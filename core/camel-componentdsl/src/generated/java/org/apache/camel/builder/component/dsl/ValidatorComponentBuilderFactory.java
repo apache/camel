@@ -49,34 +49,6 @@ public interface ValidatorComponentBuilderFactory {
             extends
                 ComponentBuilder<ValidatorComponent> {
         /**
-         * To use a custom LSResourceResolver which depends on a dynamic
-         * endpoint resource URI.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default ValidatorComponentBuilder resourceResolverFactory(
-                org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
-            doSetProperty("resourceResolverFactory", resourceResolverFactory);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ValidatorComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -97,6 +69,34 @@ public interface ValidatorComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ValidatorComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom LSResourceResolver which depends on a dynamic
+         * endpoint resource URI.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default ValidatorComponentBuilder resourceResolverFactory(
+                org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
+            doSetProperty("resourceResolverFactory", resourceResolverFactory);
+            return this;
+        }
     }
 
     class ValidatorComponentBuilderImpl
@@ -114,9 +114,9 @@ public interface ValidatorComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "resourceResolverFactory": ((ValidatorComponent) component).setResourceResolverFactory((org.apache.camel.component.validator.ValidatorResourceResolverFactory) value); return true;
-            case "basicPropertyBinding": ((ValidatorComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((ValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ValidatorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "resourceResolverFactory": ((ValidatorComponent) component).setResourceResolverFactory((org.apache.camel.component.validator.ValidatorResourceResolverFactory) value); return true;
             default: return false;
             }
         }

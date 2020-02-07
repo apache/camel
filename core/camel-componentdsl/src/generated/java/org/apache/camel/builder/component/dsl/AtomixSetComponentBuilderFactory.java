@@ -49,6 +49,17 @@ public interface AtomixSetComponentBuilderFactory {
             extends
                 ComponentBuilder<AtomixSetComponent> {
         /**
+         * The shared AtomixClient instance.
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixSetComponentBuilder atomix(io.atomix.AtomixClient atomix) {
+            doSetProperty("atomix", atomix);
+            return this;
+        }
+        /**
          * The shared component configuration.
          * 
          * The option is a:
@@ -62,14 +73,15 @@ public interface AtomixSetComponentBuilderFactory {
             return this;
         }
         /**
-         * The shared AtomixClient instance.
+         * The path to the AtomixClient configuration.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixSetComponentBuilder atomix(io.atomix.AtomixClient atomix) {
-            doSetProperty("atomix", atomix);
+        default AtomixSetComponentBuilder configurationUri(
+                java.lang.String configurationUri) {
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -87,29 +99,22 @@ public interface AtomixSetComponentBuilderFactory {
             return this;
         }
         /**
-         * The path to the AtomixClient configuration.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixSetComponentBuilder configurationUri(
-                java.lang.String configurationUri) {
-            doSetProperty("configurationUri", configurationUri);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AtomixSetComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AtomixSetComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -134,22 +139,17 @@ public interface AtomixSetComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AtomixSetComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AtomixSetComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -169,13 +169,13 @@ public interface AtomixSetComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((AtomixSetComponent) component).setConfiguration((org.apache.camel.component.atomix.client.set.AtomixSetConfiguration) value); return true;
             case "atomix": ((AtomixSetComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
-            case "nodes": ((AtomixSetComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "configuration": ((AtomixSetComponent) component).setConfiguration((org.apache.camel.component.atomix.client.set.AtomixSetConfiguration) value); return true;
             case "configurationUri": ((AtomixSetComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((AtomixSetComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((AtomixSetComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "nodes": ((AtomixSetComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
             case "bridgeErrorHandler": ((AtomixSetComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((AtomixSetComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((AtomixSetComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

@@ -67,17 +67,22 @@ public interface Iec60870ClientComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default Iec60870ClientComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Iec60870ClientComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -102,22 +107,17 @@ public interface Iec60870ClientComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default Iec60870ClientComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default Iec60870ClientComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -138,9 +138,9 @@ public interface Iec60870ClientComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "defaultConnectionOptions": ((ClientComponent) component).setDefaultConnectionOptions((org.apache.camel.component.iec60870.client.ClientOptions) value); return true;
-            case "basicPropertyBinding": ((ClientComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((ClientComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((ClientComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((ClientComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ClientComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

@@ -49,6 +49,25 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
             extends
                 ComponentBuilder<WebsocketComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default AtmosphereWebsocketComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * Default name of servlet to use. The default name is CamelServlet.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -59,19 +78,6 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
         default AtmosphereWebsocketComponentBuilder servletName(
                 java.lang.String servletName) {
             doSetProperty("servletName", servletName);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.component.servlet.HttpRegistry.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.servlet.HttpRegistry</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AtmosphereWebsocketComponentBuilder httpRegistry(
-                org.apache.camel.component.servlet.HttpRegistry httpRegistry) {
-            doSetProperty("httpRegistry", httpRegistry);
             return this;
         }
         /**
@@ -107,6 +113,71 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.camel.component.servlet.HttpRegistry.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.servlet.HttpRegistry</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AtmosphereWebsocketComponentBuilder httpRegistry(
+                org.apache.camel.component.servlet.HttpRegistry httpRegistry) {
+            doSetProperty("httpRegistry", httpRegistry);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default AtmosphereWebsocketComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether to allow java serialization when a request uses
+         * context-type=application/x-java-serialized-object. This is by default
+         * turned off. If you enable this then be aware that Java will
+         * deserialize the incoming data from the request to Java and that can
+         * be a potential security risk.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AtmosphereWebsocketComponentBuilder allowJavaSerializedObject(
+                boolean allowJavaSerializedObject) {
+            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AtmosphereWebsocketComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
          * 
@@ -134,23 +205,6 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow java serialization when a request uses
-         * context-type=application/x-java-serialized-object. This is by default
-         * turned off. If you enable this then be aware that Java will
-         * deserialize the incoming data from the request to Java and that can
-         * be a potential security risk.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AtmosphereWebsocketComponentBuilder allowJavaSerializedObject(
-                boolean allowJavaSerializedObject) {
-            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
-            return this;
-        }
-        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -162,60 +216,6 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
         default AtmosphereWebsocketComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AtmosphereWebsocketComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default AtmosphereWebsocketComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default AtmosphereWebsocketComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -235,17 +235,17 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((WebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "servletName": ((WebsocketComponent) component).setServletName((java.lang.String) value); return true;
-            case "httpRegistry": ((WebsocketComponent) component).setHttpRegistry((org.apache.camel.component.servlet.HttpRegistry) value); return true;
             case "attachmentMultipartBinding": ((WebsocketComponent) component).setAttachmentMultipartBinding((boolean) value); return true;
             case "fileNameExtWhitelist": ((WebsocketComponent) component).setFileNameExtWhitelist((java.lang.String) value); return true;
+            case "httpRegistry": ((WebsocketComponent) component).setHttpRegistry((org.apache.camel.component.servlet.HttpRegistry) value); return true;
+            case "lazyStartProducer": ((WebsocketComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "allowJavaSerializedObject": ((WebsocketComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "basicPropertyBinding": ((WebsocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "httpBinding": ((WebsocketComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "httpConfiguration": ((WebsocketComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
-            case "allowJavaSerializedObject": ((WebsocketComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "headerFilterStrategy": ((WebsocketComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((WebsocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((WebsocketComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((WebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

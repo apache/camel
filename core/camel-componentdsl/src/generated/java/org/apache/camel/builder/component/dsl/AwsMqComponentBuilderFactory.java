@@ -47,19 +47,6 @@ public interface AwsMqComponentBuilderFactory {
      */
     interface AwsMqComponentBuilder extends ComponentBuilder<MQComponent> {
         /**
-         * The AWS MQ default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.mq.MQConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsMqComponentBuilder configuration(
-                org.apache.camel.component.aws.mq.MQConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -68,42 +55,6 @@ public interface AwsMqComponentBuilderFactory {
          */
         default AwsMqComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsMqComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which MQ client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsMqComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsMqComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -127,6 +78,55 @@ public interface AwsMqComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which MQ client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsMqComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS MQ default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.mq.MQConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsMqComponentBuilder configuration(
+                org.apache.camel.component.aws.mq.MQConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsMqComponentBuilderImpl
@@ -144,12 +144,12 @@ public interface AwsMqComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
             case "accessKey": ((MQComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((MQComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((MQComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((MQComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((MQComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((MQComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((MQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
             default: return false;
             }
         }

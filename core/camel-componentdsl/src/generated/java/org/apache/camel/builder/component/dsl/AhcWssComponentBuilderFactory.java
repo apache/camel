@@ -47,118 +47,22 @@ public interface AhcWssComponentBuilderFactory {
      */
     interface AhcWssComponentBuilder extends ComponentBuilder<WsComponent> {
         /**
-         * To use a custom AsyncHttpClient.
-         * 
-         * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AhcWssComponentBuilder client(
-                org.asynchttpclient.AsyncHttpClient client) {
-            doSetProperty("client", client);
-            return this;
-        }
-        /**
-         * To use a custom AhcBinding which allows to control how to bind
-         * between AHC and Camel.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * 
-         * Group: advanced
-         */
-        default AhcWssComponentBuilder binding(
-                org.apache.camel.component.ahc.AhcBinding binding) {
-            doSetProperty("binding", binding);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
-         * 
-         * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * 
-         * Group: advanced
-         */
-        default AhcWssComponentBuilder clientConfig(
-                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
-            return this;
-        }
-        /**
-         * Reference to a org.apache.camel.support.jsse.SSLContextParameters in
-         * the Registry. Note that configuring this option will override any
-         * SSL/TLS configuration options provided through the clientConfig
-         * option at the endpoint or component level.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default AhcWssComponentBuilder sslContextParameters(
-                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Whether to allow java serialization when a request uses
-         * context-type=application/x-java-serialized-object This is by default
-         * turned off. If you enable this then be aware that Java will
-         * deserialize the incoming data from the request to Java and that can
-         * be a potential security risk.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AhcWssComponentBuilder allowJavaSerializedObject(
-                boolean allowJavaSerializedObject) {
-            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
-            return this;
-        }
-        /**
-         * Enable usage of global SSL context parameters.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         */
-        default AhcWssComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * header to and from Camel message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * 
-         * Group: filter
-         */
-        default AhcWssComponentBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AhcWssComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AhcWssComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -183,22 +87,118 @@ public interface AhcWssComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether to allow java serialization when a request uses
+         * context-type=application/x-java-serialized-object This is by default
+         * turned off. If you enable this then be aware that Java will
+         * deserialize the incoming data from the request to Java and that can
+         * be a potential security risk.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AhcWssComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AhcWssComponentBuilder allowJavaSerializedObject(
+                boolean allowJavaSerializedObject) {
+            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AhcWssComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom AhcBinding which allows to control how to bind
+         * between AHC and Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
+         * 
+         * Group: advanced
+         */
+        default AhcWssComponentBuilder binding(
+                org.apache.camel.component.ahc.AhcBinding binding) {
+            doSetProperty("binding", binding);
+            return this;
+        }
+        /**
+         * To use a custom AsyncHttpClient.
+         * 
+         * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AhcWssComponentBuilder client(
+                org.asynchttpclient.AsyncHttpClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
+         * The option is a:
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default AhcWssComponentBuilder clientConfig(
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         */
+        default AhcWssComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Reference to a org.apache.camel.support.jsse.SSLContextParameters in
+         * the Registry. Note that configuring this option will override any
+         * SSL/TLS configuration options provided through the clientConfig
+         * option at the endpoint or component level.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default AhcWssComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default AhcWssComponentBuilder useGlobalSslContextParameters(
+                boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
     }
@@ -218,16 +218,16 @@ public interface AhcWssComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "client": ((WsComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
-            case "binding": ((WsComponent) component).setBinding((org.apache.camel.component.ahc.AhcBinding) value); return true;
-            case "clientConfig": ((WsComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
-            case "sslContextParameters": ((WsComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "allowJavaSerializedObject": ((WsComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "useGlobalSslContextParameters": ((WsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "headerFilterStrategy": ((WsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((WsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((WsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((WsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((WsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "allowJavaSerializedObject": ((WsComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "basicPropertyBinding": ((WsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "binding": ((WsComponent) component).setBinding((org.apache.camel.component.ahc.AhcBinding) value); return true;
+            case "client": ((WsComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
+            case "clientConfig": ((WsComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
+            case "headerFilterStrategy": ((WsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "sslContextParameters": ((WsComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((WsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

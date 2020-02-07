@@ -49,17 +49,35 @@ public interface Aws2Ec2ComponentBuilderFactory {
             extends
                 ComponentBuilder<AWS2EC2Component> {
         /**
-         * The AWS EC2 default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Configuration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: producer
          */
-        default Aws2Ec2ComponentBuilder configuration(
-                org.apache.camel.component.aws2.ec2.AWS2EC2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2Ec2ComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -71,17 +89,6 @@ public interface Aws2Ec2ComponentBuilderFactory {
          */
         default Aws2Ec2ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2Ec2ComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -110,24 +117,17 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
+         * The AWS EC2 default configuration.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Configuration</code>
+         * type.
          * 
-         * Default: false
-         * Group: producer
+         * Group: advanced
          */
-        default Aws2Ec2ComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
+        default Aws2Ec2ComponentBuilder configuration(
+                org.apache.camel.component.aws2.ec2.AWS2EC2Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -147,12 +147,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((AWS2EC2Component) component).setConfiguration((org.apache.camel.component.aws2.ec2.AWS2EC2Configuration) value); return true;
-            case "region": ((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
             case "accessKey": ((AWS2EC2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "lazyStartProducer": ((AWS2EC2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((AWS2EC2Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((AWS2EC2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "configuration": ((AWS2EC2Component) component).setConfiguration((org.apache.camel.component.aws2.ec2.AWS2EC2Configuration) value); return true;
             default: return false;
             }
         }

@@ -60,6 +60,19 @@ public interface FlinkComponentBuilderFactory {
             return this;
         }
         /**
+         * Function performing action against a DataSet.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
+         * 
+         * Group: producer
+         */
+        default FlinkComponentBuilder dataSetCallback(
+                org.apache.camel.component.flink.DataSetCallback dataSetCallback) {
+            doSetProperty("dataSetCallback", dataSetCallback);
+            return this;
+        }
+        /**
          * DataStream to compute against.
          * 
          * The option is a:
@@ -74,19 +87,6 @@ public interface FlinkComponentBuilderFactory {
             return this;
         }
         /**
-         * Function performing action against a DataSet.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
-         * 
-         * Group: producer
-         */
-        default FlinkComponentBuilder dataSetCallback(
-                org.apache.camel.component.flink.DataSetCallback dataSetCallback) {
-            doSetProperty("dataSetCallback", dataSetCallback);
-            return this;
-        }
-        /**
          * Function performing action against a DataStream.
          * 
          * The option is a:
@@ -98,20 +98,6 @@ public interface FlinkComponentBuilderFactory {
         default FlinkComponentBuilder dataStreamCallback(
                 org.apache.camel.component.flink.DataStreamCallback dataStreamCallback) {
             doSetProperty("dataStreamCallback", dataStreamCallback);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default FlinkComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -135,6 +121,20 @@ public interface FlinkComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default FlinkComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class FlinkComponentBuilderImpl
@@ -153,11 +153,11 @@ public interface FlinkComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "dataSet": ((FlinkComponent) component).setDataSet((org.apache.flink.api.java.DataSet) value); return true;
-            case "dataStream": ((FlinkComponent) component).setDataStream((org.apache.flink.streaming.api.datastream.DataStream) value); return true;
             case "dataSetCallback": ((FlinkComponent) component).setDataSetCallback((org.apache.camel.component.flink.DataSetCallback) value); return true;
+            case "dataStream": ((FlinkComponent) component).setDataStream((org.apache.flink.streaming.api.datastream.DataStream) value); return true;
             case "dataStreamCallback": ((FlinkComponent) component).setDataStreamCallback((org.apache.camel.component.flink.DataStreamCallback) value); return true;
-            case "basicPropertyBinding": ((FlinkComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((FlinkComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((FlinkComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

@@ -64,32 +64,22 @@ public interface BraintreeComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default BraintreeComponentBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default BraintreeComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default BraintreeComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -114,22 +104,32 @@ public interface BraintreeComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default BraintreeComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default BraintreeComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeComponentBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
             return this;
         }
     }
@@ -150,10 +150,10 @@ public interface BraintreeComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((BraintreeComponent) component).setConfiguration((org.apache.camel.component.braintree.BraintreeConfiguration) value); return true;
-            case "logHandlerEnabled": ((BraintreeComponent) component).setLogHandlerEnabled((boolean) value); return true;
-            case "basicPropertyBinding": ((BraintreeComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((BraintreeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((BraintreeComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((BraintreeComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((BraintreeComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "logHandlerEnabled": ((BraintreeComponent) component).setLogHandlerEnabled((boolean) value); return true;
             default: return false;
             }
         }

@@ -51,17 +51,28 @@ public interface EhcacheComponentBuilderFactory {
             extends
                 ComponentBuilder<EhcacheComponent> {
         /**
-         * Sets the global component configuration.
+         * The default cache configuration to be used to create caches.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
+         * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
          * type.
          * 
-         * Group: advanced
+         * Group: common
          */
-        default EhcacheComponentBuilder configuration(
-                org.apache.camel.component.ehcache.EhcacheConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default EhcacheComponentBuilder cacheConfiguration(
+                org.ehcache.config.CacheConfiguration cacheConfiguration) {
+            doSetProperty("cacheConfiguration", cacheConfiguration);
+            return this;
+        }
+        /**
+         * URI pointing to the Ehcache XML configuration file's location.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default EhcacheComponentBuilder cacheConfigurationUri(
+                java.lang.String cacheConfigurationUri) {
+            doSetProperty("cacheConfigurationUri", cacheConfigurationUri);
             return this;
         }
         /**
@@ -89,19 +100,6 @@ public interface EhcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * The default cache configuration to be used to create caches.
-         * 
-         * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default EhcacheComponentBuilder cacheConfiguration(
-                org.ehcache.config.CacheConfiguration cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
-        }
-        /**
          * A map of caches configurations to be used to create caches.
          * 
          * The option is a: <code>java.util.Map<java.lang.String,
@@ -115,29 +113,22 @@ public interface EhcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * URI pointing to the Ehcache XML configuration file's location.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EhcacheComponentBuilder cacheConfigurationUri(
-                java.lang.String cacheConfigurationUri) {
-            doSetProperty("cacheConfigurationUri", cacheConfigurationUri);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default EhcacheComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default EhcacheComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -162,22 +153,31 @@ public interface EhcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default EhcacheComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default EhcacheComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets the global component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default EhcacheComponentBuilder configuration(
+                org.apache.camel.component.ehcache.EhcacheConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -197,15 +197,15 @@ public interface EhcacheComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((EhcacheComponent) component).setConfiguration((org.apache.camel.component.ehcache.EhcacheConfiguration) value); return true;
+            case "cacheConfiguration": ((EhcacheComponent) component).setCacheConfiguration((org.ehcache.config.CacheConfiguration) value); return true;
+            case "cacheConfigurationUri": ((EhcacheComponent) component).setCacheConfigurationUri((java.lang.String) value); return true;
             case "cacheManager": ((EhcacheComponent) component).setCacheManager((org.ehcache.CacheManager) value); return true;
             case "cacheManagerConfiguration": ((EhcacheComponent) component).setCacheManagerConfiguration((org.ehcache.config.Configuration) value); return true;
-            case "cacheConfiguration": ((EhcacheComponent) component).setCacheConfiguration((org.ehcache.config.CacheConfiguration) value); return true;
             case "cachesConfigurations": ((EhcacheComponent) component).setCachesConfigurations((java.util.Map<java.lang.String, org.ehcache.config.CacheConfiguration>) value); return true;
-            case "cacheConfigurationUri": ((EhcacheComponent) component).setCacheConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((EhcacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((EhcacheComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((EhcacheComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((EhcacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((EhcacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((EhcacheComponent) component).setConfiguration((org.apache.camel.component.ehcache.EhcacheConfiguration) value); return true;
             default: return false;
             }
         }

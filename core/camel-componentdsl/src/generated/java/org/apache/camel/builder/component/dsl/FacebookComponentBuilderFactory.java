@@ -51,30 +51,22 @@ public interface FacebookComponentBuilderFactory {
             extends
                 ComponentBuilder<FacebookComponent> {
         /**
-         * To use the shared configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.facebook.config.FacebookConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default FacebookComponentBuilder configuration(
-                org.apache.camel.component.facebook.config.FacebookConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default FacebookComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default FacebookComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -99,22 +91,30 @@ public interface FacebookComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default FacebookComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default FacebookComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the shared configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.facebook.config.FacebookConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default FacebookComponentBuilder configuration(
+                org.apache.camel.component.facebook.config.FacebookConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -134,10 +134,10 @@ public interface FacebookComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((FacebookComponent) component).setConfiguration((org.apache.camel.component.facebook.config.FacebookConfiguration) value); return true;
-            case "basicPropertyBinding": ((FacebookComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((FacebookComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((FacebookComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((FacebookComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((FacebookComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((FacebookComponent) component).setConfiguration((org.apache.camel.component.facebook.config.FacebookConfiguration) value); return true;
             default: return false;
             }
         }

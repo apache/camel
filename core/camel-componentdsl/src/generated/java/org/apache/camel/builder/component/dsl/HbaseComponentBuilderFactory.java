@@ -47,19 +47,6 @@ public interface HbaseComponentBuilderFactory {
      */
     interface HbaseComponentBuilder extends ComponentBuilder<HBaseComponent> {
         /**
-         * To use the shared configuration.
-         * 
-         * The option is a: <code>org.apache.hadoop.conf.Configuration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default HbaseComponentBuilder configuration(
-                org.apache.hadoop.conf.Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Maximum number of references to keep for each table in the HTable
          * pool. The default value is 10.
          * 
@@ -73,17 +60,22 @@ public interface HbaseComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default HbaseComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default HbaseComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -108,22 +100,30 @@ public interface HbaseComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default HbaseComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default HbaseComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the shared configuration.
+         * 
+         * The option is a: <code>org.apache.hadoop.conf.Configuration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default HbaseComponentBuilder configuration(
+                org.apache.hadoop.conf.Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -143,11 +143,11 @@ public interface HbaseComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((HBaseComponent) component).setConfiguration((org.apache.hadoop.conf.Configuration) value); return true;
             case "poolMaxSize": ((HBaseComponent) component).setPoolMaxSize((int) value); return true;
-            case "basicPropertyBinding": ((HBaseComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((HBaseComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((HBaseComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((HBaseComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((HBaseComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((HBaseComponent) component).setConfiguration((org.apache.hadoop.conf.Configuration) value); return true;
             default: return false;
             }
         }

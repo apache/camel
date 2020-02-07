@@ -49,6 +49,86 @@ public interface MllpComponentBuilderFactory {
      */
     interface MllpComponentBuilder extends ComponentBuilder<MllpComponent> {
         /**
+         * Sets the default configuration to use when creating MLLP endpoints.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.mllp.MllpConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default MllpComponentBuilder configuration(
+                org.apache.camel.component.mllp.MllpConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default MllpComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default MllpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MllpComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Set the default character set to use for byte to/from String
+         * conversions.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ISO-8859-1
+         * Group: advanced
+         */
+        default MllpComponentBuilder defaultCharset(
+                java.lang.String defaultCharset) {
+            doSetProperty("defaultCharset", defaultCharset);
+            return this;
+        }
+        /**
          * Set the component to log PHI data.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
@@ -74,86 +154,6 @@ public interface MllpComponentBuilderFactory {
             doSetProperty("logPhiMaxBytes", logPhiMaxBytes);
             return this;
         }
-        /**
-         * Set the default character set to use for byte to/from String
-         * conversions.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: ISO-8859-1
-         * Group: advanced
-         */
-        default MllpComponentBuilder defaultCharset(
-                java.lang.String defaultCharset) {
-            doSetProperty("defaultCharset", defaultCharset);
-            return this;
-        }
-        /**
-         * Sets the default configuration to use when creating MLLP endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.mllp.MllpConfiguration</code> type.
-         * 
-         * Group: common
-         */
-        default MllpComponentBuilder configuration(
-                org.apache.camel.component.mllp.MllpConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MllpComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default MllpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default MllpComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class MllpComponentBuilderImpl
@@ -171,13 +171,13 @@ public interface MllpComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((MllpComponent) component).setConfiguration((org.apache.camel.component.mllp.MllpConfiguration) value); return true;
+            case "bridgeErrorHandler": ((MllpComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((MllpComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MllpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "defaultCharset": ((MllpComponent) component).setDefaultCharset((java.lang.String) value); return true;
             case "logPhi": ((MllpComponent) component).setLogPhi((java.lang.Boolean) value); return true;
             case "logPhiMaxBytes": ((MllpComponent) component).setLogPhiMaxBytes((java.lang.Integer) value); return true;
-            case "defaultCharset": ((MllpComponent) component).setDefaultCharset((java.lang.String) value); return true;
-            case "configuration": ((MllpComponent) component).setConfiguration((org.apache.camel.component.mllp.MllpConfiguration) value); return true;
-            case "basicPropertyBinding": ((MllpComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((MllpComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((MllpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

@@ -49,6 +49,27 @@ public interface SparkComponentBuilderFactory {
      */
     interface SparkComponentBuilder extends ComponentBuilder<SparkComponent> {
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default SparkComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * RDD to compute against.
          * 
          * The option is a: <code>org.apache.spark.api.java.JavaRDDLike</code>
@@ -88,27 +109,6 @@ public interface SparkComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default SparkComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
     }
 
     class SparkComponentBuilderImpl
@@ -126,10 +126,10 @@ public interface SparkComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "lazyStartProducer": ((SparkComponent) component).setLazyStartProducer((boolean) value); return true;
             case "rdd": ((SparkComponent) component).setRdd((org.apache.spark.api.java.JavaRDDLike) value); return true;
             case "rddCallback": ((SparkComponent) component).setRddCallback((org.apache.camel.component.spark.RddCallback) value); return true;
             case "basicPropertyBinding": ((SparkComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((SparkComponent) component).setLazyStartProducer((boolean) value); return true;
             default: return false;
             }
         }

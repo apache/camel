@@ -47,30 +47,22 @@ public interface AvroComponentBuilderFactory {
      */
     interface AvroComponentBuilder extends ComponentBuilder<AvroComponent> {
         /**
-         * To use a shared AvroConfiguration to configure options once.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.avro.AvroConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AvroComponentBuilder configuration(
-                org.apache.camel.component.avro.AvroConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AvroComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AvroComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -94,22 +86,30 @@ public interface AvroComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AvroComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AvroComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a shared AvroConfiguration to configure options once.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.avro.AvroConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AvroComponentBuilder configuration(
+                org.apache.camel.component.avro.AvroConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -129,10 +129,10 @@ public interface AvroComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((AvroComponent) component).setConfiguration((org.apache.camel.component.avro.AvroConfiguration) value); return true;
-            case "basicPropertyBinding": ((AvroComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((AvroComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((AvroComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((AvroComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((AvroComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((AvroComponent) component).setConfiguration((org.apache.camel.component.avro.AvroConfiguration) value); return true;
             default: return false;
             }
         }

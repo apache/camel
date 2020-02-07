@@ -51,23 +51,6 @@ public interface WebsocketComponentBuilderFactory {
             extends
                 ComponentBuilder<WebsocketComponent> {
         /**
-         * Set a resource path for static resources (such as .html files etc).
-         * The resources can be loaded from classpath, if you prefix with
-         * classpath:, otherwise the resources is loaded from file system or
-         * from JAR files. For example to load from root classpath use
-         * classpath:., or classpath:WEB-INF/static If not configured (eg null)
-         * then no static resource is in use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default WebsocketComponentBuilder staticResources(
-                java.lang.String staticResources) {
-            doSetProperty("staticResources", staticResources);
-            return this;
-        }
-        /**
          * The hostname. The default value is 0.0.0.0.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -92,39 +75,89 @@ public interface WebsocketComponentBuilderFactory {
             return this;
         }
         /**
-         * The password for the keystore when using SSL.
+         * To configure a map which contains custom WebSocketFactory for sub
+         * protocols. The key in the map is the sub protocol. The default key is
+         * reserved for the default implementation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * org.apache.camel.component.websocket.WebSocketFactory></code> type.
          * 
-         * Group: security
+         * Group: common
          */
-        default WebsocketComponentBuilder sslKeyPassword(
-                java.lang.String sslKeyPassword) {
-            doSetProperty("sslKeyPassword", sslKeyPassword);
+        default WebsocketComponentBuilder socketFactory(
+                java.util.Map<java.lang.String, org.apache.camel.component.websocket.WebSocketFactory> socketFactory) {
+            doSetProperty("socketFactory", socketFactory);
             return this;
         }
         /**
-         * The password when using SSL.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: security
+         * Default: false
+         * Group: consumer
          */
-        default WebsocketComponentBuilder sslPassword(
-                java.lang.String sslPassword) {
-            doSetProperty("sslPassword", sslPassword);
+        default WebsocketComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
-         * The path to the keystore.
+         * Set a resource path for static resources (such as .html files etc).
+         * The resources can be loaded from classpath, if you prefix with
+         * classpath:, otherwise the resources is loaded from file system or
+         * from JAR files. For example to load from root classpath use
+         * classpath:., or classpath:WEB-INF/static If not configured (eg null)
+         * then no static resource is in use.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: security
+         * Group: consumer
          */
-        default WebsocketComponentBuilder sslKeystore(
-                java.lang.String sslKeystore) {
-            doSetProperty("sslKeystore", sslKeystore);
+        default WebsocketComponentBuilder staticResources(
+                java.lang.String staticResources) {
+            doSetProperty("staticResources", staticResources);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default WebsocketComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default WebsocketComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -141,20 +174,6 @@ public interface WebsocketComponentBuilderFactory {
             return this;
         }
         /**
-         * To set a value for minimum number of threads in server thread pool.
-         * MaxThreads/minThreads or threadPool fields are required due to switch
-         * to Jetty9. The default values for minThreads is 1.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: advanced
-         */
-        default WebsocketComponentBuilder minThreads(
-                java.lang.Integer minThreads) {
-            doSetProperty("minThreads", minThreads);
-            return this;
-        }
-        /**
          * To set a value for maximum number of threads in server thread pool.
          * MaxThreads/minThreads or threadPool fields are required due to switch
          * to Jetty9. The default values for maxThreads is 1 2 noCores.
@@ -166,6 +185,20 @@ public interface WebsocketComponentBuilderFactory {
         default WebsocketComponentBuilder maxThreads(
                 java.lang.Integer maxThreads) {
             doSetProperty("maxThreads", maxThreads);
+            return this;
+        }
+        /**
+         * To set a value for minimum number of threads in server thread pool.
+         * MaxThreads/minThreads or threadPool fields are required due to switch
+         * to Jetty9. The default values for minThreads is 1.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
+         */
+        default WebsocketComponentBuilder minThreads(
+                java.lang.Integer minThreads) {
+            doSetProperty("minThreads", minThreads);
             return this;
         }
         /**
@@ -196,6 +229,42 @@ public interface WebsocketComponentBuilderFactory {
             return this;
         }
         /**
+         * The password for the keystore when using SSL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default WebsocketComponentBuilder sslKeyPassword(
+                java.lang.String sslKeyPassword) {
+            doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * The path to the keystore.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default WebsocketComponentBuilder sslKeystore(
+                java.lang.String sslKeystore) {
+            doSetProperty("sslKeystore", sslKeystore);
+            return this;
+        }
+        /**
+         * The password when using SSL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default WebsocketComponentBuilder sslPassword(
+                java.lang.String sslPassword) {
+            doSetProperty("sslPassword", sslPassword);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -206,75 +275,6 @@ public interface WebsocketComponentBuilderFactory {
         default WebsocketComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
-         * To configure a map which contains custom WebSocketFactory for sub
-         * protocols. The key in the map is the sub protocol. The default key is
-         * reserved for the default implementation.
-         * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * org.apache.camel.component.websocket.WebSocketFactory></code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketComponentBuilder socketFactory(
-                java.util.Map<java.lang.String, org.apache.camel.component.websocket.WebSocketFactory> socketFactory) {
-            doSetProperty("socketFactory", socketFactory);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default WebsocketComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default WebsocketComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default WebsocketComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -294,22 +294,22 @@ public interface WebsocketComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "staticResources": ((WebsocketComponent) component).setStaticResources((java.lang.String) value); return true;
             case "host": ((WebsocketComponent) component).setHost((java.lang.String) value); return true;
             case "port": ((WebsocketComponent) component).setPort((java.lang.Integer) value); return true;
-            case "sslKeyPassword": ((WebsocketComponent) component).setSslKeyPassword((java.lang.String) value); return true;
-            case "sslPassword": ((WebsocketComponent) component).setSslPassword((java.lang.String) value); return true;
-            case "sslKeystore": ((WebsocketComponent) component).setSslKeystore((java.lang.String) value); return true;
+            case "socketFactory": ((WebsocketComponent) component).setSocketFactory((java.util.Map<java.lang.String, org.apache.camel.component.websocket.WebSocketFactory>) value); return true;
+            case "bridgeErrorHandler": ((WebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "staticResources": ((WebsocketComponent) component).setStaticResources((java.lang.String) value); return true;
+            case "lazyStartProducer": ((WebsocketComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((WebsocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "enableJmx": ((WebsocketComponent) component).setEnableJmx((boolean) value); return true;
-            case "minThreads": ((WebsocketComponent) component).setMinThreads((java.lang.Integer) value); return true;
             case "maxThreads": ((WebsocketComponent) component).setMaxThreads((java.lang.Integer) value); return true;
+            case "minThreads": ((WebsocketComponent) component).setMinThreads((java.lang.Integer) value); return true;
             case "threadPool": ((WebsocketComponent) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
             case "sslContextParameters": ((WebsocketComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "sslKeyPassword": ((WebsocketComponent) component).setSslKeyPassword((java.lang.String) value); return true;
+            case "sslKeystore": ((WebsocketComponent) component).setSslKeystore((java.lang.String) value); return true;
+            case "sslPassword": ((WebsocketComponent) component).setSslPassword((java.lang.String) value); return true;
             case "useGlobalSslContextParameters": ((WebsocketComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "socketFactory": ((WebsocketComponent) component).setSocketFactory((java.util.Map<java.lang.String, org.apache.camel.component.websocket.WebSocketFactory>) value); return true;
-            case "basicPropertyBinding": ((WebsocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((WebsocketComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((WebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

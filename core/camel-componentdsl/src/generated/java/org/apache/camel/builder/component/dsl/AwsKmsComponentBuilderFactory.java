@@ -47,20 +47,6 @@ public interface AwsKmsComponentBuilderFactory {
      */
     interface AwsKmsComponentBuilder extends ComponentBuilder<KMSComponent> {
         /**
-         * The AWS KMS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsKmsComponentBuilder configuration(
-                org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -69,42 +55,6 @@ public interface AwsKmsComponentBuilderFactory {
          */
         default AwsKmsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsKmsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which KMS client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsKmsComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsKmsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -128,6 +78,56 @@ public interface AwsKmsComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which KMS client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsKmsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS KMS default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AwsKmsComponentBuilder configuration(
+                org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsKmsComponentBuilderImpl
@@ -145,12 +145,12 @@ public interface AwsKmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((KMSComponent) component).setConfiguration((org.apache.camel.component.aws.kms.KMSConfiguration) value); return true;
             case "accessKey": ((KMSComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((KMSComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((KMSComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((KMSComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((KMSComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((KMSComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((KMSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((KMSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((KMSComponent) component).setConfiguration((org.apache.camel.component.aws.kms.KMSConfiguration) value); return true;
             default: return false;
             }
         }

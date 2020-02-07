@@ -49,32 +49,22 @@ public interface WebsocketJsr356ComponentBuilderFactory {
             extends
                 ComponentBuilder<JSR356WebSocketComponent> {
         /**
-         * To enable customization of how a WebSocket ServerEndpoint is
-         * configured and deployed. By default
-         * DefaultServerEndpointDeploymentStrategy is used.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy</code> type.
-         * 
-         * Group: advanced
-         */
-        default WebsocketJsr356ComponentBuilder serverEndpointDeploymentStrategy(
-                org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy serverEndpointDeploymentStrategy) {
-            doSetProperty("serverEndpointDeploymentStrategy", serverEndpointDeploymentStrategy);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default WebsocketJsr356ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default WebsocketJsr356ComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -99,22 +89,32 @@ public interface WebsocketJsr356ComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default WebsocketJsr356ComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default WebsocketJsr356ComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To enable customization of how a WebSocket ServerEndpoint is
+         * configured and deployed. By default
+         * DefaultServerEndpointDeploymentStrategy is used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default WebsocketJsr356ComponentBuilder serverEndpointDeploymentStrategy(
+                org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy serverEndpointDeploymentStrategy) {
+            doSetProperty("serverEndpointDeploymentStrategy", serverEndpointDeploymentStrategy);
             return this;
         }
     }
@@ -134,10 +134,10 @@ public interface WebsocketJsr356ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "serverEndpointDeploymentStrategy": ((JSR356WebSocketComponent) component).setServerEndpointDeploymentStrategy((org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy) value); return true;
-            case "basicPropertyBinding": ((JSR356WebSocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((JSR356WebSocketComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((JSR356WebSocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((JSR356WebSocketComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((JSR356WebSocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "serverEndpointDeploymentStrategy": ((JSR356WebSocketComponent) component).setServerEndpointDeploymentStrategy((org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy) value); return true;
             default: return false;
             }
         }

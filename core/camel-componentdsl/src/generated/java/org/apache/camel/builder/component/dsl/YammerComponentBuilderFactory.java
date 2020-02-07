@@ -51,65 +51,22 @@ public interface YammerComponentBuilderFactory {
             extends
                 ComponentBuilder<YammerComponent> {
         /**
-         * The consumer key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default YammerComponentBuilder consumerKey(java.lang.String consumerKey) {
-            doSetProperty("consumerKey", consumerKey);
-            return this;
-        }
-        /**
-         * The consumer secret.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default YammerComponentBuilder consumerSecret(
-                java.lang.String consumerSecret) {
-            doSetProperty("consumerSecret", consumerSecret);
-            return this;
-        }
-        /**
-         * The access token.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default YammerComponentBuilder accessToken(java.lang.String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
-         * To use a shared yammer configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.yammer.YammerConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default YammerComponentBuilder config(
-                org.apache.camel.component.yammer.YammerConfiguration config) {
-            doSetProperty("config", config);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default YammerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default YammerComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -134,22 +91,65 @@ public interface YammerComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default YammerComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default YammerComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a shared yammer configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.YammerConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default YammerComponentBuilder config(
+                org.apache.camel.component.yammer.YammerConfiguration config) {
+            doSetProperty("config", config);
+            return this;
+        }
+        /**
+         * The access token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default YammerComponentBuilder accessToken(java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * The consumer key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default YammerComponentBuilder consumerKey(java.lang.String consumerKey) {
+            doSetProperty("consumerKey", consumerKey);
+            return this;
+        }
+        /**
+         * The consumer secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default YammerComponentBuilder consumerSecret(
+                java.lang.String consumerSecret) {
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -169,13 +169,13 @@ public interface YammerComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((YammerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((YammerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((YammerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "config": ((YammerComponent) component).setConfig((org.apache.camel.component.yammer.YammerConfiguration) value); return true;
+            case "accessToken": ((YammerComponent) component).setAccessToken((java.lang.String) value); return true;
             case "consumerKey": ((YammerComponent) component).setConsumerKey((java.lang.String) value); return true;
             case "consumerSecret": ((YammerComponent) component).setConsumerSecret((java.lang.String) value); return true;
-            case "accessToken": ((YammerComponent) component).setAccessToken((java.lang.String) value); return true;
-            case "config": ((YammerComponent) component).setConfig((org.apache.camel.component.yammer.YammerConfiguration) value); return true;
-            case "basicPropertyBinding": ((YammerComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((YammerComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((YammerComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

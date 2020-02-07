@@ -15,12 +15,12 @@ public class MicrometerComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MicrometerComponent target = (MicrometerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "metricsregistry":
-        case "metricsRegistry": target.setMetricsRegistry(property(camelContext, io.micrometer.core.instrument.MeterRegistry.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "metricsregistry":
+        case "metricsRegistry": target.setMetricsRegistry(property(camelContext, io.micrometer.core.instrument.MeterRegistry.class, value)); return true;
         default: return false;
         }
     }

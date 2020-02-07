@@ -51,18 +51,99 @@ public interface ElytronComponentBuilderFactory {
             extends
                 ComponentBuilder<ElytronComponent> {
         /**
-         * Definition of Builder, which will be used for creation of security
-         * domain.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ElytronComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ElytronComponentBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ElytronComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ElytronComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Elytron security provider, has to support mechanism from parameter
+         * mechanismName.
          * 
          * The option is a:
-         * <code>org.wildfly.security.auth.server.SecurityDomain.Builder</code>
+         * <code>org.wildfly.security.WildFlyElytronBaseProvider</code> type.
+         * 
+         * Default: instance of WildFlyElytronHttpBearerProvider
+         * Group: advanced
+         */
+        default ElytronComponentBuilder elytronProvider(
+                org.wildfly.security.WildFlyElytronBaseProvider elytronProvider) {
+            doSetProperty("elytronProvider", elytronProvider);
+            return this;
+        }
+        /**
+         * To configure common options, such as thread pools.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.undertow.UndertowHostOptions</code>
          * type.
          * 
          * Group: advanced
          */
-        default ElytronComponentBuilder securityDomainBuilder(
-                org.wildfly.security.auth.server.SecurityDomain.Builder securityDomainBuilder) {
-            doSetProperty("securityDomainBuilder", securityDomainBuilder);
+        default ElytronComponentBuilder hostOptions(
+                org.apache.camel.component.undertow.UndertowHostOptions hostOptions) {
+            doSetProperty("hostOptions", hostOptions);
             return this;
         }
         /**
@@ -80,18 +161,18 @@ public interface ElytronComponentBuilderFactory {
             return this;
         }
         /**
-         * Elytron security provider, has to support mechanism from parameter
-         * mechanismName.
+         * Definition of Builder, which will be used for creation of security
+         * domain.
          * 
          * The option is a:
-         * <code>org.wildfly.security.WildFlyElytronBaseProvider</code> type.
+         * <code>org.wildfly.security.auth.server.SecurityDomain.Builder</code>
+         * type.
          * 
-         * Default: instance of WildFlyElytronHttpBearerProvider
          * Group: advanced
          */
-        default ElytronComponentBuilder elytronProvider(
-                org.wildfly.security.WildFlyElytronBaseProvider elytronProvider) {
-            doSetProperty("elytronProvider", elytronProvider);
+        default ElytronComponentBuilder securityDomainBuilder(
+                org.wildfly.security.auth.server.SecurityDomain.Builder securityDomainBuilder) {
+            doSetProperty("securityDomainBuilder", securityDomainBuilder);
             return this;
         }
         /**
@@ -135,87 +216,6 @@ public interface ElytronComponentBuilderFactory {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
-        /**
-         * To configure common options, such as thread pools.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.undertow.UndertowHostOptions</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default ElytronComponentBuilder hostOptions(
-                org.apache.camel.component.undertow.UndertowHostOptions hostOptions) {
-            doSetProperty("hostOptions", hostOptions);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side the
-         * response's body won't contain the exception's stack trace.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ElytronComponentBuilder muteException(boolean muteException) {
-            doSetProperty("muteException", muteException);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ElytronComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default ElytronComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ElytronComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class ElytronComponentBuilderImpl
@@ -233,17 +233,17 @@ public interface ElytronComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "securityDomainBuilder": ((ElytronComponent) component).setSecurityDomainBuilder((org.wildfly.security.auth.server.SecurityDomain.Builder) value); return true;
-            case "mechanismName": ((ElytronComponent) component).setMechanismName((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((ElytronComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "muteException": ((ElytronComponent) component).setMuteException((boolean) value); return true;
+            case "lazyStartProducer": ((ElytronComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ElytronComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "elytronProvider": ((ElytronComponent) component).setElytronProvider((org.wildfly.security.WildFlyElytronBaseProvider) value); return true;
+            case "hostOptions": ((ElytronComponent) component).setHostOptions((org.apache.camel.component.undertow.UndertowHostOptions) value); return true;
+            case "mechanismName": ((ElytronComponent) component).setMechanismName((java.lang.String) value); return true;
+            case "securityDomainBuilder": ((ElytronComponent) component).setSecurityDomainBuilder((org.wildfly.security.auth.server.SecurityDomain.Builder) value); return true;
             case "undertowHttpBinding": ((ElytronComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
             case "sslContextParameters": ((ElytronComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ElytronComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "hostOptions": ((ElytronComponent) component).setHostOptions((org.apache.camel.component.undertow.UndertowHostOptions) value); return true;
-            case "muteException": ((ElytronComponent) component).setMuteException((boolean) value); return true;
-            case "basicPropertyBinding": ((ElytronComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((ElytronComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((ElytronComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

@@ -49,30 +49,6 @@ public interface GoogleBigqueryComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleBigQueryComponent> {
         /**
-         * Google Cloud Project Id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GoogleBigqueryComponentBuilder projectId(
-                java.lang.String projectId) {
-            doSetProperty("projectId", projectId);
-            return this;
-        }
-        /**
-         * BigQuery Dataset Id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GoogleBigqueryComponentBuilder datasetId(
-                java.lang.String datasetId) {
-            doSetProperty("datasetId", datasetId);
-            return this;
-        }
-        /**
          * ConnectionFactory to obtain connection to Bigquery Service. If non
          * provided the default one will be used.
          * 
@@ -87,17 +63,15 @@ public interface GoogleBigqueryComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * BigQuery Dataset Id.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: producer
          */
-        default GoogleBigqueryComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleBigqueryComponentBuilder datasetId(
+                java.lang.String datasetId) {
+            doSetProperty("datasetId", datasetId);
             return this;
         }
         /**
@@ -121,6 +95,32 @@ public interface GoogleBigqueryComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Google Cloud Project Id.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default GoogleBigqueryComponentBuilder projectId(
+                java.lang.String projectId) {
+            doSetProperty("projectId", projectId);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default GoogleBigqueryComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class GoogleBigqueryComponentBuilderImpl
@@ -138,11 +138,11 @@ public interface GoogleBigqueryComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "projectId": ((GoogleBigQueryComponent) component).setProjectId((java.lang.String) value); return true;
-            case "datasetId": ((GoogleBigQueryComponent) component).setDatasetId((java.lang.String) value); return true;
             case "connectionFactory": ((GoogleBigQueryComponent) component).setConnectionFactory((org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory) value); return true;
-            case "basicPropertyBinding": ((GoogleBigQueryComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "datasetId": ((GoogleBigQueryComponent) component).setDatasetId((java.lang.String) value); return true;
             case "lazyStartProducer": ((GoogleBigQueryComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "projectId": ((GoogleBigQueryComponent) component).setProjectId((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((GoogleBigQueryComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

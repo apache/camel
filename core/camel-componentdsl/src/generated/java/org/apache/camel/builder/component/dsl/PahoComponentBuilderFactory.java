@@ -49,6 +49,17 @@ public interface PahoComponentBuilderFactory {
      */
     interface PahoComponentBuilder extends ComponentBuilder<PahoComponent> {
         /**
+         * The URL of the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default PahoComponentBuilder brokerUrl(java.lang.String brokerUrl) {
+            doSetProperty("brokerUrl", brokerUrl);
+            return this;
+        }
+        /**
          * To use the shared Paho configuration.
          * 
          * The option is a:
@@ -62,41 +73,22 @@ public interface PahoComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a shared Paho client.
-         * 
-         * The option is a:
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default PahoComponentBuilder client(
-                org.eclipse.paho.client.mqttv3.MqttClient client) {
-            doSetProperty("client", client);
-            return this;
-        }
-        /**
-         * The URL of the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoComponentBuilder brokerUrl(java.lang.String brokerUrl) {
-            doSetProperty("brokerUrl", brokerUrl);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default PahoComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default PahoComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -120,22 +112,30 @@ public interface PahoComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default PahoComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default PahoComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a shared Paho client.
+         * 
+         * The option is a:
+         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default PahoComponentBuilder client(
+                org.eclipse.paho.client.mqttv3.MqttClient client) {
+            doSetProperty("client", client);
             return this;
         }
     }
@@ -155,12 +155,12 @@ public interface PahoComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((PahoComponent) component).setConfiguration((org.apache.camel.component.paho.PahoConfiguration) value); return true;
-            case "client": ((PahoComponent) component).setClient((org.eclipse.paho.client.mqttv3.MqttClient) value); return true;
             case "brokerUrl": ((PahoComponent) component).setBrokerUrl((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((PahoComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((PahoComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "configuration": ((PahoComponent) component).setConfiguration((org.apache.camel.component.paho.PahoConfiguration) value); return true;
             case "bridgeErrorHandler": ((PahoComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((PahoComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((PahoComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "client": ((PahoComponent) component).setClient((org.eclipse.paho.client.mqttv3.MqttClient) value); return true;
             default: return false;
             }
         }

@@ -49,20 +49,6 @@ public interface AwsSwfComponentBuilderFactory {
      */
     interface AwsSwfComponentBuilder extends ComponentBuilder<SWFComponent> {
         /**
-         * The AWS SWF default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.swf.SWFConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsSwfComponentBuilder configuration(
-                org.apache.camel.component.aws.swf.SWFConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -71,17 +57,6 @@ public interface AwsSwfComponentBuilderFactory {
          */
         default AwsSwfComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AwsSwfComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -96,17 +71,33 @@ public interface AwsSwfComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AwsSwfComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AwsSwfComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AwsSwfComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -131,22 +122,31 @@ public interface AwsSwfComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AwsSwfComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AwsSwfComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS SWF default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.swf.SWFConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AwsSwfComponentBuilder configuration(
+                org.apache.camel.component.aws.swf.SWFConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -166,13 +166,13 @@ public interface AwsSwfComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((SWFComponent) component).setConfiguration((org.apache.camel.component.aws.swf.SWFConfiguration) value); return true;
             case "accessKey": ((SWFComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((SWFComponent) component).setSecretKey((java.lang.String) value); return true;
             case "region": ((SWFComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((SWFComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((SWFComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "secretKey": ((SWFComponent) component).setSecretKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((SWFComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((SWFComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((SWFComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((SWFComponent) component).setConfiguration((org.apache.camel.component.aws.swf.SWFConfiguration) value); return true;
             default: return false;
             }
         }

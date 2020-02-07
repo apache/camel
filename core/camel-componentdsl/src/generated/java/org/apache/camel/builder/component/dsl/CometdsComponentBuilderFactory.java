@@ -51,53 +51,6 @@ public interface CometdsComponentBuilderFactory {
             extends
                 ComponentBuilder<CometdComponent> {
         /**
-         * The password for the keystore when using SSL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default CometdsComponentBuilder sslKeyPassword(
-                java.lang.String sslKeyPassword) {
-            doSetProperty("sslKeyPassword", sslKeyPassword);
-            return this;
-        }
-        /**
-         * The password when using SSL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default CometdsComponentBuilder sslPassword(java.lang.String sslPassword) {
-            doSetProperty("sslPassword", sslPassword);
-            return this;
-        }
-        /**
-         * The path to the keystore.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default CometdsComponentBuilder sslKeystore(java.lang.String sslKeystore) {
-            doSetProperty("sslKeystore", sslKeystore);
-            return this;
-        }
-        /**
-         * To use a custom configured SecurityPolicy to control authorization.
-         * 
-         * The option is a: <code>org.cometd.bayeux.server.SecurityPolicy</code>
-         * type.
-         * 
-         * Group: security
-         */
-        default CometdsComponentBuilder securityPolicy(
-                org.cometd.bayeux.server.SecurityPolicy securityPolicy) {
-            doSetProperty("securityPolicy", securityPolicy);
-            return this;
-        }
-        /**
          * To use a list of custom BayeuxServer.Extension that allows modifying
          * incoming and outgoing requests.
          * 
@@ -112,43 +65,22 @@ public interface CometdsComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default CometdsComponentBuilder sslContextParameters(
-                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Enable usage of global SSL context parameters.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: security
+         * Group: consumer
          */
-        default CometdsComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default CometdsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CometdsComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -173,22 +105,90 @@ public interface CometdsComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default CometdsComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default CometdsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom configured SecurityPolicy to control authorization.
+         * 
+         * The option is a: <code>org.cometd.bayeux.server.SecurityPolicy</code>
+         * type.
+         * 
+         * Group: security
+         */
+        default CometdsComponentBuilder securityPolicy(
+                org.cometd.bayeux.server.SecurityPolicy securityPolicy) {
+            doSetProperty("securityPolicy", securityPolicy);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default CometdsComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * The password for the keystore when using SSL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default CometdsComponentBuilder sslKeyPassword(
+                java.lang.String sslKeyPassword) {
+            doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * The path to the keystore.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default CometdsComponentBuilder sslKeystore(java.lang.String sslKeystore) {
+            doSetProperty("sslKeystore", sslKeystore);
+            return this;
+        }
+        /**
+         * The password when using SSL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default CometdsComponentBuilder sslPassword(java.lang.String sslPassword) {
+            doSetProperty("sslPassword", sslPassword);
+            return this;
+        }
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default CometdsComponentBuilder useGlobalSslContextParameters(
+                boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
     }
@@ -208,16 +208,16 @@ public interface CometdsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "sslKeyPassword": ((CometdComponent) component).setSslKeyPassword((java.lang.String) value); return true;
-            case "sslPassword": ((CometdComponent) component).setSslPassword((java.lang.String) value); return true;
-            case "sslKeystore": ((CometdComponent) component).setSslKeystore((java.lang.String) value); return true;
-            case "securityPolicy": ((CometdComponent) component).setSecurityPolicy((org.cometd.bayeux.server.SecurityPolicy) value); return true;
             case "extensions": ((CometdComponent) component).setExtensions((java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension>) value); return true;
-            case "sslContextParameters": ((CometdComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "useGlobalSslContextParameters": ((CometdComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "basicPropertyBinding": ((CometdComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((CometdComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((CometdComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((CometdComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((CometdComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "securityPolicy": ((CometdComponent) component).setSecurityPolicy((org.cometd.bayeux.server.SecurityPolicy) value); return true;
+            case "sslContextParameters": ((CometdComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "sslKeyPassword": ((CometdComponent) component).setSslKeyPassword((java.lang.String) value); return true;
+            case "sslKeystore": ((CometdComponent) component).setSslKeystore((java.lang.String) value); return true;
+            case "sslPassword": ((CometdComponent) component).setSslPassword((java.lang.String) value); return true;
+            case "useGlobalSslContextParameters": ((CometdComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

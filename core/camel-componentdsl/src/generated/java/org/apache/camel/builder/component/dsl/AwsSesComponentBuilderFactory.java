@@ -48,20 +48,6 @@ public interface AwsSesComponentBuilderFactory {
      */
     interface AwsSesComponentBuilder extends ComponentBuilder<SesComponent> {
         /**
-         * The AWS SES default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.ses.SesConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsSesComponentBuilder configuration(
-                org.apache.camel.component.aws.ses.SesConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -70,42 +56,6 @@ public interface AwsSesComponentBuilderFactory {
          */
         default AwsSesComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsSesComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which SES client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsSesComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsSesComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -129,6 +79,56 @@ public interface AwsSesComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which SES client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsSesComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS SES default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ses.SesConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AwsSesComponentBuilder configuration(
+                org.apache.camel.component.aws.ses.SesConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsSesComponentBuilderImpl
@@ -146,12 +146,12 @@ public interface AwsSesComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((SesComponent) component).setConfiguration((org.apache.camel.component.aws.ses.SesConfiguration) value); return true;
             case "accessKey": ((SesComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((SesComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((SesComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((SesComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((SesComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((SesComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((SesComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((SesComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((SesComponent) component).setConfiguration((org.apache.camel.component.aws.ses.SesConfiguration) value); return true;
             default: return false;
             }
         }

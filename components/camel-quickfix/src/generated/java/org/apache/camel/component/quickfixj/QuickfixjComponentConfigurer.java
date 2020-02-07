@@ -15,21 +15,21 @@ public class QuickfixjComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QuickfixjComponent target = (QuickfixjComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "messagefactory":
-        case "messageFactory": target.setMessageFactory(property(camelContext, quickfix.MessageFactory.class, value)); return true;
-        case "logfactory":
-        case "logFactory": target.setLogFactory(property(camelContext, quickfix.LogFactory.class, value)); return true;
-        case "messagestorefactory":
-        case "messageStoreFactory": target.setMessageStoreFactory(property(camelContext, quickfix.MessageStoreFactory.class, value)); return true;
         case "configurations": target.setConfigurations(property(camelContext, java.util.Map.class, value)); return true;
         case "lazycreateengines":
         case "lazyCreateEngines": target.setLazyCreateEngines(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "logfactory":
+        case "logFactory": target.setLogFactory(property(camelContext, quickfix.LogFactory.class, value)); return true;
+        case "messagefactory":
+        case "messageFactory": target.setMessageFactory(property(camelContext, quickfix.MessageFactory.class, value)); return true;
+        case "messagestorefactory":
+        case "messageStoreFactory": target.setMessageStoreFactory(property(camelContext, quickfix.MessageStoreFactory.class, value)); return true;
         default: return false;
         }
     }

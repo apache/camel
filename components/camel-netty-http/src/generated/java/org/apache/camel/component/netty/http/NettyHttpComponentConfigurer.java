@@ -15,10 +15,10 @@ public class NettyHttpComponentConfigurer extends NettyComponentConfigurer imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NettyHttpComponent target = (NettyHttpComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "nettyhttpbinding":
-        case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "nettyhttpbinding":
+        case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
         case "securityconfiguration":
         case "securityConfiguration": target.setSecurityConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);

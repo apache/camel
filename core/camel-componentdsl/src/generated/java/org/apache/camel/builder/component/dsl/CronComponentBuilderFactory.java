@@ -47,15 +47,22 @@ public interface CronComponentBuilderFactory {
      */
     interface CronComponentBuilder extends ComponentBuilder<CronComponent> {
         /**
-         * The id of the CamelCronService to use when multiple implementations
-         * are provided.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default CronComponentBuilder cronService(java.lang.String cronService) {
-            doSetProperty("cronService", cronService);
+        default CronComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -73,22 +80,15 @@ public interface CronComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * The id of the CamelCronService to use when multiple implementations
+         * are provided.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default CronComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default CronComponentBuilder cronService(java.lang.String cronService) {
+            doSetProperty("cronService", cronService);
             return this;
         }
     }
@@ -108,9 +108,9 @@ public interface CronComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "cronService": ((CronComponent) component).setCronService((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((CronComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((CronComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((CronComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "cronService": ((CronComponent) component).setCronService((java.lang.String) value); return true;
             default: return false;
             }
         }

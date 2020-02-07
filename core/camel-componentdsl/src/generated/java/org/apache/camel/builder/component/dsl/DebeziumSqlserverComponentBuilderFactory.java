@@ -53,6 +53,25 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             extends
                 ComponentBuilder<DebeziumSqlserverComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
@@ -79,25 +98,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default DebeziumSqlserverComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class DebeziumSqlserverComponentBuilderImpl
@@ -115,9 +115,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((DebeziumSqlserverComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((DebeziumSqlserverComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "basicPropertyBinding": ((DebeziumSqlserverComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((DebeziumSqlserverComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

@@ -51,6 +51,25 @@ public interface FileWatchComponentBuilderFactory {
             extends
                 ComponentBuilder<FileWatchComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default FileWatchComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * The number of concurrent consumers. Increase this value, if your
          * route is slow to prevent buffering in queue.
          * 
@@ -62,32 +81,6 @@ public interface FileWatchComponentBuilderFactory {
         default FileWatchComponentBuilder concurrentConsumers(
                 int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Maximum size of queue between WatchService and consumer. Unbounded by
-         * default.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 2147483647
-         * Group: consumer
-         */
-        default FileWatchComponentBuilder queueSize(int queueSize) {
-            doSetProperty("queueSize", queueSize);
-            return this;
-        }
-        /**
-         * The number of threads polling WatchService. Increase this value, if
-         * you see OVERFLOW messages in log.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: consumer
-         */
-        default FileWatchComponentBuilder pollThreads(int pollThreads) {
-            doSetProperty("pollThreads", pollThreads);
             return this;
         }
         /**
@@ -106,6 +99,32 @@ public interface FileWatchComponentBuilderFactory {
         default FileWatchComponentBuilder fileHasher(
                 io.methvin.watcher.hashing.FileHasher fileHasher) {
             doSetProperty("fileHasher", fileHasher);
+            return this;
+        }
+        /**
+         * The number of threads polling WatchService. Increase this value, if
+         * you see OVERFLOW messages in log.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer
+         */
+        default FileWatchComponentBuilder pollThreads(int pollThreads) {
+            doSetProperty("pollThreads", pollThreads);
+            return this;
+        }
+        /**
+         * Maximum size of queue between WatchService and consumer. Unbounded by
+         * default.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2147483647
+         * Group: consumer
+         */
+        default FileWatchComponentBuilder queueSize(int queueSize) {
+            doSetProperty("queueSize", queueSize);
             return this;
         }
         /**
@@ -137,25 +156,6 @@ public interface FileWatchComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default FileWatchComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class FileWatchComponentBuilderImpl
@@ -173,13 +173,13 @@ public interface FileWatchComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((FileWatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((FileWatchComponent) component).setConcurrentConsumers((int) value); return true;
-            case "queueSize": ((FileWatchComponent) component).setQueueSize((int) value); return true;
-            case "pollThreads": ((FileWatchComponent) component).setPollThreads((int) value); return true;
             case "fileHasher": ((FileWatchComponent) component).setFileHasher((io.methvin.watcher.hashing.FileHasher) value); return true;
+            case "pollThreads": ((FileWatchComponent) component).setPollThreads((int) value); return true;
+            case "queueSize": ((FileWatchComponent) component).setQueueSize((int) value); return true;
             case "useFileHashing": ((FileWatchComponent) component).setUseFileHashing((boolean) value); return true;
             case "basicPropertyBinding": ((FileWatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((FileWatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

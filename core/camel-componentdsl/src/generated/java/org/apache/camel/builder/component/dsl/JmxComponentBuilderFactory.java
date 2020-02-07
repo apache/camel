@@ -47,20 +47,6 @@ public interface JmxComponentBuilderFactory {
      */
     interface JmxComponentBuilder extends ComponentBuilder<JMXComponent> {
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default JmxComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -77,6 +63,20 @@ public interface JmxComponentBuilderFactory {
         default JmxComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default JmxComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -96,8 +96,8 @@ public interface JmxComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "basicPropertyBinding": ((JMXComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((JMXComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((JMXComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

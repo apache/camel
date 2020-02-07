@@ -50,19 +50,6 @@ public interface AwsDdbstreamComponentBuilderFactory {
             extends
                 ComponentBuilder<DdbStreamComponent> {
         /**
-         * The AWS DDB stream default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsDdbstreamComponentBuilder configuration(
-                org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -72,43 +59,6 @@ public interface AwsDdbstreamComponentBuilderFactory {
         default AwsDdbstreamComponentBuilder accessKey(
                 java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default AwsDdbstreamComponentBuilder secretKey(
-                java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Region.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default AwsDdbstreamComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsDdbstreamComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -130,6 +80,56 @@ public interface AwsDdbstreamComponentBuilderFactory {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
+        /**
+         * Amazon AWS Region.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder secretKey(
+                java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsDdbstreamComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS DDB stream default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsDdbstreamComponentBuilder configuration(
+                org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsDdbstreamComponentBuilderImpl
@@ -147,12 +147,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((DdbStreamComponent) component).setConfiguration((org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration) value); return true;
             case "accessKey": ((DdbStreamComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((DdbStreamComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((DdbStreamComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((DdbStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((DdbStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "region": ((DdbStreamComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((DdbStreamComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((DdbStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((DdbStreamComponent) component).setConfiguration((org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration) value); return true;
             default: return false;
             }
         }

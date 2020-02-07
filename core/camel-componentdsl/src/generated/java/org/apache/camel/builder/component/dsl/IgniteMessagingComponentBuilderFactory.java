@@ -51,18 +51,6 @@ public interface IgniteMessagingComponentBuilderFactory {
             extends
                 ComponentBuilder<IgniteMessagingComponent> {
         /**
-         * Ignite instance.
-         * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
-         * 
-         * Group: common
-         */
-        default IgniteMessagingComponentBuilder ignite(
-                org.apache.ignite.Ignite ignite) {
-            doSetProperty("ignite", ignite);
-            return this;
-        }
-        /**
          * Resource from where to load configuration.
          * 
          * The option is a: <code>java.lang.Object</code> type.
@@ -72,6 +60,18 @@ public interface IgniteMessagingComponentBuilderFactory {
         default IgniteMessagingComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
+            return this;
+        }
+        /**
+         * Ignite instance.
+         * 
+         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * 
+         * Group: common
+         */
+        default IgniteMessagingComponentBuilder ignite(
+                org.apache.ignite.Ignite ignite) {
+            doSetProperty("ignite", ignite);
             return this;
         }
         /**
@@ -89,17 +89,22 @@ public interface IgniteMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default IgniteMessagingComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default IgniteMessagingComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -124,22 +129,17 @@ public interface IgniteMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default IgniteMessagingComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default IgniteMessagingComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -159,12 +159,12 @@ public interface IgniteMessagingComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "ignite": ((IgniteMessagingComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "configurationResource": ((IgniteMessagingComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "ignite": ((IgniteMessagingComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "igniteConfiguration": ((IgniteMessagingComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
-            case "basicPropertyBinding": ((IgniteMessagingComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((IgniteMessagingComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((IgniteMessagingComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((IgniteMessagingComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((IgniteMessagingComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

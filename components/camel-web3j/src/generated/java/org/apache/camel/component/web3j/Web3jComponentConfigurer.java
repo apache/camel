@@ -16,12 +16,12 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         Web3jComponent target = (Web3jComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.web3j.Web3jConfiguration.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

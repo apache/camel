@@ -15,15 +15,15 @@ public class AtomixMultiMapComponentConfigurer extends PropertyConfigurerSupport
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AtomixMultiMapComponent target = (AtomixMultiMapComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration.class, value)); return true;
         case "atomix": target.setAtomix(property(camelContext, io.atomix.AtomixClient.class, value)); return true;
-        case "nodes": target.setNodes(property(camelContext, java.util.List.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration.class, value)); return true;
         case "configurationuri":
         case "configurationUri": target.setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "nodes": target.setNodes(property(camelContext, java.util.List.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

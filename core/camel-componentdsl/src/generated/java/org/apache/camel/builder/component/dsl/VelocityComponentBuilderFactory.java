@@ -49,33 +49,6 @@ public interface VelocityComponentBuilderFactory {
             extends
                 ComponentBuilder<VelocityComponent> {
         /**
-         * To use the VelocityEngine otherwise a new engine is created.
-         * 
-         * The option is a: <code>org.apache.velocity.app.VelocityEngine</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default VelocityComponentBuilder velocityEngine(
-                org.apache.velocity.app.VelocityEngine velocityEngine) {
-            doSetProperty("velocityEngine", velocityEngine);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default VelocityComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -96,6 +69,33 @@ public interface VelocityComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default VelocityComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the VelocityEngine otherwise a new engine is created.
+         * 
+         * The option is a: <code>org.apache.velocity.app.VelocityEngine</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default VelocityComponentBuilder velocityEngine(
+                org.apache.velocity.app.VelocityEngine velocityEngine) {
+            doSetProperty("velocityEngine", velocityEngine);
+            return this;
+        }
     }
 
     class VelocityComponentBuilderImpl
@@ -113,9 +113,9 @@ public interface VelocityComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "velocityEngine": ((VelocityComponent) component).setVelocityEngine((org.apache.velocity.app.VelocityEngine) value); return true;
-            case "basicPropertyBinding": ((VelocityComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((VelocityComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((VelocityComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "velocityEngine": ((VelocityComponent) component).setVelocityEngine((org.apache.velocity.app.VelocityEngine) value); return true;
             default: return false;
             }
         }

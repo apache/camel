@@ -49,34 +49,6 @@ public interface GrapeComponentBuilderFactory {
      */
     interface GrapeComponentBuilder extends ComponentBuilder<GrapeComponent> {
         /**
-         * Implementation of org.apache.camel.component.grape.PatchesRepository,
-         * by default: FilePatchesRepository.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.grape.PatchesRepository</code> type.
-         * 
-         * Group: advanced
-         */
-        default GrapeComponentBuilder patchesRepository(
-                org.apache.camel.component.grape.PatchesRepository patchesRepository) {
-            doSetProperty("patchesRepository", patchesRepository);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default GrapeComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -97,6 +69,34 @@ public interface GrapeComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default GrapeComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Implementation of org.apache.camel.component.grape.PatchesRepository,
+         * by default: FilePatchesRepository.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.grape.PatchesRepository</code> type.
+         * 
+         * Group: advanced
+         */
+        default GrapeComponentBuilder patchesRepository(
+                org.apache.camel.component.grape.PatchesRepository patchesRepository) {
+            doSetProperty("patchesRepository", patchesRepository);
+            return this;
+        }
     }
 
     class GrapeComponentBuilderImpl
@@ -114,9 +114,9 @@ public interface GrapeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "patchesRepository": ((GrapeComponent) component).setPatchesRepository((org.apache.camel.component.grape.PatchesRepository) value); return true;
-            case "basicPropertyBinding": ((GrapeComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((GrapeComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((GrapeComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "patchesRepository": ((GrapeComponent) component).setPatchesRepository((org.apache.camel.component.grape.PatchesRepository) value); return true;
             default: return false;
             }
         }

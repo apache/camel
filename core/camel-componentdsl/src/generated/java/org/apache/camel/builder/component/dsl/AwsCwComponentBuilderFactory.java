@@ -47,19 +47,6 @@ public interface AwsCwComponentBuilderFactory {
      */
     interface AwsCwComponentBuilder extends ComponentBuilder<CwComponent> {
         /**
-         * The AWS CW default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.cw.CwConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsCwComponentBuilder configuration(
-                org.apache.camel.component.aws.cw.CwConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -68,42 +55,6 @@ public interface AwsCwComponentBuilderFactory {
          */
         default AwsCwComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsCwComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which CW client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsCwComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsCwComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -127,6 +78,55 @@ public interface AwsCwComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which CW client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsCwComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS CW default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.cw.CwConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsCwComponentBuilder configuration(
+                org.apache.camel.component.aws.cw.CwConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsCwComponentBuilderImpl
@@ -144,12 +144,12 @@ public interface AwsCwComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((CwComponent) component).setConfiguration((org.apache.camel.component.aws.cw.CwConfiguration) value); return true;
             case "accessKey": ((CwComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((CwComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((CwComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((CwComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((CwComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((CwComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((CwComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((CwComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((CwComponent) component).setConfiguration((org.apache.camel.component.aws.cw.CwConfiguration) value); return true;
             default: return false;
             }
         }

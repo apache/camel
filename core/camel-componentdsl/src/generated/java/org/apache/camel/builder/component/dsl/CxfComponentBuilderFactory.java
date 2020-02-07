@@ -47,59 +47,22 @@ public interface CxfComponentBuilderFactory {
      */
     interface CxfComponentBuilder extends ComponentBuilder<CxfComponent> {
         /**
-         * This option controls whether the CXF component, when running in
-         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
-         * or keep the payload as a javax.xml.transform.Source object that would
-         * allow streaming in some cases.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default CxfComponentBuilder allowStreaming(
-                java.lang.Boolean allowStreaming) {
-            doSetProperty("allowStreaming", allowStreaming);
-            return this;
-        }
-        /**
-         * Enable usage of global SSL context parameters.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: security
+         * Group: consumer
          */
-        default CxfComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * header to and from Camel message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * 
-         * Group: filter
-         */
-        default CxfComponentBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default CxfComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CxfComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -123,22 +86,59 @@ public interface CxfComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * This option controls whether the CXF component, when running in
+         * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
+         * or keep the payload as a javax.xml.transform.Source object that would
+         * allow streaming in some cases.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default CxfComponentBuilder allowStreaming(
+                java.lang.Boolean allowStreaming) {
+            doSetProperty("allowStreaming", allowStreaming);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default CxfComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default CxfComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         */
+        default CxfComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default CxfComponentBuilder useGlobalSslContextParameters(
+                boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
     }
@@ -158,12 +158,12 @@ public interface CxfComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "allowStreaming": ((CxfComponent) component).setAllowStreaming((java.lang.Boolean) value); return true;
-            case "useGlobalSslContextParameters": ((CxfComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "headerFilterStrategy": ((CxfComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((CxfComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((CxfComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((CxfComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((CxfComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "allowStreaming": ((CxfComponent) component).setAllowStreaming((java.lang.Boolean) value); return true;
+            case "basicPropertyBinding": ((CxfComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "headerFilterStrategy": ((CxfComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "useGlobalSslContextParameters": ((CxfComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

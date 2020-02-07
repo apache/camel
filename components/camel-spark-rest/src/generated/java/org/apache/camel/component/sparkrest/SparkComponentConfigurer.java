@@ -15,13 +15,21 @@ public class SparkComponentConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SparkComponent target = (SparkComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "ipaddress":
         case "ipAddress": target.setIpAddress(property(camelContext, java.lang.String.class, value)); return true;
-        case "minthreads":
-        case "minThreads": target.setMinThreads(property(camelContext, int.class, value)); return true;
+        case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "maxthreads":
         case "maxThreads": target.setMaxThreads(property(camelContext, int.class, value)); return true;
+        case "minthreads":
+        case "minThreads": target.setMinThreads(property(camelContext, int.class, value)); return true;
+        case "sparkbinding":
+        case "sparkBinding": target.setSparkBinding(property(camelContext, org.apache.camel.component.sparkrest.SparkBinding.class, value)); return true;
+        case "sparkconfiguration":
+        case "sparkConfiguration": target.setSparkConfiguration(property(camelContext, org.apache.camel.component.sparkrest.SparkConfiguration.class, value)); return true;
         case "timeoutmillis":
         case "timeOutMillis": target.setTimeOutMillis(property(camelContext, int.class, value)); return true;
         case "keystorefile":
@@ -32,14 +40,6 @@ public class SparkComponentConfigurer extends PropertyConfigurerSupport implemen
         case "truststoreFile": target.setTruststoreFile(property(camelContext, java.lang.String.class, value)); return true;
         case "truststorepassword":
         case "truststorePassword": target.setTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sparkconfiguration":
-        case "sparkConfiguration": target.setSparkConfiguration(property(camelContext, org.apache.camel.component.sparkrest.SparkConfiguration.class, value)); return true;
-        case "sparkbinding":
-        case "sparkBinding": target.setSparkBinding(property(camelContext, org.apache.camel.component.sparkrest.SparkBinding.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

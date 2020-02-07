@@ -52,15 +52,22 @@ public interface IgniteEventsComponentBuilderFactory {
             extends
                 ComponentBuilder<IgniteEventsComponent> {
         /**
-         * Ignite instance.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
-        default IgniteEventsComponentBuilder ignite(
-                org.apache.ignite.Ignite ignite) {
-            doSetProperty("ignite", ignite);
+        default IgniteEventsComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -73,6 +80,18 @@ public interface IgniteEventsComponentBuilderFactory {
         default IgniteEventsComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
+            return this;
+        }
+        /**
+         * Ignite instance.
+         * 
+         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * 
+         * Group: consumer
+         */
+        default IgniteEventsComponentBuilder ignite(
+                org.apache.ignite.Ignite ignite) {
+            doSetProperty("ignite", ignite);
             return this;
         }
         /**
@@ -103,25 +122,6 @@ public interface IgniteEventsComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default IgniteEventsComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class IgniteEventsComponentBuilderImpl
@@ -139,11 +139,11 @@ public interface IgniteEventsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "ignite": ((IgniteEventsComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
+            case "bridgeErrorHandler": ((IgniteEventsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configurationResource": ((IgniteEventsComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "ignite": ((IgniteEventsComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "igniteConfiguration": ((IgniteEventsComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
             case "basicPropertyBinding": ((IgniteEventsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((IgniteEventsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

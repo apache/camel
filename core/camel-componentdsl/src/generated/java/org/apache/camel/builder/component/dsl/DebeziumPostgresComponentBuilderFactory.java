@@ -53,6 +53,25 @@ public interface DebeziumPostgresComponentBuilderFactory {
             extends
                 ComponentBuilder<DebeziumPostgresComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default DebeziumPostgresComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
@@ -79,25 +98,6 @@ public interface DebeziumPostgresComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default DebeziumPostgresComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class DebeziumPostgresComponentBuilderImpl
@@ -115,9 +115,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((DebeziumPostgresComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((DebeziumPostgresComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration) value); return true;
             case "basicPropertyBinding": ((DebeziumPostgresComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((DebeziumPostgresComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

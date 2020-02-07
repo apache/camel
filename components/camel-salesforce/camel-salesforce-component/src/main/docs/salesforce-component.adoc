@@ -658,40 +658,40 @@ The Salesforce component supports 34 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. The value can be one of: USERNAME_PASSWORD, REFRESH_TOKEN, JWT |  | AuthenticationType
-| *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
-| *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
-| *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to \https://login.salesforce.com | https://login.salesforce.com | String
-| *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
-| *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
-| *keystore* (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
-| *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at \https://login.salesforce.com/services/oauth2/success or \https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
-| *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
-| *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
-| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
+| *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
+| *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
+| *httpMaxContentLength* (common) | Max content length of an HTTP response. |  | Integer
+| *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
 | *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpointConfig
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
-| *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
-| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
-| *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
-| *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
-| *httpMaxContentLength* (common) | Max content length of an HTTP response. |  | Integer
-| *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
-| *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
-| *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
-| *httpProxyPassword* (security) | Password to use to authenticate against the HTTP proxy server. |  | String
-| *isHttpProxySocks4* (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
-| *isHttpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
-| *httpProxyIncludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *httpProxyExcludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
+| *httpProxyHost* (proxy) | Hostname of the HTTP proxy server to use. |  | String
+| *httpProxyIncludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
+| *httpProxyPort* (proxy) | Port number of the HTTP proxy server to use. |  | Integer
+| *isHttpProxySocks4* (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
+| *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. The value can be one of: USERNAME_PASSWORD, REFRESH_TOKEN, JWT |  | AuthenticationType
+| *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
+| *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
 | *httpProxyAuthUri* (security) | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
+| *httpProxyPassword* (security) | Password to use to authenticate against the HTTP proxy server. |  | String
 | *httpProxyRealm* (security) | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
 | *httpProxyUseDigestAuth* (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxy, otherwise Basic authorization method will be used | false | boolean
-| *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *httpProxyUsername* (security) | Username to use to authenticate against the HTTP proxy server. |  | String
+| *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
+| *isHttpProxySecure* (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
+| *keystore* (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
+| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
+| *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
+| *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to \https://login.salesforce.com | https://login.salesforce.com | String
+| *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
+| *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at \https://login.salesforce.com/services/oauth2/success or \https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
+| *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
+| *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
 |===
 // component options: END
 

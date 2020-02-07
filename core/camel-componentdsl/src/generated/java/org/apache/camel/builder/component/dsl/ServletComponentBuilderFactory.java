@@ -51,6 +51,25 @@ public interface ServletComponentBuilderFactory {
             extends
                 ComponentBuilder<ServletComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ServletComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * Default name of servlet to use. The default name is CamelServlet.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -60,19 +79,6 @@ public interface ServletComponentBuilderFactory {
          */
         default ServletComponentBuilder servletName(java.lang.String servletName) {
             doSetProperty("servletName", servletName);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.component.servlet.HttpRegistry.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.servlet.HttpRegistry</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default ServletComponentBuilder httpRegistry(
-                org.apache.camel.component.servlet.HttpRegistry httpRegistry) {
-            doSetProperty("httpRegistry", httpRegistry);
             return this;
         }
         /**
@@ -108,6 +114,50 @@ public interface ServletComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.camel.component.servlet.HttpRegistry.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.servlet.HttpRegistry</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default ServletComponentBuilder httpRegistry(
+                org.apache.camel.component.servlet.HttpRegistry httpRegistry) {
+            doSetProperty("httpRegistry", httpRegistry);
+            return this;
+        }
+        /**
+         * Whether to allow java serialization when a request uses
+         * context-type=application/x-java-serialized-object. This is by default
+         * turned off. If you enable this then be aware that Java will
+         * deserialize the incoming data from the request to Java and that can
+         * be a potential security risk.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ServletComponentBuilder allowJavaSerializedObject(
+                boolean allowJavaSerializedObject) {
+            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ServletComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
          * 
@@ -135,23 +185,6 @@ public interface ServletComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow java serialization when a request uses
-         * context-type=application/x-java-serialized-object. This is by default
-         * turned off. If you enable this then be aware that Java will
-         * deserialize the incoming data from the request to Java and that can
-         * be a potential security risk.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ServletComponentBuilder allowJavaSerializedObject(
-                boolean allowJavaSerializedObject) {
-            doSetProperty("allowJavaSerializedObject", allowJavaSerializedObject);
-            return this;
-        }
-        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -163,39 +196,6 @@ public interface ServletComponentBuilderFactory {
         default ServletComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ServletComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ServletComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -215,16 +215,16 @@ public interface ServletComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((ServletComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "servletName": ((ServletComponent) component).setServletName((java.lang.String) value); return true;
-            case "httpRegistry": ((ServletComponent) component).setHttpRegistry((org.apache.camel.component.servlet.HttpRegistry) value); return true;
             case "attachmentMultipartBinding": ((ServletComponent) component).setAttachmentMultipartBinding((boolean) value); return true;
             case "fileNameExtWhitelist": ((ServletComponent) component).setFileNameExtWhitelist((java.lang.String) value); return true;
+            case "httpRegistry": ((ServletComponent) component).setHttpRegistry((org.apache.camel.component.servlet.HttpRegistry) value); return true;
+            case "allowJavaSerializedObject": ((ServletComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "basicPropertyBinding": ((ServletComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "httpBinding": ((ServletComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "httpConfiguration": ((ServletComponent) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
-            case "allowJavaSerializedObject": ((ServletComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "headerFilterStrategy": ((ServletComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((ServletComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((ServletComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

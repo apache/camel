@@ -54,48 +54,6 @@ public interface CryptoCmsComponentBuilderFactory {
             extends
                 ComponentBuilder<CryptoCmsComponent> {
         /**
-         * To configure the shared SignedDataVerifierConfiguration, which
-         * determines the uri parameters for the verify operation.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default CryptoCmsComponentBuilder signedDataVerifierConfiguration(
-                org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration signedDataVerifierConfiguration) {
-            doSetProperty("signedDataVerifierConfiguration", signedDataVerifierConfiguration);
-            return this;
-        }
-        /**
-         * To configure the shared EnvelopedDataDecryptorConfiguration, which
-         * determines the uri parameters for the decrypt operation.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default CryptoCmsComponentBuilder envelopedDataDecryptorConfiguration(
-                org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
-            doSetProperty("envelopedDataDecryptorConfiguration", envelopedDataDecryptorConfiguration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default CryptoCmsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -116,6 +74,48 @@ public interface CryptoCmsComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default CryptoCmsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To configure the shared EnvelopedDataDecryptorConfiguration, which
+         * determines the uri parameters for the decrypt operation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default CryptoCmsComponentBuilder envelopedDataDecryptorConfiguration(
+                org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
+            doSetProperty("envelopedDataDecryptorConfiguration", envelopedDataDecryptorConfiguration);
+            return this;
+        }
+        /**
+         * To configure the shared SignedDataVerifierConfiguration, which
+         * determines the uri parameters for the verify operation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default CryptoCmsComponentBuilder signedDataVerifierConfiguration(
+                org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration signedDataVerifierConfiguration) {
+            doSetProperty("signedDataVerifierConfiguration", signedDataVerifierConfiguration);
+            return this;
+        }
     }
 
     class CryptoCmsComponentBuilderImpl
@@ -133,10 +133,10 @@ public interface CryptoCmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "signedDataVerifierConfiguration": ((CryptoCmsComponent) component).setSignedDataVerifierConfiguration((org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration) value); return true;
-            case "envelopedDataDecryptorConfiguration": ((CryptoCmsComponent) component).setEnvelopedDataDecryptorConfiguration((org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration) value); return true;
-            case "basicPropertyBinding": ((CryptoCmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((CryptoCmsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((CryptoCmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "envelopedDataDecryptorConfiguration": ((CryptoCmsComponent) component).setEnvelopedDataDecryptorConfiguration((org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration) value); return true;
+            case "signedDataVerifierConfiguration": ((CryptoCmsComponent) component).setSignedDataVerifierConfiguration((org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration) value); return true;
             default: return false;
             }
         }

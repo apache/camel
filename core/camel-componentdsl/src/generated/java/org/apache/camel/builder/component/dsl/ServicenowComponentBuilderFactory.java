@@ -51,15 +51,49 @@ public interface ServicenowComponentBuilderFactory {
             extends
                 ComponentBuilder<ServiceNowComponent> {
         /**
-         * The ServiceNow instance name.
+         * The ServiceNow REST API url.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Group: producer
+         */
+        default ServicenowComponentBuilder apiUrl(java.lang.String apiUrl) {
+            doSetProperty("apiUrl", apiUrl);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ServicenowComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
          * Group: advanced
          */
-        default ServicenowComponentBuilder instanceName(
-                java.lang.String instanceName) {
-            doSetProperty("instanceName", instanceName);
+        default ServicenowComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -76,36 +110,37 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
         /**
-         * The ServiceNow REST API url.
+         * The ServiceNow instance name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: advanced
          */
-        default ServicenowComponentBuilder apiUrl(java.lang.String apiUrl) {
-            doSetProperty("apiUrl", apiUrl);
+        default ServicenowComponentBuilder instanceName(
+                java.lang.String instanceName) {
+            doSetProperty("instanceName", instanceName);
             return this;
         }
         /**
-         * ServiceNow user account name.
+         * The proxy host name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: security
+         * Group: advanced
          */
-        default ServicenowComponentBuilder userName(java.lang.String userName) {
-            doSetProperty("userName", userName);
+        default ServicenowComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * ServiceNow account password.
+         * The proxy port number.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: security
+         * Group: advanced
          */
-        default ServicenowComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
+        default ServicenowComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -145,37 +180,14 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
         /**
-         * The proxy host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default ServicenowComponentBuilder proxyHost(java.lang.String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: advanced
-         */
-        default ServicenowComponentBuilder proxyPort(java.lang.Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * Username for proxy authentication.
+         * ServiceNow account password.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          */
-        default ServicenowComponentBuilder proxyUserName(
-                java.lang.String proxyUserName) {
-            doSetProperty("proxyUserName", proxyUserName);
+        default ServicenowComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -188,6 +200,18 @@ public interface ServicenowComponentBuilderFactory {
         default ServicenowComponentBuilder proxyPassword(
                 java.lang.String proxyPassword) {
             doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * Username for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ServicenowComponentBuilder proxyUserName(
+                java.lang.String proxyUserName) {
+            doSetProperty("proxyUserName", proxyUserName);
             return this;
         }
         /**
@@ -204,38 +228,14 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * ServiceNow user account name.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: security
          */
-        default ServicenowComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default ServicenowComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
+        default ServicenowComponentBuilder userName(java.lang.String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -255,21 +255,21 @@ public interface ServicenowComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "instanceName": ((ServiceNowComponent) component).setInstanceName((java.lang.String) value); return true;
-            case "configuration": ((ServiceNowComponent) component).setConfiguration((org.apache.camel.component.servicenow.ServiceNowConfiguration) value); return true;
             case "apiUrl": ((ServiceNowComponent) component).setApiUrl((java.lang.String) value); return true;
-            case "userName": ((ServiceNowComponent) component).setUserName((java.lang.String) value); return true;
-            case "password": ((ServiceNowComponent) component).setPassword((java.lang.String) value); return true;
+            case "lazyStartProducer": ((ServiceNowComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ServiceNowComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((ServiceNowComponent) component).setConfiguration((org.apache.camel.component.servicenow.ServiceNowConfiguration) value); return true;
+            case "instanceName": ((ServiceNowComponent) component).setInstanceName((java.lang.String) value); return true;
+            case "proxyHost": ((ServiceNowComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": ((ServiceNowComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "oauthClientId": ((ServiceNowComponent) component).setOauthClientId((java.lang.String) value); return true;
             case "oauthClientSecret": ((ServiceNowComponent) component).setOauthClientSecret((java.lang.String) value); return true;
             case "oauthTokenUrl": ((ServiceNowComponent) component).setOauthTokenUrl((java.lang.String) value); return true;
-            case "proxyHost": ((ServiceNowComponent) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": ((ServiceNowComponent) component).setProxyPort((java.lang.Integer) value); return true;
-            case "proxyUserName": ((ServiceNowComponent) component).setProxyUserName((java.lang.String) value); return true;
+            case "password": ((ServiceNowComponent) component).setPassword((java.lang.String) value); return true;
             case "proxyPassword": ((ServiceNowComponent) component).setProxyPassword((java.lang.String) value); return true;
+            case "proxyUserName": ((ServiceNowComponent) component).setProxyUserName((java.lang.String) value); return true;
             case "useGlobalSslContextParameters": ((ServiceNowComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "basicPropertyBinding": ((ServiceNowComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((ServiceNowComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "userName": ((ServiceNowComponent) component).setUserName((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -47,47 +47,6 @@ public interface MsvComponentBuilderFactory {
      */
     interface MsvComponentBuilder extends ComponentBuilder<MsvComponent> {
         /**
-         * To use the javax.xml.validation.SchemaFactory.
-         * 
-         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default MsvComponentBuilder schemaFactory(
-                javax.xml.validation.SchemaFactory schemaFactory) {
-            doSetProperty("schemaFactory", schemaFactory);
-            return this;
-        }
-        /**
-         * To use a custom LSResourceResolver which depends on a dynamic
-         * endpoint resource URI.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default MsvComponentBuilder resourceResolverFactory(
-                org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
-            doSetProperty("resourceResolverFactory", resourceResolverFactory);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MsvComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -107,6 +66,47 @@ public interface MsvComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MsvComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom LSResourceResolver which depends on a dynamic
+         * endpoint resource URI.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default MsvComponentBuilder resourceResolverFactory(
+                org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
+            doSetProperty("resourceResolverFactory", resourceResolverFactory);
+            return this;
+        }
+        /**
+         * To use the javax.xml.validation.SchemaFactory.
+         * 
+         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default MsvComponentBuilder schemaFactory(
+                javax.xml.validation.SchemaFactory schemaFactory) {
+            doSetProperty("schemaFactory", schemaFactory);
+            return this;
+        }
     }
 
     class MsvComponentBuilderImpl
@@ -124,10 +124,10 @@ public interface MsvComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "schemaFactory": ((MsvComponent) component).setSchemaFactory((javax.xml.validation.SchemaFactory) value); return true;
-            case "resourceResolverFactory": ((MsvComponent) component).setResourceResolverFactory((org.apache.camel.component.validator.ValidatorResourceResolverFactory) value); return true;
-            case "basicPropertyBinding": ((MsvComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MsvComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MsvComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "resourceResolverFactory": ((MsvComponent) component).setResourceResolverFactory((org.apache.camel.component.validator.ValidatorResourceResolverFactory) value); return true;
+            case "schemaFactory": ((MsvComponent) component).setSchemaFactory((javax.xml.validation.SchemaFactory) value); return true;
             default: return false;
             }
         }

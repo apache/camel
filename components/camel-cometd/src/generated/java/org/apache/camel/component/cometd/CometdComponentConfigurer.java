@@ -15,25 +15,25 @@ public class CometdComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CometdComponent target = (CometdComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "sslkeypassword":
-        case "sslKeyPassword": target.setSslKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslpassword":
-        case "sslPassword": target.setSslPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslkeystore":
-        case "sslKeystore": target.setSslKeystore(property(camelContext, java.lang.String.class, value)); return true;
-        case "securitypolicy":
-        case "securityPolicy": target.setSecurityPolicy(property(camelContext, org.cometd.bayeux.server.SecurityPolicy.class, value)); return true;
         case "extensions": target.setExtensions(property(camelContext, java.util.List.class, value)); return true;
-        case "sslcontextparameters":
-        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
-        case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "securitypolicy":
+        case "securityPolicy": target.setSecurityPolicy(property(camelContext, org.cometd.bayeux.server.SecurityPolicy.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "sslkeypassword":
+        case "sslKeyPassword": target.setSslKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeystore":
+        case "sslKeystore": target.setSslKeystore(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslpassword":
+        case "sslPassword": target.setSslPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

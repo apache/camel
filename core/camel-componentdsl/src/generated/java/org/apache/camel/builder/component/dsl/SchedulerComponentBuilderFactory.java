@@ -51,16 +51,22 @@ public interface SchedulerComponentBuilderFactory {
             extends
                 ComponentBuilder<SchedulerComponent> {
         /**
-         * Number of threads used by the scheduling thread pool. Is by default
-         * using a single thread.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 1
-         * Group: scheduler
+         * Default: false
+         * Group: consumer
          */
-        default SchedulerComponentBuilder concurrentTasks(int concurrentTasks) {
-            doSetProperty("concurrentTasks", concurrentTasks);
+        default SchedulerComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -78,22 +84,16 @@ public interface SchedulerComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Number of threads used by the scheduling thread pool. Is by default
+         * using a single thread.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>int</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Default: 1
+         * Group: scheduler
          */
-        default SchedulerComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default SchedulerComponentBuilder concurrentTasks(int concurrentTasks) {
+            doSetProperty("concurrentTasks", concurrentTasks);
             return this;
         }
     }
@@ -113,9 +113,9 @@ public interface SchedulerComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "concurrentTasks": ((SchedulerComponent) component).setConcurrentTasks((int) value); return true;
-            case "basicPropertyBinding": ((SchedulerComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((SchedulerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((SchedulerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "concurrentTasks": ((SchedulerComponent) component).setConcurrentTasks((int) value); return true;
             default: return false;
             }
         }

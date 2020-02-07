@@ -49,6 +49,17 @@ public interface AtomixQueueComponentBuilderFactory {
             extends
                 ComponentBuilder<AtomixQueueComponent> {
         /**
+         * The shared AtomixClient instance.
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixQueueComponentBuilder atomix(io.atomix.AtomixClient atomix) {
+            doSetProperty("atomix", atomix);
+            return this;
+        }
+        /**
          * The shared component configuration.
          * 
          * The option is a:
@@ -62,14 +73,15 @@ public interface AtomixQueueComponentBuilderFactory {
             return this;
         }
         /**
-         * The shared AtomixClient instance.
+         * The path to the AtomixClient configuration.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixQueueComponentBuilder atomix(io.atomix.AtomixClient atomix) {
-            doSetProperty("atomix", atomix);
+        default AtomixQueueComponentBuilder configurationUri(
+                java.lang.String configurationUri) {
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -87,29 +99,22 @@ public interface AtomixQueueComponentBuilderFactory {
             return this;
         }
         /**
-         * The path to the AtomixClient configuration.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixQueueComponentBuilder configurationUri(
-                java.lang.String configurationUri) {
-            doSetProperty("configurationUri", configurationUri);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AtomixQueueComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AtomixQueueComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -134,22 +139,17 @@ public interface AtomixQueueComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AtomixQueueComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AtomixQueueComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -169,13 +169,13 @@ public interface AtomixQueueComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((AtomixQueueComponent) component).setConfiguration((org.apache.camel.component.atomix.client.queue.AtomixQueueConfiguration) value); return true;
             case "atomix": ((AtomixQueueComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
-            case "nodes": ((AtomixQueueComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "configuration": ((AtomixQueueComponent) component).setConfiguration((org.apache.camel.component.atomix.client.queue.AtomixQueueConfiguration) value); return true;
             case "configurationUri": ((AtomixQueueComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((AtomixQueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((AtomixQueueComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "nodes": ((AtomixQueueComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
             case "bridgeErrorHandler": ((AtomixQueueComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((AtomixQueueComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((AtomixQueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

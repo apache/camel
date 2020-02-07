@@ -63,30 +63,22 @@ public interface Olingo2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Enable usage of global SSL context parameters.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: security
+         * Group: consumer
          */
-        default Olingo2ComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default Olingo2ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Olingo2ComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -111,22 +103,30 @@ public interface Olingo2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default Olingo2ComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default Olingo2ComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default Olingo2ComponentBuilder useGlobalSslContextParameters(
+                boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
     }
@@ -147,10 +147,10 @@ public interface Olingo2ComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((Olingo2Component) component).setConfiguration((org.apache.camel.component.olingo2.Olingo2Configuration) value); return true;
-            case "useGlobalSslContextParameters": ((Olingo2Component) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "basicPropertyBinding": ((Olingo2Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((Olingo2Component) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((Olingo2Component) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((Olingo2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((Olingo2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "useGlobalSslContextParameters": ((Olingo2Component) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

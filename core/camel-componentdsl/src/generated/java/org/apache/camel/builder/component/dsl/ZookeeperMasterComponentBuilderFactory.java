@@ -51,6 +51,25 @@ public interface ZookeeperMasterComponentBuilderFactory {
             extends
                 ComponentBuilder<MasterComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ZookeeperMasterComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * To use a custom ContainerIdFactory for creating container ids.
          * 
          * The option is a:
@@ -61,6 +80,19 @@ public interface ZookeeperMasterComponentBuilderFactory {
         default ZookeeperMasterComponentBuilder containerIdFactory(
                 org.apache.camel.component.zookeepermaster.ContainerIdFactory containerIdFactory) {
             doSetProperty("containerIdFactory", containerIdFactory);
+            return this;
+        }
+        /**
+         * Timeout in millis to use when connecting to the zookeeper ensemble.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10000
+         * Group: consumer
+         */
+        default ZookeeperMasterComponentBuilder maximumConnectionTimeout(
+                int maximumConnectionTimeout) {
+            doSetProperty("maximumConnectionTimeout", maximumConnectionTimeout);
             return this;
         }
         /**
@@ -78,33 +110,6 @@ public interface ZookeeperMasterComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom configured CuratorFramework as connection to
-         * zookeeper ensemble.
-         * 
-         * The option is a:
-         * <code>org.apache.curator.framework.CuratorFramework</code> type.
-         * 
-         * Group: advanced
-         */
-        default ZookeeperMasterComponentBuilder curator(
-                org.apache.curator.framework.CuratorFramework curator) {
-            doSetProperty("curator", curator);
-            return this;
-        }
-        /**
-         * Timeout in millis to use when connecting to the zookeeper ensemble.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 10000
-         * Group: consumer
-         */
-        default ZookeeperMasterComponentBuilder maximumConnectionTimeout(
-                int maximumConnectionTimeout) {
-            doSetProperty("maximumConnectionTimeout", maximumConnectionTimeout);
-            return this;
-        }
-        /**
          * The url for the zookeeper ensemble.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -115,18 +120,6 @@ public interface ZookeeperMasterComponentBuilderFactory {
         default ZookeeperMasterComponentBuilder zooKeeperUrl(
                 java.lang.String zooKeeperUrl) {
             doSetProperty("zooKeeperUrl", zooKeeperUrl);
-            return this;
-        }
-        /**
-         * The password to use when connecting to the zookeeper ensemble.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ZookeeperMasterComponentBuilder zooKeeperPassword(
-                java.lang.String zooKeeperPassword) {
-            doSetProperty("zooKeeperPassword", zooKeeperPassword);
             return this;
         }
         /**
@@ -144,22 +137,29 @@ public interface ZookeeperMasterComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * To use a custom configured CuratorFramework as connection to
+         * zookeeper ensemble.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.curator.framework.CuratorFramework</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default ZookeeperMasterComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default ZookeeperMasterComponentBuilder curator(
+                org.apache.curator.framework.CuratorFramework curator) {
+            doSetProperty("curator", curator);
+            return this;
+        }
+        /**
+         * The password to use when connecting to the zookeeper ensemble.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ZookeeperMasterComponentBuilder zooKeeperPassword(
+                java.lang.String zooKeeperPassword) {
+            doSetProperty("zooKeeperPassword", zooKeeperPassword);
             return this;
         }
     }
@@ -179,14 +179,14 @@ public interface ZookeeperMasterComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "containerIdFactory": ((MasterComponent) component).setContainerIdFactory((org.apache.camel.component.zookeepermaster.ContainerIdFactory) value); return true;
-            case "zkRoot": ((MasterComponent) component).setZkRoot((java.lang.String) value); return true;
-            case "curator": ((MasterComponent) component).setCurator((org.apache.curator.framework.CuratorFramework) value); return true;
-            case "maximumConnectionTimeout": ((MasterComponent) component).setMaximumConnectionTimeout((int) value); return true;
-            case "zooKeeperUrl": ((MasterComponent) component).setZooKeeperUrl((java.lang.String) value); return true;
-            case "zooKeeperPassword": ((MasterComponent) component).setZooKeeperPassword((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((MasterComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((MasterComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "containerIdFactory": ((MasterComponent) component).setContainerIdFactory((org.apache.camel.component.zookeepermaster.ContainerIdFactory) value); return true;
+            case "maximumConnectionTimeout": ((MasterComponent) component).setMaximumConnectionTimeout((int) value); return true;
+            case "zkRoot": ((MasterComponent) component).setZkRoot((java.lang.String) value); return true;
+            case "zooKeeperUrl": ((MasterComponent) component).setZooKeeperUrl((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((MasterComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "curator": ((MasterComponent) component).setCurator((org.apache.curator.framework.CuratorFramework) value); return true;
+            case "zooKeeperPassword": ((MasterComponent) component).setZooKeeperPassword((java.lang.String) value); return true;
             default: return false;
             }
         }

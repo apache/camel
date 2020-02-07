@@ -51,19 +51,6 @@ public interface AwsLambdaComponentBuilderFactory {
             extends
                 ComponentBuilder<LambdaComponent> {
         /**
-         * The AWS Lambda default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.lambda.LambdaConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsLambdaComponentBuilder configuration(
-                org.apache.camel.component.aws.lambda.LambdaConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -72,42 +59,6 @@ public interface AwsLambdaComponentBuilderFactory {
          */
         default AwsLambdaComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsLambdaComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Region.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsLambdaComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsLambdaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -131,6 +82,55 @@ public interface AwsLambdaComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Amazon AWS Region.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsLambdaComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsLambdaComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsLambdaComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS Lambda default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.lambda.LambdaConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsLambdaComponentBuilder configuration(
+                org.apache.camel.component.aws.lambda.LambdaConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsLambdaComponentBuilderImpl
@@ -148,12 +148,12 @@ public interface AwsLambdaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((LambdaComponent) component).setConfiguration((org.apache.camel.component.aws.lambda.LambdaConfiguration) value); return true;
             case "accessKey": ((LambdaComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((LambdaComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((LambdaComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((LambdaComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((LambdaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((LambdaComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((LambdaComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((LambdaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((LambdaComponent) component).setConfiguration((org.apache.camel.component.aws.lambda.LambdaConfiguration) value); return true;
             default: return false;
             }
         }

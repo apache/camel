@@ -49,43 +49,22 @@ public interface QuartzComponentBuilderFactory {
             extends
                 ComponentBuilder<QuartzComponent> {
         /**
-         * Whether or not the scheduler should be auto started. This options is
-         * default true.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default QuartzComponentBuilder autoStartScheduler(
-                boolean autoStartScheduler) {
-            doSetProperty("autoStartScheduler", autoStartScheduler);
-            return this;
-        }
-        /**
-         * Seconds to wait before starting the quartz scheduler.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: scheduler
-         */
-        default QuartzComponentBuilder startDelayedSeconds(
-                int startDelayedSeconds) {
-            doSetProperty("startDelayedSeconds", startDelayedSeconds);
-            return this;
-        }
-        /**
-         * Whether to prefix the quartz job with the endpoint id. This option is
-         * default false.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer
          */
-        default QuartzComponentBuilder prefixJobNameWithEndpointId(
-                boolean prefixJobNameWithEndpointId) {
-            doSetProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
+        default QuartzComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -102,16 +81,34 @@ public interface QuartzComponentBuilderFactory {
             return this;
         }
         /**
-         * References to an existing Properties or Map to lookup in the registry
-         * to use for configuring quartz.
+         * Whether to prefix the Quartz Scheduler instance name with the
+         * CamelContext name. This is enabled by default, to let each
+         * CamelContext use its own Quartz scheduler instance by default. You
+         * can set this option to false to reuse Quartz scheduler instances
+         * between multiple CamelContext's.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
-        default QuartzComponentBuilder propertiesRef(
-                java.lang.String propertiesRef) {
-            doSetProperty("propertiesRef", propertiesRef);
+        default QuartzComponentBuilder prefixInstanceName(
+                boolean prefixInstanceName) {
+            doSetProperty("prefixInstanceName", prefixInstanceName);
+            return this;
+        }
+        /**
+         * Whether to prefix the quartz job with the endpoint id. This option is
+         * default false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default QuartzComponentBuilder prefixJobNameWithEndpointId(
+                boolean prefixJobNameWithEndpointId) {
+            doSetProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
             return this;
         }
         /**
@@ -138,20 +135,69 @@ public interface QuartzComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether to prefix the Quartz Scheduler instance name with the
-         * CamelContext name. This is enabled by default, to let each
-         * CamelContext use its own Quartz scheduler instance by default. You
-         * can set this option to false to reuse Quartz scheduler instances
-         * between multiple CamelContext's.
+         * References to an existing Properties or Map to lookup in the registry
+         * to use for configuring quartz.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default QuartzComponentBuilder propertiesRef(
+                java.lang.String propertiesRef) {
+            doSetProperty("propertiesRef", propertiesRef);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default QuartzComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the custom configured Quartz scheduler, instead of creating a
+         * new Scheduler.
+         * 
+         * The option is a: <code>org.quartz.Scheduler</code> type.
+         * 
+         * Group: advanced
+         */
+        default QuartzComponentBuilder scheduler(org.quartz.Scheduler scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use the custom SchedulerFactory which is used to create the
+         * Scheduler.
+         * 
+         * The option is a: <code>org.quartz.SchedulerFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default QuartzComponentBuilder schedulerFactory(
+                org.quartz.SchedulerFactory schedulerFactory) {
+            doSetProperty("schedulerFactory", schedulerFactory);
+            return this;
+        }
+        /**
+         * Whether or not the scheduler should be auto started. This options is
+         * default true.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: consumer
+         * Group: scheduler
          */
-        default QuartzComponentBuilder prefixInstanceName(
-                boolean prefixInstanceName) {
-            doSetProperty("prefixInstanceName", prefixInstanceName);
+        default QuartzComponentBuilder autoStartScheduler(
+                boolean autoStartScheduler) {
+            doSetProperty("autoStartScheduler", autoStartScheduler);
             return this;
         }
         /**
@@ -170,61 +216,15 @@ public interface QuartzComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the custom SchedulerFactory which is used to create the
-         * Scheduler.
+         * Seconds to wait before starting the quartz scheduler.
          * 
-         * The option is a: <code>org.quartz.SchedulerFactory</code> type.
+         * The option is a: <code>int</code> type.
          * 
-         * Group: advanced
+         * Group: scheduler
          */
-        default QuartzComponentBuilder schedulerFactory(
-                org.quartz.SchedulerFactory schedulerFactory) {
-            doSetProperty("schedulerFactory", schedulerFactory);
-            return this;
-        }
-        /**
-         * To use the custom configured Quartz scheduler, instead of creating a
-         * new Scheduler.
-         * 
-         * The option is a: <code>org.quartz.Scheduler</code> type.
-         * 
-         * Group: advanced
-         */
-        default QuartzComponentBuilder scheduler(org.quartz.Scheduler scheduler) {
-            doSetProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default QuartzComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default QuartzComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default QuartzComponentBuilder startDelayedSeconds(
+                int startDelayedSeconds) {
+            doSetProperty("startDelayedSeconds", startDelayedSeconds);
             return this;
         }
     }
@@ -244,19 +244,19 @@ public interface QuartzComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoStartScheduler": ((QuartzComponent) component).setAutoStartScheduler((boolean) value); return true;
-            case "startDelayedSeconds": ((QuartzComponent) component).setStartDelayedSeconds((int) value); return true;
-            case "prefixJobNameWithEndpointId": ((QuartzComponent) component).setPrefixJobNameWithEndpointId((boolean) value); return true;
+            case "bridgeErrorHandler": ((QuartzComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "enableJmx": ((QuartzComponent) component).setEnableJmx((boolean) value); return true;
-            case "propertiesRef": ((QuartzComponent) component).setPropertiesRef((java.lang.String) value); return true;
+            case "prefixInstanceName": ((QuartzComponent) component).setPrefixInstanceName((boolean) value); return true;
+            case "prefixJobNameWithEndpointId": ((QuartzComponent) component).setPrefixJobNameWithEndpointId((boolean) value); return true;
             case "properties": ((QuartzComponent) component).setProperties((java.util.Map) value); return true;
             case "propertiesFile": ((QuartzComponent) component).setPropertiesFile((java.lang.String) value); return true;
-            case "prefixInstanceName": ((QuartzComponent) component).setPrefixInstanceName((boolean) value); return true;
-            case "interruptJobsOnShutdown": ((QuartzComponent) component).setInterruptJobsOnShutdown((boolean) value); return true;
-            case "schedulerFactory": ((QuartzComponent) component).setSchedulerFactory((org.quartz.SchedulerFactory) value); return true;
-            case "scheduler": ((QuartzComponent) component).setScheduler((org.quartz.Scheduler) value); return true;
+            case "propertiesRef": ((QuartzComponent) component).setPropertiesRef((java.lang.String) value); return true;
             case "basicPropertyBinding": ((QuartzComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((QuartzComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "scheduler": ((QuartzComponent) component).setScheduler((org.quartz.Scheduler) value); return true;
+            case "schedulerFactory": ((QuartzComponent) component).setSchedulerFactory((org.quartz.SchedulerFactory) value); return true;
+            case "autoStartScheduler": ((QuartzComponent) component).setAutoStartScheduler((boolean) value); return true;
+            case "interruptJobsOnShutdown": ((QuartzComponent) component).setInterruptJobsOnShutdown((boolean) value); return true;
+            case "startDelayedSeconds": ((QuartzComponent) component).setStartDelayedSeconds((int) value); return true;
             default: return false;
             }
         }

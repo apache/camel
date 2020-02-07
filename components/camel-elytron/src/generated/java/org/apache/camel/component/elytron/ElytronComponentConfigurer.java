@@ -15,12 +15,12 @@ public class ElytronComponentConfigurer extends UndertowComponentConfigurer impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElytronComponent target = (ElytronComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "securitydomainbuilder":
-        case "securityDomainBuilder": target.setSecurityDomainBuilder(property(camelContext, org.wildfly.security.auth.server.SecurityDomain.Builder.class, value)); return true;
-        case "mechanismname":
-        case "mechanismName": target.setMechanismName(property(camelContext, java.lang.String.class, value)); return true;
         case "elytronprovider":
         case "elytronProvider": target.setElytronProvider(property(camelContext, org.wildfly.security.WildFlyElytronBaseProvider.class, value)); return true;
+        case "mechanismname":
+        case "mechanismName": target.setMechanismName(property(camelContext, java.lang.String.class, value)); return true;
+        case "securitydomainbuilder":
+        case "securityDomainBuilder": target.setSecurityDomainBuilder(property(camelContext, org.wildfly.security.auth.server.SecurityDomain.Builder.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }

@@ -49,6 +49,87 @@ public interface SjmsComponentBuilderFactory {
      */
     interface SjmsComponentBuilder extends ComponentBuilder<SjmsComponent> {
         /**
+         * The maximum number of connections available to endpoints started
+         * under this component.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 1
+         * Group: common
+         */
+        default SjmsComponentBuilder connectionCount(
+                java.lang.Integer connectionCount) {
+            doSetProperty("connectionCount", connectionCount);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default SjmsComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default SjmsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default SjmsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The client ID to use when creating javax.jms.Connection when using
+         * the default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default SjmsComponentBuilder connectionClientId(
+                java.lang.String connectionClientId) {
+            doSetProperty("connectionClientId", connectionClientId);
+            return this;
+        }
+        /**
          * A ConnectionFactory is required to enable the SjmsComponent. It can
          * be set directly or set set as part of a ConnectionResource.
          * 
@@ -59,6 +140,20 @@ public interface SjmsComponentBuilderFactory {
         default SjmsComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
+         * The max wait time in millis to block and wait on free connection when
+         * the pool is exhausted when using the default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         */
+        default SjmsComponentBuilder connectionMaxWait(long connectionMaxWait) {
+            doSetProperty("connectionMaxWait", connectionMaxWait);
             return this;
         }
         /**
@@ -78,17 +173,32 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
-         * The maximum number of connections available to endpoints started
-         * under this component.
+         * When using the default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then
+         * should each javax.jms.Connection be tested (calling start) before
+         * returned from the pool.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 1
-         * Group: common
+         * Default: true
+         * Group: advanced
          */
-        default SjmsComponentBuilder connectionCount(
-                java.lang.Integer connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
+        default SjmsComponentBuilder connectionTestOnBorrow(
+                boolean connectionTestOnBorrow) {
+            doSetProperty("connectionTestOnBorrow", connectionTestOnBorrow);
+            return this;
+        }
+        /**
+         * To use a custom DestinationCreationStrategy.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default SjmsComponentBuilder destinationCreationStrategy(
+                org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
         /**
@@ -113,46 +223,6 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure which kind of commit strategy to use. Camel provides two
-         * implementations out of the box, default and batch.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
-         * 
-         * Group: transaction
-         */
-        default SjmsComponentBuilder transactionCommitStrategy(
-                org.apache.camel.component.sjms.TransactionCommitStrategy transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * To use a custom DestinationCreationStrategy.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
-         * 
-         * Group: advanced
-         */
-        default SjmsComponentBuilder destinationCreationStrategy(
-                org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
-            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
-            return this;
-        }
-        /**
-         * To use a custom TimedTaskManager.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.taskmanager.TimedTaskManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default SjmsComponentBuilder timedTaskManager(
-                org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
-            doSetProperty("timedTaskManager", timedTaskManager);
-            return this;
-        }
-        /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
          * creates new instances of javax.jms.Message objects when Camel is
          * sending a JMS message.
@@ -168,75 +238,16 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
-         * When using the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then
-         * should each javax.jms.Connection be tested (calling start) before
-         * returned from the pool.
+         * To use a custom TimedTaskManager.
          * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default SjmsComponentBuilder connectionTestOnBorrow(
-                boolean connectionTestOnBorrow) {
-            doSetProperty("connectionTestOnBorrow", connectionTestOnBorrow);
-            return this;
-        }
-        /**
-         * The username to use when creating javax.jms.Connection when using the
-         * default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SjmsComponentBuilder connectionUsername(
-                java.lang.String connectionUsername) {
-            doSetProperty("connectionUsername", connectionUsername);
-            return this;
-        }
-        /**
-         * The password to use when creating javax.jms.Connection when using the
-         * default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SjmsComponentBuilder connectionPassword(
-                java.lang.String connectionPassword) {
-            doSetProperty("connectionPassword", connectionPassword);
-            return this;
-        }
-        /**
-         * The client ID to use when creating javax.jms.Connection when using
-         * the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.taskmanager.TimedTaskManager</code> type.
          * 
          * Group: advanced
          */
-        default SjmsComponentBuilder connectionClientId(
-                java.lang.String connectionClientId) {
-            doSetProperty("connectionClientId", connectionClientId);
-            return this;
-        }
-        /**
-         * The max wait time in millis to block and wait on free connection when
-         * the pool is exhausted when using the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 5000
-         * Group: advanced
-         */
-        default SjmsComponentBuilder connectionMaxWait(long connectionMaxWait) {
-            doSetProperty("connectionMaxWait", connectionMaxWait);
+        default SjmsComponentBuilder timedTaskManager(
+                org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
+            doSetProperty("timedTaskManager", timedTaskManager);
             return this;
         }
         /**
@@ -254,56 +265,45 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * The password to use when creating javax.jms.Connection when using the
+         * default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: security
          */
-        default SjmsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SjmsComponentBuilder connectionPassword(
+                java.lang.String connectionPassword) {
+            doSetProperty("connectionPassword", connectionPassword);
             return this;
         }
         /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
+         * The username to use when creating javax.jms.Connection when using the
+         * default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: false
-         * Group: producer
+         * Group: security
          */
-        default SjmsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
+        default SjmsComponentBuilder connectionUsername(
+                java.lang.String connectionUsername) {
+            doSetProperty("connectionUsername", connectionUsername);
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * To configure which kind of commit strategy to use. Camel provides two
+         * implementations out of the box, default and batch.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: transaction
          */
-        default SjmsComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default SjmsComponentBuilder transactionCommitStrategy(
+                org.apache.camel.component.sjms.TransactionCommitStrategy transactionCommitStrategy) {
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
     }
@@ -323,23 +323,23 @@ public interface SjmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionFactory": ((SjmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
-            case "connectionResource": ((SjmsComponent) component).setConnectionResource((org.apache.camel.component.sjms.jms.ConnectionResource) value); return true;
             case "connectionCount": ((SjmsComponent) component).setConnectionCount((java.lang.Integer) value); return true;
-            case "jmsKeyFormatStrategy": ((SjmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
-            case "transactionCommitStrategy": ((SjmsComponent) component).setTransactionCommitStrategy((org.apache.camel.component.sjms.TransactionCommitStrategy) value); return true;
-            case "destinationCreationStrategy": ((SjmsComponent) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
-            case "timedTaskManager": ((SjmsComponent) component).setTimedTaskManager((org.apache.camel.component.sjms.taskmanager.TimedTaskManager) value); return true;
-            case "messageCreatedStrategy": ((SjmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
-            case "connectionTestOnBorrow": ((SjmsComponent) component).setConnectionTestOnBorrow((boolean) value); return true;
-            case "connectionUsername": ((SjmsComponent) component).setConnectionUsername((java.lang.String) value); return true;
-            case "connectionPassword": ((SjmsComponent) component).setConnectionPassword((java.lang.String) value); return true;
-            case "connectionClientId": ((SjmsComponent) component).setConnectionClientId((java.lang.String) value); return true;
-            case "connectionMaxWait": ((SjmsComponent) component).setConnectionMaxWait((long) value); return true;
-            case "headerFilterStrategy": ((SjmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((SjmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((SjmsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((SjmsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((SjmsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((SjmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "connectionClientId": ((SjmsComponent) component).setConnectionClientId((java.lang.String) value); return true;
+            case "connectionFactory": ((SjmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "connectionMaxWait": ((SjmsComponent) component).setConnectionMaxWait((long) value); return true;
+            case "connectionResource": ((SjmsComponent) component).setConnectionResource((org.apache.camel.component.sjms.jms.ConnectionResource) value); return true;
+            case "connectionTestOnBorrow": ((SjmsComponent) component).setConnectionTestOnBorrow((boolean) value); return true;
+            case "destinationCreationStrategy": ((SjmsComponent) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
+            case "jmsKeyFormatStrategy": ((SjmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
+            case "messageCreatedStrategy": ((SjmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
+            case "timedTaskManager": ((SjmsComponent) component).setTimedTaskManager((org.apache.camel.component.sjms.taskmanager.TimedTaskManager) value); return true;
+            case "headerFilterStrategy": ((SjmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "connectionPassword": ((SjmsComponent) component).setConnectionPassword((java.lang.String) value); return true;
+            case "connectionUsername": ((SjmsComponent) component).setConnectionUsername((java.lang.String) value); return true;
+            case "transactionCommitStrategy": ((SjmsComponent) component).setTransactionCommitStrategy((org.apache.camel.component.sjms.TransactionCommitStrategy) value); return true;
             default: return false;
             }
         }

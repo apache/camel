@@ -51,19 +51,6 @@ public interface InfinispanComponentBuilderFactory {
             extends
                 ComponentBuilder<InfinispanComponent> {
         /**
-         * Default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.infinispan.InfinispanConfiguration</code> type.
-         * 
-         * Group: common
-         */
-        default InfinispanComponentBuilder configuration(
-                org.apache.camel.component.infinispan.InfinispanConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Default Cache container.
          * 
          * The option is a:
@@ -77,17 +64,35 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.infinispan.InfinispanConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default InfinispanComponentBuilder configuration(
+                org.apache.camel.component.infinispan.InfinispanConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default InfinispanComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default InfinispanComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -112,22 +117,17 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default InfinispanComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default InfinispanComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -147,11 +147,11 @@ public interface InfinispanComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((InfinispanComponent) component).setConfiguration((org.apache.camel.component.infinispan.InfinispanConfiguration) value); return true;
             case "cacheContainer": ((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
-            case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((InfinispanComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "configuration": ((InfinispanComponent) component).setConfiguration((org.apache.camel.component.infinispan.InfinispanConfiguration) value); return true;
             case "bridgeErrorHandler": ((InfinispanComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((InfinispanComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

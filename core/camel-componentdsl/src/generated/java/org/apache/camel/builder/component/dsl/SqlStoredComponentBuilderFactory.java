@@ -63,20 +63,6 @@ public interface SqlStoredComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default SqlStoredComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -97,6 +83,20 @@ public interface SqlStoredComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default SqlStoredComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class SqlStoredComponentBuilderImpl
@@ -115,8 +115,8 @@ public interface SqlStoredComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "dataSource": ((SqlStoredComponent) component).setDataSource((javax.sql.DataSource) value); return true;
-            case "basicPropertyBinding": ((SqlStoredComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((SqlStoredComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((SqlStoredComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

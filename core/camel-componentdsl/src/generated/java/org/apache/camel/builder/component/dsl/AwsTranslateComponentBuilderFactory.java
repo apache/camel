@@ -49,19 +49,6 @@ public interface AwsTranslateComponentBuilderFactory {
             extends
                 ComponentBuilder<TranslateComponent> {
         /**
-         * The AWS Translate default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.translate.TranslateConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsTranslateComponentBuilder configuration(
-                org.apache.camel.component.aws.translate.TranslateConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -71,43 +58,6 @@ public interface AwsTranslateComponentBuilderFactory {
         default AwsTranslateComponentBuilder accessKey(
                 java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsTranslateComponentBuilder secretKey(
-                java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which Translate client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsTranslateComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsTranslateComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -131,6 +81,56 @@ public interface AwsTranslateComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which Translate client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder secretKey(
+                java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsTranslateComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS Translate default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.translate.TranslateConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsTranslateComponentBuilder configuration(
+                org.apache.camel.component.aws.translate.TranslateConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsTranslateComponentBuilderImpl
@@ -148,12 +148,12 @@ public interface AwsTranslateComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((TranslateComponent) component).setConfiguration((org.apache.camel.component.aws.translate.TranslateConfiguration) value); return true;
             case "accessKey": ((TranslateComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((TranslateComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((TranslateComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((TranslateComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((TranslateComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((TranslateComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((TranslateComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((TranslateComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((TranslateComponent) component).setConfiguration((org.apache.camel.component.aws.translate.TranslateConfiguration) value); return true;
             default: return false;
             }
         }
