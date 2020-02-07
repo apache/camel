@@ -71,7 +71,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private boolean ignoreMissingChars;
     private boolean countGrapheme;
 
-	private Class<?> header;
+    private Class<?> header;
     private Class<?> footer;
 
     public BindyFixedLengthFactory(Class<?> type) throws Exception {
@@ -173,7 +173,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         String delimiter;
         Field field;
         
-        final UnicodeHelper record = new UnicodeHelper(recordStr,(this.countGrapheme) ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS);
+        final UnicodeHelper record = new UnicodeHelper(recordStr, (this.countGrapheme) ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS);
 
         // Iterate through the list of positions
         // defined in the @DataField
@@ -220,7 +220,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 }
                 offset += length;
             } else if (!delimiter.equals("")) {
-            	final UnicodeHelper tempToken = new UnicodeHelper(record.substring(offset - 1, record.length()),(this.countGrapheme) ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS);
+                final UnicodeHelper tempToken = new UnicodeHelper(record.substring(offset - 1, record.length()), (this.countGrapheme) ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS);
                 token = tempToken.substring(0, tempToken.indexOf(delimiter));
                 // include the delimiter in the offset calculation
                 offset += token.length() + 1;
@@ -722,7 +722,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * Flag indicating whether graphemes or codepoints are counted.
      */
     public boolean isCountGrapheme() {
-		return countGrapheme;
-	}
+        return countGrapheme;
+    }
 
 }
