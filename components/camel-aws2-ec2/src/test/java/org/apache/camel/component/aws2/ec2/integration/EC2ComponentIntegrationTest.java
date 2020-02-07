@@ -27,7 +27,6 @@ import org.apache.camel.component.aws2.ec2.AWS2EC2Operations;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
@@ -35,26 +34,26 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void createAndRunInstancesTest() {
-        
+
         template.send("direct:createAndRun", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1); 
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
             }
         });
     }
-    
+
     @Test
     public void createAndRunInstancesWithSecurityGroupsTest() {
-        
+
         template.send("direct:createAndRun", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(AWS2EC2Constants.IMAGE_ID, "ami-fd65ba94");
                 exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_TYPE, InstanceType.T2_MICRO);
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1); 
-                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);  
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MIN_COUNT, 1);
+                exchange.getIn().setHeader(AWS2EC2Constants.INSTANCE_MAX_COUNT, 1);
                 Collection<String> secGroups = new ArrayList<>();
                 secGroups.add("secgroup-1");
                 secGroups.add("secgroup-2");
@@ -62,10 +61,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2CreateAndRunTestWithKeyPair() throws Exception {
-        
+
         template.request("direct:createAndRun", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -78,10 +77,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void stopInstances() {
-        
+
         template.send("direct:stop", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -90,10 +89,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void startInstances() {
-        
+
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -102,10 +101,10 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void terminateInstances() {
-        
+
         template.send("direct:terminate", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -114,24 +113,24 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeInstancesTest() throws Exception {
-        
+
         template.request("direct:describe", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
-                
+
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeSpecificInstancesTest() throws Exception {
-        
+
         template.request("direct:describe", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -140,24 +139,24 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeInstancesStatusTest() throws Exception {
-        
+
         template.request("direct:describeStatus", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
-                
+
             }
         });
     }
-    
+
     @Test
     public void ec2DescribeStatusSpecificInstancesTest() throws Exception {
-        
+
         template.request("direct:describeStatus", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -166,12 +165,12 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2RebootInstancesTest() throws Exception {
-        
+
         template.request("direct:reboot", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -180,12 +179,12 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2MonitorInstancesTest() throws Exception {
-        
+
         template.request("direct:monitor", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -194,12 +193,12 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void ec2UnmonitorInstancesTest() throws Exception {
-        
+
         template.request("direct:unmonitor", new Processor() {
-            
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 Collection<String> l = new ArrayList<>();
@@ -208,30 +207,21 @@ public class EC2ComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:createAndRun")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
-                from("direct:stop")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
-                from("direct:start")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
-                from("direct:terminate")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
-                from("direct:describe")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstances");
-                from("direct:describeStatus")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstancesStatus");
-                from("direct:reboot")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=rebootInstances");
-                from("direct:monitor")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=monitorInstances");
-                from("direct:unmonitor")
-                        .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=unmonitorInstances");
+                from("direct:createAndRun").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
+                from("direct:stop").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=stopInstances");
+                from("direct:start").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=startInstances");
+                from("direct:terminate").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=terminateInstances");
+                from("direct:describe").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstances");
+                from("direct:describeStatus").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=describeInstancesStatus");
+                from("direct:reboot").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=rebootInstances");
+                from("direct:monitor").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=monitorInstances");
+                from("direct:unmonitor").to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=unmonitorInstances");
             }
         };
     }

@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -40,12 +39,12 @@ import software.amazon.awssdk.services.ec2.Ec2ClientBuilder;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ec2", title = "AWS 2 EC2", syntax = "aws2-ec2:label", producerOnly = true, label = "cloud,management")
 public class AWS2EC2Endpoint extends ScheduledPollEndpoint {
-    
+
     private Ec2Client ec2Client;
 
     @UriParam
     private AWS2EC2Configuration configuration;
-    
+
     public AWS2EC2Endpoint(String uri, Component component, AWS2EC2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -64,10 +63,10 @@ public class AWS2EC2Endpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
-        ec2Client = configuration.getAmazonEc2Client() != null ? configuration.getAmazonEc2Client() : (Ec2Client) createEc2Client();
+
+        ec2Client = configuration.getAmazonEc2Client() != null ? configuration.getAmazonEc2Client() : (Ec2Client)createEc2Client();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonEc2Client())) {
