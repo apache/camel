@@ -50,7 +50,7 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
-import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
@@ -1288,7 +1288,7 @@ public abstract class AbstractCamelCatalog {
     private static String stripOptionalPrefixFromName(Map<String, BaseOptionModel> rows, String name) {
         for (BaseOptionModel row : rows.values()) {
             String optionalPrefix = row.getOptionalPrefix();
-            if (!Strings.isNullOrEmpty(optionalPrefix) && name.startsWith(optionalPrefix)) {
+            if (ObjectHelper.isNotEmpty(optionalPrefix) && name.startsWith(optionalPrefix)) {
                 // try again
                 return stripOptionalPrefixFromName(rows, name.substring(optionalPrefix.length()));
             } else {
@@ -1303,7 +1303,7 @@ public abstract class AbstractCamelCatalog {
     private static String getPropertyNameFromNameWithPrefix(Map<String, BaseOptionModel> rows, String name) {
         for (BaseOptionModel row : rows.values()) {
             String prefix = row.getPrefix();
-            if (!Strings.isNullOrEmpty(prefix) && name.startsWith(prefix)) {
+            if (ObjectHelper.isNotEmpty(prefix) && name.startsWith(prefix)) {
                 return row.getName();
             }
         }
