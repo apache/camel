@@ -47,7 +47,6 @@
   <feature name='camel-core' version='${project.version}' start-level='50'>
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle dependency='true'>mvn:com.github.ben-manes.caffeine/caffeine/${caffeine-version}</bundle>
-    <bundle>mvn:org.apache.camel/spi-annotations/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-util/${project.version}</bundle>

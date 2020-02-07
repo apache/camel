@@ -191,7 +191,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                 indices.add(new IndexReader(is).read());
             }
             for (String cpe : project.getCompileClasspathElements()) {
-                if (cpe.matches(".*/(camel|spi-annotations)-[^/]+.jar")) {
+                if (cpe.matches(".*/camel-[^/]+.jar")) {
                     try (JarFile jf = new JarFile(cpe)) {
                         JarEntry indexEntry = jf.getJarEntry("META-INF/jandex.idx");
                         if (indexEntry != null) {

@@ -115,6 +115,11 @@ Should be changed to
 ipfs:add
 ----
 
+=== spi-annotations
+
+The `spi-annotations` JAR is mandatory but was mistakenly defined as optional scope. The content of this JAR
+is now embedded directly into `camel-api` JAR so end users does not have to include or depend on `spi-annotations` JAR anymore.
+
 === camel-core-engine and camel-jaxp
 
 XML and JAXB has been moved out of camel-base and camel-core-engine.
