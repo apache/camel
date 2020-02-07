@@ -43,6 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -491,17 +492,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 componentModel.setVerifiers(componentAnnotation.enums());
             }
 
-            // We order the methods according to the source code to keep compatibility
-            // with the old apt processing tool, however, we could get rid of that
-            JavaClassSource source = javaClassSource(classElement.getName());
-            List<MethodSource<JavaClassSource>> methodSources = source != null
-                    ? source.getMethods().stream()
-                    .filter(method -> method.isPublic()
-                            && method.getName().startsWith("set")
-                            && method.getParameters().size() == 1
-                            && method.getReturnType().getName().equals("void")).collect(Collectors.toList())
-                    : Collections.EMPTY_LIST;
-
             List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
                 Metadata metadata = method.getAnnotation(Metadata.class);
                 String methodName = method.getName();
@@ -529,26 +519,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     return false;
                 }
                 return true;
-            }).sorted(Comparator.comparing(m -> {
-                if (methodSources.isEmpty()) {
-                    return 0;
-                }
-                int index = -1;
-                for (int i = 0; i < methodSources.size(); i++) {
-                    MethodSource<?> ms = methodSources.get(i);
-                    if (ms.getName().equals(m.getName())
-                            && ms.getReturnType().getName().equals("void")
-                            && ms.getParameters().size() == 1
-                            && getSimpleName(ms.getParameters().get(0).getType())
-                                    .equals(m.getParameters()[0].getType().getSimpleName())) {
-                        index = i;
-                    }
-                }
-                if (index >= 0) {
-                    return index;
-                }
-                throw new IllegalStateException();
-            })).collect(Collectors.toList());
+            }).collect(Collectors.toList());
 
             for (Method method : methods) {
                 String methodName = method.getName();
@@ -649,6 +620,17 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     accept = false;
                 }
                 if (accept) {
+                    Optional<ComponentOptionModel> prev = componentModel.getComponentOptions().stream()
+                            .filter(opt -> name.equals(opt.getName())).findAny();
+                    if (prev.isPresent()) {
+                        if (!prev.get().getJavaType().equals("java.lang.String")) {
+                            accept = false;
+                        } else {
+                            componentModel.getComponentOptions().remove(prev.get());
+                        }
+                    }
+                }
+                if (accept) {
                     ComponentOptionModel option = new ComponentOptionModel();
                     option.setKind("property");
                     option.setName(name);
@@ -667,9 +649,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setEnums(enums);
                     option.setConfigurationClass(nestedTypeName);
                     option.setConfigurationField(nestedFieldName);
-                    if (componentModel.getComponentOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
-                        componentModel.addComponentOption(option);
-                    }
+                    componentModel.addComponentOption(option);
                 }
             }
 
@@ -1266,52 +1246,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private List<Path> getSourceRoots() {
         if (sourceRoots == null) {
-            try {
-                sourceRoots = project.getCompileSourceRoots().stream()
-                        .map(Paths::get)
-                        .collect(Collectors.toList());
-                // we can only find camel root folder if its the apache camel project itself
-                // 3rd party projects then this will be null
-                File camelRootFile = PackageHelper.findCamelCoreDirectory(project.getBasedir());
-                final Path camelRoot = camelRootFile != null ? camelRootFile.toPath().getParent().getParent() : project.getBasedir().toPath();
-                project.getCompileClasspathElements().stream()
-                        .flatMap(dep -> {
-                            // m2 repo dependency
-                            if (dep.contains("/org/apache/camel/")) {
-                                String name = Strings.before(Strings.after(dep, "/org/apache/camel/"), "/");
-                                return Stream.of(name);
-                            // reactor dependency
-                            } else if (camelRootFile != null && dep.startsWith(camelRoot.toString() + "/")) {
-                                String name = Strings.before(Strings.after(dep, camelRoot.toString() + "/"), "/target");
-                                int idx = name.lastIndexOf("/");
-                                if (idx > 0) {
-                                    name = name.substring(idx + 1);
-                                }
-                                return Stream.of(name);
-                            } else {
-                                return Stream.empty();
-                            }
-                        })
-                        .flatMap(dep -> Stream.of(
-                                "core/" + dep,
-                                "components/" + dep,
-                                "components/camel-as2/" + dep,
-                                "components/camel-box/" + dep,
-                                "components/camel-debezium-common/" + dep,
-                                "components/camel-fhir/" + dep,
-                                "components/camel-olingo2/" + dep,
-                                "components/camel-olingo4/" + dep,
-                                "components/camel-salesforce/" + dep,
-                                "components/camel-servicenow/" + dep))
-                        .flatMap(dep -> Stream.of(
-                                dep + "/src/main/java",
-                                dep + "/src/generated/java"))
-                        .map(camelRoot::resolve)
-                        .filter(Files::isDirectory)
-                        .forEach(sourceRoots::add);
-            } catch (DependencyResolutionRequiredException e) {
-                throw new RuntimeException("Unable to find source roots", e);
-            }
+            sourceRoots = project.getCompileSourceRoots().stream()
+                    .map(Paths::get)
+                    .collect(Collectors.toList());
         }
         return sourceRoots;
     }
