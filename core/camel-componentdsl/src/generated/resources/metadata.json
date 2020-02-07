@@ -381,6 +381,26 @@
     "artifactId": "camel-aws2-cw",
     "version": "3.1.0-SNAPSHOT"
   },
+  "Aws2Ec2ComponentBuilderFactory": {
+    "kind": "component",
+    "scheme": "aws2-ec2",
+    "extendsScheme": "",
+    "syntax": "aws2-ec2:label",
+    "title": "AWS 2 EC2",
+    "description": "The aws-ec2 is used for managing Amazon EC2 instances.",
+    "label": "cloud,management",
+    "deprecated": false,
+    "deprecationNote": "cloud,management",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.aws2.ec2.AWS2EC2Component",
+    "firstVersion": "3.1.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-ec2",
+    "version": "3.1.0-SNAPSHOT"
+  },
   "Aws2EcsComponentBuilderFactory": {
     "kind": "component",
     "scheme": "aws2-ecs",

@@ -473,6 +473,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2CwComponentBuilderFactory.aws2Cw();
     }
     /**
+     * AWS 2 EC2 (camel-aws2-ec2)
+     * The aws-ec2 is used for managing Amazon EC2 instances.
+     * 
+     * Category: cloud,management
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-ec2
+     */
+    static org.apache.camel.builder.component.dsl.Aws2Ec2ComponentBuilderFactory.Aws2Ec2ComponentBuilder aws2Ec2() {
+        return org.apache.camel.builder.component.dsl.Aws2Ec2ComponentBuilderFactory.aws2Ec2();
+    }
+    /**
      * AWS 2 ECS (camel-aws2-ecs)
      * The aws2-ecs is used for managing Amazon ECS
      * 
