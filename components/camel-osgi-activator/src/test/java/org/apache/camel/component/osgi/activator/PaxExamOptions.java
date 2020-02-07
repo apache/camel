@@ -68,7 +68,6 @@ public enum PaxExamOptions {
                 createStreamBundleOption("camel-management-api.jar"),
                 createStreamBundleOption("camel-support.jar"),
                 createStreamBundleOption("camel-util.jar"),
-                createStreamBundleOption("spi-annotations.jar"),
                 createStreamBundleOption("camel-timer.jar"),
                 createStreamBundleOption("camel-log.jar"),
                 createStreamBundleOption("camel-core-osgi.jar")

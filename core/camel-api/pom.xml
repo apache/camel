@@ -52,6 +52,33 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <!-- shade spi-annotations into camel-api -->
+                <!-- so we these annotations embedded in camel-api -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>org.apache.camel:spi-annotations</include>
+                                </includes>
+                            </artifactSet>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>release</id>
