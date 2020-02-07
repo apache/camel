@@ -12,9 +12,6 @@ import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class CamelMessageReceiver implements MessageReceiver {
 
     private final Logger localLog;
