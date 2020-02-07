@@ -18,8 +18,6 @@ package org.apache.camel.tooling.model;
 
 import java.util.List;
 
-import org.apache.camel.tooling.util.Strings;
-
 @SuppressWarnings("unused")
 public abstract class BaseOptionModel {
 

@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.camel.tooling.util.Strings;
-
 public abstract class BaseModel<O extends BaseOptionModel> {
 
     protected String name;

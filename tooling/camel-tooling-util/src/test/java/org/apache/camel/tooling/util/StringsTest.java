@@ -30,20 +30,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class StringsTest {
 
-    static Stream<Arguments> getClassShortNameTypeVarations() {
-        return Stream.of(arguments("String", "String"), arguments("String", "java.lang.String"), arguments("List", "List<String>"), arguments("List", "java.util.List<String>"),
-                arguments("List", "List<java.lang.String>"), arguments("List", "java.util.List.List<org.apache.camel.Exchange>"),
-                arguments("List", "java.util.List<Map<String,Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,Integer>>"),
-                arguments("List", "java.util.List<Map<String,java.lang.Integer>>"), arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
-                arguments("List", "java.util.List<java.util.Map<java.lang.String,java.lang.Integer>>"));
-    }
-
-    @ParameterizedTest
-    @MethodSource("getClassShortNameTypeVarations")
-    public void getClassShortName(String expectedBaseClassName, String className) {
-        assertEquals(expectedBaseClassName, Strings.getClassShortName(className));
-    }
-
     @Test
     public void testBetween() {
         assertEquals("org.apache.camel.model.OnCompletionDefinition", between("java.util.List<org.apache.camel.model.OnCompletionDefinition>", "<", ">"));
@@ -56,21 +42,4 @@ public class StringsTest {
         assertEquals("Reply To Concurrent Consumers", asTitle("replyToConcurrentConsumers"));
     }
 
-    @Test
-    public void testWrap() {
-        assertEquals("Hello WorldFoo Nar", wrap("HelloWorldFooNar", 8));
-        assertEquals("UseMessageIDAs CorrelationID", wrap("useMessageIDAsCorrelationID", 25));
-        assertEquals("ReplyToCacheLevelName", wrap("replyToCacheLevelName", 25));
-        assertEquals("AllowReplyManagerQuick Stop", wrap("allowReplyManagerQuickStop", 25));
-        assertEquals("AcknowledgementModeName", wrap("acknowledgementModeName", 25));
-        assertEquals("ReplyToCacheLevelName", wrap("replyToCacheLevelName", 25));
-        assertEquals("ReplyToOnTimeoutMax ConcurrentConsumers", wrap("replyToOnTimeoutMaxConcurrentConsumers", 25));
-        assertEquals("ReplyToOnTimeoutMax ConcurrentConsumers", wrap("replyToOnTimeoutMaxConcurrentConsumers", 23));
-        assertEquals("ReplyToMaxConcurrent Consumers", wrap("replyToMaxConcurrentConsumers", 23));
-
-    }
-
-    private String wrap(String str, int watermark) {
-        return Strings.wrapCamelCaseWords(str, watermark, " ");
-    }
 }
