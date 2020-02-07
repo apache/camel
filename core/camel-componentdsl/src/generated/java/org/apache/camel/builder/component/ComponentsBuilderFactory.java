@@ -474,7 +474,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 EC2 (camel-aws2-ec2)
-     * The aws-ec2 is used for managing Amazon EC2 instances.
+     * The aws2-ec2 is used for managing Amazon EC2 instances.
      * 
      * Category: cloud,management
      * Since: 3.1

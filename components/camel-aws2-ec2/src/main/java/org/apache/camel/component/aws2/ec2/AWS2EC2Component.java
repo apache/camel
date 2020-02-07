@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 
 /**
- * For working with Amazon's Elastic Compute Cloud (EC2).
+ * For working with Amazon's Elastic Compute Cloud (EC2) SDK v2.
  */
 @Component("aws2-ec2")
 public class AWS2EC2Component extends DefaultComponent {

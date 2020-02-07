@@ -5,7 +5,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ec2:label",
     "title": "AWS 2 EC2",
-    "description": "The aws-ec2 is used for managing Amazon EC2 instances.",
+    "description": "The aws2-ec2 is used for managing Amazon EC2 instances.",
     "label": "cloud,management",
     "deprecated": false,
     "async": false,
