@@ -247,6 +247,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private void enhanceComponentModel(ComponentModel componentModel, ComponentModel parentData, String excludeProperties) {
         componentModel.getComponentOptions().removeIf(option -> filterOutOption(componentModel, option));
         componentModel.getComponentOptions().forEach(option -> fixDoc(option, parentData != null ? parentData.getComponentOptions() : null));
+        componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
         componentModel.getEndpointOptions().removeIf(option -> filterOutOption(componentModel, option));
         componentModel.getEndpointOptions().forEach(option -> fixDoc(option, parentData != null ? parentData.getEndpointOptions() : null));
         componentModel.getEndpointOptions().sort(EndpointHelper.createOverallComparator(componentModel.getSyntax()));
