@@ -42,25 +42,12 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${artifactId}-api</artifactId>
       <version>${version}</version>
-    </dependency>
-
-    <!-- support camel documentation -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>apt</artifactId>
-    </dependency>
-
-    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <!-- Component API javadoc in provided scope to read API signatures -->
@@ -237,18 +224,11 @@
         <version>${camelVersion}</version>
         <executions>
           <execution>
-            <id>prepare</id>
+            <id>generate</id>
             <goals>
-              <goal>prepare-components</goal>
+              <goal>generate-component</goal>
             </goals>
             <phase>generate-resources</phase>
-          </execution>
-          <execution>
-            <id>validate</id>
-            <goals>
-              <goal>validate-components</goal>
-            </goals>
-            <phase>prepare-package</phase>
           </execution>
         </executions>
       </plugin>

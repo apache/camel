@@ -54,15 +54,7 @@
             <version>${twilio-version}</version>
         </dependency>
 
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Component API javadoc in provided scope to read API signatures -->
+         <!-- Component API javadoc in provided scope to read API signatures -->
         <dependency>
             <groupId>com.twilio.sdk</groupId>
             <artifactId>twilio</artifactId>

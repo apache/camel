@@ -157,13 +157,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- VelocityEngine javadoc for testing -->
         <dependency>
             <groupId>org.apache.velocity</groupId>

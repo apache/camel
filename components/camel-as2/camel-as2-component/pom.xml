@@ -53,13 +53,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Component API javadoc in provided scope to read API signatures -->
         <dependency>
             <groupId>org.apache.camel</groupId>
