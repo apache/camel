@@ -17,6 +17,11 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon EC2. More information is available at
 https://aws.amazon.com/ec2/[Amazon EC2].
 
+[NOTE]
+====
+The AWS2 EC2 component is not supported in OSGI
+====
+
 == URI Format
 
 [source,java]
