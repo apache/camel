@@ -26,5 +26,7 @@ public final class GooglePubsubConstants {
         AUTO, NONE
     }
 
+    private GooglePubsubConstants() {
+        // not called
+    }
 }
-
