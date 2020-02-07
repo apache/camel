@@ -30,7 +30,7 @@
     <artifactId>camel-xml-jaxp</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: XML JAXP</name>
-    <description>Camel XML JAXB</description>
+    <description>Camel XML JAXP</description>
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
@@ -39,10 +39,6 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>

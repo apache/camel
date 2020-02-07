@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>camel-xml-jaxb</artifactId>
-
+    <packaging>jar</packaging>
     <name>Camel :: XML JAXB</name>
     <description>Camel XML JAXB</description>
 
