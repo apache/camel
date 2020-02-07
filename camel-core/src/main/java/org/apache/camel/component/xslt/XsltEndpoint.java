@@ -17,6 +17,8 @@
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +28,13 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -50,6 +57,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Transforms the message using a XSLT template.
@@ -81,6 +89,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private Object saxonConfiguration;
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
+    @Metadata(label = "advanced")
+    private Map<String, Object> saxonReaderProperties = new HashMap<>();
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
     @UriParam(label = "advanced")
@@ -271,6 +281,19 @@ public class XsltEndpoint extends ProcessorEndpoint {
     public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
         this.saxonConfigurationProperties = configurationProperties;
     }
+    
+    
+    public Map<String, Object> getSaxonReaderProperties() {
+        return saxonReaderProperties;
+    }
+
+    /**
+     * To set custom Saxon Reader properties
+     */
+    public void setSaxonReaderProperties(Map<String, Object> saxonReaderProperties) {
+        this.saxonReaderProperties = saxonReaderProperties;
+    }
+
 
     public ResultHandlerFactory getResultHandlerFactory() {
         return resultHandlerFactory;
@@ -416,6 +439,11 @@ public class XsltEndpoint extends ProcessorEndpoint {
     protected void loadResource(String resourceUri) throws TransformerException, IOException {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);
+        if (this.saxon && this.saxonReaderProperties != null) {
+            //for Saxon we need to create XMLReader for the coming source
+            //so that the features configuration can take effect
+            source = createReaderForSource(source);
+        }
         if (source == null) {
             throw new IOException("Cannot load schema resource " + resourceUri);
         } else {
@@ -424,6 +452,35 @@ public class XsltEndpoint extends ProcessorEndpoint {
         // now loaded so clear flag
         cacheCleared = false;
     }
+
+    private Source createReaderForSource(Source source) {
+        try {
+            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+            //xmlReader.setErrorHandler(new DefaultErrorHandler());
+            for (Map.Entry<String, Object> entry : this.saxonReaderProperties.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                try {
+                    URI uri = new URI(key);
+                    if (value != null 
+                        && (value.toString().equals("true") || (value.toString().equals("false")))) {
+                        xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
+                    } else if (value != null) {
+                        xmlReader.setProperty(uri.toString(), value);
+                    }
+                } catch (URISyntaxException e) {
+                    LOG.debug("{} isn't a valid URI, so ingore it", key);
+                }
+            }     
+            InputSource inputSource = SAXSource.sourceToInputSource(source);
+            return new SAXSource(xmlReader, inputSource);
+        } catch (SAXException e) {
+            LOG.info("Can't created XMLReader for source ", e);
+            return null;
+        }
+
+    }
+
 
     @Override
     protected void doStart() throws Exception {
@@ -515,4 +572,5 @@ public class XsltEndpoint extends ProcessorEndpoint {
         super.doStop();
         ServiceHelper.stopService(xslt);
     }
+    
 }
