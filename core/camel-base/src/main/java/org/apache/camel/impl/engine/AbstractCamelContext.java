@@ -459,6 +459,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     public void addComponent(String componentName, final Component component) {
         ObjectHelper.notNull(component, "component");
         component.setCamelContext(this);
+        ServiceHelper.initService(component);
         Component oldValue = components.putIfAbsent(componentName, component);
         if (oldValue != null) {
             throw new IllegalArgumentException("Cannot add component as its already previously added: " + componentName);
