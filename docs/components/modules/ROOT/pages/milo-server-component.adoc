@@ -11,7 +11,7 @@
 The Milo Server component provides an OPC UA server using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
-*Java 8*: This component requires Java 8 at runtime. 
+*Java 9+*: This component requires Java 9+ at runtime.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

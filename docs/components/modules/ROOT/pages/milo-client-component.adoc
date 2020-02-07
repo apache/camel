@@ -11,8 +11,7 @@
 The Milo Client component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
-*Important*: To successfully use certificates for secured communication,
-JCE Jurisdiction Policy File Default has to be *Unlimited* (which is by default since jdk 9+).
+*Java 9+*: This component requires Java 9+ at runtime.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

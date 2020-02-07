@@ -45,6 +45,8 @@ The Yammer component can be configured with the Yammer account settings which ar
 // component options: START
 The Yammer component supports 7 options, which are listed below.
 
+
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -78,13 +80,16 @@ with the following path and query parameters:
 
 === Path Parameters (1 parameters):
 
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *function* | *Required* The function to use. The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT |  | YammerFunctionType
 |===
 
+
 === Query Parameters (31 parameters):
+
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
