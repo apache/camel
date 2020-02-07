@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.weka;
 
+import java.util.Locale;
+
 import io.nessus.weka.AssertArg;
 import io.nessus.weka.Dataset;
 import io.nessus.weka.NominalPredictor;
@@ -91,7 +93,7 @@ public class PredictionTest extends AbstractWekaTest {
             logInfo(String.format("Correctly Classified Instances   %d %.4f %%", correct, accuracy));
             logInfo(String.format("Incorrectly Classified Instances %d %.4f %%", incorrect, 100 - accuracy));
             
-            Assert.assertEquals("88.8889", String.format("%.4f", accuracy));
+            Assert.assertEquals("88.8889", String.format(Locale.ENGLISH, "%.4f", accuracy));
         }
     }
 
