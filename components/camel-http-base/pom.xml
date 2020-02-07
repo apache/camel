@@ -29,7 +29,7 @@
     <artifactId>camel-http-base</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: HTTP :: Bae</name>
+    <name>Camel :: HTTP :: Base</name>
     <description>Camel HTTP base</description>
 
     <dependencies>
