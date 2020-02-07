@@ -24,8 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.gson.annotation.ExcludeAge;
 import org.apache.camel.component.gson.annotation.ExcludeWeight;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GsonMarshalExclusionTest extends CamelTestSupport {
 
@@ -102,11 +104,11 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
     //END SNIPPET: strategy
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 GsonDataFormat weightExclusionFormat = new GsonDataFormat(TestPojoExclusion.class);
                 weightExclusionFormat.setExclusionStrategies(Arrays.<ExclusionStrategy>asList(new WeightExclusionStrategy()));

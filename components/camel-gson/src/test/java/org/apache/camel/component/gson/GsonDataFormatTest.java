@@ -19,9 +19,9 @@ package org.apache.camel.component.gson;
 import java.io.*;
 import java.util.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GsonDataFormatTest {
     @Test
@@ -41,12 +41,12 @@ public class GsonDataFormatTest {
 
     private void testJson(String json, Object expected) throws Exception {
         Object unmarshalled;
-        GsonDataFormat gsonDataFormat = new GsonDataFormat();
-        gsonDataFormat.doStart();
-        try (InputStream in = new ByteArrayInputStream(json.getBytes())) {
-            unmarshalled = gsonDataFormat.unmarshal(null, in);
+        try (GsonDataFormat gsonDataFormat = new GsonDataFormat()) {
+            gsonDataFormat.doStart();
+            try (InputStream in = new ByteArrayInputStream(json.getBytes())) {
+                unmarshalled = gsonDataFormat.unmarshal(null, in);
+            }
+            assertEquals(expected, unmarshalled);
         }
-
-        assertEquals(expected, unmarshalled);
     }
 }
