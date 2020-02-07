@@ -49,21 +49,6 @@ public interface GooglePubsubComponentBuilderFactory {
             extends
                 ComponentBuilder<GooglePubsubComponent> {
         /**
-         * Sets the connection factory to use: provides the ability to
-         * explicitly manage connection credentials: - the path to the key file
-         * - the Service Account Key / Email pair.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
-         * 
-         * Group: common
-         */
-        default GooglePubsubComponentBuilder connectionFactory(
-                org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -134,7 +119,6 @@ public interface GooglePubsubComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionFactory": ((GooglePubsubComponent) component).setConnectionFactory((org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GooglePubsubComponent) component).setBasicPropertyBinding((boolean) value); return true;
