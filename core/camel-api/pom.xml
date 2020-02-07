@@ -33,11 +33,16 @@
     <name>Camel :: API</name>
     <description>The Camel API</description>
 
+    <properties>
+        <camel.osgi.export.pkg>$${replace;{local-packages};;;\;},org.apache.camel.spi.annotations</camel.osgi.export.pkg>
+    </properties>
+
     <dependencies>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>spi-annotations</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
