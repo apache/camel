@@ -55,7 +55,6 @@
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-engine/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-catalog/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>
@@ -64,7 +63,6 @@
     <bundle>mvn:org.apache.camel/camel-main/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-caffeine-lrucache/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-tooling-model/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-tooling-util/${project.version}</bundle>
     <!-- core components -->
     <bundle>mvn:org.apache.camel/camel-bean/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
