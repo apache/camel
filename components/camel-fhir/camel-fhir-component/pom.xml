@@ -29,7 +29,7 @@
 
     <artifactId>camel-fhir</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Fhir</name>
+    <name>Camel :: FHIR</name>
     <description>Camel FHIR HL7 support</description>
 
     <properties>

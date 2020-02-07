@@ -31,8 +31,8 @@
     <artifactId>camel-bundle-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>Camel :: Maven Plugins :: Enhanced bundle plugin</name>
-    <description>Bundle plugin detecting stale input</description>
+    <name>Camel :: Maven Plugins :: Enhanced Bundle Plugin</name>
+    <description>OSGi Bundle plugin detecting stale input</description>
 
     <dependencies>
         <dependency>
