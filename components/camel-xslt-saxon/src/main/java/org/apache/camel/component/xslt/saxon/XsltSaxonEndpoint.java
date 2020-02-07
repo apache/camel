@@ -249,6 +249,8 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                     if (value != null 
                         && (value.toString().equals("true") || (value.toString().equals("false")))) {
                         xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
+                    } else if (value != null) {
+                        xmlReader.setProperty(uri.toString(), value);
                     }
                 } catch (URISyntaxException e) {
                     LOG.debug("{} isn't a valid URI, so ingore it", key);
