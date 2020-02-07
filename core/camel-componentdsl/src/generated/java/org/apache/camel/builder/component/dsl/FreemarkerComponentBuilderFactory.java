@@ -49,33 +49,6 @@ public interface FreemarkerComponentBuilderFactory {
             extends
                 ComponentBuilder<FreemarkerComponent> {
         /**
-         * To use an existing freemarker.template.Configuration instance as the
-         * configuration.
-         * 
-         * The option is a: <code>freemarker.template.Configuration</code> type.
-         * 
-         * Group: advanced
-         */
-        default FreemarkerComponentBuilder configuration(
-                freemarker.template.Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default FreemarkerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -96,6 +69,33 @@ public interface FreemarkerComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default FreemarkerComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use an existing freemarker.template.Configuration instance as the
+         * configuration.
+         * 
+         * The option is a: <code>freemarker.template.Configuration</code> type.
+         * 
+         * Group: advanced
+         */
+        default FreemarkerComponentBuilder configuration(
+                freemarker.template.Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class FreemarkerComponentBuilderImpl
@@ -113,9 +113,9 @@ public interface FreemarkerComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((FreemarkerComponent) component).setConfiguration((freemarker.template.Configuration) value); return true;
-            case "basicPropertyBinding": ((FreemarkerComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((FreemarkerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((FreemarkerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((FreemarkerComponent) component).setConfiguration((freemarker.template.Configuration) value); return true;
             default: return false;
             }
         }

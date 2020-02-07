@@ -49,6 +49,25 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleSheetsStreamComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -59,20 +78,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         default GoogleSheetsStreamComponentBuilder configuration(
                 org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration configuration) {
             doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * To use the GoogleSheetsClientFactory as factory for creating the
-         * client. Will by default use BatchGoogleSheetsClientFactory.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.sheets.GoogleSheetsClientFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default GoogleSheetsStreamComponentBuilder clientFactory(
-                org.apache.camel.component.google.sheets.GoogleSheetsClientFactory clientFactory) {
-            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -90,22 +95,17 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * To use the GoogleSheetsClientFactory as factory for creating the
+         * client. Will by default use BatchGoogleSheetsClientFactory.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.google.sheets.GoogleSheetsClientFactory</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default GoogleSheetsStreamComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default GoogleSheetsStreamComponentBuilder clientFactory(
+                org.apache.camel.component.google.sheets.GoogleSheetsClientFactory clientFactory) {
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
     }
@@ -125,10 +125,10 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((GoogleSheetsStreamComponent) component).setConfiguration((org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration) value); return true;
-            case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
-            case "basicPropertyBinding": ((GoogleSheetsStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((GoogleSheetsStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "configuration": ((GoogleSheetsStreamComponent) component).setConfiguration((org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration) value); return true;
+            case "basicPropertyBinding": ((GoogleSheetsStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
             default: return false;
             }
         }

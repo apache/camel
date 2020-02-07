@@ -51,29 +51,22 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleCalendarStreamComponent> {
         /**
-         * The configuration.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default GoogleCalendarStreamComponentBuilder configuration(
-                org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * The client Factory.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.calendar.GoogleCalendarClientFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default GoogleCalendarStreamComponentBuilder clientFactory(
-                org.apache.camel.component.google.calendar.GoogleCalendarClientFactory clientFactory) {
-            doSetProperty("clientFactory", clientFactory);
+        default GoogleCalendarStreamComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -91,22 +84,29 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * The client Factory.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.google.calendar.GoogleCalendarClientFactory</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default GoogleCalendarStreamComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default GoogleCalendarStreamComponentBuilder clientFactory(
+                org.apache.camel.component.google.calendar.GoogleCalendarClientFactory clientFactory) {
+            doSetProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
+         * The configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default GoogleCalendarStreamComponentBuilder configuration(
+                org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -126,10 +126,10 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((GoogleCalendarStreamComponent) component).setConfiguration((org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration) value); return true;
-            case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
-            case "basicPropertyBinding": ((GoogleCalendarStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((GoogleCalendarStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((GoogleCalendarStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
+            case "configuration": ((GoogleCalendarStreamComponent) component).setConfiguration((org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration) value); return true;
             default: return false;
             }
         }

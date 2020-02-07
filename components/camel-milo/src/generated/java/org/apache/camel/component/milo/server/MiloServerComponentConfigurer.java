@@ -15,45 +15,45 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MiloServerComponent target = (MiloServerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "namespaceuri":
-        case "namespaceUri": target.setNamespaceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "producturi":
-        case "productUri": target.setProductUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "bindport":
-        case "bindPort": target.setBindPort(property(camelContext, int.class, value)); return true;
-        case "securitypolicies":
-        case "securityPolicies": target.setSecurityPolicies(property(camelContext, java.util.Set.class, value)); return true;
-        case "securitypoliciesbyid":
-        case "securityPoliciesById": target.setSecurityPoliciesById(property(camelContext, java.util.Collection.class, value)); return true;
-        case "userauthenticationcredentials":
-        case "userAuthenticationCredentials": target.setUserAuthenticationCredentials(property(camelContext, java.lang.String.class, value)); return true;
-        case "enableanonymousauthentication":
-        case "enableAnonymousAuthentication": target.setEnableAnonymousAuthentication(property(camelContext, boolean.class, value)); return true;
-        case "usernamesecuritypolicyuri":
-        case "usernameSecurityPolicyUri": target.setUsernameSecurityPolicyUri(property(camelContext, org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class, value)); return true;
         case "bindaddresses":
         case "bindAddresses": target.setBindAddresses(property(camelContext, java.lang.String.class, value)); return true;
+        case "bindport":
+        case "bindPort": target.setBindPort(property(camelContext, int.class, value)); return true;
         case "buildinfo":
         case "buildInfo": target.setBuildInfo(property(camelContext, org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class, value)); return true;
-        case "servercertificate":
-        case "serverCertificate": target.setServerCertificate(property(camelContext, org.apache.camel.component.milo.KeyStoreLoader.Result.class, value)); return true;
         case "certificatemanager":
         case "certificateManager": target.setCertificateManager(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateManager.class, value)); return true;
         case "certificatevalidator":
         case "certificateValidator": target.setCertificateValidator(property(camelContext, java.util.function.Supplier.class, value)); return true;
         case "defaultcertificatevalidator":
         case "defaultCertificateValidator": target.setDefaultCertificateValidator(property(camelContext, java.io.File.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "enableanonymousauthentication":
+        case "enableAnonymousAuthentication": target.setEnableAnonymousAuthentication(property(camelContext, boolean.class, value)); return true;
+        case "namespaceuri":
+        case "namespaceUri": target.setNamespaceUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "producturi":
+        case "productUri": target.setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "securitypolicies":
+        case "securityPolicies": target.setSecurityPolicies(property(camelContext, java.util.Set.class, value)); return true;
+        case "securitypoliciesbyid":
+        case "securityPoliciesById": target.setSecurityPoliciesById(property(camelContext, java.util.Collection.class, value)); return true;
+        case "servercertificate":
+        case "serverCertificate": target.setServerCertificate(property(camelContext, org.apache.camel.component.milo.KeyStoreLoader.Result.class, value)); return true;
+        case "userauthenticationcredentials":
+        case "userAuthenticationCredentials": target.setUserAuthenticationCredentials(property(camelContext, java.lang.String.class, value)); return true;
+        case "usernamesecuritypolicyuri":
+        case "usernameSecurityPolicyUri": target.setUsernameSecurityPolicyUri(property(camelContext, org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

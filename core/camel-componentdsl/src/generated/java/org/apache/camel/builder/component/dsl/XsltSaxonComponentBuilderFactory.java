@@ -49,18 +49,54 @@ public interface XsltSaxonComponentBuilderFactory {
             extends
                 ComponentBuilder<XsltSaxonComponent> {
         /**
-         * Allows you to use a custom
-         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
-         * camel-saxon to the classpath. The function is looked up in the
-         * registry, where you can comma to separate multiple values to lookup.
+         * Cache for the resource content (the stylesheet file) when it is
+         * loaded. If set to false Camel will reload the stylesheet file on each
+         * message processing. This is good for development. A cached stylesheet
+         * can be forced to reload at runtime via JMX using the
+         * clearCachedStylesheet operation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
+         * Group: producer
+         */
+        default XsltSaxonComponentBuilder contentCache(boolean contentCache) {
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default XsltSaxonComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder saxonExtensionFunctions(
-                java.lang.String saxonExtensionFunctions) {
-            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
+        default XsltSaxonComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -89,48 +125,31 @@ public interface XsltSaxonComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom UriResolver which depends on a dynamic endpoint
-         * resource URI. Should not be used together with the option
-         * 'uriResolver'.
+         * Allows you to use a custom
+         * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
+         * camel-saxon to the classpath. The function is looked up in the
+         * registry, where you can comma to separate multiple values to lookup.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.xslt.XsltUriResolverFactory</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default XsltSaxonComponentBuilder uriResolverFactory(
-                org.apache.camel.component.xslt.XsltUriResolverFactory uriResolverFactory) {
-            doSetProperty("uriResolverFactory", uriResolverFactory);
-            return this;
-        }
-        /**
-         * To use a custom UriResolver. Should not be used together with the
-         * option 'uriResolverFactory'.
-         * 
-         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder uriResolver(
-                javax.xml.transform.URIResolver uriResolver) {
-            doSetProperty("uriResolver", uriResolver);
+        default XsltSaxonComponentBuilder saxonExtensionFunctions(
+                java.lang.String saxonExtensionFunctions) {
+            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
         }
         /**
-         * Cache for the resource content (the stylesheet file) when it is
-         * loaded. If set to false Camel will reload the stylesheet file on each
-         * message processing. This is good for development. A cached stylesheet
-         * can be forced to reload at runtime via JMX using the
-         * clearCachedStylesheet operation.
+         * To use a custom XSLT transformer factory, specified as a FQN class
+         * name.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: true
-         * Group: producer
+         * Group: advanced
          */
-        default XsltSaxonComponentBuilder contentCache(boolean contentCache) {
-            doSetProperty("contentCache", contentCache);
+        default XsltSaxonComponentBuilder transformerFactoryClass(
+                java.lang.String transformerFactoryClass) {
+            doSetProperty("transformerFactoryClass", transformerFactoryClass);
             return this;
         }
         /**
@@ -148,51 +167,32 @@ public interface XsltSaxonComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom XSLT transformer factory, specified as a FQN class
-         * name.
+         * To use a custom UriResolver. Should not be used together with the
+         * option 'uriResolverFactory'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
          * 
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder transformerFactoryClass(
-                java.lang.String transformerFactoryClass) {
-            doSetProperty("transformerFactoryClass", transformerFactoryClass);
+        default XsltSaxonComponentBuilder uriResolver(
+                javax.xml.transform.URIResolver uriResolver) {
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * To use a custom UriResolver which depends on a dynamic endpoint
+         * resource URI. Should not be used together with the option
+         * 'uriResolver'.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.xslt.XsltUriResolverFactory</code>
+         * type.
          * 
-         * Default: false
          * Group: advanced
          */
-        default XsltSaxonComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default XsltSaxonComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
+        default XsltSaxonComponentBuilder uriResolverFactory(
+                org.apache.camel.component.xslt.XsltUriResolverFactory uriResolverFactory) {
+            doSetProperty("uriResolverFactory", uriResolverFactory);
             return this;
         }
     }
@@ -212,16 +212,16 @@ public interface XsltSaxonComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "saxonExtensionFunctions": ((XsltSaxonComponent) component).setSaxonExtensionFunctions((java.lang.String) value); return true;
+            case "contentCache": ((XsltSaxonComponent) component).setContentCache((boolean) value); return true;
+            case "lazyStartProducer": ((XsltSaxonComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((XsltSaxonComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "saxonConfiguration": ((XsltSaxonComponent) component).setSaxonConfiguration((net.sf.saxon.Configuration) value); return true;
             case "saxonConfigurationProperties": ((XsltSaxonComponent) component).setSaxonConfigurationProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
-            case "uriResolverFactory": ((XsltSaxonComponent) component).setUriResolverFactory((org.apache.camel.component.xslt.XsltUriResolverFactory) value); return true;
-            case "uriResolver": ((XsltSaxonComponent) component).setUriResolver((javax.xml.transform.URIResolver) value); return true;
-            case "contentCache": ((XsltSaxonComponent) component).setContentCache((boolean) value); return true;
-            case "transformerFactoryConfigurationStrategy": ((XsltSaxonComponent) component).setTransformerFactoryConfigurationStrategy((org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy) value); return true;
+            case "saxonExtensionFunctions": ((XsltSaxonComponent) component).setSaxonExtensionFunctions((java.lang.String) value); return true;
             case "transformerFactoryClass": ((XsltSaxonComponent) component).setTransformerFactoryClass((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((XsltSaxonComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((XsltSaxonComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "transformerFactoryConfigurationStrategy": ((XsltSaxonComponent) component).setTransformerFactoryConfigurationStrategy((org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy) value); return true;
+            case "uriResolver": ((XsltSaxonComponent) component).setUriResolver((javax.xml.transform.URIResolver) value); return true;
+            case "uriResolverFactory": ((XsltSaxonComponent) component).setUriResolverFactory((org.apache.camel.component.xslt.XsltUriResolverFactory) value); return true;
             default: return false;
             }
         }

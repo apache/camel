@@ -53,14 +53,14 @@ public interface ConsulComponentBuilderFactory {
             extends
                 ComponentBuilder<ConsulComponent> {
         /**
-         * The Consul agent URL.
+         * Sets the ACL token to be used with Consul.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default ConsulComponentBuilder url(java.lang.String url) {
-            doSetProperty("url", url);
+        default ConsulComponentBuilder aclToken(java.lang.String aclToken) {
+            doSetProperty("aclToken", aclToken);
             return this;
         }
         /**
@@ -72,6 +72,17 @@ public interface ConsulComponentBuilderFactory {
          */
         default ConsulComponentBuilder datacenter(java.lang.String datacenter) {
             doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * Sets the password to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -89,27 +100,14 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Enable usage of global SSL context parameters.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         */
-        default ConsulComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
-         * Sets the ACL token to be used with Consul.
+         * The Consul agent URL.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default ConsulComponentBuilder aclToken(java.lang.String aclToken) {
-            doSetProperty("aclToken", aclToken);
+        default ConsulComponentBuilder url(java.lang.String url) {
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -124,42 +122,22 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the password to be used for basic authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ConsulComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Sets the common configuration shared among endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.consul.ConsulConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default ConsulComponentBuilder configuration(
-                org.apache.camel.component.consul.ConsulConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default ConsulComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ConsulComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -184,22 +162,44 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default ConsulComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default ConsulComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets the common configuration shared among endpoints.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.consul.ConsulConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default ConsulComponentBuilder configuration(
+                org.apache.camel.component.consul.ConsulConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default ConsulComponentBuilder useGlobalSslContextParameters(
+                boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
     }
@@ -219,17 +219,17 @@ public interface ConsulComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "url": ((ConsulComponent) component).setUrl((java.lang.String) value); return true;
-            case "datacenter": ((ConsulComponent) component).setDatacenter((java.lang.String) value); return true;
-            case "sslContextParameters": ((ConsulComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "useGlobalSslContextParameters": ((ConsulComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "aclToken": ((ConsulComponent) component).setAclToken((java.lang.String) value); return true;
-            case "userName": ((ConsulComponent) component).setUserName((java.lang.String) value); return true;
+            case "datacenter": ((ConsulComponent) component).setDatacenter((java.lang.String) value); return true;
             case "password": ((ConsulComponent) component).setPassword((java.lang.String) value); return true;
-            case "configuration": ((ConsulComponent) component).setConfiguration((org.apache.camel.component.consul.ConsulConfiguration) value); return true;
-            case "basicPropertyBinding": ((ConsulComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((ConsulComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "sslContextParameters": ((ConsulComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "url": ((ConsulComponent) component).setUrl((java.lang.String) value); return true;
+            case "userName": ((ConsulComponent) component).setUserName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((ConsulComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((ConsulComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ConsulComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((ConsulComponent) component).setConfiguration((org.apache.camel.component.consul.ConsulConfiguration) value); return true;
+            case "useGlobalSslContextParameters": ((ConsulComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

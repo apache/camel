@@ -49,43 +49,43 @@ public interface TelegramComponentBuilderFactory {
             extends
                 ComponentBuilder<TelegramComponent> {
         /**
-         * The default Telegram authorization token to be used when the
-         * information is not provided in the endpoints.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: security
+         * Default: false
+         * Group: consumer
          */
-        default TelegramComponentBuilder authorizationToken(
-                java.lang.String authorizationToken) {
-            doSetProperty("authorizationToken", authorizationToken);
+        default TelegramComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
-         * To use a custom AsyncHttpClient.
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
          * 
-         * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
-         * type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: advanced
+         * Default: false
+         * Group: producer
          */
-        default TelegramComponentBuilder client(
-                org.asynchttpclient.AsyncHttpClient client) {
-            doSetProperty("client", client);
-            return this;
-        }
-        /**
-         * To configure the AsyncHttpClient to use a custom
-         * com.ning.http.client.AsyncHttpClientConfig instance.
-         * 
-         * The option is a:
-         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * 
-         * Group: advanced
-         */
-        default TelegramComponentBuilder clientConfig(
-                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
-            doSetProperty("clientConfig", clientConfig);
+        default TelegramComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -116,43 +116,43 @@ public interface TelegramComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
+         * To use a custom AsyncHttpClient.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>org.asynchttpclient.AsyncHttpClient</code>
+         * type.
          * 
-         * Default: false
-         * Group: producer
+         * Group: advanced
          */
-        default TelegramComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
+        default TelegramComponentBuilder client(
+                org.asynchttpclient.AsyncHttpClient client) {
+            doSetProperty("client", client);
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * To configure the AsyncHttpClient to use a custom
+         * com.ning.http.client.AsyncHttpClientConfig instance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default TelegramComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default TelegramComponentBuilder clientConfig(
+                org.asynchttpclient.AsyncHttpClientConfig clientConfig) {
+            doSetProperty("clientConfig", clientConfig);
+            return this;
+        }
+        /**
+         * The default Telegram authorization token to be used when the
+         * information is not provided in the endpoints.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default TelegramComponentBuilder authorizationToken(
+                java.lang.String authorizationToken) {
+            doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
     }
@@ -172,13 +172,13 @@ public interface TelegramComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "authorizationToken": ((TelegramComponent) component).setAuthorizationToken((java.lang.String) value); return true;
-            case "client": ((TelegramComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
-            case "clientConfig": ((TelegramComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
+            case "bridgeErrorHandler": ((TelegramComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((TelegramComponent) component).setLazyStartProducer((boolean) value); return true;
             case "baseUri": ((TelegramComponent) component).setBaseUri((java.lang.String) value); return true;
             case "basicPropertyBinding": ((TelegramComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((TelegramComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((TelegramComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "client": ((TelegramComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
+            case "clientConfig": ((TelegramComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
+            case "authorizationToken": ((TelegramComponent) component).setAuthorizationToken((java.lang.String) value); return true;
             default: return false;
             }
         }

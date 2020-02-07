@@ -49,16 +49,21 @@ public interface VmComponentBuilderFactory {
      */
     interface VmComponentBuilder extends ComponentBuilder<VmComponent> {
         /**
-         * Sets the default maximum capacity of the SEDA queue (i.e., the number
-         * of messages it can hold).
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 1000
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default VmComponentBuilder queueSize(int queueSize) {
-            doSetProperty("queueSize", queueSize);
+        default VmComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -71,19 +76,6 @@ public interface VmComponentBuilderFactory {
          */
         default VmComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Sets the default queue factory.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
-         * 
-         * Group: advanced
-         */
-        default VmComponentBuilder defaultQueueFactory(
-                org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
-            doSetProperty("defaultQueueFactory", defaultQueueFactory);
             return this;
         }
         /**
@@ -137,20 +129,6 @@ public interface VmComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default VmComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -171,21 +149,43 @@ public interface VmComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default VmComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default VmComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets the default queue factory.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
+         * 
+         * Group: advanced
+         */
+        default VmComponentBuilder defaultQueueFactory(
+                org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
+            doSetProperty("defaultQueueFactory", defaultQueueFactory);
+            return this;
+        }
+        /**
+         * Sets the default maximum capacity of the SEDA queue (i.e., the number
+         * of messages it can hold).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1000
+         * Group: advanced
+         */
+        default VmComponentBuilder queueSize(int queueSize) {
+            doSetProperty("queueSize", queueSize);
             return this;
         }
     }
@@ -205,15 +205,15 @@ public interface VmComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "queueSize": ((VmComponent) component).setQueueSize((int) value); return true;
+            case "bridgeErrorHandler": ((VmComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((VmComponent) component).setConcurrentConsumers((int) value); return true;
-            case "defaultQueueFactory": ((VmComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
             case "defaultBlockWhenFull": ((VmComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
             case "defaultDiscardWhenFull": ((VmComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
             case "defaultOfferTimeout": ((VmComponent) component).setDefaultOfferTimeout((long) value); return true;
-            case "basicPropertyBinding": ((VmComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((VmComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((VmComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((VmComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "defaultQueueFactory": ((VmComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "queueSize": ((VmComponent) component).setQueueSize((int) value); return true;
             default: return false;
             }
         }

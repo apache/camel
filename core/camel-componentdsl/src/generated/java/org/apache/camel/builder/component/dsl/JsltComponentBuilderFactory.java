@@ -49,33 +49,6 @@ public interface JsltComponentBuilderFactory {
      */
     interface JsltComponentBuilder extends ComponentBuilder<JsltComponent> {
         /**
-         * JSLT can be extended by plugging in functions written in Java.
-         * 
-         * The option is a:
-         * <code>java.util.Collection<com.schibsted.spt.data.jslt.Function></code> type.
-         * 
-         * Group: advanced
-         */
-        default JsltComponentBuilder functions(
-                java.util.Collection<com.schibsted.spt.data.jslt.Function> functions) {
-            doSetProperty("functions", functions);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default JsltComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -95,6 +68,33 @@ public interface JsltComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default JsltComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * JSLT can be extended by plugging in functions written in Java.
+         * 
+         * The option is a:
+         * <code>java.util.Collection<com.schibsted.spt.data.jslt.Function></code> type.
+         * 
+         * Group: advanced
+         */
+        default JsltComponentBuilder functions(
+                java.util.Collection<com.schibsted.spt.data.jslt.Function> functions) {
+            doSetProperty("functions", functions);
+            return this;
+        }
     }
 
     class JsltComponentBuilderImpl
@@ -112,9 +112,9 @@ public interface JsltComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "functions": ((JsltComponent) component).setFunctions((java.util.Collection<com.schibsted.spt.data.jslt.Function>) value); return true;
-            case "basicPropertyBinding": ((JsltComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((JsltComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((JsltComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "functions": ((JsltComponent) component).setFunctions((java.util.Collection<com.schibsted.spt.data.jslt.Function>) value); return true;
             default: return false;
             }
         }

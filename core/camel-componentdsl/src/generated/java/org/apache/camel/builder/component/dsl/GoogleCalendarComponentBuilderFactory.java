@@ -62,31 +62,22 @@ public interface GoogleCalendarComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the GoogleCalendarClientFactory as factory for creating the
-         * client. Will by default use BatchGoogleCalendarClientFactory.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.calendar.GoogleCalendarClientFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default GoogleCalendarComponentBuilder clientFactory(
-                org.apache.camel.component.google.calendar.GoogleCalendarClientFactory clientFactory) {
-            doSetProperty("clientFactory", clientFactory);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default GoogleCalendarComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleCalendarComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -111,22 +102,31 @@ public interface GoogleCalendarComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default GoogleCalendarComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default GoogleCalendarComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the GoogleCalendarClientFactory as factory for creating the
+         * client. Will by default use BatchGoogleCalendarClientFactory.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.google.calendar.GoogleCalendarClientFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default GoogleCalendarComponentBuilder clientFactory(
+                org.apache.camel.component.google.calendar.GoogleCalendarClientFactory clientFactory) {
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
     }
@@ -147,10 +147,10 @@ public interface GoogleCalendarComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((GoogleCalendarComponent) component).setConfiguration((org.apache.camel.component.google.calendar.GoogleCalendarConfiguration) value); return true;
-            case "clientFactory": ((GoogleCalendarComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
-            case "basicPropertyBinding": ((GoogleCalendarComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((GoogleCalendarComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((GoogleCalendarComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((GoogleCalendarComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((GoogleCalendarComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "clientFactory": ((GoogleCalendarComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
             default: return false;
             }
         }

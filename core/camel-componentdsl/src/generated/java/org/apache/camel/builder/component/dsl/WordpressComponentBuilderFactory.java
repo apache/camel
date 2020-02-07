@@ -49,30 +49,22 @@ public interface WordpressComponentBuilderFactory {
             extends
                 ComponentBuilder<WordpressComponent> {
         /**
-         * Wordpress component configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.wordpress.WordpressComponentConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default WordpressComponentBuilder configuration(
-                org.apache.camel.component.wordpress.WordpressComponentConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default WordpressComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default WordpressComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -97,22 +89,30 @@ public interface WordpressComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default WordpressComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default WordpressComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Wordpress component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.wordpress.WordpressComponentConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default WordpressComponentBuilder configuration(
+                org.apache.camel.component.wordpress.WordpressComponentConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -132,10 +132,10 @@ public interface WordpressComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((WordpressComponent) component).setConfiguration((org.apache.camel.component.wordpress.WordpressComponentConfiguration) value); return true;
-            case "basicPropertyBinding": ((WordpressComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((WordpressComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((WordpressComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((WordpressComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((WordpressComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((WordpressComponent) component).setConfiguration((org.apache.camel.component.wordpress.WordpressComponentConfiguration) value); return true;
             default: return false;
             }
         }

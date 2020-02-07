@@ -51,19 +51,6 @@ public interface MybatisBeanComponentBuilderFactory {
             extends
                 ComponentBuilder<MyBatisBeanComponent> {
         /**
-         * To use the SqlSessionFactory.
-         * 
-         * The option is a:
-         * <code>org.apache.ibatis.session.SqlSessionFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default MybatisBeanComponentBuilder sqlSessionFactory(
-                org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory) {
-            doSetProperty("sqlSessionFactory", sqlSessionFactory);
-            return this;
-        }
-        /**
          * Location of MyBatis xml configuration file. The default value is:
          * SqlMapConfig.xml loaded from the classpath.
          * 
@@ -75,20 +62,6 @@ public interface MybatisBeanComponentBuilderFactory {
         default MybatisBeanComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MybatisBeanComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -112,6 +85,33 @@ public interface MybatisBeanComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MybatisBeanComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the SqlSessionFactory.
+         * 
+         * The option is a:
+         * <code>org.apache.ibatis.session.SqlSessionFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default MybatisBeanComponentBuilder sqlSessionFactory(
+                org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory) {
+            doSetProperty("sqlSessionFactory", sqlSessionFactory);
+            return this;
+        }
     }
 
     class MybatisBeanComponentBuilderImpl
@@ -129,10 +129,10 @@ public interface MybatisBeanComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "sqlSessionFactory": ((MyBatisBeanComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
             case "configurationUri": ((MyBatisBeanComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((MyBatisBeanComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MyBatisBeanComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MyBatisBeanComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "sqlSessionFactory": ((MyBatisBeanComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
             default: return false;
             }
         }

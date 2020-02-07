@@ -49,33 +49,22 @@ public interface Jt400ComponentBuilderFactory {
      */
     interface Jt400ComponentBuilder extends ComponentBuilder<Jt400Component> {
         /**
-         * Default connection pool used by the component. Note that this pool is
-         * lazily initialized. This is because in a scenario where the user
-         * always provides a pool, it would be wasteful for Camel to initialize
-         * and keep an idle pool.
-         * 
-         * The option is a:
-         * <code>com.ibm.as400.access.AS400ConnectionPool</code> type.
-         * 
-         * Group: advanced
-         */
-        default Jt400ComponentBuilder connectionPool(
-                com.ibm.as400.access.AS400ConnectionPool connectionPool) {
-            doSetProperty("connectionPool", connectionPool);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default Jt400ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Jt400ComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -100,22 +89,33 @@ public interface Jt400ComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default Jt400ComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default Jt400ComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Default connection pool used by the component. Note that this pool is
+         * lazily initialized. This is because in a scenario where the user
+         * always provides a pool, it would be wasteful for Camel to initialize
+         * and keep an idle pool.
+         * 
+         * The option is a:
+         * <code>com.ibm.as400.access.AS400ConnectionPool</code> type.
+         * 
+         * Group: advanced
+         */
+        default Jt400ComponentBuilder connectionPool(
+                com.ibm.as400.access.AS400ConnectionPool connectionPool) {
+            doSetProperty("connectionPool", connectionPool);
             return this;
         }
     }
@@ -135,10 +135,10 @@ public interface Jt400ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionPool": ((Jt400Component) component).setConnectionPool((com.ibm.as400.access.AS400ConnectionPool) value); return true;
-            case "basicPropertyBinding": ((Jt400Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((Jt400Component) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((Jt400Component) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((Jt400Component) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((Jt400Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "connectionPool": ((Jt400Component) component).setConnectionPool((com.ibm.as400.access.AS400ConnectionPool) value); return true;
             default: return false;
             }
         }

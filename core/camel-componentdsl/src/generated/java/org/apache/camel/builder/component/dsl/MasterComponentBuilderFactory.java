@@ -51,6 +51,39 @@ public interface MasterComponentBuilderFactory {
             extends
                 ComponentBuilder<MasterComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default MasterComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MasterComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
          * Inject the service to use.
          * 
          * The option is a:
@@ -78,39 +111,6 @@ public interface MasterComponentBuilderFactory {
             doSetProperty("serviceSelector", serviceSelector);
             return this;
         }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MasterComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default MasterComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class MasterComponentBuilderImpl
@@ -128,10 +128,10 @@ public interface MasterComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((MasterComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((MasterComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "service": ((MasterComponent) component).setService((org.apache.camel.cluster.CamelClusterService) value); return true;
             case "serviceSelector": ((MasterComponent) component).setServiceSelector((org.apache.camel.cluster.CamelClusterService.Selector) value); return true;
-            case "basicPropertyBinding": ((MasterComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((MasterComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

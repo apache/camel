@@ -49,20 +49,6 @@ public interface AwsSqsComponentBuilderFactory {
      */
     interface AwsSqsComponentBuilder extends ComponentBuilder<SqsComponent> {
         /**
-         * The AWS SQS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.sqs.SqsConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsSqsComponentBuilder configuration(
-                org.apache.camel.component.aws.sqs.SqsConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -71,17 +57,6 @@ public interface AwsSqsComponentBuilderFactory {
          */
         default AwsSqsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AwsSqsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -97,17 +72,33 @@ public interface AwsSqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AwsSqsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AwsSqsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AwsSqsComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -132,22 +123,31 @@ public interface AwsSqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AwsSqsComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AwsSqsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS SQS default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.sqs.SqsConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AwsSqsComponentBuilder configuration(
+                org.apache.camel.component.aws.sqs.SqsConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -167,13 +167,13 @@ public interface AwsSqsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((SqsComponent) component).setConfiguration((org.apache.camel.component.aws.sqs.SqsConfiguration) value); return true;
             case "accessKey": ((SqsComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((SqsComponent) component).setSecretKey((java.lang.String) value); return true;
             case "region": ((SqsComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((SqsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((SqsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "secretKey": ((SqsComponent) component).setSecretKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((SqsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((SqsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((SqsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((SqsComponent) component).setConfiguration((org.apache.camel.component.aws.sqs.SqsConfiguration) value); return true;
             default: return false;
             }
         }

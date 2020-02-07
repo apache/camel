@@ -49,16 +49,22 @@ public interface SedaComponentBuilderFactory {
      */
     interface SedaComponentBuilder extends ComponentBuilder<SedaComponent> {
         /**
-         * Sets the default maximum capacity of the SEDA queue (i.e., the number
-         * of messages it can hold).
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 1000
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default SedaComponentBuilder queueSize(int queueSize) {
-            doSetProperty("queueSize", queueSize);
+        default SedaComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -71,19 +77,6 @@ public interface SedaComponentBuilderFactory {
          */
         default SedaComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Sets the default queue factory.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
-         * 
-         * Group: advanced
-         */
-        default SedaComponentBuilder defaultQueueFactory(
-                org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
-            doSetProperty("defaultQueueFactory", defaultQueueFactory);
             return this;
         }
         /**
@@ -138,20 +131,6 @@ public interface SedaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default SedaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -172,22 +151,43 @@ public interface SedaComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default SedaComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default SedaComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets the default queue factory.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
+         * 
+         * Group: advanced
+         */
+        default SedaComponentBuilder defaultQueueFactory(
+                org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
+            doSetProperty("defaultQueueFactory", defaultQueueFactory);
+            return this;
+        }
+        /**
+         * Sets the default maximum capacity of the SEDA queue (i.e., the number
+         * of messages it can hold).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1000
+         * Group: advanced
+         */
+        default SedaComponentBuilder queueSize(int queueSize) {
+            doSetProperty("queueSize", queueSize);
             return this;
         }
     }
@@ -207,15 +207,15 @@ public interface SedaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "queueSize": ((SedaComponent) component).setQueueSize((int) value); return true;
+            case "bridgeErrorHandler": ((SedaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": ((SedaComponent) component).setConcurrentConsumers((int) value); return true;
-            case "defaultQueueFactory": ((SedaComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
             case "defaultBlockWhenFull": ((SedaComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
             case "defaultDiscardWhenFull": ((SedaComponent) component).setDefaultDiscardWhenFull((boolean) value); return true;
             case "defaultOfferTimeout": ((SedaComponent) component).setDefaultOfferTimeout((long) value); return true;
-            case "basicPropertyBinding": ((SedaComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((SedaComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((SedaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((SedaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "defaultQueueFactory": ((SedaComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "queueSize": ((SedaComponent) component).setQueueSize((int) value); return true;
             default: return false;
             }
         }

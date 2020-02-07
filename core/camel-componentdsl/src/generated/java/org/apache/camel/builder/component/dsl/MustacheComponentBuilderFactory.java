@@ -49,33 +49,6 @@ public interface MustacheComponentBuilderFactory {
             extends
                 ComponentBuilder<MustacheComponent> {
         /**
-         * To use a custom MustacheFactory.
-         * 
-         * The option is a: <code>com.github.mustachejava.MustacheFactory</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default MustacheComponentBuilder mustacheFactory(
-                com.github.mustachejava.MustacheFactory mustacheFactory) {
-            doSetProperty("mustacheFactory", mustacheFactory);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MustacheComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -96,6 +69,33 @@ public interface MustacheComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MustacheComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom MustacheFactory.
+         * 
+         * The option is a: <code>com.github.mustachejava.MustacheFactory</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default MustacheComponentBuilder mustacheFactory(
+                com.github.mustachejava.MustacheFactory mustacheFactory) {
+            doSetProperty("mustacheFactory", mustacheFactory);
+            return this;
+        }
     }
 
     class MustacheComponentBuilderImpl
@@ -113,9 +113,9 @@ public interface MustacheComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "mustacheFactory": ((MustacheComponent) component).setMustacheFactory((com.github.mustachejava.MustacheFactory) value); return true;
-            case "basicPropertyBinding": ((MustacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MustacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MustacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "mustacheFactory": ((MustacheComponent) component).setMustacheFactory((com.github.mustachejava.MustacheFactory) value); return true;
             default: return false;
             }
         }

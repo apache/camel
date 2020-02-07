@@ -51,30 +51,22 @@ public interface AzureBlobComponentBuilderFactory {
             extends
                 ComponentBuilder<BlobServiceComponent> {
         /**
-         * The Blob Service configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobServiceConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AzureBlobComponentBuilder configuration(
-                org.apache.camel.component.azure.blob.BlobServiceConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AzureBlobComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AzureBlobComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -99,22 +91,30 @@ public interface AzureBlobComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AzureBlobComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AzureBlobComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The Blob Service configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.blob.BlobServiceConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AzureBlobComponentBuilder configuration(
+                org.apache.camel.component.azure.blob.BlobServiceConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -134,10 +134,10 @@ public interface AzureBlobComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((BlobServiceComponent) component).setConfiguration((org.apache.camel.component.azure.blob.BlobServiceConfiguration) value); return true;
-            case "basicPropertyBinding": ((BlobServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((BlobServiceComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((BlobServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((BlobServiceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((BlobServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((BlobServiceComponent) component).setConfiguration((org.apache.camel.component.azure.blob.BlobServiceConfiguration) value); return true;
             default: return false;
             }
         }

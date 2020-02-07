@@ -51,6 +51,20 @@ public interface JgroupsRaftComponentBuilderFactory {
             extends
                 ComponentBuilder<JGroupsRaftComponent> {
         /**
+         * Specifies configuration properties of the RaftHandle JChannel used by
+         * the endpoint (ignored if raftHandle ref is provided).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: raft.xml
+         * Group: common
+         */
+        default JgroupsRaftComponentBuilder channelProperties(
+                java.lang.String channelProperties) {
+            doSetProperty("channelProperties", channelProperties);
+            return this;
+        }
+        /**
          * RaftHandle to use.
          * 
          * The option is a: <code>org.jgroups.raft.RaftHandle</code> type.
@@ -60,6 +74,17 @@ public interface JgroupsRaftComponentBuilderFactory {
         default JgroupsRaftComponentBuilder raftHandle(
                 org.jgroups.raft.RaftHandle raftHandle) {
             doSetProperty("raftHandle", raftHandle);
+            return this;
+        }
+        /**
+         * Unique raftId to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default JgroupsRaftComponentBuilder raftId(java.lang.String raftId) {
+            doSetProperty("raftId", raftId);
             return this;
         }
         /**
@@ -77,42 +102,22 @@ public interface JgroupsRaftComponentBuilderFactory {
             return this;
         }
         /**
-         * Unique raftId to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JgroupsRaftComponentBuilder raftId(java.lang.String raftId) {
-            doSetProperty("raftId", raftId);
-            return this;
-        }
-        /**
-         * Specifies configuration properties of the RaftHandle JChannel used by
-         * the endpoint (ignored if raftHandle ref is provided).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: raft.xml
-         * Group: common
-         */
-        default JgroupsRaftComponentBuilder channelProperties(
-                java.lang.String channelProperties) {
-            doSetProperty("channelProperties", channelProperties);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default JgroupsRaftComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JgroupsRaftComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -137,22 +142,17 @@ public interface JgroupsRaftComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default JgroupsRaftComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default JgroupsRaftComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -172,13 +172,13 @@ public interface JgroupsRaftComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "raftHandle": ((JGroupsRaftComponent) component).setRaftHandle((org.jgroups.raft.RaftHandle) value); return true;
-            case "stateMachine": ((JGroupsRaftComponent) component).setStateMachine((org.jgroups.protocols.raft.StateMachine) value); return true;
-            case "raftId": ((JGroupsRaftComponent) component).setRaftId((java.lang.String) value); return true;
             case "channelProperties": ((JGroupsRaftComponent) component).setChannelProperties((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((JGroupsRaftComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((JGroupsRaftComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "raftHandle": ((JGroupsRaftComponent) component).setRaftHandle((org.jgroups.raft.RaftHandle) value); return true;
+            case "raftId": ((JGroupsRaftComponent) component).setRaftId((java.lang.String) value); return true;
+            case "stateMachine": ((JGroupsRaftComponent) component).setStateMachine((org.jgroups.protocols.raft.StateMachine) value); return true;
             case "bridgeErrorHandler": ((JGroupsRaftComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((JGroupsRaftComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((JGroupsRaftComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

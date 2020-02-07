@@ -51,6 +51,25 @@ public interface PaxloggingComponentBuilderFactory {
             extends
                 ComponentBuilder<PaxLoggingComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PaxloggingComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * The OSGi BundleContext is automatic injected by Camel.
          * 
          * The option is a: <code>org.osgi.framework.BundleContext</code> type.
@@ -76,25 +95,6 @@ public interface PaxloggingComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default PaxloggingComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class PaxloggingComponentBuilderImpl
@@ -112,9 +112,9 @@ public interface PaxloggingComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((PaxLoggingComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "bundleContext": ((PaxLoggingComponent) component).setBundleContext((org.osgi.framework.BundleContext) value); return true;
             case "basicPropertyBinding": ((PaxLoggingComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((PaxLoggingComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

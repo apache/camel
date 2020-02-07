@@ -49,19 +49,6 @@ public interface SshComponentBuilderFactory {
      */
     interface SshComponentBuilder extends ComponentBuilder<SshComponent> {
         /**
-         * To use the shared SSH configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.ssh.SshConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default SshComponentBuilder configuration(
-                org.apache.camel.component.ssh.SshConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Sets the hostname of the remote SSH server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -70,40 +57,6 @@ public interface SshComponentBuilderFactory {
          */
         default SshComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshComponentBuilder port(int port) {
-            doSetProperty("port", port);
-            return this;
-        }
-        /**
-         * Sets the username to use in logging into the remote SSH server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SshComponentBuilder username(java.lang.String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * Sets the password to use in connecting to remote SSH server. Requires
-         * keyPairProvider to be set to null.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SshComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
@@ -118,6 +71,157 @@ public interface SshComponentBuilderFactory {
          */
         default SshComponentBuilder pollCommand(java.lang.String pollCommand) {
             doSetProperty("pollCommand", pollCommand);
+            return this;
+        }
+        /**
+         * Sets the port number for the remote SSH server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         */
+        default SshComponentBuilder port(int port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
+         * Sets the timeout in milliseconds to wait in establishing the remote
+         * SSH server connection. Defaults to 30000 milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
+         */
+        default SshComponentBuilder timeout(long timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default SshComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default SshComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default SshComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets the channel type to pass to the Channel as part of command
+         * execution. Defaults to exec.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default SshComponentBuilder channelType(java.lang.String channelType) {
+            doSetProperty("channelType", channelType);
+            return this;
+        }
+        /**
+         * To use the shared SSH configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ssh.SshConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default SshComponentBuilder configuration(
+                org.apache.camel.component.ssh.SshConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Sets the shellPrompt to be dropped when response is read after
+         * command execution.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default SshComponentBuilder shellPrompt(java.lang.String shellPrompt) {
+            doSetProperty("shellPrompt", shellPrompt);
+            return this;
+        }
+        /**
+         * Sets the sleep period in milliseconds to wait reading response from
+         * shell prompt. Defaults to 100 milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
+         */
+        default SshComponentBuilder sleepForShellPrompt(long sleepForShellPrompt) {
+            doSetProperty("sleepForShellPrompt", sleepForShellPrompt);
+            return this;
+        }
+        /**
+         * Sets the resource path of the certificate to use for Authentication.
+         * Will use ResourceHelperKeyPairProvider to resolve file based
+         * certificate, and depends on keyType setting.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SshComponentBuilder certResource(java.lang.String certResource) {
+            doSetProperty("certResource", certResource);
+            return this;
+        }
+        /**
+         * Sets the password to use in loading certResource, if certResource is
+         * an encrypted key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SshComponentBuilder certResourcePassword(
+                java.lang.String certResourcePassword) {
+            doSetProperty("certResourcePassword", certResourcePassword);
             return this;
         }
         /**
@@ -148,130 +252,26 @@ public interface SshComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the timeout in milliseconds to wait in establishing the remote
-         * SSH server connection. Defaults to 30000 milliseconds.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: common
-         */
-        default SshComponentBuilder timeout(long timeout) {
-            doSetProperty("timeout", timeout);
-            return this;
-        }
-        /**
-         * Sets the resource path of the certificate to use for Authentication.
-         * Will use ResourceHelperKeyPairProvider to resolve file based
-         * certificate, and depends on keyType setting.
+         * Sets the password to use in connecting to remote SSH server. Requires
+         * keyPairProvider to be set to null.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          */
-        default SshComponentBuilder certResource(java.lang.String certResource) {
-            doSetProperty("certResource", certResource);
+        default SshComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
             return this;
         }
         /**
-         * Sets the password to use in loading certResource, if certResource is
-         * an encrypted key.
+         * Sets the username to use in logging into the remote SSH server.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          */
-        default SshComponentBuilder certResourcePassword(
-                java.lang.String certResourcePassword) {
-            doSetProperty("certResourcePassword", certResourcePassword);
-            return this;
-        }
-        /**
-         * Sets the channel type to pass to the Channel as part of command
-         * execution. Defaults to exec.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default SshComponentBuilder channelType(java.lang.String channelType) {
-            doSetProperty("channelType", channelType);
-            return this;
-        }
-        /**
-         * Sets the shellPrompt to be dropped when response is read after
-         * command execution.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default SshComponentBuilder shellPrompt(java.lang.String shellPrompt) {
-            doSetProperty("shellPrompt", shellPrompt);
-            return this;
-        }
-        /**
-         * Sets the sleep period in milliseconds to wait reading response from
-         * shell prompt. Defaults to 100 milliseconds.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: advanced
-         */
-        default SshComponentBuilder sleepForShellPrompt(long sleepForShellPrompt) {
-            doSetProperty("sleepForShellPrompt", sleepForShellPrompt);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default SshComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default SshComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SshComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default SshComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -291,23 +291,23 @@ public interface SshComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((SshComponent) component).setConfiguration((org.apache.camel.component.ssh.SshConfiguration) value); return true;
             case "host": ((SshComponent) component).setHost((java.lang.String) value); return true;
-            case "port": ((SshComponent) component).setPort((int) value); return true;
-            case "username": ((SshComponent) component).setUsername((java.lang.String) value); return true;
-            case "password": ((SshComponent) component).setPassword((java.lang.String) value); return true;
             case "pollCommand": ((SshComponent) component).setPollCommand((java.lang.String) value); return true;
-            case "keyPairProvider": ((SshComponent) component).setKeyPairProvider((org.apache.sshd.common.keyprovider.KeyPairProvider) value); return true;
-            case "keyType": ((SshComponent) component).setKeyType((java.lang.String) value); return true;
+            case "port": ((SshComponent) component).setPort((int) value); return true;
             case "timeout": ((SshComponent) component).setTimeout((long) value); return true;
-            case "certResource": ((SshComponent) component).setCertResource((java.lang.String) value); return true;
-            case "certResourcePassword": ((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((SshComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((SshComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((SshComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "channelType": ((SshComponent) component).setChannelType((java.lang.String) value); return true;
+            case "configuration": ((SshComponent) component).setConfiguration((org.apache.camel.component.ssh.SshConfiguration) value); return true;
             case "shellPrompt": ((SshComponent) component).setShellPrompt((java.lang.String) value); return true;
             case "sleepForShellPrompt": ((SshComponent) component).setSleepForShellPrompt((long) value); return true;
-            case "basicPropertyBinding": ((SshComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((SshComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((SshComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "certResource": ((SshComponent) component).setCertResource((java.lang.String) value); return true;
+            case "certResourcePassword": ((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
+            case "keyPairProvider": ((SshComponent) component).setKeyPairProvider((org.apache.sshd.common.keyprovider.KeyPairProvider) value); return true;
+            case "keyType": ((SshComponent) component).setKeyType((java.lang.String) value); return true;
+            case "password": ((SshComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": ((SshComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

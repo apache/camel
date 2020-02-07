@@ -51,15 +51,22 @@ public interface SjmsBatchComponentBuilderFactory {
             extends
                 ComponentBuilder<SjmsBatchComponent> {
         /**
-         * A ConnectionFactory is required to enable the SjmsBatchComponent.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default SjmsBatchComponentBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
+        default SjmsBatchComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -82,6 +89,32 @@ public interface SjmsBatchComponentBuilderFactory {
         default SjmsBatchComponentBuilder asyncStartListener(
                 boolean asyncStartListener) {
             doSetProperty("asyncStartListener", asyncStartListener);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default SjmsBatchComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * A ConnectionFactory is required to enable the SjmsBatchComponent.
+         * 
+         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default SjmsBatchComponentBuilder connectionFactory(
+                javax.jms.ConnectionFactory connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -112,39 +145,6 @@ public interface SjmsBatchComponentBuilderFactory {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default SjmsBatchComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SjmsBatchComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class SjmsBatchComponentBuilderImpl
@@ -162,12 +162,12 @@ public interface SjmsBatchComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionFactory": ((SjmsBatchComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "bridgeErrorHandler": ((SjmsBatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "asyncStartListener": ((SjmsBatchComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "basicPropertyBinding": ((SjmsBatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "connectionFactory": ((SjmsBatchComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
             case "recoveryInterval": ((SjmsBatchComponent) component).setRecoveryInterval((int) value); return true;
             case "headerFilterStrategy": ((SjmsBatchComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((SjmsBatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((SjmsBatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

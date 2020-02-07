@@ -51,33 +51,6 @@ public interface MicrometerComponentBuilderFactory {
             extends
                 ComponentBuilder<MicrometerComponent> {
         /**
-         * To use a custom configured MetricRegistry.
-         * 
-         * The option is a:
-         * <code>io.micrometer.core.instrument.MeterRegistry</code> type.
-         * 
-         * Group: advanced
-         */
-        default MicrometerComponentBuilder metricsRegistry(
-                io.micrometer.core.instrument.MeterRegistry metricsRegistry) {
-            doSetProperty("metricsRegistry", metricsRegistry);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MicrometerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -98,6 +71,33 @@ public interface MicrometerComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MicrometerComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom configured MetricRegistry.
+         * 
+         * The option is a:
+         * <code>io.micrometer.core.instrument.MeterRegistry</code> type.
+         * 
+         * Group: advanced
+         */
+        default MicrometerComponentBuilder metricsRegistry(
+                io.micrometer.core.instrument.MeterRegistry metricsRegistry) {
+            doSetProperty("metricsRegistry", metricsRegistry);
+            return this;
+        }
     }
 
     class MicrometerComponentBuilderImpl
@@ -115,9 +115,9 @@ public interface MicrometerComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "metricsRegistry": ((MicrometerComponent) component).setMetricsRegistry((io.micrometer.core.instrument.MeterRegistry) value); return true;
-            case "basicPropertyBinding": ((MicrometerComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MicrometerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MicrometerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "metricsRegistry": ((MicrometerComponent) component).setMetricsRegistry((io.micrometer.core.instrument.MeterRegistry) value); return true;
             default: return false;
             }
         }

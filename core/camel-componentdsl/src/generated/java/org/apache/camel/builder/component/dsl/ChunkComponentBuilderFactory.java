@@ -47,20 +47,6 @@ public interface ChunkComponentBuilderFactory {
      */
     interface ChunkComponentBuilder extends ComponentBuilder<ChunkComponent> {
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ChunkComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -81,6 +67,20 @@ public interface ChunkComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ChunkComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class ChunkComponentBuilderImpl
@@ -98,8 +98,8 @@ public interface ChunkComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "basicPropertyBinding": ((ChunkComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((ChunkComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ChunkComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

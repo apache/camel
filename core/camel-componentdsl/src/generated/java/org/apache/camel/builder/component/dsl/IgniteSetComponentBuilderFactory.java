@@ -51,17 +51,6 @@ public interface IgniteSetComponentBuilderFactory {
             extends
                 ComponentBuilder<IgniteSetComponent> {
         /**
-         * Ignite instance.
-         * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
-         * 
-         * Group: producer
-         */
-        default IgniteSetComponentBuilder ignite(org.apache.ignite.Ignite ignite) {
-            doSetProperty("ignite", ignite);
-            return this;
-        }
-        /**
          * Resource from where to load configuration.
          * 
          * The option is a: <code>java.lang.Object</code> type.
@@ -71,6 +60,17 @@ public interface IgniteSetComponentBuilderFactory {
         default IgniteSetComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
+            return this;
+        }
+        /**
+         * Ignite instance.
+         * 
+         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteSetComponentBuilder ignite(org.apache.ignite.Ignite ignite) {
+            doSetProperty("ignite", ignite);
             return this;
         }
         /**
@@ -85,20 +85,6 @@ public interface IgniteSetComponentBuilderFactory {
         default IgniteSetComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
             doSetProperty("igniteConfiguration", igniteConfiguration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default IgniteSetComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -122,6 +108,20 @@ public interface IgniteSetComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default IgniteSetComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class IgniteSetComponentBuilderImpl
@@ -139,11 +139,11 @@ public interface IgniteSetComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "ignite": ((IgniteSetComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "configurationResource": ((IgniteSetComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "ignite": ((IgniteSetComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "igniteConfiguration": ((IgniteSetComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
-            case "basicPropertyBinding": ((IgniteSetComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((IgniteSetComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((IgniteSetComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

@@ -49,22 +49,6 @@ public interface NettyHttpComponentBuilderFactory {
             extends
                 ComponentBuilder<NettyHttpComponent> {
         /**
-         * To use a custom
-         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
-         * to/from Netty and Camel Message API.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default NettyHttpComponentBuilder nettyHttpBinding(
-                org.apache.camel.component.netty.http.NettyHttpBinding nettyHttpBinding) {
-            doSetProperty("nettyHttpBinding", nettyHttpBinding);
-            return this;
-        }
-        /**
          * To use the NettyConfiguration as configuration when creating
          * endpoints.
          * 
@@ -79,45 +63,35 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * headers.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * 
-         * Group: advanced
-         */
-        default NettyHttpComponentBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Refers to a
-         * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration
-         * for configuring secure web resources.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
-         * 
-         * Group: security
-         */
-        default NettyHttpComponentBuilder securityConfiguration(
-                org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration securityConfiguration) {
-            doSetProperty("securityConfiguration", securityConfiguration);
-            return this;
-        }
-        /**
-         * Enable usage of global SSL context parameters.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: security
+         * Group: consumer
          */
-        default NettyHttpComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+        default NettyHttpComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To use the given EventExecutorGroup.
+         * 
+         * The option is a:
+         * <code>io.netty.util.concurrent.EventExecutorGroup</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default NettyHttpComponentBuilder executorService(
+                io.netty.util.concurrent.EventExecutorGroup executorService) {
+            doSetProperty("executorService", executorService);
             return this;
         }
         /**
@@ -137,46 +111,6 @@ public interface NettyHttpComponentBuilderFactory {
          */
         default NettyHttpComponentBuilder maximumPoolSize(int maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
-            return this;
-        }
-        /**
-         * To use the given EventExecutorGroup.
-         * 
-         * The option is a:
-         * <code>io.netty.util.concurrent.EventExecutorGroup</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default NettyHttpComponentBuilder executorService(
-                io.netty.util.concurrent.EventExecutorGroup executorService) {
-            doSetProperty("executorService", executorService);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default NettyHttpComponentBuilder sslContextParameters(
-                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default NettyHttpComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -201,22 +135,88 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default NettyHttpComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default NettyHttpComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * headers.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default NettyHttpComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
+         * to/from Netty and Camel Message API.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default NettyHttpComponentBuilder nettyHttpBinding(
+                org.apache.camel.component.netty.http.NettyHttpBinding nettyHttpBinding) {
+            doSetProperty("nettyHttpBinding", nettyHttpBinding);
+            return this;
+        }
+        /**
+         * Refers to a
+         * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration
+         * for configuring secure web resources.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
+         * 
+         * Group: security
+         */
+        default NettyHttpComponentBuilder securityConfiguration(
+                org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default NettyHttpComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default NettyHttpComponentBuilder useGlobalSslContextParameters(
+                boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
     }
@@ -236,17 +236,17 @@ public interface NettyHttpComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "nettyHttpBinding": ((NettyHttpComponent) component).setNettyHttpBinding((org.apache.camel.component.netty.http.NettyHttpBinding) value); return true;
             case "configuration": ((NettyHttpComponent) component).setConfiguration((org.apache.camel.component.netty.http.NettyHttpConfiguration) value); return true;
-            case "headerFilterStrategy": ((NettyHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "securityConfiguration": ((NettyHttpComponent) component).setSecurityConfiguration((org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration) value); return true;
-            case "useGlobalSslContextParameters": ((NettyHttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "maximumPoolSize": ((NettyHttpComponent) component).setMaximumPoolSize((int) value); return true;
-            case "executorService": ((NettyHttpComponent) component).setExecutorService((io.netty.util.concurrent.EventExecutorGroup) value); return true;
-            case "sslContextParameters": ((NettyHttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "basicPropertyBinding": ((NettyHttpComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((NettyHttpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((NettyHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "executorService": ((NettyHttpComponent) component).setExecutorService((io.netty.util.concurrent.EventExecutorGroup) value); return true;
+            case "maximumPoolSize": ((NettyHttpComponent) component).setMaximumPoolSize((int) value); return true;
+            case "lazyStartProducer": ((NettyHttpComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((NettyHttpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "headerFilterStrategy": ((NettyHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "nettyHttpBinding": ((NettyHttpComponent) component).setNettyHttpBinding((org.apache.camel.component.netty.http.NettyHttpBinding) value); return true;
+            case "securityConfiguration": ((NettyHttpComponent) component).setSecurityConfiguration((org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration) value); return true;
+            case "sslContextParameters": ((NettyHttpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((NettyHttpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

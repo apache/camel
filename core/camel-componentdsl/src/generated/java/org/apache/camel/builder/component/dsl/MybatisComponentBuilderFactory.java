@@ -51,19 +51,6 @@ public interface MybatisComponentBuilderFactory {
             extends
                 ComponentBuilder<MyBatisComponent> {
         /**
-         * To use the SqlSessionFactory.
-         * 
-         * The option is a:
-         * <code>org.apache.ibatis.session.SqlSessionFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default MybatisComponentBuilder sqlSessionFactory(
-                org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory) {
-            doSetProperty("sqlSessionFactory", sqlSessionFactory);
-            return this;
-        }
-        /**
          * Location of MyBatis xml configuration file. The default value is:
          * SqlMapConfig.xml loaded from the classpath.
          * 
@@ -78,17 +65,22 @@ public interface MybatisComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default MybatisComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MybatisComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -113,22 +105,30 @@ public interface MybatisComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default MybatisComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default MybatisComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the SqlSessionFactory.
+         * 
+         * The option is a:
+         * <code>org.apache.ibatis.session.SqlSessionFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default MybatisComponentBuilder sqlSessionFactory(
+                org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory) {
+            doSetProperty("sqlSessionFactory", sqlSessionFactory);
             return this;
         }
     }
@@ -148,11 +148,11 @@ public interface MybatisComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "sqlSessionFactory": ((MyBatisComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
             case "configurationUri": ((MyBatisComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((MyBatisComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((MyBatisComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((MyBatisComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((MyBatisComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MyBatisComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "sqlSessionFactory": ((MyBatisComponent) component).setSqlSessionFactory((org.apache.ibatis.session.SqlSessionFactory) value); return true;
             default: return false;
             }
         }

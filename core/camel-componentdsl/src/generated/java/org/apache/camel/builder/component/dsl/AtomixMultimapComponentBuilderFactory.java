@@ -51,6 +51,18 @@ public interface AtomixMultimapComponentBuilderFactory {
             extends
                 ComponentBuilder<AtomixMultiMapComponent> {
         /**
+         * The shared AtomixClient instance.
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: producer
+         */
+        default AtomixMultimapComponentBuilder atomix(
+                io.atomix.AtomixClient atomix) {
+            doSetProperty("atomix", atomix);
+            return this;
+        }
+        /**
          * The shared component configuration.
          * 
          * The option is a:
@@ -64,32 +76,6 @@ public interface AtomixMultimapComponentBuilderFactory {
             return this;
         }
         /**
-         * The shared AtomixClient instance.
-         * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
-         * 
-         * Group: producer
-         */
-        default AtomixMultimapComponentBuilder atomix(
-                io.atomix.AtomixClient atomix) {
-            doSetProperty("atomix", atomix);
-            return this;
-        }
-        /**
-         * The nodes the AtomixClient should connect to.
-         * 
-         * The option is a:
-         * <code>java.util.List<io.atomix.catalyst.transport.Address></code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default AtomixMultimapComponentBuilder nodes(
-                java.util.List<io.atomix.catalyst.transport.Address> nodes) {
-            doSetProperty("nodes", nodes);
-            return this;
-        }
-        /**
          * The path to the AtomixClient configuration.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -99,20 +85,6 @@ public interface AtomixMultimapComponentBuilderFactory {
         default AtomixMultimapComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AtomixMultimapComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -136,6 +108,34 @@ public interface AtomixMultimapComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The nodes the AtomixClient should connect to.
+         * 
+         * The option is a:
+         * <code>java.util.List<io.atomix.catalyst.transport.Address></code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AtomixMultimapComponentBuilder nodes(
+                java.util.List<io.atomix.catalyst.transport.Address> nodes) {
+            doSetProperty("nodes", nodes);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AtomixMultimapComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class AtomixMultimapComponentBuilderImpl
@@ -153,12 +153,12 @@ public interface AtomixMultimapComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((AtomixMultiMapComponent) component).setConfiguration((org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration) value); return true;
             case "atomix": ((AtomixMultiMapComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
-            case "nodes": ((AtomixMultiMapComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "configuration": ((AtomixMultiMapComponent) component).setConfiguration((org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration) value); return true;
             case "configurationUri": ((AtomixMultiMapComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((AtomixMultiMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((AtomixMultiMapComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "nodes": ((AtomixMultiMapComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "basicPropertyBinding": ((AtomixMultiMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

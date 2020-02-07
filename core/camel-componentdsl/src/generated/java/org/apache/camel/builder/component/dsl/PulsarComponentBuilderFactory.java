@@ -49,32 +49,6 @@ public interface PulsarComponentBuilderFactory {
             extends
                 ComponentBuilder<PulsarComponent> {
         /**
-         * The pulsar auto configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.pulsar.utils.AutoConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default PulsarComponentBuilder autoConfiguration(
-                org.apache.camel.component.pulsar.utils.AutoConfiguration autoConfiguration) {
-            doSetProperty("autoConfiguration", autoConfiguration);
-            return this;
-        }
-        /**
-         * The pulsar client.
-         * 
-         * The option is a:
-         * <code>org.apache.pulsar.client.api.PulsarClient</code> type.
-         * 
-         * Group: advanced
-         */
-        default PulsarComponentBuilder pulsarClient(
-                org.apache.pulsar.client.api.PulsarClient pulsarClient) {
-            doSetProperty("pulsarClient", pulsarClient);
-            return this;
-        }
-        /**
          * Whether to allow manual message acknowledgements. If this option is
          * enabled, then messages are not immediately acknowledged after being
          * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
@@ -93,6 +67,25 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PulsarComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * Provide a factory to create an alternate implementation of
          * PulsarMessageReceipt.
          * 
@@ -104,20 +97,6 @@ public interface PulsarComponentBuilderFactory {
         default PulsarComponentBuilder pulsarMessageReceiptFactory(
                 org.apache.camel.component.pulsar.PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
             doSetProperty("pulsarMessageReceiptFactory", pulsarMessageReceiptFactory);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default PulsarComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -142,22 +121,43 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * The pulsar auto configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pulsar.utils.AutoConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default PulsarComponentBuilder autoConfiguration(
+                org.apache.camel.component.pulsar.utils.AutoConfiguration autoConfiguration) {
+            doSetProperty("autoConfiguration", autoConfiguration);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default PulsarComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default PulsarComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The pulsar client.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.PulsarClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default PulsarComponentBuilder pulsarClient(
+                org.apache.pulsar.client.api.PulsarClient pulsarClient) {
+            doSetProperty("pulsarClient", pulsarClient);
             return this;
         }
     }
@@ -177,13 +177,13 @@ public interface PulsarComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoConfiguration": ((PulsarComponent) component).setAutoConfiguration((org.apache.camel.component.pulsar.utils.AutoConfiguration) value); return true;
-            case "pulsarClient": ((PulsarComponent) component).setPulsarClient((org.apache.pulsar.client.api.PulsarClient) value); return true;
             case "allowManualAcknowledgement": ((PulsarComponent) component).setAllowManualAcknowledgement((boolean) value); return true;
-            case "pulsarMessageReceiptFactory": ((PulsarComponent) component).setPulsarMessageReceiptFactory((org.apache.camel.component.pulsar.PulsarMessageReceiptFactory) value); return true;
-            case "basicPropertyBinding": ((PulsarComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((PulsarComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((PulsarComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "pulsarMessageReceiptFactory": ((PulsarComponent) component).setPulsarMessageReceiptFactory((org.apache.camel.component.pulsar.PulsarMessageReceiptFactory) value); return true;
+            case "lazyStartProducer": ((PulsarComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "autoConfiguration": ((PulsarComponent) component).setAutoConfiguration((org.apache.camel.component.pulsar.utils.AutoConfiguration) value); return true;
+            case "basicPropertyBinding": ((PulsarComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "pulsarClient": ((PulsarComponent) component).setPulsarClient((org.apache.pulsar.client.api.PulsarClient) value); return true;
             default: return false;
             }
         }

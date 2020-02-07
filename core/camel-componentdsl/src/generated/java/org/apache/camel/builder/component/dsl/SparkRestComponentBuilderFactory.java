@@ -51,15 +51,22 @@ public interface SparkRestComponentBuilderFactory {
             extends
                 ComponentBuilder<SparkComponent> {
         /**
-         * Port number. Will by default use 4567.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 4567
+         * Default: false
          * Group: consumer
          */
-        default SparkRestComponentBuilder port(int port) {
-            doSetProperty("port", port);
+        default SparkRestComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -76,14 +83,29 @@ public interface SparkRestComponentBuilderFactory {
             return this;
         }
         /**
-         * Minimum number of threads in Spark thread-pool (shared globally).
+         * Port number. Will by default use 4567.
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4567
+         * Group: consumer
+         */
+        default SparkRestComponentBuilder port(int port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
          * Group: advanced
          */
-        default SparkRestComponentBuilder minThreads(int minThreads) {
-            doSetProperty("minThreads", minThreads);
+        default SparkRestComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -95,6 +117,44 @@ public interface SparkRestComponentBuilderFactory {
          */
         default SparkRestComponentBuilder maxThreads(int maxThreads) {
             doSetProperty("maxThreads", maxThreads);
+            return this;
+        }
+        /**
+         * Minimum number of threads in Spark thread-pool (shared globally).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default SparkRestComponentBuilder minThreads(int minThreads) {
+            doSetProperty("minThreads", minThreads);
+            return this;
+        }
+        /**
+         * To use a custom SparkBinding to map to/from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sparkrest.SparkBinding</code> type.
+         * 
+         * Group: advanced
+         */
+        default SparkRestComponentBuilder sparkBinding(
+                org.apache.camel.component.sparkrest.SparkBinding sparkBinding) {
+            doSetProperty("sparkBinding", sparkBinding);
+            return this;
+        }
+        /**
+         * To use the shared SparkConfiguration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sparkrest.SparkConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default SparkRestComponentBuilder sparkConfiguration(
+                org.apache.camel.component.sparkrest.SparkConfiguration sparkConfiguration) {
+            doSetProperty("sparkConfiguration", sparkConfiguration);
             return this;
         }
         /**
@@ -157,66 +217,6 @@ public interface SparkRestComponentBuilderFactory {
             doSetProperty("truststorePassword", truststorePassword);
             return this;
         }
-        /**
-         * To use the shared SparkConfiguration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sparkrest.SparkConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default SparkRestComponentBuilder sparkConfiguration(
-                org.apache.camel.component.sparkrest.SparkConfiguration sparkConfiguration) {
-            doSetProperty("sparkConfiguration", sparkConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom SparkBinding to map to/from Camel message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sparkrest.SparkBinding</code> type.
-         * 
-         * Group: advanced
-         */
-        default SparkRestComponentBuilder sparkBinding(
-                org.apache.camel.component.sparkrest.SparkBinding sparkBinding) {
-            doSetProperty("sparkBinding", sparkBinding);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default SparkRestComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default SparkRestComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class SparkRestComponentBuilderImpl
@@ -234,19 +234,19 @@ public interface SparkRestComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "port": ((SparkComponent) component).setPort((int) value); return true;
+            case "bridgeErrorHandler": ((SparkComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "ipAddress": ((SparkComponent) component).setIpAddress((java.lang.String) value); return true;
-            case "minThreads": ((SparkComponent) component).setMinThreads((int) value); return true;
+            case "port": ((SparkComponent) component).setPort((int) value); return true;
+            case "basicPropertyBinding": ((SparkComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "maxThreads": ((SparkComponent) component).setMaxThreads((int) value); return true;
+            case "minThreads": ((SparkComponent) component).setMinThreads((int) value); return true;
+            case "sparkBinding": ((SparkComponent) component).setSparkBinding((org.apache.camel.component.sparkrest.SparkBinding) value); return true;
+            case "sparkConfiguration": ((SparkComponent) component).setSparkConfiguration((org.apache.camel.component.sparkrest.SparkConfiguration) value); return true;
             case "timeOutMillis": ((SparkComponent) component).setTimeOutMillis((int) value); return true;
             case "keystoreFile": ((SparkComponent) component).setKeystoreFile((java.lang.String) value); return true;
             case "keystorePassword": ((SparkComponent) component).setKeystorePassword((java.lang.String) value); return true;
             case "truststoreFile": ((SparkComponent) component).setTruststoreFile((java.lang.String) value); return true;
             case "truststorePassword": ((SparkComponent) component).setTruststorePassword((java.lang.String) value); return true;
-            case "sparkConfiguration": ((SparkComponent) component).setSparkConfiguration((org.apache.camel.component.sparkrest.SparkConfiguration) value); return true;
-            case "sparkBinding": ((SparkComponent) component).setSparkBinding((org.apache.camel.component.sparkrest.SparkBinding) value); return true;
-            case "basicPropertyBinding": ((SparkComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((SparkComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

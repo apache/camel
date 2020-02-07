@@ -49,20 +49,6 @@ public interface AwsDdbComponentBuilderFactory {
      */
     interface AwsDdbComponentBuilder extends ComponentBuilder<DdbComponent> {
         /**
-         * The AWS DDB default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.ddb.DdbConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsDdbComponentBuilder configuration(
-                org.apache.camel.component.aws.ddb.DdbConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -71,42 +57,6 @@ public interface AwsDdbComponentBuilderFactory {
          */
         default AwsDdbComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsDdbComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which DDB client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsDdbComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsDdbComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -130,6 +80,56 @@ public interface AwsDdbComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which DDB client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsDdbComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsDdbComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsDdbComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS DDB default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ddb.DdbConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AwsDdbComponentBuilder configuration(
+                org.apache.camel.component.aws.ddb.DdbConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsDdbComponentBuilderImpl
@@ -147,12 +147,12 @@ public interface AwsDdbComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((DdbComponent) component).setConfiguration((org.apache.camel.component.aws.ddb.DdbConfiguration) value); return true;
             case "accessKey": ((DdbComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((DdbComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((DdbComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((DdbComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((DdbComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((DdbComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((DdbComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((DdbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((DdbComponent) component).setConfiguration((org.apache.camel.component.aws.ddb.DdbConfiguration) value); return true;
             default: return false;
             }
         }

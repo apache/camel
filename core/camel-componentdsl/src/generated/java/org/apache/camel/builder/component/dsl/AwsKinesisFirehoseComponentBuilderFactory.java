@@ -51,19 +51,6 @@ public interface AwsKinesisFirehoseComponentBuilderFactory {
             extends
                 ComponentBuilder<KinesisFirehoseComponent> {
         /**
-         * The AWS Kinesis Firehose default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsKinesisFirehoseComponentBuilder configuration(
-                org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -73,44 +60,6 @@ public interface AwsKinesisFirehoseComponentBuilderFactory {
         default AwsKinesisFirehoseComponentBuilder accessKey(
                 java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsKinesisFirehoseComponentBuilder secretKey(
-                java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Region.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsKinesisFirehoseComponentBuilder region(
-                java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsKinesisFirehoseComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -134,6 +83,57 @@ public interface AwsKinesisFirehoseComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Amazon AWS Region.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKinesisFirehoseComponentBuilder region(
+                java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKinesisFirehoseComponentBuilder secretKey(
+                java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsKinesisFirehoseComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS Kinesis Firehose default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsKinesisFirehoseComponentBuilder configuration(
+                org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsKinesisFirehoseComponentBuilderImpl
@@ -151,12 +151,12 @@ public interface AwsKinesisFirehoseComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((KinesisFirehoseComponent) component).setConfiguration((org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration) value); return true;
             case "accessKey": ((KinesisFirehoseComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((KinesisFirehoseComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((KinesisFirehoseComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((KinesisFirehoseComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((KinesisFirehoseComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((KinesisFirehoseComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((KinesisFirehoseComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((KinesisFirehoseComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((KinesisFirehoseComponent) component).setConfiguration((org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration) value); return true;
             default: return false;
             }
         }

@@ -49,29 +49,22 @@ public interface GoogleMailStreamComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleMailStreamComponent> {
         /**
-         * The configuration.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default GoogleMailStreamComponentBuilder configuration(
-                org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * The client Factory.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.mail.GoogleMailClientFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default GoogleMailStreamComponentBuilder clientFactory(
-                org.apache.camel.component.google.mail.GoogleMailClientFactory clientFactory) {
-            doSetProperty("clientFactory", clientFactory);
+        default GoogleMailStreamComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -89,22 +82,29 @@ public interface GoogleMailStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * The client Factory.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.google.mail.GoogleMailClientFactory</code> type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default GoogleMailStreamComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default GoogleMailStreamComponentBuilder clientFactory(
+                org.apache.camel.component.google.mail.GoogleMailClientFactory clientFactory) {
+            doSetProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
+         * The configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default GoogleMailStreamComponentBuilder configuration(
+                org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -124,10 +124,10 @@ public interface GoogleMailStreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((GoogleMailStreamComponent) component).setConfiguration((org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration) value); return true;
-            case "clientFactory": ((GoogleMailStreamComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
-            case "basicPropertyBinding": ((GoogleMailStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((GoogleMailStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((GoogleMailStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "clientFactory": ((GoogleMailStreamComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
+            case "configuration": ((GoogleMailStreamComponent) component).setConfiguration((org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration) value); return true;
             default: return false;
             }
         }

@@ -51,19 +51,6 @@ public interface JcacheComponentBuilderFactory {
             extends
                 ComponentBuilder<JCacheComponent> {
         /**
-         * The fully qualified class name of the
-         * javax.cache.spi.CachingProvider.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcacheComponentBuilder cachingProvider(
-                java.lang.String cachingProvider) {
-            doSetProperty("cachingProvider", cachingProvider);
-            return this;
-        }
-        /**
          * A Configuration for the Cache.
          * 
          * The option is a: <code>javax.cache.configuration.Configuration</code>
@@ -102,6 +89,19 @@ public interface JcacheComponentBuilderFactory {
             return this;
         }
         /**
+         * The fully qualified class name of the
+         * javax.cache.spi.CachingProvider.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default JcacheComponentBuilder cachingProvider(
+                java.lang.String cachingProvider) {
+            doSetProperty("cachingProvider", cachingProvider);
+            return this;
+        }
+        /**
          * An implementation specific URI for the CacheManager.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -114,17 +114,22 @@ public interface JcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default JcacheComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JcacheComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -149,22 +154,17 @@ public interface JcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default JcacheComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default JcacheComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -184,14 +184,14 @@ public interface JcacheComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "cachingProvider": ((JCacheComponent) component).setCachingProvider((java.lang.String) value); return true;
             case "cacheConfiguration": ((JCacheComponent) component).setCacheConfiguration((javax.cache.configuration.Configuration) value); return true;
             case "cacheConfigurationProperties": ((JCacheComponent) component).setCacheConfigurationProperties((java.util.Map) value); return true;
             case "cacheConfigurationPropertiesRef": ((JCacheComponent) component).setCacheConfigurationPropertiesRef((java.lang.String) value); return true;
+            case "cachingProvider": ((JCacheComponent) component).setCachingProvider((java.lang.String) value); return true;
             case "configurationUri": ((JCacheComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((JCacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((JCacheComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((JCacheComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((JCacheComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((JCacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

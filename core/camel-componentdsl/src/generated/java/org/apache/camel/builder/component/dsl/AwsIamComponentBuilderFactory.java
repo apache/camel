@@ -47,20 +47,6 @@ public interface AwsIamComponentBuilderFactory {
      */
     interface AwsIamComponentBuilder extends ComponentBuilder<IAMComponent> {
         /**
-         * The AWS IAM default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.iam.IAMConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsIamComponentBuilder configuration(
-                org.apache.camel.component.aws.iam.IAMConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -69,42 +55,6 @@ public interface AwsIamComponentBuilderFactory {
          */
         default AwsIamComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsIamComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which IAM client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsIamComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsIamComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -128,6 +78,56 @@ public interface AwsIamComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which IAM client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsIamComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS IAM default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.iam.IAMConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AwsIamComponentBuilder configuration(
+                org.apache.camel.component.aws.iam.IAMConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsIamComponentBuilderImpl
@@ -145,12 +145,12 @@ public interface AwsIamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;
             case "accessKey": ((IAMComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((IAMComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((IAMComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((IAMComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((IAMComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((IAMComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;
             default: return false;
             }
         }

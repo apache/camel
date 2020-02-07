@@ -51,6 +51,39 @@ public interface HazelcastInstanceComponentBuilderFactory {
             extends
                 ComponentBuilder<HazelcastInstanceComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default HazelcastInstanceComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default HazelcastInstanceComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
@@ -80,39 +113,6 @@ public interface HazelcastInstanceComponentBuilderFactory {
             doSetProperty("hazelcastMode", hazelcastMode);
             return this;
         }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default HazelcastInstanceComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default HazelcastInstanceComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class HazelcastInstanceComponentBuilderImpl
@@ -130,10 +130,10 @@ public interface HazelcastInstanceComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((HazelcastInstanceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((HazelcastInstanceComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "hazelcastInstance": ((HazelcastInstanceComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
             case "hazelcastMode": ((HazelcastInstanceComponent) component).setHazelcastMode((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((HazelcastInstanceComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "bridgeErrorHandler": ((HazelcastInstanceComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

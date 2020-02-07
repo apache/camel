@@ -51,6 +51,25 @@ public interface DirectComponentBuilderFactory {
             extends
                 ComponentBuilder<DirectComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default DirectComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * If sending a message to a direct endpoint which has no active
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
@@ -62,6 +81,27 @@ public interface DirectComponentBuilderFactory {
          */
         default DirectComponentBuilder block(boolean block) {
             doSetProperty("block", block);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default DirectComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -90,46 +130,6 @@ public interface DirectComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default DirectComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default DirectComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class DirectComponentBuilderImpl
@@ -147,11 +147,11 @@ public interface DirectComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((DirectComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "block": ((DirectComponent) component).setBlock((boolean) value); return true;
+            case "lazyStartProducer": ((DirectComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeout": ((DirectComponent) component).setTimeout((long) value); return true;
             case "basicPropertyBinding": ((DirectComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((DirectComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((DirectComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

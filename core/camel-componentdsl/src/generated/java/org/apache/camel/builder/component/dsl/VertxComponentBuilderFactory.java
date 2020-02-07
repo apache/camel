@@ -49,18 +49,6 @@ public interface VertxComponentBuilderFactory {
      */
     interface VertxComponentBuilder extends ComponentBuilder<VertxComponent> {
         /**
-         * To use a custom VertxFactory implementation.
-         * 
-         * The option is a: <code>io.vertx.core.spi.VertxFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default VertxComponentBuilder vertxFactory(
-                io.vertx.core.spi.VertxFactory vertxFactory) {
-            doSetProperty("vertxFactory", vertxFactory);
-            return this;
-        }
-        /**
          * Hostname for creating an embedded clustered EventBus.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -83,15 +71,16 @@ public interface VertxComponentBuilderFactory {
             return this;
         }
         /**
-         * Options to use for creating vertx.
+         * Timeout in seconds to wait for clustered Vertx EventBus to be ready.
+         * The default value is 60.
          * 
-         * The option is a: <code>io.vertx.core.VertxOptions</code> type.
+         * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
-        default VertxComponentBuilder vertxOptions(
-                io.vertx.core.VertxOptions vertxOptions) {
-            doSetProperty("vertxOptions", vertxOptions);
+        default VertxComponentBuilder timeout(int timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -107,30 +96,34 @@ public interface VertxComponentBuilderFactory {
             return this;
         }
         /**
-         * Timeout in seconds to wait for clustered Vertx EventBus to be ready.
-         * The default value is 60.
+         * Options to use for creating vertx.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>io.vertx.core.VertxOptions</code> type.
          * 
-         * Default: 60
          * Group: common
          */
-        default VertxComponentBuilder timeout(int timeout) {
-            doSetProperty("timeout", timeout);
+        default VertxComponentBuilder vertxOptions(
+                io.vertx.core.VertxOptions vertxOptions) {
+            doSetProperty("vertxOptions", vertxOptions);
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default VertxComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default VertxComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -155,22 +148,29 @@ public interface VertxComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default VertxComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default VertxComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom VertxFactory implementation.
+         * 
+         * The option is a: <code>io.vertx.core.spi.VertxFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default VertxComponentBuilder vertxFactory(
+                io.vertx.core.spi.VertxFactory vertxFactory) {
+            doSetProperty("vertxFactory", vertxFactory);
             return this;
         }
     }
@@ -190,15 +190,15 @@ public interface VertxComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "vertxFactory": ((VertxComponent) component).setVertxFactory((io.vertx.core.spi.VertxFactory) value); return true;
             case "host": ((VertxComponent) component).setHost((java.lang.String) value); return true;
             case "port": ((VertxComponent) component).setPort((int) value); return true;
-            case "vertxOptions": ((VertxComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
-            case "vertx": ((VertxComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
             case "timeout": ((VertxComponent) component).setTimeout((int) value); return true;
-            case "basicPropertyBinding": ((VertxComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((VertxComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "vertx": ((VertxComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
+            case "vertxOptions": ((VertxComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
             case "bridgeErrorHandler": ((VertxComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((VertxComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((VertxComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "vertxFactory": ((VertxComponent) component).setVertxFactory((io.vertx.core.spi.VertxFactory) value); return true;
             default: return false;
             }
         }

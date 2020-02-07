@@ -49,33 +49,6 @@ public interface JoltComponentBuilderFactory {
      */
     interface JoltComponentBuilder extends ComponentBuilder<JoltComponent> {
         /**
-         * Explicitly sets the Transform to use. If not set a Transform
-         * specified by the transformDsl will be created.
-         * 
-         * The option is a: <code>com.bazaarvoice.jolt.Transform</code> type.
-         * 
-         * Group: advanced
-         */
-        default JoltComponentBuilder transform(
-                com.bazaarvoice.jolt.Transform transform) {
-            doSetProperty("transform", transform);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default JoltComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -95,6 +68,33 @@ public interface JoltComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default JoltComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Explicitly sets the Transform to use. If not set a Transform
+         * specified by the transformDsl will be created.
+         * 
+         * The option is a: <code>com.bazaarvoice.jolt.Transform</code> type.
+         * 
+         * Group: advanced
+         */
+        default JoltComponentBuilder transform(
+                com.bazaarvoice.jolt.Transform transform) {
+            doSetProperty("transform", transform);
+            return this;
+        }
     }
 
     class JoltComponentBuilderImpl
@@ -112,9 +112,9 @@ public interface JoltComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "transform": ((JoltComponent) component).setTransform((com.bazaarvoice.jolt.Transform) value); return true;
-            case "basicPropertyBinding": ((JoltComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((JoltComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((JoltComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "transform": ((JoltComponent) component).setTransform((com.bazaarvoice.jolt.Transform) value); return true;
             default: return false;
             }
         }

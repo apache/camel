@@ -51,42 +51,6 @@ public interface QuickfixComponentBuilderFactory {
             extends
                 ComponentBuilder<QuickfixjComponent> {
         /**
-         * To use the given MessageFactory.
-         * 
-         * The option is a: <code>quickfix.MessageFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default QuickfixComponentBuilder messageFactory(
-                quickfix.MessageFactory messageFactory) {
-            doSetProperty("messageFactory", messageFactory);
-            return this;
-        }
-        /**
-         * To use the given LogFactory.
-         * 
-         * The option is a: <code>quickfix.LogFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default QuickfixComponentBuilder logFactory(
-                quickfix.LogFactory logFactory) {
-            doSetProperty("logFactory", logFactory);
-            return this;
-        }
-        /**
-         * To use the given MessageStoreFactory.
-         * 
-         * The option is a: <code>quickfix.MessageStoreFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default QuickfixComponentBuilder messageStoreFactory(
-                quickfix.MessageStoreFactory messageStoreFactory) {
-            doSetProperty("messageStoreFactory", messageStoreFactory);
-            return this;
-        }
-        /**
          * To use the given map of pre configured QuickFix configurations mapped
          * to the key.
          * 
@@ -116,17 +80,22 @@ public interface QuickfixComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default QuickfixComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default QuickfixComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -151,22 +120,53 @@ public interface QuickfixComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default QuickfixComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default QuickfixComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the given LogFactory.
+         * 
+         * The option is a: <code>quickfix.LogFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default QuickfixComponentBuilder logFactory(
+                quickfix.LogFactory logFactory) {
+            doSetProperty("logFactory", logFactory);
+            return this;
+        }
+        /**
+         * To use the given MessageFactory.
+         * 
+         * The option is a: <code>quickfix.MessageFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default QuickfixComponentBuilder messageFactory(
+                quickfix.MessageFactory messageFactory) {
+            doSetProperty("messageFactory", messageFactory);
+            return this;
+        }
+        /**
+         * To use the given MessageStoreFactory.
+         * 
+         * The option is a: <code>quickfix.MessageStoreFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default QuickfixComponentBuilder messageStoreFactory(
+                quickfix.MessageStoreFactory messageStoreFactory) {
+            doSetProperty("messageStoreFactory", messageStoreFactory);
             return this;
         }
     }
@@ -186,14 +186,14 @@ public interface QuickfixComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "messageFactory": ((QuickfixjComponent) component).setMessageFactory((quickfix.MessageFactory) value); return true;
-            case "logFactory": ((QuickfixjComponent) component).setLogFactory((quickfix.LogFactory) value); return true;
-            case "messageStoreFactory": ((QuickfixjComponent) component).setMessageStoreFactory((quickfix.MessageStoreFactory) value); return true;
             case "configurations": ((QuickfixjComponent) component).setConfigurations((java.util.Map<java.lang.String, org.apache.camel.component.quickfixj.QuickfixjConfiguration>) value); return true;
             case "lazyCreateEngines": ((QuickfixjComponent) component).setLazyCreateEngines((boolean) value); return true;
-            case "basicPropertyBinding": ((QuickfixjComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((QuickfixjComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((QuickfixjComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((QuickfixjComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((QuickfixjComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "logFactory": ((QuickfixjComponent) component).setLogFactory((quickfix.LogFactory) value); return true;
+            case "messageFactory": ((QuickfixjComponent) component).setMessageFactory((quickfix.MessageFactory) value); return true;
+            case "messageStoreFactory": ((QuickfixjComponent) component).setMessageStoreFactory((quickfix.MessageStoreFactory) value); return true;
             default: return false;
             }
         }

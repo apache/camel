@@ -51,6 +51,25 @@ public interface RestEndpointComponentBuilderFactory {
             extends
                 ComponentBuilder<RestComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default RestEndpointComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * The Camel Rest component to use for (consumer) the REST transport,
          * such as jetty, servlet, undertow. If no component has been explicit
          * configured, then Camel will lookup if there is a Camel component that
@@ -68,20 +87,15 @@ public interface RestEndpointComponentBuilderFactory {
             return this;
         }
         /**
-         * The Camel Rest component to use for (producer) the REST transport,
-         * such as http, undertow. If no component has been explicit configured,
-         * then Camel will lookup if there is a Camel component that integrates
-         * with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory
-         * is registered in the registry. If either one is found, then that is
-         * being used.
+         * The swagger api doc resource to use. The resource is loaded from
+         * classpath by default and must be in JSon format.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
-        default RestEndpointComponentBuilder producerComponentName(
-                java.lang.String producerComponentName) {
-            doSetProperty("producerComponentName", producerComponentName);
+        default RestEndpointComponentBuilder apiDoc(java.lang.String apiDoc) {
+            doSetProperty("apiDoc", apiDoc);
             return this;
         }
         /**
@@ -103,18 +117,6 @@ public interface RestEndpointComponentBuilderFactory {
             return this;
         }
         /**
-         * The swagger api doc resource to use. The resource is loaded from
-         * classpath by default and must be in JSon format.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default RestEndpointComponentBuilder apiDoc(java.lang.String apiDoc) {
-            doSetProperty("apiDoc", apiDoc);
-            return this;
-        }
-        /**
          * Host and port of HTTP service to use (override host in swagger
          * schema).
          * 
@@ -124,20 +126,6 @@ public interface RestEndpointComponentBuilderFactory {
          */
         default RestEndpointComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default RestEndpointComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -162,22 +150,34 @@ public interface RestEndpointComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * The Camel Rest component to use for (producer) the REST transport,
+         * such as http, undertow. If no component has been explicit configured,
+         * then Camel will lookup if there is a Camel component that integrates
+         * with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory
+         * is registered in the registry. If either one is found, then that is
+         * being used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default RestEndpointComponentBuilder producerComponentName(
+                java.lang.String producerComponentName) {
+            doSetProperty("producerComponentName", producerComponentName);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default RestEndpointComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default RestEndpointComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -197,14 +197,14 @@ public interface RestEndpointComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "consumerComponentName": ((RestComponent) component).setConsumerComponentName((java.lang.String) value); return true;
-            case "producerComponentName": ((RestComponent) component).setProducerComponentName((java.lang.String) value); return true;
-            case "componentName": ((RestComponent) component).setComponentName((java.lang.String) value); return true;
-            case "apiDoc": ((RestComponent) component).setApiDoc((java.lang.String) value); return true;
-            case "host": ((RestComponent) component).setHost((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((RestComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((RestComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((RestComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "consumerComponentName": ((RestComponent) component).setConsumerComponentName((java.lang.String) value); return true;
+            case "apiDoc": ((RestComponent) component).setApiDoc((java.lang.String) value); return true;
+            case "componentName": ((RestComponent) component).setComponentName((java.lang.String) value); return true;
+            case "host": ((RestComponent) component).setHost((java.lang.String) value); return true;
+            case "lazyStartProducer": ((RestComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "producerComponentName": ((RestComponent) component).setProducerComponentName((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((RestComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

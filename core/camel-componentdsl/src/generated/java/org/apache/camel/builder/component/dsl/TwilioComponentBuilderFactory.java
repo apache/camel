@@ -51,6 +51,60 @@ public interface TwilioComponentBuilderFactory {
             extends
                 ComponentBuilder<TwilioComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default TwilioComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default TwilioComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default TwilioComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -77,14 +131,14 @@ public interface TwilioComponentBuilderFactory {
             return this;
         }
         /**
-         * The account to use.
+         * The account SID to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          */
-        default TwilioComponentBuilder username(java.lang.String username) {
-            doSetProperty("username", username);
+        default TwilioComponentBuilder accountSid(java.lang.String accountSid) {
+            doSetProperty("accountSid", accountSid);
             return this;
         }
         /**
@@ -99,68 +153,14 @@ public interface TwilioComponentBuilderFactory {
             return this;
         }
         /**
-         * The account SID to use.
+         * The account to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          */
-        default TwilioComponentBuilder accountSid(java.lang.String accountSid) {
-            doSetProperty("accountSid", accountSid);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default TwilioComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default TwilioComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default TwilioComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default TwilioComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -180,14 +180,14 @@ public interface TwilioComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((TwilioComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((TwilioComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((TwilioComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((TwilioComponent) component).setConfiguration((org.apache.camel.component.twilio.TwilioConfiguration) value); return true;
             case "restClient": ((TwilioComponent) component).setRestClient((com.twilio.http.TwilioRestClient) value); return true;
-            case "username": ((TwilioComponent) component).setUsername((java.lang.String) value); return true;
-            case "password": ((TwilioComponent) component).setPassword((java.lang.String) value); return true;
             case "accountSid": ((TwilioComponent) component).setAccountSid((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((TwilioComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((TwilioComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((TwilioComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "password": ((TwilioComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": ((TwilioComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

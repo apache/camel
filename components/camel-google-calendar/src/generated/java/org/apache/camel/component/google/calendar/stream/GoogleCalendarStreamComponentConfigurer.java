@@ -15,13 +15,13 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleCalendarStreamComponent target = (GoogleCalendarStreamComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration.class, value)); return true;
-        case "clientfactory":
-        case "clientFactory": target.setClientFactory(property(camelContext, org.apache.camel.component.google.calendar.GoogleCalendarClientFactory.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "clientfactory":
+        case "clientFactory": target.setClientFactory(property(camelContext, org.apache.camel.component.google.calendar.GoogleCalendarClientFactory.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration.class, value)); return true;
         default: return false;
         }
     }

@@ -19,10 +19,10 @@ public class SpringBatchComponentConfigurer extends PropertyConfigurerSupport im
         case "jobLauncher": target.setJobLauncher(property(camelContext, org.springframework.batch.core.launch.JobLauncher.class, value)); return true;
         case "jobregistry":
         case "jobRegistry": target.setJobRegistry(property(camelContext, org.springframework.batch.core.configuration.JobRegistry.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

@@ -49,33 +49,6 @@ public interface MicroprofileMetricsComponentBuilderFactory {
             extends
                 ComponentBuilder<MicroProfileMetricsComponent> {
         /**
-         * Use a custom MetricRegistry.
-         * 
-         * The option is a:
-         * <code>org.eclipse.microprofile.metrics.MetricRegistry</code> type.
-         * 
-         * Group: advanced
-         */
-        default MicroprofileMetricsComponentBuilder metricRegistry(
-                org.eclipse.microprofile.metrics.MetricRegistry metricRegistry) {
-            doSetProperty("metricRegistry", metricRegistry);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MicroprofileMetricsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -96,6 +69,33 @@ public interface MicroprofileMetricsComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MicroprofileMetricsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Use a custom MetricRegistry.
+         * 
+         * The option is a:
+         * <code>org.eclipse.microprofile.metrics.MetricRegistry</code> type.
+         * 
+         * Group: advanced
+         */
+        default MicroprofileMetricsComponentBuilder metricRegistry(
+                org.eclipse.microprofile.metrics.MetricRegistry metricRegistry) {
+            doSetProperty("metricRegistry", metricRegistry);
+            return this;
+        }
     }
 
     class MicroprofileMetricsComponentBuilderImpl
@@ -113,9 +113,9 @@ public interface MicroprofileMetricsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "metricRegistry": ((MicroProfileMetricsComponent) component).setMetricRegistry((org.eclipse.microprofile.metrics.MetricRegistry) value); return true;
-            case "basicPropertyBinding": ((MicroProfileMetricsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MicroProfileMetricsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MicroProfileMetricsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "metricRegistry": ((MicroProfileMetricsComponent) component).setMetricRegistry((org.eclipse.microprofile.metrics.MetricRegistry) value); return true;
             default: return false;
             }
         }

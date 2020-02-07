@@ -47,20 +47,6 @@ public interface Aws2MskComponentBuilderFactory {
      */
     interface Aws2MskComponentBuilder extends ComponentBuilder<MSK2Component> {
         /**
-         * The AWS MSK default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.msk.MSK2Configuration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default Aws2MskComponentBuilder configuration(
-                org.apache.camel.component.aws2.msk.MSK2Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -69,42 +55,6 @@ public interface Aws2MskComponentBuilderFactory {
          */
         default Aws2MskComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2MskComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which MSK client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2MskComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default Aws2MskComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -128,6 +78,56 @@ public interface Aws2MskComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which MSK client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2MskComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2MskComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default Aws2MskComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS MSK default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.msk.MSK2Configuration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default Aws2MskComponentBuilder configuration(
+                org.apache.camel.component.aws2.msk.MSK2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class Aws2MskComponentBuilderImpl
@@ -145,12 +145,12 @@ public interface Aws2MskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((MSK2Component) component).setConfiguration((org.apache.camel.component.aws2.msk.MSK2Configuration) value); return true;
             case "accessKey": ((MSK2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((MSK2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((MSK2Component) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((MSK2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MSK2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((MSK2Component) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((MSK2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((MSK2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((MSK2Component) component).setConfiguration((org.apache.camel.component.aws2.msk.MSK2Configuration) value); return true;
             default: return false;
             }
         }

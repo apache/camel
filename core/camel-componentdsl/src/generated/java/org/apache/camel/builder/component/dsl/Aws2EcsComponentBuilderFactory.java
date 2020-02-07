@@ -47,20 +47,6 @@ public interface Aws2EcsComponentBuilderFactory {
      */
     interface Aws2EcsComponentBuilder extends ComponentBuilder<ECS2Component> {
         /**
-         * The AWS ECS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.ecs.ECS2Configuration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default Aws2EcsComponentBuilder configuration(
-                org.apache.camel.component.aws2.ecs.ECS2Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -69,42 +55,6 @@ public interface Aws2EcsComponentBuilderFactory {
          */
         default Aws2EcsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2EcsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which ECS client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2EcsComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default Aws2EcsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -128,6 +78,56 @@ public interface Aws2EcsComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which ECS client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EcsComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EcsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default Aws2EcsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS ECS default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ecs.ECS2Configuration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default Aws2EcsComponentBuilder configuration(
+                org.apache.camel.component.aws2.ecs.ECS2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class Aws2EcsComponentBuilderImpl
@@ -145,12 +145,12 @@ public interface Aws2EcsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((ECS2Component) component).setConfiguration((org.apache.camel.component.aws2.ecs.ECS2Configuration) value); return true;
             case "accessKey": ((ECS2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((ECS2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((ECS2Component) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((ECS2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((ECS2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((ECS2Component) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((ECS2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((ECS2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((ECS2Component) component).setConfiguration((org.apache.camel.component.aws2.ecs.ECS2Configuration) value); return true;
             default: return false;
             }
         }

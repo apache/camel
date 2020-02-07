@@ -51,6 +51,49 @@ public interface DisruptorComponentBuilderFactory {
             extends
                 ComponentBuilder<DisruptorComponent> {
         /**
+         * To configure the ring buffer size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1024
+         * Group: common
+         */
+        default DisruptorComponentBuilder bufferSize(int bufferSize) {
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * To configure the ring buffer size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         */
+        @Deprecated
+        default DisruptorComponentBuilder queueSize(int queueSize) {
+            doSetProperty("queueSize", queueSize);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default DisruptorComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * To configure the default number of concurrent consumers.
          * 
          * The option is a: <code>int</code> type.
@@ -74,21 +117,6 @@ public interface DisruptorComponentBuilderFactory {
         default DisruptorComponentBuilder defaultMultipleConsumers(
                 boolean defaultMultipleConsumers) {
             doSetProperty("defaultMultipleConsumers", defaultMultipleConsumers);
-            return this;
-        }
-        /**
-         * To configure the default value for DisruptorProducerType The default
-         * value is Multi.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
-         * 
-         * Default: Multi
-         * Group: producer
-         */
-        default DisruptorComponentBuilder defaultProducerType(
-                org.apache.camel.component.disruptor.DisruptorProducerType defaultProducerType) {
-            doSetProperty("defaultProducerType", defaultProducerType);
             return this;
         }
         /**
@@ -121,41 +149,18 @@ public interface DisruptorComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure the ring buffer size.
+         * To configure the default value for DisruptorProducerType The default
+         * value is Multi.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
-         * Group: common
+         * Default: Multi
+         * Group: producer
          */
-        @Deprecated
-        default DisruptorComponentBuilder queueSize(int queueSize) {
-            doSetProperty("queueSize", queueSize);
-            return this;
-        }
-        /**
-         * To configure the ring buffer size.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1024
-         * Group: common
-         */
-        default DisruptorComponentBuilder bufferSize(int bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default DisruptorComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default DisruptorComponentBuilder defaultProducerType(
+                org.apache.camel.component.disruptor.DisruptorProducerType defaultProducerType) {
+            doSetProperty("defaultProducerType", defaultProducerType);
             return this;
         }
         /**
@@ -180,22 +185,17 @@ public interface DisruptorComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default DisruptorComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default DisruptorComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -215,16 +215,16 @@ public interface DisruptorComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bufferSize": ((DisruptorComponent) component).setBufferSize((int) value); return true;
+            case "queueSize": ((DisruptorComponent) component).setQueueSize((int) value); return true;
+            case "bridgeErrorHandler": ((DisruptorComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "defaultConcurrentConsumers": ((DisruptorComponent) component).setDefaultConcurrentConsumers((int) value); return true;
             case "defaultMultipleConsumers": ((DisruptorComponent) component).setDefaultMultipleConsumers((boolean) value); return true;
-            case "defaultProducerType": ((DisruptorComponent) component).setDefaultProducerType((org.apache.camel.component.disruptor.DisruptorProducerType) value); return true;
             case "defaultWaitStrategy": ((DisruptorComponent) component).setDefaultWaitStrategy((org.apache.camel.component.disruptor.DisruptorWaitStrategy) value); return true;
             case "defaultBlockWhenFull": ((DisruptorComponent) component).setDefaultBlockWhenFull((boolean) value); return true;
-            case "queueSize": ((DisruptorComponent) component).setQueueSize((int) value); return true;
-            case "bufferSize": ((DisruptorComponent) component).setBufferSize((int) value); return true;
-            case "basicPropertyBinding": ((DisruptorComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "defaultProducerType": ((DisruptorComponent) component).setDefaultProducerType((org.apache.camel.component.disruptor.DisruptorProducerType) value); return true;
             case "lazyStartProducer": ((DisruptorComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((DisruptorComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((DisruptorComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

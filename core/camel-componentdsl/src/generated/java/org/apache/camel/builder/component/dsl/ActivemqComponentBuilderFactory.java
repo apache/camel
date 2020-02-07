@@ -62,6 +62,77 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the JMS client ID to use. Note that this value, if specified,
+         * must be unique and can only be used by a single JMS connection
+         * instance. It is typically only required for durable topic
+         * subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
+         * Topics instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ActivemqComponentBuilder clientId(java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
+         * Configuration of ActiveMQ.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default ActivemqComponentBuilder configuration(
+                org.apache.camel.component.jms.JmsConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
+         * 
+         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * 
+         * Group: common
+         */
+        default ActivemqComponentBuilder connectionFactory(
+                javax.jms.ConnectionFactory connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
+         * The durable subscriber name for specifying durable topic
+         * subscriptions. The clientId option must be configured as well.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ActivemqComponentBuilder durableSubscriptionName(
+                java.lang.String durableSubscriptionName) {
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
+            return this;
+        }
+        /**
+         * Specifies whether to test the connection on startup. This ensures
+         * that when Camel starts that all the JMS consumers have a valid
+         * connection to the JMS broker. If a connection cannot be granted then
+         * Camel throws an exception on startup. This ensures that Camel is not
+         * started with failed connections. The JMS producers is tested as well.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default ActivemqComponentBuilder testConnectionOnStartup(
+                boolean testConnectionOnStartup) {
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
          * Define if all Java packages are trusted or not (for Java object JMS
          * message types). Notice its not recommended practice to send Java
          * serialized objects over network. Setting this to true can expose
@@ -115,48 +186,209 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Configuration of ActiveMQ.
+         * The JMS acknowledgement mode defined as an Integer. Allows you to set
+         * vendor-specific extensions to the acknowledgment mode. For the
+         * regular modes, it is preferable to use the acknowledgementModeName
+         * instead.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
+         * The option is a: <code>int</code> type.
          * 
-         * Group: common
+         * Group: consumer
          */
-        default ActivemqComponentBuilder configuration(
-                org.apache.camel.component.jms.JmsConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default ActivemqComponentBuilder acknowledgementMode(
+                int acknowledgementMode) {
+            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
-         * Whether to auto-discover ConnectionFactory from the registry, if no
-         * connection factory has been configured. If only one instance of
-         * ConnectionFactory is found then it will be used. This is enabled by
-         * default.
+         * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
+         * CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: AUTO_ACKNOWLEDGE
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder acknowledgementModeName(
+                java.lang.String acknowledgementModeName) {
+            doSetProperty("acknowledgementModeName", acknowledgementModeName);
+            return this;
+        }
+        /**
+         * Whether the JmsConsumer processes the Exchange asynchronously. If
+         * enabled then the JmsConsumer may pickup the next message from the JMS
+         * queue, while the previous message is being processed asynchronously
+         * (by the Asynchronous Routing Engine). This means that messages may be
+         * processed not 100% strictly in order. If disabled (as default) then
+         * the Exchange is fully processed before the JmsConsumer will pickup
+         * the next message from the JMS queue. Note if transacted has been
+         * enabled, then asyncConsumer=true does not run asynchronously, as
+         * transaction must be executed synchronously (Camel 3.0 may support
+         * async transactions).
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default ActivemqComponentBuilder allowAutoWiredConnectionFactory(
-                boolean allowAutoWiredConnectionFactory) {
-            doSetProperty("allowAutoWiredConnectionFactory", allowAutoWiredConnectionFactory);
+        default ActivemqComponentBuilder asyncConsumer(boolean asyncConsumer) {
+            doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
         /**
-         * Whether to auto-discover DestinationResolver from the registry, if no
-         * destination resolver has been configured. If only one instance of
-         * DestinationResolver is found then it will be used. This is enabled by
-         * default.
+         * Specifies whether the consumer container should auto-startup.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder autoStartup(boolean autoStartup) {
+            doSetProperty("autoStartup", autoStartup);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default ActivemqComponentBuilder allowAutoWiredDestinationResolver(
-                boolean allowAutoWiredDestinationResolver) {
-            doSetProperty("allowAutoWiredDestinationResolver", allowAutoWiredDestinationResolver);
+        default ActivemqComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Sets the cache level by ID for the underlying JMS resources. See
+         * cacheLevelName option for more details.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder cacheLevel(int cacheLevel) {
+            doSetProperty("cacheLevel", cacheLevel);
+            return this;
+        }
+        /**
+         * Sets the cache level by name for the underlying JMS resources.
+         * Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER,
+         * CACHE_NONE, and CACHE_SESSION. The default setting is CACHE_AUTO. See
+         * the Spring documentation and Transactions Cache Levels for more
+         * information.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: CACHE_AUTO
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder cacheLevelName(
+                java.lang.String cacheLevelName) {
+            doSetProperty("cacheLevelName", cacheLevelName);
+            return this;
+        }
+        /**
+         * Specifies the default number of concurrent consumers when consuming
+         * from JMS (not for request/reply over JMS). See also the
+         * maxMessagesPerTask option to control dynamic scaling up/down of
+         * threads. When doing request/reply over JMS then the option
+         * replyToConcurrentConsumers is used to control number of concurrent
+         * consumers on the reply message listener.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of concurrent consumers when consuming
+         * from JMS (not for request/reply over JMS). See also the
+         * maxMessagesPerTask option to control dynamic scaling up/down of
+         * threads. When doing request/reply over JMS then the option
+         * replyToMaxConcurrentConsumers is used to control number of concurrent
+         * consumers on the reply message listener.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder maxConcurrentConsumers(
+                int maxConcurrentConsumers) {
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Set whether to make the subscription durable. The durable
+         * subscription name to be used can be specified through the
+         * subscriptionName property. Default is false. Set this to true to
+         * register a durable subscription, typically in combination with a
+         * subscriptionName value (unless your message listener class name is
+         * good enough as subscription name). Only makes sense when listening to
+         * a topic (pub-sub domain), therefore this method switches the
+         * pubSubDomain flag as well.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder subscriptionDurable(
+                boolean subscriptionDurable) {
+            doSetProperty("subscriptionDurable", subscriptionDurable);
+            return this;
+        }
+        /**
+         * Set the name of a subscription to create. To be applied in case of a
+         * topic (pub-sub domain) with a shared or durable subscription. The
+         * subscription name needs to be unique within this client's JMS client
+         * id. Default is the class name of the specified message listener.
+         * Note: Only 1 concurrent consumer (which is the default of this
+         * message listener container) is allowed for each subscription, except
+         * for a shared subscription (which requires JMS 2.0).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder subscriptionName(
+                java.lang.String subscriptionName) {
+            doSetProperty("subscriptionName", subscriptionName);
+            return this;
+        }
+        /**
+         * Set whether to make the subscription shared. The shared subscription
+         * name to be used can be specified through the subscriptionName
+         * property. Default is false. Set this to true to register a shared
+         * subscription, typically in combination with a subscriptionName value
+         * (unless your message listener class name is good enough as
+         * subscription name). Note that shared subscriptions may also be
+         * durable, so this flag can (and often will) be combined with
+         * subscriptionDurable as well. Only makes sense when listening to a
+         * topic (pub-sub domain), therefore this method switches the
+         * pubSubDomain flag as well. Requires a JMS 2.0 compatible message
+         * broker.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ActivemqComponentBuilder subscriptionShared(
+                boolean subscriptionShared) {
+            doSetProperty("subscriptionShared", subscriptionShared);
             return this;
         }
         /**
@@ -199,18 +431,43 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * The JMS acknowledgement mode defined as an Integer. Allows you to set
-         * vendor-specific extensions to the acknowledgment mode. For the
-         * regular modes, it is preferable to use the acknowledgementModeName
-         * instead.
+         * Specifies what default TaskExecutor type to use in the
+         * DefaultMessageListenerContainer, for both consumer endpoints and the
+         * ReplyTo consumer of producer endpoints. Possible values: SimpleAsync
+         * (uses Spring's SimpleAsyncTaskExecutor) or ThreadPool (uses Spring's
+         * ThreadPoolTaskExecutor with optimal values - cached threadpool-like).
+         * If not set, it defaults to the previous behaviour, which uses a
+         * cached thread pool for consumer endpoints and SimpleAsync for reply
+         * consumers. The use of ThreadPool is recommended to reduce thread
+         * trash in elastic configurations with dynamically increasing and
+         * decreasing concurrent consumers.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
+         * type.
          * 
-         * Group: consumer
+         * Group: consumer (advanced)
          */
-        default ActivemqComponentBuilder acknowledgementMode(
-                int acknowledgementMode) {
-            doSetProperty("acknowledgementMode", acknowledgementMode);
+        default ActivemqComponentBuilder defaultTaskExecutorType(
+                org.apache.camel.component.jms.DefaultTaskExecutorType defaultTaskExecutorType) {
+            doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
+            return this;
+        }
+        /**
+         * Enables eager loading of JMS properties as soon as a message is
+         * loaded which generally is inefficient as the JMS properties may not
+         * be required but sometimes can catch early any issues with the
+         * underlying JMS provider and the use of JMS properties. See also the
+         * option eagerLoadingOfBody.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         */
+        default ActivemqComponentBuilder eagerLoadingOfProperties(
+                boolean eagerLoadingOfProperties) {
+            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
         }
         /**
@@ -232,75 +489,337 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Enables eager loading of JMS properties as soon as a message is
-         * loaded which generally is inefficient as the JMS properties may not
-         * be required but sometimes can catch early any issues with the
-         * underlying JMS provider and the use of JMS properties. See also the
-         * option eagerLoadingOfBody.
+         * Specifies whether the listener session should be exposed when
+         * consuming messages.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: consumer (advanced)
          */
-        default ActivemqComponentBuilder eagerLoadingOfProperties(
-                boolean eagerLoadingOfProperties) {
-            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+        default ActivemqComponentBuilder exposeListenerSession(
+                boolean exposeListenerSession) {
+            doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
         }
         /**
-         * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
-         * CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE.
+         * Allows you to specify a custom task executor for consuming messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.springframework.core.task.TaskExecutor</code> type.
          * 
-         * Default: AUTO_ACKNOWLEDGE
-         * Group: consumer
+         * Group: consumer (advanced)
          */
-        default ActivemqComponentBuilder acknowledgementModeName(
-                java.lang.String acknowledgementModeName) {
-            doSetProperty("acknowledgementModeName", acknowledgementModeName);
+        default ActivemqComponentBuilder taskExecutor(
+                org.springframework.core.task.TaskExecutor taskExecutor) {
+            doSetProperty("taskExecutor", taskExecutor);
             return this;
         }
         /**
-         * Specifies whether the consumer container should auto-startup.
+         * Specifies the delivery mode to be used. Possibles values are those
+         * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
+         * = 2.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default ActivemqComponentBuilder deliveryMode(
+                java.lang.Integer deliveryMode) {
+            doSetProperty("deliveryMode", deliveryMode);
+            return this;
+        }
+        /**
+         * Specifies whether persistent delivery is used by default.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: consumer
+         * Group: producer
          */
-        default ActivemqComponentBuilder autoStartup(boolean autoStartup) {
-            doSetProperty("autoStartup", autoStartup);
+        default ActivemqComponentBuilder deliveryPersistent(
+                boolean deliveryPersistent) {
+            doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
         }
         /**
-         * Sets the cache level by ID for the underlying JMS resources. See
-         * cacheLevelName option for more details.
+         * Set if the deliveryMode, priority or timeToLive qualities of service
+         * should be used when sending messages. This option is based on
+         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
+         * options are applied to the current endpoint. This contrasts with the
+         * preserveMessageQos option, which operates at message granularity,
+         * reading QoS properties exclusively from the Camel In message headers.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ActivemqComponentBuilder explicitQosEnabled(
+                boolean explicitQosEnabled) {
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
+            return this;
+        }
+        /**
+         * Sets whether date headers should be formatted according to the ISO
+         * 8601 standard.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ActivemqComponentBuilder formatDateHeadersToIso8601(
+                boolean formatDateHeadersToIso8601) {
+            doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ActivemqComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Set to true, if you want to send message using the QoS settings
+         * specified on the message, instead of the QoS settings on the JMS
+         * endpoint. The following three headers are considered JMSPriority,
+         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
+         * of them. If not provided, Camel will fall back to use the values from
+         * the endpoint instead. So, when using this option, the headers
+         * override the values from the endpoint. The explicitQosEnabled option,
+         * by contrast, will only use options set on the endpoint, and not
+         * values from the message header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ActivemqComponentBuilder preserveMessageQos(
+                boolean preserveMessageQos) {
+            doSetProperty("preserveMessageQos", preserveMessageQos);
+            return this;
+        }
+        /**
+         * Values greater than 1 specify the message priority when sending
+         * (where 0 is the lowest priority and 9 is the highest). The
+         * explicitQosEnabled option must also be enabled in order for this
+         * option to have any effect.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Group: consumer
+         * Default: 4
+         * Group: producer
          */
-        default ActivemqComponentBuilder cacheLevel(int cacheLevel) {
-            doSetProperty("cacheLevel", cacheLevel);
+        default ActivemqComponentBuilder priority(int priority) {
+            doSetProperty("priority", priority);
             return this;
         }
         /**
-         * Sets the cache level by name for the underlying JMS resources.
-         * Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER,
-         * CACHE_NONE, and CACHE_SESSION. The default setting is CACHE_AUTO. See
-         * the Spring documentation and Transactions Cache Levels for more
-         * information.
+         * Specifies the maximum number of concurrent consumers for continue
+         * routing when timeout occurred when using request/reply over JMS.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: producer
+         */
+        default ActivemqComponentBuilder replyOnTimeoutToMaxConcurrentConsumers(
+                int replyOnTimeoutToMaxConcurrentConsumers) {
+            doSetProperty("replyOnTimeoutToMaxConcurrentConsumers", replyOnTimeoutToMaxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Specifies the default number of concurrent consumers when doing
+         * request/reply over JMS. See also the maxMessagesPerTask option to
+         * control dynamic scaling up/down of threads.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: producer
+         */
+        default ActivemqComponentBuilder replyToConcurrentConsumers(
+                int replyToConcurrentConsumers) {
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of concurrent consumers when using
+         * request/reply over JMS. See also the maxMessagesPerTask option to
+         * control dynamic scaling up/down of threads.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ActivemqComponentBuilder replyToMaxConcurrentConsumers(
+                int replyToMaxConcurrentConsumers) {
+            doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Allows for explicitly specifying which kind of strategy to use for
+         * replyTo queues when doing request/reply over JMS. Possible values
+         * are: Temporary, Shared, or Exclusive. By default Camel will use
+         * temporary queues. However if replyTo has been configured, then Shared
+         * is used by default. This option allows you to use exclusive queues
+         * instead of shared ones. See Camel JMS documentation for more details,
+         * and especially the notes about the implications if running in a
+         * clustered environment, and the fact that Shared reply queues has
+         * lower performance than its alternatives Temporary and Exclusive.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.ReplyToType</code> type.
+         * 
+         * Group: producer
+         */
+        default ActivemqComponentBuilder replyToType(
+                org.apache.camel.component.jms.ReplyToType replyToType) {
+            doSetProperty("replyToType", replyToType);
+            return this;
+        }
+        /**
+         * The timeout for waiting for a reply when using the InOut Exchange
+         * Pattern (in milliseconds). The default is 20 seconds. You can include
+         * the header CamelJmsRequestTimeout to override this endpoint
+         * configured timeout value, and thus have per message individual
+         * timeout values. See also the requestTimeoutCheckerInterval option.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 20000
+         * Group: producer
+         */
+        default ActivemqComponentBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * When sending messages, specifies the time-to-live of the message (in
+         * milliseconds).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: producer
+         */
+        default ActivemqComponentBuilder timeToLive(long timeToLive) {
+            doSetProperty("timeToLive", timeToLive);
+            return this;
+        }
+        /**
+         * This option is used to allow additional headers which may have values
+         * that are invalid according to JMS specification. For example some
+         * message systems such as WMQ do this with header names using prefix
+         * JMS_IBM_MQMD_ containing values with byte array or other invalid
+         * types. You can specify multiple header names separated by comma, and
+         * use as suffix for wildcard matching.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: CACHE_AUTO
-         * Group: consumer
+         * Group: producer (advanced)
          */
-        default ActivemqComponentBuilder cacheLevelName(
-                java.lang.String cacheLevelName) {
-            doSetProperty("cacheLevelName", cacheLevelName);
+        default ActivemqComponentBuilder allowAdditionalHeaders(
+                java.lang.String allowAdditionalHeaders) {
+            doSetProperty("allowAdditionalHeaders", allowAdditionalHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow sending messages with no body. If this option is
+         * false and the message body is null, then an JMSException is thrown.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         */
+        default ActivemqComponentBuilder allowNullBody(boolean allowNullBody) {
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * If true, Camel will always make a JMS message copy of the message
+         * when it is passed to the producer for sending. Copying the message is
+         * needed in some situations, such as when a
+         * replyToDestinationSelectorName is set (incidentally, Camel will set
+         * the alwaysCopyMessage option to true, if a
+         * replyToDestinationSelectorName is set).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default ActivemqComponentBuilder alwaysCopyMessage(
+                boolean alwaysCopyMessage) {
+            doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
+            return this;
+        }
+        /**
+         * Use this JMS property to correlate messages in InOut exchange pattern
+         * (request-reply) instead of JMSCorrelationID property. This allows you
+         * to exchange messages with systems that do not correlate messages
+         * using JMSCorrelationID JMS property. If used JMSCorrelationID will
+         * not be used or set by Camel. The value of here named property will be
+         * generated if not supplied in the header of the message under the same
+         * name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default ActivemqComponentBuilder correlationProperty(
+                java.lang.String correlationProperty) {
+            doSetProperty("correlationProperty", correlationProperty);
+            return this;
+        }
+        /**
+         * When using mapJmsMessage=false Camel will create a new JMS message to
+         * send to a new JMS destination if you touch the headers (get or set)
+         * during the route. Set this option to true to force Camel to send the
+         * original JMS message that was received.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default ActivemqComponentBuilder forceSendOriginalMessage(
+                boolean forceSendOriginalMessage) {
+            doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
+            return this;
+        }
+        /**
+         * Only applicable when sending to JMS destination using InOnly (eg fire
+         * and forget). Enabling this option will enrich the Camel Exchange with
+         * the actual JMSMessageID that was used by the JMS client when the
+         * message was sent to the JMS destination.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default ActivemqComponentBuilder includeSentJMSMessageID(
+                boolean includeSentJMSMessageID) {
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
         }
         /**
@@ -324,141 +843,120 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the JMS client ID to use. Note that this value, if specified,
-         * must be unique and can only be used by a single JMS connection
-         * instance. It is typically only required for durable topic
-         * subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
-         * Topics instead.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ActivemqComponentBuilder clientId(java.lang.String clientId) {
-            doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Specifies the default number of concurrent consumers when consuming
-         * from JMS (not for request/reply over JMS). See also the
-         * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads. When doing request/reply over JMS then the option
-         * replyToConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            doSetProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Specifies the default number of concurrent consumers when doing
-         * request/reply over JMS. See also the maxMessagesPerTask option to
-         * control dynamic scaling up/down of threads.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: producer
-         */
-        default ActivemqComponentBuilder replyToConcurrentConsumers(
-                int replyToConcurrentConsumers) {
-            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
-            return this;
-        }
-        /**
-         * The connection factory to be use. A connection factory must be
-         * configured either on the component or endpoint.
-         * 
-         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
-         * 
-         * Group: common
-         */
-        default ActivemqComponentBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Username to use with the ConnectionFactory. You can also configure
-         * username/password directly on the ConnectionFactory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ActivemqComponentBuilder username(java.lang.String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
-         * Password to use with the ConnectionFactory. You can also configure
-         * username/password directly on the ConnectionFactory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ActivemqComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Specifies whether persistent delivery is used by default.
+         * Sets whether StreamMessage type is enabled or not. Message payloads
+         * of streaming kind such as files, InputStream, etc will either by sent
+         * as BytesMessage or StreamMessage. This option controls which kind
+         * will be used. By default BytesMessage is used which enforces the
+         * entire message payload to be read into memory. By enabling this
+         * option the message payload is read into memory in chunks and each
+         * chunk is then written to the StreamMessage until no more data.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: true
-         * Group: producer
+         * Default: false
+         * Group: producer (advanced)
          */
-        default ActivemqComponentBuilder deliveryPersistent(
-                boolean deliveryPersistent) {
-            doSetProperty("deliveryPersistent", deliveryPersistent);
+        default ActivemqComponentBuilder streamMessageTypeEnabled(
+                boolean streamMessageTypeEnabled) {
+            doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
         }
         /**
-         * Specifies the delivery mode to be used. Possibles values are those
-         * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
-         * = 2.
+         * Whether to auto-discover ConnectionFactory from the registry, if no
+         * connection factory has been configured. If only one instance of
+         * ConnectionFactory is found then it will be used. This is enabled by
+         * default.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: producer
+         * Default: false
+         * Group: advanced
          */
-        default ActivemqComponentBuilder deliveryMode(
-                java.lang.Integer deliveryMode) {
-            doSetProperty("deliveryMode", deliveryMode);
+        default ActivemqComponentBuilder allowAutoWiredConnectionFactory(
+                boolean allowAutoWiredConnectionFactory) {
+            doSetProperty("allowAutoWiredConnectionFactory", allowAutoWiredConnectionFactory);
             return this;
         }
         /**
-         * The durable subscriber name for specifying durable topic
-         * subscriptions. The clientId option must be configured as well.
+         * Whether to auto-discover DestinationResolver from the registry, if no
+         * destination resolver has been configured. If only one instance of
+         * DestinationResolver is found then it will be used. This is enabled by
+         * default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: common
+         * Default: false
+         * Group: advanced
          */
-        default ActivemqComponentBuilder durableSubscriptionName(
-                java.lang.String durableSubscriptionName) {
-            doSetProperty("durableSubscriptionName", durableSubscriptionName);
+        default ActivemqComponentBuilder allowAutoWiredDestinationResolver(
+                boolean allowAutoWiredDestinationResolver) {
+            doSetProperty("allowAutoWiredDestinationResolver", allowAutoWiredDestinationResolver);
             return this;
         }
         /**
-         * Specifies the JMS Exception Listener that is to be notified of any
-         * underlying JMS exceptions.
+         * Whether to startup the JmsConsumer message listener asynchronously,
+         * when starting a route. For example if a JmsConsumer cannot get a
+         * connection to a remote JMS broker, then it may block while retrying
+         * and/or failover. This will cause Camel to block while starting
+         * routes. By setting this option to true, you will let routes startup,
+         * while the JmsConsumer connects to the JMS broker using a dedicated
+         * thread in asynchronous mode. If this option is used, then beware that
+         * if the connection could not be established, then an exception is
+         * logged at WARN level, and the consumer will not be able to receive
+         * messages; You can then restart the route to retry.
          * 
-         * The option is a: <code>javax.jms.ExceptionListener</code> type.
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder asyncStartListener(
+                boolean asyncStartListener) {
+            doSetProperty("asyncStartListener", asyncStartListener);
+            return this;
+        }
+        /**
+         * Whether to stop the JmsConsumer message listener asynchronously, when
+         * stopping a route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder asyncStopListener(
+                boolean asyncStopListener) {
+            doSetProperty("asyncStopListener", asyncStopListener);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * A pluggable
+         * org.springframework.jms.support.destination.DestinationResolver that
+         * allows you to use your own resolver (for example, to lookup the real
+         * destination in a JNDI registry).
+         * 
+         * The option is a:
+         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * 
          * Group: advanced
          */
-        default ActivemqComponentBuilder exceptionListener(
-                javax.jms.ExceptionListener exceptionListener) {
-            doSetProperty("exceptionListener", exceptionListener);
+        default ActivemqComponentBuilder destinationResolver(
+                org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -481,63 +979,29 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows to configure the default errorHandler logging level for
-         * logging uncaught exceptions.
+         * Specifies the JMS Exception Listener that is to be notified of any
+         * underlying JMS exceptions.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a: <code>javax.jms.ExceptionListener</code> type.
          * 
-         * Default: WARN
-         * Group: logging
+         * Group: advanced
          */
-        default ActivemqComponentBuilder errorHandlerLoggingLevel(
-                org.apache.camel.LoggingLevel errorHandlerLoggingLevel) {
-            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+        default ActivemqComponentBuilder exceptionListener(
+                javax.jms.ExceptionListener exceptionListener) {
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
-         * Allows to control whether stacktraces should be logged or not, by the
-         * default errorHandler.
+         * Specify the limit for the number of consumers that are allowed to be
+         * idle at any given time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>int</code> type.
          * 
-         * Default: true
-         * Group: logging
+         * Default: 1
+         * Group: advanced
          */
-        default ActivemqComponentBuilder errorHandlerLogStackTrace(
-                boolean errorHandlerLogStackTrace) {
-            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
-            return this;
-        }
-        /**
-         * Set if the deliveryMode, priority or timeToLive qualities of service
-         * should be used when sending messages. This option is based on
-         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
-         * options are applied to the current endpoint. This contrasts with the
-         * preserveMessageQos option, which operates at message granularity,
-         * reading QoS properties exclusively from the Camel In message headers.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default ActivemqComponentBuilder explicitQosEnabled(
-                boolean explicitQosEnabled) {
-            doSetProperty("explicitQosEnabled", explicitQosEnabled);
-            return this;
-        }
-        /**
-         * Specifies whether the listener session should be exposed when
-         * consuming messages.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         */
-        default ActivemqComponentBuilder exposeListenerSession(
-                boolean exposeListenerSession) {
-            doSetProperty("exposeListenerSession", exposeListenerSession);
+        default ActivemqComponentBuilder idleConsumerLimit(int idleConsumerLimit) {
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -558,61 +1022,70 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Specify the limit for the number of consumers that are allowed to be
-         * idle at any given time.
+         * Whether to include all JMSXxxx properties when mapping from JMS to
+         * Camel Message. Setting this to true will include properties such as
+         * JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
+         * headerFilterStrategy then this option does not apply.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 1
+         * Default: false
          * Group: advanced
          */
-        default ActivemqComponentBuilder idleConsumerLimit(int idleConsumerLimit) {
-            doSetProperty("idleConsumerLimit", idleConsumerLimit);
+        default ActivemqComponentBuilder includeAllJMSXProperties(
+                boolean includeAllJMSXProperties) {
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
-         * Specifies the maximum number of concurrent consumers when consuming
-         * from JMS (not for request/reply over JMS). See also the
-         * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads. When doing request/reply over JMS then the option
-         * replyToMaxConcurrentConsumers is used to control number of concurrent
-         * consumers on the reply message listener.
+         * Pluggable strategy for encoding and decoding JMS keys so they can be
+         * compliant with the JMS specification. Camel provides two
+         * implementations out of the box: default and passthrough. The default
+         * strategy will safely marshal dots and hyphens (. and -). The
+         * passthrough strategy leaves the key as is. Can be used for JMS
+         * brokers which do not care whether JMS header keys contain illegal
+         * characters. You can provide your own implementation of the
+         * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it
+         * using the # notation.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
+         * type.
          * 
-         * Group: consumer
+         * Group: advanced
          */
-        default ActivemqComponentBuilder maxConcurrentConsumers(
-                int maxConcurrentConsumers) {
-            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+        default ActivemqComponentBuilder jmsKeyFormatStrategy(
+                org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
-         * Specifies the maximum number of concurrent consumers when using
-         * request/reply over JMS. See also the maxMessagesPerTask option to
-         * control dynamic scaling up/down of threads.
+         * Allows you to use your own implementation of the
+         * org.springframework.jms.core.JmsOperations interface. Camel uses
+         * JmsTemplate as default. Can be used for testing purpose, but not used
+         * much as stated in the spring API docs.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a:
+         * <code>org.springframework.jms.core.JmsOperations</code> type.
          * 
-         * Group: producer
+         * Group: advanced
          */
-        default ActivemqComponentBuilder replyToMaxConcurrentConsumers(
-                int replyToMaxConcurrentConsumers) {
-            doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+        default ActivemqComponentBuilder jmsOperations(
+                org.springframework.jms.core.JmsOperations jmsOperations) {
+            doSetProperty("jmsOperations", jmsOperations);
             return this;
         }
         /**
-         * Specifies the maximum number of concurrent consumers for continue
-         * routing when timeout occurred when using request/reply over JMS.
+         * Specifies whether Camel should auto map the received JMS message to a
+         * suited payload type, such as javax.jms.TextMessage to a String etc.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Default: 1
-         * Group: producer
+         * Default: true
+         * Group: advanced
          */
-        default ActivemqComponentBuilder replyOnTimeoutToMaxConcurrentConsumers(
-                int replyOnTimeoutToMaxConcurrentConsumers) {
-            doSetProperty("replyOnTimeoutToMaxConcurrentConsumers", replyOnTimeoutToMaxConcurrentConsumers);
+        default ActivemqComponentBuilder mapJmsMessage(boolean mapJmsMessage) {
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -647,16 +1120,19 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * To use the given MessageCreatedStrategy which are invoked when Camel
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
+         * type.
          * 
-         * Default: true
          * Group: advanced
          */
-        default ActivemqComponentBuilder mapJmsMessage(boolean mapJmsMessage) {
-            doSetProperty("mapJmsMessage", mapJmsMessage);
+        default ActivemqComponentBuilder messageCreatedStrategy(
+                org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -694,53 +1170,6 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * If true, Camel will always make a JMS message copy of the message
-         * when it is passed to the producer for sending. Copying the message is
-         * needed in some situations, such as when a
-         * replyToDestinationSelectorName is set (incidentally, Camel will set
-         * the alwaysCopyMessage option to true, if a
-         * replyToDestinationSelectorName is set).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default ActivemqComponentBuilder alwaysCopyMessage(
-                boolean alwaysCopyMessage) {
-            doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
-            return this;
-        }
-        /**
-         * Specifies whether JMSMessageID should always be used as
-         * JMSCorrelationID for InOut messages.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder useMessageIDAsCorrelationID(
-                boolean useMessageIDAsCorrelationID) {
-            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
-            return this;
-        }
-        /**
-         * Values greater than 1 specify the message priority when sending
-         * (where 0 is the lowest priority and 9 is the highest). The
-         * explicitQosEnabled option must also be enabled in order for this
-         * option to have any effect.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 4
-         * Group: producer
-         */
-        default ActivemqComponentBuilder priority(int priority) {
-            doSetProperty("priority", priority);
-            return this;
-        }
-        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -751,6 +1180,19 @@ public interface ActivemqComponentBuilderFactory {
          */
         default ActivemqComponentBuilder pubSubNoLocal(boolean pubSubNoLocal) {
             doSetProperty("pubSubNoLocal", pubSubNoLocal);
+            return this;
+        }
+        /**
+         * To use a custom QueueBrowseStrategy when browsing queues.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.QueueBrowseStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder queueBrowseStrategy(
+                org.apache.camel.component.jms.QueueBrowseStrategy queueBrowseStrategy) {
+            doSetProperty("queueBrowseStrategy", queueBrowseStrategy);
             return this;
         }
         /**
@@ -780,29 +1222,179 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows you to specify a custom task executor for consuming messages.
-         * 
-         * The option is a:
-         * <code>org.springframework.core.task.TaskExecutor</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default ActivemqComponentBuilder taskExecutor(
-                org.springframework.core.task.TaskExecutor taskExecutor) {
-            doSetProperty("taskExecutor", taskExecutor);
-            return this;
-        }
-        /**
-         * When sending messages, specifies the time-to-live of the message (in
-         * milliseconds).
+         * Configures how often Camel should check for timed out Exchanges when
+         * doing request/reply over JMS. By default Camel checks once per
+         * second. But if you must react faster when a timeout occurs, then you
+         * can lower this interval, to check more frequently. The timeout is
+         * determined by the option requestTimeout.
          * 
          * The option is a: <code>long</code> type.
          * 
-         * Default: -1
-         * Group: producer
+         * Default: 1000
+         * Group: advanced
          */
-        default ActivemqComponentBuilder timeToLive(long timeToLive) {
-            doSetProperty("timeToLive", timeToLive);
+        default ActivemqComponentBuilder requestTimeoutCheckerInterval(
+                long requestTimeoutCheckerInterval) {
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            return this;
+        }
+        /**
+         * If enabled and you are using Request Reply messaging (InOut) and an
+         * Exchange failed on the consumer side, then the caused Exception will
+         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * is Camel, the returned Exception is rethrown. This allows you to use
+         * Camel JMS as a bridge in your routing - for example, using persistent
+         * queues to enable robust routing. Notice that if you also have
+         * transferExchange enabled, this option takes precedence. The caught
+         * exception is required to be serializable. The original Exception on
+         * the consumer side can be wrapped in an outer exception such as
+         * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder transferException(
+                boolean transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * You can transfer the exchange over the wire instead of just the body
+         * and headers. The following fields are transferred: In body, Out body,
+         * Fault body, In headers, Out headers, Fault headers, exchange
+         * properties, exchange exception. This requires that the objects are
+         * serializable. Camel will exclude any non-serializable objects and log
+         * it at WARN level. You must enable this option on both the producer
+         * and consumer side, so Camel knows the payloads is an Exchange and not
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder transferExchange(
+                boolean transferExchange) {
+            doSetProperty("transferExchange", transferExchange);
+            return this;
+        }
+        /**
+         * Specifies whether JMSMessageID should always be used as
+         * JMSCorrelationID for InOut messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder useMessageIDAsCorrelationID(
+                boolean useMessageIDAsCorrelationID) {
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            return this;
+        }
+        /**
+         * Number of times to wait for provisional correlation id to be updated
+         * to the actual correlation id when doing request/reply over JMS and
+         * when the option useMessageIDAsCorrelationID is enabled.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+                int waitForProvisionCorrelationToBeUpdatedCounter) {
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            return this;
+        }
+        /**
+         * Interval in millis to sleep each time while waiting for provisional
+         * correlation id to be updated.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+                long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Allows to configure the default errorHandler logging level for
+         * logging uncaught exceptions.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: WARN
+         * Group: logging
+         */
+        default ActivemqComponentBuilder errorHandlerLoggingLevel(
+                org.apache.camel.LoggingLevel errorHandlerLoggingLevel) {
+            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows to control whether stacktraces should be logged or not, by the
+         * default errorHandler.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default ActivemqComponentBuilder errorHandlerLogStackTrace(
+                boolean errorHandlerLogStackTrace) {
+            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         */
+        default ActivemqComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Password to use with the ConnectionFactory. You can also configure
+         * username/password directly on the ConnectionFactory.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ActivemqComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to use with the ConnectionFactory. You can also configure
+         * username/password directly on the ConnectionFactory.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ActivemqComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -870,598 +1462,6 @@ public interface ActivemqComponentBuilderFactory {
             doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
-        /**
-         * Specifies whether to test the connection on startup. This ensures
-         * that when Camel starts that all the JMS consumers have a valid
-         * connection to the JMS broker. If a connection cannot be granted then
-         * Camel throws an exception on startup. This ensures that Camel is not
-         * started with failed connections. The JMS producers is tested as well.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default ActivemqComponentBuilder testConnectionOnStartup(
-                boolean testConnectionOnStartup) {
-            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
-            return this;
-        }
-        /**
-         * Whether to startup the JmsConsumer message listener asynchronously,
-         * when starting a route. For example if a JmsConsumer cannot get a
-         * connection to a remote JMS broker, then it may block while retrying
-         * and/or failover. This will cause Camel to block while starting
-         * routes. By setting this option to true, you will let routes startup,
-         * while the JmsConsumer connects to the JMS broker using a dedicated
-         * thread in asynchronous mode. If this option is used, then beware that
-         * if the connection could not be established, then an exception is
-         * logged at WARN level, and the consumer will not be able to receive
-         * messages; You can then restart the route to retry.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder asyncStartListener(
-                boolean asyncStartListener) {
-            doSetProperty("asyncStartListener", asyncStartListener);
-            return this;
-        }
-        /**
-         * Whether to stop the JmsConsumer message listener asynchronously, when
-         * stopping a route.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder asyncStopListener(
-                boolean asyncStopListener) {
-            doSetProperty("asyncStopListener", asyncStopListener);
-            return this;
-        }
-        /**
-         * When using mapJmsMessage=false Camel will create a new JMS message to
-         * send to a new JMS destination if you touch the headers (get or set)
-         * during the route. Set this option to true to force Camel to send the
-         * original JMS message that was received.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default ActivemqComponentBuilder forceSendOriginalMessage(
-                boolean forceSendOriginalMessage) {
-            doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
-            return this;
-        }
-        /**
-         * The timeout for waiting for a reply when using the InOut Exchange
-         * Pattern (in milliseconds). The default is 20 seconds. You can include
-         * the header CamelJmsRequestTimeout to override this endpoint
-         * configured timeout value, and thus have per message individual
-         * timeout values. See also the requestTimeoutCheckerInterval option.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 20000
-         * Group: producer
-         */
-        default ActivemqComponentBuilder requestTimeout(long requestTimeout) {
-            doSetProperty("requestTimeout", requestTimeout);
-            return this;
-        }
-        /**
-         * Configures how often Camel should check for timed out Exchanges when
-         * doing request/reply over JMS. By default Camel checks once per
-         * second. But if you must react faster when a timeout occurs, then you
-         * can lower this interval, to check more frequently. The timeout is
-         * determined by the option requestTimeout.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder requestTimeoutCheckerInterval(
-                long requestTimeoutCheckerInterval) {
-            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
-            return this;
-        }
-        /**
-         * You can transfer the exchange over the wire instead of just the body
-         * and headers. The following fields are transferred: In body, Out body,
-         * Fault body, In headers, Out headers, Fault headers, exchange
-         * properties, exchange exception. This requires that the objects are
-         * serializable. Camel will exclude any non-serializable objects and log
-         * it at WARN level. You must enable this option on both the producer
-         * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload. Use this with caution as the data is using Java
-         * Object serialization and requires the received to be able to
-         * deserialize the data at Class level, which forces a strong coupling
-         * between the producers and consumer having to use compatible Camel
-         * versions!.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder transferExchange(
-                boolean transferExchange) {
-            doSetProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
-         * is Camel, the returned Exception is rethrown. This allows you to use
-         * Camel JMS as a bridge in your routing - for example, using persistent
-         * queues to enable robust routing. Notice that if you also have
-         * transferExchange enabled, this option takes precedence. The caught
-         * exception is required to be serializable. The original Exception on
-         * the consumer side can be wrapped in an outer exception such as
-         * org.apache.camel.RuntimeCamelException when returned to the producer.
-         * Use this with caution as the data is using Java Object serialization
-         * and requires the received to be able to deserialize the data at Class
-         * level, which forces a strong coupling between the producers and
-         * consumer!.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder transferException(
-                boolean transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
-         * Allows you to use your own implementation of the
-         * org.springframework.jms.core.JmsOperations interface. Camel uses
-         * JmsTemplate as default. Can be used for testing purpose, but not used
-         * much as stated in the spring API docs.
-         * 
-         * The option is a:
-         * <code>org.springframework.jms.core.JmsOperations</code> type.
-         * 
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder jmsOperations(
-                org.springframework.jms.core.JmsOperations jmsOperations) {
-            doSetProperty("jmsOperations", jmsOperations);
-            return this;
-        }
-        /**
-         * A pluggable
-         * org.springframework.jms.support.destination.DestinationResolver that
-         * allows you to use your own resolver (for example, to lookup the real
-         * destination in a JNDI registry).
-         * 
-         * The option is a:
-         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
-         * 
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder destinationResolver(
-                org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
-            doSetProperty("destinationResolver", destinationResolver);
-            return this;
-        }
-        /**
-         * Allows for explicitly specifying which kind of strategy to use for
-         * replyTo queues when doing request/reply over JMS. Possible values
-         * are: Temporary, Shared, or Exclusive. By default Camel will use
-         * temporary queues. However if replyTo has been configured, then Shared
-         * is used by default. This option allows you to use exclusive queues
-         * instead of shared ones. See Camel JMS documentation for more details,
-         * and especially the notes about the implications if running in a
-         * clustered environment, and the fact that Shared reply queues has
-         * lower performance than its alternatives Temporary and Exclusive.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jms.ReplyToType</code> type.
-         * 
-         * Group: producer
-         */
-        default ActivemqComponentBuilder replyToType(
-                org.apache.camel.component.jms.ReplyToType replyToType) {
-            doSetProperty("replyToType", replyToType);
-            return this;
-        }
-        /**
-         * Set to true, if you want to send message using the QoS settings
-         * specified on the message, instead of the QoS settings on the JMS
-         * endpoint. The following three headers are considered JMSPriority,
-         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
-         * of them. If not provided, Camel will fall back to use the values from
-         * the endpoint instead. So, when using this option, the headers
-         * override the values from the endpoint. The explicitQosEnabled option,
-         * by contrast, will only use options set on the endpoint, and not
-         * values from the message header.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default ActivemqComponentBuilder preserveMessageQos(
-                boolean preserveMessageQos) {
-            doSetProperty("preserveMessageQos", preserveMessageQos);
-            return this;
-        }
-        /**
-         * Whether the JmsConsumer processes the Exchange asynchronously. If
-         * enabled then the JmsConsumer may pickup the next message from the JMS
-         * queue, while the previous message is being processed asynchronously
-         * (by the Asynchronous Routing Engine). This means that messages may be
-         * processed not 100% strictly in order. If disabled (as default) then
-         * the Exchange is fully processed before the JmsConsumer will pickup
-         * the next message from the JMS queue. Note if transacted has been
-         * enabled, then asyncConsumer=true does not run asynchronously, as
-         * transaction must be executed synchronously (Camel 3.0 may support
-         * async transactions).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder asyncConsumer(boolean asyncConsumer) {
-            doSetProperty("asyncConsumer", asyncConsumer);
-            return this;
-        }
-        /**
-         * Whether to allow sending messages with no body. If this option is
-         * false and the message body is null, then an JMSException is thrown.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         */
-        default ActivemqComponentBuilder allowNullBody(boolean allowNullBody) {
-            doSetProperty("allowNullBody", allowNullBody);
-            return this;
-        }
-        /**
-         * Only applicable when sending to JMS destination using InOnly (eg fire
-         * and forget). Enabling this option will enrich the Camel Exchange with
-         * the actual JMSMessageID that was used by the JMS client when the
-         * message was sent to the JMS destination.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default ActivemqComponentBuilder includeSentJMSMessageID(
-                boolean includeSentJMSMessageID) {
-            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
-            return this;
-        }
-        /**
-         * Whether to include all JMSXxxx properties when mapping from JMS to
-         * Camel Message. Setting this to true will include properties such as
-         * JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
-         * headerFilterStrategy then this option does not apply.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder includeAllJMSXProperties(
-                boolean includeAllJMSXProperties) {
-            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
-            return this;
-        }
-        /**
-         * Specifies what default TaskExecutor type to use in the
-         * DefaultMessageListenerContainer, for both consumer endpoints and the
-         * ReplyTo consumer of producer endpoints. Possible values: SimpleAsync
-         * (uses Spring's SimpleAsyncTaskExecutor) or ThreadPool (uses Spring's
-         * ThreadPoolTaskExecutor with optimal values - cached threadpool-like).
-         * If not set, it defaults to the previous behaviour, which uses a
-         * cached thread pool for consumer endpoints and SimpleAsync for reply
-         * consumers. The use of ThreadPool is recommended to reduce thread
-         * trash in elastic configurations with dynamically increasing and
-         * decreasing concurrent consumers.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default ActivemqComponentBuilder defaultTaskExecutorType(
-                org.apache.camel.component.jms.DefaultTaskExecutorType defaultTaskExecutorType) {
-            doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
-            return this;
-        }
-        /**
-         * Pluggable strategy for encoding and decoding JMS keys so they can be
-         * compliant with the JMS specification. Camel provides two
-         * implementations out of the box: default and passthrough. The default
-         * strategy will safely marshal dots and hyphens (. and -). The
-         * passthrough strategy leaves the key as is. Can be used for JMS
-         * brokers which do not care whether JMS header keys contain illegal
-         * characters. You can provide your own implementation of the
-         * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it
-         * using the # notation.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder jmsKeyFormatStrategy(
-                org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
-            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
-            return this;
-        }
-        /**
-         * This option is used to allow additional headers which may have values
-         * that are invalid according to JMS specification. For example some
-         * message systems such as WMQ do this with header names using prefix
-         * JMS_IBM_MQMD_ containing values with byte array or other invalid
-         * types. You can specify multiple header names separated by comma, and
-         * use as suffix for wildcard matching.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default ActivemqComponentBuilder allowAdditionalHeaders(
-                java.lang.String allowAdditionalHeaders) {
-            doSetProperty("allowAdditionalHeaders", allowAdditionalHeaders);
-            return this;
-        }
-        /**
-         * To use a custom QueueBrowseStrategy when browsing queues.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jms.QueueBrowseStrategy</code> type.
-         * 
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder queueBrowseStrategy(
-                org.apache.camel.component.jms.QueueBrowseStrategy queueBrowseStrategy) {
-            doSetProperty("queueBrowseStrategy", queueBrowseStrategy);
-            return this;
-        }
-        /**
-         * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
-         * sending a JMS message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder messageCreatedStrategy(
-                org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
-            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
-            return this;
-        }
-        /**
-         * Number of times to wait for provisional correlation id to be updated
-         * to the actual correlation id when doing request/reply over JMS and
-         * when the option useMessageIDAsCorrelationID is enabled.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 50
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder waitForProvisionCorrelationToBeUpdatedCounter(
-                int waitForProvisionCorrelationToBeUpdatedCounter) {
-            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
-            return this;
-        }
-        /**
-         * Interval in millis to sleep each time while waiting for provisional
-         * correlation id to be updated.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 100
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
-                long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
-            return this;
-        }
-        /**
-         * Use this JMS property to correlate messages in InOut exchange pattern
-         * (request-reply) instead of JMSCorrelationID property. This allows you
-         * to exchange messages with systems that do not correlate messages
-         * using JMSCorrelationID JMS property. If used JMSCorrelationID will
-         * not be used or set by Camel. The value of here named property will be
-         * generated if not supplied in the header of the message under the same
-         * name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer (advanced)
-         */
-        default ActivemqComponentBuilder correlationProperty(
-                java.lang.String correlationProperty) {
-            doSetProperty("correlationProperty", correlationProperty);
-            return this;
-        }
-        /**
-         * Set whether to make the subscription durable. The durable
-         * subscription name to be used can be specified through the
-         * subscriptionName property. Default is false. Set this to true to
-         * register a durable subscription, typically in combination with a
-         * subscriptionName value (unless your message listener class name is
-         * good enough as subscription name). Only makes sense when listening to
-         * a topic (pub-sub domain), therefore this method switches the
-         * pubSubDomain flag as well.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder subscriptionDurable(
-                boolean subscriptionDurable) {
-            doSetProperty("subscriptionDurable", subscriptionDurable);
-            return this;
-        }
-        /**
-         * Set whether to make the subscription shared. The shared subscription
-         * name to be used can be specified through the subscriptionName
-         * property. Default is false. Set this to true to register a shared
-         * subscription, typically in combination with a subscriptionName value
-         * (unless your message listener class name is good enough as
-         * subscription name). Note that shared subscriptions may also be
-         * durable, so this flag can (and often will) be combined with
-         * subscriptionDurable as well. Only makes sense when listening to a
-         * topic (pub-sub domain), therefore this method switches the
-         * pubSubDomain flag as well. Requires a JMS 2.0 compatible message
-         * broker.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder subscriptionShared(
-                boolean subscriptionShared) {
-            doSetProperty("subscriptionShared", subscriptionShared);
-            return this;
-        }
-        /**
-         * Set the name of a subscription to create. To be applied in case of a
-         * topic (pub-sub domain) with a shared or durable subscription. The
-         * subscription name needs to be unique within this client's JMS client
-         * id. Default is the class name of the specified message listener.
-         * Note: Only 1 concurrent consumer (which is the default of this
-         * message listener container) is allowed for each subscription, except
-         * for a shared subscription (which requires JMS 2.0).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder subscriptionName(
-                java.lang.String subscriptionName) {
-            doSetProperty("subscriptionName", subscriptionName);
-            return this;
-        }
-        /**
-         * Sets whether StreamMessage type is enabled or not. Message payloads
-         * of streaming kind such as files, InputStream, etc will either by sent
-         * as BytesMessage or StreamMessage. This option controls which kind
-         * will be used. By default BytesMessage is used which enforces the
-         * entire message payload to be read into memory. By enabling this
-         * option the message payload is read into memory in chunks and each
-         * chunk is then written to the StreamMessage until no more data.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         */
-        default ActivemqComponentBuilder streamMessageTypeEnabled(
-                boolean streamMessageTypeEnabled) {
-            doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
-            return this;
-        }
-        /**
-         * Sets whether date headers should be formatted according to the ISO
-         * 8601 standard.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default ActivemqComponentBuilder formatDateHeadersToIso8601(
-                boolean formatDateHeadersToIso8601) {
-            doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * header to and from Camel message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * 
-         * Group: filter
-         */
-        default ActivemqComponentBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ActivemqComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default ActivemqComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class ActivemqComponentBuilderImpl
@@ -1480,93 +1480,93 @@ public interface ActivemqComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "brokerURL": ((ActiveMQComponent) component).setBrokerURL((java.lang.String) value); return true;
+            case "clientId": ((ActiveMQComponent) component).setClientId((java.lang.String) value); return true;
+            case "configuration": ((ActiveMQComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
+            case "connectionFactory": ((ActiveMQComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "durableSubscriptionName": ((ActiveMQComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "testConnectionOnStartup": ((ActiveMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
             case "trustAllPackages": ((ActiveMQComponent) component).setTrustAllPackages((boolean) value); return true;
             case "usePooledConnection": ((ActiveMQComponent) component).setUsePooledConnection((boolean) value); return true;
             case "useSingleConnection": ((ActiveMQComponent) component).setUseSingleConnection((boolean) value); return true;
-            case "configuration": ((ActiveMQComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
-            case "allowAutoWiredConnectionFactory": ((ActiveMQComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
-            case "allowAutoWiredDestinationResolver": ((ActiveMQComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
-            case "acceptMessagesWhileStopping": ((ActiveMQComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
-            case "allowReplyManagerQuickStop": ((ActiveMQComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
             case "acknowledgementMode": ((ActiveMQComponent) component).setAcknowledgementMode((int) value); return true;
-            case "eagerPoisonBody": ((ActiveMQComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
-            case "eagerLoadingOfProperties": ((ActiveMQComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
             case "acknowledgementModeName": ((ActiveMQComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
+            case "asyncConsumer": ((ActiveMQComponent) component).setAsyncConsumer((boolean) value); return true;
             case "autoStartup": ((ActiveMQComponent) component).setAutoStartup((boolean) value); return true;
+            case "bridgeErrorHandler": ((ActiveMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "cacheLevel": ((ActiveMQComponent) component).setCacheLevel((int) value); return true;
             case "cacheLevelName": ((ActiveMQComponent) component).setCacheLevelName((java.lang.String) value); return true;
-            case "replyToCacheLevelName": ((ActiveMQComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
-            case "clientId": ((ActiveMQComponent) component).setClientId((java.lang.String) value); return true;
             case "concurrentConsumers": ((ActiveMQComponent) component).setConcurrentConsumers((int) value); return true;
-            case "replyToConcurrentConsumers": ((ActiveMQComponent) component).setReplyToConcurrentConsumers((int) value); return true;
-            case "connectionFactory": ((ActiveMQComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
-            case "username": ((ActiveMQComponent) component).setUsername((java.lang.String) value); return true;
-            case "password": ((ActiveMQComponent) component).setPassword((java.lang.String) value); return true;
-            case "deliveryPersistent": ((ActiveMQComponent) component).setDeliveryPersistent((boolean) value); return true;
-            case "deliveryMode": ((ActiveMQComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
-            case "durableSubscriptionName": ((ActiveMQComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
-            case "exceptionListener": ((ActiveMQComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
-            case "errorHandler": ((ActiveMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
-            case "errorHandlerLoggingLevel": ((ActiveMQComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
-            case "errorHandlerLogStackTrace": ((ActiveMQComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
-            case "explicitQosEnabled": ((ActiveMQComponent) component).setExplicitQosEnabled((boolean) value); return true;
-            case "exposeListenerSession": ((ActiveMQComponent) component).setExposeListenerSession((boolean) value); return true;
-            case "idleTaskExecutionLimit": ((ActiveMQComponent) component).setIdleTaskExecutionLimit((int) value); return true;
-            case "idleConsumerLimit": ((ActiveMQComponent) component).setIdleConsumerLimit((int) value); return true;
             case "maxConcurrentConsumers": ((ActiveMQComponent) component).setMaxConcurrentConsumers((int) value); return true;
-            case "replyToMaxConcurrentConsumers": ((ActiveMQComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
+            case "subscriptionDurable": ((ActiveMQComponent) component).setSubscriptionDurable((boolean) value); return true;
+            case "subscriptionName": ((ActiveMQComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "subscriptionShared": ((ActiveMQComponent) component).setSubscriptionShared((boolean) value); return true;
+            case "acceptMessagesWhileStopping": ((ActiveMQComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
+            case "allowReplyManagerQuickStop": ((ActiveMQComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
+            case "defaultTaskExecutorType": ((ActiveMQComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
+            case "eagerLoadingOfProperties": ((ActiveMQComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
+            case "eagerPoisonBody": ((ActiveMQComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
+            case "exposeListenerSession": ((ActiveMQComponent) component).setExposeListenerSession((boolean) value); return true;
+            case "taskExecutor": ((ActiveMQComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
+            case "deliveryMode": ((ActiveMQComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
+            case "deliveryPersistent": ((ActiveMQComponent) component).setDeliveryPersistent((boolean) value); return true;
+            case "explicitQosEnabled": ((ActiveMQComponent) component).setExplicitQosEnabled((boolean) value); return true;
+            case "formatDateHeadersToIso8601": ((ActiveMQComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
+            case "lazyStartProducer": ((ActiveMQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "preserveMessageQos": ((ActiveMQComponent) component).setPreserveMessageQos((boolean) value); return true;
+            case "priority": ((ActiveMQComponent) component).setPriority((int) value); return true;
             case "replyOnTimeoutToMaxConcurrentConsumers": ((ActiveMQComponent) component).setReplyOnTimeoutToMaxConcurrentConsumers((int) value); return true;
+            case "replyToConcurrentConsumers": ((ActiveMQComponent) component).setReplyToConcurrentConsumers((int) value); return true;
+            case "replyToMaxConcurrentConsumers": ((ActiveMQComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
+            case "replyToType": ((ActiveMQComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
+            case "requestTimeout": ((ActiveMQComponent) component).setRequestTimeout((long) value); return true;
+            case "timeToLive": ((ActiveMQComponent) component).setTimeToLive((long) value); return true;
+            case "allowAdditionalHeaders": ((ActiveMQComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
+            case "allowNullBody": ((ActiveMQComponent) component).setAllowNullBody((boolean) value); return true;
+            case "alwaysCopyMessage": ((ActiveMQComponent) component).setAlwaysCopyMessage((boolean) value); return true;
+            case "correlationProperty": ((ActiveMQComponent) component).setCorrelationProperty((java.lang.String) value); return true;
+            case "forceSendOriginalMessage": ((ActiveMQComponent) component).setForceSendOriginalMessage((boolean) value); return true;
+            case "includeSentJMSMessageID": ((ActiveMQComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
+            case "replyToCacheLevelName": ((ActiveMQComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
+            case "streamMessageTypeEnabled": ((ActiveMQComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
+            case "allowAutoWiredConnectionFactory": ((ActiveMQComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
+            case "allowAutoWiredDestinationResolver": ((ActiveMQComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
+            case "asyncStartListener": ((ActiveMQComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "asyncStopListener": ((ActiveMQComponent) component).setAsyncStopListener((boolean) value); return true;
+            case "basicPropertyBinding": ((ActiveMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "destinationResolver": ((ActiveMQComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
+            case "errorHandler": ((ActiveMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "exceptionListener": ((ActiveMQComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "idleConsumerLimit": ((ActiveMQComponent) component).setIdleConsumerLimit((int) value); return true;
+            case "idleTaskExecutionLimit": ((ActiveMQComponent) component).setIdleTaskExecutionLimit((int) value); return true;
+            case "includeAllJMSXProperties": ((ActiveMQComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "jmsKeyFormatStrategy": ((ActiveMQComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
+            case "jmsOperations": ((ActiveMQComponent) component).setJmsOperations((org.springframework.jms.core.JmsOperations) value); return true;
+            case "mapJmsMessage": ((ActiveMQComponent) component).setMapJmsMessage((boolean) value); return true;
             case "maxMessagesPerTask": ((ActiveMQComponent) component).setMaxMessagesPerTask((int) value); return true;
             case "messageConverter": ((ActiveMQComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
-            case "mapJmsMessage": ((ActiveMQComponent) component).setMapJmsMessage((boolean) value); return true;
+            case "messageCreatedStrategy": ((ActiveMQComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
             case "messageIdEnabled": ((ActiveMQComponent) component).setMessageIdEnabled((boolean) value); return true;
             case "messageTimestampEnabled": ((ActiveMQComponent) component).setMessageTimestampEnabled((boolean) value); return true;
-            case "alwaysCopyMessage": ((ActiveMQComponent) component).setAlwaysCopyMessage((boolean) value); return true;
-            case "useMessageIDAsCorrelationID": ((ActiveMQComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
-            case "priority": ((ActiveMQComponent) component).setPriority((int) value); return true;
             case "pubSubNoLocal": ((ActiveMQComponent) component).setPubSubNoLocal((boolean) value); return true;
+            case "queueBrowseStrategy": ((ActiveMQComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
             case "receiveTimeout": ((ActiveMQComponent) component).setReceiveTimeout((long) value); return true;
             case "recoveryInterval": ((ActiveMQComponent) component).setRecoveryInterval((long) value); return true;
-            case "taskExecutor": ((ActiveMQComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
-            case "timeToLive": ((ActiveMQComponent) component).setTimeToLive((long) value); return true;
+            case "requestTimeoutCheckerInterval": ((ActiveMQComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "transferException": ((ActiveMQComponent) component).setTransferException((boolean) value); return true;
+            case "transferExchange": ((ActiveMQComponent) component).setTransferExchange((boolean) value); return true;
+            case "useMessageIDAsCorrelationID": ((ActiveMQComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedCounter": ((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "errorHandlerLoggingLevel": ((ActiveMQComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
+            case "errorHandlerLogStackTrace": ((ActiveMQComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "headerFilterStrategy": ((ActiveMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "password": ((ActiveMQComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": ((ActiveMQComponent) component).setUsername((java.lang.String) value); return true;
             case "transacted": ((ActiveMQComponent) component).setTransacted((boolean) value); return true;
             case "lazyCreateTransactionManager": ((ActiveMQComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
             case "transactionManager": ((ActiveMQComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
             case "transactionName": ((ActiveMQComponent) component).setTransactionName((java.lang.String) value); return true;
             case "transactionTimeout": ((ActiveMQComponent) component).setTransactionTimeout((int) value); return true;
-            case "testConnectionOnStartup": ((ActiveMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
-            case "asyncStartListener": ((ActiveMQComponent) component).setAsyncStartListener((boolean) value); return true;
-            case "asyncStopListener": ((ActiveMQComponent) component).setAsyncStopListener((boolean) value); return true;
-            case "forceSendOriginalMessage": ((ActiveMQComponent) component).setForceSendOriginalMessage((boolean) value); return true;
-            case "requestTimeout": ((ActiveMQComponent) component).setRequestTimeout((long) value); return true;
-            case "requestTimeoutCheckerInterval": ((ActiveMQComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
-            case "transferExchange": ((ActiveMQComponent) component).setTransferExchange((boolean) value); return true;
-            case "transferException": ((ActiveMQComponent) component).setTransferException((boolean) value); return true;
-            case "jmsOperations": ((ActiveMQComponent) component).setJmsOperations((org.springframework.jms.core.JmsOperations) value); return true;
-            case "destinationResolver": ((ActiveMQComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
-            case "replyToType": ((ActiveMQComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
-            case "preserveMessageQos": ((ActiveMQComponent) component).setPreserveMessageQos((boolean) value); return true;
-            case "asyncConsumer": ((ActiveMQComponent) component).setAsyncConsumer((boolean) value); return true;
-            case "allowNullBody": ((ActiveMQComponent) component).setAllowNullBody((boolean) value); return true;
-            case "includeSentJMSMessageID": ((ActiveMQComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
-            case "includeAllJMSXProperties": ((ActiveMQComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
-            case "defaultTaskExecutorType": ((ActiveMQComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
-            case "jmsKeyFormatStrategy": ((ActiveMQComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
-            case "allowAdditionalHeaders": ((ActiveMQComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
-            case "queueBrowseStrategy": ((ActiveMQComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
-            case "messageCreatedStrategy": ((ActiveMQComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
-            case "waitForProvisionCorrelationToBeUpdatedCounter": ((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
-            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((ActiveMQComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
-            case "correlationProperty": ((ActiveMQComponent) component).setCorrelationProperty((java.lang.String) value); return true;
-            case "subscriptionDurable": ((ActiveMQComponent) component).setSubscriptionDurable((boolean) value); return true;
-            case "subscriptionShared": ((ActiveMQComponent) component).setSubscriptionShared((boolean) value); return true;
-            case "subscriptionName": ((ActiveMQComponent) component).setSubscriptionName((java.lang.String) value); return true;
-            case "streamMessageTypeEnabled": ((ActiveMQComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
-            case "formatDateHeadersToIso8601": ((ActiveMQComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
-            case "headerFilterStrategy": ((ActiveMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((ActiveMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((ActiveMQComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((ActiveMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

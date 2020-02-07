@@ -51,30 +51,22 @@ public interface AzureQueueComponentBuilderFactory {
             extends
                 ComponentBuilder<QueueServiceComponent> {
         /**
-         * The Queue Service configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.azure.queue.QueueServiceConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AzureQueueComponentBuilder configuration(
-                org.apache.camel.component.azure.queue.QueueServiceConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AzureQueueComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AzureQueueComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -99,22 +91,30 @@ public interface AzureQueueComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AzureQueueComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AzureQueueComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The Queue Service configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.queue.QueueServiceConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default AzureQueueComponentBuilder configuration(
+                org.apache.camel.component.azure.queue.QueueServiceConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -134,10 +134,10 @@ public interface AzureQueueComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((QueueServiceComponent) component).setConfiguration((org.apache.camel.component.azure.queue.QueueServiceConfiguration) value); return true;
-            case "basicPropertyBinding": ((QueueServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((QueueServiceComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((QueueServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((QueueServiceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((QueueServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((QueueServiceComponent) component).setConfiguration((org.apache.camel.component.azure.queue.QueueServiceConfiguration) value); return true;
             default: return false;
             }
         }

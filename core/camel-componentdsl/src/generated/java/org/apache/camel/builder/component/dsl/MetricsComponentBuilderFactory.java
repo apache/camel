@@ -51,33 +51,6 @@ public interface MetricsComponentBuilderFactory {
             extends
                 ComponentBuilder<MetricsComponent> {
         /**
-         * To use a custom configured MetricRegistry.
-         * 
-         * The option is a: <code>com.codahale.metrics.MetricRegistry</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default MetricsComponentBuilder metricRegistry(
-                com.codahale.metrics.MetricRegistry metricRegistry) {
-            doSetProperty("metricRegistry", metricRegistry);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default MetricsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -98,6 +71,33 @@ public interface MetricsComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default MetricsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom configured MetricRegistry.
+         * 
+         * The option is a: <code>com.codahale.metrics.MetricRegistry</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default MetricsComponentBuilder metricRegistry(
+                com.codahale.metrics.MetricRegistry metricRegistry) {
+            doSetProperty("metricRegistry", metricRegistry);
+            return this;
+        }
     }
 
     class MetricsComponentBuilderImpl
@@ -115,9 +115,9 @@ public interface MetricsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "metricRegistry": ((MetricsComponent) component).setMetricRegistry((com.codahale.metrics.MetricRegistry) value); return true;
-            case "basicPropertyBinding": ((MetricsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((MetricsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MetricsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "metricRegistry": ((MetricsComponent) component).setMetricRegistry((com.codahale.metrics.MetricRegistry) value); return true;
             default: return false;
             }
         }

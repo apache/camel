@@ -17,18 +17,18 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ignorexmlconfiguration":
         case "ignoreXmlConfiguration": target.setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
-        case "validationproviderresolver":
-        case "validationProviderResolver": target.setValidationProviderResolver(property(camelContext, javax.validation.ValidationProviderResolver.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "constraintvalidatorfactory":
+        case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
         case "messageinterpolator":
         case "messageInterpolator": target.setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
         case "traversableresolver":
         case "traversableResolver": target.setTraversableResolver(property(camelContext, javax.validation.TraversableResolver.class, value)); return true;
-        case "constraintvalidatorfactory":
-        case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "validationproviderresolver":
+        case "validationProviderResolver": target.setValidationProviderResolver(property(camelContext, javax.validation.ValidationProviderResolver.class, value)); return true;
         default: return false;
         }
     }

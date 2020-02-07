@@ -53,17 +53,22 @@ public interface WebhookComponentBuilderFactory {
             extends
                 ComponentBuilder<WebhookComponent> {
         /**
-         * Set the default configuration for the webhook meta-component.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.webhook.WebhookConfiguration</code>
-         * type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default WebhookComponentBuilder configuration(
-                org.apache.camel.component.webhook.WebhookConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default WebhookComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -81,22 +86,17 @@ public interface WebhookComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Set the default configuration for the webhook meta-component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.webhook.WebhookConfiguration</code>
+         * type.
          * 
-         * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default WebhookComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default WebhookComponentBuilder configuration(
+                org.apache.camel.component.webhook.WebhookConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -116,9 +116,9 @@ public interface WebhookComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((WebhookComponent) component).setConfiguration((org.apache.camel.component.webhook.WebhookConfiguration) value); return true;
-            case "basicPropertyBinding": ((WebhookComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "bridgeErrorHandler": ((WebhookComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "basicPropertyBinding": ((WebhookComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((WebhookComponent) component).setConfiguration((org.apache.camel.component.webhook.WebhookConfiguration) value); return true;
             default: return false;
             }
         }

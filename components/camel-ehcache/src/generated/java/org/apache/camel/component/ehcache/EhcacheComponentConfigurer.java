@@ -15,23 +15,23 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EhcacheComponent target = (EhcacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ehcache.EhcacheConfiguration.class, value)); return true;
+        case "cacheconfiguration":
+        case "cacheConfiguration": target.setCacheConfiguration(property(camelContext, org.ehcache.config.CacheConfiguration.class, value)); return true;
+        case "cacheconfigurationuri":
+        case "cacheConfigurationUri": target.setCacheConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "cachemanager":
         case "cacheManager": target.setCacheManager(property(camelContext, org.ehcache.CacheManager.class, value)); return true;
         case "cachemanagerconfiguration":
         case "cacheManagerConfiguration": target.setCacheManagerConfiguration(property(camelContext, org.ehcache.config.Configuration.class, value)); return true;
-        case "cacheconfiguration":
-        case "cacheConfiguration": target.setCacheConfiguration(property(camelContext, org.ehcache.config.CacheConfiguration.class, value)); return true;
         case "cachesconfigurations":
         case "cachesConfigurations": target.setCachesConfigurations(property(camelContext, java.util.Map.class, value)); return true;
-        case "cacheconfigurationuri":
-        case "cacheConfigurationUri": target.setCacheConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ehcache.EhcacheConfiguration.class, value)); return true;
         default: return false;
         }
     }

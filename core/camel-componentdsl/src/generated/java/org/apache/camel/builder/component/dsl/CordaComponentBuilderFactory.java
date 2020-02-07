@@ -61,17 +61,22 @@ public interface CordaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default CordaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CordaComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -96,22 +101,17 @@ public interface CordaComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default CordaComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default CordaComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -132,9 +132,9 @@ public interface CordaComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((CordaComponent) component).setConfiguration((org.apache.camel.component.corda.CordaConfiguration) value); return true;
-            case "basicPropertyBinding": ((CordaComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((CordaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((CordaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((CordaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((CordaComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

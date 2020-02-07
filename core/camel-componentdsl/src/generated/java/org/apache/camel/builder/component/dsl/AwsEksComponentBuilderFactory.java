@@ -47,20 +47,6 @@ public interface AwsEksComponentBuilderFactory {
      */
     interface AwsEksComponentBuilder extends ComponentBuilder<EKSComponent> {
         /**
-         * The AWS EKS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.eks.EKSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsEksComponentBuilder configuration(
-                org.apache.camel.component.aws.eks.EKSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -69,42 +55,6 @@ public interface AwsEksComponentBuilderFactory {
          */
         default AwsEksComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsEksComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The region in which EKS client needs to work.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsEksComponentBuilder region(java.lang.String region) {
-            doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsEksComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -128,6 +78,56 @@ public interface AwsEksComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * The region in which EKS client needs to work.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder region(java.lang.String region) {
+            doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsEksComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The AWS EKS default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.eks.EKSConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AwsEksComponentBuilder configuration(
+                org.apache.camel.component.aws.eks.EKSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
     }
 
     class AwsEksComponentBuilderImpl
@@ -145,12 +145,12 @@ public interface AwsEksComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((EKSComponent) component).setConfiguration((org.apache.camel.component.aws.eks.EKSConfiguration) value); return true;
             case "accessKey": ((EKSComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": ((EKSComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "region": ((EKSComponent) component).setRegion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((EKSComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((EKSComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "region": ((EKSComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": ((EKSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((EKSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((EKSComponent) component).setConfiguration((org.apache.camel.component.aws.eks.EKSConfiguration) value); return true;
             default: return false;
             }
         }

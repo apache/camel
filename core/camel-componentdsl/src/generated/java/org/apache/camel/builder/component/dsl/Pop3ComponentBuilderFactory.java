@@ -47,6 +47,59 @@ public interface Pop3ComponentBuilderFactory {
      */
     interface Pop3ComponentBuilder extends ComponentBuilder<MailComponent> {
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Pop3ComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
          * Sets the Mail configuration.
          * 
          * The option is a:
@@ -74,19 +127,6 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Enable usage of global SSL context parameters.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: security
-         */
-        default Pop3ComponentBuilder useGlobalSslContextParameters(
-                boolean useGlobalSslContextParameters) {
-            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
-            return this;
-        }
-        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -101,56 +141,16 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: security
          */
-        default Pop3ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default Pop3ComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default Pop3ComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default Pop3ComponentBuilder useGlobalSslContextParameters(
+                boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
     }
@@ -170,13 +170,13 @@ public interface Pop3ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((MailComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((MailComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MailComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((MailComponent) component).setConfiguration((org.apache.camel.component.mail.MailConfiguration) value); return true;
             case "contentTypeResolver": ((MailComponent) component).setContentTypeResolver((org.apache.camel.component.mail.ContentTypeResolver) value); return true;
-            case "useGlobalSslContextParameters": ((MailComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "headerFilterStrategy": ((MailComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((MailComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((MailComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((MailComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "useGlobalSslContextParameters": ((MailComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

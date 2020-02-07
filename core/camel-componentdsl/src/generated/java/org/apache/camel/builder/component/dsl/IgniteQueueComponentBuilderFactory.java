@@ -51,18 +51,6 @@ public interface IgniteQueueComponentBuilderFactory {
             extends
                 ComponentBuilder<IgniteQueueComponent> {
         /**
-         * Ignite instance.
-         * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
-         * 
-         * Group: producer
-         */
-        default IgniteQueueComponentBuilder ignite(
-                org.apache.ignite.Ignite ignite) {
-            doSetProperty("ignite", ignite);
-            return this;
-        }
-        /**
          * Resource from where to load configuration.
          * 
          * The option is a: <code>java.lang.Object</code> type.
@@ -72,6 +60,18 @@ public interface IgniteQueueComponentBuilderFactory {
         default IgniteQueueComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
+            return this;
+        }
+        /**
+         * Ignite instance.
+         * 
+         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueComponentBuilder ignite(
+                org.apache.ignite.Ignite ignite) {
+            doSetProperty("ignite", ignite);
             return this;
         }
         /**
@@ -86,20 +86,6 @@ public interface IgniteQueueComponentBuilderFactory {
         default IgniteQueueComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
             doSetProperty("igniteConfiguration", igniteConfiguration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default IgniteQueueComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -123,6 +109,20 @@ public interface IgniteQueueComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default IgniteQueueComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class IgniteQueueComponentBuilderImpl
@@ -140,11 +140,11 @@ public interface IgniteQueueComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "ignite": ((IgniteQueueComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "configurationResource": ((IgniteQueueComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "ignite": ((IgniteQueueComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "igniteConfiguration": ((IgniteQueueComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
-            case "basicPropertyBinding": ((IgniteQueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((IgniteQueueComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((IgniteQueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

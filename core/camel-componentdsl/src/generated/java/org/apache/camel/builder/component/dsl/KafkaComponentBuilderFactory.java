@@ -49,6 +49,20 @@ public interface KafkaComponentBuilderFactory {
      */
     interface KafkaComponentBuilder extends ComponentBuilder<KafkaComponent> {
         /**
+         * URL of the Kafka brokers to use. The format is
+         * host1:port1,host2:port2, and the list can be a subset of brokers or a
+         * VIP pointing to a subset of brokers. This option is known as
+         * bootstrap.servers in the Kafka documentation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default KafkaComponentBuilder brokers(java.lang.String brokers) {
+            doSetProperty("brokers", brokers);
+            return this;
+        }
+        /**
          * Allows to pre-configure the Kafka component with common options that
          * the endpoints will reuse.
          * 
@@ -64,17 +78,111 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * URL of the Kafka brokers to use. The format is
-         * host1:port1,host2:port2, and the list can be a subset of brokers or a
-         * VIP pointing to a subset of brokers. This option is known as
-         * bootstrap.servers in the Kafka documentation.
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
+         * option is enabled then an instance of KafkaManualCommit is stored on
+         * the Exchange message header, which allows end users to access this
+         * API and perform manual offset commits via the Kafka consumer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: common
+         * Default: false
+         * Group: consumer
          */
-        default KafkaComponentBuilder brokers(java.lang.String brokers) {
-            doSetProperty("brokers", brokers);
+        default KafkaComponentBuilder allowManualCommit(
+                boolean allowManualCommit) {
+            doSetProperty("allowManualCommit", allowManualCommit);
+            return this;
+        }
+        /**
+         * This options controls what happens when a consumer is processing an
+         * exchange and it fails. If the option is false then the consumer
+         * continues to the next message and processes it. If the option is true
+         * then the consumer breaks out, and will seek back to offset of the
+         * message that caused a failure, and then re-attempt to process this
+         * message. However this can lead to endless processing of the same
+         * message if its bound to fail every time, eg a poison message.
+         * Therefore its recommended to deal with that for example by using
+         * Camel's error handler.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default KafkaComponentBuilder breakOnFirstError(
+                boolean breakOnFirstError) {
+            doSetProperty("breakOnFirstError", breakOnFirstError);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default KafkaComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Factory to use for creating KafkaManualCommit instances. This allows
+         * to plugin a custom factory to create custom KafkaManualCommit
+         * instances in case special logic is needed when doing manual commits
+         * that deviates from the default implementation that comes out of the
+         * box.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.kafka.KafkaManualCommitFactory</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default KafkaComponentBuilder kafkaManualCommitFactory(
+                org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
+            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default KafkaComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default KafkaComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -107,114 +215,6 @@ public interface KafkaComponentBuilderFactory {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
-        /**
-         * This options controls what happens when a consumer is processing an
-         * exchange and it fails. If the option is false then the consumer
-         * continues to the next message and processes it. If the option is true
-         * then the consumer breaks out, and will seek back to offset of the
-         * message that caused a failure, and then re-attempt to process this
-         * message. However this can lead to endless processing of the same
-         * message if its bound to fail every time, eg a poison message.
-         * Therefore its recommended to deal with that for example by using
-         * Camel's error handler.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default KafkaComponentBuilder breakOnFirstError(
-                boolean breakOnFirstError) {
-            doSetProperty("breakOnFirstError", breakOnFirstError);
-            return this;
-        }
-        /**
-         * Whether to allow doing manual commits via KafkaManualCommit. If this
-         * option is enabled then an instance of KafkaManualCommit is stored on
-         * the Exchange message header, which allows end users to access this
-         * API and perform manual offset commits via the Kafka consumer.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default KafkaComponentBuilder allowManualCommit(
-                boolean allowManualCommit) {
-            doSetProperty("allowManualCommit", allowManualCommit);
-            return this;
-        }
-        /**
-         * Factory to use for creating KafkaManualCommit instances. This allows
-         * to plugin a custom factory to create custom KafkaManualCommit
-         * instances in case special logic is needed when doing manual commits
-         * that deviates from the default implementation that comes out of the
-         * box.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.kafka.KafkaManualCommitFactory</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default KafkaComponentBuilder kafkaManualCommitFactory(
-                org.apache.camel.component.kafka.KafkaManualCommitFactory kafkaManualCommitFactory) {
-            doSetProperty("kafkaManualCommitFactory", kafkaManualCommitFactory);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default KafkaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default KafkaComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default KafkaComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
     }
 
     class KafkaComponentBuilderImpl
@@ -232,16 +232,16 @@ public interface KafkaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
             case "brokers": ((KafkaComponent) component).setBrokers((java.lang.String) value); return true;
+            case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
+            case "allowManualCommit": ((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
+            case "breakOnFirstError": ((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
+            case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.KafkaManualCommitFactory) value); return true;
+            case "lazyStartProducer": ((KafkaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((KafkaComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "workerPool": ((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
             case "useGlobalSslContextParameters": ((KafkaComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "breakOnFirstError": ((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
-            case "allowManualCommit": ((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
-            case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.KafkaManualCommitFactory) value); return true;
-            case "basicPropertyBinding": ((KafkaComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((KafkaComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((KafkaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

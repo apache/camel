@@ -51,19 +51,6 @@ public interface MiloClientComponentBuilderFactory {
             extends
                 ComponentBuilder<MiloClientComponent> {
         /**
-         * All default options for client.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.milo.client.MiloClientConfiguration</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientComponentBuilder defaultConfiguration(
-                org.apache.camel.component.milo.client.MiloClientConfiguration defaultConfiguration) {
-            doSetProperty("defaultConfiguration", defaultConfiguration);
-            return this;
-        }
-        /**
          * Default application name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -85,6 +72,19 @@ public interface MiloClientComponentBuilderFactory {
         default MiloClientComponentBuilder applicationUri(
                 java.lang.String applicationUri) {
             doSetProperty("applicationUri", applicationUri);
+            return this;
+        }
+        /**
+         * All default options for client.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.milo.client.MiloClientConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default MiloClientComponentBuilder defaultConfiguration(
+                org.apache.camel.component.milo.client.MiloClientConfiguration defaultConfiguration) {
+            doSetProperty("defaultConfiguration", defaultConfiguration);
             return this;
         }
         /**
@@ -112,17 +112,22 @@ public interface MiloClientComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default MiloClientComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MiloClientComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -147,22 +152,17 @@ public interface MiloClientComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default MiloClientComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default MiloClientComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -182,14 +182,14 @@ public interface MiloClientComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "defaultConfiguration": ((MiloClientComponent) component).setDefaultConfiguration((org.apache.camel.component.milo.client.MiloClientConfiguration) value); return true;
             case "applicationName": ((MiloClientComponent) component).setApplicationName((java.lang.String) value); return true;
             case "applicationUri": ((MiloClientComponent) component).setApplicationUri((java.lang.String) value); return true;
+            case "defaultConfiguration": ((MiloClientComponent) component).setDefaultConfiguration((org.apache.camel.component.milo.client.MiloClientConfiguration) value); return true;
             case "productUri": ((MiloClientComponent) component).setProductUri((java.lang.String) value); return true;
             case "reconnectTimeout": ((MiloClientComponent) component).setReconnectTimeout((java.lang.Long) value); return true;
-            case "basicPropertyBinding": ((MiloClientComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((MiloClientComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((MiloClientComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((MiloClientComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((MiloClientComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

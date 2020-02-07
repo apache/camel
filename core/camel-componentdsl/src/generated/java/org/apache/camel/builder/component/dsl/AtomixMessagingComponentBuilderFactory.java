@@ -50,6 +50,18 @@ public interface AtomixMessagingComponentBuilderFactory {
             extends
                 ComponentBuilder<AtomixMessagingComponent> {
         /**
+         * The shared AtomixClient instance.
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixMessagingComponentBuilder atomix(
+                io.atomix.AtomixClient atomix) {
+            doSetProperty("atomix", atomix);
+            return this;
+        }
+        /**
          * The shared component configuration.
          * 
          * The option is a:
@@ -63,15 +75,15 @@ public interface AtomixMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * The shared AtomixClient instance.
+         * The path to the AtomixClient configuration.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixMessagingComponentBuilder atomix(
-                io.atomix.AtomixClient atomix) {
-            doSetProperty("atomix", atomix);
+        default AtomixMessagingComponentBuilder configurationUri(
+                java.lang.String configurationUri) {
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -89,29 +101,22 @@ public interface AtomixMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * The path to the AtomixClient configuration.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixMessagingComponentBuilder configurationUri(
-                java.lang.String configurationUri) {
-            doSetProperty("configurationUri", configurationUri);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default AtomixMessagingComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AtomixMessagingComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -136,22 +141,17 @@ public interface AtomixMessagingComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AtomixMessagingComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AtomixMessagingComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
     }
@@ -171,13 +171,13 @@ public interface AtomixMessagingComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((AtomixMessagingComponent) component).setConfiguration((org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration) value); return true;
             case "atomix": ((AtomixMessagingComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
-            case "nodes": ((AtomixMessagingComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "configuration": ((AtomixMessagingComponent) component).setConfiguration((org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration) value); return true;
             case "configurationUri": ((AtomixMessagingComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((AtomixMessagingComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((AtomixMessagingComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "nodes": ((AtomixMessagingComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
             case "bridgeErrorHandler": ((AtomixMessagingComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((AtomixMessagingComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((AtomixMessagingComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

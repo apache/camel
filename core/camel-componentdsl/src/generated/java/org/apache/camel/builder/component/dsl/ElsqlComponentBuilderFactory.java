@@ -74,19 +74,6 @@ public interface ElsqlComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a specific configured ElSqlConfig. It may be better to use the
-         * databaseVendor option instead.
-         * 
-         * The option is a: <code>com.opengamma.elsql.ElSqlConfig</code> type.
-         * 
-         * Group: advanced
-         */
-        default ElsqlComponentBuilder elSqlConfig(
-                com.opengamma.elsql.ElSqlConfig elSqlConfig) {
-            doSetProperty("elSqlConfig", elSqlConfig);
-            return this;
-        }
-        /**
          * The resource file which contains the elsql SQL statements to use. You
          * can specify multiple resources separated by comma. The resources are
          * loaded on the classpath by default, you can prefix with file: to load
@@ -102,17 +89,22 @@ public interface ElsqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default ElsqlComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ElsqlComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -137,22 +129,30 @@ public interface ElsqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default ElsqlComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default ElsqlComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a specific configured ElSqlConfig. It may be better to use the
+         * databaseVendor option instead.
+         * 
+         * The option is a: <code>com.opengamma.elsql.ElSqlConfig</code> type.
+         * 
+         * Group: advanced
+         */
+        default ElsqlComponentBuilder elSqlConfig(
+                com.opengamma.elsql.ElSqlConfig elSqlConfig) {
+            doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
     }
@@ -174,11 +174,11 @@ public interface ElsqlComponentBuilderFactory {
             switch (name) {
             case "databaseVendor": ((ElsqlComponent) component).setDatabaseVendor((org.apache.camel.component.elsql.ElSqlDatabaseVendor) value); return true;
             case "dataSource": ((ElsqlComponent) component).setDataSource((javax.sql.DataSource) value); return true;
-            case "elSqlConfig": ((ElsqlComponent) component).setElSqlConfig((com.opengamma.elsql.ElSqlConfig) value); return true;
             case "resourceUri": ((ElsqlComponent) component).setResourceUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((ElsqlComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((ElsqlComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((ElsqlComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((ElsqlComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ElsqlComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "elSqlConfig": ((ElsqlComponent) component).setElSqlConfig((com.opengamma.elsql.ElSqlConfig) value); return true;
             default: return false;
             }
         }

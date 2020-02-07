@@ -55,18 +55,6 @@ public interface IgniteComputeComponentBuilderFactory {
             extends
                 ComponentBuilder<IgniteComputeComponent> {
         /**
-         * Ignite instance.
-         * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
-         * 
-         * Group: producer
-         */
-        default IgniteComputeComponentBuilder ignite(
-                org.apache.ignite.Ignite ignite) {
-            doSetProperty("ignite", ignite);
-            return this;
-        }
-        /**
          * Resource from where to load configuration.
          * 
          * The option is a: <code>java.lang.Object</code> type.
@@ -76,6 +64,18 @@ public interface IgniteComputeComponentBuilderFactory {
         default IgniteComputeComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
             doSetProperty("configurationResource", configurationResource);
+            return this;
+        }
+        /**
+         * Ignite instance.
+         * 
+         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteComputeComponentBuilder ignite(
+                org.apache.ignite.Ignite ignite) {
+            doSetProperty("ignite", ignite);
             return this;
         }
         /**
@@ -90,20 +90,6 @@ public interface IgniteComputeComponentBuilderFactory {
         default IgniteComputeComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
             doSetProperty("igniteConfiguration", igniteConfiguration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default IgniteComputeComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -127,6 +113,20 @@ public interface IgniteComputeComponentBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default IgniteComputeComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
     }
 
     class IgniteComputeComponentBuilderImpl
@@ -144,11 +144,11 @@ public interface IgniteComputeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "ignite": ((IgniteComputeComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "configurationResource": ((IgniteComputeComponent) component).setConfigurationResource((java.lang.Object) value); return true;
+            case "ignite": ((IgniteComputeComponent) component).setIgnite((org.apache.ignite.Ignite) value); return true;
             case "igniteConfiguration": ((IgniteComputeComponent) component).setIgniteConfiguration((org.apache.ignite.configuration.IgniteConfiguration) value); return true;
-            case "basicPropertyBinding": ((IgniteComputeComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "lazyStartProducer": ((IgniteComputeComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((IgniteComputeComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

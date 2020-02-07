@@ -49,35 +49,6 @@ public interface Sjms2ComponentBuilderFactory {
      */
     interface Sjms2ComponentBuilder extends ComponentBuilder<Sjms2Component> {
         /**
-         * A ConnectionFactory is required to enable the SjmsComponent. It can
-         * be set directly or set set as part of a ConnectionResource.
-         * 
-         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * A ConnectionResource is an interface that allows for customization
-         * and container control of the ConnectionFactory. See Plugable
-         * Connection Resource Management for further details.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder connectionResource(
-                org.apache.camel.component.sjms.jms.ConnectionResource connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
          * The maximum number of connections available to endpoints started
          * under this component.
          * 
@@ -92,179 +63,22 @@ public interface Sjms2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Pluggable strategy for encoding and decoding JMS keys so they can be
-         * compliant with the JMS specification. Camel provides one
-         * implementation out of the box: default. The default strategy will
-         * safely marshal dots and hyphens (. and -). Can be used for JMS
-         * brokers which do not care whether JMS header keys contain illegal
-         * characters. You can provide your own implementation of the
-         * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it
-         * using the # notation.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder jmsKeyFormatStrategy(
-                org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
-            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
-            return this;
-        }
-        /**
-         * To configure which kind of commit strategy to use. Camel provides two
-         * implementations out of the box, default and batch.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
-         * 
-         * Group: transaction
-         */
-        default Sjms2ComponentBuilder transactionCommitStrategy(
-                org.apache.camel.component.sjms.TransactionCommitStrategy transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * To use a custom DestinationCreationStrategy.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder destinationCreationStrategy(
-                org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
-            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
-            return this;
-        }
-        /**
-         * To use a custom TimedTaskManager.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.taskmanager.TimedTaskManager</code> type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder timedTaskManager(
-                org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
-            doSetProperty("timedTaskManager", timedTaskManager);
-            return this;
-        }
-        /**
-         * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
-         * sending a JMS message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder messageCreatedStrategy(
-                org.apache.camel.component.sjms.jms.MessageCreatedStrategy messageCreatedStrategy) {
-            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
-            return this;
-        }
-        /**
-         * When using the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then
-         * should each javax.jms.Connection be tested (calling start) before
-         * returned from the pool.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder connectionTestOnBorrow(
-                boolean connectionTestOnBorrow) {
-            doSetProperty("connectionTestOnBorrow", connectionTestOnBorrow);
-            return this;
-        }
-        /**
-         * The username to use when creating javax.jms.Connection when using the
-         * default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default Sjms2ComponentBuilder connectionUsername(
-                java.lang.String connectionUsername) {
-            doSetProperty("connectionUsername", connectionUsername);
-            return this;
-        }
-        /**
-         * The password to use when creating javax.jms.Connection when using the
-         * default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default Sjms2ComponentBuilder connectionPassword(
-                java.lang.String connectionPassword) {
-            doSetProperty("connectionPassword", connectionPassword);
-            return this;
-        }
-        /**
-         * The client ID to use when creating javax.jms.Connection when using
-         * the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder connectionClientId(
-                java.lang.String connectionClientId) {
-            doSetProperty("connectionClientId", connectionClientId);
-            return this;
-        }
-        /**
-         * The max wait time in millis to block and wait on free connection when
-         * the pool is exhausted when using the default
-         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 5000
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder connectionMaxWait(long connectionMaxWait) {
-            doSetProperty("connectionMaxWait", connectionMaxWait);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * header to and from Camel message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * 
-         * Group: filter
-         */
-        default Sjms2ComponentBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default Sjms2ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Sjms2ComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -289,22 +103,208 @@ public interface Sjms2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default Sjms2ComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default Sjms2ComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The client ID to use when creating javax.jms.Connection when using
+         * the default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder connectionClientId(
+                java.lang.String connectionClientId) {
+            doSetProperty("connectionClientId", connectionClientId);
+            return this;
+        }
+        /**
+         * A ConnectionFactory is required to enable the SjmsComponent. It can
+         * be set directly or set set as part of a ConnectionResource.
+         * 
+         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder connectionFactory(
+                javax.jms.ConnectionFactory connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
+         * The max wait time in millis to block and wait on free connection when
+         * the pool is exhausted when using the default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder connectionMaxWait(long connectionMaxWait) {
+            doSetProperty("connectionMaxWait", connectionMaxWait);
+            return this;
+        }
+        /**
+         * A ConnectionResource is an interface that allows for customization
+         * and container control of the ConnectionFactory. See Plugable
+         * Connection Resource Management for further details.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder connectionResource(
+                org.apache.camel.component.sjms.jms.ConnectionResource connectionResource) {
+            doSetProperty("connectionResource", connectionResource);
+            return this;
+        }
+        /**
+         * When using the default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then
+         * should each javax.jms.Connection be tested (calling start) before
+         * returned from the pool.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder connectionTestOnBorrow(
+                boolean connectionTestOnBorrow) {
+            doSetProperty("connectionTestOnBorrow", connectionTestOnBorrow);
+            return this;
+        }
+        /**
+         * To use a custom DestinationCreationStrategy.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder destinationCreationStrategy(
+                org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
+            return this;
+        }
+        /**
+         * Pluggable strategy for encoding and decoding JMS keys so they can be
+         * compliant with the JMS specification. Camel provides one
+         * implementation out of the box: default. The default strategy will
+         * safely marshal dots and hyphens (. and -). Can be used for JMS
+         * brokers which do not care whether JMS header keys contain illegal
+         * characters. You can provide your own implementation of the
+         * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it
+         * using the # notation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder jmsKeyFormatStrategy(
+                org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            return this;
+        }
+        /**
+         * To use the given MessageCreatedStrategy which are invoked when Camel
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
+         * 
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder messageCreatedStrategy(
+                org.apache.camel.component.sjms.jms.MessageCreatedStrategy messageCreatedStrategy) {
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
+            return this;
+        }
+        /**
+         * To use a custom TimedTaskManager.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.taskmanager.TimedTaskManager</code> type.
+         * 
+         * Group: advanced
+         */
+        default Sjms2ComponentBuilder timedTaskManager(
+                org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
+            doSetProperty("timedTaskManager", timedTaskManager);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         */
+        default Sjms2ComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * The password to use when creating javax.jms.Connection when using the
+         * default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Sjms2ComponentBuilder connectionPassword(
+                java.lang.String connectionPassword) {
+            doSetProperty("connectionPassword", connectionPassword);
+            return this;
+        }
+        /**
+         * The username to use when creating javax.jms.Connection when using the
+         * default
+         * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Sjms2ComponentBuilder connectionUsername(
+                java.lang.String connectionUsername) {
+            doSetProperty("connectionUsername", connectionUsername);
+            return this;
+        }
+        /**
+         * To configure which kind of commit strategy to use. Camel provides two
+         * implementations out of the box, default and batch.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
+         * 
+         * Group: transaction
+         */
+        default Sjms2ComponentBuilder transactionCommitStrategy(
+                org.apache.camel.component.sjms.TransactionCommitStrategy transactionCommitStrategy) {
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
     }
@@ -324,23 +324,23 @@ public interface Sjms2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
-            case "connectionResource": ((Sjms2Component) component).setConnectionResource((org.apache.camel.component.sjms.jms.ConnectionResource) value); return true;
             case "connectionCount": ((Sjms2Component) component).setConnectionCount((java.lang.Integer) value); return true;
-            case "jmsKeyFormatStrategy": ((Sjms2Component) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
-            case "transactionCommitStrategy": ((Sjms2Component) component).setTransactionCommitStrategy((org.apache.camel.component.sjms.TransactionCommitStrategy) value); return true;
-            case "destinationCreationStrategy": ((Sjms2Component) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
-            case "timedTaskManager": ((Sjms2Component) component).setTimedTaskManager((org.apache.camel.component.sjms.taskmanager.TimedTaskManager) value); return true;
-            case "messageCreatedStrategy": ((Sjms2Component) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
-            case "connectionTestOnBorrow": ((Sjms2Component) component).setConnectionTestOnBorrow((boolean) value); return true;
-            case "connectionUsername": ((Sjms2Component) component).setConnectionUsername((java.lang.String) value); return true;
-            case "connectionPassword": ((Sjms2Component) component).setConnectionPassword((java.lang.String) value); return true;
-            case "connectionClientId": ((Sjms2Component) component).setConnectionClientId((java.lang.String) value); return true;
-            case "connectionMaxWait": ((Sjms2Component) component).setConnectionMaxWait((long) value); return true;
-            case "headerFilterStrategy": ((Sjms2Component) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "basicPropertyBinding": ((Sjms2Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((Sjms2Component) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((Sjms2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "connectionClientId": ((Sjms2Component) component).setConnectionClientId((java.lang.String) value); return true;
+            case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "connectionMaxWait": ((Sjms2Component) component).setConnectionMaxWait((long) value); return true;
+            case "connectionResource": ((Sjms2Component) component).setConnectionResource((org.apache.camel.component.sjms.jms.ConnectionResource) value); return true;
+            case "connectionTestOnBorrow": ((Sjms2Component) component).setConnectionTestOnBorrow((boolean) value); return true;
+            case "destinationCreationStrategy": ((Sjms2Component) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
+            case "jmsKeyFormatStrategy": ((Sjms2Component) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
+            case "messageCreatedStrategy": ((Sjms2Component) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
+            case "timedTaskManager": ((Sjms2Component) component).setTimedTaskManager((org.apache.camel.component.sjms.taskmanager.TimedTaskManager) value); return true;
+            case "headerFilterStrategy": ((Sjms2Component) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "connectionPassword": ((Sjms2Component) component).setConnectionPassword((java.lang.String) value); return true;
+            case "connectionUsername": ((Sjms2Component) component).setConnectionUsername((java.lang.String) value); return true;
+            case "transactionCommitStrategy": ((Sjms2Component) component).setTransactionCommitStrategy((org.apache.camel.component.sjms.TransactionCommitStrategy) value); return true;
             default: return false;
             }
         }

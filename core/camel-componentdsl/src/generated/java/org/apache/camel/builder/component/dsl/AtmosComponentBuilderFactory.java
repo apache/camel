@@ -47,63 +47,22 @@ public interface AtmosComponentBuilderFactory {
      */
     interface AtmosComponentBuilder extends ComponentBuilder<AtmosComponent> {
         /**
-         * The token id to pass to the Atmos client.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default AtmosComponentBuilder fullTokenId(java.lang.String fullTokenId) {
-            doSetProperty("fullTokenId", fullTokenId);
-            return this;
-        }
-        /**
-         * The secret key to pass to the Atmos client (should be base64
-         * encoded).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default AtmosComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
-         * The URI of the server for the Atmos client to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default AtmosComponentBuilder uri(java.lang.String uri) {
-            doSetProperty("uri", uri);
-            return this;
-        }
-        /**
-         * Whether the Atmos client should perform SSL validation.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: security
+         * Group: consumer
          */
-        default AtmosComponentBuilder sslValidation(boolean sslValidation) {
-            doSetProperty("sslValidation", sslValidation);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AtmosComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AtmosComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -128,22 +87,63 @@ public interface AtmosComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default AtmosComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default AtmosComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * The URI of the server for the Atmos client to connect to.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AtmosComponentBuilder uri(java.lang.String uri) {
+            doSetProperty("uri", uri);
+            return this;
+        }
+        /**
+         * The token id to pass to the Atmos client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AtmosComponentBuilder fullTokenId(java.lang.String fullTokenId) {
+            doSetProperty("fullTokenId", fullTokenId);
+            return this;
+        }
+        /**
+         * The secret key to pass to the Atmos client (should be base64
+         * encoded).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AtmosComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Whether the Atmos client should perform SSL validation.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default AtmosComponentBuilder sslValidation(boolean sslValidation) {
+            doSetProperty("sslValidation", sslValidation);
             return this;
         }
     }
@@ -163,13 +163,13 @@ public interface AtmosComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "bridgeErrorHandler": ((AtmosComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((AtmosComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((AtmosComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "uri": ((AtmosComponent) component).setUri((java.lang.String) value); return true;
             case "fullTokenId": ((AtmosComponent) component).setFullTokenId((java.lang.String) value); return true;
             case "secretKey": ((AtmosComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "uri": ((AtmosComponent) component).setUri((java.lang.String) value); return true;
             case "sslValidation": ((AtmosComponent) component).setSslValidation((boolean) value); return true;
-            case "basicPropertyBinding": ((AtmosComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((AtmosComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "bridgeErrorHandler": ((AtmosComponent) component).setBridgeErrorHandler((boolean) value); return true;
             default: return false;
             }
         }

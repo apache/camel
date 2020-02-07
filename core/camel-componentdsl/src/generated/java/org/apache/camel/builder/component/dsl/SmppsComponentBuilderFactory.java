@@ -47,30 +47,22 @@ public interface SmppsComponentBuilderFactory {
      */
     interface SmppsComponentBuilder extends ComponentBuilder<SmppComponent> {
         /**
-         * To use the shared SmppConfiguration as configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.smpp.SmppConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default SmppsComponentBuilder configuration(
-                org.apache.camel.component.smpp.SmppConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: advanced
+         * Group: consumer
          */
-        default SmppsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SmppsComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -95,22 +87,30 @@ public interface SmppsComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default SmppsComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default SmppsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the shared SmppConfiguration as configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.smpp.SmppConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default SmppsComponentBuilder configuration(
+                org.apache.camel.component.smpp.SmppConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -130,10 +130,10 @@ public interface SmppsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((SmppComponent) component).setConfiguration((org.apache.camel.component.smpp.SmppConfiguration) value); return true;
-            case "basicPropertyBinding": ((SmppComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((SmppComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((SmppComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((SmppComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((SmppComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((SmppComponent) component).setConfiguration((org.apache.camel.component.smpp.SmppConfiguration) value); return true;
             default: return false;
             }
         }

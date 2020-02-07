@@ -49,16 +49,22 @@ public interface ReactiveStreamsComponentBuilderFactory {
             extends
                 ComponentBuilder<ReactiveStreamsComponent> {
         /**
-         * Configures the internal engine for Reactive Streams.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
-         * Group: advanced
+         * Default: false
+         * Group: consumer
          */
-        default ReactiveStreamsComponentBuilder internalEngineConfiguration(
-                org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration internalEngineConfiguration) {
-            doSetProperty("internalEngineConfiguration", internalEngineConfiguration);
+        default ReactiveStreamsComponentBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -74,35 +80,6 @@ public interface ReactiveStreamsComponentBuilderFactory {
         default ReactiveStreamsComponentBuilder backpressureStrategy(
                 org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy backpressureStrategy) {
             doSetProperty("backpressureStrategy", backpressureStrategy);
-            return this;
-        }
-        /**
-         * Set the type of the underlying reactive streams implementation to
-         * use. The implementation is looked up from the registry or using a
-         * ServiceLoader, the default implementation is
-         * DefaultCamelReactiveStreamsService.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default ReactiveStreamsComponentBuilder serviceType(
-                java.lang.String serviceType) {
-            doSetProperty("serviceType", serviceType);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default ReactiveStreamsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -127,22 +104,45 @@ public interface ReactiveStreamsComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: consumer
+         * Group: advanced
          */
-        default ReactiveStreamsComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+        default ReactiveStreamsComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Configures the internal engine for Reactive Streams.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default ReactiveStreamsComponentBuilder internalEngineConfiguration(
+                org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration internalEngineConfiguration) {
+            doSetProperty("internalEngineConfiguration", internalEngineConfiguration);
+            return this;
+        }
+        /**
+         * Set the type of the underlying reactive streams implementation to
+         * use. The implementation is looked up from the registry or using a
+         * ServiceLoader, the default implementation is
+         * DefaultCamelReactiveStreamsService.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default ReactiveStreamsComponentBuilder serviceType(
+                java.lang.String serviceType) {
+            doSetProperty("serviceType", serviceType);
             return this;
         }
     }
@@ -162,12 +162,12 @@ public interface ReactiveStreamsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "internalEngineConfiguration": ((ReactiveStreamsComponent) component).setInternalEngineConfiguration((org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration) value); return true;
-            case "backpressureStrategy": ((ReactiveStreamsComponent) component).setBackpressureStrategy((org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy) value); return true;
-            case "serviceType": ((ReactiveStreamsComponent) component).setServiceType((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((ReactiveStreamsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((ReactiveStreamsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "bridgeErrorHandler": ((ReactiveStreamsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "backpressureStrategy": ((ReactiveStreamsComponent) component).setBackpressureStrategy((org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy) value); return true;
+            case "lazyStartProducer": ((ReactiveStreamsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "basicPropertyBinding": ((ReactiveStreamsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "internalEngineConfiguration": ((ReactiveStreamsComponent) component).setInternalEngineConfiguration((org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration) value); return true;
+            case "serviceType": ((ReactiveStreamsComponent) component).setServiceType((java.lang.String) value); return true;
             default: return false;
             }
         }

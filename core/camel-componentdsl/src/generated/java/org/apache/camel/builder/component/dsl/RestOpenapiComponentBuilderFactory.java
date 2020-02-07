@@ -110,6 +110,27 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default RestOpenapiComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * What payload type this component is producing. For example
          * application/json according to the RFC7231. This equates to the value
          * of Content-Type HTTP header. If set overrides any value present in
@@ -145,6 +166,20 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default RestOpenapiComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
          * Customize TLS parameters used by the component. If not set defaults
          * to the TLS parameters set in the Camel context.
          * 
@@ -171,41 +206,6 @@ public interface RestOpenapiComponentBuilderFactory {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default RestOpenapiComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default RestOpenapiComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
     }
 
     class RestOpenapiComponentBuilderImpl
@@ -227,12 +227,12 @@ public interface RestOpenapiComponentBuilderFactory {
             case "componentName": ((RestOpenApiComponent) component).setComponentName((java.lang.String) value); return true;
             case "consumes": ((RestOpenApiComponent) component).setConsumes((java.lang.String) value); return true;
             case "host": ((RestOpenApiComponent) component).setHost((java.lang.String) value); return true;
+            case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
             case "produces": ((RestOpenApiComponent) component).setProduces((java.lang.String) value); return true;
             case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.net.URI) value); return true;
+            case "basicPropertyBinding": ((RestOpenApiComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "sslContextParameters": ((RestOpenApiComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((RestOpenApiComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
-            case "basicPropertyBinding": ((RestOpenApiComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "lazyStartProducer": ((RestOpenApiComponent) component).setLazyStartProducer((boolean) value); return true;
             default: return false;
             }
         }

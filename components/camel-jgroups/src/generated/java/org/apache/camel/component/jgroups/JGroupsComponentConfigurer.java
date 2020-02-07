@@ -18,14 +18,14 @@ public class JGroupsComponentConfigurer extends PropertyConfigurerSupport implem
         case "channel": target.setChannel(property(camelContext, org.jgroups.JChannel.class, value)); return true;
         case "channelproperties":
         case "channelProperties": target.setChannelProperties(property(camelContext, java.lang.String.class, value)); return true;
-        case "enableviewmessages":
-        case "enableViewMessages": target.setEnableViewMessages(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "enableviewmessages":
+        case "enableViewMessages": target.setEnableViewMessages(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
