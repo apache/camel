@@ -32,10 +32,6 @@
     <description>Camel Debezium Common support</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-        </dependency>
         <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
