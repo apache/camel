@@ -65,7 +65,7 @@ public class FacebookComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         // configure endpoint properties
-        endpoint.configureProperties(parameters);
+        setProperties(endpoint, parameters);
 
         // validate parameters
         validateParameters(uri, parameters, null);

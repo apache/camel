@@ -44,6 +44,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
@@ -68,7 +69,8 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
     private final XmlVerifierConfiguration config;
 
-    public XmlVerifierProcessor(XmlVerifierConfiguration config) {
+    public XmlVerifierProcessor(CamelContext context, XmlVerifierConfiguration config) {
+        super(context);
         this.config = config;
     }
 

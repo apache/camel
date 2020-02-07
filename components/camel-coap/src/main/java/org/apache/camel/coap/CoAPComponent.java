@@ -136,7 +136,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = getCamelContext().getRestConfiguration("coap", true);
+            config = camelContext.getRestConfiguration("coap", true);
         }
 
         if (config.isEnableCORS()) {
@@ -187,7 +187,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         }
 
         CoAPEndpoint endpoint = camelContext.getEndpoint(url, CoAPEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);

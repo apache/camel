@@ -20,10 +20,13 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -96,6 +99,19 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
             Map<String, Object> param = PropertiesHelper.extractProperties(parameters, "ftpClient.");
             answer.setFtpClientParameters(param);
         }
+    }
+
+    @Override
+    protected void setProperties(Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+        Object siteCommand = parameters.remove("siteCommand");
+        if (siteCommand != null) {
+            String cmd = PropertyConfigurerSupport.property(getCamelContext(), String.class, siteCommand);
+            if (EndpointHelper.isReferenceParameter(cmd)) {
+                cmd = EndpointHelper.resolveReferenceParameter(getCamelContext(), cmd, String.class);
+            }
+            ((FtpEndpoint) endpoint).getConfiguration().setSiteCommand(cmd);
+        }
+        super.setProperties(endpoint, parameters);
     }
 
     @Override

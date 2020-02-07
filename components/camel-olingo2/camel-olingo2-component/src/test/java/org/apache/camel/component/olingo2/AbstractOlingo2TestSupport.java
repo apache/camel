@@ -61,6 +61,7 @@ public class AbstractOlingo2TestSupport extends CamelTestSupport {
 
         // add OlingoComponent to Camel context
         final Olingo2Component component = new Olingo2Component(context);
+        component.init();
         component.setConfiguration(configuration);
         context.addComponent("olingo2", component);
 

@@ -50,7 +50,7 @@ public class HipchatComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HipchatEndpoint endpoint = getHipchatEndpoint(uri);
-        setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().getAuthToken() == null) {
             throw new HipchatException("OAuth 2 auth token must be specified");
         }

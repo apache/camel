@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -73,7 +72,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
         // brokers can be configured on either component or endpoint level
         // and the consumer and produce is aware of this and act accordingly
 
-        setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
 
         if (endpoint.getConfiguration().getSslContextParameters() == null) {

@@ -56,6 +56,7 @@ public class IronMQBatchProducerTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projectId", "dummy");
         parameters.put("token", "dummy");

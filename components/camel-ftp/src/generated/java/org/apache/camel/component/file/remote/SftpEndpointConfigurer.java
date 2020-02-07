@@ -15,6 +15,7 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SftpEndpoint target = (SftpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "binary": target.getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
         case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "disconnect": target.setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "donefilename":
@@ -23,6 +24,8 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "fileName": target.setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "jschlogginglevel":
         case "jschLoggingLevel": target.getConfiguration().setJschLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "passivemode":
+        case "passiveMode": target.getConfiguration().setPassiveMode(property(camelContext, boolean.class, value)); return true;
         case "separator": target.getConfiguration().setSeparator(property(camelContext, org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class, value)); return true;
         case "fastexistscheck":
         case "fastExistsCheck": target.setFastExistsCheck(property(camelContext, boolean.class, value)); return true;

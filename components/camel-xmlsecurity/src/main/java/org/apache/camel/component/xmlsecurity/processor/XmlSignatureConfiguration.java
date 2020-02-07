@@ -30,9 +30,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public abstract class XmlSignatureConfiguration implements Cloneable, CamelContextAware {
+public abstract class XmlSignatureConfiguration implements Cloneable {
 
-    private CamelContext context;
     @UriParam(label = "common")
     private String baseUri;
     @UriParam(label = "common")
@@ -51,16 +50,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
     private URIDereferencer uriDereferencer;
 
     public XmlSignatureConfiguration() {
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return context;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.context = camelContext;
     }
 
     public URIDereferencer getUriDereferencer() {

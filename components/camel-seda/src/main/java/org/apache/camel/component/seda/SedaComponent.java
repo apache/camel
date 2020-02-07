@@ -224,9 +224,9 @@ public class SedaComponent extends DefaultComponent {
         answer.setOfferTimeout(offerTimeout);
         answer.setBlockWhenFull(blockWhenFull);
         answer.setDiscardWhenFull(discardWhenFull);
-        answer.configureProperties(parameters);
         answer.setConcurrentConsumers(consumers);
         answer.setLimitConcurrentConsumers(limitConcurrentConsumers);
+        setProperties(answer, parameters);
         return answer;
     }
 

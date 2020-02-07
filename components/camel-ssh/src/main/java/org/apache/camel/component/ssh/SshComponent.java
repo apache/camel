@@ -43,7 +43,7 @@ public class SshComponent extends DefaultComponent {
         newConfig.configure(u);
 
         SshEndpoint endpoint = new SshEndpoint(uri, this, newConfig);
-        setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 

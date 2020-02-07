@@ -105,7 +105,7 @@ public class DisruptorComponent extends DefaultComponent {
         answer.setBlockWhenFull(blockWhenFull);
         answer.setWaitStrategy(waitStrategy);
         answer.setProducerType(producerType);
-        answer.configureProperties(parameters);
+        setProperties(answer, parameters);
 
         return answer;
     }

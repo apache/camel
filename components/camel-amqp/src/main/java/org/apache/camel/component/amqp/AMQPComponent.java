@@ -27,6 +27,7 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
 /**
@@ -113,6 +114,16 @@ public class AMQPComponent extends JmsComponent {
         if (getConfiguration() instanceof AMQPConfiguration) {
             ((AMQPConfiguration) getConfiguration()).setIncludeAmqpAnnotations(includeAmqpAnnotations);
         }
+    }
+
+    @Override
+    protected void setProperties(Endpoint bean, Map<String, Object> parameters) throws Exception {
+        Object includeAmqpAnnotations = parameters.remove("includeAmqpAnnotations");
+        if (includeAmqpAnnotations != null) {
+            ((AMQPConfiguration) ((JmsEndpoint) bean).getConfiguration())
+                    .setIncludeAmqpAnnotations(PropertyConfigurerSupport.property(getCamelContext(), boolean.class, includeAmqpAnnotations));
+        }
+        super.setProperties(bean, parameters);
     }
 
 }

@@ -53,9 +53,6 @@ public class YammerComponent extends DefaultComponent {
         endpointConfig.setFunction(remaining);
         endpointConfig.setFunctionType(YammerFunctionType.fromUri(remaining));
         
-        // and then override from parameters
-        setProperties(endpointConfig, parameters);
-        
         Endpoint endpoint = new YammerEndpoint(uri, this, endpointConfig);
         setProperties(endpoint, parameters);
         return endpoint;

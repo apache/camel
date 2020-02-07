@@ -49,10 +49,13 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     /**
      * Initializes the SpringLdapEndpoint using the provided template
      *
+     * @param endpointUri the full URI used to create this endpoint
+     * @param component the component that created this endpoint
      * @param templateName name of the LDAP template
      * @param ldapTemplate LDAP template, see org.springframework.ldap.core.LdapTemplate
      */
-    public SpringLdapEndpoint(String templateName, LdapTemplate ldapTemplate) {
+    public SpringLdapEndpoint(String endpointUri, SpringLdapComponent component, String templateName, LdapTemplate ldapTemplate) {
+        super(endpointUri, component);
         this.templateName = templateName;
         this.ldapTemplate = ldapTemplate;
     }

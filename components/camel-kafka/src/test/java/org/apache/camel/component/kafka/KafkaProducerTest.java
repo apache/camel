@@ -73,6 +73,7 @@ public class KafkaProducerTest {
     public KafkaProducerTest() throws Exception {
         KafkaComponent kafka = new KafkaComponent(new DefaultCamelContext());
         kafka.setBrokers("broker1:1234,broker2:4567");
+        kafka.init();
 
         endpoint = kafka.createEndpoint("kafka:sometopic", "sometopic", new HashMap());
         producer = new KafkaProducer(endpoint);

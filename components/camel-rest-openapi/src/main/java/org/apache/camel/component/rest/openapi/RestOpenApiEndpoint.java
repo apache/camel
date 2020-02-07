@@ -324,11 +324,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         Map<String, Object> params = determineEndpointParameters(openapi, operation);
         boolean hasHost = params.containsKey("host");
-        if (endpoint instanceof DefaultEndpoint) {
-            // let the rest endpoint configure itself
-            DefaultEndpoint de = (DefaultEndpoint) endpoint;
-            de.setProperties(endpoint, params);
-        }
+        // let the rest endpoint configure itself
+        endpoint.configureProperties(params);
 
         // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
         // Host header from some other HTTP input, and if so then lets remove it

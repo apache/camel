@@ -65,7 +65,6 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
             Comparator<Exchange> comparator = createSortByComparator(it);
             endpoint.setSortBy(comparator);
         }
-        setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
 
         afterPropertiesSet(endpoint);

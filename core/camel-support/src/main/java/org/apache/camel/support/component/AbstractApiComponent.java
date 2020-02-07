@@ -83,11 +83,8 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
             final T endpointConfiguration = createEndpointConfiguration(apiName);
             final Endpoint endpoint = createEndpoint(uri, methodName, apiName, endpointConfiguration);
 
-            // set endpoint property inBody
-            setProperties(endpoint, parameters);
-
             // configure endpoint properties and initialize state
-            endpoint.configureProperties(parameters);
+            setProperties(endpoint, parameters);
 
             return endpoint;
         } catch (InvocationTargetException e) {

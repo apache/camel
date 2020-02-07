@@ -452,15 +452,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             url = url + "?" + query;
         }
 
+        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();
+
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component, one such case is when we switch from "http" to "https" component name
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
-        if (parameters != null && !parameters.isEmpty()) {
-            setProperties(camelContext, endpoint, parameters);
-        }
+        setProperties(endpoint, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
 

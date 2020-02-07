@@ -40,6 +40,7 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
     }
 
     public YammerEndpoint(String uri, YammerComponent yammerComponent, YammerConfiguration config) {
+        super(uri, yammerComponent);
         this.setConfig(config);
     }
 

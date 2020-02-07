@@ -71,6 +71,7 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         context.getPropertiesComponent().setLocation("ref:prop");
 
         KafkaComponent kafka = new KafkaComponent(context);
+        kafka.init();
         kafka.setBrokers("localhost:" + getKafkaPort());
         context.addComponent("kafka", kafka);
 

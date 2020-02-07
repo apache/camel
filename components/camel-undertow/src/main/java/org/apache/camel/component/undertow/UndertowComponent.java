@@ -221,7 +221,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         String url = RestComponentHelper.createRestConsumerUrl(getComponentName(), scheme, host, port, path, map);
 
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         if (!map.containsKey("undertowHttpBinding")) {
             // use the rest binding, if not using a custom http binding
@@ -278,15 +278,15 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             url = url + "?" + query;
         }
 
+        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();
+
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
-        if (parameters != null && !parameters.isEmpty()) {
-            setProperties(camelContext, endpoint, parameters);
-        }
+        setProperties(endpoint, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new UndertowRestHeaderFilterStrategy(path, queryParameters));
 
