@@ -393,7 +393,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         String url = RestComponentHelper.createRestConsumerUrl("netty-http", scheme, host, port, path, map);
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
@@ -449,15 +449,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             url = url + "?" + query;
         }
 
+        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();
+
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        if (parameters != null && !parameters.isEmpty()) {
-            setProperties(camelContext, endpoint, parameters);
-        }
+        setProperties(endpoint, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new NettyHttpRestHeaderFilterStrategy(path, queryParameters));
 

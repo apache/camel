@@ -49,7 +49,7 @@ public class SpringLdapComponent extends DefaultComponent {
         Registry registry = camelContext.getRegistry();
         LdapTemplate ldapTemplate = registry.lookupByNameAndType(remaining, LdapTemplate.class);
 
-        Endpoint endpoint = new SpringLdapEndpoint(remaining, ldapTemplate);
+        Endpoint endpoint = new SpringLdapEndpoint(uri, this, remaining, ldapTemplate);
         setProperties(endpoint, parameters);
         return endpoint;
     }

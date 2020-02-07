@@ -1376,7 +1376,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         }
 
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
-        setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
 
         return endpoint;
     }

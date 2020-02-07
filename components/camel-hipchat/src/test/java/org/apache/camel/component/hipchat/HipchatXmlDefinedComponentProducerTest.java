@@ -48,12 +48,8 @@ public class HipchatXmlDefinedComponentProducerTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        HipchatComponent component = new HipchatComponent(context) {
-            @Override
-            protected HipchatEndpoint getHipchatEndpoint(String uri) {
-                return new HipchatEPSuccessTestSupport(uri, this, null, null);
-            }
-        };
+        HipchatComponent component = new HipchatTestComponent(context);
+        component.init();
         context.addComponent("hipchat", component);
 
         // This test is all about ensuring the endpoint is configured correctly when using the XML DSL so this

@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriParam;
  * from SFTP servers.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP", syntax = "sftp:host:port/directoryName", label = "file", 
-             excludeProperties = "appendChars,binary,passiveMode,bufferSize,siteCommand,"
+             excludeProperties = "appendChars,bufferSize,siteCommand,"
                                  + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                                  + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                                  + "renameUsingCopy")

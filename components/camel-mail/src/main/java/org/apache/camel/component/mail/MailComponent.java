@@ -110,7 +110,6 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
 
         endpoint.setContentTypeResolver(contentTypeResolver);
         setEndpointHeaderFilterStrategy(endpoint);
-        setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
 
         // sanity check that we know the mail server

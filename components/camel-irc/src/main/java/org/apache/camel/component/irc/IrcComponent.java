@@ -54,7 +54,7 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
         config.configure(uri);
 
         IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
-        setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 

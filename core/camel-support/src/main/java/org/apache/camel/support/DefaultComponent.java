@@ -169,10 +169,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
 
         // configure remainder of the parameters
-        endpoint.configureProperties(parameters);
-        if (useIntrospectionOnEndpoint()) {
-            setProperties(endpoint, parameters);
-        }
+        setProperties(endpoint, parameters);
 
         // if endpoint is strict (not lenient) and we have unknown parameters configured then
         // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
@@ -258,10 +255,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
 
         // configure remainder of the parameters
-        endpoint.configureProperties(parameters);
-        if (useIntrospectionOnEndpoint()) {
-            setProperties(endpoint, parameters);
-        }
+        setProperties(endpoint, parameters);
 
         // if endpoint is strict (not lenient) and we have unknown parameters configured then
         // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
@@ -473,6 +467,23 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         throws Exception;
 
     /**
+     * Configure an endpoint using the given parameters.
+     * In the usual cases, this is the only call needed after having created the endpoint
+     * in the {@link #createEndpoint(String, String, Map)} method's implementation.
+     *
+     * This method will call the {@link Endpoint#configureProperties(Map)} method which
+     * should delegate the the endpoint's {@link GeneratedPropertyConfigurer} instance.
+     * In some rare cases, you need to override this method to explicitely set parameters
+     * in case a simple generated configurer can not be used.
+     *
+     * @param endpoint    the endpoint
+     * @param parameters  properties to set
+     */
+    protected void setProperties(Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+        endpoint.configureProperties(parameters);
+    }
+
+    /**
      * Sets the bean properties on the given bean
      *
      * @param bean        the bean
@@ -501,13 +512,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                     .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
                     .bind(camelContext, bean, parameters);
         } else {
-            PropertyConfigurer configurer = null;
+            PropertyConfigurer configurer;
             if (bean instanceof Component) {
                 configurer = getComponentPropertyConfigurer();
             } else if (bean instanceof Endpoint) {
                 configurer = getEndpointPropertyConfigurer();
             } else if (bean instanceof PropertyConfigurerAware) {
                 configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
+            } else {
+                configurer = null;
             }
             // use advanced binding
             PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);

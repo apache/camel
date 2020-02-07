@@ -297,7 +297,7 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: validationFailedHandler
                 from("direct:validationFailedHandler")
-                        .to("xmlsecurity:verify:validationFailedHandler?keySelector=#selectorKeyValue&validationFailedHandler=validationFailedHandlerIgnoreManifestFailures")
+                        .to("xmlsecurity:verify:validationFailedHandler?keySelector=#selectorKeyValue&validationFailedHandler=#validationFailedHandlerIgnoreManifestFailures")
                         .to("mock:result");
                 // END SNIPPET: validationFailedHandler
             }
@@ -734,7 +734,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testVerifySignatureInvalidValueException() throws Exception {
         MockEndpoint mock = setupExceptionMock();
         setUpKeys("DSA", 512);
-        context.getEndpoint("xmlsecurity:verify:verifyexceptions?keySelector=#selector", XmlVerifierEndpoint.class).setKeySelector(
+        context.getEndpoint("xmlsecurity:verify:verifyexceptions", XmlVerifierEndpoint.class).setKeySelector(
                 KeySelector.singletonKeySelector(keyPair.getPublic()));
         // payload needs DSA key
         InputStream payload = XmlSignatureTest.class

@@ -80,10 +80,10 @@ public class XmlSignatureComponent extends DefaultComponent {
                 )
             );
         }
-        setProperties(endpoint.getConfiguration(), parameters);
-        endpoint.getConfiguration().setCamelContext(getCamelContext());
         endpoint.setCommand(XmlCommand.valueOf(scheme));
         endpoint.setName(name);
+        setProperties(endpoint, parameters);
+        setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
     }
 

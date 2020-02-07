@@ -82,11 +82,8 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
         final Olingo4Configuration endpointConfiguration = createEndpointConfiguration(Olingo4ApiName.DEFAULT);
         final Endpoint endpoint = createEndpoint(uri, methodName, Olingo4ApiName.DEFAULT, endpointConfiguration);
 
-        // set endpoint property inBody
-        setProperties(endpoint, parameters);
-
         // configure endpoint properties and initialize state
-        endpoint.configureProperties(parameters);
+        setProperties(endpoint, parameters);
 
         return endpoint;
     }

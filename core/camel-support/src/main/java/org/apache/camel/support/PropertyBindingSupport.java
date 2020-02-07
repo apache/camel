@@ -225,7 +225,8 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
             org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
-            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, removeParameters, mandatory,
+            return doBindProperties(camelContext, target,  removeParameters ? properties : new HashMap<>(properties),
+                    optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
         }
 
@@ -247,7 +248,8 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(obj, "target");
             org.apache.camel.util.ObjectHelper.notNull(prop, "properties");
 
-            return doBindProperties(context, obj, prop, optionPrefix, ignoreCase, removeParameters, mandatory,
+            return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
+                    optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
         }
 
@@ -269,7 +271,7 @@ public final class PropertyBindingSupport {
             Map<String, Object> properties = new HashMap<>(1);
             properties.put(key, value);
 
-            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, removeParameters, mandatory,
+            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
         }
 

@@ -24,6 +24,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         IronMQEndpoint endpoint = (IronMQEndpoint)component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy");
 
         assertEquals("TestQueue", endpoint.getConfiguration().getQueueName());
@@ -40,7 +41,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfigurationAndIronMQCloud() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
-
+        component.init();
         IronMQEndpoint endpoint = (IronMQEndpoint)component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&ironMQCloud=https://iron.foo");
 
         assertEquals("TestQueue", endpoint.getConfiguration().getQueueName());
@@ -55,6 +56,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         IronMQEndpoint endpoint = (IronMQEndpoint)component
             .createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&timeout=120&visibilityDelay=5&maxMessagesPerPoll=20&preserveHeaders=true&wait=30"
                             + "&ironMQCloud=https://iron.foo&batchDelete=true");
@@ -73,6 +75,7 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithPollConsumerConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         IronMQEndpoint endpoint = (IronMQEndpoint)component
             .createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&initialDelay=200&delay=400&timeout=120&maxMessagesPerPoll=20");
         IronMQConsumer consumer = (IronMQConsumer)endpoint.createConsumer(null);
@@ -85,12 +88,14 @@ public class IronMQComponentConfigurationTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutTokenConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         component.createEndpoint("ironmq://testqueue?projectId=yyy");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutProjectIdConfiguration() throws Exception {
         IronMQComponent component = new IronMQComponent(context);
+        component.init();
         component.createEndpoint("ironmq://MyQueue?token=xxx");
     }
 }

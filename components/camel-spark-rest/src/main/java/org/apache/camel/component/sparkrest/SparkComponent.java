@@ -344,7 +344,7 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
 
         // get the endpoint
         SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);

@@ -36,6 +36,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -93,6 +94,15 @@ public class RestEndpoint extends DefaultEndpoint {
     public RestEndpoint(String endpointUri, RestComponent component) {
         super(endpointUri, component);
         setExchangePattern(ExchangePattern.InOut);
+    }
+
+    @Override
+    public void configureProperties(Map<String, Object> options) {
+        Object parameters = options.remove("parameters");
+        if (parameters != null) {
+            setParameters(PropertyConfigurerSupport.property(getCamelContext(), Map.class, parameters));
+        }
+        super.configureProperties(options);
     }
 
     @Override

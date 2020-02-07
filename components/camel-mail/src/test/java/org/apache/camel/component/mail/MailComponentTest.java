@@ -256,6 +256,7 @@ public class MailComponentTest extends CamelTestSupport {
     public void testMailComponentCtr() throws Exception {
         MailComponent comp = new MailComponent();
         comp.setCamelContext(context);
+        comp.init();
 
         assertNotNull(comp.getConfiguration());
         assertNull(comp.getContentTypeResolver());
@@ -270,6 +271,7 @@ public class MailComponentTest extends CamelTestSupport {
     @Test
     public void testMailComponentCtrCamelContext() throws Exception {
         MailComponent comp = new MailComponent(context);
+        comp.init();
 
         assertNotNull(comp.getConfiguration());
         assertNull(comp.getContentTypeResolver());

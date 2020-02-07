@@ -208,6 +208,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return component;
     }
 
+    public void setComponent(Component component) {
+        this.component = component;
+    }
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -394,7 +398,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        // noop
+        setProperties(this, options);
     }
 
     /**
@@ -405,7 +409,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param bean        the bean
      * @param parameters  properties to set
      */
-    public void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
+    public void setProperties(Object bean, Map<String, Object> parameters) {
         if (parameters == null || parameters.isEmpty()) {
             return;
         }

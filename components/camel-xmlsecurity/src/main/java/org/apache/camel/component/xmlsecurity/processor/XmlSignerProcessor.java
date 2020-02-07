@@ -64,6 +64,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
@@ -197,7 +198,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
     private final XmlSignerConfiguration config;
     
-    public XmlSignerProcessor(XmlSignerConfiguration config) {
+    public XmlSignerProcessor(CamelContext context, XmlSignerConfiguration config) {
+        super(context);
         this.config = config;
     }
 

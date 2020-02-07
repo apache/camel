@@ -38,7 +38,7 @@ public class XmlSignerEndpoint extends XmlSignatureEndpoint {
 
     @Override
     Processor createProcessor() {
-        return new XmlSignerProcessor(getConfiguration());
+        return new XmlSignerProcessor(getCamelContext(), getConfiguration());
     }
 
     @Override

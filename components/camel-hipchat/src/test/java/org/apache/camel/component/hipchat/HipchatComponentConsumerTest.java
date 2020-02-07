@@ -187,12 +187,8 @@ public class HipchatComponentConsumerTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        HipchatComponent component = new HipchatComponent(context) {
-            @Override
-            protected HipchatEndpoint getHipchatEndpoint(String uri) {
-                return new HipchatEPSuccessTestSupport(uri, this, null, closeableHttpResponse);
-            }
-        };
+        HipchatComponent component = new HipchatTestComponent(context, closeableHttpResponse);
+        component.init();
         context.addComponent("hipchat", component);
         return context;
     }

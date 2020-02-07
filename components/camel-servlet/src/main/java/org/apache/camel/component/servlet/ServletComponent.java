@@ -299,7 +299,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String url = RestComponentHelper.createRestConsumerUrl("servlet", path, map);  
 
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         if (!map.containsKey("httpBinding")) {
             // use the rest binding, if not using a custom http binding
