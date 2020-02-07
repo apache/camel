@@ -67,6 +67,9 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     private RemovalListener<String, Publisher> removalListener = removal -> {
         Publisher publisher = removal.getValue();
+        if (publisher == null) {
+            return;
+        }
         publisher.shutdown();
         try {
             publisher.awaitTermination(1, TimeUnit.MINUTES);
