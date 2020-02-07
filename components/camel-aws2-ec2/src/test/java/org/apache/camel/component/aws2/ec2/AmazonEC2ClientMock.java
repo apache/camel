@@ -59,7 +59,7 @@ import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
 public class AmazonEC2ClientMock implements Ec2Client {
-    
+
     @Override
     public RunInstancesResponse runInstances(RunInstancesRequest runInstancesRequest) {
         RunInstancesResponse.Builder result = RunInstancesResponse.builder();
@@ -97,22 +97,22 @@ public class AmazonEC2ClientMock implements Ec2Client {
                 }
             }
             instances.add(ins.build());
-            result.instances(instances); 
+            result.instances(instances);
         } else {
-        	AwsServiceException.Builder builder = AwsServiceException.builder();
-        	AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
-        	builderError.errorMessage("The image-id doesn't exists");
-        	builder.awsErrorDetails(builderError.build());
-        	AwsServiceException ase = builder.build();
+            AwsServiceException.Builder builder = AwsServiceException.builder();
+            AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
+            builderError.errorMessage("The image-id doesn't exists");
+            builder.awsErrorDetails(builderError.build());
+            AwsServiceException ase = builder.build();
             throw ase;
         }
         return result.build();
-        
+
     }
-    
+
     @Override
     public StartInstancesResponse startInstances(StartInstancesRequest startInstancesRequest) {
-    	StartInstancesResponse.Builder result = StartInstancesResponse.builder();
+        StartInstancesResponse.Builder result = StartInstancesResponse.builder();
         if (startInstancesRequest.instanceIds().get(0).equals("test-1")) {
             Collection<InstanceStateChange> coll = new ArrayList<>();
             InstanceStateChange.Builder sc = InstanceStateChange.builder();
@@ -128,19 +128,19 @@ public class AmazonEC2ClientMock implements Ec2Client {
             coll.add(sc.build());
             result.startingInstances(coll);
         } else {
-        	AwsServiceException.Builder builder = AwsServiceException.builder();
-        	AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
-        	builderError.errorMessage("The image-id doesn't exists");
-        	builder.awsErrorDetails(builderError.build());
-        	AwsServiceException ase = builder.build();
+            AwsServiceException.Builder builder = AwsServiceException.builder();
+            AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
+            builderError.errorMessage("The image-id doesn't exists");
+            builder.awsErrorDetails(builderError.build());
+            AwsServiceException ase = builder.build();
             throw ase;
         }
-        return result.build();       
+        return result.build();
     }
-    
+
     @Override
     public StopInstancesResponse stopInstances(StopInstancesRequest stopInstancesRequest) {
-    	StopInstancesResponse.Builder builder = StopInstancesResponse.builder();
+        StopInstancesResponse.Builder builder = StopInstancesResponse.builder();
         if (stopInstancesRequest.instanceIds().get(0).equals("test-1")) {
             Collection<InstanceStateChange> coll = new ArrayList<>();
             InstanceStateChange.Builder sc = InstanceStateChange.builder();
@@ -156,14 +156,14 @@ public class AmazonEC2ClientMock implements Ec2Client {
             coll.add(sc.build());
             builder.stoppingInstances(coll);
         } else {
-        	AwsServiceException.Builder exc = AwsServiceException.builder();
-        	AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
-        	builderError.errorMessage("The image-id doesn't exists");
-        	exc.awsErrorDetails(builderError.build());
-        	AwsServiceException ase = exc.build();
+            AwsServiceException.Builder exc = AwsServiceException.builder();
+            AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
+            builderError.errorMessage("The image-id doesn't exists");
+            exc.awsErrorDetails(builderError.build());
+            AwsServiceException ase = exc.build();
             throw ase;
         }
-        return builder.build();        
+        return builder.build();
     }
 
     @Override
@@ -184,19 +184,19 @@ public class AmazonEC2ClientMock implements Ec2Client {
             coll.add(sc.build());
             result.terminatingInstances(coll);
         } else {
-        	AwsServiceException.Builder exc = AwsServiceException.builder();
-        	AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
-        	builderError.errorMessage("The image-id doesn't exists");
-        	exc.awsErrorDetails(builderError.build());
-        	AwsServiceException ase = exc.build();
+            AwsServiceException.Builder exc = AwsServiceException.builder();
+            AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
+            builderError.errorMessage("The image-id doesn't exists");
+            exc.awsErrorDetails(builderError.build());
+            AwsServiceException ase = exc.build();
             throw ase;
         }
-        return result.build();    
+        return result.build();
     }
-    
+
     @Override
     public DescribeInstancesResponse describeInstances(DescribeInstancesRequest describeInstancesRequest) {
-    	DescribeInstancesResponse.Builder result = DescribeInstancesResponse.builder();
+        DescribeInstancesResponse.Builder result = DescribeInstancesResponse.builder();
         if (describeInstancesRequest.instanceIds().isEmpty()) {
             Collection<Reservation> list = new ArrayList<>();
             Reservation.Builder res = Reservation.builder();
@@ -216,7 +216,7 @@ public class AmazonEC2ClientMock implements Ec2Client {
             instances.add(ins1.build());
             res.instances(instances);
             list.add(res.build());
-            result.reservations(list); 
+            result.reservations(list);
         } else {
             if (describeInstancesRequest.instanceIds().contains("instance-1")) {
                 Collection<Reservation> list = new ArrayList<>();
@@ -232,15 +232,15 @@ public class AmazonEC2ClientMock implements Ec2Client {
                 instances.add(ins.build());
                 res.instances(instances);
                 list.add(res.build());
-                result.reservations(list); 
+                result.reservations(list);
             }
         }
         return result.build();
     }
-    
+
     @Override
     public DescribeInstanceStatusResponse describeInstanceStatus(DescribeInstanceStatusRequest describeInstanceStatusRequest) {
-    	DescribeInstanceStatusResponse.Builder result = DescribeInstanceStatusResponse.builder();
+        DescribeInstanceStatusResponse.Builder result = DescribeInstanceStatusResponse.builder();
         Collection<InstanceStatus> instanceStatuses = new ArrayList<>();
         if (describeInstanceStatusRequest.instanceIds().isEmpty()) {
             InstanceStatus.Builder status = InstanceStatus.builder();
@@ -273,10 +273,10 @@ public class AmazonEC2ClientMock implements Ec2Client {
     public RebootInstancesResponse rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
         return RebootInstancesResponse.builder().build();
     }
-    
+
     @Override
     public MonitorInstancesResponse monitorInstances(MonitorInstancesRequest monitorInstancesRequest) {
-    	MonitorInstancesResponse.Builder result = MonitorInstancesResponse.builder();
+        MonitorInstancesResponse.Builder result = MonitorInstancesResponse.builder();
         if (!monitorInstancesRequest.instanceIds().isEmpty()) {
             Collection<InstanceMonitoring> coll = new ArrayList<>();
             Iterator<String> it = monitorInstancesRequest.instanceIds().iterator();
@@ -286,17 +286,17 @@ public class AmazonEC2ClientMock implements Ec2Client {
                 mon.instanceId(id);
                 Monitoring.Builder monitoring = Monitoring.builder();
                 monitoring.state(MonitoringState.ENABLED);
-                mon.monitoring(monitoring.build()); 
+                mon.monitoring(monitoring.build());
                 coll.add(mon.build());
             }
             result.instanceMonitorings(coll);
         }
         return result.build();
     }
-    
+
     @Override
     public UnmonitorInstancesResponse unmonitorInstances(UnmonitorInstancesRequest unmonitorInstancesRequest) {
-    	UnmonitorInstancesResponse.Builder result = UnmonitorInstancesResponse.builder();
+        UnmonitorInstancesResponse.Builder result = UnmonitorInstancesResponse.builder();
         if (!unmonitorInstancesRequest.instanceIds().isEmpty()) {
             Collection<InstanceMonitoring> coll = new ArrayList<>();
             Iterator<String> it = unmonitorInstancesRequest.instanceIds().iterator();
@@ -306,30 +306,30 @@ public class AmazonEC2ClientMock implements Ec2Client {
                 mon.instanceId(id);
                 Monitoring.Builder monitoring = Monitoring.builder();
                 monitoring.state(MonitoringState.DISABLED);
-                mon.monitoring(monitoring.build()); 
+                mon.monitoring(monitoring.build());
                 coll.add(mon.build());
             }
             result.instanceMonitorings(coll);
         }
         return result.build();
     }
-    
+
     @Override
     public CreateTagsResponse createTags(CreateTagsRequest createTagsRequest) {
         return CreateTagsResponse.builder().build();
     }
-    
+
     @Override
     public DeleteTagsResponse deleteTags(DeleteTagsRequest deleteTagsRequest) {
         return DeleteTagsResponse.builder().build();
     }
 
-	@Override
-	public String serviceName() {
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        return null;
+    }
 
-	@Override
-	public void close() {	
-	}
+    @Override
+    public void close() {
+    }
 }

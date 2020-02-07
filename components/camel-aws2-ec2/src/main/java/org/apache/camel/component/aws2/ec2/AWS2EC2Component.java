@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.ec2.Ec2Client;
 
 /**
@@ -39,16 +38,16 @@ public class AWS2EC2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private AWS2EC2Configuration configuration;
-    
+
     public AWS2EC2Component() {
         this(null);
     }
-    
+
     public AWS2EC2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new AWS2EC2ComponentVerifierExtension());
     }
 
@@ -65,10 +64,10 @@ public class AWS2EC2Component extends DefaultComponent {
         if (configuration.getAmazonEc2Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonEC2Client or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public AWS2EC2Configuration getConfiguration() {
         return configuration;
     }
@@ -90,7 +89,7 @@ public class AWS2EC2Component extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -101,7 +100,7 @@ public class AWS2EC2Component extends DefaultComponent {
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
-    
+
     public String getSecretKey() {
         return secretKey;
     }

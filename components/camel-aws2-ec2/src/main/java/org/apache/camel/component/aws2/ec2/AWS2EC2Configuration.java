@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.ec2;
 
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -28,7 +27,8 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 @UriParams
 public class AWS2EC2Configuration implements Cloneable {
 
-    @UriPath(description = "Logical name") @Metadata(required = true)
+    @UriPath(description = "Logical name")
+    @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
     private Ec2Client amazonEc2Client;
@@ -47,7 +47,7 @@ public class AWS2EC2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
-    
+
     public Ec2Client getAmazonEc2Client() {
         return amazonEc2Client;
     }
@@ -58,7 +58,7 @@ public class AWS2EC2Configuration implements Cloneable {
     public void setAmazonEc2Client(Ec2Client amazonEc2Client) {
         this.amazonEc2Client = amazonEc2Client;
     }
-    
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -69,7 +69,7 @@ public class AWS2EC2Configuration implements Cloneable {
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
-    
+
     public String getSecretKey() {
         return secretKey;
     }
@@ -86,14 +86,15 @@ public class AWS2EC2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, 
-     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances,  
-     * createTags or deleteTags
+     * The operation to perform. It can be createAndRunInstances,
+     * startInstances, stopInstances, terminateInstances, describeInstances,
+     * describeInstancesStatus, rebootInstances, monitorInstances,
+     * unmonitorInstances, createTags or deleteTags
      */
     public void setOperation(AWS2EC2Operations operation) {
         this.operation = operation;
-    } 
-    
+    }
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -104,7 +105,7 @@ public class AWS2EC2Configuration implements Cloneable {
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -126,19 +127,20 @@ public class AWS2EC2Configuration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public String getRegion() {
         return region;
     }
 
     /**
-     * The region in which EC2 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which EC2 client needs to work. When using this parameter,
+     * the configuration will expect the capitalized name of the region (for
+     * example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     // *************************************************
     //
     // *************************************************

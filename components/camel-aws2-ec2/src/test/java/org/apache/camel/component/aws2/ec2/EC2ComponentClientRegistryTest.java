@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.ec2;
 
-import org.apache.camel.component.aws2.ec2.AWS2EC2Component;
-import org.apache.camel.component.aws2.ec2.AWS2EC2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -33,7 +31,7 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalEC2ClientMisconfiguration() throws Exception {
 

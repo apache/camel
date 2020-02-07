@@ -20,15 +20,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.camel.component.aws2.ec2.AWS2EC2Operations;
-
 public class EC2OperationsTest {
 
     @Test
     public void supportedOperationCount() {
         assertEquals(11, AWS2EC2Operations.values().length);
     }
-    
+
     @Test
     public void valueOf() {
         assertEquals(AWS2EC2Operations.createAndRunInstances, AWS2EC2Operations.valueOf("createAndRunInstances"));
@@ -43,7 +41,7 @@ public class EC2OperationsTest {
         assertEquals(AWS2EC2Operations.createTags, AWS2EC2Operations.valueOf("createTags"));
         assertEquals(AWS2EC2Operations.deleteTags, AWS2EC2Operations.valueOf("deleteTags"));
     }
-    
+
     @Test
     public void testToString() {
         assertEquals(AWS2EC2Operations.createAndRunInstances.toString(), "createAndRunInstances");
