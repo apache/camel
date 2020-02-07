@@ -19,6 +19,8 @@ package org.apache.camel.component.iec60870.client;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.camel.component.iec60870.DiscardAckModule;
@@ -42,13 +44,6 @@ public class ClientConnection {
     public interface ValueListener {
         void update(ObjectAddress address, Value<?> value);
     }
-
-    private final StateListener stateListener = new StateListener() {
-
-        @Override
-        public void stateChanged(final State state, final Throwable e) {
-        }
-    };
 
     private final DataHandler dataHandler = new AbstractDataProcessor() {
 
@@ -99,7 +94,19 @@ public class ClientConnection {
     public void start() {
         final DataModule dataModule = new DataModule(this.dataHandler, this.options.getDataModuleOptions());
         final ModulesFactory factory = () -> Arrays.asList(dataModule, new DiscardAckModule());
-        this.client = new AutoConnectClient(this.host, this.port, this.options.getProtocolOptions(), factory, this.stateListener);
+        final CountDownLatch latch = new CountDownLatch(1);
+        this.client = new AutoConnectClient(this.host, this.port, this.options.getProtocolOptions(), factory, new StateListener() {
+            @Override
+            public void stateChanged(final State state, final Throwable e) {
+                if (state == State.CONNECTED)
+                    latch.countDown();
+            }
+        });
+        try {
+            latch.await(2000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ex) {
+            // ignore
+        }
     }
 
     public void stop() throws Exception {
