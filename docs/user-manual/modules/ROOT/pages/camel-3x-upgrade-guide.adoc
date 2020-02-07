@@ -130,6 +130,19 @@ The camel-xml-jaxp JAR has XML parsers and type converters.
 The camel-xml-jaxb has support for loading XML DSL routes using JAXB.
 An alternative is to use the new camel-xml-io for loading XML routes which is more light-weight and faster than JAXB.
 
+=== JAXB is now optional
+
+JAXB is now optional in Camel and only needed when using XML routes with the `camel-xml-jaxb` JAR
+for loading and parsing the routes with JAXB. There is an alternative implementation with `camel-xml-io` (see above).
+
+This means that `jaxb-core` and `jaxb-impl` JARs no longer are needed on the classpath and as such has been removed
+as dependency in the various Camel `pom.xml` files.
+
+There are a number of components that uses JAXB such as `camel-spring`, `camel-blueprint`, `camel-cdi` for their support
+of using XML for beans and Camel XML routes. And a few components such as `camel-soap` etc.
+
+But at general then Camel is now lighter in classpath dependency by not requiring to have JAXB present.
+
 === Graceful Shutdown Timeout
 
 When shutting down Camel, then the default timeout has changed from 300 seconds (5 minutes) to 45 seconds.
