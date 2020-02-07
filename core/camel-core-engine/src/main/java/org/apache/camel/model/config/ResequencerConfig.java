@@ -28,19 +28,20 @@ import org.apache.camel.model.OtherAttributesAware;
 
 @XmlType(name = "resequencerConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("rawtypes")
 public abstract class ResequencerConfig implements OtherAttributesAware {
 
     // use xs:any to support optional property placeholders
     @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
+    private Map otherAttributes;
 
     @Override
-    public Map<QName, Object> getOtherAttributes() {
+    public Map getOtherAttributes() {
         return otherAttributes;
     }
 
     @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+    public void setOtherAttributes(Map otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
 

@@ -72,6 +72,7 @@ import org.slf4j.LoggerFactory;
  * Base class for processor types that most XML types extend.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("rawtypes")
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block, OtherAttributesAware {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -87,7 +88,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     // use xs:any to support optional property placeholders
     @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
+    private Map otherAttributes;
     @XmlTransient
     private final int index;
 
@@ -1309,7 +1310,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then
      * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.validation.PredicateValidationException}
+     * {@link org.apache.camel.support.processor.PredicateValidationException}
      * is thrown.
      *
      * @param expression the expression
@@ -1324,7 +1325,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then
      * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.validation.PredicateValidationException}
+     * {@link org.apache.camel.support.processor.PredicateValidationException}
      * is thrown.
      *
      * @param predicate the predicate
@@ -1339,7 +1340,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a validation expression which only if it is <tt>true</tt> then
      * the exchange is forwarded to the destination. Otherwise a
-     * {@link org.apache.camel.support.processor.validation.PredicateValidationException}
+     * {@link org.apache.camel.support.processor.PredicateValidationException}
      * is thrown.
      *
      * @return the builder
@@ -4026,12 +4027,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     @Override
-    public Map<QName, Object> getOtherAttributes() {
+    public Map getOtherAttributes() {
         return otherAttributes;
     }
 
     @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+    public void setOtherAttributes(Map otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
 

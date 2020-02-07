@@ -34,6 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("rawtypes")
 public class LoadBalancerDefinition extends IdentifiedType implements OtherAttributesAware {
     @XmlTransient
     private LoadBalancer loadBalancer;
@@ -41,7 +42,7 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
     private String loadBalancerTypeName;
     // use xs:any to support optional property placeholders
     @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
+    private Map otherAttributes;
 
     public LoadBalancerDefinition() {
     }
@@ -81,12 +82,12 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
     }
 
     @Override
-    public Map<QName, Object> getOtherAttributes() {
+    public Map getOtherAttributes() {
         return otherAttributes;
     }
 
     @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+    public void setOtherAttributes(Map otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
 
