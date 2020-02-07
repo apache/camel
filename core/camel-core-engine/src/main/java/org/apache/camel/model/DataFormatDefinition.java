@@ -35,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("rawtypes")
 public class DataFormatDefinition extends IdentifiedType implements OtherAttributesAware, DefinitionPropertyPlaceholderConfigurer {
     @XmlTransient
     private DataFormat dataFormat;
@@ -42,7 +43,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     private String dataFormatName;
     // use xs:any to support optional property placeholders
     @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
+    private Map otherAttributes;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String contentTypeHeader;
@@ -75,7 +76,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     }
 
     @Override
-    public Map<QName, Object> getOtherAttributes() {
+    public Map getOtherAttributes() {
         return otherAttributes;
     }
 
@@ -83,7 +84,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
      * Adds an optional attribute
      */
     @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+    public void setOtherAttributes(Map otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
 

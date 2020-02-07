@@ -18,8 +18,6 @@ package org.apache.camel.model;
 
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
 /**
  * Models can support being configured with any other attributes to shadow
  * existing options to be used for property placeholders.
@@ -28,16 +26,17 @@ import javax.xml.namespace.QName;
  * integer type. Then the any attributes can be used to override those existing
  * attributes and supporting property placeholders.
  */
+@SuppressWarnings("rawtypes")
 public interface OtherAttributesAware {
 
     /**
      * Adds optional attribute to use as property placeholder
      */
-    Map<QName, Object> getOtherAttributes();
+    Map getOtherAttributes();
 
     /**
      * Adds optional attribute to use as property placeholder
      */
-    void setOtherAttributes(Map<QName, Object> otherAttributes);
+    void setOtherAttributes(Map otherAttributes);
 
 }

@@ -56,6 +56,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("rawtypes")
 public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware, ExpressionFactory, DefinitionPropertyPlaceholderConfigurer {
     @XmlAttribute
     @XmlID
@@ -74,7 +75,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     private ExpressionDefinition expressionType;
     // use xs:any to support optional property placeholders
     @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
+    private Map otherAttributes;
 
     public ExpressionDefinition() {
     }
@@ -279,12 +280,12 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     }
 
     @Override
-    public Map<QName, Object> getOtherAttributes() {
+    public Map getOtherAttributes() {
         return otherAttributes;
     }
 
     @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+    public void setOtherAttributes(Map otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
 

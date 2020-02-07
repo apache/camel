@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.namespace.QName;
 
 import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -197,20 +196,22 @@ public class BaseParser {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
         // Ignore
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
             return;
         }
+        String fqn = ns.isEmpty() ? name : "{" + ns + "}" + name;
         if (definition instanceof OtherAttributesAware) {
-            Map<QName, Object> others = ((OtherAttributesAware)definition).getOtherAttributes();
+            Map<Object, Object> others = ((OtherAttributesAware) definition).getOtherAttributes();
             if (others == null) {
                 others = new LinkedHashMap<>();
-                ((OtherAttributesAware)definition).setOtherAttributes(others);
+                ((OtherAttributesAware) definition).setOtherAttributes(others);
             }
-            others.put(new QName(ns, name), val);
+            others.put(fqn, val);
         } else {
-            throw new XmlPullParserException("Unsupported attribute '{" + ns + "}" + name + "'");
+            throw new XmlPullParserException("Unsupported attribute '" + fqn + "'");
         }
     }
 

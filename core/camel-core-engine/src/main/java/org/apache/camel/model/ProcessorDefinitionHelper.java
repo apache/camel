@@ -53,6 +53,7 @@ public final class ProcessorDefinitionHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorDefinitionHelper.class);
     private static final ThreadLocal<RestoreAction> CURRENT_RESTORE_ACTION = new ThreadLocal<>();
+    public static final String PREFIX = "{" + Constants.PLACEHOLDER_QNAME + "}";
 
     private ProcessorDefinitionHelper() {
     }
@@ -761,9 +762,9 @@ public final class ProcessorDefinitionHelper {
                     extraWrite.putAll(writeProperties);
                 }
 
-                Map<QName, Object> other = ooa.getOtherAttributes();
-                other.forEach((k, v) -> {
-                    if (Constants.PLACEHOLDER_QNAME.equals(k.getNamespaceURI())) {
+                ooa.getOtherAttributes().forEach((k, v) -> {
+                    String ks = k.toString();
+                    if (ks.startsWith(PREFIX)) {
                         if (v instanceof String) {
                             // value must be enclosed with placeholder tokens
                             String s = (String)v;
@@ -776,11 +777,12 @@ public final class ProcessorDefinitionHelper {
                             if (!s.endsWith(suffixToken)) {
                                 s = s + suffixToken;
                             }
+                            String kk = ks.substring(PREFIX.length());
                             final String value = s;
-                            extraRead.put(k.getLocalPart(), () -> value);
-                            extraWrite.put(k.getLocalPart(), text -> {
+                            extraRead.put(kk, () -> value);
+                            extraWrite.put(kk, text -> {
                                 try {
-                                    PropertyBindingSupport.build().withCamelContext(camelContext).withTarget(definition).withMandatory(true).withProperty(k.getLocalPart(), text)
+                                    PropertyBindingSupport.build().withCamelContext(camelContext).withTarget(definition).withMandatory(true).withProperty(kk, text)
                                         .bind();
                                 } catch (Exception e) {
                                     throw RuntimeCamelException.wrapRuntimeException(e);
