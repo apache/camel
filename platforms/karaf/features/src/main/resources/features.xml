@@ -65,7 +65,6 @@
     <bundle>mvn:org.apache.camel/camel-caffeine-lrucache/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-tooling-model/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-tooling-util/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/spi-annotations/${project.version}</bundle>
     <!-- core components -->
     <bundle>mvn:org.apache.camel/camel-bean/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
