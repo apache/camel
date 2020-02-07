@@ -641,7 +641,7 @@
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.12.5</testcontainers-version>
-        <threetenbp-version>1.4.0</threetenbp>
+        <threetenbp-version>1.4.0</threetenbp-version>
         <tinybundles-version>2.1.1</tinybundles-version>
         <tika-version>1.23</tika-version>
         <twilio-version>7.9.1</twilio-version>
