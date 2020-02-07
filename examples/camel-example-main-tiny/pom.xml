@@ -39,18 +39,6 @@
 
     <dependencies>
 
-        <!-- use camel-core-engine that has minimal JAR dependency set -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
-            <exclusions>
-                <!-- we dont need json-utils -->
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-util-json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
@@ -76,23 +64,10 @@
             <artifactId>camel-timer</artifactId>
         </dependency>
 
-        <!-- we dont need JAXB which at this moment can only be turned off like this in camel source project -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

@@ -43,6 +43,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
         </dependency>
+        <!-- use fast and light-weight xml parser -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-io</artifactId>
+        </dependency>
 
         <!-- and we use these components -->
         <dependency>
@@ -58,17 +63,10 @@
             <artifactId>camel-quartz</artifactId>
         </dependency>
 
-        <!-- use fast and light-weight xml parser -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-io</artifactId>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
