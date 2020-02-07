@@ -623,10 +623,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     Optional<ComponentOptionModel> prev = componentModel.getComponentOptions().stream()
                             .filter(opt -> name.equals(opt.getName())).findAny();
                     if (prev.isPresent()) {
-                        if (!prev.get().getJavaType().equals("java.lang.String")) {
-                            accept = false;
-                        } else {
+                        String prv = prev.get().getJavaType();
+                        String cur = fieldTypeName;
+                        if (prv.equals("java.lang.String")
+                                || prv.equals("java.lang.String[]") && cur.equals("java.util.Collection<java.lang.String>")) {
                             componentModel.getComponentOptions().remove(prev.get());
+                        } else {
+                            accept = false;
                         }
                     }
                 }
