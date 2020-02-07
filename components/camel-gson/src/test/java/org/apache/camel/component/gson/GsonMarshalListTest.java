@@ -23,12 +23,12 @@ import java.util.List;
 import com.google.gson.reflect.TypeToken;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GsonMarshalListTest extends CamelTestSupport {
-
-
 
     @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
@@ -58,10 +58,10 @@ public class GsonMarshalListTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 
                 GsonDataFormat formatPojo = new GsonDataFormat();
                 Type genericType = new TypeToken<List<TestPojo>>() { }.getType();
