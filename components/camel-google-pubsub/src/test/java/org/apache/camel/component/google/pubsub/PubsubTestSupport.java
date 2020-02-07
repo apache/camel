@@ -21,6 +21,7 @@ import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.ProjectTopicName;
 import com.google.pubsub.v1.PushConfig;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
@@ -61,6 +62,11 @@ public class PubsubTestSupport extends CamelTestSupport {
 
         context.addComponent("google-pubsub", component);
         context.getPropertiesComponent().setLocation("ref:prop");
+    }
+
+    @BindToRegistry("prop")
+    public Properties loadRegProperties() throws Exception {
+        return loadProperties();
     }
 
     @Override
