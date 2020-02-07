@@ -96,6 +96,16 @@ lengths, if/try depths, etc...
         <property name="max" value="250"/>
     </module>
 
+    <module name="SuppressWithPlainTextCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE\:OFF"/>
+        <property name="onCommentFormat" value="CHECKSTYLE\:ON"/>
+    </module>
+    <module name="SuppressWithPlainTextCommentFilter">
+        <property name="offCommentFormat" value="CHECKSTYLE.OFF\:([\w\|]+)"/>
+        <property name="onCommentFormat" value="CHECKSTYLE.ON\:([\w\|]+)"/>
+        <property name="checkFormat" value="$1"/>
+    </module>
+
     <module name="TreeWalker">
         <module name="SuppressWarningsHolder"/>
         <!-- Checks for Javadoc comments.                     -->
