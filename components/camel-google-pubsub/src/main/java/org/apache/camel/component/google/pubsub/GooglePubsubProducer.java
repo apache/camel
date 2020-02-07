@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.google.api.client.util.Strings;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -26,10 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Generic PubSub Producer

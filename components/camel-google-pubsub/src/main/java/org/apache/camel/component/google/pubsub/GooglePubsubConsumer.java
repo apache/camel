@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.util.concurrent.ExecutorService;
+
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.common.base.Strings;
@@ -25,8 +27,6 @@ import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutorService;
 
 class GooglePubsubConsumer extends DefaultConsumer {
 

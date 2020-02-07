@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -33,10 +37,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Messaging client for Google Cloud Platform PubSub Service
@@ -94,7 +94,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     @Override
     public GooglePubsubComponent getComponent() {
-        return (GooglePubsubComponent)super.getComponent();
+        return (GooglePubsubComponent) super.getComponent();
     }
 
     public void afterPropertiesSet() throws Exception {
