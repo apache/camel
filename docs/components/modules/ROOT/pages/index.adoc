@@ -48,7 +48,7 @@ Number of Components: 320 in 258 JAR artifacts (1 deprecated)
 
 | xref:aws2-cw-component.adoc[AWS 2 CloudWatch] (camel-aws2-cw) | 3.1 | The aws2-cw component is used for sending metrics to an Amazon CloudWatch.
 
-| xref:aws2-ec2-component.adoc[AWS 2 EC2] (camel-aws2-ec2) | 3.1 | The aws-ec2 is used for managing Amazon EC2 instances.
+| xref:aws2-ec2-component.adoc[AWS 2 EC2] (camel-aws2-ec2) | 3.1 | The aws2-ec2 is used for managing Amazon EC2 instances.
 
 | xref:aws2-ecs-component.adoc[AWS 2 ECS] (camel-aws2-ecs) | 3.1 | The aws2-ecs is used for managing Amazon ECS
 
