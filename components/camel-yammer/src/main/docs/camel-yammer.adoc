@@ -1,0 +1,2 @@
+[[yammer-component]]
+= Yammer Component
