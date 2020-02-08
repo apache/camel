@@ -555,45 +555,7 @@ public final class PropertyBindingSupport {
     private static Object resolveValue(CamelContext context, Object target, String name, Object value,
                                        boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter) throws Exception {
         if (value instanceof String) {
-            if (value.toString().startsWith("#class:")) {
-                // its a new class to be created
-                String className = value.toString().substring(7);
-                String factoryMethod = null;
-                String parameters = null;
-                if (className.endsWith(")") && className.indexOf('(') != -1) {
-                    parameters = StringHelper.after(className, "(");
-                    parameters = parameters.substring(0, parameters.length() - 1); // clip last )
-                    className = StringHelper.before(className, "(");
-                }
-                if (className != null && className.indexOf('#') != -1) {
-                    factoryMethod = StringHelper.after(className, "#");
-                    className = StringHelper.before(className, "#");
-                }
-                Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
-                if (factoryMethod != null) {
-                    value = context.getInjector().newInstance(type, factoryMethod);
-                } else if (parameters != null) {
-                    // special to support constructor parameters
-                    value = newInstanceConstructorParameters(context, type, parameters);
-                } else {
-                    value = context.getInjector().newInstance(type);
-                }
-                if (value == null) {
-                    throw new IllegalStateException("Cannot create instance of class: " + className);
-                }
-            } else if (value.toString().startsWith("#type:")) {
-                // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
-                String typeName = value.toString().substring(6);
-                Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
-                Set<?> types = context.getRegistry().findByType(type);
-                if (types.size() == 1) {
-                    value = types.iterator().next();
-                } else if (types.size() > 1) {
-                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
-                } else {
-                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
-                }
-            } else if (value.toString().equals("#autowired")) {
+            if (value.toString().equals("#autowired")) {
                 // we should get the type from the setter
                 Method method = findBestSetterMethod(context, target.getClass(), name, fluentBuilder, allowPrivateSetter, ignoreCase);
                 if (method != null) {
@@ -609,9 +571,8 @@ public final class PropertyBindingSupport {
                 } else {
                     throw new IllegalStateException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
                 }
-            } else if (value.toString().startsWith("#bean:")) {
-                String key = value.toString().substring(6);
-                value = context.getRegistry().lookupByName(key);
+            } else {
+                value = resolveBean(context, name, value);
             }
         }
         return value;
@@ -955,6 +916,62 @@ public final class PropertyBindingSupport {
             }
         }
         return parameterType.isAssignableFrom(expectedType);
+    }
+
+    /**
+     * Resolves the value as either a class, type or bean.
+     *
+     * @param camelContext       the camel context
+     * @param name               the name of the bean
+     * @param value              how to resolve the bean with a prefix of either class#:, type#: or bean#:
+     * @return the resolve bean
+     * @throws Exception is thrown if error resolving the bean, or if the value is invalid.
+     */
+    public static Object resolveBean(CamelContext camelContext, String name, Object value) throws Exception {
+        if (value.toString().startsWith("#class:")) {
+            // its a new class to be created
+            String className = value.toString().substring(7);
+            String factoryMethod = null;
+            String parameters = null;
+            if (className.endsWith(")") && className.indexOf('(') != -1) {
+                parameters = StringHelper.after(className, "(");
+                parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+                className = StringHelper.before(className, "(");
+            }
+            if (className != null && className.indexOf('#') != -1) {
+                factoryMethod = StringHelper.after(className, "#");
+                className = StringHelper.before(className, "#");
+            }
+            Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(className);
+            if (factoryMethod != null) {
+                value = camelContext.getInjector().newInstance(type, factoryMethod);
+            } else if (parameters != null) {
+                // special to support constructor parameters
+                value = newInstanceConstructorParameters(camelContext, type, parameters);
+            } else {
+                value = camelContext.getInjector().newInstance(type);
+            }
+            if (value == null) {
+                throw new IllegalStateException("Cannot create instance of class: " + className);
+            }
+        } else if (value.toString().startsWith("#type:")) {
+            // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
+            String typeName = value.toString().substring(6);
+            Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            Set<?> types = camelContext.getRegistry().findByType(type);
+            if (types.size() == 1) {
+                value = types.iterator().next();
+            } else if (types.size() > 1) {
+                throw new IllegalStateException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
+            } else {
+                throw new IllegalStateException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
+            }
+        } else if (value.toString().startsWith("#bean:")) {
+            String key = value.toString().substring(6);
+            value = camelContext.getRegistry().lookupByName(key);
+        }
+
+        return value;
     }
 
 }

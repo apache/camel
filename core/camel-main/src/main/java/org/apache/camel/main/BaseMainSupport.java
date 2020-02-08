@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -58,6 +59,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -694,6 +696,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         Map<String, Object> hystrixProperties = new LinkedHashMap<>();
         Map<String, Object> resilience4jProperties = new LinkedHashMap<>();
         Map<String, Object> restProperties = new LinkedHashMap<>();
+        Map<String, Object> beansProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.context.")) {
                 // grab the value
@@ -719,8 +722,22 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 String option = key.substring(11);
                 validateOptionAndValue(key, option, value);
                 restProperties.put(optionKey(option), value);
+            } else if (key.startsWith("camel.beans.")) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(12);
+                validateOptionAndValue(key, option, value);
+                beansProperties.put(optionKey(option), value);
             }
         }
+
+        // create beans first as they may be used later
+        if (!beansProperties.isEmpty()) {
+            LOG.debug("Creating and binding beans to registry from loaded properties: {}", beansProperties.size());
+            bindBeansToRegistry(camelContext, beansProperties, "camel.beans.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+        }
+
         if (!contextProperties.isEmpty()) {
             LOG.debug("Auto-configuring CamelContext from loaded properties: {}", contextProperties.size());
             setPropertiesOnTarget(camelContext, camelContext, contextProperties, "camel.context.",
@@ -761,6 +778,11 @@ public abstract class BaseMainSupport extends ServiceSupport {
         }
 
         // log which options was not set
+        if (!beansProperties.isEmpty()) {
+            beansProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.beans.{}={}", k, v);
+            });
+        }
         if (!contextProperties.isEmpty()) {
             contextProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.context.{}={} on bean: {}", k, v, camelContext);
@@ -786,6 +808,32 @@ public abstract class BaseMainSupport extends ServiceSupport {
             restProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.rest.{}={} on bean: {}", k, v, rest);
             });
+        }
+    }
+
+    private void bindBeansToRegistry(CamelContext camelContext, Map<String, Object> properties,
+                                     String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+                                     Map<String, String> autoConfiguredProperties) throws Exception {
+
+        // make defensive copy as we mutate the map
+        Set<String> keys = new LinkedHashSet<>(properties.keySet());
+        for (String key : keys) {
+            if (key.indexOf('.') == -1) {
+                // create beans first and then set properties
+                String name = key;
+                Object value = properties.remove(key);
+                Object bean = PropertyBindingSupport.resolveBean(camelContext, name, value);
+                if (bean == null) {
+                    throw new IllegalArgumentException("Cannot create/resolve bean with name " + name + " from value: " + value);
+                }
+                // register bean
+                camelContext.getRegistry().bind(name, bean);
+                autoConfiguredProperties.put(optionPrefix + key, value.toString());
+                // and then configure properties on the beans afterwards
+                Map<String, Object> config = PropertiesHelper.extractProperties(properties, key + ".");
+                setPropertiesOnTarget(camelContext, bean, config, optionPrefix + key + ".", failIfNotSet, ignoreCase, autoConfiguredProperties);
+                LOG.info("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
+            }
         }
     }
 
