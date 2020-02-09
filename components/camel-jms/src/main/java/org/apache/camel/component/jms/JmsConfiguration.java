@@ -653,7 +653,7 @@ public class JmsConfiguration implements Cloneable {
 
             // prefer to use timeToLive over requestTimeout if both specified
             long ttl = timeToLive > 0 ? timeToLive : requestTimeout;
-            if (ttl > 0 && !isDisableTimeToLive()) {
+            if (!isDisableTimeToLive()) {
                 // only use TTL if not disabled
                 jmsTemplate.setTimeToLive(ttl);
             }
