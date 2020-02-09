@@ -542,7 +542,7 @@ public final class AdviceWithTasks {
                         // spool to beginning of range
                         current = selectFrom;
                     }
-                    return current >= selectFrom && current <= selectTo;
+                    return current <= selectTo;
                 }
 
                 return current < list.size();
