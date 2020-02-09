@@ -159,7 +159,7 @@ public class WorkdayConfiguration {
             entity = u.getScheme();
             path = u.getPath();
         } catch (Exception e) {
-            throw new MalformedURLException(String.format("An invalid workday remaining uri: '%s' was provided. Error: ", remaining, e.getMessage()));
+            throw new MalformedURLException(String.format("An invalid workday remaining uri: '%s' was provided. Error: '%s'", remaining, e.getMessage()));
         }
         ObjectHelper.notNull(entity, "Entity");
 
