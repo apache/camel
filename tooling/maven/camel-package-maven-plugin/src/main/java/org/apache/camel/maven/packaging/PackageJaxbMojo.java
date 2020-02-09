@@ -123,6 +123,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
                 sb.append(NL);
             }
             updateResource(jaxbIndexDir, fn, sb.toString());
+            count++;
         }
 
         if (count > 0) {
