@@ -14,10 +14,10 @@ convert to and from the following common types:
 * ...
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html[Message
 interface] defines a helper method to allow conversions to be done via
 the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html#getBody(java.lang.Class)[getBody(Class)]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html#getBody-java.lang.Class-[getBody(Class)]
 method.
 
 So in an endpoint you can convert a body to another type via:
@@ -32,9 +32,9 @@ Document document = message.getBody(Document.class);
 == How Type Conversion works
 
 The type conversion strategy is defined by the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/TypeConverter.html[TypeConverter]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/TypeConverter.html[TypeConverter]
 interface that can be customized on a
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext].
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext].
 
 Camel provides a default type converter registy.
 From Camel 3 onwards there type converter registry implementation uses source code generation via the `camel-apt` compiler plugin to generate source code, that allows Camel at runtime to load and invoke these type converters via quick java method invocations. The older implementation in Camel 2 uses a annotation based discover to load and register type converters and invokes the type converters via Java method call reflections.
@@ -44,7 +44,7 @@ From Camel 3 onwards there type converter registry implementation uses source co
 == TypeConverterRegistry
 
 Exposed the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/TypeConverterRegistry.html[TypeConverterRegistry]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/TypeConverterRegistry.html[TypeConverterRegistry]
 from xref:camelcontext.adoc[CamelContext] so end users more easily will
 be able to add type converters at runtime. This is also usable in
 situations where the default discovering of type converters fails on
@@ -219,7 +219,7 @@ public static InputStream toInputStream(File file) throws IOException {
 *Available in Camel 2.0*
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/converter/AnnotationTypeConverterLoader.html[AnnotationTypeConverterLoader]
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/impl/converter/AnnotationTypeConverterLoader.html[AnnotationTypeConverterLoader]
 has been enhanced to also look for methods defined with a
 `@FallbackConverter` annotation, and register it as a fallback type
 converter.

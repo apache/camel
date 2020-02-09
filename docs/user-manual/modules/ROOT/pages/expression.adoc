@@ -7,7 +7,7 @@ Integration Patterns] in the DSL or
 XML Configuration like the
 Recipient List. +
  To support dynamic rules Camel supports pluggable
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expression.html[Expression]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Expression.html[Expression]
 strategies using a variety of different Languages.
 
 [[Expression-API]]
@@ -15,9 +15,9 @@ strategies using a variety of different Languages.
 
 If you are outside of the DSL and want to create your own
 expressions you can either implement the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expression.html[Expression
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Expression.html[Expression
 interface], reuse one of the other builders or try the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builder/ExpressionBuilder.html[ExpressionBuilder
+https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/builder/ExpressionBuilder.html[ExpressionBuilder
 class].
 
 [[Expression-Expression]]

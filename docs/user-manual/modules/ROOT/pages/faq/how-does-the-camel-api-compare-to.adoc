@@ -2,9 +2,9 @@
 = How does the Camel API compare to from CXF, HTTP, JBI, JMS, JavaMail, etc.
 
 We have tried to make the Camel
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html[Exchange]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html[Exchange]
 and
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html[Message]
 map very closely to JBI in particular but also
 xref:components::cxf-component.adoc[CXF], xref:components::http-component.adoc[HTTP], xref:components::jms-component.adoc[JMS],
 xref:components::mail-component.adoc[Mail], xref:components::xmpp-component.adoc[XMPP] and most other integration

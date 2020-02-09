@@ -10,16 +10,16 @@ obtain insights into how Camel routes perform down to the individual
 processor level.
 
 The supported types of management objects are
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedEndpoint.html[endpoint],
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedRoute.html[route],
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedService.html[service],
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedEndpoint.html[endpoint],
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedRoute.html[route],
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedService.html[service],
 and
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/mbean/ManagedProcessor.html[processor].
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedProcessor.html[processor].
 Some of these management objects also expose lifecycle operations in
 addition to performance counter attributes.
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/DefaultManagementObjectNameStrategy.html[`DefaultManagementObjectNameStrategy`]
+https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/DefaultManagementObjectNameStrategy.html[`DefaultManagementObjectNameStrategy`]
 is the default naming strategy which builds object names used for MBean
 registration. By default, `org.apache.camel` is the domain name for all
 object names created by `CamelNamingStrategy`. The domain name of the

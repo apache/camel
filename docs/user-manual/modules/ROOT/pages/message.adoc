@@ -4,7 +4,7 @@
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/Message.html[Message] from
 the xref:enterprise-integration-patterns.adoc[EIP patterns] using the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Message.html[Message]
 interface.
 
 image::eip/MessageSolution.gif[image]
