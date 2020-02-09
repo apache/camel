@@ -1,0 +1,63 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.elasticsearch;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.elasticsearch.search.SearchHits;
+import org.junit.Test;
+
+public class ElasticsearchSizeLimitTest extends ElasticsearchBaseTest {
+
+    @Test
+    public void testSize() {
+        //put 4
+        String indexId = template.requestBody("direct:index", getContent("content"), String.class);
+        String indexId1 = template.requestBody("direct:index", getContent("content1"), String.class);
+        String indexId2 = template.requestBody("direct:index", getContent("content2"), String.class);
+        String indexId4 = template.requestBody("direct:index", getContent("content3"), String.class);
+
+        String query = "{\"query\":{\"match_all\": {}}}";
+        SearchHits searchWithSizeTwo = template.requestBody("direct:searchWithSizeTwo", query, SearchHits.class);
+        SearchHits searchFrom3 = template.requestBody("direct:searchFrom3", query, SearchHits.class);
+        assertEquals(2, searchWithSizeTwo.getHits().length);
+        assertEquals(1, searchFrom3.getHits().length);
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:index")
+                    .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:searchWithSizeTwo")
+                    .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&size=2&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:searchFrom3")
+                    .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&from=3&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+            }
+        };
+    }
+
+    private Map<String, String> getContent(String content) {
+        Map<String, String> map = new HashMap<>();
+        map.put("content", content);
+        return map;
+    }
+}
