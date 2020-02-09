@@ -2,7 +2,7 @@
 = Error Handler
 
 Camel supports pluggable
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
 strategies to deal with errors processing an
 Event Driven Consumer. An alternative
 is to specify the error handling directly in the DSL
