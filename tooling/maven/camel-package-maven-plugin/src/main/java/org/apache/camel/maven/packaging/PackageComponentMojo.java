@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -98,7 +96,6 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         StringBuilder buffer = new StringBuilder();
         int count = 0;
 
-        Set<String> components = new HashSet<>();
         File f = componentOutDir;
         f = new File(f, "META-INF/services/org/apache/camel/component");
         if (f.exists() && f.isDirectory()) {
@@ -117,7 +114,6 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
                             buffer.append(" ");
                         }
                         buffer.append(name);
-                        components.add(file.getName());
                     }
                 }
             }
