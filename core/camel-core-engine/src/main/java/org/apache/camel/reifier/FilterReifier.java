@@ -30,14 +30,14 @@ public class FilterReifier extends ExpressionReifier<FilterDefinition> {
 
     @Override
     public FilterProcessor createProcessor() throws Exception {
-        return createFilterProcessor(routeContext);
+        return createFilterProcessor();
     }
 
     @Override
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
+    protected FilterProcessor createFilterProcessor() throws Exception {
         // filter EIP should have child outputs
         Processor childProcessor = this.createChildProcessor(true);
-        return new FilterProcessor(createPredicate(routeContext), childProcessor);
+        return new FilterProcessor(createPredicate(), childProcessor);
     }
 
 }

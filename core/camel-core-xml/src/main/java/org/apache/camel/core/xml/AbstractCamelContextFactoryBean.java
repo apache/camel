@@ -498,7 +498,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getValidators() != null) {
             for (ValidatorDefinition def : getValidators().getValidators()) {
                 // create and register validators on validator registry
-                Validator validator = ValidatorReifier.reifier(def).createValidator(getContext());
+                Validator validator = ValidatorReifier.reifier(getContext(), def).createValidator();
                 getContext().getValidatorRegistry().put(createValidatorKey(def), validator);
             }
         }

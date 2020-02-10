@@ -29,6 +29,6 @@ public class WhenReifier extends ExpressionReifier<WhenDefinition> {
 
     @Override
     public FilterProcessor createProcessor() throws Exception {
-        return createFilterProcessor(routeContext);
+        return createFilterProcessor();
     }
 }

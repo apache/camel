@@ -41,7 +41,6 @@ import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExecutorServiceAwareDefinition;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
@@ -101,7 +100,6 @@ import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.channel.DefaultChannel;
@@ -370,7 +368,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * <li>if none found, then <tt>null</tt> is returned.</li>
      * </ul>
      *
-     * @param routeContext the route context
      * @param name name which is appended to the thread name, when the
      *            {@link ExecutorService} is created based
      *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
