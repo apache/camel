@@ -121,47 +121,6 @@ with the following path and query parameters:
 | *proxyPort* (proxy) | The proxy port |  | Integer
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-braintree-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 16 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.braintree.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.braintree.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.braintree.configuration.access-token* | The access token granted by a merchant to another in order to process transactions on their behalf. Used in place of environment, merchant id, public key and private key fields. |  | String
-| *camel.component.braintree.configuration.api-name* | What kind of operation to perform |  | BraintreeApiName
-| *camel.component.braintree.configuration.environment* | The environment Either SANDBOX or PRODUCTION |  | String
-| *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, @see java.util.logging.Level |  | Level
-| *camel.component.braintree.configuration.http-log-name* | Set log category to use to log http calls, default "Braintree" |  | String
-| *camel.component.braintree.configuration.http-read-timeout* | Set read timeout for http calls. |  | Integer
-| *camel.component.braintree.configuration.merchant-id* | The merchant id provided by Braintree. |  | String
-| *camel.component.braintree.configuration.method-name* | What sub operation to use for the selected operation |  | String
-| *camel.component.braintree.configuration.private-key* | The private key provided by Braintree. |  | String
-| *camel.component.braintree.configuration.proxy-host* | The proxy host |  | String
-| *camel.component.braintree.configuration.proxy-port* | The proxy port |  | Integer
-| *camel.component.braintree.configuration.public-key* | The public key provided by Braintree. |  | String
-| *camel.component.braintree.enabled* | Whether to enable auto configuration of the braintree component. This is enabled by default. |  | Boolean
-| *camel.component.braintree.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 

@@ -118,69 +118,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-web3j-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 38 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.web3j.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.web3j.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.web3j.configuration.address* | Contract address. |  | String
-| *camel.component.web3j.configuration.addresses* | Contract address or a list of addresses. |  | List
-| *camel.component.web3j.configuration.at-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
-| *camel.component.web3j.configuration.block-hash* | Hash of the block where this transaction was in. |  | String
-| *camel.component.web3j.configuration.client-id* | A random hexadecimal(32 bytes) ID identifying the client. |  | String
-| *camel.component.web3j.configuration.data* | The compiled code of a contract OR the hash of the invoked method signature and encoded parameters. |  | String
-| *camel.component.web3j.configuration.database-name* | The local database name. |  | String
-| *camel.component.web3j.configuration.filter-id* | The filter id to use. |  | BigInteger
-| *camel.component.web3j.configuration.from-address* | The address the transaction is send from |  | String
-| *camel.component.web3j.configuration.from-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
-| *camel.component.web3j.configuration.full-transaction-objects* | If true it returns the full transaction objects, if false only the hashes of the transactions. | false | Boolean
-| *camel.component.web3j.configuration.gas-limit* | The maximum gas allowed in this block. |  | BigInteger
-| *camel.component.web3j.configuration.gas-price* | Gas price used for each paid gas. |  | BigInteger
-| *camel.component.web3j.configuration.hashrate* | A hexadecimal string representation (32 bytes) of the hash rate. |  | String
-| *camel.component.web3j.configuration.header-pow-hash* | The header's pow-hash (256 bits) used for submitting a proof-of-work solution. |  | String
-| *camel.component.web3j.configuration.index* | The transactions/uncle index position in the block. |  | BigInteger
-| *camel.component.web3j.configuration.key-name* | The key name in the database. |  | String
-| *camel.component.web3j.configuration.mix-digest* | The mix digest (256 bits) used for submitting a proof-of-work solution. |  | String
-| *camel.component.web3j.configuration.nonce* | The nonce found (64 bits) used for submitting a proof-of-work solution. |  | String
-| *camel.component.web3j.configuration.operation* | Operation to use. | transaction | String
-| *camel.component.web3j.configuration.position* | The transaction index position withing a block. |  | BigInteger
-| *camel.component.web3j.configuration.priority* | The priority of a whisper message. |  | BigInteger
-| *camel.component.web3j.configuration.private-for* | A transaction privateFor nodes with public keys in a Quorum network |  | List
-| *camel.component.web3j.configuration.quorum-a-p-i* | If true, this will support Quorum API. | false | Boolean
-| *camel.component.web3j.configuration.sha3-hash-of-data-to-sign* | Message to sign by calculating an Ethereum specific signature. |  | String
-| *camel.component.web3j.configuration.signed-transaction-data* | The signed transaction data for a new message call transaction or a contract creation for signed transactions. |  | String
-| *camel.component.web3j.configuration.source-code* | The source code to compile. |  | String
-| *camel.component.web3j.configuration.to-address* | The address the transaction is directed to. |  | String
-| *camel.component.web3j.configuration.to-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
-| *camel.component.web3j.configuration.topics* | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | List
-| *camel.component.web3j.configuration.transaction-hash* | The information about a transaction requested by transaction hash. |  | String
-| *camel.component.web3j.configuration.ttl* | The time to live in seconds of a whisper message. |  | BigInteger
-| *camel.component.web3j.configuration.value* | The value sent within a transaction. |  | BigInteger
-| *camel.component.web3j.configuration.web3j* | The preconfigured Web3j object. |  | Web3j
-| *camel.component.web3j.enabled* | Whether to enable auto configuration of the web3j component. This is enabled by default. |  | Boolean
-| *camel.component.web3j.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 

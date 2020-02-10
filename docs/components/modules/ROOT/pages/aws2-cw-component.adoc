@@ -99,8 +99,6 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-// spring-boot-auto-configure options: END
 
 Required CW component options
 
