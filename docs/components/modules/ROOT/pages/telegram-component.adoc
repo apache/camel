@@ -129,39 +129,6 @@ with the following path and query parameters:
 | *authorizationToken* (security) | *Required* The authorization token for using the bot (ask the BotFather) |  | String
 |===
 // endpoint options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-telegram-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 8 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.telegram.authorization-token* | The default Telegram authorization token to be used when the information is not provided in the endpoints. |  | String
-| *camel.component.telegram.base-uri* | Set an alternative base URI, e.g. when you want to test the component against a mock Telegram API. |  | String
-| *camel.component.telegram.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.telegram.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.telegram.client* | To use a custom AsyncHttpClient. The option is a org.asynchttpclient.AsyncHttpClient type. |  | String
-| *camel.component.telegram.client-config* | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. The option is a org.asynchttpclient.AsyncHttpClientConfig type. |  | String
-| *camel.component.telegram.enabled* | Whether to enable auto configuration of the telegram component. This is enabled by default. |  | Boolean
-| *camel.component.telegram.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-|===
-// spring-boot-auto-configure options: END
 
 
 
