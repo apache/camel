@@ -145,6 +145,16 @@ public class ElasticsearchProducer extends DefaultProducer {
             configIndexName = true;
         }
 
+        Integer size = message.getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);
+        if (size == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_SIZE, configuration.getSize());
+        }
+
+        Integer from = message.getHeader(ElasticsearchConstants.PARAM_FROM, Integer.class);
+        if (from == null) {
+            message.setHeader(ElasticsearchConstants.PARAM_FROM, configuration.getFrom());
+        }
+
         boolean configWaitForActiveShards = false;
         Integer waitForActiveShards = message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
         if (waitForActiveShards == null) {
@@ -324,7 +334,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     public RestClient getClient() {
         return client;
     }
-    
+
     private final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
             super(restClient, client -> { }, Collections.emptyList());
