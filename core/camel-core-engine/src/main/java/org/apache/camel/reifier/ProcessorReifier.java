@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
@@ -38,6 +40,7 @@ import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.EnrichDefinition;
+import org.apache.camel.model.ExecutorServiceAwareDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FinallyDefinition;
@@ -103,11 +106,13 @@ import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,6 +217,253 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     /**
+     * Determines whether a new thread pool will be created or not.
+     * <p/>
+     * This is used to know if a new thread pool will be created, and therefore
+     * is not shared by others, and therefore exclusive to the definition.
+     *
+     * @param definition the node definition which may leverage executor
+     *            service.
+     * @param useDefault whether to fallback and use a default thread pool, if
+     *            no explicit configured
+     * @return <tt>true</tt> if a new thread pool will be created,
+     *         <tt>false</tt> if not
+     * @see #getConfiguredExecutorService(String, ExecutorServiceAwareDefinition, boolean)
+     */
+    public boolean willCreateNewThreadPool(ExecutorServiceAwareDefinition<?> definition, boolean useDefault) {
+        ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
+
+        if (definition.getExecutorService() != null) {
+            // no there is a custom thread pool configured
+            return false;
+        } else if (definition.getExecutorServiceRef() != null) {
+            ExecutorService answer = routeContext.lookup(definition.getExecutorServiceRef(), ExecutorService.class);
+            // if no existing thread pool, then we will have to create a new
+            // thread pool
+            return answer == null;
+        } else if (useDefault) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Will lookup and get the configured
+     * {@link ExecutorService} from the given definition.
+     * <p/>
+     * This method will lookup for configured thread pool in the following order
+     * <ul>
+     * <li>from the definition if any explicit configured executor service.</li>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
+     * ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     * The various {@link ExecutorServiceAwareDefinition} should use this helper
+     * method to ensure they support configured executor services in the same
+     * coherent way.
+     *
+     * @param name name which is appended to the thread name, when the
+     *            {@link ExecutorService} is created based
+     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param definition the node definition which may leverage executor
+     *            service.
+     * @param useDefault whether to fallback and use a default thread pool, if
+     *            no explicit configured
+     * @return the configured executor service, or <tt>null</tt> if none was
+     *         configured.
+     * @throws IllegalArgumentException is thrown if lookup of executor service
+     *             in {@link org.apache.camel.spi.Registry} was not found
+     */
+    public ExecutorService getConfiguredExecutorService(String name, ExecutorServiceAwareDefinition<?> definition, boolean useDefault)
+        throws IllegalArgumentException {
+        ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
+
+        // prefer to use explicit configured executor on the definition
+        if (definition.getExecutorService() != null) {
+            return definition.getExecutorService();
+        } else if (definition.getExecutorServiceRef() != null) {
+            // lookup in registry first and use existing thread pool if exists
+            ExecutorService answer = lookupExecutorServiceRef(name, definition, definition.getExecutorServiceRef());
+            if (answer == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef()
+                                                   + " not found in registry (as an ExecutorService instance) or as a thread pool profile.");
+            }
+            return answer;
+        } else if (useDefault) {
+            return manager.newDefaultThreadPool(definition, name);
+        }
+
+        return null;
+    }
+
+    /**
+     * Will lookup and get the configured
+     * {@link java.util.concurrent.ScheduledExecutorService} from the given
+     * definition.
+     * <p/>
+     * This method will lookup for configured thread pool in the following order
+     * <ul>
+     * <li>from the definition if any explicit configured executor service.</li>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
+     * ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     * The various {@link ExecutorServiceAwareDefinition} should use this helper
+     * method to ensure they support configured executor services in the same
+     * coherent way.
+     *
+     * @param name name which is appended to the thread name, when the
+     *            {@link ExecutorService} is created based
+     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param definition the node definition which may leverage executor
+     *            service.
+     * @param useDefault whether to fallback and use a default thread pool, if
+     *            no explicit configured
+     * @return the configured executor service, or <tt>null</tt> if none was
+     *         configured.
+     * @throws IllegalArgumentException is thrown if the found instance is not a
+     *             ScheduledExecutorService type, or lookup of executor service
+     *             in {@link org.apache.camel.spi.Registry} was not found
+     */
+    public ScheduledExecutorService getConfiguredScheduledExecutorService(String name, ExecutorServiceAwareDefinition<?> definition,
+                                                                                 boolean useDefault)
+        throws IllegalArgumentException {
+        ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
+
+        // prefer to use explicit configured executor on the definition
+        if (definition.getExecutorService() != null) {
+            ExecutorService executorService = definition.getExecutorService();
+            if (executorService instanceof ScheduledExecutorService) {
+                return (ScheduledExecutorService)executorService;
+            }
+            throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " is not an ScheduledExecutorService instance");
+        } else if (definition.getExecutorServiceRef() != null) {
+            ScheduledExecutorService answer = lookupScheduledExecutorServiceRef(name, definition, definition.getExecutorServiceRef());
+            if (answer == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef()
+                                                   + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
+            }
+            return answer;
+        } else if (useDefault) {
+            return manager.newDefaultScheduledThreadPool(definition, name);
+        }
+
+        return null;
+    }
+
+    /**
+     * Will lookup in {@link org.apache.camel.spi.Registry} for a
+     * {@link ScheduledExecutorService} registered with the given
+     * <tt>executorServiceRef</tt> name.
+     * <p/>
+     * This method will lookup for configured thread pool in the following order
+     * <ul>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
+     * ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     *
+     * @param routeContext the route context
+     * @param name name which is appended to the thread name, when the
+     *            {@link ExecutorService} is created based
+     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param source the source to use the thread pool
+     * @param executorServiceRef reference name of the thread pool
+     * @return the executor service, or <tt>null</tt> if none was found.
+     */
+    public ScheduledExecutorService lookupScheduledExecutorServiceRef(String name, Object source, String executorServiceRef) {
+
+        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
+        ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
+
+        // lookup in registry first and use existing thread pool if exists
+        ScheduledExecutorService answer = routeContext.lookup(executorServiceRef, ScheduledExecutorService.class);
+        if (answer == null) {
+            // then create a thread pool assuming the ref is a thread pool
+            // profile id
+            answer = manager.newScheduledThreadPool(source, name, executorServiceRef);
+        }
+        return answer;
+    }
+
+    /**
+     * Will lookup in {@link org.apache.camel.spi.Registry} for a
+     * {@link ExecutorService} registered with the given
+     * <tt>executorServiceRef</tt> name.
+     * <p/>
+     * This method will lookup for configured thread pool in the following order
+     * <ul>
+     * <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     * <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile
+     * ThreadPoolProfile(s)}.</li>
+     * <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     *
+     * @param name name which is appended to the thread name, when the
+     *            {@link ExecutorService} is created based
+     *            on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param source the source to use the thread pool
+     * @param executorServiceRef reference name of the thread pool
+     * @return the executor service, or <tt>null</tt> if none was found.
+     */
+    public ExecutorService lookupExecutorServiceRef(String name, Object source, String executorServiceRef) {
+
+        ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
+        ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
+
+        // lookup in registry first and use existing thread pool if exists
+        ExecutorService answer = routeContext.lookup(executorServiceRef, ExecutorService.class);
+        if (answer == null) {
+            // then create a thread pool assuming the ref is a thread pool
+            // profile id
+            answer = manager.newThreadPool(source, name, executorServiceRef);
+        }
+        return answer;
+    }
+
+    /**
+     * Is there any outputs in the given list.
+     * <p/>
+     * Is used for check if the route output has any real outputs (non
+     * abstracts)
+     *
+     * @param outputs the outputs
+     * @param excludeAbstract whether or not to exclude abstract outputs (e.g.
+     *            skip onException etc.)
+     * @return <tt>true</tt> if has outputs, otherwise <tt>false</tt> is
+     *         returned
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public boolean hasOutputs(List<ProcessorDefinition<?>> outputs, boolean excludeAbstract) {
+        if (outputs == null || outputs.isEmpty()) {
+            return false;
+        }
+        if (!excludeAbstract) {
+            return true;
+        }
+        for (ProcessorDefinition output : outputs) {
+            if (output.isWrappingEntireOutput()) {
+                // special for those as they wrap entire output, so we should
+                // just check its output
+                return hasOutputs(output.getOutputs(), excludeAbstract);
+            }
+            if (!output.isAbstract()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Override this in definition class and implement logic to create the
      * processor based on the definition model.
      */
@@ -253,7 +505,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return children;
     }
 
-    public void addRoutes(RouteContext routeContext) throws Exception {
+    public void addRoutes() throws Exception {
         Channel processor = makeProcessor();
         if (processor == null) {
             // no processor to add
@@ -280,19 +532,19 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Wraps the child processor in whatever necessary interceptors and error
      * handlers
      */
-    public Channel wrapProcessor(RouteContext routeContext, Processor processor) throws Exception {
+    public Channel wrapProcessor(Processor processor) throws Exception {
         // don't double wrap
         if (processor instanceof Channel) {
             return (Channel)processor;
         }
-        return wrapChannel(routeContext, processor, null);
+        return wrapChannel(processor, null);
     }
 
-    protected Channel wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child) throws Exception {
-        return wrapChannel(routeContext, processor, child, definition.isInheritErrorHandler());
+    protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child) throws Exception {
+        return wrapChannel(processor, child, definition.isInheritErrorHandler());
     }
 
-    protected Channel wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
+    protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
         // put a channel in between this and each output to control the route
         // flow logic
         DefaultChannel channel = new DefaultChannel(camelContext);
@@ -300,9 +552,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // add interceptor strategies to the channel must be in this order:
         // camel context, route context, local
         List<InterceptStrategy> interceptors = new ArrayList<>();
-        addInterceptStrategies(routeContext, interceptors, camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies());
-        addInterceptStrategies(routeContext, interceptors, routeContext.getInterceptStrategies());
-        addInterceptStrategies(routeContext, interceptors, definition.getInterceptStrategies());
+        addInterceptStrategies(interceptors, camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies());
+        addInterceptStrategies(interceptors, routeContext.getInterceptStrategies());
+        addInterceptStrategies(interceptors, definition.getInterceptStrategies());
 
         // force the creation of an id
         RouteDefinitionHelper.forceAssignIds(camelContext, definition);
@@ -385,7 +637,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             wrap = true;
         }
         if (wrap) {
-            wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
+            wrapChannelInErrorHandler(channel, inheritErrorHandler);
         }
 
         // do post init at the end
@@ -399,15 +651,14 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Wraps the given channel in error handler (if error handler is inherited)
      *
      * @param channel the channel
-     * @param routeContext the route context
      * @param inheritErrorHandler whether to inherit error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    private void wrapChannelInErrorHandler(DefaultChannel channel, RouteContext routeContext, Boolean inheritErrorHandler) throws Exception {
+    private void wrapChannelInErrorHandler(DefaultChannel channel, Boolean inheritErrorHandler) throws Exception {
         if (inheritErrorHandler == null || inheritErrorHandler) {
             log.trace("{} is configured to inheritErrorHandler", definition);
             Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(routeContext, output);
+            Processor errorHandler = wrapInErrorHandler(output);
             // set error handler on channel
             channel.setErrorHandler(errorHandler);
         } else {
@@ -418,12 +669,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Wraps the given output in an error handler
      *
-     * @param routeContext the route context
      * @param output the output
      * @return the output wrapped with the error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
+    protected Processor wrapInErrorHandler(Processor output) throws Exception {
         ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
         // create error handler
         Processor errorHandler = ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(output);
@@ -439,11 +689,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     /**
      * Adds the given list of interceptors to the channel.
      *
-     * @param routeContext the route context
      * @param interceptors the list to add strategies
      * @param strategies list of strategies to add.
      */
-    protected void addInterceptStrategies(RouteContext routeContext, List<InterceptStrategy> interceptors, List<InterceptStrategy> strategies) {
+    protected void addInterceptStrategies(List<InterceptStrategy> interceptors, List<InterceptStrategy> strategies) {
         interceptors.addAll(strategies);
     }
 
@@ -503,7 +752,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 continue;
             }
 
-            Processor channel = wrapChannel(routeContext, processor, output);
+            Processor channel = wrapChannel(processor, output);
             list.add(channel);
         }
 
@@ -594,7 +843,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // no processor to make
             return null;
         }
-        return wrapProcessor(routeContext, processor);
+        return wrapProcessor(processor);
     }
 
     /**

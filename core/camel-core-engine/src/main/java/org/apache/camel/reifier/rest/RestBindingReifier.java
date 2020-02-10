@@ -160,7 +160,7 @@ public class RestBindingReifier extends AbstractReifier {
         }
         if (clazz != null) {
             JAXBContext jc = JAXBContext.newInstance(clazz);
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, jaxb, "context", jc);
+            setJaxbContext(jaxb, jc);
         }
         setAdditionalConfiguration(config, jaxb, "xml.in.");
 
@@ -171,13 +171,17 @@ public class RestBindingReifier extends AbstractReifier {
         }
         if (outClazz != null) {
             JAXBContext jc = JAXBContext.newInstance(outClazz);
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJaxb, "context", jc);
+            setJaxbContext(outJaxb, jc);
         } else if (clazz != null) {
             // fallback and use the context from the input
             JAXBContext jc = JAXBContext.newInstance(clazz);
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJaxb, "context", jc);
+            setJaxbContext(outJaxb, jc);
         }
         setAdditionalConfiguration(config, outJaxb, "xml.out.");
+    }
+
+    private void setJaxbContext(DataFormat jaxb, JAXBContext jc) throws Exception {
+        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, jaxb, "context", jc);
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) throws Exception {

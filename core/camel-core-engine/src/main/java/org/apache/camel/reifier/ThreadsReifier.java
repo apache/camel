@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -41,8 +40,8 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         // the threads name
         String name = definition.getThreadName() != null ? definition.getThreadName() : "Threads";
         // prefer any explicit configured executor service
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, true);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, name, definition, false);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
+        ExecutorService threadPool = getConfiguredExecutorService(name, definition, false);
 
         // resolve what rejected policy to use
         ThreadPoolRejectedPolicy policy = resolveRejectedPolicy(routeContext);

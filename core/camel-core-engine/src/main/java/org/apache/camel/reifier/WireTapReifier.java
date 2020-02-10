@@ -23,7 +23,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
@@ -41,8 +40,8 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
     @Override
     public Processor createProcessor() throws Exception {
         // executor service is mandatory for wire tap
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, true);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "WireTap", definition, true);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
+        ExecutorService threadPool = getConfiguredExecutorService("WireTap", definition, true);
 
         // must use InOnly for WireTap
         definition.setPattern(ExchangePattern.InOnly.name());
@@ -51,7 +50,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         SendDynamicProcessor dynamicTo = (SendDynamicProcessor)super.createProcessor();
 
         // create error handler we need to use for processing the wire tapped
-        Processor target = wrapInErrorHandler(routeContext, dynamicTo);
+        Processor target = wrapInErrorHandler(dynamicTo);
 
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);

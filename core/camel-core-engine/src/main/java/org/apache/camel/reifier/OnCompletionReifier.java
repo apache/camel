@@ -23,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnCompletionMode;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -76,8 +75,8 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
             when = definition.getOnWhen().getExpression().createPredicate(routeContext);
         }
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "OnCompletion", definition, isParallelProcessing);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
+        ExecutorService threadPool = getConfiguredExecutorService("OnCompletion", definition, isParallelProcessing);
 
         // should be after consumer by default
         boolean afterConsumer = definition.getMode() == null || definition.getMode() == OnCompletionMode.AfterConsumer;

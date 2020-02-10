@@ -25,7 +25,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
@@ -64,8 +63,8 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         boolean isParallelAggregate = definition.getParallelAggregate() != null && parseBoolean(definition.getParallelAggregate());
         boolean isStopOnAggregateException = definition.getStopOnAggregateException() != null && parseBoolean(definition.getStopOnAggregateException());
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", definition, isParallelProcessing);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
+        ExecutorService threadPool = getConfiguredExecutorService("Multicast", definition, isParallelProcessing);
 
         long timeout = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : 0;
         if (timeout > 0 && !isParallelProcessing) {

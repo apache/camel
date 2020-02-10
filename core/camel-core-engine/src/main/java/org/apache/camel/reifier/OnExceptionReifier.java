@@ -38,7 +38,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
     }
 
     @Override
-    public void addRoutes(RouteContext routeContext) throws Exception {
+    public void addRoutes() throws Exception {
         // assign whether this was a route scoped onException or not
         // we need to know this later when setting the parent, as only route
         // scoped should have parent

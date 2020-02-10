@@ -31,7 +31,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
@@ -152,7 +151,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             boolean shutdownThreadPool = false;
             ExecutorService executorService = routeContext.lookup(ref, ExecutorService.class);
             if (executorService == null) {
-                executorService = ProcessorDefinitionHelper.lookupExecutorServiceRef(routeContext, "CircuitBreaker", definition, ref);
+                executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
             }
             processor.setExecutorService(executorService);

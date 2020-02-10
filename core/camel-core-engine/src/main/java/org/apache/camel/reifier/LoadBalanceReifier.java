@@ -58,7 +58,7 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
                     throw new IllegalArgumentException("Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
                 }
                 Processor processor = createProcessor(processorType);
-                Channel channel = wrapChannel(routeContext, processor, processorType);
+                Channel channel = wrapChannel(processor, processorType);
                 loadBalancer.addProcessor(channel);
             }
         }
@@ -71,7 +71,7 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
             // handler can react afterwards
             inherit = true;
         }
-        Processor target = wrapChannel(routeContext, loadBalancer, definition, inherit);
+        Processor target = wrapChannel(loadBalancer, definition, inherit);
         return target;
     }
 

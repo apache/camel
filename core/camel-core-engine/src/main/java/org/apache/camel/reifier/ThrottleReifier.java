@@ -21,7 +21,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
@@ -36,8 +35,8 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         boolean async = definition.getAsyncDelayed() != null && definition.getAsyncDelayed();
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, true);
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", definition, true);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
+        ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Throttle", definition, true);
 
         // should be default 1000 millis
         long period = definition.getTimePeriodMillis() != null ? definition.getTimePeriodMillis() : 1000L;
