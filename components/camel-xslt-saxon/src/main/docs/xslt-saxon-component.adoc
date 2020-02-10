@@ -106,43 +106,6 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-xslt-saxon-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 12 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.xslt-saxon.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.xslt-saxon.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.xslt-saxon.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
-| *camel.component.xslt-saxon.enabled* | Whether to enable auto configuration of the xslt-saxon component. This is enabled by default. |  | Boolean
-| *camel.component.xslt-saxon.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.component.xslt-saxon.saxon-configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
-| *camel.component.xslt-saxon.saxon-configuration-properties* | To set custom Saxon configuration properties |  | Map
-| *camel.component.xslt-saxon.saxon-extension-functions* | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
-| *camel.component.xslt-saxon.transformer-factory-class* | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
-| *camel.component.xslt-saxon.transformer-factory-configuration-strategy* | A configuration strategy to apply on freshly created instances of TransformerFactory. The option is a org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy type. |  | String
-| *camel.component.xslt-saxon.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String
-| *camel.component.xslt-saxon.uri-resolver-factory* | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. The option is a org.apache.camel.component.xslt.XsltUriResolverFactory type. |  | String
-|===
-// spring-boot-auto-configure options: END
 
 == Using XSLT endpoints
 
