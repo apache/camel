@@ -33,14 +33,14 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
-    public SplitReifier(ProcessorDefinition<?> definition) {
-        super((SplitDefinition)definition);
+    public SplitReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (SplitDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-        definition.setAggregationStrategy(createAggregationStrategy(routeContext));
+    public Processor createProcessor() throws Exception {
+        Processor childProcessor = this.createChildProcessor(true);
+        definition.setAggregationStrategy(createAggregationStrategy());
 
         boolean isParallelProcessing = definition.getParallelProcessing() != null && definition.getParallelProcessing();
         boolean isStreaming = definition.getStreaming() != null && definition.getStreaming();
@@ -55,18 +55,18 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getOnPrepareRef(), Processor.class));
+            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, definition.getOnPrepareRef(), Processor.class));
         }
 
         Expression exp = definition.getExpression().createExpression(routeContext);
 
-        Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
+        Splitter answer = new Splitter(camelContext, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
                                        shutdownThreadPool, isStreaming, definition.isStopOnException(), timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
                                        isStopOnAggregateException);
         return answer;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
@@ -85,7 +85,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         if (strategy != null && definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork()) {

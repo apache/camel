@@ -30,12 +30,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
 
-    public OnCompletionReifier(ProcessorDefinition<?> definition) {
-        super((OnCompletionDefinition)definition);
+    public OnCompletionReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (OnCompletionDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // assign whether this was a route scoped onCompletion or not
         // we need to know this later when setting the parent, as only route
         // scoped should have parent
@@ -50,10 +50,10 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
             routeScoped = definition.getParent() != null;
         }
 
-        boolean isOnCompleteOnly = definition.getOnCompleteOnly() != null && parseBoolean(routeContext, definition.getOnCompleteOnly());
-        boolean isOnFailureOnly = definition.getOnFailureOnly() != null && parseBoolean(routeContext, definition.getOnFailureOnly());
-        boolean isParallelProcessing = definition.getParallelProcessing() != null && parseBoolean(routeContext, definition.getParallelProcessing());
-        boolean original = definition.getUseOriginalMessage() != null && parseBoolean(routeContext, definition.getUseOriginalMessage());
+        boolean isOnCompleteOnly = definition.getOnCompleteOnly() != null && parseBoolean(definition.getOnCompleteOnly());
+        boolean isOnFailureOnly = definition.getOnFailureOnly() != null && parseBoolean(definition.getOnFailureOnly());
+        boolean isParallelProcessing = definition.getParallelProcessing() != null && parseBoolean(definition.getParallelProcessing());
+        boolean original = definition.getUseOriginalMessage() != null && parseBoolean(definition.getUseOriginalMessage());
 
         if (isOnCompleteOnly && isOnFailureOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
@@ -63,11 +63,11 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
             routeContext.setAllowUseOriginalMessage(true);
         }
 
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
+        Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the on completion route in a unit of work processor
-        CamelInternalProcessor internal = new CamelInternalProcessor(routeContext.getCamelContext(), childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, routeContext.getCamelContext()));
+        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
 
         routeContext.setOnCompletion(getId(definition, routeContext), internal);
 
@@ -82,7 +82,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         // should be after consumer by default
         boolean afterConsumer = definition.getMode() == null || definition.getMode() == OnCompletionMode.AfterConsumer;
 
-        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), internal, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
+        OnCompletionProcessor answer = new OnCompletionProcessor(camelContext, internal, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
                                                                  original, afterConsumer);
         return answer;
     }

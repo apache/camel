@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 
 public class LZFDataFormatReifier extends DataFormatReifier<LZFDataFormat> {
 
-    public LZFDataFormatReifier(DataFormatDefinition definition) {
-        super((LZFDataFormat)definition);
+    public LZFDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (LZFDataFormat)definition);
     }
 
     @Override

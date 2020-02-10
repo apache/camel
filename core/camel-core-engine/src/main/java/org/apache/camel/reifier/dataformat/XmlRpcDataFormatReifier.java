@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 
 public class XmlRpcDataFormatReifier extends DataFormatReifier<XmlRpcDataFormat> {
 
-    public XmlRpcDataFormatReifier(DataFormatDefinition definition) {
-        super((XmlRpcDataFormat)definition);
+    public XmlRpcDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (XmlRpcDataFormat)definition);
     }
 
     @Override

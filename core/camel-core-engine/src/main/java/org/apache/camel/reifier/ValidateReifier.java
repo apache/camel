@@ -25,12 +25,12 @@ import org.apache.camel.support.processor.PredicateValidatingProcessor;
 
 public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
 
-    public ValidateReifier(ProcessorDefinition<?> definition) {
-        super((ValidateDefinition)definition);
+    public ValidateReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ValidateDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         Predicate pred = definition.getExpression().createPredicate(routeContext);
         return new PredicateValidatingProcessor(pred);
     }

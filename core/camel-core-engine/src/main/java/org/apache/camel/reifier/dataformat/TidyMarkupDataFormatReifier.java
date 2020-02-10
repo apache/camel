@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 
 public class TidyMarkupDataFormatReifier extends DataFormatReifier<TidyMarkupDataFormat> {
 
-    public TidyMarkupDataFormatReifier(DataFormatDefinition definition) {
-        super((TidyMarkupDataFormat)definition);
+    public TidyMarkupDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (TidyMarkupDataFormat)definition);
     }
 
     @Override

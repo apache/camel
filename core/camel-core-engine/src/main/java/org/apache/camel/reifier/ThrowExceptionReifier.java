@@ -25,19 +25,19 @@ import org.apache.camel.spi.RouteContext;
 
 public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefinition> {
 
-    public ThrowExceptionReifier(ProcessorDefinition<?> definition) {
-        super((ThrowExceptionDefinition)definition);
+    public ThrowExceptionReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ThrowExceptionDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
+    public Processor createProcessor() {
         if (definition.getRef() != null && definition.getException() == null) {
             definition.setException(routeContext.lookup(definition.getRef(), Exception.class));
         }
 
         if (definition.getExceptionType() != null && definition.getExceptionClass() == null) {
             try {
-                definition.setExceptionClass(routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(definition.getExceptionType(), Exception.class));
+                definition.setExceptionClass(camelContext.getClassResolver().resolveMandatoryClass(definition.getExceptionType(), Exception.class));
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }

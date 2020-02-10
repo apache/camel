@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.GrokDataFormat;
 
 public class GrokDataFormatReifier extends DataFormatReifier<GrokDataFormat> {
 
-    public GrokDataFormatReifier(DataFormatDefinition definition) {
-        super((GrokDataFormat)definition);
+    public GrokDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (GrokDataFormat)definition);
     }
 
     @Override

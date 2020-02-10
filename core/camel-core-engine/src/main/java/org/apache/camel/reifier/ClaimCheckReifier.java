@@ -31,16 +31,16 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
-    public ClaimCheckReifier(ProcessorDefinition<?> definition) {
-        super(ClaimCheckDefinition.class.cast(definition));
+    public ClaimCheckReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, ClaimCheckDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         notNull(definition.getOperation(), "operation", this);
 
         ClaimCheckProcessor claim = new ClaimCheckProcessor();
-        claim.setOperation(parse(routeContext, ClaimCheckOperation.class, definition.getOperation()).name());
+        claim.setOperation(parse(ClaimCheckOperation.class, definition.getOperation()).name());
         claim.setKey(definition.getKey());
         claim.setFilter(definition.getFilter());
 
@@ -115,7 +115,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         return strategy;

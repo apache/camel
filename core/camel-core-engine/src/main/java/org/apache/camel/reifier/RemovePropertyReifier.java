@@ -25,12 +25,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefinition> {
 
-    public RemovePropertyReifier(ProcessorDefinition<?> definition) {
-        super((RemovePropertyDefinition)definition);
+    public RemovePropertyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (RemovePropertyDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPropertyName(), "propertyName", this);
         return new RemovePropertyProcessor(definition.getPropertyName());
     }

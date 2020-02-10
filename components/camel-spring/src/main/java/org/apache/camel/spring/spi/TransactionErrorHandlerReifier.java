@@ -18,6 +18,7 @@ package org.apache.camel.spring.spi;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
@@ -35,12 +36,12 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerReifier.class);
 
-    public TransactionErrorHandlerReifier(ErrorHandlerFactory definition) {
-        super(definition);
+    public TransactionErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
+        super(routeContext, definition);
     }
 
     @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
+    public Processor createErrorHandler(Processor processor) throws Exception {
         TransactionTemplate transactionTemplate = definition.getTransactionTemplate();
         if (transactionTemplate == null) {
             // lookup in context if no transaction template has been configured

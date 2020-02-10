@@ -25,17 +25,17 @@ import org.apache.camel.util.StringHelper;
 
 public class CustomLoadBalancerReifier extends LoadBalancerReifier<CustomLoadBalancerDefinition> {
 
-    public CustomLoadBalancerReifier(LoadBalancerDefinition definition) {
-        super((CustomLoadBalancerDefinition)definition);
+    public CustomLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
+        super(routeContext, (CustomLoadBalancerDefinition)definition);
     }
 
     @Override
-    public LoadBalancer createLoadBalancer(RouteContext routeContext) {
+    public LoadBalancer createLoadBalancer() {
         if (definition.getCustomLoadBalancer() != null) {
             return definition.getCustomLoadBalancer();
         }
         StringHelper.notEmpty(definition.getRef(), "ref", this);
-        return CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getRef(), LoadBalancer.class);
+        return CamelContextHelper.mandatoryLookup(camelContext, definition.getRef(), LoadBalancer.class);
     }
 
 }

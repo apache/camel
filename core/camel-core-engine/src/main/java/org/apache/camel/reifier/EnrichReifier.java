@@ -28,12 +28,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
-    public EnrichReifier(ProcessorDefinition<?> definition) {
-        super(EnrichDefinition.class.cast(definition));
+    public EnrichReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, EnrichDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         Expression exp = definition.getExpression().createExpression(routeContext);
         boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && Boolean.parseBoolean(definition.getShareUnitOfWork());
         boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && Boolean.parseBoolean(definition.getIgnoreInvalidEndpoint());
@@ -41,7 +41,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         Enricher enricher = new Enricher(exp);
         enricher.setShareUnitOfWork(isShareUnitOfWork);
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
         if (strategy != null) {
             enricher.setAggregationStrategy(strategy);
         }
@@ -52,7 +52,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         return enricher;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
@@ -71,7 +71,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         return strategy;

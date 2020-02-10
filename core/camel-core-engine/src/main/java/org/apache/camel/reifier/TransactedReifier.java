@@ -39,12 +39,12 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactedReifier.class);
 
-    public TransactedReifier(ProcessorDefinition<?> definition) {
-        super((TransactedDefinition)definition);
+    public TransactedReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (TransactedDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         Policy policy = resolvePolicy(routeContext);
         org.apache.camel.util.ObjectHelper.notNull(policy, "policy", this);
 
@@ -52,7 +52,7 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
         policy.beforeWrap(routeContext, definition);
 
         // create processor after the before wrap
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
+        Processor childProcessor = this.createChildProcessor(true);
 
         // wrap
         Processor target = policy.wrap(routeContext, childProcessor);

@@ -27,13 +27,13 @@ import org.apache.camel.util.ObjectHelper;
 
 public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsumerDefinition> {
 
-    public IdempotentConsumerReifier(ProcessorDefinition<?> definition) {
-        super(IdempotentConsumerDefinition.class.cast(definition));
+    public IdempotentConsumerReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, IdempotentConsumerDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
+    public Processor createProcessor() throws Exception {
+        Processor childProcessor = this.createChildProcessor(true);
 
         IdempotentRepository idempotentRepository = resolveMessageIdRepository(routeContext);
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", definition);

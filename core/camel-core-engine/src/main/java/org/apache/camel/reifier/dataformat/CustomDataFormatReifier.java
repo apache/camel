@@ -25,12 +25,12 @@ import org.apache.camel.spi.DataFormat;
 
 public class CustomDataFormatReifier extends DataFormatReifier<CustomDataFormat> {
 
-    public CustomDataFormatReifier(DataFormatDefinition definition) {
-        super((CustomDataFormat)definition);
+    public CustomDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (CustomDataFormat) definition);
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
+    protected DataFormat doCreateDataFormat() {
         return DataFormatReifier.getDataFormat(camelContext, null, definition.getRef());
     }
 

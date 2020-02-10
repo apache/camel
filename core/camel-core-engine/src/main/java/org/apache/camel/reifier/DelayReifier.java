@@ -29,20 +29,20 @@ import org.apache.camel.spi.RouteContext;
 
 public class DelayReifier extends ExpressionReifier<DelayDefinition> {
 
-    public DelayReifier(ProcessorDefinition<?> definition) {
-        super(DelayDefinition.class.cast(definition));
+    public DelayReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, DelayDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
+    public Processor createProcessor() throws Exception {
+        Processor childProcessor = this.createChildProcessor(false);
         Expression delay = createAbsoluteTimeDelayExpression(routeContext);
 
         boolean async = definition.getAsyncDelayed() == null || Boolean.parseBoolean(definition.getAsyncDelayed());
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, async);
         ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", definition, async);
 
-        Delayer answer = new Delayer(routeContext.getCamelContext(), childProcessor, delay, threadPool, shutdownThreadPool);
+        Delayer answer = new Delayer(camelContext, childProcessor, delay, threadPool, shutdownThreadPool);
         answer.setAsyncDelayed(async);
         answer.setCallerRunsWhenRejected(definition.getCallerRunsWhenRejected() == null
                 || Boolean.parseBoolean(definition.getCallerRunsWhenRejected()));

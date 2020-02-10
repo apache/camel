@@ -29,12 +29,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
-    public ThrottleReifier(ProcessorDefinition<?> definition) {
-        super((ThrottleDefinition)definition);
+    public ThrottleReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ThrottleDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         boolean async = definition.getAsyncDelayed() != null && definition.getAsyncDelayed();
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, true);
         ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", definition, true);
@@ -54,7 +54,7 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         }
 
         boolean reject = definition.getRejectExecution() != null && definition.getRejectExecution();
-        Throttler answer = new Throttler(routeContext.getCamelContext(), maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
+        Throttler answer = new Throttler(camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
         if (definition.getCallerRunsWhenRejected() == null) {

@@ -33,8 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
 
-    public OnExceptionReifier(ProcessorDefinition<?> definition) {
-        super((OnExceptionDefinition)definition);
+    public OnExceptionReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (OnExceptionDefinition)definition);
     }
 
     @Override
@@ -51,22 +51,22 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             definition.setRouteScoped(definition.getParent() != null);
         }
 
-        setHandledFromExpressionType(routeContext);
-        setContinuedFromExpressionType(routeContext);
-        setRetryWhileFromExpressionType(routeContext);
-        setOnRedeliveryFromRedeliveryRef(routeContext);
-        setOnExceptionOccurredFromOnExceptionOccurredRef(routeContext);
+        setHandledFromExpressionType();
+        setContinuedFromExpressionType();
+        setRetryWhileFromExpressionType();
+        setOnRedeliveryFromRedeliveryRef();
+        setOnExceptionOccurredFromOnExceptionOccurredRef();
 
         // must validate configuration before creating processor
         definition.validateConfiguration();
 
-        if (definition.getUseOriginalMessage() != null && parseBoolean(routeContext, definition.getUseOriginalMessage())) {
+        if (definition.getUseOriginalMessage() != null && parseBoolean(definition.getUseOriginalMessage())) {
             // ensure allow original is turned on
             routeContext.setAllowUseOriginalMessage(true);
         }
 
         // lets attach this on exception to the route error handler
-        Processor child = createOutputsProcessor(routeContext);
+        Processor child = createOutputsProcessor();
         if (child != null) {
             // wrap in our special safe fallback error handler if OnException
             // have child output
@@ -81,14 +81,14 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
     }
 
     @Override
-    public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
+    public CatchProcessor createProcessor() throws Exception {
         // load exception classes
         List<Class<? extends Throwable>> classes = null;
         if (definition.getExceptions() != null && !definition.getExceptions().isEmpty()) {
-            classes = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
+            classes = createExceptionClasses(camelContext.getClassResolver());
         }
 
-        if (definition.getUseOriginalMessage() != null && parseBoolean(routeContext, definition.getUseOriginalMessage())) {
+        if (definition.getUseOriginalMessage() != null && parseBoolean(definition.getUseOriginalMessage())) {
             // ensure allow original is turned on
             routeContext.setAllowUseOriginalMessage(true);
         }
@@ -96,7 +96,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         // must validate configuration before creating processor
         definition.validateConfiguration();
 
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
+        Processor childProcessor = this.createChildProcessor(false);
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
@@ -121,38 +121,38 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         return answer;
     }
 
-    private void setHandledFromExpressionType(RouteContext routeContext) {
+    private void setHandledFromExpressionType() {
         if (definition.getHandled() != null && definition.getHandledPolicy() == null && routeContext != null) {
             definition.handled(definition.getHandled().createPredicate(routeContext));
         }
     }
 
-    private void setContinuedFromExpressionType(RouteContext routeContext) {
+    private void setContinuedFromExpressionType() {
         if (definition.getContinued() != null && definition.getContinuedPolicy() == null && routeContext != null) {
             definition.continued(definition.getContinued().createPredicate(routeContext));
         }
     }
 
-    private void setRetryWhileFromExpressionType(RouteContext routeContext) {
+    private void setRetryWhileFromExpressionType() {
         if (definition.getRetryWhile() != null && definition.getRetryWhilePolicy() == null && routeContext != null) {
             definition.retryWhile(definition.getRetryWhile().createPredicate(routeContext));
         }
     }
 
-    private void setOnRedeliveryFromRedeliveryRef(RouteContext routeContext) {
+    private void setOnRedeliveryFromRedeliveryRef() {
         // lookup onRedelivery if ref is provided
         if (ObjectHelper.isNotEmpty(definition.getOnRedeliveryRef())) {
             // if ref is provided then use mandatory lookup to fail if not found
-            Processor onRedelivery = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getOnRedeliveryRef(), Processor.class);
+            Processor onRedelivery = CamelContextHelper.mandatoryLookup(camelContext, definition.getOnRedeliveryRef(), Processor.class);
             definition.setOnRedelivery(onRedelivery);
         }
     }
 
-    private void setOnExceptionOccurredFromOnExceptionOccurredRef(RouteContext routeContext) {
+    private void setOnExceptionOccurredFromOnExceptionOccurredRef() {
         // lookup onRedelivery if ref is provided
         if (ObjectHelper.isNotEmpty(definition.getOnExceptionOccurredRef())) {
             // if ref is provided then use mandatory lookup to fail if not found
-            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getOnExceptionOccurredRef(), Processor.class);
+            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(camelContext, definition.getOnExceptionOccurredRef(), Processor.class);
             definition.setOnExceptionOccurred(onExceptionOccurred);
         }
     }

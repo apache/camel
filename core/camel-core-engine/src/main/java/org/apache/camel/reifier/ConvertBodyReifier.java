@@ -27,14 +27,14 @@ import org.apache.camel.spi.RouteContext;
 
 public class ConvertBodyReifier extends ProcessorReifier<ConvertBodyDefinition> {
 
-    public ConvertBodyReifier(ProcessorDefinition<?> definition) {
-        super(ConvertBodyDefinition.class.cast(definition));
+    public ConvertBodyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, ConvertBodyDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         if (definition.getTypeClass() == null && definition.getType() != null) {
-            definition.setTypeClass(routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(definition.getType()));
+            definition.setTypeClass(camelContext.getClassResolver().resolveMandatoryClass(definition.getType()));
         }
 
         // validate charset

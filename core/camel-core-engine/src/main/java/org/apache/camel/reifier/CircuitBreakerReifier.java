@@ -23,12 +23,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class CircuitBreakerReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public CircuitBreakerReifier(ProcessorDefinition<?> definition) {
-        super(CircuitBreakerDefinition.class.cast(definition));
+    public CircuitBreakerReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, CircuitBreakerDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         throw new IllegalStateException("Cannot find camel-hystrix or camel-microprofile-fault-tolerance on the classpath.");
     }
 
