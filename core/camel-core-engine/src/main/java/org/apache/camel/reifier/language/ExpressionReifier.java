@@ -47,6 +47,8 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -186,7 +188,16 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     protected void setProperties(Object target, Map<String, Object> properties) {
         properties.entrySet().removeIf(e -> e.getValue() == null);
-        PropertyBindingSupport.build().bind(camelContext, target, properties);
+
+        PropertyConfigurer configurer = null;
+        if (target instanceof PropertyConfigurerAware) {
+            configurer = ((PropertyConfigurerAware) target).getPropertyConfigurer(target);
+        } else if (target instanceof PropertyConfigurer) {
+            configurer = (PropertyConfigurer) target;
+        }
+        PropertyBindingSupport.build()
+                .withConfigurer(configurer)
+                .bind(camelContext, target, properties);
     }
 
     protected Object or(Object a, Object b) {
