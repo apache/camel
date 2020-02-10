@@ -2,7 +2,7 @@
 = Process EIP
 :page-source: core/camel-core-engine/src/main/docs/eips/process-eip.adoc
 
-The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a xref:message-translator.adoc[Message Translator]
+The https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a xref:message-translator.adoc[Message Translator]
 
 == Options
 
@@ -89,13 +89,13 @@ refactor it into a separate class.
 == Turning your processor into a full Component
 
 There is a base class called
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/ProcessorEndpoint.html[ProcessorEndpoint]
+https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/ProcessorEndpoint.html[ProcessorEndpoint]
 which supports the full xref:endpoint.adoc[Endpoint] semantics given a
 Processor instance.
 
 So you just need to create a https://github.com/apache/camel/tree/master/components[Component] class by
 deriving from
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
+https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/DefaultComponent.html[DefaultComponent]
 which returns instances of ProcessorEndpoint. For more details see
 xref:writing-components.adoc[Writing Components]
 
