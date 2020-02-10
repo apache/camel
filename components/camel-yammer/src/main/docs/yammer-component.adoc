@@ -1,2 +1,18 @@
 [[yammer-component]]
 = Yammer Component
+
+*Since Camel 2.12*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+// component options: START
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+// spring-boot-auto-configure options: END
+
