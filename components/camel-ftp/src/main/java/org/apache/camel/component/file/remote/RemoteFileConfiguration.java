@@ -78,14 +78,16 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     @UriParam(defaultValue = "true", label = "advanced", description = "Sets whether we should stepwise change "
                                                                        + "directories while traversing file structures when downloading files, or as well when uploading a file "
                                                                        + "to a directory. <p/> You can disable this if you for example are in a situation where you cannot change "
-                                                                       + "directory on the FTP server due security reasons.")
+                                                                       + "directory on the FTP server due security reasons. "
+                                                                       + "Stepwise cannot be used together with streamDownload.")
     private boolean stepwise = true;
     @UriParam(defaultValue = "UNIX", description = "Sets the path separator to be used. <p/> UNIX = Uses unix style "
                                                    + "path separator Windows = Uses windows style path separator Auto = (is default) Use existing path " + "separator in file name")
     private PathSeparator separator = PathSeparator.UNIX;
     @UriParam(label = "consumer", description = "Sets the download method to use when not using a local working "
                                                 + "directory.  If set to true, the remote files are streamed to the route as they are read.  When set to "
-                                                + "false, the remote files are loaded into memory before being sent into the route.")
+                                                + "false, the remote files are loaded into memory before being sent into the route. "
+                                                + "If enabling this option then you must set stepwise=false as both cannot be enabled at the same time.")
     private boolean streamDownload;
     @UriParam(defaultValue = "true", label = "consumer,advanced", description = "Whether to allow using LIST "
                                                                                 + "command when downloading a file. <p/> Default is <tt>true</tt>. In some use cases you may want to "
