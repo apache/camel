@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq;
+package org.apache.camel.component.rabbitmq.integration;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,13 +36,17 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.component.rabbitmq.testbeans.TestNonSerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     public static final String ROUTING_KEY = "rk5";
@@ -75,7 +79,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         SimpleRegistry reg = new SimpleRegistry();
 
         HashMap<String, Object> args = new HashMap<>();
-        args.put("queue.x-expires", 60000);
+        args.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, 60000);
         reg.bind("args", args);
 
         return reg;
@@ -148,7 +152,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         testObject.setName("header");
 
         headers.put("String", "String");
-        headers.put("Boolean", new Boolean(false));
+        headers.put("Boolean", Boolean.valueOf(false));
 
         // This will blow up the connection if not removed before sending the message
         headers.put("TestObject1", testObject);
@@ -231,7 +235,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     }
 
     @Test
-    public void inOutTimeOutTest() {
+    public void inOutTimeOutTest() throws InterruptedException {
         try {
             template.requestBodyAndHeader("direct:rabbitMQ", "TimeOut", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
             fail("This should have thrown a timeOut exception");

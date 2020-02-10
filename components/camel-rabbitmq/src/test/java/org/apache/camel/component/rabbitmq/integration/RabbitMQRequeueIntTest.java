@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq;
+package org.apache.camel.component.rabbitmq.integration;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -22,6 +22,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.awaitility.Awaitility;
 import org.junit.Test;
 
@@ -38,8 +39,8 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/ex4??username=cameltest&password=cameltest"
-            + "&autoAck=false&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout"
+    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
+            + "&autoAck=false&autoDelete=false&durable=true&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout"
             + "&deadLetterQueue=" + DEAD_LETTER_QUEUE_NAME + "&routingKey=" + ROUTING_KEY)
     private Endpoint rabbitMQEndpoint;
 
@@ -94,16 +95,16 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
 
     @Test
     public void testNoRequeueHeaderCausesReject() throws Exception {
-        DeadLetterConsumer deadLetterConsumer = new DeadLetterConsumer();
+        final java.util.List<String> received = new java.util.ArrayList<>();
 
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
         directProducer.sendBody("Hello, World!");
-        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, false, deadLetterConsumer);
+        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
         // If message was rejected and not requeued, it will be published in dead letter queue
-        await().atMost(5, SECONDS).until(() -> deadLetterConsumer.getReceivedSize() == 1);
+        await().atMost(5, SECONDS).until(() -> received.size() == 1);
 
         producingMockEndpoint.assertIsSatisfied();
         consumingMockEndpoint.assertIsSatisfied();
@@ -111,16 +112,16 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
 
     @Test
     public void testNonBooleanRequeueHeaderCausesReject() throws Exception {
-        DeadLetterConsumer deadLetterConsumer = new DeadLetterConsumer();
+        final java.util.List<String> received = new java.util.ArrayList<>();
 
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, 4L);
-        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, false, deadLetterConsumer);
+        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
         // If message was rejected and not requeued, it will be published in dead letter queue
-        await().atMost(5, SECONDS).until(() -> deadLetterConsumer.getReceivedSize() == 1);
+        await().atMost(5, SECONDS).until(() -> received.size() == 1);
 
         producingMockEndpoint.assertIsSatisfied();
         consumingMockEndpoint.assertIsSatisfied();
@@ -128,16 +129,16 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
 
     @Test
     public void testFalseRequeueHeaderCausesReject() throws Exception {
-        DeadLetterConsumer deadLetterConsumer = new DeadLetterConsumer();
+        final java.util.List<String> received = new java.util.ArrayList<>();
 
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, false);
-        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, false, deadLetterConsumer);
+        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
         // If message was rejected and not requeued, it will be published in dead letter queue
-        await().atMost(5, SECONDS).until(() -> deadLetterConsumer.getReceivedSize() == 1);
+        await().atMost(5, SECONDS).until(() -> received.size() == 1);
 
         producingMockEndpoint.assertIsSatisfied();
         consumingMockEndpoint.assertIsSatisfied();
@@ -145,22 +146,21 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
 
     @Test
     public void testTrueRequeueHeaderCausesRequeue() throws Exception {
-        DeadLetterConsumer deadLetterConsumer = new DeadLetterConsumer();
+        final java.util.List<String> received = new java.util.ArrayList<>();
 
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.setMinimumExpectedMessageCount(2);
 
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, true);
-        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, false, deadLetterConsumer);
-
+        deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
         Awaitility.await()
                 .during(1, SECONDS)
                 .atMost(2, SECONDS)
-                .until(() ->  deadLetterConsumer.getReceivedSize() >= 0);
+                .until(() ->  received.size() >= 0);
 
         // If message was rejected and requeued it will not be published in dead letter queue
-        assertEquals(deadLetterConsumer.getReceivedSize(), 0);
+        assertEquals(0, received.size());
         producingMockEndpoint.assertIsSatisfied();
         consumingMockEndpoint.assertIsSatisfied();
     }
@@ -168,13 +168,9 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     private class DeadLetterConsumer extends com.rabbitmq.client.DefaultConsumer {
         private final java.util.List<String> received;
 
-        DeadLetterConsumer() {
+        DeadLetterConsumer(java.util.List<String> received) {
             super(deadLetterChannel);
-            received = new java.util.ArrayList<>();
-        }
-
-        public int getReceivedSize() {
-            return received.size();
+            this.received = received;
         }
 
         @Override
