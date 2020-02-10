@@ -30,7 +30,7 @@ public class StickyLoadBalancerReifier extends LoadBalancerReifier<StickyLoadBal
 
     @Override
     public LoadBalancer createLoadBalancer() {
-        return new StickyLoadBalancer(definition.getCorrelationExpression().createExpression(routeContext));
+        return new StickyLoadBalancer(createExpression(definition.getCorrelationExpression()));
     }
 
 }

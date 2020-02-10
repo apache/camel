@@ -72,7 +72,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
-            when = definition.getOnWhen().getExpression().createPredicate(routeContext);
+            when = createPredicate(definition.getOnWhen().getExpression());
         }
 
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);

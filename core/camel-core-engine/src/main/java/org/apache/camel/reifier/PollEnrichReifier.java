@@ -38,7 +38,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         // if no timeout then we should block, and there use a negative timeout
         long time = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : -1;
         boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && parseBoolean(definition.getIgnoreInvalidEndpoint());
-        Expression exp = definition.getExpression().createExpression(routeContext);
+        Expression exp = createExpression(definition.getExpression());
 
         PollEnricher enricher = new PollEnricher(exp, time);
 

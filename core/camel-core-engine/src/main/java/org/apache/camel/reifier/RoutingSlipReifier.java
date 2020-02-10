@@ -36,7 +36,7 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression expression = definition.getExpression().createExpression(routeContext);
+        Expression expression = createExpression(definition.getExpression());
         String delimiter = definition.getUriDelimiter() != null ? definition.getUriDelimiter() : DEFAULT_DELIMITER;
 
         RoutingSlip routingSlip = new RoutingSlip(camelContext, expression, delimiter);

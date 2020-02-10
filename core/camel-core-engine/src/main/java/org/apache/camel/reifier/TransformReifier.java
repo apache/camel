@@ -31,7 +31,7 @@ public class TransformReifier extends ExpressionReifier<TransformDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression expr = definition.getExpression().createExpression(routeContext);
+        Expression expr = createExpression(definition.getExpression());
         return new TransformProcessor(expr);
     }
 }

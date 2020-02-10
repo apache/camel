@@ -21,12 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
  * To use Camel message body or header with a tokenizer in Camel expressions or
@@ -195,45 +191,6 @@ public class TokenizerExpression extends ExpressionDefinition {
      */
     public void setSkipFirst(String skipFirst) {
         this.skipFirst = skipFirst;
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        // special for new line tokens, if defined from XML then its 2
-        // characters, so we replace that back to a single char
-        if (token.startsWith("\\n")) {
-            token = '\n' + token.substring(2);
-        }
-
-        TokenizeLanguage language = new TokenizeLanguage();
-        language.setToken(token);
-        language.setEndToken(endToken);
-        language.setInheritNamespaceTagName(inheritNamespaceTagName);
-        language.setHeaderName(headerName);
-        language.setGroupDelimiter(groupDelimiter);
-        if (regex != null) {
-            language.setRegex(Boolean.parseBoolean(regex));
-        }
-        if (xml != null) {
-            language.setXml(Boolean.parseBoolean(xml));
-        }
-        if (includeTokens != null) {
-            language.setIncludeTokens(Boolean.parseBoolean(includeTokens));
-        }
-        if (group != null && !"0".equals(group)) {
-            language.setGroup(group);
-        }
-
-        if (skipFirst != null) {
-            language.setSkipFirst(Boolean.parseBoolean(skipFirst));
-        }
-        return language.createExpression();
-    }
-
-    @Override
-    public Predicate createPredicate(CamelContext camelContext) {
-        Expression exp = createExpression(camelContext);
-        return ExpressionToPredicateAdapter.toPredicate(exp);
     }
 
     @Override

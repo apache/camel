@@ -72,7 +72,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
     @SuppressWarnings("deprecation")
     protected Resequencer createBatchResequencer(RouteContext routeContext, BatchResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(true);
-        Expression expression = definition.getExpression().createExpression(routeContext);
+        Expression expression = createExpression(definition.getExpression());
 
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
@@ -106,7 +106,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
      */
     protected StreamResequencer createStreamResequencer(RouteContext routeContext, StreamResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(true);
-        Expression expression = definition.getExpression().createExpression(routeContext);
+        Expression expression = createExpression(definition.getExpression());
 
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));

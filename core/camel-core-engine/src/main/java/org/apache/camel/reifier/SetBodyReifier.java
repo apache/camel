@@ -31,7 +31,7 @@ public class SetBodyReifier extends ExpressionReifier<SetBodyDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression expr = definition.getExpression().createExpression(routeContext);
+        Expression expr = createExpression(definition.getExpression());
         return new SetBodyProcessor(expr);
     }
 }

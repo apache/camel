@@ -31,7 +31,7 @@ public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Predicate pred = definition.getExpression().createPredicate(routeContext);
+        Predicate pred = createPredicate(definition.getExpression());
         return new PredicateValidatingProcessor(pred);
     }
 

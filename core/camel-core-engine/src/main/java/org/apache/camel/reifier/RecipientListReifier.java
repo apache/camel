@@ -43,7 +43,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
 
     @Override
     public Processor createProcessor() throws Exception {
-        final Expression expression = definition.getExpression().createExpression(routeContext);
+        final Expression expression = createExpression(definition.getExpression());
 
         boolean isParallelProcessing = definition.getParallelProcessing() != null && parseBoolean(definition.getParallelProcessing());
         boolean isStreaming = definition.getStreaming() != null && parseBoolean(definition.getStreaming());

@@ -17,6 +17,11 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
@@ -54,6 +59,22 @@ public abstract class AbstractReifier {
 
     protected <T> T parse(Class<T> clazz, String text) {
         return CamelContextHelper.parse(camelContext, clazz, text);
+    }
+
+    protected Expression createExpression(ExpressionDefinition expression) {
+        return ExpressionReifier.reifier(camelContext, expression).createExpression();
+    }
+
+    protected Expression createExpression(ExpressionSubElementDefinition expression) {
+        return ExpressionReifier.reifier(camelContext, expression).createExpression();
+    }
+
+    protected Predicate createPredicate(ExpressionDefinition expression) {
+        return ExpressionReifier.reifier(camelContext, expression).createPredicate();
+    }
+
+    protected Predicate createPredicate(ExpressionSubElementDefinition expression) {
+        return ExpressionReifier.reifier(camelContext, expression).createPredicate();
     }
 
 }

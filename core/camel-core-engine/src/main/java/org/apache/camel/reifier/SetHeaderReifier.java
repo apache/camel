@@ -34,7 +34,7 @@ public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getName(), "headerName");
-        Expression expr = definition.getExpression().createExpression(routeContext);
+        Expression expr = createExpression(definition.getExpression());
         Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(definition.getName(), camelContext);
         return new SetHeaderProcessor(nameExpr, expr);
     }

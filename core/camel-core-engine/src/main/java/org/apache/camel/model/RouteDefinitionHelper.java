@@ -451,15 +451,14 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initRouteInput(CamelContext camelContext, FromDefinition input) {
-        // resolve property placeholders on route input which hasn't been done
-        // yet
-        if (input != null) {
-            try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
+//        // resolve property placeholders on route input which hasn't been done yet
+//        if (input != null) {
+//            try {
+//                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
+//            } catch (Exception e) {
+//                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+//            }
+//        }
     }
 
     private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> abstracts,

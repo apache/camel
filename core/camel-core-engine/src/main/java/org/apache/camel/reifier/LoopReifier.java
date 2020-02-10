@@ -39,9 +39,9 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
         Predicate predicate = null;
         Expression expression = null;
         if (isWhile) {
-            predicate = definition.getExpression().createPredicate(routeContext);
+            predicate = createPredicate(definition.getExpression());
         } else {
-            expression = definition.getExpression().createExpression(routeContext);
+            expression = createExpression(definition.getExpression());
         }
         return new LoopProcessor(camelContext, output, expression, predicate, isCopy);
     }
