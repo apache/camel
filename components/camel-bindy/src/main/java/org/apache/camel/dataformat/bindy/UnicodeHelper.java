@@ -1,35 +1,47 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.dataformat.bindy;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ibm.icu.text.BreakIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ibm.icu.text.BreakIterator;
-
 /**
- * <p>Unterstützung für String-Verarbeitung für Unicode-Strings</p>
- * 
- * <p>Hinweise:</p>
- * <ul>
- *     <li>Die Schnittstelle orientiert sich an der von {@link String}.</li>
- *     <li>Einmal erzeugt ist eine Instanz immutable.</li>
- * </ul>
+ * This class replicates the essential parts of the String class in order to aid
+ * proper work for Unicode chars in the presense of UTF-16. So for all operations 
+ * please see {@link String} with the same signature. This class is equally immutable.
  */
-public class UnicodeHelper {
+public class UnicodeHelper implements Serializable {
     /**
-     * <p>Definiert wie die Länge eines Strings bzw. dessen Bestandteile &quot;Zeichen&quot; ermittelt wird.</p> 
+     * Defines how length if a string is defined, i.e how chars are counted.
      */
     public enum Method {
         /**
-         * <p>Die Länge entspricht der Anzahl der (Unicode-)Codepoints.</p>
+         * One "char" is one Unicode codepoint, which is the standard case.
          */
         CODEPOINTS,
         
         /**
-         * <p>Die Länge entspricht der Anzahl der Grapheme.</p>
+         * One "char" is one graphem.
          */
         GRAPHEME;
     }
@@ -43,12 +55,12 @@ public class UnicodeHelper {
     private Method method;
     
     /**
-     * Erzeugt einen LengthHelper
+     * Create instance.
      * 
      * @param input
-     *         String der verarbeitet werden soll.
+     *         String, that is to be wrapped.
      * @param method 
-     *         Methode wie die Länge ermittelt wird.
+     *         Method, that is used to determin "chars" of string.
      */
     public UnicodeHelper(final String input, final Method method) {
         this.input = input;
@@ -57,24 +69,21 @@ public class UnicodeHelper {
     }
 
     /**
+     * For Serialization only!
+     */
+    protected UnicodeHelper() {
+        // Empty
+    }
+
+    /**
      * @return
-     *         Gibt die verwendete Methode zur Längenermittlung an.
+     *         Returns the method used to determining the string length.
      */
     public Method getMethod() {
         return method;
     }
 
     /**
-     * Returns a string that is a substring of this string. The substring begins with the character at 
-     * the specified index and extends to the end of this string.
-     * 
-     * @param beginIndex
-     *         the beginning index, inclusive.
-     * @return 
-     *         the specified substring.
-     * @throws java.lang.IndexOutOfBoundsException
-     *         if beginIndex is negative or larger than the length of this String object.
-     * 
      * @see String#substring(int)
      */
     public String substring(final int beginIndex) {
@@ -85,19 +94,6 @@ public class UnicodeHelper {
     }
     
     /**
-     * Returns a string that is a substring of this string. The substring begins at the specified beginIndex 
-     * and extends to the character at index endIndex - 1. Thus the length of the substring is endIndex-beginIndex. 
-     * 
-     * @param beginIndex
-     *         the beginning index, inclusive.
-     * @param endIndex
-     *         the ending index, exclusive.
-     * @return
-     *         the specified substring.
-     * @throws java.lang.IndexOutOfBoundsException
-     *         if the beginIndex is negative, or endIndex is larger than the length of this String object, 
-     *         or beginIndex is larger than endIndex.
-     * 
      * @see String#substring(int, int)
      */
     public String substring(final int beginIndex, final int endIndex) {
@@ -109,11 +105,6 @@ public class UnicodeHelper {
     }
 
     /**
-     * Returns the length of this string. The length is equal to the graphemes in the string.
-     * 
-     * @return
-     *         Returns the length of this character sequence. 
-     * 
      * @see String#length()
      */
     public int length() {
@@ -123,15 +114,6 @@ public class UnicodeHelper {
     }
     
     /**
-     * Return the first index of the string s  
-     * 
-     * @param str
-     *         The String to found
-     * @return
-     *         If found the index, else -1 
-     * @throws IllegalArgumentException
-     *         If argument given to indexOf is not a string conisting fully of valid unicode chars.
-     * 
      * @see String#indexOf(String)
      */
     public int indexOf(final String str) {
@@ -152,7 +134,7 @@ public class UnicodeHelper {
             }
         }
         
-        final String cps = str.codePoints().mapToObj((cp) -> String.format("0x%X", cp)).collect(Collectors.joining(","));
+        final String cps = str.codePoints().mapToObj(cp -> String.format("0x%X", cp)).collect(Collectors.joining(","));
         throw new IllegalArgumentException("Given string (" + cps + ") is not a valid sequence of " + this.method + "s.");
     }
     
@@ -194,8 +176,8 @@ public class UnicodeHelper {
         final List<Integer> result = new ArrayList<>();
 
         // 
-        // Achtung: Hier wird der BreakIterator der ICU lib (com.ibm.icu.text.BreakIterator; siehe Dependencies) 
-        // benutzt, denn der in Java Eingebaute ist zu alt und kann darum mit manchen Zeichen nicht korrekt umgehen.
+        // Caution: The BreakIterator of ICU lib (com.ibm.icu.text.BreakIterator; siehe Dependencies) ist used here, 
+        //          since the Java builtin one cannot handle modern unicode (Emojis with sex, skin colour, etc.) correctly.
         //
         final BreakIterator bit = BreakIterator.getCharacterInstance();
         bit.setText(input);
@@ -205,5 +187,10 @@ public class UnicodeHelper {
             result.add(end);
         }
         this.splitted = result;
+    }
+
+    @Override
+    public String toString() {
+        return "StringHelper [input=" + input + ", splitted=" + splitted + ", method=" + method + "]";
     }
 }
