@@ -45,7 +45,6 @@ import org.w3c.dom.Node;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.om.AllElementsSpaceStrippingRule;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
@@ -62,6 +61,7 @@ import net.sf.saxon.value.Int64Value;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.StringValue;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -69,8 +69,10 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.xml.BytesSource;
@@ -83,7 +85,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The XQueryExpression, as you would expect, can be executed repeatedly, as often as you want, in the same or in different threads.
  */
-public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
+public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor, GeneratedPropertyConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);
     private Configuration configuration;
     private Map<String, Object> configurationProperties = new HashMap<>();
@@ -100,6 +102,19 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private boolean allowStAX;
     private String headerName;
 
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "resulttype":
+            case "resultType": setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+            case "headername":
+            case "headerName": setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            default: return false;
+        }
+    }
     @Override
     public String toString() {
         return "XQuery[" + expression + "]";
