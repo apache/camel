@@ -22,7 +22,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.RouteContext;
@@ -39,8 +38,8 @@ public class DelayReifier extends ExpressionReifier<DelayDefinition> {
         Expression delay = createAbsoluteTimeDelayExpression(routeContext);
 
         boolean async = definition.getAsyncDelayed() == null || Boolean.parseBoolean(definition.getAsyncDelayed());
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, async);
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", definition, async);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, async);
+        ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Delay", definition, async);
 
         Delayer answer = new Delayer(camelContext, childProcessor, delay, threadPool, shutdownThreadPool);
         answer.setAsyncDelayed(async);

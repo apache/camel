@@ -23,7 +23,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -47,8 +46,8 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork();
         boolean isParallelAggregate = definition.getParallelAggregate() != null && definition.getParallelAggregate();
         boolean isStopOnAggregateException = definition.getStopOnAggregateException() != null && definition.getStopOnAggregateException();
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", definition, isParallelProcessing);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
+        ExecutorService threadPool = getConfiguredExecutorService("Split", definition, isParallelProcessing);
 
         long timeout = definition.getTimeout() != null ? definition.getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing) {

@@ -25,7 +25,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.processor.EvaluateExpressionProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -81,8 +80,8 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             answer.setTimeout(parseLong(definition.getTimeout()));
         }
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", definition, isParallelProcessing);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
+        ExecutorService threadPool = getConfiguredExecutorService("RecipientList", definition, isParallelProcessing);
         answer.setExecutorService(threadPool);
         answer.setShutdownExecutorService(shutdownThreadPool);
         long timeout = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : 0;
@@ -102,7 +101,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         // special error handling
         // when sending to the recipients individually
         Processor evalProcessor = new EvaluateExpressionProcessor(expression);
-        evalProcessor = super.wrapInErrorHandler(routeContext, evalProcessor);
+        evalProcessor = super.wrapInErrorHandler(evalProcessor);
 
         pipe.add(evalProcessor);
         pipe.add(answer);

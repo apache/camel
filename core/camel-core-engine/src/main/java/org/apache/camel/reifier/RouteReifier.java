@@ -34,7 +34,6 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -374,7 +373,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // validate route has output processors
-        if (!ProcessorDefinitionHelper.hasOutputs(definition.getOutputs(), true)) {
+        if (!hasOutputs(definition.getOutputs(), true)) {
             String at = definition.getInput().toString();
             Exception cause = new IllegalArgumentException("Route " + definition.getId() + " has no output processors."
                                                            + " You need to add outputs to the route such as to(\"log:foo\").");
@@ -384,7 +383,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
         for (ProcessorDefinition<?> output : list) {
             try {
-                ProcessorReifier.reifier(routeContext, output).addRoutes(routeContext);
+                ProcessorReifier.reifier(routeContext, output).addRoutes();
             } catch (Exception e) {
                 throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
             }

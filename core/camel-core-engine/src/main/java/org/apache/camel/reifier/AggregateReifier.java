@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -28,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
@@ -36,7 +34,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
@@ -61,8 +58,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
         boolean parallel = parseBoolean(definition.getParallelProcessing());
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, parallel);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", definition, parallel);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
+        ExecutorService threadPool = getConfiguredExecutorService("Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator
             // we do not run in parallel mode, but use a synchronous executor,
@@ -169,7 +166,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
         if (definition.getOptimisticLockRetryPolicy() == null) {
             if (definition.getOptimisticLockRetryPolicyDefinition() != null) {
-                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(camelContext, definition.getOptimisticLockRetryPolicyDefinition()));
+                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicyDefinition()));
             }
         } else {
             answer.setOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicy());
@@ -183,22 +180,22 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return answer;
     }
 
-    public static OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(CamelContext camelContext, OptimisticLockRetryPolicyDefinition definition) {
+    public OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(OptimisticLockRetryPolicyDefinition definition) {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         if (definition.getMaximumRetries() != null) {
-            policy.setMaximumRetries(CamelContextHelper.parseInt(camelContext, definition.getMaximumRetries()));
+            policy.setMaximumRetries(parseInt(definition.getMaximumRetries()));
         }
         if (definition.getRetryDelay() != null) {
-            policy.setRetryDelay(CamelContextHelper.parseLong(camelContext, definition.getRetryDelay()));
+            policy.setRetryDelay(parseLong(definition.getRetryDelay()));
         }
         if (definition.getMaximumRetryDelay() != null) {
-            policy.setMaximumRetryDelay(CamelContextHelper.parseLong(camelContext, definition.getMaximumRetryDelay()));
+            policy.setMaximumRetryDelay(parseLong(definition.getMaximumRetryDelay()));
         }
         if (definition.getExponentialBackOff() != null) {
-            policy.setExponentialBackOff(CamelContextHelper.parseBoolean(camelContext, definition.getExponentialBackOff()));
+            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff()));
         }
         if (definition.getRandomBackOff() != null) {
-            policy.setRandomBackOff(CamelContextHelper.parseBoolean(camelContext, definition.getRandomBackOff()));
+            policy.setRandomBackOff(parseBoolean(definition.getRandomBackOff()));
         }
         return policy;
     }
