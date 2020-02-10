@@ -18,7 +18,6 @@ package org.apache.camel.component.validator;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -42,15 +40,10 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpointClearCachedSchemaTest.class);
 
-    private CamelContext context;
-
     @Test
     public void testClearCachedSchema() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-
-        // send one message for start up to finish.
-        new Sender().run();
 
         // send with 5 sender threads in parallel and call clear cache in
         // between
@@ -59,7 +52,7 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         for (int i = 0; i < 5; i++) {
             senderPool.execute(new Sender());
             if (i == 2) {
-                /**
+                /*
                  * The clear cache thread calls xsdEndpoint.clearCachedSchema
                  */
                 executorClearCache.execute(new ClearCache());
@@ -69,17 +62,13 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         senderPool.shutdown();
         executorClearCache.shutdown();
 
-        senderPool.awaitTermination(2, TimeUnit.SECONDS);
-
-        List<Exchange> exchanges = mock.getExchanges();
-
-        assertNotNull(exchanges);
+        senderPool.awaitTermination(4, TimeUnit.SECONDS);
 
         // expect at least 5 correct sent messages, the messages sent before
         // the clearCacheSchema method is called will fail with a validation
         // error and will nor result in an exchange
-        assertTrue("Less then expected exchanges", exchanges.size() > 5);
-
+        mock.expectedMinimumMessageCount(5);
+        mock.assertIsSatisfied();
     }
 
     @Override
