@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq;
+package org.apache.camel.component.rabbitmq.integration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.support.ObjectHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQProducerIntTest.class);
-    
+
     private static final String EXCHANGE = "ex1";
     private static final String ROUTE = "route1";
     private static final String CUSTOM_HEADER = "CustomHeader";
@@ -56,7 +57,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
 
     @Produce("direct:start")
     protected ProducerTemplate template;
-    
+
     @Produce("direct:start-allow-null-headers")
     protected ProducerTemplate templateAllowNullHeaders;
 
@@ -99,7 +100,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     public void setUpRabbitMQ() throws Exception {
         connection = connection();
         channel = connection.createChannel();
-        channel.queueDeclare("sammyq", false, false, true, null);
+        channel.queueDeclare("sammyq", true, false, false, null);
         channel.queueBind("sammyq", EXCHANGE, ROUTE);
     }
 
@@ -118,32 +119,32 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
 
         assertThatBodiesReceivedIn(received, "new message");
     }
-    
+
     @Test
     public void producedMessageWithNotNullHeaders() throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
-        
+
         headers.put(RabbitMQConstants.EXCHANGE_NAME, EXCHANGE);
         headers.put(CUSTOM_HEADER, CUSTOM_HEADER.toLowerCase());
-        
+
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received, receivedHeaders));
 
         template.sendBodyAndHeaders("new message", headers);
 
         assertThatBodiesAndHeadersReceivedIn(receivedHeaders, headers, received, "new message");
     }
-    
+
     @Test
     public void producedMessageAllowNullHeaders() throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
-        
+
         headers.put(RabbitMQConstants.EXCHANGE_NAME, null);
         headers.put(CUSTOM_HEADER, null);
-        
+
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received, receivedHeaders));
 
         templateAllowNullHeaders.sendBodyAndHeaders("new message", headers);
@@ -159,7 +160,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
             assertEquals(body, received.get(0));
         }
     }
-    
+
     private void assertThatBodiesAndHeadersReceivedIn(Map<String, Object> receivedHeaders, Map<String, Object> expectedHeaders,
                                                       final List<String> received, final String... expected) throws InterruptedException {
         Thread.sleep(500);
@@ -168,15 +169,15 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         for (String body : expected) {
             assertEquals(body, received.get(0));
         }
-        
+
         for (Map.Entry<String, Object> headers : expectedHeaders.entrySet()) {
             Object receivedValue = receivedHeaders.get(headers.getKey());
             Object expectedValue = headers.getValue();
-            
+
             assertTrue("Header key " + headers.getKey() + " not found", receivedHeaders.containsKey(headers.getKey()));
             assertEquals(0, ObjectHelper.compare(receivedValue == null ? "" : receivedValue.toString(), expectedValue == null ? "" : expectedValue.toString()));
         }
-        
+
     }
 
     @Test
@@ -233,7 +234,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
             this.received = received;
             receivedHeaders = new HashMap<>();
         }
-        
+
         ArrayPopulatingConsumer(final List<String> received, Map<String, Object> receivedHeaders) {
             super(RabbitMQProducerIntTest.this.channel);
             this.received = received;
@@ -246,7 +247,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
                                    AMQP.BasicProperties properties,
                                    byte[] body) throws IOException {
             LOGGER.info("AMQP.BasicProperties: {}", properties);
-            
+
             receivedHeaders.putAll(properties.getHeaders());
             received.add(new String(body));
         }

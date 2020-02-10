@@ -14,42 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq;
+package org.apache.camel.component.rabbitmq.integration;
 
-import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.rabbitmq.client.AlreadyClosedException;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.junit.Test;
 
 /**
- * Integration test to check that RabbitMQ Endpoint is able to reconnect to broker when broker
- * is not available.
- * <ul>
- * <li>Stop the broker</li>
- * <li>Run the test: the producer complains it can not send messages, the consumer is silent</li>
- * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
- * <li>Stop the broker: the producer complains it can not send messages, the consumer is silent</li>
- * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
- * <li>Kill all connections from the broker: the producer sends messages, and the consumer receives messages</li>
- * </ul>
+ * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and
+ * consumers
  */
-public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
-    private static final String EXCHANGE = "ex3";
-
+public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
+    public static final String ROUTING_KEY = "rk4";
+    private static final int PRODUCER_COUNT = 10;
+    private static final int CONSUMER_COUNT = 10;
+    private static final int MESSAGE_COUNT = 100;
+    
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest"
-                          + "&queue=q3&routingKey=rk3" + "&automaticRecoveryEnabled=true"
-                          + "&requestedHeartbeat=1000" + "&connectionTimeout=5000")
+    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
+                          + "&queue=q4&routingKey=" + ROUTING_KEY + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
+                          + "&concurrentConsumers=" + CONSUMER_COUNT)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("mock:producing")
@@ -63,14 +61,9 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
         return new RouteBuilder() {
 
             @Override
-            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 from("direct:rabbitMQ")
                         .id("producingRoute")
-                        .onException(AlreadyClosedException.class, ConnectException.class)
-                        .maximumRedeliveries(10)
-                        .redeliveryDelay(500L)
-                        .end()
                         .log("Sending message")
                         .inOnly(rabbitMQEndpoint)
                         .to(producingMockEndpoint);
@@ -84,19 +77,27 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
 
     @Test
     public void testSendEndReceive() throws Exception {
-        int nbMessages = 50;
-        int failedMessages = 0;
-        for (int i = 0; i < nbMessages; i++) {
-            try {
-                directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY, "rk3");
-            } catch (CamelExecutionException e) {
-                log.debug("Can not send message", e);
-                failedMessages++;
-            }
-            Thread.sleep(500L);
+        // Start producers
+        ExecutorService executorService = Executors.newFixedThreadPool(PRODUCER_COUNT);
+        List<Future<?>> futures = new ArrayList<>(PRODUCER_COUNT);
+        for (int i = 0; i < PRODUCER_COUNT; i++) {
+            futures.add(executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < MESSAGE_COUNT; i++) {
+                        directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY,
+                                                         ROUTING_KEY);
+                    }
+                }
+            }));
         }
-        producingMockEndpoint.expectedMessageCount(nbMessages - failedMessages);
-        consumingMockEndpoint.expectedMessageCount(nbMessages - failedMessages);
+        // Wait for producers to end
+        for (Future<?> future : futures) {
+            future.get(5, TimeUnit.SECONDS);
+        }
+        // Check message count
+        producingMockEndpoint.expectedMessageCount(PRODUCER_COUNT * MESSAGE_COUNT);
+        consumingMockEndpoint.expectedMessageCount(PRODUCER_COUNT * MESSAGE_COUNT);
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
     }
 }
