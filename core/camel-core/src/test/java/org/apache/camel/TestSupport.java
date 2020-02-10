@@ -385,7 +385,7 @@ public abstract class TestSupport extends Assert {
     public static Channel unwrapChannel(Processor processor) {
         while (true) {
             if (processor instanceof Pipeline) {
-                processor = ((Pipeline)processor).getProcessors().get(0);
+                processor = ((Pipeline)processor).next().get(0);
             }
             if (processor instanceof Channel) {
                 return (Channel)processor;

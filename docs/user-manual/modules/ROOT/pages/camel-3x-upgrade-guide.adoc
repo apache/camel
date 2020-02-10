@@ -329,6 +329,10 @@ Some unused methods have been removed from `CamelContext` which were not part of
 * getPollingConsumerServicePool
 * setPollingConsumerServicePool
 
+==== Internal API changes
+
+Remove the method `getProcessors` from `Pipeline` as you should use the `next` method instead to access a read-only view of the processors.
+
 ==== @Experimental
 
 The `@Experimental` annotation is moved from `meta-annotations` JAR to `camel-api`

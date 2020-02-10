@@ -164,11 +164,6 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
         return id;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Processor> getProcessors() {
-        return (List) processors;
-    }
-
     @Override
     public String getTraceLabel() {
         return "pipeline";

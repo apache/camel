@@ -76,7 +76,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
     private void navigateRoute(Navigate<Processor> nav, StringBuilder sb) {
         if (nav instanceof Pipeline) {
-            nav = (Navigate<Processor>)((Pipeline)nav).getProcessors().get(0);
+            nav = (Navigate<Processor>) nav.next().get(0);
         }
 
         if (!nav.hasNext()) {
