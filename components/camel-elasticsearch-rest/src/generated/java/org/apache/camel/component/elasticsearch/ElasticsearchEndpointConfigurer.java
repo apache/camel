@@ -22,6 +22,7 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "enableSniffer": target.getConfiguration().setEnableSniffer(property(camelContext, boolean.class, value)); return true;
         case "enablessl":
         case "enableSSL": target.getConfiguration().setEnableSSL(property(camelContext, boolean.class, value)); return true;
+        case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.Integer.class, value)); return true;
         case "hostaddresses":
         case "hostAddresses": target.getConfiguration().setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "indexname":
@@ -33,6 +34,7 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.elasticsearch.ElasticsearchOperation.class, value)); return true;
         case "scrollkeepalivems":
         case "scrollKeepAliveMs": target.getConfiguration().setScrollKeepAliveMs(property(camelContext, int.class, value)); return true;
+        case "size": target.getConfiguration().setSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "sniffafterfailuredelay":
         case "sniffAfterFailureDelay": target.getConfiguration().setSniffAfterFailureDelay(property(camelContext, int.class, value)); return true;
         case "snifferinterval":
