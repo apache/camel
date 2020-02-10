@@ -443,6 +443,8 @@ stepwise, while others can only download if they do not.
 
 You can use the `stepwise` option to control the behavior.
 
+*Important*: Stepwise=true is not supported for stream download.
+
 Note that stepwise changing of directory will in most cases only work
 when the user is confined to it's home directory and when the home
 directory is reported as `"/"`.

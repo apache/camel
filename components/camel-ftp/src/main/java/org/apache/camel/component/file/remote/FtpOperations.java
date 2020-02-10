@@ -425,6 +425,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        if (endpoint.getConfiguration().isStepwise() && endpoint.getConfiguration().isStreamDownload()) {
+            //stepwise and streamDownload are not supported together
+            throw new IllegalArgumentException("The option stepwise is not supported for stream downloading");
+        }
         boolean result;
         try {
             GenericFile<FTPFile> target = (GenericFile<FTPFile>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);

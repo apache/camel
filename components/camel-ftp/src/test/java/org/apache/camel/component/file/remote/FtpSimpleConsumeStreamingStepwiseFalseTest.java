@@ -26,7 +26,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FtpSimpleConsumeStreamingTest extends FtpServerTestSupport {
+public class FtpSimpleConsumeStreamingStepwiseFalseTest extends FtpServerTestSupport {
+
+    boolean isStepwise() {
+        return false;
+    }
 
     @Test
     public void testFtpSimpleConsumeAbsolute() throws Exception {
@@ -42,15 +46,24 @@ public class FtpSimpleConsumeStreamingTest extends FtpServerTestSupport {
         String path = FTP_ROOT_DIR + "/tmp/mytemp";
         template.sendBodyAndHeader("file:" + path, expected, Exchange.FILE_NAME, "hello.txt");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+        MockEndpoint mock = getMockEndpoint();
 
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        GenericFile<?> remoteFile = (GenericFile<?>)mock.getExchanges().get(0).getIn().getBody();
+        assertMore(mock);
+    }
+
+    void assertMore(MockEndpoint mock) {
+        GenericFile<?> remoteFile = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();
         assertTrue(remoteFile.getBody() instanceof InputStream);
+    }
+
+    MockEndpoint getMockEndpoint() {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
+        return mock;
     }
 
     @Override
@@ -58,7 +71,7 @@ public class FtpSimpleConsumeStreamingTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true").routeId("foo").noAutoStartup()
+                from("ftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true&stepwise=" + String.valueOf(isStepwise())).routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
         };

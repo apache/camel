@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpStreamingMoveTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/mymove?password=admin&delay=1000&streamDownload=true&move=done";
+        return "ftp://admin@localhost:" + getPort() + "/mymove?password=admin&delay=1000&streamDownload=true&move=done&stepwise=false";
     }
 
     @Override
