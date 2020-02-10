@@ -54,7 +54,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
 
-        Expression correlation = definition.getExpression().createExpression(routeContext);
+        Expression correlation = createExpression(definition.getExpression());
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
         boolean parallel = parseBoolean(definition.getParallelProcessing());
@@ -112,7 +112,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             answer.setOptimisticLocking(parseBoolean(definition.getOptimisticLocking()));
         }
         if (definition.getCompletionPredicate() != null) {
-            Predicate predicate = definition.getCompletionPredicate().createPredicate(routeContext);
+            Predicate predicate = createPredicate(definition.getCompletionPredicate());
             answer.setCompletionPredicate(predicate);
         } else if (strategy instanceof Predicate) {
             // if aggregation strategy implements predicate and was not
@@ -121,7 +121,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             answer.setCompletionPredicate((Predicate)strategy);
         }
         if (definition.getCompletionTimeoutExpression() != null) {
-            Expression expression = definition.getCompletionTimeoutExpression().createExpression(routeContext);
+            Expression expression = createExpression(definition.getCompletionTimeoutExpression());
             answer.setCompletionTimeoutExpression(expression);
         }
         if (definition.getCompletionTimeout() != null) {
@@ -131,7 +131,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             answer.setCompletionInterval(parseLong(definition.getCompletionInterval()));
         }
         if (definition.getCompletionSizeExpression() != null) {
-            Expression expression = definition.getCompletionSizeExpression().createExpression(routeContext);
+            Expression expression = createExpression(definition.getCompletionSizeExpression());
             answer.setCompletionSizeExpression(expression);
         }
         if (definition.getCompletionSize() != null) {

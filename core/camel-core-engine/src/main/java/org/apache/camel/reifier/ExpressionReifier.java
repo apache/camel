@@ -45,7 +45,7 @@ abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReif
      * @return the created predicate
      */
     protected Predicate createPredicate() {
-        return definition.getExpression().createPredicate(routeContext);
+        return createPredicate(definition.getExpression());
     }
 
 }

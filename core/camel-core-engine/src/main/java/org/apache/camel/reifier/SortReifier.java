@@ -57,7 +57,7 @@ public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifi
         if (definition.getExpression() == null) {
             exp = bodyExpression();
         } else {
-            exp = definition.getExpression().createExpression(routeContext);
+            exp = createExpression(definition.getExpression());
         }
         return new SortProcessor<T>(exp, definition.getComparator());
     }

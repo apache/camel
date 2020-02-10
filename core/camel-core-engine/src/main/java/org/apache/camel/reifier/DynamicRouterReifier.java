@@ -34,7 +34,7 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression expression = definition.getExpression().createExpression(routeContext);
+        Expression expression = createExpression(definition.getExpression());
         String delimiter = definition.getUriDelimiter() != null ? definition.getUriDelimiter() : DynamicRouterDefinition.DEFAULT_DELIMITER;
 
         DynamicRouter dynamicRouter = new DynamicRouter(camelContext, expression, delimiter);

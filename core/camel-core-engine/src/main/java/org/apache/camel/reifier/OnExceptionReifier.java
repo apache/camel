@@ -100,12 +100,12 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
-            when = definition.getOnWhen().getExpression().createPredicate(routeContext);
+            when = createPredicate(definition.getOnWhen().getExpression());
         }
 
         Predicate handle = null;
         if (definition.getHandled() != null) {
-            handle = definition.getHandled().createPredicate(routeContext);
+            handle = createPredicate(definition.getHandled());
         }
 
         return new CatchProcessor(classes, childProcessor, when, handle);
@@ -122,20 +122,23 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
     }
 
     private void setHandledFromExpressionType() {
-        if (definition.getHandled() != null && definition.getHandledPolicy() == null && routeContext != null) {
-            definition.handled(definition.getHandled().createPredicate(routeContext));
+        // TODO: should not modify
+        if (definition.getHandled() != null && definition.getHandledPolicy() == null && camelContext != null) {
+            definition.handled(createPredicate(definition.getHandled()));
         }
     }
 
     private void setContinuedFromExpressionType() {
-        if (definition.getContinued() != null && definition.getContinuedPolicy() == null && routeContext != null) {
-            definition.continued(definition.getContinued().createPredicate(routeContext));
+        // TODO: should not modify
+        if (definition.getContinued() != null && definition.getContinuedPolicy() == null && camelContext != null) {
+            definition.continued(createPredicate(definition.getContinued()));
         }
     }
 
     private void setRetryWhileFromExpressionType() {
-        if (definition.getRetryWhile() != null && definition.getRetryWhilePolicy() == null && routeContext != null) {
-            definition.retryWhile(definition.getRetryWhile().createPredicate(routeContext));
+        // TODO: should not modify
+        if (definition.getRetryWhile() != null && definition.getRetryWhilePolicy() == null && camelContext != null) {
+            definition.retryWhile(createPredicate(definition.getRetryWhile()));
         }
     }
 

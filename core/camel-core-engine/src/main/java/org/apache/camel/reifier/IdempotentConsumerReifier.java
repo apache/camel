@@ -38,7 +38,7 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
         IdempotentRepository idempotentRepository = resolveMessageIdRepository(routeContext);
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", definition);
 
-        Expression expression = definition.getExpression().createExpression(routeContext);
+        Expression expression = createExpression(definition.getExpression());
 
         // these boolean should be true by default
         boolean eager = definition.getEager() == null || Boolean.parseBoolean(definition.getEager());

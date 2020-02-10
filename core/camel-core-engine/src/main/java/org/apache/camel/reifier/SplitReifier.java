@@ -57,7 +57,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, definition.getOnPrepareRef(), Processor.class));
         }
 
-        Expression exp = definition.getExpression().createExpression(routeContext);
+        Expression exp = createExpression(definition.getExpression());
 
         Splitter answer = new Splitter(camelContext, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
                                        shutdownThreadPool, isStreaming, definition.isStopOnException(), timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,

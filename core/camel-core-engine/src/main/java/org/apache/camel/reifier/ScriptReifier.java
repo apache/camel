@@ -31,7 +31,7 @@ public class ScriptReifier extends ExpressionReifier<ScriptDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression expr = definition.getExpression().createExpression(routeContext);
+        Expression expr = createExpression(definition.getExpression());
         return new ScriptProcessor(expr);
     }
 }

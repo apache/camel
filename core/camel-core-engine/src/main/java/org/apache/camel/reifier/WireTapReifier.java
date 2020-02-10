@@ -71,7 +71,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
             answer.addNewExchangeProcessor(definition.getNewExchangeProcessor());
         }
         if (definition.getNewExchangeExpression() != null) {
-            answer.setNewExchangeExpression(definition.getNewExchangeExpression().createExpression(routeContext));
+            answer.setNewExchangeExpression(createExpression(definition.getNewExchangeExpression()));
         }
         if (definition.getHeaders() != null && !definition.getHeaders().isEmpty()) {
             for (SetHeaderDefinition header : definition.getHeaders()) {

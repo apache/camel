@@ -34,7 +34,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Expression exp = definition.getExpression().createExpression(routeContext);
+        Expression exp = createExpression(definition.getExpression());
         boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && Boolean.parseBoolean(definition.getShareUnitOfWork());
         boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && Boolean.parseBoolean(definition.getIgnoreInvalidEndpoint());
 

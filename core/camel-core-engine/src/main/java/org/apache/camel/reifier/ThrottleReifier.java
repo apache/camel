@@ -22,7 +22,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ThrottleDefinition;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.RouteContext;
 
@@ -42,14 +41,14 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         long period = definition.getTimePeriodMillis() != null ? definition.getTimePeriodMillis() : 1000L;
 
         // max requests per period is mandatory
-        Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression(routeContext);
+        Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression();
         if (maxRequestsExpression == null) {
             throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
         }
 
         Expression correlation = null;
         if (definition.getCorrelationExpression() != null) {
-            correlation = definition.getCorrelationExpression().createExpression(routeContext);
+            correlation = createExpression(definition.getCorrelationExpression());
         }
 
         boolean reject = definition.getRejectExecution() != null && definition.getRejectExecution();
@@ -67,11 +66,7 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
     }
 
     private Expression createMaxRequestsPerPeriodExpression() {
-        ExpressionDefinition expr = definition.getExpression();
-        if (expr != null) {
-            return expr.createExpression(routeContext);
-        }
-        return null;
+        return definition.getExpression() != null ? createExpression(definition.getExpression()) : null;
     }
 
 }
