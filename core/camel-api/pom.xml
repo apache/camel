@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -34,15 +35,11 @@
     <description>The Camel API</description>
 
     <properties>
-        <camel.osgi.export.pkg>$${replace;{local-packages};;;\;},org.apache.camel.spi.annotations</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>$${replace;{local-packages};;;\;},org.apache.camel.spi.annotations
+        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -58,24 +55,25 @@
 
     <build>
         <plugins>
+
+            <!-- we want to embed spi-annotations directly in camel-api so they are always there -->
             <plugin>
-                <!-- shade spi-annotations into camel-api -->
-                <!-- so we these annotations embedded in camel-api -->
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
+                <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>copy-spi-annotations</id>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.apache.camel:spi-annotations</include>
-                                </includes>
-                            </artifactSet>
-                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <outputDirectory>${basedir}/src/generated/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../tooling/spi-annotations/src/main/java</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
