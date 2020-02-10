@@ -35,7 +35,7 @@ public class DelayReifier extends ExpressionReifier<DelayDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Processor childProcessor = this.createChildProcessor(false);
-        Expression delay = createAbsoluteTimeDelayExpression(routeContext);
+        Expression delay = createAbsoluteTimeDelayExpression();
 
         boolean async = definition.getAsyncDelayed() == null || Boolean.parseBoolean(definition.getAsyncDelayed());
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, async);
@@ -48,7 +48,7 @@ public class DelayReifier extends ExpressionReifier<DelayDefinition> {
         return answer;
     }
 
-    private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {
+    private Expression createAbsoluteTimeDelayExpression() {
         ExpressionDefinition expr = definition.getExpression();
         if (expr != null) {
             return expr.createExpression(routeContext);

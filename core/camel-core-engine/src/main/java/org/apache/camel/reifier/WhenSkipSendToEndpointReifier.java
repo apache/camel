@@ -31,15 +31,15 @@ public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSen
 
     @Override
     public FilterProcessor createProcessor() throws Exception {
-        return createFilterProcessor(routeContext);
+        return createFilterProcessor();
     }
 
     @Override
-    protected Predicate createPredicate(RouteContext routeContext) {
+    protected Predicate createPredicate() {
         // we need to keep track whether the when matches or not, so delegate
         // the predicate and add the matches result as a property on the
         // exchange
-        final Predicate delegate = super.createPredicate(routeContext);
+        final Predicate delegate = super.createPredicate();
         return new Predicate() {
             @Override
             public boolean matches(Exchange exchange) {

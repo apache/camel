@@ -600,7 +600,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // create and register validators on validator registry
         for (ValidatorDefinition def : camelContext.getExtension(Model.class).getValidators()) {
-            Validator validator = ValidatorReifier.reifier(def).createValidator(camelContext);
+            Validator validator = ValidatorReifier.reifier(camelContext, def).createValidator();
             camelContext.getValidatorRegistry().put(createValidatorKey(def), validator);
         }
     }

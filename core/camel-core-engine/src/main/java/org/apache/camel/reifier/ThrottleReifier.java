@@ -66,7 +66,7 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
         return answer;
     }
 
-    private Expression createMaxRequestsPerPeriodExpression(RouteContext routeContext) {
+    private Expression createMaxRequestsPerPeriodExpression() {
         ExpressionDefinition expr = definition.getExpression();
         if (expr != null) {
             return expr.createExpression(routeContext);
