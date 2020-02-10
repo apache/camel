@@ -93,7 +93,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
                 // TransactionInterceptor is a DelegateProcessor
                 processor = ((DelegateProcessor)processor).getProcessor();
             } else if (processor instanceof Pipeline) {
-                for (Processor p : ((Pipeline)processor).getProcessors()) {
+                for (Processor p : ((Pipeline)processor).next()) {
                     p = findProcessorByClass(p, findClass);
                     if (p != null && p.getClass().isAssignableFrom(findClass)) {
                         processor = p;
