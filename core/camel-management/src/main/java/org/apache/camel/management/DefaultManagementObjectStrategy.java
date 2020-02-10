@@ -305,7 +305,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         if (definition instanceof RecipientListDefinition) {
             // special for RecipientListDefinition, as the processor is wrapped in a pipeline as last
             Pipeline pipeline = (Pipeline) processor;
-            Iterator<Processor> it = pipeline.getProcessors().iterator();
+            Iterator<Processor> it = pipeline.next().iterator();
             while (it.hasNext()) {
                 processor = it.next();
             }
