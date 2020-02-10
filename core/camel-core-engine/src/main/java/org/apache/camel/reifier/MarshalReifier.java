@@ -26,13 +26,13 @@ import org.apache.camel.support.processor.MarshalProcessor;
 
 public class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
 
-    public MarshalReifier(ProcessorDefinition<?> definition) {
-        super((MarshalDefinition)definition);
+    public MarshalReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (MarshalDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        DataFormat dataFormat = DataFormatReifier.getDataFormat(routeContext.getCamelContext(), definition.getDataFormatType(), null);
+    public Processor createProcessor() {
+        DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType(), null);
         return new MarshalProcessor(dataFormat);
     }
 

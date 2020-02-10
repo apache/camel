@@ -20,14 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityAbstractDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
 
 public class UniVocityAbstractDataFormatReifier<T extends UniVocityAbstractDataFormat> extends DataFormatReifier<T> {
 
-    public UniVocityAbstractDataFormatReifier(DataFormatDefinition definition) {
-        super((T)definition);
+    public UniVocityAbstractDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (T)definition);
     }
 
     @Override

@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 
 public class BarcodeDataFormatReifier extends DataFormatReifier<BarcodeDataFormat> {
 
-    public BarcodeDataFormatReifier(DataFormatDefinition definition) {
-        super((BarcodeDataFormat)definition);
+    public BarcodeDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (BarcodeDataFormat)definition);
     }
 
     @Override

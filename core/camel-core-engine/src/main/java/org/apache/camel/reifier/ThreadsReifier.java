@@ -32,12 +32,12 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
-    public ThreadsReifier(ProcessorDefinition<?> definition) {
-        super((ThreadsDefinition)definition);
+    public ThreadsReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ThreadsDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // the threads name
         String name = definition.getThreadName() != null ? definition.getThreadName() : "Threads";
         // prefer any explicit configured executor service
@@ -47,7 +47,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         // resolve what rejected policy to use
         ThreadPoolRejectedPolicy policy = resolveRejectedPolicy(routeContext);
         if (policy == null) {
-            if (definition.getCallerRunsWhenRejected() == null || parseBoolean(routeContext, definition.getCallerRunsWhenRejected())) {
+            if (definition.getCallerRunsWhenRejected() == null || parseBoolean(definition.getCallerRunsWhenRejected())) {
                 // should use caller runs by default if not configured
                 policy = ThreadPoolRejectedPolicy.CallerRuns;
             } else {
@@ -58,16 +58,16 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
         // if no explicit then create from the options
         if (threadPool == null) {
-            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+            ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
             // create the thread pool using a builder
             ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name)
-                .poolSize(definition.getPoolSize() != null ? parseInt(routeContext, definition.getPoolSize()) : null)
-                .maxPoolSize(definition.getMaxPoolSize() != null ? parseInt(routeContext, definition.getMaxPoolSize()) : null)
-                .keepAliveTime(definition.getKeepAliveTime() != null ? parseLong(routeContext, definition.getKeepAliveTime()) : null,
+                .poolSize(definition.getPoolSize() != null ? parseInt(definition.getPoolSize()) : null)
+                .maxPoolSize(definition.getMaxPoolSize() != null ? parseInt(definition.getMaxPoolSize()) : null)
+                .keepAliveTime(definition.getKeepAliveTime() != null ? parseLong(definition.getKeepAliveTime()) : null,
                                definition.getTimeUnit() != null ? TimeUnit.valueOf(definition.getTimeUnit()) : null)
-                .maxQueueSize(definition.getMaxQueueSize() != null ? parseInt(routeContext, definition.getMaxQueueSize()) : null)
+                .maxQueueSize(definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null)
                 .rejectedPolicy(policy)
-                .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null ? parseBoolean(routeContext, definition.getAllowCoreThreadTimeOut()) : null)
+                .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null ? parseBoolean(definition.getAllowCoreThreadTimeOut()) : null)
                 .build();
             threadPool = manager.newThreadPool(definition, name, profile);
             shutdownThreadPool = true;
@@ -98,12 +98,12 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
             }
         }
 
-        return new ThreadsProcessor(routeContext.getCamelContext(), threadPool, shutdownThreadPool, policy);
+        return new ThreadsProcessor(camelContext, threadPool, shutdownThreadPool, policy);
     }
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy(RouteContext routeContext) {
         if (definition.getExecutorServiceRef() != null && definition.getRejectedPolicy() == null) {
-            ThreadPoolProfile threadPoolProfile = routeContext.getCamelContext().getExecutorServiceManager().getThreadPoolProfile(definition.getExecutorServiceRef());
+            ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager().getThreadPoolProfile(definition.getExecutorServiceRef());
             if (threadPoolProfile != null) {
                 return threadPoolProfile.getRejectedPolicy();
             }

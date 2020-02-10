@@ -22,30 +22,38 @@ import org.apache.camel.support.CamelContextHelper;
 
 public abstract class AbstractReifier {
 
-    protected static String parseString(RouteContext routeContext, String text) {
-        return CamelContextHelper.parseText(routeContext.getCamelContext(), text);
+    protected final RouteContext routeContext;
+    protected final CamelContext camelContext;
+
+    public AbstractReifier(RouteContext routeContext) {
+        this.routeContext = routeContext;
+        this.camelContext = routeContext.getCamelContext();
     }
 
-    protected static boolean parseBoolean(RouteContext routeContext, String text) {
-        Boolean b = CamelContextHelper.parseBoolean(routeContext.getCamelContext(), text);
-        return b != null && b;
+    public AbstractReifier(CamelContext camelContext) {
+        this.routeContext = null;
+        this.camelContext = camelContext;
     }
 
-    protected static boolean parseBoolean(CamelContext camelContext, String text) {
+    protected String parseString(String text) {
+        return CamelContextHelper.parseText(camelContext, text);
+    }
+
+    protected boolean parseBoolean(String text) {
         Boolean b = CamelContextHelper.parseBoolean(camelContext, text);
         return b != null && b;
     }
 
-    protected static Long parseLong(RouteContext routeContext, String text) {
-        return CamelContextHelper.parseLong(routeContext.getCamelContext(), text);
+    protected Long parseLong(String text) {
+        return CamelContextHelper.parseLong(camelContext, text);
     }
 
-    protected static Integer parseInt(RouteContext routeContext, String text) {
-        return CamelContextHelper.parseInteger(routeContext.getCamelContext(), text);
+    protected Integer parseInt(String text) {
+        return CamelContextHelper.parseInteger(camelContext, text);
     }
 
-    protected static <T> T parse(RouteContext routeContext, Class<T> clazz, String text) {
-        return CamelContextHelper.parse(routeContext.getCamelContext(), clazz, text);
+    protected <T> T parse(Class<T> clazz, String text) {
+        return CamelContextHelper.parse(camelContext, clazz, text);
     }
 
 }

@@ -27,19 +27,19 @@ import org.apache.camel.spi.RouteContext;
 
 public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
-    public LoadBalanceReifier(ProcessorDefinition<?> definition) {
-        super((LoadBalanceDefinition)definition);
+    public LoadBalanceReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (LoadBalanceDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // the load balancer is stateful so we should only create it once in
         // case its used from a context scoped error handler
 
         LoadBalancer loadBalancer = definition.getLoadBalancerType().getLoadBalancer();
         if (loadBalancer == null) {
             // then create it and reuse it
-            loadBalancer = LoadBalancerReifier.reifier(definition.getLoadBalancerType()).createLoadBalancer(routeContext);
+            loadBalancer = LoadBalancerReifier.reifier(routeContext, definition.getLoadBalancerType()).createLoadBalancer();
             definition.getLoadBalancerType().setLoadBalancer(loadBalancer);
 
             // some load balancer can only support a fixed number of outputs
@@ -57,7 +57,7 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
                 if (LoadBalanceDefinition.class.isInstance(processorType)) {
                     throw new IllegalArgumentException("Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
                 }
-                Processor processor = createProcessor(routeContext, processorType);
+                Processor processor = createProcessor(processorType);
                 Channel channel = wrapChannel(routeContext, processor, processorType);
                 loadBalancer.addProcessor(channel);
             }

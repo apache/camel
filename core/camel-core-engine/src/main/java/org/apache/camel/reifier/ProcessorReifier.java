@@ -21,8 +21,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
@@ -112,11 +113,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier {
 
-    private static final Map<Class<?>, Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
+    private static final Map<Class<?>, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
     static {
         // NOTE: if adding a new class then update the initial capacity of the
         // HashMap
-        Map<Class<?>, Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map = new HashMap<>(65);
+        Map<Class<?>, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map = new HashMap<>(65);
         map.put(AggregateDefinition.class, AggregateReifier::new);
         map.put(BeanDefinition.class, BeanReifier::new);
         map.put(CatchDefinition.class, CatchReifier::new);
@@ -188,18 +189,24 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected final T definition;
 
-    public ProcessorReifier(T definition) {
+    public ProcessorReifier(RouteContext routeContext, T definition) {
+        super(routeContext);
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<?> processorClass, Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
+    public ProcessorReifier(CamelContext camelContext, T definition) {
+        super(camelContext);
+        this.definition = definition;
+    }
+
+    public static void registerReifier(Class<?> processorClass, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
         PROCESSORS.put(processorClass, creator);
     }
 
-    public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(ProcessorDefinition<?> definition) {
-        Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier = PROCESSORS.get(definition.getClass());
+    public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier = PROCESSORS.get(definition.getClass());
         if (reifier != null) {
-            return reifier.apply(definition);
+            return reifier.apply(routeContext, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
     }
@@ -208,20 +215,19 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Override this in definition class and implement logic to create the
      * processor based on the definition model.
      */
-    public abstract Processor createProcessor(RouteContext routeContext) throws Exception;
+    public abstract Processor createProcessor() throws Exception;
 
     /**
      * Prefer to use {#link #createChildProcessor}.
      */
-    protected Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
+    protected Processor createOutputsProcessor() throws Exception {
         Collection<ProcessorDefinition<?>> outputs = definition.getOutputs();
-        return createOutputsProcessor(routeContext, outputs);
+        return createOutputsProcessor(outputs);
     }
 
     /**
      * Creates the child processor (outputs) from the current definition
      *
-     * @param routeContext the route context
      * @param mandatory whether or not children is mandatory (ie the definition
      *            should have outputs)
      * @return the created children, or <tt>null</tt> if definition had no
@@ -229,16 +235,16 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @throws Exception is thrown if error creating the child or if it was
      *             mandatory and there was no output defined on definition
      */
-    protected Processor createChildProcessor(RouteContext routeContext, boolean mandatory) throws Exception {
+    protected Processor createChildProcessor(boolean mandatory) throws Exception {
         Processor children = null;
         // at first use custom factory
-        if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            children = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory().createChildProcessor(routeContext, definition, mandatory);
+        if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+            children = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createChildProcessor(routeContext, definition, mandatory);
         }
         // fallback to default implementation if factory did not create the
         // child
         if (children == null) {
-            children = createOutputsProcessor(routeContext);
+            children = createOutputsProcessor();
         }
 
         if (children == null && mandatory) {
@@ -248,7 +254,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     public void addRoutes(RouteContext routeContext) throws Exception {
-        Channel processor = makeProcessor(routeContext);
+        Channel processor = makeProcessor();
         if (processor == null) {
             // no processor to add
             return;
@@ -289,17 +295,17 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Channel wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
         // put a channel in between this and each output to control the route
         // flow logic
-        DefaultChannel channel = new DefaultChannel(routeContext.getCamelContext());
+        DefaultChannel channel = new DefaultChannel(camelContext);
 
         // add interceptor strategies to the channel must be in this order:
         // camel context, route context, local
         List<InterceptStrategy> interceptors = new ArrayList<>();
-        addInterceptStrategies(routeContext, interceptors, routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getInterceptStrategies());
+        addInterceptStrategies(routeContext, interceptors, camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies());
         addInterceptStrategies(routeContext, interceptors, routeContext.getInterceptStrategies());
         addInterceptStrategies(routeContext, interceptors, definition.getInterceptStrategies());
 
         // force the creation of an id
-        RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
+        RouteDefinitionHelper.forceAssignIds(camelContext, definition);
 
         // fix parent/child relationship. This will be the case of the routes
         // has been
@@ -367,7 +373,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // however if share unit of work is enabled, we need to wrap an
             // error handler on the multicast parent
             MulticastDefinition def = (MulticastDefinition)definition;
-            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && parseBoolean(routeContext, def.getShareUnitOfWork());
+            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && parseBoolean(def.getShareUnitOfWork());
             if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrap = true;
@@ -420,10 +426,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
         ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
         // create error handler
-        Processor errorHandler = ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, output);
+        Processor errorHandler = ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(output);
 
         // invoke lifecycles so we can manage this error handler builder
-        for (LifecycleStrategy strategy : routeContext.getCamelContext().getLifecycleStrategies()) {
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
         }
 
@@ -446,30 +452,30 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * to using a {@link Pipeline} but derived classes could change the
      * behaviour
      */
-    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        return Pipeline.newInstance(routeContext.getCamelContext(), list);
+    protected Processor createCompositeProcessor(List<Processor> list) throws Exception {
+        return Pipeline.newInstance(camelContext, list);
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
+    protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs) throws Exception {
         // We will save list of actions to restore the outputs back to the
         // original state.
         Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
         try {
-            return createOutputsProcessorImpl(routeContext, outputs);
+            return createOutputsProcessorImpl(outputs);
         } finally {
             propertyPlaceholdersChangeReverter.run();
         }
     }
 
-    protected Processor createOutputsProcessorImpl(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
+    protected Processor createOutputsProcessorImpl(Collection<ProcessorDefinition<?>> outputs) throws Exception {
         List<Processor> list = new ArrayList<>();
         for (ProcessorDefinition<?> output : outputs) {
 
             // allow any custom logic before we create the processor
-            reifier(output).preCreateProcessor();
+            reifier(routeContext, output).preCreateProcessor();
 
             // resolve properties before we create the processor
-            ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), output);
+            ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, output);
 
             // also resolve properties and constant fields on embedded expressions
             ProcessorDefinition<?> me = output;
@@ -478,11 +484,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 ExpressionDefinition expressionDefinition = exp.getExpression();
                 if (expressionDefinition != null) {
                     // resolve properties before we create the processor
-                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
+                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
                 }
             }
 
-            Processor processor = createProcessor(routeContext, output);
+            Processor processor = createProcessor(output);
 
             // inject id
             if (processor instanceof IdAware) {
@@ -508,23 +514,23 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             if (list.size() == 1) {
                 processor = list.get(0);
             } else {
-                processor = createCompositeProcessor(routeContext, list);
+                processor = createCompositeProcessor(list);
             }
         }
 
         return processor;
     }
 
-    protected Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> output) throws Exception {
+    protected Processor createProcessor(ProcessorDefinition<?> output) throws Exception {
         Processor processor = null;
         // at first use custom factory
-        if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            processor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, output);
+        if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, output);
         }
         // fallback to default implementation if factory did not create the
         // processor
         if (processor == null) {
-            processor = reifier(output).createProcessor(routeContext);
+            processor = reifier(routeContext, output).createProcessor();
         }
         return processor;
     }
@@ -533,26 +539,26 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Creates the processor and wraps it in any necessary interceptors and
      * error handlers
      */
-    protected Channel makeProcessor(RouteContext routeContext) throws Exception {
+    protected Channel makeProcessor() throws Exception {
         // We will save list of actions to restore the definition back to the
         // original state.
         Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
         try {
-            return makeProcessorImpl(routeContext);
+            return makeProcessorImpl();
         } finally {
             // Lets restore
             propertyPlaceholdersChangeReverter.run();
         }
     }
 
-    private Channel makeProcessorImpl(RouteContext routeContext) throws Exception {
+    private Channel makeProcessorImpl() throws Exception {
         Processor processor = null;
 
         // allow any custom logic before we create the processor
         preCreateProcessor();
 
         // resolve properties before we create the processor
-        ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), definition);
+        ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, definition);
 
         // also resolve properties and constant fields on embedded expressions
         ProcessorDefinition<?> me = definition;
@@ -561,18 +567,18 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             ExpressionDefinition expressionDefinition = exp.getExpression();
             if (expressionDefinition != null) {
                 // resolve properties before we create the processor
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
             }
         }
 
         // at first use custom factory
-        if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            processor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, definition);
+        if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, definition);
         }
         // fallback to default implementation if factory did not create the
         // processor
         if (processor == null) {
-            processor = createProcessor(routeContext);
+            processor = createProcessor();
         }
 
         // inject id
@@ -609,7 +615,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected String getId(OptionalIdentifiedDefinition<?> def, RouteContext routeContext) {
-        return def.idOrCreate(routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        return def.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
     }
 
 }

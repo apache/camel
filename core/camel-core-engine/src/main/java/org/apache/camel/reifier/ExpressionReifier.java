@@ -24,8 +24,8 @@ import org.apache.camel.spi.RouteContext;
 
 abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReifier<T> {
 
-    protected ExpressionReifier(T definition) {
-        super(definition);
+    protected ExpressionReifier(RouteContext routeContext, T definition) {
+        super(routeContext, definition);
     }
 
     /**
@@ -36,7 +36,7 @@ abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReif
      * @throws Exception is thrown if error creating the processor
      */
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = createOutputsProcessor(routeContext);
+        Processor childProcessor = createOutputsProcessor();
         return new FilterProcessor(createPredicate(routeContext), childProcessor);
     }
 

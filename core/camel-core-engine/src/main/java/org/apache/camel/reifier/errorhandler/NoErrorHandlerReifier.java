@@ -27,12 +27,12 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerBuilder> {
 
-    public NoErrorHandlerReifier(ErrorHandlerFactory definition) {
-        super((NoErrorHandlerBuilder)definition);
+    public NoErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
+        super(routeContext, (NoErrorHandlerBuilder)definition);
     }
 
     @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
+    public Processor createErrorHandler(Processor processor) throws Exception {
         return new DelegateAsyncProcessor(processor) {
             @Override
             public boolean process(final Exchange exchange, final AsyncCallback callback) {

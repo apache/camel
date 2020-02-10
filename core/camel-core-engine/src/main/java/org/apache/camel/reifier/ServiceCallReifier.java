@@ -23,12 +23,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
-    public ServiceCallReifier(ProcessorDefinition<?> definition) {
-        super(ServiceCallDefinition.class.cast(definition));
+    public ServiceCallReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, ServiceCallDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         throw new IllegalStateException("Cannot find camel-cloud on the classpath.");
     }
 

@@ -29,13 +29,13 @@ import org.apache.camel.spi.RouteContext;
 
 public class TryReifier extends ProcessorReifier<TryDefinition> {
 
-    public TryReifier(ProcessorDefinition<?> definition) {
-        super((TryDefinition)definition);
+    public TryReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (TryDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor tryProcessor = createOutputsProcessor(routeContext, definition.getOutputsWithoutCatches());
+    public Processor createProcessor() throws Exception {
+        Processor tryProcessor = createOutputsProcessor(definition.getOutputsWithoutCatches());
         if (tryProcessor == null) {
             throw new IllegalArgumentException("Definition has no children on " + this);
         }
@@ -43,7 +43,7 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
         List<Processor> catchProcessors = new ArrayList<>();
         if (definition.getCatchClauses() != null) {
             for (CatchDefinition catchClause : definition.getCatchClauses()) {
-                catchProcessors.add(createProcessor(routeContext, catchClause));
+                catchProcessors.add(createProcessor(catchClause));
             }
         }
 
@@ -52,14 +52,14 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
             finallyDefinition = new FinallyDefinition();
             finallyDefinition.setParent(definition);
         }
-        Processor finallyProcessor = createProcessor(routeContext, finallyDefinition);
+        Processor finallyProcessor = createProcessor(finallyDefinition);
 
         // must have either a catch or finally
         if (definition.getFinallyClause() == null && definition.getCatchClauses() == null) {
             throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
         }
 
-        return new TryProcessor(routeContext.getCamelContext(), tryProcessor, catchProcessors, finallyProcessor);
+        return new TryProcessor(camelContext, tryProcessor, catchProcessors, finallyProcessor);
     }
 
 }

@@ -26,13 +26,13 @@ import org.apache.camel.support.processor.UnmarshalProcessor;
 
 public class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
 
-    public UnmarshalReifier(ProcessorDefinition<?> definition) {
-        super((UnmarshalDefinition)definition);
+    public UnmarshalReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (UnmarshalDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        DataFormat dataFormat = DataFormatReifier.getDataFormat(routeContext.getCamelContext(), definition.getDataFormatType(), null);
+    public Processor createProcessor() {
+        DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType(), null);
         return new UnmarshalProcessor(dataFormat);
     }
 }

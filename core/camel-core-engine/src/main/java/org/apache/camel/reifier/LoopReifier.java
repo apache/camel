@@ -26,15 +26,15 @@ import org.apache.camel.spi.RouteContext;
 
 public class LoopReifier extends ExpressionReifier<LoopDefinition> {
 
-    public LoopReifier(ProcessorDefinition<?> definition) {
-        super((LoopDefinition)definition);
+    public LoopReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (LoopDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor output = this.createChildProcessor(routeContext, true);
-        boolean isCopy = definition.getCopy() != null && parseBoolean(routeContext, definition.getCopy());
-        boolean isWhile = definition.getDoWhile() != null && parseBoolean(routeContext, definition.getDoWhile());
+    public Processor createProcessor() throws Exception {
+        Processor output = this.createChildProcessor(true);
+        boolean isCopy = definition.getCopy() != null && parseBoolean(definition.getCopy());
+        boolean isWhile = definition.getDoWhile() != null && parseBoolean(definition.getDoWhile());
 
         Predicate predicate = null;
         Expression expression = null;
@@ -43,7 +43,7 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
         } else {
             expression = definition.getExpression().createExpression(routeContext);
         }
-        return new LoopProcessor(routeContext.getCamelContext(), output, expression, predicate, isCopy);
+        return new LoopProcessor(camelContext, output, expression, predicate, isCopy);
     }
 
 }

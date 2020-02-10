@@ -25,12 +25,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class SetBodyReifier extends ExpressionReifier<SetBodyDefinition> {
 
-    public SetBodyReifier(ProcessorDefinition<?> definition) {
-        super((SetBodyDefinition)definition);
+    public SetBodyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (SetBodyDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         Expression expr = definition.getExpression().createExpression(routeContext);
         return new SetBodyProcessor(expr);
     }

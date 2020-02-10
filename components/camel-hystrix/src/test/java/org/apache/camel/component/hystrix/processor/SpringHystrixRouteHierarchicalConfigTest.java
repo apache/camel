@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.impl.engine.DefaultRouteContext;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,12 +39,14 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
     @Test
     public void testHystrix() throws Exception {
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
+        final RouteContext routeContext = new DefaultRouteContext(context, routeDefinition,
+                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()));
         CircuitBreakerDefinition hystrixDefinition = findCircuitBreakerDefinition(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);
 
-        HystrixReifier reifier = new HystrixReifier(hystrixDefinition);
-        HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration(context);
+        HystrixReifier reifier = new HystrixReifier(routeContext, hystrixDefinition);
+        HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());

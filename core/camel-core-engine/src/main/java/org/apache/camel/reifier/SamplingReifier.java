@@ -26,12 +26,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
 
-    public SamplingReifier(ProcessorDefinition<?> definition) {
-        super((SamplingDefinition)definition);
+    public SamplingReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (SamplingDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         if (definition.getMessageFrequency() != null) {
             return new SamplingThrottler(definition.getMessageFrequency());
         } else {

@@ -23,13 +23,13 @@ import org.apache.camel.spi.RouteContext;
 
 public class OnFallbackReifier extends ProcessorReifier<OnFallbackDefinition> {
 
-    public OnFallbackReifier(ProcessorDefinition<?> definition) {
-        super((OnFallbackDefinition)definition);
+    public OnFallbackReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (OnFallbackDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, false);
+    public Processor createProcessor() throws Exception {
+        return this.createChildProcessor(false);
     }
 
 }

@@ -25,19 +25,19 @@ import org.apache.camel.spi.RouteContext;
 
 public class FinallyReifier extends ProcessorReifier<FinallyDefinition> {
 
-    public FinallyReifier(ProcessorDefinition<?> definition) {
-        super(FinallyDefinition.class.cast(definition));
+    public FinallyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, FinallyDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // parent must be a try
         if (!(definition.getParent() instanceof TryDefinition)) {
             throw new IllegalArgumentException("This doFinally should have a doTry as its parent on " + definition);
         }
 
         // do finally does mandate a child processor
-        return new FinallyProcessor(this.createChildProcessor(routeContext, false));
+        return new FinallyProcessor(this.createChildProcessor(false));
     }
 
 }

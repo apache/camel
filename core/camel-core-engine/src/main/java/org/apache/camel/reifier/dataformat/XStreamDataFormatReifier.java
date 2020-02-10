@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 
 public class XStreamDataFormatReifier extends DataFormatReifier<XStreamDataFormat> {
 
-    public XStreamDataFormatReifier(DataFormatDefinition definition) {
-        super((XStreamDataFormat)definition);
+    public XStreamDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (XStreamDataFormat)definition);
     }
 
     @Override

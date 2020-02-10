@@ -26,14 +26,14 @@ import org.apache.camel.spi.RouteContext;
 
 public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
 
-    public SendReifier(ProcessorDefinition<?> definition) {
-        super((SendDefinition)definition);
+    public SendReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (SendDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
-        return new SendProcessor(endpoint, parse(routeContext, ExchangePattern.class, definition.getPattern()));
+        return new SendProcessor(endpoint, parse(ExchangePattern.class, definition.getPattern()));
     }
 
     public Endpoint resolveEndpoint(RouteContext context) {

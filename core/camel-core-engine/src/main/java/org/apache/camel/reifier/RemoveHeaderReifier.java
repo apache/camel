@@ -25,12 +25,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RemoveHeaderReifier extends ProcessorReifier<RemoveHeaderDefinition> {
 
-    public RemoveHeaderReifier(ProcessorDefinition<?> definition) {
-        super((RemoveHeaderDefinition)definition);
+    public RemoveHeaderReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (RemoveHeaderDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getHeaderName(), "headerName", this);
         return new RemoveHeaderProcessor(definition.getHeaderName());
     }

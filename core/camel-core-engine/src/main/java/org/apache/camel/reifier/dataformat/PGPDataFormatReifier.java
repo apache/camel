@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 
 public class PGPDataFormatReifier extends DataFormatReifier<PGPDataFormat> {
 
-    public PGPDataFormatReifier(DataFormatDefinition definition) {
-        super((PGPDataFormat)definition);
+    public PGPDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (PGPDataFormat)definition);
     }
 
     @Override

@@ -46,19 +46,19 @@ import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public ResilienceReifier(CircuitBreakerDefinition definition) {
-        super(definition);
+    public ResilienceReifier(RouteContext routeContext, CircuitBreakerDefinition definition) {
+        super(routeContext, definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // create the regular and fallback processors
-        Processor processor = createChildProcessor(routeContext, true);
+        Processor processor = createChildProcessor(true);
         Processor fallback = null;
         if (definition.getOnFallback() != null) {
-            fallback = ProcessorReifier.reifier(definition.getOnFallback()).createProcessor(routeContext);
+            fallback = ProcessorReifier.reifier(routeContext, definition.getOnFallback()).createProcessor();
         }
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(routeContext, definition.getOnFallback().getFallbackViaNetwork());
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork());
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-resilience4j does not support onFallbackViaNetwork");
         }
