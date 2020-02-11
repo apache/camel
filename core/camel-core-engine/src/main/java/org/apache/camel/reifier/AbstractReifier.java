@@ -88,18 +88,20 @@ public abstract class AbstractReifier {
     protected void addOtherAttributes(Object definition, Map<String, Object> properties) {
         if (definition instanceof OtherAttributesAware) {
             Map<Object, Object> others = ((OtherAttributesAware) definition).getOtherAttributes();
-            others.forEach((k, v) -> {
-                String ks = k.toString();
-                if (ks.startsWith(PREFIX) && v instanceof String) {
-                    // value must be enclosed with placeholder tokens
-                    String s = (String) v;
-                    if (!s.startsWith(PropertiesComponent.PREFIX_TOKEN) && !s.endsWith(PropertiesComponent.SUFFIX_TOKEN)) {
-                        s = PropertiesComponent.PREFIX_TOKEN + s + PropertiesComponent.SUFFIX_TOKEN;
+            if (others != null) {
+                others.forEach((k, v) -> {
+                    String ks = k.toString();
+                    if (ks.startsWith(PREFIX) && v instanceof String) {
+                        // value must be enclosed with placeholder tokens
+                        String s = (String) v;
+                        if (!s.startsWith(PropertiesComponent.PREFIX_TOKEN) && !s.endsWith(PropertiesComponent.SUFFIX_TOKEN)) {
+                            s = PropertiesComponent.PREFIX_TOKEN + s + PropertiesComponent.SUFFIX_TOKEN;
+                        }
+                        String kk = ks.substring(PREFIX.length());
+                        properties.put(kk, s);
                     }
-                    String kk = ks.substring(PREFIX.length());
-                    properties.put(kk, s);
-                }
-            });
+                });
+            }
         }
     }
 

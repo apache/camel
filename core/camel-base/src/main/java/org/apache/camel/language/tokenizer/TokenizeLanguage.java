@@ -241,7 +241,7 @@ public class TokenizeLanguage implements Language, IsSingleton, GeneratedPropert
     }
 
     public void setGroup(String group) {
-        this.group = group;
+        this.group = "0".equals(group) ? null : group;
     }
 
     public String getGroupDelimiter() {
