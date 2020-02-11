@@ -30,8 +30,7 @@ public abstract class AbstractDdbCommand {
     protected Exchange exchange;
     protected DynamoDbClient ddbClient;
 
-    public AbstractDdbCommand(DynamoDbClient ddbClient,
-                              Ddb2Configuration configuration, Exchange exchange) {
+    public AbstractDdbCommand(DynamoDbClient ddbClient, Ddb2Configuration configuration, Exchange exchange) {
 
         this.ddbClient = ddbClient;
         this.configuration = configuration;
@@ -67,7 +66,7 @@ public abstract class AbstractDdbCommand {
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(Ddb2Constants.ATTRIBUTES, attributes);
     }
-    
+
     protected void addToResults(Map<String, Object> map) {
         Message msg = getMessageForResponse(exchange);
         for (Map.Entry<String, Object> en : map.entrySet()) {

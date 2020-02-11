@@ -18,12 +18,11 @@ package org.apache.camel.component.aws2.ddb;
 
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse;
-
-import org.apache.camel.Exchange;
 
 public class UpdateItemCommand extends AbstractDdbCommand {
 
@@ -33,12 +32,8 @@ public class UpdateItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        UpdateItemResponse result = ddbClient.updateItem(UpdateItemRequest.builder()
-                .tableName(determineTableName())
-                .key(determineKey())
-                .attributeUpdates(determineUpdateValues())
-                .expected(determineUpdateCondition())
-                .returnValues(determineReturnValues()).build());
+        UpdateItemResponse result = ddbClient.updateItem(UpdateItemRequest.builder().tableName(determineTableName()).key(determineKey()).attributeUpdates(determineUpdateValues())
+            .expected(determineUpdateCondition()).returnValues(determineReturnValues()).build());
 
         addAttributesToResult(result.attributes());
     }

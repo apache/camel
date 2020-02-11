@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.services.dynamodb.model.Shard;
 
 class ShardList {
@@ -57,7 +56,8 @@ class ShardList {
 
     Shard first() {
         // Potential optimisation: if the two provided sequence numbers are the
-        // same then we can skip the shard entirely. Need to confirm this with AWS.
+        // same then we can skip the shard entirely. Need to confirm this with
+        // AWS.
         for (Shard shard : shards.values()) {
             if (!shards.containsKey(shard.parentShardId())) {
                 return shard;

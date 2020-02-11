@@ -21,18 +21,17 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.dynamodb.model.ShardIteratorType;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 @UriParams
 public class Ddb2StreamConfiguration implements Cloneable {
-    
+
     @UriPath(label = "consumer", description = "Name of the dynamodb table")
     @Metadata(required = true)
     private String tableName;
-    
+
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
@@ -46,17 +45,13 @@ public class Ddb2StreamConfiguration implements Cloneable {
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll")
     private int maxResultsPerRequest = 100;
 
-    @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream"
-            + " to start getting records. Note that using TRIM_HORIZON can cause a"
-            + " significant delay before the stream has caught up to real-time."
-            + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider"
-            + " MUST be supplied.",
-            defaultValue = "LATEST")
+    @UriParam(label = "consumer", description = "Defines where in the DynaboDB stream" + " to start getting records. Note that using TRIM_HORIZON can cause a"
+                                                + " significant delay before the stream has caught up to real-time."
+                                                + " if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider" + " MUST be supplied.", defaultValue = "LATEST")
     private ShardIteratorType iteratorType = ShardIteratorType.LATEST;
 
-    @UriParam(label = "consumer", description = "Provider for the sequence number when"
-            + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
-            + " iterator types. Can be a registry reference or a literal sequence number.")
+    @UriParam(label = "consumer", description = "Provider for the sequence number when" + " using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER"
+                                                + " iterator types. Can be a registry reference or a literal sequence number.")
     private SequenceNumberProvider sequenceNumberProvider;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the DDBStreams client")
     private Protocol proxyProtocol = Protocol.HTTPS;
@@ -64,7 +59,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
-    
+
     public DynamoDbStreamsClient getAmazonDynamoDbStreamsClient() {
         return amazonDynamoDbStreamsClient;
     }
@@ -128,7 +123,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
     public void setSequenceNumberProvider(SequenceNumberProvider sequenceNumberProvider) {
         this.sequenceNumberProvider = sequenceNumberProvider;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -152,7 +147,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     // *************************************************
     //
     // *************************************************

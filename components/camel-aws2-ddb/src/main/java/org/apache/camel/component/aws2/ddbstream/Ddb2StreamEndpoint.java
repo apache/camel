@@ -26,14 +26,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClientBuilder;
 import software.amazon.awssdk.services.dynamodb.model.Record;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBuilder;
@@ -41,14 +38,12 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBui
 /**
  * The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams",
-        consumerOnly = true, syntax = "aws2-ddbstream:tableName",
-        label = "cloud,messaging,streams")
+@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS 2 DynamoDB Streams", consumerOnly = true, syntax = "aws2-ddbstream:tableName", label = "cloud,messaging,streams")
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     Ddb2StreamConfiguration configuration;
-    
+
     private DynamoDbStreamsClient ddbStreamClient;
 
     public Ddb2StreamEndpoint(String uri, Ddb2StreamConfiguration configuration, Ddb2StreamComponent component) {
@@ -75,15 +70,14 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
 
         return ex;
     }
-    
+
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
-        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null ? configuration.getAmazonDynamoDbStreamsClient()
-            : createDdbStreamClient();
+
+        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null ? configuration.getAmazonDynamoDbStreamsClient() : createDdbStreamClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonDynamoDbStreamsClient())) {
@@ -97,7 +91,7 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
     public Ddb2StreamConfiguration getConfiguration() {
         return configuration;
     }
-    
+
     public DynamoDbStreamsClient getClient() {
         return ddbStreamClient;
     }
@@ -107,9 +101,7 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
         case AFTER_SEQUENCE_NUMBER:
         case AT_SEQUENCE_NUMBER:
             if (null == configuration.getSequenceNumberProvider()) {
-                throw new IllegalStateException("sequenceNumberProvider must be"
-                        + " provided, either as an implementation of"
-                        + " SequenceNumberProvider or a literal String.");
+                throw new IllegalStateException("sequenceNumberProvider must be" + " provided, either as an implementation of" + " SequenceNumberProvider or a literal String.");
             } else {
                 return configuration.getSequenceNumberProvider().getSequenceNumber();
             }
@@ -117,10 +109,10 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
             return "";
         }
     }
-    
+
     DynamoDbStreamsClient createDdbStreamClient() {
-    	DynamoDbStreamsClient client = null;
-    	DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();
+        DynamoDbStreamsClient client = null;
+        DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;
@@ -152,12 +144,8 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public String toString() {
-        return "DdbStreamEndpoint{"
-                + "tableName=" + configuration.getTableName()
-                + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest=" + configuration.getMaxResultsPerRequest()
-                + ", iteratorType=" + configuration.getIteratorType()
-                + ", sequenceNumberProvider=" + configuration.getSequenceNumberProvider()
-                + ", uri=" + getEndpointUri()
-                + '}';
+        return "DdbStreamEndpoint{" + "tableName=" + configuration.getTableName() + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
+               + configuration.getMaxResultsPerRequest() + ", iteratorType=" + configuration.getIteratorType() + ", sequenceNumberProvider="
+               + configuration.getSequenceNumberProvider() + ", uri=" + getEndpointUri() + '}';
     }
 }

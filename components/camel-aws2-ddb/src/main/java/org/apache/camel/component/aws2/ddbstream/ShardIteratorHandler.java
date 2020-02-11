@@ -20,7 +20,6 @@ import java.math.BigInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.services.dynamodb.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.dynamodb.model.GetShardIteratorRequest;
@@ -54,15 +53,18 @@ class ShardIteratorHandler {
             iteratorType = ShardIteratorType.AFTER_SEQUENCE_NUMBER;
             sequenceNumber = resumeFromSequenceNumber;
         }
-        // either return a cached one or get a new one via a GetShardIterator request.
+        // either return a cached one or get a new one via a GetShardIterator
+        // request.
         if (currentShardIterator == null) {
-            ListStreamsResponse streamsListResult = getClient().listStreams(
-                    ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build()
-            );
-            final String streamArn = streamsListResult.streams().get(0).streamArn(); // XXX assumes there is only one stream
-            DescribeStreamResponse streamDescriptionResult = getClient().describeStream(
-                    DescribeStreamRequest.builder().streamArn(streamArn).build()
-            );
+            ListStreamsResponse streamsListResult = getClient().listStreams(ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
+            final String streamArn = streamsListResult.streams().get(0).streamArn(); // XXX
+                                                                                     // assumes
+                                                                                     // there
+                                                                                     // is
+                                                                                     // only
+                                                                                     // one
+                                                                                     // stream
+            DescribeStreamResponse streamDescriptionResult = getClient().describeStream(DescribeStreamRequest.builder().streamArn(streamArn).build());
             shardList.addAll(streamDescriptionResult.streamDescription().shards());
 
             LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
@@ -74,9 +76,7 @@ class ShardIteratorHandler {
             shardList.removeOlderThan(currentShard);
             LOG.trace("Next shard is: {} (in {})", currentShard, shardList);
 
-            GetShardIteratorResponse result = getClient().getShardIterator(
-                    buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber)
-            );
+            GetShardIteratorResponse result = getClient().getShardIterator(buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber));
             currentShardIterator = result.shardIterator();
         }
         LOG.trace("Shard Iterator is: {}", currentShardIterator);
@@ -84,10 +84,7 @@ class ShardIteratorHandler {
     }
 
     private GetShardIteratorRequest buildGetShardIteratorRequest(final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
-        GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder()
-                .streamArn(streamArn)
-                .shardId(currentShard.shardId())
-                .shardIteratorType(iteratorType);
+        GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder().streamArn(streamArn).shardId(currentShard.shardId()).shardIteratorType(iteratorType);
         switch (iteratorType) {
         case AFTER_SEQUENCE_NUMBER:
         case AT_SEQUENCE_NUMBER:
@@ -100,10 +97,7 @@ class ShardIteratorHandler {
             // because we get a 400 when we use one of the
             // {at,after}_sequence_number iterator types and don't supply
             // a sequence number.
-            if (BigIntComparisons.Conditions.LTEQ.matches(
-                    new BigInteger(currentShard.sequenceNumberRange().startingSequenceNumber()),
-                    new BigInteger(sequenceNumber)
-            )) {
+            if (BigIntComparisons.Conditions.LTEQ.matches(new BigInteger(currentShard.sequenceNumberRange().startingSequenceNumber()), new BigInteger(sequenceNumber))) {
                 req.sequenceNumber(sequenceNumber);
             } else {
                 req.shardIteratorType(ShardIteratorType.TRIM_HORIZON);
@@ -115,7 +109,7 @@ class ShardIteratorHandler {
     }
 
     private Shard resolveNewShard(ShardIteratorType type, String resumeFrom) {
-        switch(type) {
+        switch (type) {
         case AFTER_SEQUENCE_NUMBER:
             return shardList.afterSeq(resumeFrom != null ? resumeFrom : getEndpoint().getSequenceNumber());
         case AT_SEQUENCE_NUMBER:
@@ -135,7 +129,7 @@ class ShardIteratorHandler {
     Ddb2StreamEndpoint getEndpoint() {
         return endpoint;
     }
-   
+
     private DynamoDbStreamsClient getClient() {
         return getEndpoint().getClient();
     }

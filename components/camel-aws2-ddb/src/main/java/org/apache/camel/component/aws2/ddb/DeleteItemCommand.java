@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse;
@@ -30,11 +29,8 @@ public class DeleteItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        DeleteItemResponse result = ddbClient.deleteItem(DeleteItemRequest.builder()
-                .tableName(determineTableName())
-                .key(determineKey())
-                .returnValues(determineReturnValues())
-                .expected(determineUpdateCondition()).build());
+        DeleteItemResponse result = ddbClient.deleteItem(DeleteItemRequest.builder().tableName(determineTableName()).key(determineKey()).returnValues(determineReturnValues())
+            .expected(determineUpdateCondition()).build());
 
         addAttributesToResult(result.attributes());
     }

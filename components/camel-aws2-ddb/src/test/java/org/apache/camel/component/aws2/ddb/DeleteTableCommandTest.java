@@ -16,19 +16,11 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.Ddb2Constants;
-import org.apache.camel.component.aws2.ddb.DeleteTableCommand;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
-import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
@@ -40,24 +32,23 @@ public class DeleteTableCommandTest {
     private AmazonDDBClientMock ddbClient;
     private Ddb2Configuration configuration;
     private Exchange exchange;
-    
+
     @Before
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new Ddb2Configuration();
         configuration.setTableName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new DeleteTableCommand(ddbClient, configuration, exchange);
     }
 
     @Test
     public void testExecute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", ddbClient.deleteTableRequest.tableName());
-        assertEquals(ProvisionedThroughputDescription.builder().build(), exchange.getIn().getHeader(
-                Ddb2Constants.PROVISIONED_THROUGHPUT));
+        assertEquals(ProvisionedThroughputDescription.builder().build(), exchange.getIn().getHeader(Ddb2Constants.PROVISIONED_THROUGHPUT));
         assertEquals(Long.valueOf(10L), exchange.getIn().getHeader(Ddb2Constants.ITEM_COUNT, Long.class));
         assertEquals(Long.valueOf(20L), exchange.getIn().getHeader(Ddb2Constants.TABLE_SIZE, Long.class));
         assertEquals(TableStatus.ACTIVE, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS, TableStatus.class));

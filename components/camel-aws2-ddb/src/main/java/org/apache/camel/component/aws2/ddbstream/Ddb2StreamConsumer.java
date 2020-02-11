@@ -29,7 +29,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.services.dynamodb.model.ExpiredIteratorException;
 import software.amazon.awssdk.services.dynamodb.model.GetRecordsRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetRecordsResponse;
@@ -46,7 +45,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
     public Ddb2StreamConsumer(Ddb2StreamEndpoint endpoint, Processor processor) {
         this(endpoint, processor, new ShardIteratorHandler(endpoint));
     }
-    
+
     Ddb2StreamConsumer(Ddb2StreamEndpoint endpoint, Processor processor, ShardIteratorHandler shardIteratorHandler) {
         super(endpoint, processor);
         this.shardIteratorHandler = shardIteratorHandler;
@@ -56,15 +55,13 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
     protected int poll() throws Exception {
         GetRecordsResponse result;
         try {
-            GetRecordsRequest.Builder req = GetRecordsRequest.builder()
-                        .shardIterator(shardIteratorHandler.getShardIterator(null))
-                        .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
+            GetRecordsRequest.Builder req = GetRecordsRequest.builder().shardIterator(shardIteratorHandler.getShardIterator(null))
+                .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req.build());
         } catch (ExpiredIteratorException e) {
             LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
-            GetRecordsRequest.Builder req = GetRecordsRequest.builder()
-                        .shardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
-                        .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
+            GetRecordsRequest.Builder req = GetRecordsRequest.builder().shardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
+                .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req.build());
         }
         List<Record> records = result.records();
@@ -104,7 +101,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public Ddb2StreamEndpoint getEndpoint() {
-        return (Ddb2StreamEndpoint) super.getEndpoint();
+        return (Ddb2StreamEndpoint)super.getEndpoint();
     }
 
     private Queue<Exchange> createExchanges(List<Record> records, String lastSeenSequenceNumber) {
@@ -115,7 +112,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
             providedSeqNum = new BigInteger(lastSeenSequenceNumber);
             condition = BigIntComparisons.Conditions.LT;
         }
-        switch(getEndpoint().getConfiguration().getIteratorType()) {
+        switch (getEndpoint().getConfiguration().getIteratorType()) {
         case AFTER_SEQUENCE_NUMBER:
             condition = BigIntComparisons.Conditions.LT;
             providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());

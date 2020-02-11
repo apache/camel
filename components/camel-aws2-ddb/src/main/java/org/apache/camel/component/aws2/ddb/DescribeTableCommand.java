@@ -18,22 +18,19 @@ package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 
 public class DescribeTableCommand extends AbstractDdbCommand {
 
-    public DescribeTableCommand(DynamoDbClient ddbClient, Ddb2Configuration configuration,
-                                Exchange exchange) {
+    public DescribeTableCommand(DynamoDbClient ddbClient, Ddb2Configuration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }
 
     @Override
     public void execute() {
-        DescribeTableResponse result = ddbClient.describeTable(DescribeTableRequest.builder()
-                .tableName(determineTableName()).build());
+        DescribeTableResponse result = ddbClient.describeTable(DescribeTableRequest.builder().tableName(determineTableName()).build());
 
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(Ddb2Constants.TABLE_NAME, result.table().tableName());
@@ -41,10 +38,8 @@ public class DescribeTableCommand extends AbstractDdbCommand {
         msg.setHeader(Ddb2Constants.CREATION_DATE, result.table().creationDateTime());
         msg.setHeader(Ddb2Constants.ITEM_COUNT, result.table().itemCount());
         msg.setHeader(Ddb2Constants.KEY_SCHEMA, result.table().keySchema());
-        msg.setHeader(Ddb2Constants.READ_CAPACITY,
-                result.table().provisionedThroughput().readCapacityUnits());
-        msg.setHeader(Ddb2Constants.WRITE_CAPACITY,
-                result.table().provisionedThroughput().writeCapacityUnits());
+        msg.setHeader(Ddb2Constants.READ_CAPACITY, result.table().provisionedThroughput().readCapacityUnits());
+        msg.setHeader(Ddb2Constants.WRITE_CAPACITY, result.table().provisionedThroughput().writeCapacityUnits());
         msg.setHeader(Ddb2Constants.TABLE_SIZE, result.table().tableSizeBytes());
     }
 }
