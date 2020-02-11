@@ -45,17 +45,17 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
     public Processor createProcessor() throws Exception {
         final Expression expression = createExpression(definition.getExpression());
 
-        boolean isParallelProcessing = definition.getParallelProcessing() != null && parseBoolean(definition.getParallelProcessing());
-        boolean isStreaming = definition.getStreaming() != null && parseBoolean(definition.getStreaming());
-        boolean isParallelAggregate = definition.getParallelAggregate() != null && parseBoolean(definition.getParallelAggregate());
-        boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && parseBoolean(definition.getShareUnitOfWork());
-        boolean isStopOnException = definition.getStopOnException() != null && parseBoolean(definition.getStopOnException());
-        boolean isIgnoreInvalidEndpoints = definition.getIgnoreInvalidEndpoints() != null && parseBoolean(definition.getIgnoreInvalidEndpoints());
-        boolean isStopOnAggregateException = definition.getStopOnAggregateException() != null && parseBoolean(definition.getStopOnAggregateException());
+        boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
+        boolean isStreaming = parseBoolean(definition.getStreaming(), false);
+        boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
+        boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
+        boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
+        boolean isIgnoreInvalidEndpoints = parseBoolean(definition.getIgnoreInvalidEndpoints(), false);
+        boolean isStopOnAggregateException = parseBoolean(definition.getStopOnAggregateException(), false);
 
         RecipientList answer;
         if (definition.getDelimiter() != null) {
-            answer = new RecipientList(camelContext, expression, definition.getDelimiter());
+            answer = new RecipientList(camelContext, expression, parseString(definition.getDelimiter()));
         } else {
             answer = new RecipientList(camelContext, expression);
         }
@@ -114,14 +114,14 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
+            Object aggStrategy = routeContext.lookup(parseString(definition.getStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getStrategyMethodName()));
                 if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
@@ -138,7 +138,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
-        if (definition.getShareUnitOfWork() != null && parseBoolean(definition.getShareUnitOfWork())) {
+        if (parseBoolean(definition.getShareUnitOfWork(), false)) {
             // wrap strategy in share unit of work
             strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }

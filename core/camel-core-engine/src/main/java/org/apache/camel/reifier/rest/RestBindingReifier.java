@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestBindingDefinition;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
@@ -45,19 +46,19 @@ public class RestBindingReifier extends AbstractReifier {
         // these options can be overridden per rest verb
         String mode = config.getBindingMode().name();
         if (definition.getBindingMode() != null) {
-            mode = definition.getBindingMode();
+            mode = parse(RestBindingMode.class, definition.getBindingMode()).name();
         }
         boolean cors = config.isEnableCORS();
         if (definition.getEnableCORS() != null) {
-            cors = parseBoolean(definition.getEnableCORS());
+            cors = parseBoolean(definition.getEnableCORS(), false);
         }
         boolean skip = config.isSkipBindingOnErrorCode();
         if (definition.getSkipBindingOnErrorCode() != null) {
-            skip = parseBoolean(definition.getSkipBindingOnErrorCode());
+            skip = parseBoolean(definition.getSkipBindingOnErrorCode(), false);
         }
         boolean validation = config.isClientRequestValidation();
         if (definition.getClientRequestValidation() != null) {
-            validation = parseBoolean(definition.getClientRequestValidation());
+            validation = parseBoolean(definition.getClientRequestValidation(), false);
         }
 
         // cors headers
@@ -65,7 +66,8 @@ public class RestBindingReifier extends AbstractReifier {
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingAdvice(camelContext, null, null, null, null, definition.getConsumes(), definition.getProduces(), mode, skip, validation, cors, corsHeaders,
+            return new RestBindingAdvice(camelContext, null, null, null, null,
+                                         parseString(definition.getConsumes()), parseString(definition.getProduces()), mode, skip, validation, cors, corsHeaders,
                                          definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                                          definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
         }
@@ -90,7 +92,7 @@ public class RestBindingReifier extends AbstractReifier {
             outJson = camelContext.resolveDataFormat(name);
 
             if (json != null) {
-                setupJson(config, definition.getType(), definition.getOutType(), json, outJson);
+                setupJson(config, parseString(definition.getType()), parseString(definition.getOutType()), json, outJson);
             }
         }
 
@@ -119,11 +121,13 @@ public class RestBindingReifier extends AbstractReifier {
             }
 
             if (jaxb != null) {
-                setupJaxb(config, definition.getType(), definition.getOutType(), jaxb, outJaxb);
+                setupJaxb(config, parseString(definition.getType()), parseString(definition.getOutType()), jaxb, outJaxb);
             }
         }
 
-        return new RestBindingAdvice(camelContext, json, jaxb, outJson, outJaxb, definition.getConsumes(), definition.getProduces(), mode, skip, validation, cors, corsHeaders,
+        return new RestBindingAdvice(camelContext, json, jaxb, outJson, outJaxb,
+                                     parseString(definition.getConsumes()), parseString(definition.getProduces()),
+                                     mode, skip, validation, cors, corsHeaders,
                                      definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                                      definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
     }

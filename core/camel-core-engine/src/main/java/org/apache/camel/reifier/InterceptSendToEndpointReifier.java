@@ -70,7 +70,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                     // only proxy if the uri is matched decorate endpoint with
                     // our proxy
                     // should be false by default
-                    boolean skip = definition.getSkipSendToOriginalEndpoint() != null && parseBoolean(definition.getSkipSendToOriginalEndpoint());
+                    boolean skip = parseBoolean(definition.getSkipSendToOriginalEndpoint(), false);
                     DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
                     proxy.setBefore(before);
                     proxy.setAfter(after);

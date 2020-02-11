@@ -23,8 +23,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.Simple;
 import org.apache.camel.spi.ExpressionResultTypeAware;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.PredicateToExpressionAdapter;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
@@ -36,7 +36,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  * means that using simple language for {@link Expression}s or
  * {@link Predicate}s is very easy with the help of this builder.
  */
-public class SimpleBuilder implements Predicate, Expression, ExpressionResultTypeAware, GeneratedPropertyConfigurer {
+public class SimpleBuilder implements Predicate, Expression, ExpressionResultTypeAware, PropertyConfigurer {
 
     private final String text;
     private Class<?> resultType;

@@ -840,18 +840,18 @@ public class ModelParser extends BaseParser {
     protected <T extends Resilience4jConfigurationCommon> AttributeHandler<T> resilience4jConfigurationCommonAttributeHandler() {
         return (def, key, val) -> {
             switch (key) {
-                case "automaticTransitionFromOpenToHalfOpenEnabled": def.setAutomaticTransitionFromOpenToHalfOpenEnabled(Boolean.valueOf(val)); break;
+                case "automaticTransitionFromOpenToHalfOpenEnabled": def.setAutomaticTransitionFromOpenToHalfOpenEnabled(val); break;
                 case "circuitBreakerRef": def.setCircuitBreakerRef(val); break;
                 case "configRef": def.setConfigRef(val); break;
-                case "failureRateThreshold": def.setFailureRateThreshold(Float.valueOf(val)); break;
-                case "minimumNumberOfCalls": def.setMinimumNumberOfCalls(Integer.valueOf(val)); break;
-                case "permittedNumberOfCallsInHalfOpenState": def.setPermittedNumberOfCallsInHalfOpenState(Integer.valueOf(val)); break;
-                case "slidingWindowSize": def.setSlidingWindowSize(Integer.valueOf(val)); break;
+                case "failureRateThreshold": def.setFailureRateThreshold(val); break;
+                case "minimumNumberOfCalls": def.setMinimumNumberOfCalls(val); break;
+                case "permittedNumberOfCallsInHalfOpenState": def.setPermittedNumberOfCallsInHalfOpenState(val); break;
+                case "slidingWindowSize": def.setSlidingWindowSize(val); break;
                 case "slidingWindowType": def.setSlidingWindowType(val); break;
-                case "slowCallDurationThreshold": def.setSlowCallDurationThreshold(Integer.valueOf(val)); break;
-                case "slowCallRateThreshold": def.setSlowCallRateThreshold(Float.valueOf(val)); break;
-                case "waitDurationInOpenState": def.setWaitDurationInOpenState(Integer.valueOf(val)); break;
-                case "writableStackTraceEnabled": def.setWritableStackTraceEnabled(Boolean.valueOf(val)); break;
+                case "slowCallDurationThreshold": def.setSlowCallDurationThreshold(val); break;
+                case "slowCallRateThreshold": def.setSlowCallRateThreshold(val); break;
+                case "waitDurationInOpenState": def.setWaitDurationInOpenState(val); break;
+                case "writableStackTraceEnabled": def.setWritableStackTraceEnabled(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -860,12 +860,12 @@ public class ModelParser extends BaseParser {
     protected <T extends Resilience4jConfigurationCommon> ElementHandler<T> resilience4jConfigurationCommonElementHandler() {
         return (def, key) -> {
             switch (key) {
-                case "bulkheadEnabled": def.setBulkheadEnabled(Boolean.valueOf(doParseText())); break;
-                case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(Integer.valueOf(doParseText())); break;
-                case "bulkheadMaxWaitDuration": def.setBulkheadMaxWaitDuration(Integer.valueOf(doParseText())); break;
-                case "timeoutCancelRunningFuture": def.setTimeoutCancelRunningFuture(Boolean.valueOf(doParseText())); break;
-                case "timeoutDuration": def.setTimeoutDuration(Integer.valueOf(doParseText())); break;
-                case "timeoutEnabled": def.setTimeoutEnabled(Boolean.valueOf(doParseText())); break;
+                case "bulkheadEnabled": def.setBulkheadEnabled(doParseText()); break;
+                case "bulkheadMaxConcurrentCalls": def.setBulkheadMaxConcurrentCalls(doParseText()); break;
+                case "bulkheadMaxWaitDuration": def.setBulkheadMaxWaitDuration(doParseText()); break;
+                case "timeoutCancelRunningFuture": def.setTimeoutCancelRunningFuture(doParseText()); break;
+                case "timeoutDuration": def.setTimeoutDuration(doParseText()); break;
+                case "timeoutEnabled": def.setTimeoutEnabled(doParseText()); break;
                 case "timeoutExecutorServiceRef": def.setTimeoutExecutorServiceRef(doParseText()); break;
                 default: return false;
             }
@@ -1018,10 +1018,10 @@ public class ModelParser extends BaseParser {
     protected SagaDefinition doParseSagaDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaDefinition(), (def, key, val) -> {
             switch (key) {
-                case "completionMode": def.setCompletionMode(SagaCompletionMode.valueOf(val)); break;
-                case "propagation": def.setPropagation(SagaPropagation.valueOf(val)); break;
+                case "completionMode": def.setCompletionMode(val); break;
+                case "propagation": def.setPropagation(val); break;
                 case "sagaServiceRef": def.setSagaServiceRef(val); break;
-                case "timeoutInMilliseconds": def.setTimeoutInMilliseconds(Long.valueOf(val)); break;
+                case "timeoutInMilliseconds": def.setTimeoutInMilliseconds(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1063,9 +1063,9 @@ public class ModelParser extends BaseParser {
     protected SamplingDefinition doParseSamplingDefinition() throws IOException, XmlPullParserException {
         return doParse(new SamplingDefinition(), (def, key, val) -> {
             switch (key) {
-                case "messageFrequency": def.setMessageFrequency(Long.valueOf(val)); break;
-                case "samplePeriod": def.setSamplePeriod(Long.valueOf(val)); break;
-                case "units": def.setUnits(TimeUnit.valueOf(val)); break;
+                case "messageFrequency": def.setMessageFrequency(val); break;
+                case "samplePeriod": def.setSamplePeriod(val); break;
+                case "units": def.setUnits(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1120,16 +1120,16 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
                 case "onPrepareRef": def.setOnPrepareRef(val); break;
-                case "parallelAggregate": def.setParallelAggregate(Boolean.valueOf(val)); break;
-                case "parallelProcessing": def.setParallelProcessing(Boolean.valueOf(val)); break;
-                case "shareUnitOfWork": def.setShareUnitOfWork(Boolean.valueOf(val)); break;
-                case "stopOnAggregateException": def.setStopOnAggregateException(Boolean.valueOf(val)); break;
-                case "stopOnException": def.setStopOnException(Boolean.valueOf(val)); break;
-                case "strategyMethodAllowNull": def.setStrategyMethodAllowNull(Boolean.valueOf(val)); break;
+                case "parallelAggregate": def.setParallelAggregate(val); break;
+                case "parallelProcessing": def.setParallelProcessing(val); break;
+                case "shareUnitOfWork": def.setShareUnitOfWork(val); break;
+                case "stopOnAggregateException": def.setStopOnAggregateException(val); break;
+                case "stopOnException": def.setStopOnException(val); break;
+                case "strategyMethodAllowNull": def.setStrategyMethodAllowNull(val); break;
                 case "strategyMethodName": def.setStrategyMethodName(val); break;
                 case "strategyRef": def.setStrategyRef(val); break;
-                case "streaming": def.setStreaming(Boolean.valueOf(val)); break;
-                case "timeout": def.setTimeout(Long.valueOf(val)); break;
+                case "streaming": def.setStreaming(val); break;
+                case "timeout": def.setTimeout(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1180,11 +1180,11 @@ public class ModelParser extends BaseParser {
     protected ThrottleDefinition doParseThrottleDefinition() throws IOException, XmlPullParserException {
         return doParse(new ThrottleDefinition(), (def, key, val) -> {
             switch (key) {
-                case "asyncDelayed": def.setAsyncDelayed(Boolean.valueOf(val)); break;
-                case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(Boolean.valueOf(val)); break;
+                case "asyncDelayed": def.setAsyncDelayed(val); break;
+                case "callerRunsWhenRejected": def.setCallerRunsWhenRejected(val); break;
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
-                case "rejectExecution": def.setRejectExecution(Boolean.valueOf(val)); break;
-                case "timePeriodMillis": def.setTimePeriodMillis(Long.valueOf(val)); break;
+                case "rejectExecution": def.setRejectExecution(val); break;
+                case "timePeriodMillis": def.setTimePeriodMillis(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;

@@ -142,12 +142,6 @@ public final class RouteDefinitionHelper {
                 // placeholder
                 if (!originalId.equals(id)) {
                     route.setId(id);
-                    ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            route.setId(originalId);
-                        }
-                    });
                 }
                 customIds.add(id);
             } else {
@@ -187,13 +181,6 @@ public final class RouteDefinitionHelper {
                     throw new IllegalArgumentException("Cannot auto assign id to route: " + route);
                 }
                 route.setId(id);
-                ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        route.setId(null);
-                        route.setCustomId(false);
-                    }
-                });
                 route.setCustomId(false);
                 customIds.add(route.getId());
             }
@@ -342,13 +329,7 @@ public final class RouteDefinitionHelper {
                                     List<InterceptFromDefinition> interceptFromDefinitions, List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
                                     List<OnCompletionDefinition> onCompletions) {
 
-        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
-        try {
-            prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions, onCompletions);
-        } finally {
-            // Lets restore
-            propertyPlaceholdersChangeReverter.run();
-        }
+        prepareRouteImp(context, route, onExceptions, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions, onCompletions);
     }
 
     /**
@@ -732,12 +713,6 @@ public final class RouteDefinitionHelper {
                 // placeholder
                 if (!originalId.equals(id)) {
                     processor.setId(id);
-                    ProcessorDefinitionHelper.addPropertyPlaceholdersChangeRevertAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            processor.setId(originalId);
-                        }
-                    });
                 }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);

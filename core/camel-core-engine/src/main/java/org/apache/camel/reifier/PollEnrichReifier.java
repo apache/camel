@@ -37,7 +37,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
         // if no timeout then we should block, and there use a negative timeout
         long time = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : -1;
-        boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && parseBoolean(definition.getIgnoreInvalidEndpoint());
+        boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
         Expression exp = createExpression(definition.getExpression());
 
         PollEnricher enricher = new PollEnricher(exp, time);
@@ -49,7 +49,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
             enricher.setAggregationStrategy(strategy);
         }
         if (definition.getAggregateOnException() != null) {
-            enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException()));
+            enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
         if (definition.getCacheSize() != null) {
             enricher.setCacheSize(parseInt(definition.getCacheSize()));
@@ -62,14 +62,14 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
+            Object aggStrategy = routeContext.lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {

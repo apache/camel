@@ -35,9 +35,9 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Object bean = definition.getBean();
-        String ref = definition.getRef();
-        String method = definition.getMethod();
-        String beanType = definition.getBeanType();
+        String ref = parseString(definition.getRef());
+        String method = parseString(definition.getMethod());
+        String beanType = parseString(definition.getBeanType());
         Class<?> beanClass = definition.getBeanClass();
 
         BeanProcessorFactory fac = camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory();
@@ -47,7 +47,7 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         // use singleton as default scope
         BeanScope scope = BeanScope.Singleton;
         if (definition.getScope() != null) {
-            scope = CamelContextHelper.parse(camelContext, BeanScope.class, definition.getScope());
+            scope = parse(BeanScope.class, definition.getScope());
         }
         return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
     }

@@ -32,7 +32,6 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
@@ -478,9 +477,7 @@ public final class PropertyBindingSupport {
         final String uOptionPrefix = ignoreCase && isNotEmpty(optionPrefix) ? optionPrefix.toUpperCase(Locale.US) : "";
         final int size = properties.size();
 
-        if (configurer instanceof GeneratedPropertyConfigurer) {
-            GeneratedPropertyConfigurer gen = (GeneratedPropertyConfigurer) configurer;
-
+        if (configurer != null) {
             for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, Object> entry = iter.next();
                 String key = entry.getKey();
@@ -489,14 +486,14 @@ public final class PropertyBindingSupport {
                 // property configurer does not support nested names so skip if the name has a dot
                 if (key.indexOf('.') == -1) {
                     try {
-                        // GeneratedPropertyConfigurer works by invoking the methods directly but it does
+                        // PropertyConfigurer works by invoking the methods directly but it does
                         // not resolve property placeholders eventually defined in the value before invoking
                         // the setter.
                         if (value instanceof String) {
                             value = camelContext.resolvePropertyPlaceholders((String) value);
                         }
                         value = resolveValue(camelContext, target, key, value, ignoreCase, fluentBuilder, allowPrivateSetter);
-                        boolean hit = gen.configure(camelContext, target, key, value, ignoreCase);
+                        boolean hit = configurer.configure(camelContext, target, key, value, ignoreCase);
                         if (removeParameter && hit) {
                             iter.remove();
                         }

@@ -58,7 +58,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
             processor.setCacheSize(parseInt(definition.getCacheSize()));
         }
         if (definition.getIgnoreInvalidEndpoint() != null) {
-            processor.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint()));
+            processor.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
         }
         return processor;
     }

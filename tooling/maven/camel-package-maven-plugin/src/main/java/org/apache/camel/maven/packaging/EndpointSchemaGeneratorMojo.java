@@ -977,67 +977,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    protected void generatePropertyPlaceholderProviderSource(Class<?> classElement, EipModel eipModel, Set<EipOptionModel> options,
-                                                             Set<String> propertyPlaceholderDefinitions) {
-
-        // not ever model classes support property placeholders as this has been
-        // limited to mainly Camel routes
-        // so filter out unwanted models
-        boolean rest = classElement.getName().startsWith("org.apache.camel.model.rest.");
-        boolean processor = loadClass("org.apache.camel.model.ProcessorDefinition").isAssignableFrom(classElement);
-        boolean language = loadClass("org.apache.camel.model.language.ExpressionDefinition").isAssignableFrom(classElement);
-        boolean dataformat = loadClass("org.apache.camel.model.DataFormatDefinition").isAssignableFrom(classElement);
-
-        if (!rest && !processor && !language && !dataformat) {
-            return;
-        }
-
-        Class<?> parent = loadClass("org.apache.camel.spi.PropertyPlaceholderConfigurer");
-        String fqnDef = classElement.getName();
-
-        generatePropertyPlaceholderProviderSource(parent, fqnDef, options);
-        propertyPlaceholderDefinitions.add(fqnDef);
-
-        // we also need to generate from when we generate route as from can also
-        // configure property placeholders
-        if (fqnDef.equals("org.apache.camel.model.RouteDefinition")) {
-            fqnDef = "org.apache.camel.model.FromDefinition";
-
-            options.clear();
-            options.add(createOption("id", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
-            options.add(createOption("uri", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
-
-            generatePropertyPlaceholderProviderSource(parent, fqnDef, options);
-            propertyPlaceholderDefinitions.add(fqnDef);
-        }
-    }
-
-    protected void generatePropertyPlaceholderProviderSource(Class<?> parent, String fqnDef, Set<EipOptionModel> options) {
-
-        String def = fqnDef.substring(fqnDef.lastIndexOf('.') + 1);
-        String cn = def + "PropertyPlaceholderProvider";
-        String fqn = "org.apache.camel.model.placeholder." + cn;
-
-        try (Writer w = new StringWriter()) {
-            PropertyPlaceholderGenerator.generatePropertyPlaceholderProviderSource(def, fqnDef, cn, options, w);
-            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to generate source code file: " + fqn, e);
-        }
-    }
-
-    private void generatePropertyPlaceholderDefinitionsHelper(Set<String> propertyPlaceholderDefinitions) {
-
-        String fqn = "org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper";
-
-        try (Writer w = new StringWriter()) {
-            PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(propertyPlaceholderDefinitions, w);
-            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to generate source code file: " + fqn, e);
-        }
-    }
-
     private Class<?> loadClass(String name) {
         try {
             return getProjectClassLoader().loadClass(name);
@@ -1093,25 +1032,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return metadata.required();
         }
         return defaultValue;
-    }
-
-    private EipOptionModel createOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String description, boolean deprecated,
-                                        String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfs, boolean asPredicate) {
-        EipOptionModel option = new EipOptionModel();
-        option.setName(name);
-        option.setDisplayName(Strings.isNullOrEmpty(displayName) ? Strings.asTitle(name) : displayName);
-        option.setKind(kind);
-        option.setRequired(required);
-        option.setDefaultValue("java.lang.Boolean".equals(type) && !Strings.isNullOrEmpty(defaultValue) ? Boolean.parseBoolean(defaultValue) : defaultValue);
-        option.setDescription(JavadocHelper.sanitizeDescription(description, false));
-        option.setDeprecated(deprecated);
-        option.setDeprecationNote(Strings.isNullOrEmpty(deprecationNote) ? null : deprecationNote);
-        option.setType(getType(type, enumType));
-        option.setJavaType(type);
-        option.setEnums(enums != null && !enums.isEmpty() ? new ArrayList<>(enums) : null);
-        option.setOneOfs(oneOfs != null && !oneOfs.isEmpty() ? new ArrayList<>(oneOfs) : null);
-        option.setAsPredicate(asPredicate);
-        return option;
     }
 
     private boolean hasSuperClass(Class<?> classElement, String superClassName) {

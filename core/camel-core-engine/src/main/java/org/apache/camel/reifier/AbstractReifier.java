@@ -16,23 +16,16 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.model.Constants;
 import org.apache.camel.model.ExpressionSubElementDefinition;
-import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.reifier.language.ExpressionReifier;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
 public abstract class AbstractReifier {
-
-    private static final String PREFIX = "{" + Constants.PLACEHOLDER_QNAME + "}";
 
     protected final RouteContext routeContext;
     protected final CamelContext camelContext;
@@ -51,21 +44,51 @@ public abstract class AbstractReifier {
         return CamelContextHelper.parseText(camelContext, text);
     }
 
-    protected boolean parseBoolean(String text) {
-        Boolean b = CamelContextHelper.parseBoolean(camelContext, text);
-        return b != null && b;
+    protected Boolean parseBoolean(String text) {
+        return CamelContextHelper.parseBoolean(camelContext, text);
+    }
+
+    protected boolean parseBoolean(String text, boolean def) {
+        Boolean b = parseBoolean(text);
+        return b != null ? b : def;
     }
 
     protected Long parseLong(String text) {
         return CamelContextHelper.parseLong(camelContext, text);
     }
 
+    protected long parseLong(String text, long def) {
+        Long l = parseLong(text);
+        return l != null ? l : def;
+    }
+
     protected Integer parseInt(String text) {
         return CamelContextHelper.parseInteger(camelContext, text);
     }
 
+    protected int parseInt(String text, int def) {
+        Integer i = parseInt(text);
+        return i != null ? i : def;
+    }
+
+    protected Float parseFloat(String text) {
+        return CamelContextHelper.parseFloat(camelContext, text);
+    }
+
+    protected float parseFloat(String text, float def) {
+        Float f = parseFloat(text);
+        return f != null ? f : def;
+    }
+
     protected <T> T parse(Class<T> clazz, String text) {
         return CamelContextHelper.parse(camelContext, clazz, text);
+    }
+
+    protected <T> T parse(Class<T> clazz, Object text) {
+        if (text instanceof String) {
+            text = parseString((String) text);
+        }
+        return CamelContextHelper.convertTo(camelContext, clazz, text);
     }
 
     protected Expression createExpression(ExpressionDefinition expression) {
@@ -82,27 +105,6 @@ public abstract class AbstractReifier {
 
     protected Predicate createPredicate(ExpressionSubElementDefinition expression) {
         return ExpressionReifier.reifier(camelContext, expression).createPredicate();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void addOtherAttributes(Object definition, Map<String, Object> properties) {
-        if (definition instanceof OtherAttributesAware) {
-            Map<Object, Object> others = ((OtherAttributesAware) definition).getOtherAttributes();
-            if (others != null) {
-                others.forEach((k, v) -> {
-                    String ks = k.toString();
-                    if (ks.startsWith(PREFIX) && v instanceof String) {
-                        // value must be enclosed with placeholder tokens
-                        String s = (String) v;
-                        if (!s.startsWith(PropertiesComponent.PREFIX_TOKEN) && !s.endsWith(PropertiesComponent.SUFFIX_TOKEN)) {
-                            s = PropertiesComponent.PREFIX_TOKEN + s + PropertiesComponent.SUFFIX_TOKEN;
-                        }
-                        String kk = ks.substring(PREFIX.length());
-                        properties.put(kk, s);
-                    }
-                });
-            }
-        }
     }
 
     protected Object or(Object a, Object b) {

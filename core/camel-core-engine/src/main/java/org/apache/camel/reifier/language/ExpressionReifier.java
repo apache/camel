@@ -26,10 +26,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.Constants;
 import org.apache.camel.model.ExpressionSubElementDefinition;
-import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -50,10 +47,8 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ScriptHelper;
@@ -118,7 +113,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 }
                 String exp = parseString(definition.getExpression());
                 // should be true by default
-                boolean isTrim = definition.getTrim() == null || parseBoolean(definition.getTrim());
+                boolean isTrim =parseBoolean(definition.getTrim(), true);
                 // trim if configured to trim
                 if (exp != null && isTrim) {
                     exp = exp.trim();
@@ -153,7 +148,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 }
                 String exp = parseString(definition.getExpression());
                 // should be true by default
-                boolean isTrim = definition.getTrim() == null || parseBoolean(definition.getTrim());
+                boolean isTrim = parseBoolean(definition.getTrim(), true);
                 // trim if configured to trim
                 if (exp != null && isTrim) {
                     exp = exp.trim();
@@ -196,7 +191,6 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     protected void setProperties(Object target, Map<String, Object> properties) {
         properties.entrySet().removeIf(e -> e.getValue() == null);
-        addOtherAttributes(definition, properties);
 
         PropertyConfigurer configurer = null;
         if (target instanceof PropertyConfigurerAware) {

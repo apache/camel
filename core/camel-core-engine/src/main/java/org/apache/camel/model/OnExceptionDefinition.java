@@ -148,7 +148,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         }
 
         // only one of handled or continued is allowed
-        if (getHandledPolicy() != null && getContinuedPolicy() != null) {
+        if ((getHandledPolicy() != null || getHandled() != null)
+                && (getContinuedPolicy() != null || getContinued() != null)) {
             throw new IllegalArgumentException("Only one of handled or continued is allowed to be configured on: " + this);
         }
 
@@ -162,7 +163,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         // onException(Exception.class);
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
-            ObjectHelper.firstNotNull(handledPolicy, continuedPolicy, retryWhilePolicy, redeliveryPolicyType, useOriginalMessage, useOriginalBody, onRedeliveryRef,
+            ObjectHelper.firstNotNull(handledPolicy, handled, continuedPolicy, continued, retryWhilePolicy, retryWhile,
+                                      redeliveryPolicyType, useOriginalMessage, useOriginalBody, onRedeliveryRef,
                                       onRedelivery, onExceptionOccurred)
                 .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
         }

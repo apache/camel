@@ -41,12 +41,12 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
         Expression expression = createExpression(definition.getExpression());
 
         // these boolean should be true by default
-        boolean eager = definition.getEager() == null || Boolean.parseBoolean(definition.getEager());
-        boolean duplicate = definition.getSkipDuplicate() == null || Boolean.parseBoolean(definition.getSkipDuplicate());
-        boolean remove = definition.getRemoveOnFailure() == null || Boolean.parseBoolean(definition.getRemoveOnFailure());
+        boolean eager = parseBoolean(definition.getEager(), true);
+        boolean duplicate = parseBoolean(definition.getSkipDuplicate(), true);
+        boolean remove = parseBoolean(definition.getRemoveOnFailure(), true);
 
         // these boolean should be false by default
-        boolean completionEager = definition.getCompletionEager() != null && Boolean.parseBoolean(definition.getCompletionEager());
+        boolean completionEager = parseBoolean(definition.getCompletionEager(), false);
 
         return new IdempotentConsumer(expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
     }
@@ -60,7 +60,7 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
      */
     protected <T> IdempotentRepository resolveMessageIdRepository(RouteContext routeContext) {
         if (definition.getMessageIdRepositoryRef() != null) {
-            definition.setMessageIdRepository(routeContext.mandatoryLookup(definition.getMessageIdRepositoryRef(), IdempotentRepository.class));
+            definition.setMessageIdRepository(routeContext.mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
         }
         return definition.getMessageIdRepository();
     }

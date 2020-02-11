@@ -41,26 +41,27 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         Processor childProcessor = this.createChildProcessor(true);
         definition.setAggregationStrategy(createAggregationStrategy());
 
-        boolean isParallelProcessing = definition.getParallelProcessing() != null && definition.getParallelProcessing();
-        boolean isStreaming = definition.getStreaming() != null && definition.getStreaming();
-        boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork();
-        boolean isParallelAggregate = definition.getParallelAggregate() != null && definition.getParallelAggregate();
-        boolean isStopOnAggregateException = definition.getStopOnAggregateException() != null && definition.getStopOnAggregateException();
+        boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
+        boolean isStreaming = parseBoolean(definition.getStreaming(), false);
+        boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
+        boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
+        boolean isStopOnAggregateException = parseBoolean(definition.getStopOnAggregateException(), false);
+        boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
         ExecutorService threadPool = getConfiguredExecutorService("Split", definition, isParallelProcessing);
 
-        long timeout = definition.getTimeout() != null ? definition.getTimeout() : 0;
+        long timeout = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : 0;
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, definition.getOnPrepareRef(), Processor.class));
+            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, parseString(definition.getOnPrepareRef()), Processor.class));
         }
 
         Expression exp = createExpression(definition.getExpression());
 
         Splitter answer = new Splitter(camelContext, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
-                                       shutdownThreadPool, isStreaming, definition.isStopOnException(), timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
+                                       shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
                                        isStopOnAggregateException);
         return answer;
     }
@@ -74,8 +75,8 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(definition.getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(definition.getStrategyMethodAllowNull());
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
@@ -87,7 +88,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
-        if (strategy != null && definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork()) {
+        if (strategy != null && parseBoolean(definition.getShareUnitOfWork(), false)) {
             // wrap strategy in share unit of work
             strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }

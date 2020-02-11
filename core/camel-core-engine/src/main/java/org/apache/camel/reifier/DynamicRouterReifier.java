@@ -39,10 +39,10 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
 
         DynamicRouter dynamicRouter = new DynamicRouter(camelContext, expression, delimiter);
         if (definition.getIgnoreInvalidEndpoints() != null) {
-            dynamicRouter.setIgnoreInvalidEndpoints(Boolean.parseBoolean(definition.getIgnoreInvalidEndpoints()));
+            dynamicRouter.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }
         if (definition.getCacheSize() != null) {
-            dynamicRouter.setCacheSize(Integer.parseInt(definition.getCacheSize()));
+            dynamicRouter.setCacheSize(parseInt(definition.getCacheSize()));
         }
 
         // and wrap this in an error handler

@@ -33,14 +33,14 @@
 
     <route>
       <from uri="direct:start"/>
-      <recipientList prop:parallelProcessing="concurrent">
+      <recipientList parallelProcessing="{{concurrent}}">
         <header>foo</header>
       </recipientList>
     </route>
 
     <route>
       <from uri="direct:a"/>
-      <setHeader name="foo" prop:name="theRealHeader">
+      <setHeader name="{{theRealHeader}}">
         <constant>1000</constant>
       </setHeader>
       <delay>

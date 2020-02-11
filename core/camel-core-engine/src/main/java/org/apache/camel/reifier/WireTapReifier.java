@@ -57,18 +57,19 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
 
         // is true by default
-        boolean isCopy = definition.getCopy() == null || parseBoolean(definition.getCopy());
+        boolean isCopy = parseBoolean(definition.getCopy(), true);
 
         WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal,
                 parse(ExchangePattern.class, definition.getPattern()),
                 threadPool, shutdownThreadPool,
-                definition.getDynamicUri() == null || parseBoolean(definition.getDynamicUri()));
+                parseBoolean(definition.getDynamicUri(), true));
         answer.setCopy(isCopy);
+        Processor newExchangeProcessor = definition.getNewExchangeProcessor();
         if (definition.getNewExchangeProcessorRef() != null) {
-            definition.setNewExchangeProcessor(routeContext.mandatoryLookup(definition.getNewExchangeProcessorRef(), Processor.class));
+            newExchangeProcessor = routeContext.mandatoryLookup(parseString(definition.getNewExchangeProcessorRef()), Processor.class);
         }
-        if (definition.getNewExchangeProcessor() != null) {
-            answer.addNewExchangeProcessor(definition.getNewExchangeProcessor());
+        if (newExchangeProcessor != null) {
+            answer.addNewExchangeProcessor(newExchangeProcessor);
         }
         if (definition.getNewExchangeExpression() != null) {
             answer.setNewExchangeExpression(createExpression(definition.getNewExchangeExpression()));
@@ -79,11 +80,12 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
                 answer.addNewExchangeProcessor(processor);
             }
         }
+        Processor onPrepare = definition.getOnPrepare();
         if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, definition.getOnPrepareRef(), Processor.class));
+            onPrepare = CamelContextHelper.mandatoryLookup(camelContext, parseString(definition.getOnPrepareRef()), Processor.class);
         }
-        if (definition.getOnPrepare() != null) {
-            answer.setOnPrepare(definition.getOnPrepare());
+        if (onPrepare != null) {
+            answer.setOnPrepare(onPrepare);
         }
 
         return answer;
@@ -92,7 +94,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
     @Override
     protected Expression createExpression(RouteContext routeContext, String uri) {
         // whether to use dynamic or static uri
-        if (definition.getDynamicUri() == null || parseBoolean(definition.getDynamicUri())) {
+        if (parseBoolean(definition.getDynamicUri(), true)) {
             return super.createExpression(routeContext, uri);
         } else {
             return ExpressionBuilder.constantExpression(uri);

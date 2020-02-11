@@ -38,7 +38,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         // the threads name
-        String name = definition.getThreadName() != null ? definition.getThreadName() : "Threads";
+        String name = definition.getThreadName() != null ? parseString(definition.getThreadName()) : "Threads";
         // prefer any explicit configured executor service
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ExecutorService threadPool = getConfiguredExecutorService(name, definition, false);
@@ -46,7 +46,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         // resolve what rejected policy to use
         ThreadPoolRejectedPolicy policy = resolveRejectedPolicy(routeContext);
         if (policy == null) {
-            if (definition.getCallerRunsWhenRejected() == null || parseBoolean(definition.getCallerRunsWhenRejected())) {
+            if (parseBoolean(definition.getCallerRunsWhenRejected(), true)) {
                 // should use caller runs by default if not configured
                 policy = ThreadPoolRejectedPolicy.CallerRuns;
             } else {
@@ -63,10 +63,10 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
                 .poolSize(definition.getPoolSize() != null ? parseInt(definition.getPoolSize()) : null)
                 .maxPoolSize(definition.getMaxPoolSize() != null ? parseInt(definition.getMaxPoolSize()) : null)
                 .keepAliveTime(definition.getKeepAliveTime() != null ? parseLong(definition.getKeepAliveTime()) : null,
-                               definition.getTimeUnit() != null ? TimeUnit.valueOf(definition.getTimeUnit()) : null)
+                               definition.getTimeUnit() != null ? parse(TimeUnit.class, definition.getTimeUnit()) : null)
                 .maxQueueSize(definition.getMaxQueueSize() != null ? parseInt(definition.getMaxQueueSize()) : null)
                 .rejectedPolicy(policy)
-                .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null ? parseBoolean(definition.getAllowCoreThreadTimeOut()) : null)
+                .allowCoreThreadTimeOut(definition.getAllowCoreThreadTimeOut() != null ? parseBoolean(definition.getAllowCoreThreadTimeOut(), false) : null)
                 .build();
             threadPool = manager.newThreadPool(definition, name, profile);
             shutdownThreadPool = true;
@@ -102,7 +102,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy(RouteContext routeContext) {
         if (definition.getExecutorServiceRef() != null && definition.getRejectedPolicy() == null) {
-            ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager().getThreadPoolProfile(definition.getExecutorServiceRef());
+            ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager().getThreadPoolProfile(parseString(definition.getExecutorServiceRef()));
             if (threadPoolProfile != null) {
                 return threadPoolProfile.getRejectedPolicy();
             }

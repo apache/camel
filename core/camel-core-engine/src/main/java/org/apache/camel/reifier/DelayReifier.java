@@ -36,14 +36,13 @@ public class DelayReifier extends ExpressionReifier<DelayDefinition> {
         Processor childProcessor = this.createChildProcessor(false);
         Expression delay = createAbsoluteTimeDelayExpression();
 
-        boolean async = definition.getAsyncDelayed() == null || Boolean.parseBoolean(definition.getAsyncDelayed());
+        boolean async = parseBoolean(definition.getAsyncDelayed(), true);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, async);
         ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Delay", definition, async);
 
         Delayer answer = new Delayer(camelContext, childProcessor, delay, threadPool, shutdownThreadPool);
         answer.setAsyncDelayed(async);
-        answer.setCallerRunsWhenRejected(definition.getCallerRunsWhenRejected() == null
-                || Boolean.parseBoolean(definition.getCallerRunsWhenRejected()));
+        answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
         return answer;
     }
 

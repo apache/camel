@@ -33,12 +33,12 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        boolean async = definition.getAsyncDelayed() != null && definition.getAsyncDelayed();
+        boolean async = parseBoolean(definition.getAsyncDelayed(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
         ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Throttle", definition, true);
 
         // should be default 1000 millis
-        long period = definition.getTimePeriodMillis() != null ? definition.getTimePeriodMillis() : 1000L;
+        long period = definition.getTimePeriodMillis() != null ? parseLong(definition.getTimePeriodMillis()) : 1000L;
 
         // max requests per period is mandatory
         Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression();
@@ -51,16 +51,12 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
             correlation = createExpression(definition.getCorrelationExpression());
         }
 
-        boolean reject = definition.getRejectExecution() != null && definition.getRejectExecution();
+        boolean reject = parseBoolean(definition.getRejectExecution(), false);
         Throttler answer = new Throttler(camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
-        if (definition.getCallerRunsWhenRejected() == null) {
-            // should be true by default
-            answer.setCallerRunsWhenRejected(true);
-        } else {
-            answer.setCallerRunsWhenRejected(definition.getCallerRunsWhenRejected());
-        }
+        // should be true by default
+        answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
 
         return answer;
     }

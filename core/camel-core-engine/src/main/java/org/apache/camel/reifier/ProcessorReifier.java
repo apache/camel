@@ -110,6 +110,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -285,7 +286,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return definition.getExecutorService();
         } else if (definition.getExecutorServiceRef() != null) {
             // lookup in registry first and use existing thread pool if exists
-            ExecutorService answer = lookupExecutorServiceRef(name, definition, definition.getExecutorServiceRef());
+            ExecutorService answer = lookupExecutorServiceRef(name, definition, parseString(definition.getExecutorServiceRef()));
             if (answer == null) {
                 throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef()
                                                    + " not found in registry (as an ExecutorService instance) or as a thread pool profile.");
@@ -622,7 +623,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // however if share unit of work is enabled, we need to wrap an
             // error handler on the multicast parent
             MulticastDefinition def = (MulticastDefinition)definition;
-            boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && parseBoolean(def.getShareUnitOfWork());
+            boolean isShareUnitOfWork = parseBoolean(def.getShareUnitOfWork(), false);
             if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrap = true;
@@ -703,14 +704,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs) throws Exception {
-        // We will save list of actions to restore the outputs back to the
-        // original state.
-        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
-        try {
-            return createOutputsProcessorImpl(outputs);
-        } finally {
-            propertyPlaceholdersChangeReverter.run();
-        }
+        return createOutputsProcessorImpl(outputs);
     }
 
     protected Processor createOutputsProcessorImpl(Collection<ProcessorDefinition<?>> outputs) throws Exception {
@@ -720,19 +714,19 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // allow any custom logic before we create the processor
             reifier(routeContext, output).preCreateProcessor();
 
-            // resolve properties before we create the processor
-            ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, output);
+//            // resolve properties before we create the processor
+//            ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, output);
 
-            // also resolve properties and constant fields on embedded expressions
-            ProcessorDefinition<?> me = output;
-            if (me instanceof ExpressionNode) {
-                ExpressionNode exp = (ExpressionNode)me;
-                ExpressionDefinition expressionDefinition = exp.getExpression();
-                if (expressionDefinition != null) {
-                    // resolve properties before we create the processor
-                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
-                }
-            }
+//            // also resolve properties and constant fields on embedded expressions
+//            ProcessorDefinition<?> me = output;
+//            if (me instanceof ExpressionNode) {
+//                ExpressionNode exp = (ExpressionNode)me;
+//                ExpressionDefinition expressionDefinition = exp.getExpression();
+//                if (expressionDefinition != null) {
+//                    // resolve properties before we create the processor
+//                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
+//                }
+//            }
 
             Processor processor = createProcessor(output);
 
@@ -786,36 +780,24 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * error handlers
      */
     protected Channel makeProcessor() throws Exception {
-        // We will save list of actions to restore the definition back to the
-        // original state.
-        Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
-        try {
-            return makeProcessorImpl();
-        } finally {
-            // Lets restore
-            propertyPlaceholdersChangeReverter.run();
-        }
-    }
-
-    private Channel makeProcessorImpl() throws Exception {
         Processor processor = null;
 
         // allow any custom logic before we create the processor
         preCreateProcessor();
 
-        // resolve properties before we create the processor
-        ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, definition);
+//        // resolve properties before we create the processor
+//        ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, definition);
 
-        // also resolve properties and constant fields on embedded expressions
-        ProcessorDefinition<?> me = definition;
-        if (me instanceof ExpressionNode) {
-            ExpressionNode exp = (ExpressionNode)me;
-            ExpressionDefinition expressionDefinition = exp.getExpression();
-            if (expressionDefinition != null) {
-                // resolve properties before we create the processor
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
-            }
-        }
+//        // also resolve properties and constant fields on embedded expressions
+//        ProcessorDefinition<?> me = definition;
+//        if (me instanceof ExpressionNode) {
+//            ExpressionNode exp = (ExpressionNode)me;
+//            ExpressionDefinition expressionDefinition = exp.getExpression();
+//            if (expressionDefinition != null) {
+//                // resolve properties before we create the processor
+//                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
+//            }
+//        }
 
         // at first use custom factory
         if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
