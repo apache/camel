@@ -8,7 +8,7 @@ Building it yourself.
 Then come back here and you might want to read the following
 documentation before continuing:
 
-* Longer https://camel.apache.org/manual/latest/book-getting-started.html[Getting Started Guide]
+* Longer xref:book-getting-started.adoc[Getting Started Guide]
 * Find out about xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
   and how to implement them with Camel
 * Review the https://camel.apache.org/manual/latest/architecture.html[Architecture guide] to see how to build Routes using the xref:java-dsl.adoc[Java DSL]
