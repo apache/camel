@@ -71,6 +71,13 @@
             <version>${smallrye-config-version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- smallrye health uses cdi api -->
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${cdi-api-2.0-version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- JSON support for smallrye-health -->
         <dependency>
