@@ -474,7 +474,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 DynamoDB (camel-aws2-ddb)
-     * The aws-ddb component is used for storing and retrieving data from
+     * The aws2-ddb component is used for storing and retrieving data from
      * Amazon's DynamoDB service.
      * 
      * Category: cloud,database,nosql
@@ -486,7 +486,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 DynamoDB Streams (camel-aws2-ddb)
-     * The aws-ddbstream component is used for working with Amazon DynamoDB
+     * The aws2-ddbstream component is used for working with Amazon DynamoDB
      * Streams.
      * 
      * Category: cloud,messaging,streams

@@ -5,7 +5,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ddbstream:tableName",
     "title": "AWS 2 DynamoDB Streams",
-    "description": "The aws-ddbstream component is used for working with Amazon DynamoDB Streams.",
+    "description": "The aws2-ddbstream component is used for working with Amazon DynamoDB Streams.",
     "label": "cloud,messaging,streams",
     "deprecated": false,
     "async": false,
