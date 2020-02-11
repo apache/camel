@@ -23,7 +23,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -33,40 +32,41 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
-    public SplitReifier(ProcessorDefinition<?> definition) {
-        super((SplitDefinition)definition);
+    public SplitReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (SplitDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-        definition.setAggregationStrategy(createAggregationStrategy(routeContext));
+    public Processor createProcessor() throws Exception {
+        Processor childProcessor = this.createChildProcessor(true);
+        definition.setAggregationStrategy(createAggregationStrategy());
 
-        boolean isParallelProcessing = definition.getParallelProcessing() != null && definition.getParallelProcessing();
-        boolean isStreaming = definition.getStreaming() != null && definition.getStreaming();
-        boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork();
-        boolean isParallelAggregate = definition.getParallelAggregate() != null && definition.getParallelAggregate();
-        boolean isStopOnAggregateException = definition.getStopOnAggregateException() != null && definition.getStopOnAggregateException();
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, isParallelProcessing);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", definition, isParallelProcessing);
+        boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
+        boolean isStreaming = parseBoolean(definition.getStreaming(), false);
+        boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
+        boolean isParallelAggregate = parseBoolean(definition.getParallelAggregate(), false);
+        boolean isStopOnAggregateException = parseBoolean(definition.getStopOnAggregateException(), false);
+        boolean isStopOnException = parseBoolean(definition.getStopOnException(), false);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, isParallelProcessing);
+        ExecutorService threadPool = getConfiguredExecutorService("Split", definition, isParallelProcessing);
 
-        long timeout = definition.getTimeout() != null ? definition.getTimeout() : 0;
+        long timeout = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : 0;
         if (timeout > 0 && !isParallelProcessing) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), definition.getOnPrepareRef(), Processor.class));
+            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, parseString(definition.getOnPrepareRef()), Processor.class));
         }
 
-        Expression exp = definition.getExpression().createExpression(routeContext);
+        Expression exp = createExpression(definition.getExpression());
 
-        Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
-                                       shutdownThreadPool, isStreaming, definition.isStopOnException(), timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
+        Splitter answer = new Splitter(camelContext, exp, childProcessor, definition.getAggregationStrategy(), isParallelProcessing, threadPool,
+                                       shutdownThreadPool, isStreaming, isStopOnException, timeout, definition.getOnPrepare(), isShareUnitOfWork, isParallelAggregate,
                                        isStopOnAggregateException);
         return answer;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getStrategyRef() != null) {
             Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
@@ -75,8 +75,8 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(definition.getStrategyMethodAllowNull());
-                    adapter.setAllowNullOldExchange(definition.getStrategyMethodAllowNull());
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
@@ -85,10 +85,10 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
-        if (strategy != null && definition.getShareUnitOfWork() != null && definition.getShareUnitOfWork()) {
+        if (strategy != null && parseBoolean(definition.getShareUnitOfWork(), false)) {
             // wrap strategy in share unit of work
             strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }

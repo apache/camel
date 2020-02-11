@@ -27,30 +27,30 @@ import org.apache.camel.util.StringHelper;
 
 public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelBuilder> {
 
-    public DeadLetterChannelReifier(ErrorHandlerFactory definition) {
-        super(definition);
+    public DeadLetterChannelReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
+        super(routeContext, definition);
     }
 
     @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        validateDeadLetterUri(routeContext);
+    public Processor createErrorHandler(Processor processor) throws Exception {
+        validateDeadLetterUri();
 
-        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, definition.getLogger(), definition.getOnRedelivery(),
+        DeadLetterChannel answer = new DeadLetterChannel(camelContext, processor, definition.getLogger(), definition.getOnRedelivery(),
                                                          definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(), definition.getFailureProcessor(),
                                                          definition.getDeadLetterUri(), definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
-                                                         definition.isUseOriginalBody(), definition.getRetryWhilePolicy(routeContext.getCamelContext()),
-                                                         getExecutorService(routeContext.getCamelContext()), definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
+                                                         definition.isUseOriginalBody(), definition.getRetryWhilePolicy(camelContext),
+                                                         getExecutorService(camelContext), definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
     }
 
-    protected void validateDeadLetterUri(RouteContext routeContext) {
+    protected void validateDeadLetterUri() {
         Endpoint deadLetter = definition.getDeadLetter();
         String deadLetterUri = definition.getDeadLetterUri();
         if (deadLetter == null) {
             StringHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
-            deadLetter = routeContext.getCamelContext().getEndpoint(deadLetterUri);
+            deadLetter = camelContext.getEndpoint(deadLetterUri);
             if (deadLetter == null) {
                 throw new NoSuchEndpointException(deadLetterUri);
             }

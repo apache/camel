@@ -23,12 +23,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class WhenReifier extends ExpressionReifier<WhenDefinition> {
 
-    public WhenReifier(ProcessorDefinition<?> definition) {
-        super((WhenDefinition)definition);
+    public WhenReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (WhenDefinition) definition);
     }
 
     @Override
-    public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
-        return createFilterProcessor(routeContext);
+    public FilterProcessor createProcessor() throws Exception {
+        return createFilterProcessor();
     }
 }

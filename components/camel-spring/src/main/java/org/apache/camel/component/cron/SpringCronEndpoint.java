@@ -33,10 +33,10 @@ public class SpringCronEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public void configureProperties(Map<String, Object> options) {
+        configureScheduledPollConsumerProperties(options);
         PropertyBindingSupport.build().withPlaceholder(false).withNesting(false)
                 .withDeepNesting(false).withReference(false)
                 .bind(getCamelContext(), this, options);
-        configureScheduledPollConsumerProperties(options);
     }
 
     @Override

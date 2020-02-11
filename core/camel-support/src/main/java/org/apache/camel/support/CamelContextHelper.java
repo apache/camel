@@ -378,15 +378,39 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Parses the given text and converts it to an Integer and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the int value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Integer parseInt(CamelContext camelContext, String text) {
+        return parse(camelContext, Integer.class, text);
+    }
+
+    /**
      * Parses the given text and converts it to an Long and handling property placeholders as well
      *
      * @param camelContext the camel context
      * @param text  the text
-     * @return the long vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return the long value, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Long parseLong(CamelContext camelContext, String text) {
         return parse(camelContext, Long.class, text);
+    }
+
+    /**
+     * Parses the given text and converts it to a Float and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the float value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Float parseFloat(CamelContext camelContext, String text) {
+        return parse(camelContext, Float.class, text);
     }
 
     /**

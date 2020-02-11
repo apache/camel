@@ -32,7 +32,7 @@ public class HystrixProcessorFactory extends TypedProcessorFactory<CircuitBreake
 
     @Override
     public Processor doCreateProcessor(RouteContext routeContext, CircuitBreakerDefinition definition) throws Exception {
-        return new HystrixReifier(definition).createProcessor(routeContext);
+        return new HystrixReifier(routeContext, definition).createProcessor();
     }
 
 }

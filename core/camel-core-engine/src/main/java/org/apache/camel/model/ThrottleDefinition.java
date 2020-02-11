@@ -47,15 +47,17 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    @Metadata(defaultValue = "1000")
-    private Long timePeriodMillis;
+    @Metadata(defaultValue = "1000", javaType = "java.lang.Long")
+    private String timePeriodMillis;
     @XmlAttribute
-    private Boolean asyncDelayed;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String asyncDelayed;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean callerRunsWhenRejected;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String callerRunsWhenRejected;
     @XmlAttribute
-    private Boolean rejectExecution;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String rejectExecution;
 
     public ThrottleDefinition() {
     }
@@ -104,7 +106,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition timePeriodMillis(long timePeriodMillis) {
-        setTimePeriodMillis(timePeriodMillis);
+        setTimePeriodMillis(Long.toString(timePeriodMillis));
         return this;
     }
 
@@ -130,7 +132,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
-        setCallerRunsWhenRejected(callerRunsWhenRejected);
+        setCallerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
         return this;
     }
 
@@ -141,7 +143,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition asyncDelayed() {
-        setAsyncDelayed(true);
+        setAsyncDelayed(Boolean.toString(true));
         return this;
     }
 
@@ -156,7 +158,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition rejectExecution(boolean rejectExecution) {
-        setRejectExecution(rejectExecution);
+        setRejectExecution(Boolean.toString(rejectExecution));
         return this;
     }
 
@@ -198,27 +200,27 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         super.setExpression(expression);
     }
 
-    public Long getTimePeriodMillis() {
+    public String getTimePeriodMillis() {
         return timePeriodMillis;
     }
 
-    public void setTimePeriodMillis(Long timePeriodMillis) {
+    public void setTimePeriodMillis(String timePeriodMillis) {
         this.timePeriodMillis = timePeriodMillis;
     }
 
-    public Boolean getAsyncDelayed() {
+    public String getAsyncDelayed() {
         return asyncDelayed;
     }
 
-    public void setAsyncDelayed(Boolean asyncDelayed) {
+    public void setAsyncDelayed(String asyncDelayed) {
         this.asyncDelayed = asyncDelayed;
     }
 
-    public Boolean getCallerRunsWhenRejected() {
+    public String getCallerRunsWhenRejected() {
         return callerRunsWhenRejected;
     }
 
-    public void setCallerRunsWhenRejected(Boolean callerRunsWhenRejected) {
+    public void setCallerRunsWhenRejected(String callerRunsWhenRejected) {
         this.callerRunsWhenRejected = callerRunsWhenRejected;
     }
 
@@ -242,11 +244,11 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Boolean getRejectExecution() {
+    public String getRejectExecution() {
         return rejectExecution;
     }
 
-    public void setRejectExecution(Boolean rejectExecution) {
+    public void setRejectExecution(String rejectExecution) {
         this.rejectExecution = rejectExecution;
     }
 

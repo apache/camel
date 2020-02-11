@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 
 public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityDataFormat> {
 
-    public XMLSecurityDataFormatReifier(DataFormatDefinition definition) {
-        super((XMLSecurityDataFormat)definition);
+    public XMLSecurityDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (XMLSecurityDataFormat)definition);
     }
 
     @Override

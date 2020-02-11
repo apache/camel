@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 
 public class ASN1DataFormatReifier extends DataFormatReifier<ASN1DataFormat> {
 
-    public ASN1DataFormatReifier(DataFormatDefinition definition) {
-        super((ASN1DataFormat)definition);
+    public ASN1DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (ASN1DataFormat)definition);
     }
 
     @Override

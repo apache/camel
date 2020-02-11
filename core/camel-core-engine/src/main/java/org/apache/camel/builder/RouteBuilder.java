@@ -580,7 +580,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // create and register transformers on transformer registry
         for (TransformerDefinition def : camelContext.getExtension(Model.class).getTransformers()) {
-            Transformer transformer = TransformerReifier.reifier(def).createTransformer(camelContext);
+            Transformer transformer = TransformerReifier.reifier(camelContext, def).createTransformer();
             camelContext.getTransformerRegistry().put(createTransformerKey(def), transformer);
         }
     }
@@ -600,7 +600,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // create and register validators on validator registry
         for (ValidatorDefinition def : camelContext.getExtension(Model.class).getValidators()) {
-            Validator validator = ValidatorReifier.reifier(def).createValidator(camelContext);
+            Validator validator = ValidatorReifier.reifier(camelContext, def).createValidator();
             camelContext.getValidatorRegistry().put(createValidatorKey(def), validator);
         }
     }

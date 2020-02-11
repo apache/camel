@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
@@ -39,28 +38,28 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
-    public AggregateReifier(ProcessorDefinition<?> definition) {
-        super(AggregateDefinition.class.cast(definition));
+    public AggregateReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, AggregateDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return createAggregator(routeContext);
+    public Processor createProcessor() throws Exception {
+        return createAggregator();
     }
 
-    protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
+    protected AggregateProcessor createAggregator() throws Exception {
+        Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the aggregate route in a unit of work processor
-        CamelInternalProcessor internal = new CamelInternalProcessor(routeContext.getCamelContext(), childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, routeContext.getCamelContext()));
+        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
 
-        Expression correlation = definition.getExpression().createExpression(routeContext);
+        Expression correlation = createExpression(definition.getExpression());
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        boolean parallel = parseBoolean(routeContext, definition.getParallelProcessing());
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, parallel);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", definition, parallel);
+        boolean parallel = parseBoolean(definition.getParallelProcessing(), false);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
+        ExecutorService threadPool = getConfiguredExecutorService("Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator
             // we do not run in parallel mode, but use a synchronous executor,
@@ -69,7 +68,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             shutdownThreadPool = true;
         }
 
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), internal, correlation, strategy, threadPool, shutdownThreadPool);
+        AggregateProcessor answer = new AggregateProcessor(camelContext, internal, correlation, strategy, threadPool, shutdownThreadPool);
 
         AggregationRepository repository = createAggregationRepository(routeContext);
         if (repository != null) {
@@ -90,7 +89,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool
                 // profile id
-                timeoutThreadPool = routeContext.getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
+                timeoutThreadPool = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AggregateProcessor.AGGREGATE_TIMEOUT_CHECKER,
                                                                                                                       definition.getTimeoutCheckerExecutorServiceRef());
                 if (timeoutThreadPool == null) {
                     throw new IllegalArgumentException("ExecutorServiceRef " + definition.getTimeoutCheckerExecutorServiceRef()
@@ -102,18 +101,19 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         answer.setTimeoutCheckerExecutorService(timeoutThreadPool);
         answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
-        if (parseBoolean(routeContext, definition.getCompletionFromBatchConsumer())
-                && parseBoolean(routeContext, definition.getDiscardOnAggregationFailure())) {
+        if (parseBoolean(definition.getCompletionFromBatchConsumer(), false)
+                && parseBoolean(definition.getDiscardOnAggregationFailure(), false)) {
             throw new IllegalArgumentException("Cannot use both completionFromBatchConsumer and discardOnAggregationFailure on: " + definition);
         }
 
         // set other options
         answer.setParallelProcessing(parallel);
-        if (definition.getOptimisticLocking() != null) {
-            answer.setOptimisticLocking(parseBoolean(routeContext, definition.getOptimisticLocking()));
+        Boolean optimisticLocking = parseBoolean(definition.getOptimisticLocking());
+        if (optimisticLocking != null) {
+            answer.setOptimisticLocking(optimisticLocking);
         }
         if (definition.getCompletionPredicate() != null) {
-            Predicate predicate = definition.getCompletionPredicate().createPredicate(routeContext);
+            Predicate predicate = createPredicate(definition.getCompletionPredicate());
             answer.setCompletionPredicate(predicate);
         } else if (strategy instanceof Predicate) {
             // if aggregation strategy implements predicate and was not
@@ -122,52 +122,64 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             answer.setCompletionPredicate((Predicate)strategy);
         }
         if (definition.getCompletionTimeoutExpression() != null) {
-            Expression expression = definition.getCompletionTimeoutExpression().createExpression(routeContext);
+            Expression expression = createExpression(definition.getCompletionTimeoutExpression());
             answer.setCompletionTimeoutExpression(expression);
         }
-        if (definition.getCompletionTimeout() != null) {
-            answer.setCompletionTimeout(parseLong(routeContext, definition.getCompletionTimeout()));
+        Long completionTimeout = parseLong(definition.getCompletionTimeout());
+        if (completionTimeout != null) {
+            answer.setCompletionTimeout(completionTimeout);
         }
-        if (definition.getCompletionInterval() != null) {
-            answer.setCompletionInterval(parseLong(routeContext, definition.getCompletionInterval()));
+        Long completionInterval = parseLong(definition.getCompletionInterval());
+        if (completionInterval != null) {
+            answer.setCompletionInterval(completionInterval);
         }
         if (definition.getCompletionSizeExpression() != null) {
-            Expression expression = definition.getCompletionSizeExpression().createExpression(routeContext);
+            Expression expression = createExpression(definition.getCompletionSizeExpression());
             answer.setCompletionSizeExpression(expression);
         }
-        if (definition.getCompletionSize() != null) {
-            answer.setCompletionSize(parseInt(routeContext, definition.getCompletionSize()));
+        Integer completionSize = parseInt(definition.getCompletionSize());
+        if (completionSize != null) {
+            answer.setCompletionSize(completionSize);
         }
-        if (definition.getCompletionFromBatchConsumer() != null) {
-            answer.setCompletionFromBatchConsumer(parseBoolean(routeContext, definition.getCompletionFromBatchConsumer()));
+        Boolean completionFromBatchConsumer = parseBoolean(definition.getCompletionFromBatchConsumer());
+        if (completionFromBatchConsumer != null) {
+            answer.setCompletionFromBatchConsumer(completionFromBatchConsumer);
         }
-        if (definition.getCompletionOnNewCorrelationGroup() != null) {
-            answer.setCompletionOnNewCorrelationGroup(parseBoolean(routeContext, definition.getCompletionOnNewCorrelationGroup()));
+        Boolean completionOnNewCorrelationGroup = parseBoolean(definition.getCompletionOnNewCorrelationGroup());
+        if (completionOnNewCorrelationGroup != null) {
+            answer.setCompletionOnNewCorrelationGroup(completionOnNewCorrelationGroup);
         }
-        if (definition.getEagerCheckCompletion() != null) {
-            answer.setEagerCheckCompletion(parseBoolean(routeContext, definition.getEagerCheckCompletion()));
+        Boolean eagerCheckCompletion = parseBoolean(definition.getEagerCheckCompletion());
+        if (eagerCheckCompletion != null) {
+            answer.setEagerCheckCompletion(eagerCheckCompletion);
         }
-        if (definition.getIgnoreInvalidCorrelationKeys() != null) {
-            answer.setIgnoreInvalidCorrelationKeys(parseBoolean(routeContext, definition.getIgnoreInvalidCorrelationKeys()));
+        Boolean ignoreInvalidCorrelationKeys = parseBoolean(definition.getIgnoreInvalidCorrelationKeys());
+        if (ignoreInvalidCorrelationKeys != null) {
+            answer.setIgnoreInvalidCorrelationKeys(ignoreInvalidCorrelationKeys);
         }
-        if (definition.getCloseCorrelationKeyOnCompletion() != null) {
-            answer.setCloseCorrelationKeyOnCompletion(parseInt(routeContext, definition.getCloseCorrelationKeyOnCompletion()));
+        Integer closeCorrelationKeyOnCompletion = parseInt(definition.getCloseCorrelationKeyOnCompletion());
+        if (closeCorrelationKeyOnCompletion != null) {
+            answer.setCloseCorrelationKeyOnCompletion(closeCorrelationKeyOnCompletion);
         }
-        if (definition.getDiscardOnCompletionTimeout() != null) {
-            answer.setDiscardOnCompletionTimeout(parseBoolean(routeContext, definition.getDiscardOnCompletionTimeout()));
+        Boolean discardOnCompletionTimeout = parseBoolean(definition.getDiscardOnCompletionTimeout());
+        if (discardOnCompletionTimeout != null) {
+            answer.setDiscardOnCompletionTimeout(discardOnCompletionTimeout);
         }
-        if (definition.getDiscardOnAggregationFailure() != null) {
-            answer.setDiscardOnAggregationFailure(parseBoolean(routeContext, definition.getDiscardOnAggregationFailure()));
+        Boolean discardOnAggregationFailure = parseBoolean(definition.getDiscardOnAggregationFailure());
+        if (discardOnAggregationFailure != null) {
+            answer.setDiscardOnAggregationFailure(discardOnAggregationFailure);
         }
-        if (definition.getForceCompletionOnStop() != null) {
-            answer.setForceCompletionOnStop(parseBoolean(routeContext, definition.getForceCompletionOnStop()));
+        Boolean forceCompletionOnStop = parseBoolean(definition.getForceCompletionOnStop());
+        if (forceCompletionOnStop != null) {
+            answer.setForceCompletionOnStop(forceCompletionOnStop);
         }
-        if (definition.getCompleteAllOnStop() != null) {
-            answer.setCompleteAllOnStop(parseBoolean(routeContext, definition.getCompleteAllOnStop()));
+        Boolean completeAllOnStop = parseBoolean(definition.getCompleteAllOnStop());
+        if (completeAllOnStop != null) {
+            answer.setCompleteAllOnStop(completeAllOnStop);
         }
         if (definition.getOptimisticLockRetryPolicy() == null) {
             if (definition.getOptimisticLockRetryPolicyDefinition() != null) {
-                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(routeContext, definition.getOptimisticLockRetryPolicyDefinition()));
+                answer.setOptimisticLockRetryPolicy(createOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicyDefinition()));
             }
         } else {
             answer.setOptimisticLockRetryPolicy(definition.getOptimisticLockRetryPolicy());
@@ -175,28 +187,29 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (definition.getAggregateController() != null) {
             answer.setAggregateController(definition.getAggregateController());
         }
-        if (definition.getCompletionTimeoutCheckerInterval() != null) {
-            answer.setCompletionTimeoutCheckerInterval(parseLong(routeContext, definition.getCompletionTimeoutCheckerInterval()));
+        Long completionTimeoutCheckerInterval = parseLong(definition.getCompletionTimeoutCheckerInterval());
+        if (completionTimeoutCheckerInterval != null) {
+            answer.setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
         }
         return answer;
     }
 
-    public static OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(RouteContext routeContext, OptimisticLockRetryPolicyDefinition definition) {
+    public OptimisticLockRetryPolicy createOptimisticLockRetryPolicy(OptimisticLockRetryPolicyDefinition definition) {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         if (definition.getMaximumRetries() != null) {
-            policy.setMaximumRetries(parseInt(routeContext, definition.getMaximumRetries()));
+            policy.setMaximumRetries(parseInt(definition.getMaximumRetries()));
         }
         if (definition.getRetryDelay() != null) {
-            policy.setRetryDelay(parseLong(routeContext, definition.getRetryDelay()));
+            policy.setRetryDelay(parseLong(definition.getRetryDelay()));
         }
         if (definition.getMaximumRetryDelay() != null) {
-            policy.setMaximumRetryDelay(parseLong(routeContext, definition.getMaximumRetryDelay()));
+            policy.setMaximumRetryDelay(parseLong(definition.getMaximumRetryDelay()));
         }
         if (definition.getExponentialBackOff() != null) {
-            policy.setExponentialBackOff(parseBoolean(routeContext, definition.getExponentialBackOff()));
+            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff(), false));
         }
         if (definition.getRandomBackOff() != null) {
-            policy.setRandomBackOff(parseBoolean(routeContext, definition.getRandomBackOff()));
+            policy.setRandomBackOff(parseBoolean(definition.getRandomBackOff(), false));
         }
         return policy;
     }
@@ -210,8 +223,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(Boolean.parseBoolean(definition.getStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(Boolean.parseBoolean(definition.getStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
@@ -224,7 +237,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         return strategy;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.stream.Stream;
+
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemovePropertiesDefinition;
@@ -25,19 +27,23 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RemovePropertiesReifier extends ProcessorReifier<RemovePropertiesDefinition> {
 
-    public RemovePropertiesReifier(ProcessorDefinition<?> definition) {
-        super((RemovePropertiesDefinition)definition);
+    public RemovePropertiesReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (RemovePropertiesDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPattern(), "patterns", this);
         if (definition.getExcludePatterns() != null) {
-            return new RemovePropertiesProcessor(definition.getPattern(), definition.getExcludePatterns());
+            return new RemovePropertiesProcessor(parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
         } else if (definition.getExcludePattern() != null) {
-            return new RemovePropertiesProcessor(definition.getPattern(), new String[] {definition.getExcludePattern()});
+            return new RemovePropertiesProcessor(parseString(definition.getPattern()), parseStrings(new String[] {definition.getExcludePattern()}));
         } else {
-            return new RemovePropertiesProcessor(definition.getPattern(), null);
+            return new RemovePropertiesProcessor(parseString(definition.getPattern()), null);
         }
+    }
+
+    private String[] parseStrings(String[] array) {
+        return Stream.of(array).map(this::parseString).toArray(String[]::new);
     }
 }

@@ -21,58 +21,48 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.ThrottleDefinition;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.RouteContext;
 
 public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
-    public ThrottleReifier(ProcessorDefinition<?> definition) {
-        super((ThrottleDefinition)definition);
+    public ThrottleReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ThrottleDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        boolean async = definition.getAsyncDelayed() != null && definition.getAsyncDelayed();
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, true);
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", definition, true);
+    public Processor createProcessor() throws Exception {
+        boolean async = parseBoolean(definition.getAsyncDelayed(), false);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, true);
+        ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Throttle", definition, true);
 
         // should be default 1000 millis
-        long period = definition.getTimePeriodMillis() != null ? definition.getTimePeriodMillis() : 1000L;
+        long period = definition.getTimePeriodMillis() != null ? parseLong(definition.getTimePeriodMillis()) : 1000L;
 
         // max requests per period is mandatory
-        Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression(routeContext);
+        Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression();
         if (maxRequestsExpression == null) {
             throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
         }
 
         Expression correlation = null;
         if (definition.getCorrelationExpression() != null) {
-            correlation = definition.getCorrelationExpression().createExpression(routeContext);
+            correlation = createExpression(definition.getCorrelationExpression());
         }
 
-        boolean reject = definition.getRejectExecution() != null && definition.getRejectExecution();
-        Throttler answer = new Throttler(routeContext.getCamelContext(), maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
+        boolean reject = parseBoolean(definition.getRejectExecution(), false);
+        Throttler answer = new Throttler(camelContext, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
-        if (definition.getCallerRunsWhenRejected() == null) {
-            // should be true by default
-            answer.setCallerRunsWhenRejected(true);
-        } else {
-            answer.setCallerRunsWhenRejected(definition.getCallerRunsWhenRejected());
-        }
+        // should be true by default
+        answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
 
         return answer;
     }
 
-    private Expression createMaxRequestsPerPeriodExpression(RouteContext routeContext) {
-        ExpressionDefinition expr = definition.getExpression();
-        if (expr != null) {
-            return expr.createExpression(routeContext);
-        }
-        return null;
+    private Expression createMaxRequestsPerPeriodExpression() {
+        return definition.getExpression() != null ? createExpression(definition.getExpression()) : null;
     }
 
 }

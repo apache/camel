@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 
 public class IcalDataFormatReifier extends DataFormatReifier<IcalDataFormat> {
 
-    public IcalDataFormatReifier(DataFormatDefinition definition) {
-        super((IcalDataFormat)definition);
+    public IcalDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (IcalDataFormat)definition);
     }
 
     @Override

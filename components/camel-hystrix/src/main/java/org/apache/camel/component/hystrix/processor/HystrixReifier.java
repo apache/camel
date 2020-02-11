@@ -43,20 +43,20 @@ import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public HystrixReifier(CircuitBreakerDefinition definition) {
-        super(definition);
+    public HystrixReifier(RouteContext routeContext, CircuitBreakerDefinition definition) {
+        super(routeContext, definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // create the regular and fallback processors
-        Processor processor = createChildProcessor(routeContext, true);
+        Processor processor = createChildProcessor(true);
         Processor fallback = null;
         if (definition.getOnFallback() != null) {
-            fallback = ProcessorReifier.reifier(definition.getOnFallback()).createProcessor(routeContext);
+            fallback = ProcessorReifier.reifier(routeContext, definition.getOnFallback()).createProcessor();
         }
 
-        final HystrixConfigurationDefinition config = buildHystrixConfiguration(routeContext.getCamelContext());
+        final HystrixConfigurationDefinition config = buildHystrixConfiguration();
         final String id = getId(definition, routeContext);
 
         // group and thread pool keys to use they can be configured on configRef and config, so look there first, and if none then use default
@@ -94,7 +94,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
         // create setter for fallback via network
         HystrixCommand.Setter fallbackSetter = null;
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(routeContext, definition.getOnFallback().getFallbackViaNetwork());
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             // use a different thread pool that is for fallback (should never use the same thread pool as the regular command)
             HystrixThreadPoolKey tpFallbackKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey + "-fallback");
@@ -211,7 +211,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
     // Helpers
     // *******************************
 
-    HystrixConfigurationDefinition buildHystrixConfiguration(CamelContext camelContext) throws Exception {
+    HystrixConfigurationDefinition buildHystrixConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
 
         // Extract properties from default configuration, the one configured on
@@ -224,7 +224,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
-            final String ref = definition.getConfigurationRef();
+            final String ref = parseString(definition.getConfigurationRef());
 
             loadProperties(camelContext, properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),

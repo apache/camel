@@ -39,6 +39,7 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     public void testCustomSchemaFactory() throws Exception {
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);
+        v.init();
         v.createEndpoint("validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
     }
 

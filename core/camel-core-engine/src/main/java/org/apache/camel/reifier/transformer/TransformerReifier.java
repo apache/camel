@@ -18,20 +18,21 @@ package org.apache.camel.reifier.transformer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.Transformer;
 
-public abstract class TransformerReifier<T> {
+public abstract class TransformerReifier<T> extends AbstractReifier {
 
-    private static final Map<Class<?>, Function<TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> TRANSFORMERS;
+    private static final Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> TRANSFORMERS;
     static {
-        Map<Class<?>, Function<TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> map = new HashMap<>();
         map.put(CustomTransformerDefinition.class, CustomTransformeReifier::new);
         map.put(DataFormatTransformerDefinition.class, DataFormatTransformeReifier::new);
         map.put(EndpointTransformerDefinition.class, EndpointTransformeReifier::new);
@@ -40,22 +41,23 @@ public abstract class TransformerReifier<T> {
 
     protected final T definition;
 
-    public TransformerReifier(T definition) {
+    public TransformerReifier(CamelContext camelContext, T definition) {
+        super(camelContext);
         this.definition = definition;
     }
 
-    public static TransformerReifier<? extends TransformerDefinition> reifier(TransformerDefinition definition) {
-        Function<TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> reifier = TRANSFORMERS.get(definition.getClass());
+    public static TransformerReifier<? extends TransformerDefinition> reifier(CamelContext camelContext, TransformerDefinition definition) {
+        BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> reifier = TRANSFORMERS.get(definition.getClass());
         if (reifier != null) {
-            return reifier.apply(definition);
+            return reifier.apply(camelContext, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
     }
 
-    public Transformer createTransformer(CamelContext context) {
-        return doCreateTransformer(context);
+    public Transformer createTransformer() {
+        return doCreateTransformer();
     }
 
-    protected abstract Transformer doCreateTransformer(CamelContext context);
+    protected abstract Transformer doCreateTransformer();
 
 }

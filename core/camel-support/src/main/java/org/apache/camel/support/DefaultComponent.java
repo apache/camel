@@ -32,14 +32,11 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.extension.ComponentExtension;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -64,8 +61,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
 
-    private volatile GeneratedPropertyConfigurer componentPropertyConfigurer;
-    private volatile GeneratedPropertyConfigurer endpointPropertyConfigurer;
+    private volatile PropertyConfigurer componentPropertyConfigurer;
+    private volatile PropertyConfigurer endpointPropertyConfigurer;
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
     private CamelContext camelContext;
 
@@ -442,7 +439,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * in the {@link #createEndpoint(String, String, Map)} method's implementation.
      *
      * This method will call the {@link Endpoint#configureProperties(Map)} method which
-     * should delegate the the endpoint's {@link GeneratedPropertyConfigurer} instance.
+     * should delegate the the endpoint's {@link PropertyConfigurer} instance.
      * In some rare cases, you need to override this method to explicitely set parameters
      * in case a simple generated configurer can not be used.
      *

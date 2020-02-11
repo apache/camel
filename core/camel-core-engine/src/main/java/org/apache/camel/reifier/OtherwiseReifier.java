@@ -23,12 +23,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class OtherwiseReifier extends ProcessorReifier<OtherwiseDefinition> {
 
-    public OtherwiseReifier(ProcessorDefinition<?> definition) {
-        super(OtherwiseDefinition.class.cast(definition));
+    public OtherwiseReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, OtherwiseDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, false);
+    public Processor createProcessor() throws Exception {
+        return this.createChildProcessor(false);
     }
 }

@@ -37,7 +37,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     @Override
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         ErrorHandlerFactory handler = lookupErrorHandler(routeContext);
-        return ErrorHandlerReifier.reifier(handler).createErrorHandler(routeContext, processor);
+        return ErrorHandlerReifier.reifier(routeContext, handler).createErrorHandler(processor);
     }
 
     @Override

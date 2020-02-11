@@ -16,14 +16,10 @@
  */
 package org.apache.camel.model;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
 
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
@@ -35,14 +31,11 @@ import org.apache.camel.spi.Metadata;
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public class LoadBalancerDefinition extends IdentifiedType implements OtherAttributesAware {
+public class LoadBalancerDefinition extends IdentifiedType {
     @XmlTransient
     private LoadBalancer loadBalancer;
     @XmlTransient
     private String loadBalancerTypeName;
-    // use xs:any to support optional property placeholders
-    @XmlAnyAttribute
-    private Map otherAttributes;
 
     public LoadBalancerDefinition() {
     }
@@ -79,16 +72,6 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
 
     public String getLoadBalancerTypeName() {
         return loadBalancerTypeName;
-    }
-
-    @Override
-    public Map getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    @Override
-    public void setOtherAttributes(Map otherAttributes) {
-        this.otherAttributes = otherAttributes;
     }
 
     @Override

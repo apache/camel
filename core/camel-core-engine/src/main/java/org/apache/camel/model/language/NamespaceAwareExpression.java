@@ -59,22 +59,4 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
         this.namespaces = namespaces;
     }
 
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        configureNamespaceAware(expression);
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        configureNamespaceAware(predicate);
-        super.configurePredicate(camelContext, predicate);
-    }
-
-    protected void configureNamespaceAware(Object builder) {
-        if (namespaces != null && builder instanceof NamespaceAware) {
-            NamespaceAware namespaceAware = (NamespaceAware)builder;
-            namespaceAware.setNamespaces(namespaces);
-        }
-    }
 }

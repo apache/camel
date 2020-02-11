@@ -28,21 +28,21 @@ import org.apache.camel.spi.RouteContext;
 
 public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinition<?>> {
 
-    public DynamicRouterReifier(ProcessorDefinition<?> definition) {
-        super(DynamicRouterDefinition.class.cast(definition));
+    public DynamicRouterReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, DynamicRouterDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expression = definition.getExpression().createExpression(routeContext);
+    public Processor createProcessor() throws Exception {
+        Expression expression = createExpression(definition.getExpression());
         String delimiter = definition.getUriDelimiter() != null ? definition.getUriDelimiter() : DynamicRouterDefinition.DEFAULT_DELIMITER;
 
-        DynamicRouter dynamicRouter = new DynamicRouter(routeContext.getCamelContext(), expression, delimiter);
+        DynamicRouter dynamicRouter = new DynamicRouter(camelContext, expression, delimiter);
         if (definition.getIgnoreInvalidEndpoints() != null) {
-            dynamicRouter.setIgnoreInvalidEndpoints(Boolean.parseBoolean(definition.getIgnoreInvalidEndpoints()));
+            dynamicRouter.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }
         if (definition.getCacheSize() != null) {
-            dynamicRouter.setCacheSize(Integer.parseInt(definition.getCacheSize()));
+            dynamicRouter.setCacheSize(parseInt(definition.getCacheSize()));
         }
 
         // and wrap this in an error handler
@@ -50,7 +50,7 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
         // create error handler (create error handler directly to keep it light
         // weight,
         // instead of using ProcessorReifier.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor)ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, dynamicRouter.newRoutingSlipProcessorForErrorHandler());
+        AsyncProcessor errorHandler = (AsyncProcessor)ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());
         dynamicRouter.setErrorHandler(errorHandler);
 
         return dynamicRouter;

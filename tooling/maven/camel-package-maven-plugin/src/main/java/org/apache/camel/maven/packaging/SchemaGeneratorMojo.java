@@ -146,14 +146,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // we want them to be sorted
-        Set<String> propertyPlaceholderDefinitions = new TreeSet<>(String::compareToIgnoreCase);
         for (ClassInfo element : coreElements) {
-            processModelClass(element, propertyPlaceholderDefinitions);
-        }
-
-        if (!propertyPlaceholderDefinitions.isEmpty()) {
-            getLog().info(String.format("Generating placeholder definitions helper for %d definitions", propertyPlaceholderDefinitions.size()));
-            generatePropertyPlaceholderDefinitionsHelper(propertyPlaceholderDefinitions);
+            processModelClass(element, null);
         }
 
         // spring elements
@@ -234,71 +228,6 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 packageName.replace('.', '/') + "/" + fileName,
                 json);
 
-        // generate property placeholder provider java source code
-        if (propertyPlaceholderDefinitions != null) {
-            generatePropertyPlaceholderProviderSource(classElement, eipModel, eipOptions, propertyPlaceholderDefinitions);
-        }
-    }
-
-    protected void generatePropertyPlaceholderProviderSource(Class<?> classElement, EipModel eipModel, Set<EipOptionModel> options,
-                                                             Set<String> propertyPlaceholderDefinitions) {
-
-        // not ever model classes support property placeholders as this has been
-        // limited to mainly Camel routes
-        // so filter out unwanted models
-        boolean rest = classElement.getName().startsWith("org.apache.camel.model.rest.");
-        boolean processor = loadClass("org.apache.camel.model.ProcessorDefinition").isAssignableFrom(classElement);
-        boolean language = loadClass("org.apache.camel.model.language.ExpressionDefinition").isAssignableFrom(classElement);
-        boolean dataformat = loadClass("org.apache.camel.model.DataFormatDefinition").isAssignableFrom(classElement);
-
-        if (!rest && !processor && !language && !dataformat) {
-            return;
-        }
-
-        Class<?> parent = loadClass("org.apache.camel.spi.PropertyPlaceholderConfigurer");
-        String fqnDef = classElement.getName();
-
-        generatePropertyPlaceholderProviderSource(parent, fqnDef, options);
-        propertyPlaceholderDefinitions.add(fqnDef);
-
-        // we also need to generate from when we generate route as from can also
-        // configure property placeholders
-        if (fqnDef.equals("org.apache.camel.model.RouteDefinition")) {
-            fqnDef = "org.apache.camel.model.FromDefinition";
-
-            options.clear();
-            options.add(createOption("id", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
-            options.add(createOption("uri", null, null, "java.lang.String", false, null, null, false, null, false, null, false, null, false));
-
-            generatePropertyPlaceholderProviderSource(parent, fqnDef, options);
-            propertyPlaceholderDefinitions.add(fqnDef);
-        }
-    }
-
-    protected void generatePropertyPlaceholderProviderSource(Class<?> parent, String fqnDef, Set<EipOptionModel> options) {
-
-        String def = fqnDef.substring(fqnDef.lastIndexOf('.') + 1);
-        String cn = def + "PropertyPlaceholderProvider";
-        String fqn = "org.apache.camel.model.placeholder." + cn;
-
-        try (Writer w = new StringWriter()) {
-            PropertyPlaceholderGenerator.generatePropertyPlaceholderProviderSource(def, fqnDef, cn, options, w);
-            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to generate source code file: " + fqn, e);
-        }
-    }
-
-    private void generatePropertyPlaceholderDefinitionsHelper(Set<String> propertyPlaceholderDefinitions) {
-
-        String fqn = "org.apache.camel.model.placeholder.DefinitionPropertiesPlaceholderProviderHelper";
-
-        try (Writer w = new StringWriter()) {
-            PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(propertyPlaceholderDefinitions, w);
-            updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to generate source code file: " + fqn, e);
-        }
     }
 
     private Class<?> loadClass(String name) {

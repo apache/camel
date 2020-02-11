@@ -28,18 +28,16 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class BeanReifier extends ProcessorReifier<BeanDefinition> {
 
-    public BeanReifier(ProcessorDefinition<?> definition) {
-        super(BeanDefinition.class.cast(definition));
+    public BeanReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, BeanDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        CamelContext camelContext = routeContext.getCamelContext();
-
+    public Processor createProcessor() throws Exception {
         Object bean = definition.getBean();
-        String ref = definition.getRef();
-        String method = definition.getMethod();
-        String beanType = definition.getBeanType();
+        String ref = parseString(definition.getRef());
+        String method = parseString(definition.getMethod());
+        String beanType = parseString(definition.getBeanType());
         Class<?> beanClass = definition.getBeanClass();
 
         BeanProcessorFactory fac = camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory();
@@ -49,7 +47,7 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         // use singleton as default scope
         BeanScope scope = BeanScope.Singleton;
         if (definition.getScope() != null) {
-            scope = CamelContextHelper.parse(routeContext.getCamelContext(), BeanScope.class, definition.getScope());
+            scope = parse(BeanScope.class, definition.getScope());
         }
         return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
     }

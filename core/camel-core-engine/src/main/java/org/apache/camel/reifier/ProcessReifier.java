@@ -28,12 +28,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
 
-    public ProcessReifier(ProcessorDefinition<?> definition) {
-        super((ProcessDefinition)definition);
+    public ProcessReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ProcessDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
+    public Processor createProcessor() {
         Processor answer = definition.getProcessor();
         if (answer == null) {
             ObjectHelper.notNull(definition.getRef(), "ref", definition);
