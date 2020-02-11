@@ -7,7 +7,7 @@
 
 == Overview
 
-* https://github.com/apache/camel/blob/master/README.md[Introduction]
+* https://camel.apache.org/manual/latest/faq/what-is-camel.html[Introduction]
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
 * xref:faq.adoc[FAQ]
