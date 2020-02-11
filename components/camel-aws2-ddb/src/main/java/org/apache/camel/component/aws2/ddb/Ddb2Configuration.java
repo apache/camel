@@ -197,10 +197,10 @@ public class Ddb2Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the DDB client. When using this
-     * parameter, the configuration will expect the capitalized name of the
-     * region (for example AP_EAST_1) You'll need to use the name
-     * Regions.EU_WEST_1.name()
+     * The region in which DynamoDB client needs to work. When using this
+     * parameter, the configuration will expect the lowercase name of the
+     * region (for example ap-east-1) You'll need to use the name
+     * Region.EU_WEST_1.id()
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
