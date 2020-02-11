@@ -20,22 +20,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 public class DeleteTableCommand extends AbstractDdbCommand {
 
-    public DeleteTableCommand(DynamoDbClient ddbClient, Ddb2Configuration configuration,
-                              Exchange exchange) {
+    public DeleteTableCommand(DynamoDbClient ddbClient, Ddb2Configuration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }
 
     @Override
     public void execute() {
-        TableDescription tableDescription = ddbClient
-                .deleteTable(DeleteTableRequest.builder().tableName(determineTableName()).build()).tableDescription();
+        TableDescription tableDescription = ddbClient.deleteTable(DeleteTableRequest.builder().tableName(determineTableName()).build()).tableDescription();
 
         Map tmp = new HashMap<>();
         tmp.put(Ddb2Constants.PROVISIONED_THROUGHPUT, tableDescription.provisionedThroughput());

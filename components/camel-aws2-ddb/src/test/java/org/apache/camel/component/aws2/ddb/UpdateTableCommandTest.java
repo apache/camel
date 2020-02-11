@@ -17,8 +17,6 @@
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.UpdateTableCommand;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
@@ -32,7 +30,7 @@ public class UpdateTableCommandTest {
     private AmazonDDBClientMock ddbClient;
     private Ddb2Configuration configuration;
     private Exchange exchange;
-    
+
     @Before
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
@@ -41,14 +39,14 @@ public class UpdateTableCommandTest {
         configuration.setReadCapacity(20L);
         configuration.setWriteCapacity(30L);
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new UpdateTableCommand(ddbClient, configuration, exchange);
     }
 
     @Test
     public void testExecute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", ddbClient.updateTableRequest.tableName());
         assertEquals(Long.valueOf(20), ddbClient.updateTableRequest.provisionedThroughput().readCapacityUnits());
         assertEquals(Long.valueOf(30), ddbClient.updateTableRequest.provisionedThroughput().writeCapacityUnits());

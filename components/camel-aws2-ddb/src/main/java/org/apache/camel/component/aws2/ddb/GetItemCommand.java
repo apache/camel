@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
@@ -30,11 +29,8 @@ public class GetItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        GetItemResponse result = ddbClient.getItem(GetItemRequest.builder()
-                .key(determineKey())
-                .tableName(determineTableName())
-                .attributesToGet(determineAttributeNames())
-                .consistentRead(determineConsistentRead()).build());
+        GetItemResponse result = ddbClient.getItem(GetItemRequest.builder().key(determineKey()).tableName(determineTableName()).attributesToGet(determineAttributeNames())
+            .consistentRead(determineConsistentRead()).build());
         addAttributesToResult(result.item());
     }
 }

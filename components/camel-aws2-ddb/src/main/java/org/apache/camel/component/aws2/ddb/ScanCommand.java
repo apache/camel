@@ -19,12 +19,11 @@ package org.apache.camel.component.aws2.ddb;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
-
-import org.apache.camel.Exchange;
 
 public class ScanCommand extends AbstractDdbCommand {
 
@@ -34,11 +33,8 @@ public class ScanCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        ScanResponse result = ddbClient.scan(ScanRequest.builder()
-                .tableName(determineTableName())
-                .limit(determineLimit())
-                .exclusiveStartKey(determineExclusiveStartKey())
-                .scanFilter(determineScanFilter()).build());
+        ScanResponse result = ddbClient.scan(ScanRequest.builder().tableName(determineTableName()).limit(determineLimit()).exclusiveStartKey(determineExclusiveStartKey())
+            .scanFilter(determineScanFilter()).build());
 
         Map tmp = new HashMap<>();
         tmp.put(Ddb2Constants.ITEMS, result.items());

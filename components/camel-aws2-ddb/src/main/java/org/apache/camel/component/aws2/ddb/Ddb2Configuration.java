@@ -21,14 +21,14 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @UriParams
 public class Ddb2Configuration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String tableName;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -117,7 +117,8 @@ public class Ddb2Configuration implements Cloneable {
     }
 
     /**
-     * Determines whether or not strong consistency should be enforced when data is read.
+     * Determines whether or not strong consistency should be enforced when data
+     * is read.
      */
     public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
@@ -128,7 +129,8 @@ public class Ddb2Configuration implements Cloneable {
     }
 
     /**
-     * The provisioned throughput to reserve for reading resources from your table
+     * The provisioned throughput to reserve for reading resources from your
+     * table
      */
     public void setReadCapacity(Long readCapacity) {
         this.readCapacity = readCapacity;
@@ -139,7 +141,8 @@ public class Ddb2Configuration implements Cloneable {
     }
 
     /**
-     * The provisioned throughput to reserved for writing resources to your table
+     * The provisioned throughput to reserved for writing resources to your
+     * table
      */
     public void setWriteCapacity(Long writeCapacity) {
         this.writeCapacity = writeCapacity;
@@ -166,7 +169,7 @@ public class Ddb2Configuration implements Cloneable {
     public void setKeyAttributeType(String keyAttributeType) {
         this.keyAttributeType = keyAttributeType;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -177,7 +180,7 @@ public class Ddb2Configuration implements Cloneable {
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -194,8 +197,10 @@ public class Ddb2Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the DDB client. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * To define a proxy port when instantiating the DDB client. When using this
+     * parameter, the configuration will expect the capitalized name of the
+     * region (for example AP_EAST_1) You'll need to use the name
+     * Regions.EU_WEST_1.name()
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -211,7 +216,7 @@ public class Ddb2Configuration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     // *************************************************
     //
     // *************************************************

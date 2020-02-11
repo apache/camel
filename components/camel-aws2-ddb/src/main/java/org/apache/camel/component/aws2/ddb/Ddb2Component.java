@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @Component("aws2-ddb")
@@ -36,16 +35,16 @@ public class Ddb2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private Ddb2Configuration configuration;
-    
+
     public Ddb2Component() {
         this(null);
     }
 
     public Ddb2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new Ddb2ComponentVerifierExtension());
     }
 
@@ -69,7 +68,7 @@ public class Ddb2Component extends DefaultComponent {
 
         return endpoint;
     }
-    
+
     public Ddb2Configuration getConfiguration() {
         return configuration;
     }
@@ -84,7 +83,7 @@ public class Ddb2Component extends DefaultComponent {
     public String getAccessKey() {
         return accessKey;
     }
-    
+
     /**
      * Amazon AWS Access Key
      */
@@ -102,7 +101,7 @@ public class Ddb2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     /**
      * The region in which DDB client needs to work
      */
@@ -113,7 +112,7 @@ public class Ddb2Component extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(Ddb2Configuration configuration) {
         Set<DynamoDbClient> clients = getCamelContext().getRegistry().findByType(DynamoDbClient.class);
         if (clients.size() == 1) {

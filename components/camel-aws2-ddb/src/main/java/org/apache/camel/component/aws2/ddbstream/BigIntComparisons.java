@@ -39,6 +39,7 @@ interface BigIntComparisons {
                 return first.compareTo(second) <= 0;
             }
         }
-        // TODO Add EQ/GTEQ/GT as needed, but note that GTEQ == !LT and GT == !LTEQ and EQ == (!LT && !GT)
+        // TODO Add EQ/GTEQ/GT as needed, but note that GTEQ == !LT and GT ==
+        // !LTEQ and EQ == (!LT && !GT)
     }
 }

@@ -16,28 +16,25 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
-import org.apache.camel.component.aws2.ddb.Ddb2Component;
-import org.apache.camel.component.aws2.ddb.Ddb2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 public class DdbComponentConfigurationTest extends CamelTestSupport {
-    
+
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         Ddb2Endpoint endpoint = (Ddb2Endpoint)component.createEndpoint("aws2-ddb://myTable");
-        
+
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
@@ -45,26 +42,27 @@ public class DdbComponentConfigurationTest extends CamelTestSupport {
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
         Ddb2Endpoint endpoint = (Ddb2Endpoint)component.createEndpoint("aws2-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
-        Ddb2Endpoint endpoint = (Ddb2Endpoint)component.createEndpoint("aws2-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        Ddb2Endpoint endpoint = (Ddb2Endpoint)component
+            .createEndpoint("aws2-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
         assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
     }
-    
+
 }

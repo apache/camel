@@ -22,14 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.Ddb2Constants;
-import org.apache.camel.component.aws2.ddb.QueryCommand;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
@@ -65,27 +61,25 @@ public class QueryCommandTest {
         exchange.getIn().setHeader(Ddb2Constants.START_KEY, startKey);
         exchange.getIn().setHeader(Ddb2Constants.LIMIT, 10);
         exchange.getIn().setHeader(Ddb2Constants.SCAN_INDEX_FORWARD, true);
-        
+
         Map<String, Condition> keyConditions = new HashMap<>();
-        Condition.Builder condition = Condition.builder()
-            .comparisonOperator(ComparisonOperator.GT.toString())
-            .attributeValueList(AttributeValue.builder().n("1985").build());
-        
+        Condition.Builder condition = Condition.builder().comparisonOperator(ComparisonOperator.GT.toString()).attributeValueList(AttributeValue.builder().n("1985").build());
+
         keyConditions.put("1", condition.build());
-        
+
         exchange.getIn().setHeader(Ddb2Constants.KEY_CONDITIONS, keyConditions);
 
         command.execute();
 
         Map<String, AttributeValue> mapAssert = new HashMap<>();
         mapAssert.put("1", AttributeValue.builder().s("LAST_KEY").build());
-        ConsumedCapacity consumed = (ConsumedCapacity) exchange.getIn().getHeader(Ddb2Constants.CONSUMED_CAPACITY);
+        ConsumedCapacity consumed = (ConsumedCapacity)exchange.getIn().getHeader(Ddb2Constants.CONSUMED_CAPACITY);
         assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(Ddb2Constants.COUNT, Integer.class));
         assertEquals(Double.valueOf(1.0), consumed.capacityUnits());
         assertEquals(mapAssert, exchange.getIn().getHeader(Ddb2Constants.LAST_EVALUATED_KEY, Map.class));
         assertEquals(keyConditions, exchange.getIn().getHeader(Ddb2Constants.KEY_CONDITIONS, Map.class));
 
-        Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
+        Map<?, ?> items = (Map<?, ?>)exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
         assertEquals(AttributeValue.builder().s("attrValue").build(), items.get("attrName"));
     }
 }

@@ -21,14 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.ddb.BatchGetItemsCommand;
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.Ddb2Constants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 
@@ -64,12 +60,10 @@ public class BatchGetItemsCommandTest {
 
         assertEquals(keysAndAttributesMap, ddbClient.batchGetItemRequest.requestItems());
 
-
         List<Map<String, AttributeValue>> batchResponse = (List<Map<String, AttributeValue>>)exchange.getIn().getHeader(Ddb2Constants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
         AttributeValue value = batchResponse.get(0).get("attrName");
 
-        KeysAndAttributes unProcessedAttributes = (KeysAndAttributes)exchange.getIn().getHeader(
-                Ddb2Constants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
+        KeysAndAttributes unProcessedAttributes = (KeysAndAttributes)exchange.getIn().getHeader(Ddb2Constants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
         Map<String, AttributeValue> next = unProcessedAttributes.keys().iterator().next();
 
         assertEquals(AttributeValue.builder().s("attrValue").build(), value);

@@ -20,14 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.Ddb2Constants;
-import org.apache.camel.component.aws2.ddb.DeleteItemCommand;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
@@ -56,10 +52,8 @@ public class DeleteItemCommandTest {
         key.put("1", AttributeValue.builder().s("Key_1").build());
         exchange.getIn().setHeader(Ddb2Constants.KEY, key);
 
-
         Map<String, ExpectedAttributeValue> updateCondition = new HashMap<>();
-        updateCondition
-                .put("name", ExpectedAttributeValue.builder().attributeValueList(AttributeValue.builder().s("expected value").build()).build());
+        updateCondition.put("name", ExpectedAttributeValue.builder().attributeValueList(AttributeValue.builder().s("expected value").build()).build());
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_CONDITION, updateCondition);
         exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
 
@@ -69,8 +63,6 @@ public class DeleteItemCommandTest {
         assertEquals(key, ddbClient.deleteItemRequest.key());
         assertEquals(updateCondition, ddbClient.deleteItemRequest.expected());
         assertEquals(ReturnValue.ALL_OLD, ddbClient.deleteItemRequest.returnValues());
-        assertEquals(AttributeValue.builder().s("attrValue").build(),
-                exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get(
-                        "attrName"));
+        assertEquals(AttributeValue.builder().s("attrValue").build(), exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

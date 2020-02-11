@@ -16,28 +16,26 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
-import org.apache.camel.component.aws2.ddb.Ddb2Component;
-import org.apache.camel.component.aws2.ddb.Ddb2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class DdbComponentRegistryClientTest extends CamelTestSupport {
-    
+
     @Test
     public void createEndpointWithRegistryClient() throws Exception {
         AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
         context.getRegistry().bind("ddbClient", ddbClient);
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
         Ddb2Endpoint endpoint = (Ddb2Endpoint)component.createEndpoint("aws2-ddb://myTable");
-        
+
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutRegistryClient() throws Exception {
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
         Ddb2Endpoint endpoint = (Ddb2Endpoint)component.createEndpoint("aws2-ddb://myTable");
-        
+
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
     }
 }

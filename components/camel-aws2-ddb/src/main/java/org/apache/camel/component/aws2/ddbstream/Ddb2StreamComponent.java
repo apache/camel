@@ -24,19 +24,18 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 @Component("aws2-ddbstream")
 public class Ddb2StreamComponent extends DefaultComponent {
-    
+
     @Metadata
     private String accessKey;
     @Metadata
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private Ddb2StreamConfiguration configuration;
 
     public Ddb2StreamComponent() {
@@ -45,13 +44,13 @@ public class Ddb2StreamComponent extends DefaultComponent {
 
     public Ddb2StreamComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new Ddb2StreamComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        
+
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Table name must be specified.");
         }
@@ -68,7 +67,7 @@ public class Ddb2StreamComponent extends DefaultComponent {
         }
         return endpoint;
     }
-    
+
     public Ddb2StreamConfiguration getConfiguration() {
         return configuration;
     }
@@ -112,7 +111,7 @@ public class Ddb2StreamComponent extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(Ddb2StreamConfiguration configuration) {
         Set<DynamoDbStreamsClient> clients = getCamelContext().getRegistry().findByType(DynamoDbStreamsClient.class);
         if (clients.size() == 1) {

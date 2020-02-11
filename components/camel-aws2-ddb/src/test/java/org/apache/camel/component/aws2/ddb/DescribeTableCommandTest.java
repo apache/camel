@@ -17,18 +17,13 @@
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.Ddb2Constants;
-import org.apache.camel.component.aws2.ddb.DescribeTableCommand;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
@@ -58,10 +53,9 @@ public class DescribeTableCommandTest {
         assertEquals("FULL_DESCRIBE_TABLE", ddbClient.describeTableRequest.tableName());
         assertEquals("FULL_DESCRIBE_TABLE", exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME));
         assertEquals(TableStatus.ACTIVE, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS));
-        
+
         assertEquals(100L, exchange.getIn().getHeader(Ddb2Constants.ITEM_COUNT));
-        assertEquals(keySchema,
-                exchange.getIn().getHeader(Ddb2Constants.KEY_SCHEMA));
+        assertEquals(keySchema, exchange.getIn().getHeader(Ddb2Constants.KEY_SCHEMA));
         assertEquals(20L, exchange.getIn().getHeader(Ddb2Constants.READ_CAPACITY));
         assertEquals(10L, exchange.getIn().getHeader(Ddb2Constants.WRITE_CAPACITY));
         assertEquals(1000L, exchange.getIn().getHeader(Ddb2Constants.TABLE_SIZE));

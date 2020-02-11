@@ -20,14 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
-import org.apache.camel.component.aws2.ddb.Ddb2Constants;
-import org.apache.camel.component.aws2.ddb.PutItemCommand;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 
@@ -65,7 +61,6 @@ public class PutItemCommandTest {
         assertEquals("DOMAIN1", ddbClient.putItemRequest.tableName());
         assertEquals(attributeMap, ddbClient.putItemRequest.item());
         assertEquals(expectedAttributeValueMap, ddbClient.putItemRequest.expected());
-        assertEquals(AttributeValue.builder().s("attrValue").build(),
-                exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
+        assertEquals(AttributeValue.builder().s("attrValue").build(), exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

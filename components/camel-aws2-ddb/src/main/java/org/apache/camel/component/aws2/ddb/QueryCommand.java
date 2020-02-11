@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
@@ -34,23 +33,17 @@ public class QueryCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        QueryRequest.Builder query = QueryRequest.builder()
-                .tableName(determineTableName())
-                .attributesToGet(determineAttributeNames())
-                .consistentRead(determineConsistentRead())
-                .exclusiveStartKey(determineStartKey())
-                .keyConditions(determineKeyConditions())
-                .exclusiveStartKey(determineStartKey())
-                .limit(determineLimit())
-                .scanIndexForward(determineScanIndexForward());
-        
+        QueryRequest.Builder query = QueryRequest.builder().tableName(determineTableName()).attributesToGet(determineAttributeNames()).consistentRead(determineConsistentRead())
+            .exclusiveStartKey(determineStartKey()).keyConditions(determineKeyConditions()).exclusiveStartKey(determineStartKey()).limit(determineLimit())
+            .scanIndexForward(determineScanIndexForward());
+
         // Check if we have set an Index Name
         if (exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class) != null) {
             query.indexName(exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class));
         }
-        
+
         QueryResponse result = ddbClient.query(query.build());
-        
+
         Map tmp = new HashMap<>();
         tmp.put(Ddb2Constants.ITEMS, result.items());
         tmp.put(Ddb2Constants.LAST_EVALUATED_KEY, result.lastEvaluatedKey());
@@ -59,7 +52,7 @@ public class QueryCommand extends AbstractDdbCommand {
         addToResults(tmp);
     }
 
-    private  Map<String, AttributeValue> determineStartKey() {
+    private Map<String, AttributeValue> determineStartKey() {
         return exchange.getIn().getHeader(Ddb2Constants.START_KEY, Map.class);
     }
 

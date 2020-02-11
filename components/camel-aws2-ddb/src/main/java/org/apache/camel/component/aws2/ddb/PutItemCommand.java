@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
@@ -30,11 +29,8 @@ public class PutItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        PutItemResponse result = ddbClient.putItem(PutItemRequest.builder()
-                .tableName(determineTableName())
-                .item(determineItem())
-                .expected(determineUpdateCondition())
-                .returnValues(determineReturnValues()).build());
+        PutItemResponse result = ddbClient.putItem(PutItemRequest.builder().tableName(determineTableName()).item(determineItem()).expected(determineUpdateCondition())
+            .returnValues(determineReturnValues()).build());
 
         addAttributesToResult(result.attributes());
     }

@@ -28,7 +28,6 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -46,7 +45,8 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 /**
- * The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+ * The aws-ddb component is used for storing and retrieving data from Amazon's
+ * DynamoDB service.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS 2 DynamoDB", syntax = "aws2-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class Ddb2Endpoint extends ScheduledPollEndpoint {
@@ -77,9 +77,8 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        ddbClient = configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
-            : createDdbClient();
-        
+        ddbClient = configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient() : createDdbClient();
+
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
 
@@ -103,7 +102,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
             LOG.trace("Table [{}] created", tableName);
         }
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonDDBClient())) {
@@ -116,13 +115,8 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
 
     private TableDescription createTable(String tableName) {
         CreateTableRequest.Builder createTableRequest = CreateTableRequest.builder().tableName(tableName)
-                .keySchema(
-                        KeySchemaElement.builder().attributeName(
-                                configuration.getKeyAttributeName())
-                                .keyType(configuration.getKeyAttributeType()).build())
-                .provisionedThroughput(
-                        ProvisionedThroughput.builder().readCapacityUnits(configuration.getReadCapacity())
-                                .writeCapacityUnits(configuration.getWriteCapacity()).build());
+            .keySchema(KeySchemaElement.builder().attributeName(configuration.getKeyAttributeName()).keyType(configuration.getKeyAttributeType()).build())
+            .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(configuration.getReadCapacity()).writeCapacityUnits(configuration.getWriteCapacity()).build());
         return getDdbClient().createTable(createTableRequest.build()).tableDescription();
     }
 
@@ -135,8 +129,8 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
     }
 
     DynamoDbClient createDdbClient() {
-    	DynamoDbClient client = null;
-    	DynamoDbClientBuilder clientBuilder = DynamoDbClient.builder();
+        DynamoDbClient client = null;
+        DynamoDbClientBuilder clientBuilder = DynamoDbClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;

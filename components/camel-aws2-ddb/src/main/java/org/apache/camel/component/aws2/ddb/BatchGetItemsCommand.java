@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
@@ -34,13 +33,12 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        BatchGetItemResponse result = ddbClient.batchGetItem(
-                BatchGetItemRequest.builder().requestItems(determineBatchItems()).build());
+        BatchGetItemResponse result = ddbClient.batchGetItem(BatchGetItemRequest.builder().requestItems(determineBatchItems()).build());
 
         Map tmp = new HashMap<>();
         tmp.put(Ddb2Constants.BATCH_RESPONSE, result.responses());
         tmp.put(Ddb2Constants.UNPROCESSED_KEYS, result.unprocessedKeys());
-        addToResults(tmp);        
+        addToResults(tmp);
     }
 
     @SuppressWarnings("unchecked")
@@ -48,4 +46,3 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
         return exchange.getIn().getHeader(Ddb2Constants.BATCH_ITEMS, Map.class);
     }
 }
-
