@@ -19,8 +19,6 @@ package org.apache.camel.component.aws2.cw;
 import java.time.Instant;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.component.aws2.cw.Cw2Component;
-import org.apache.camel.component.aws2.cw.Cw2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import software.amazon.awssdk.core.Protocol;
