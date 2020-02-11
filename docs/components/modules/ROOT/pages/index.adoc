@@ -48,9 +48,9 @@ Number of Components: 322 in 259 JAR artifacts (1 deprecated)
 
 | xref:aws2-cw-component.adoc[AWS 2 CloudWatch] (camel-aws2-cw) | 3.1 | The aws2-cw component is used for sending metrics to an Amazon CloudWatch.
 
-| xref:aws2-ddb-component.adoc[AWS 2 DynamoDB] (camel-aws2-ddb) | 3.1 | The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+| xref:aws2-ddb-component.adoc[AWS 2 DynamoDB] (camel-aws2-ddb) | 3.1 | The aws2-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
 
-| xref:aws2-ddbstream-component.adoc[AWS 2 DynamoDB Streams] (camel-aws2-ddb) | 3.1 | The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
+| xref:aws2-ddbstream-component.adoc[AWS 2 DynamoDB Streams] (camel-aws2-ddb) | 3.1 | The aws2-ddbstream component is used for working with Amazon DynamoDB Streams.
 
 | xref:aws2-ec2-component.adoc[AWS 2 EC2] (camel-aws2-ec2) | 3.1 | The aws2-ec2 is used for managing Amazon EC2 instances.
 
