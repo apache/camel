@@ -588,6 +588,7 @@
   </feature>
   <feature name='camel-bindy' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:com.ibm.icu/icu4j/${icu4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-bindy/${project.version}</bundle>
   </feature>
   <feature name='camel-box' version='${project.version}' start-level='50'>
