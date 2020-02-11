@@ -320,25 +320,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>jandex</goal>
-                            <goal>generate-schema</goal>
-                            <goal>generate-spi</goal>
-                            <goal>prepare-components</goal>
-                            <goal>generate-components-list</goal>
-                            <goal>generate-jaxb-list</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
