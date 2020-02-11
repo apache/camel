@@ -16,8 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
@@ -29,8 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class SimpleTokenizer {
 
-    // use CopyOnWriteArrayList so we can modify it in the for loop when changing function start/end tokens
-    private static final List<SimpleTokenType> KNOWN_TOKENS = new CopyOnWriteArrayList<>();
+    private static final List<SimpleTokenType> KNOWN_TOKENS = new ArrayList<>();
 
     // optimise to be able to quick check for start functions
     private static final String[] FUNCTION_START = new String[]{"${", "$simple{"};
