@@ -1,11 +1,5 @@
 [[aws2-ddb-component]]
 = AWS 2 DynamoDB Component
-*Since Camel 3.1*
-*Since Camel 3.1*
-
-
-
-*Since Camel 3.1*
 
 // HEADER START
 *Only producer is supported*
@@ -19,6 +13,11 @@ Prerequisites
 You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon DynamoDB. More information is available at
 https://aws.amazon.com/dynamodb[Amazon DynamoDB].
+
+[NOTE]
+====
+The AWS2 DynamoDB component is not supported in OSGI
+====
 
 == URI Format
 
