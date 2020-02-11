@@ -45,7 +45,7 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 /**
- * The aws-ddb component is used for storing and retrieving data from Amazon's
+ * The aws2-ddb component is used for storing and retrieving data from Amazon's
  * DynamoDB service.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddb", title = "AWS 2 DynamoDB", syntax = "aws2-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
