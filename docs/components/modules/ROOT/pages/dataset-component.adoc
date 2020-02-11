@@ -19,7 +19,7 @@ together with the powerful Bean Integration.
 
 The DataSet component provides a mechanism to easily perform load & soak
 testing of your system. It works by allowing you to create
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/dataset/DataSet.html[DataSet
+https://www.javadoc.io/doc/org.apache.camel/camel-dataset/current/org/apache/camel/component/dataset/DataSet.html[DataSet
 instances] both as a source of messages and as a way to assert that the
 data set is received.
 
@@ -34,7 +34,7 @@ dataset:name[?options]
 ----
 
 Where *name* is used to find the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/dataset/DataSet.html[DataSet
+https://www.javadoc.io/doc/org.apache.camel/camel-dataset/current/org/apache/camel/component/dataset/DataSet.html[DataSet
 instance] in the Registry
 
 Camel ships with a support implementation of
