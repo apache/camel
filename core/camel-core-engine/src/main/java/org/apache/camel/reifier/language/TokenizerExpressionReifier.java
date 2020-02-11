@@ -16,12 +16,16 @@
  */
 package org.apache.camel.reifier.language;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.TokenizerExpression;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpression> {
@@ -31,37 +35,25 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
     }
 
     @Override
-    public Expression createExpression() {
+    protected void configureLanguage(Language language) {
+        Map<String, Object> props = new HashMap<>();
         // special for new line tokens, if defined from XML then its 2
         // characters, so we replace that back to a single char
         String token = definition.getToken();
         if (token.startsWith("\\n")) {
             token = '\n' + token.substring(2);
         }
-
-        TokenizeLanguage language = new TokenizeLanguage();
-        language.setToken(parseString(token));
-        language.setEndToken(parseString(definition.getEndToken()));
-        language.setInheritNamespaceTagName(parseString(definition.getInheritNamespaceTagName()));
-        language.setHeaderName(parseString(definition.getHeaderName()));
-        language.setGroupDelimiter(parseString(definition.getGroupDelimiter()));
-        if (definition.getRegex() != null) {
-            language.setRegex(parseBoolean(definition.getRegex()));
-        }
-        if (definition.getXml() != null) {
-            language.setXml(parseBoolean(definition.getXml()));
-        }
-        if (definition.getIncludeTokens() != null) {
-            language.setIncludeTokens(parseBoolean(definition.getIncludeTokens()));
-        }
-        if (definition.getGroup() != null && !"0".equals(definition.getGroup())) {
-            language.setGroup(parseString(definition.getGroup()));
-        }
-
-        if (definition.getSkipFirst() != null) {
-            language.setSkipFirst(parseBoolean(definition.getSkipFirst()));
-        }
-        return language.createExpression();
+        props.put("token", token);
+        props.put("endToken", definition.getEndToken());
+        props.put("inheritNamespaceTagName", definition.getInheritNamespaceTagName());
+        props.put("headerName", definition.getHeaderName());
+        props.put("groupDelimiter", definition.getGroupDelimiter());
+        props.put("regex", definition.getRegex());
+        props.put("xml", definition.getXml());
+        props.put("includeTokens", definition.getIncludeTokens());
+        props.put("group", definition.getGroup());
+        props.put("skipFirst", definition.getSkipFirst());
+        setProperties(language, props);
     }
 
     @Override

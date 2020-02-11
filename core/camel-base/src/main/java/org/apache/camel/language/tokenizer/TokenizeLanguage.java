@@ -16,12 +16,15 @@
  */
 package org.apache.camel.language.tokenizer;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  * And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
 @org.apache.camel.spi.annotations.Language("tokenize")
-public class TokenizeLanguage implements Language, IsSingleton {
+public class TokenizeLanguage implements Language, IsSingleton, GeneratedPropertyConfigurer {
 
     private String token;
     private String endToken;
@@ -88,6 +91,32 @@ public class TokenizeLanguage implements Language, IsSingleton {
         language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setXml(true);
         return language.createExpression(null);
+    }
+
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "token": setToken(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "endtoken":
+            case "endToken": setEndToken(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "inheritnamespacetagname":
+            case "inheritNamespaceTagName": setInheritNamespaceTagName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "headername":
+            case "headerName": setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "regex": setRegex(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+            case "xml": setXml(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+            case "includetokens":
+            case "includeTokens": setIncludeTokens(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+            case "group": setGroup(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "groupdelimiter":
+            case "groupDelimiter": setGroupDelimiter(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "skipfirst":
+            case "skipFirst": setSkipFirst(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+            default: return false;
+        }
     }
 
     @Override
