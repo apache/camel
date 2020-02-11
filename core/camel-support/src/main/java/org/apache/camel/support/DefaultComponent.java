@@ -404,40 +404,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             if (name.contains(",")) {
                 name = StringHelper.before(name, ",");
             }
-            try {
-                final Registry registry = getCamelContext().getRegistry();
-                LOG.trace("Discovering optional component property configurer class for component: {}", name);
-                final String componentConfigurerName = name + "-component-configurer";
-                componentPropertyConfigurer = registry.lookupByNameAndType(componentConfigurerName, GeneratedPropertyConfigurer.class);
-                if (LOG.isDebugEnabled() && componentPropertyConfigurer != null) {
-                    LOG.debug("Discovered component property configurer using the Camel registry: {} -> {}", componentConfigurerName, componentPropertyConfigurer);
-                }
-                if (componentPropertyConfigurer == null) {
-                    final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
-                            .findOptionalClass(name + "-component", null);
-                    clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
-                    if (LOG.isDebugEnabled() && componentPropertyConfigurer != null) {
-                        LOG.debug("Discovered component property configurer using the FactoryFinder: {} -> {}", name, componentPropertyConfigurer);
-                    }
-                }
-
-                LOG.trace("Discovering optional endpoint property configurer class for component: {}", name);
-                final String endpointConfigurerName = name + "-endpoint-configurer";
-                endpointPropertyConfigurer = registry.lookupByNameAndType(endpointConfigurerName, GeneratedPropertyConfigurer.class);
-                if (LOG.isDebugEnabled() && endpointPropertyConfigurer != null) {
-                    LOG.debug("Discovered endpoint property configurer using the Camel registry: {} -> {}", endpointConfigurerName, endpointPropertyConfigurer);
-                }
-                if (endpointPropertyConfigurer == null) {
-                    final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
-                            .findOptionalClass(name + "-endpoint", null);
-                    clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
-                    if (LOG.isDebugEnabled() && endpointPropertyConfigurer != null) {
-                        LOG.debug("Discovered endpoint property configurer using the FactoryFinder: {} -> {}", name, endpointPropertyConfigurer);
-                    }
-                }
-            } catch (NoFactoryAvailableException e) {
-                // ignore
-            }
+            final String componentConfigurerName = name + "-component-configurer";
+            componentPropertyConfigurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(componentConfigurerName, getCamelContext());
+            final String endpointConfigurerName = name + "-endpoint-configurer";
+            endpointPropertyConfigurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(endpointConfigurerName, getCamelContext());
         }
     }
 

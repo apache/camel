@@ -30,6 +30,7 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -424,5 +425,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets the {@link RuntimeCamelCatalog} to use.
      */
     void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog);
+
+    /**
+     * Gets the {@link ConfigurerResolver} to use.
+     */
+    ConfigurerResolver getConfigurerResolver();
+
+    /**
+     * Sets the {@link ConfigurerResolver} to use.
+     */
+    void setConfigurerResolver(ConfigurerResolver configurerResolver);
 
 }

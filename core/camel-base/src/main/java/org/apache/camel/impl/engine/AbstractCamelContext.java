@@ -88,6 +88,7 @@ import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
@@ -238,6 +239,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile CamelBeanPostProcessor beanPostProcessor;
     private volatile ComponentResolver componentResolver;
     private volatile LanguageResolver languageResolver;
+    private volatile ConfigurerResolver configurerResolver;
     private volatile DataFormatResolver dataFormatResolver;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
@@ -1808,6 +1810,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         this.languageResolver = doAddService(languageResolver);
     }
 
+    public ConfigurerResolver getConfigurerResolver() {
+        if (configurerResolver == null) {
+            synchronized (lock) {
+                if (configurerResolver == null) {
+                    setConfigurerResolver(createConfigurerResolver());
+                }
+            }
+        }
+        return configurerResolver;
+    }
+
+    public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
+        this.configurerResolver = doAddService(configurerResolver);
+    }
+
     public boolean isAutoCreateComponents() {
         return autoCreateComponents;
     }
@@ -3348,6 +3365,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getInjector();
         getRegistry();
         getLanguageResolver();
+        getConfigurerResolver();
         getExecutorServiceManager();
         getInflightRepository();
         getAsyncProcessorAwaitManager();
@@ -4349,6 +4367,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract Tracer createTracer();
 
     protected abstract LanguageResolver createLanguageResolver();
+
+    protected abstract ConfigurerResolver createConfigurerResolver();
 
     protected abstract RestRegistryFactory createRestRegistryFactory();
 
