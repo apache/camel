@@ -33,6 +33,13 @@
 
     <dependencies>
 
+        <!-- need JAXB API -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta-jaxb-version}</version>
+        </dependency>
+
         <!-- need JAXB implementation -->
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
