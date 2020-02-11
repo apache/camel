@@ -64,16 +64,20 @@ import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.IndexReader;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Generate Model lightweight XML Parser source code.
@@ -98,6 +102,13 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
     private Class<?> restsDefinitionClass;
     private Class<?> processorDefinitionClass;
     private Class<?> dataFormatDefinitionClass;
+
+    @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
+        generateXmlParser = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-xml-parser", "false"));
+        super.execute(project, projectHelper, buildContext);
+    }
 
     @Override
     public void execute() throws MojoExecutionException {

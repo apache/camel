@@ -80,7 +80,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     public Expression createExpression(String expression) {
         String path = expression != null ? expression : this.path;
         ObjectHelper.notNull(path, "path");
-        XMLTokenExpressionIterator expr = new XMLTokenExpressionIterator(headerName, path, mode, group);
+        XMLTokenExpressionIterator expr = new XMLTokenExpressionIterator(path, mode, group, headerName);
         if (namespaces != null) {
             expr.setNamespaces(namespaces.getNamespaces());
         }

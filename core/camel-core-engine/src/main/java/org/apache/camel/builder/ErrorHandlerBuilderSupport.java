@@ -106,7 +106,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     }
 
     protected static ExceptionPolicy toExceptionPolicy(OnExceptionDefinition exceptionType, RouteContext routeContext) {
-        return ErrorHandlerReifier.createExceptionPolicy(exceptionType, routeContext);
+        return ErrorHandlerReifier.createExceptionPolicy(exceptionType, routeContext.getCamelContext());
     }
 
     protected static List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType, ClassResolver resolver) {

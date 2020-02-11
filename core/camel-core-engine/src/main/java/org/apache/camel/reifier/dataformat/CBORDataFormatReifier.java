@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.CBORDataFormat;
 
 public class CBORDataFormatReifier extends DataFormatReifier<CBORDataFormat> {
 
-    public CBORDataFormatReifier(DataFormatDefinition definition) {
-        super((CBORDataFormat)definition);
+    public CBORDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (CBORDataFormat)definition);
     }
 
     @Override

@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 
 public class BeanioDataFormatReifier extends DataFormatReifier<BeanioDataFormat> {
 
-    public BeanioDataFormatReifier(DataFormatDefinition definition) {
-        super((BeanioDataFormat)definition);
+    public BeanioDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (BeanioDataFormat)definition);
     }
 
     @Override

@@ -19,7 +19,7 @@ package org.apache.camel.reifier.dataformat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
@@ -72,7 +72,6 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -86,9 +85,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
     private static final Logger LOG = LoggerFactory.getLogger(DataFormatReifier.class);
 
-    private static final Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
+    private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
-        Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
+        Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
         map.put(Any23DataFormat.class, Any23DataFormatReifier::new);
         map.put(ASN1DataFormat.class, ASN1DataFormatReifier::new);
         map.put(AvroDataFormat.class, AvroDataFormatReifier::new);
@@ -136,12 +135,13 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
     protected final T definition;
 
-    public DataFormatReifier(T definition) {
+    public DataFormatReifier(CamelContext camelContext, T definition) {
+        super(camelContext);
         this.definition = definition;
     }
 
     public static void registerReifier(Class<? extends DataFormatDefinition> dataFormatClass,
-                                       Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
+                                       BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
         DATAFORMATS.put(dataFormatClass, creator);
     }
 
@@ -178,26 +178,25 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (type.getDataFormat() != null) {
             return type.getDataFormat();
         }
-        return reifier(type).createDataFormat(camelContext);
+        return reifier(camelContext, type).createDataFormat();
     }
 
-    public static DataFormatReifier<? extends DataFormatDefinition> reifier(DataFormatDefinition definition) {
-        Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier = DATAFORMATS.get(definition.getClass());
+    public static DataFormatReifier<? extends DataFormatDefinition> reifier(CamelContext camelContext, DataFormatDefinition definition) {
+        BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier = DATAFORMATS.get(definition.getClass());
         if (reifier != null) {
-            return reifier.apply(definition);
+            return reifier.apply(camelContext, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
     }
 
-    public DataFormat createDataFormat(CamelContext camelContext) {
+    public DataFormat createDataFormat() {
         DataFormat dataFormat = definition.getDataFormat();
         if (dataFormat == null) {
-            dataFormat = doCreateDataFormat(camelContext);
+            dataFormat = doCreateDataFormat();
             if (dataFormat != null) {
                 if (dataFormat instanceof DataFormatContentTypeHeader) {
                     // is enabled by default so assume true if null
-                    final boolean contentTypeHeader = definition.getContentTypeHeader() == null
-                            || parseBoolean(camelContext, definition.getContentTypeHeader());
+                    final boolean contentTypeHeader = parseBoolean(definition.getContentTypeHeader(), true);
                     ((DataFormatContentTypeHeader) dataFormat).setContentTypeHeader(contentTypeHeader);
                 }
                 // configure the rest of the options
@@ -214,7 +213,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     /**
      * Factory method to create the data format instance
      */
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
+    protected DataFormat doCreateDataFormat() {
         // must use getDataFormatName() as we need special logic in json dataformat
         String dfn = definition.getDataFormatName();
         if (dfn != null) {
@@ -259,7 +258,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         if (configurer == null) {
             final String configurerName = name + "-dataformat-configurer";
-            configurer = camelContext.getRegistry().lookupByNameAndType(configurerName, GeneratedPropertyConfigurer.class);
+            configurer = camelContext.getRegistry().lookupByNameAndType(configurerName, PropertyConfigurer.class);
             if (LOG.isDebugEnabled() && configurer != null) {
                 LOG.debug("Discovered dataformat property configurer using the Camel registry: {} -> {}", configurerName, configurer);
             }
@@ -270,7 +269,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                         .findOptionalClass(name + "-dataformat-configurer", null)
                         .orElse(null);
                 if (clazz != null) {
-                    configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, GeneratedPropertyConfigurer.class);
+                    configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, PropertyConfigurer.class);
                     if (LOG.isDebugEnabled() && configurer != null) {
                         LOG.debug("Discovered dataformat property configurer using the FactoryFinder: {} -> {}", name, configurer);
                     }
@@ -283,13 +282,5 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     }
 
     protected abstract void prepareDataFormatConfig(Map<String, Object> properties);
-
-    protected Object or(Object a, Object b) {
-        return a != null ? a : b;
-    }
-
-    protected Object asRef(String s) {
-        return s != null ? s.startsWith("#") ? s : "#" + s : null;
-    }
 
 }

@@ -50,6 +50,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
@@ -1675,6 +1676,18 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             String answer = getPropertiesComponent().parseUri(text);
             LOG.debug("Resolved text: {} -> {}", text, answer);
             return answer;
+        }
+        // is the value a known field (currently we only support
+        // constants from Exchange.class)
+        if (text != null && text.startsWith("Exchange.")) {
+            String field = StringHelper.after(text, "Exchange.");
+            String constant = ExchangeConstantProvider.lookup(field);
+            if (constant != null) {
+                LOG.debug("Resolved constant: {} -> {}", text, constant);
+                return constant;
+            } else {
+                throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
+            }
         }
 
         // return original text as is

@@ -22,39 +22,32 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.RouteContext;
 
 public class DelayReifier extends ExpressionReifier<DelayDefinition> {
 
-    public DelayReifier(ProcessorDefinition<?> definition) {
-        super(DelayDefinition.class.cast(definition));
+    public DelayReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, DelayDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
-        Expression delay = createAbsoluteTimeDelayExpression(routeContext);
+    public Processor createProcessor() throws Exception {
+        Processor childProcessor = this.createChildProcessor(false);
+        Expression delay = createAbsoluteTimeDelayExpression();
 
-        boolean async = definition.getAsyncDelayed() == null || Boolean.parseBoolean(definition.getAsyncDelayed());
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, definition, async);
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", definition, async);
+        boolean async = parseBoolean(definition.getAsyncDelayed(), true);
+        boolean shutdownThreadPool = willCreateNewThreadPool(definition, async);
+        ScheduledExecutorService threadPool = getConfiguredScheduledExecutorService("Delay", definition, async);
 
-        Delayer answer = new Delayer(routeContext.getCamelContext(), childProcessor, delay, threadPool, shutdownThreadPool);
+        Delayer answer = new Delayer(camelContext, childProcessor, delay, threadPool, shutdownThreadPool);
         answer.setAsyncDelayed(async);
-        answer.setCallerRunsWhenRejected(definition.getCallerRunsWhenRejected() == null
-                || Boolean.parseBoolean(definition.getCallerRunsWhenRejected()));
+        answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
         return answer;
     }
 
-    private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {
-        ExpressionDefinition expr = definition.getExpression();
-        if (expr != null) {
-            return expr.createExpression(routeContext);
-        }
-        return null;
+    private Expression createAbsoluteTimeDelayExpression() {
+        return definition.getExpression() != null ? createExpression(definition.getExpression()) : null;
     }
 
 }

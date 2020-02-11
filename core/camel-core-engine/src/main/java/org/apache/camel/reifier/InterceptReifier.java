@@ -28,14 +28,14 @@ import org.apache.camel.spi.RouteContext;
 
 public class InterceptReifier<T extends InterceptDefinition> extends ProcessorReifier<T> {
 
-    public InterceptReifier(ProcessorDefinition<?> definition) {
-        super((T)definition);
+    public InterceptReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (T) definition);
     }
 
     @Override
-    public Processor createProcessor(final RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // create the output processor
-        Processor output = this.createChildProcessor(routeContext, true);
+        Processor output = this.createChildProcessor(true);
 
         // add the output as a intercept strategy to the route context so its
         // invoked on each processing step

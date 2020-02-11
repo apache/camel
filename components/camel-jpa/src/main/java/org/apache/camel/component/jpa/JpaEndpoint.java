@@ -173,11 +173,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
         Map<String, Object> emProperties = PropertiesHelper.extractProperties(options, "emf.");
         if (!emProperties.isEmpty()) {
             setEntityManagerProperties(emProperties);
         }
+        super.configureProperties(options);
     }
 
     @Override

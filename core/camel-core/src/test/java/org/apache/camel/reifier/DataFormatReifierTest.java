@@ -30,14 +30,14 @@ public class DataFormatReifierTest {
     @Test
     public void testHandleCustomDataFormat() {
         try {
-            DataFormatReifier.reifier(new MyDataFormat());
+            DataFormatReifier.reifier(null, new MyDataFormat());
 
             fail("Should throw IllegalStateException instead");
         } catch (IllegalStateException e) {
         }
 
         DataFormatReifier.registerReifier(MyDataFormat.class, CustomDataFormatReifier::new);
-        DataFormatReifier.reifier(new MyDataFormat());
+        DataFormatReifier.reifier(null, new MyDataFormat());
     }
 
     public static class MyDataFormat extends CustomDataFormat {

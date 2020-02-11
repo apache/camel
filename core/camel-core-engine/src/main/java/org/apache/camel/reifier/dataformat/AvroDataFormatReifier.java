@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 
 public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
 
-    public AvroDataFormatReifier(DataFormatDefinition definition) {
-        super((AvroDataFormat)definition);
+    public AvroDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (AvroDataFormat)definition);
     }
 
     @Override

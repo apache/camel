@@ -30,22 +30,22 @@ import org.apache.camel.spi.RouteContext;
 
 public class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalancerDefinition> {
 
-    public WeightedLoadBalancerReifier(LoadBalancerDefinition definition) {
-        super((WeightedLoadBalancerDefinition)definition);
+    public WeightedLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
+        super(routeContext, (WeightedLoadBalancerDefinition)definition);
     }
 
     @Override
-    public LoadBalancer createLoadBalancer(RouteContext routeContext) {
+    public LoadBalancer createLoadBalancer() {
         WeightedLoadBalancer loadBalancer;
         List<Integer> distributionRatioList = new ArrayList<>();
 
         try {
             String[] ratios = definition.getDistributionRatio().split(definition.getDistributionRatioDelimiter());
             for (String ratio : ratios) {
-                distributionRatioList.add(parseInt(routeContext, ratio.trim()));
+                distributionRatioList.add(parseInt(ratio.trim()));
             }
 
-            boolean isRoundRobin = definition.getRoundRobin() != null && parseBoolean(routeContext, definition.getRoundRobin());
+            boolean isRoundRobin = parseBoolean(definition.getRoundRobin(), false);
             if (isRoundRobin) {
                 loadBalancer = new WeightedRoundRobinLoadBalancer(distributionRatioList);
             } else {

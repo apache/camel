@@ -52,7 +52,8 @@ public class OptionalPropertiesDslTest extends ContextTestSupport {
                     // on the Multicast EIP
                     // which should have the value of {{stop}} key being looked
                     // up in the properties file
-                    .multicast().placeholder("stopOnException", "stop").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
+                    .multicast().stopOnException("{{stop}}").to("mock:a")
+                        .throwException(new IllegalAccessException("Damn")).to("mock:b");
                 // END SNIPPET: e1
             }
         };

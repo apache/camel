@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.Any23DataFormat;
 
 public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
 
-    public Any23DataFormatReifier(DataFormatDefinition definition) {
-        super((Any23DataFormat)definition);
+    public Any23DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (Any23DataFormat)definition);
     }
 
     @Override

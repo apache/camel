@@ -42,15 +42,16 @@ import org.apache.camel.util.ObjectHelper;
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     @XmlAttribute
-    @Metadata(defaultValue = "REQUIRED")
-    private SagaPropagation propagation;
+    @Metadata(defaultValue = "REQUIRED", enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
+    private String propagation;
 
     @XmlAttribute
-    @Metadata(defaultValue = "AUTO")
-    private SagaCompletionMode completionMode;
+    @Metadata(defaultValue = "AUTO", enums = "AUTO,MANUAL")
+    private String completionMode;
 
     @XmlAttribute
-    private Long timeoutInMilliseconds;
+    @Metadata(javaType = "java.lang.Long")
+    private String timeoutInMilliseconds;
 
     @XmlElement
     private SagaActionUriDefinition compensation;
@@ -142,7 +143,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.completion = completion;
     }
 
-    public SagaPropagation getPropagation() {
+    public String getPropagation() {
         return propagation;
     }
 
@@ -150,11 +151,11 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * Set the Saga propagation mode (REQUIRED, REQUIRES_NEW, MANDATORY,
      * SUPPORTS, NOT_SUPPORTED, NEVER).
      */
-    public void setPropagation(SagaPropagation propagation) {
+    public void setPropagation(String propagation) {
         this.propagation = propagation;
     }
 
-    public SagaCompletionMode getCompletionMode() {
+    public String getCompletionMode() {
         return completionMode;
     }
 
@@ -165,7 +166,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * When set to MANUAL, the user must complete or compensate the saga using
      * the "saga:complete" or "saga:compensate" endpoints.
      */
-    public void setCompletionMode(SagaCompletionMode completionMode) {
+    public void setCompletionMode(String completionMode) {
         this.completionMode = completionMode;
     }
 
@@ -203,7 +204,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.options = options;
     }
 
-    public Long getTimeoutInMilliseconds() {
+    public String getTimeoutInMilliseconds() {
         return timeoutInMilliseconds;
     }
 
@@ -212,7 +213,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * expired, the saga will be compensated automatically (unless a different
      * decision has been taken in the meantime).
      */
-    public void setTimeoutInMilliseconds(Long timeoutInMilliseconds) {
+    public void setTimeoutInMilliseconds(String timeoutInMilliseconds) {
         this.timeoutInMilliseconds = timeoutInMilliseconds;
     }
 
@@ -242,7 +243,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition propagation(SagaPropagation propagation) {
-        setPropagation(propagation);
+        setPropagation(propagation.name());
         return this;
     }
 
@@ -257,7 +258,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition completionMode(SagaCompletionMode completionMode) {
-        setCompletionMode(completionMode);
+        setCompletionMode(completionMode.name());
         return this;
     }
 
@@ -267,7 +268,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition timeout(long timeout, TimeUnit unit) {
-        setTimeoutInMilliseconds(unit.toMillis(timeout));
+        setTimeoutInMilliseconds(Long.toString(unit.toMillis(timeout)));
         return this;
     }
 

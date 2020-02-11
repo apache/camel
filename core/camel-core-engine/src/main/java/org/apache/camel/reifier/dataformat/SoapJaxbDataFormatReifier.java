@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 
 public class SoapJaxbDataFormatReifier extends DataFormatReifier<SoapJaxbDataFormat> {
 
-    public SoapJaxbDataFormatReifier(DataFormatDefinition definition) {
-        super((SoapJaxbDataFormat)definition);
+    public SoapJaxbDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (SoapJaxbDataFormat)definition);
     }
 
     @Override
