@@ -773,16 +773,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 route.getOutputs().add(def);
             }
 
-//            // ensure property placeholders is resolved on the verb
-//            try {
-//                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, verb);
-//                for (RestOperationParamDefinition param : verb.getParams()) {
-//                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, param);
-//                }
-//            } catch (Exception e) {
-//                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-//            }
-
             // add the binding
             RestBindingDefinition binding = new RestBindingDefinition();
             binding.setComponent(component);
