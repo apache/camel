@@ -51,9 +51,10 @@ import org.slf4j.LoggerFactory;
  */
 public final class ProcessorDefinitionHelper {
 
+    public static final String PREFIX = "{" + Constants.PLACEHOLDER_QNAME + "}";
+
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorDefinitionHelper.class);
     private static final ThreadLocal<RestoreAction> CURRENT_RESTORE_ACTION = new ThreadLocal<>();
-    public static final String PREFIX = "{" + Constants.PLACEHOLDER_QNAME + "}";
 
     private ProcessorDefinitionHelper() {
     }
