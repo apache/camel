@@ -22,7 +22,7 @@ backing system (the transaction manager). In such cases you should
 resort to the backing system how to configure the redelivery.
 
 You should use the
-https://www.javadoc.io/doc/org.apache.camel/camel-spring/current/org/apache/camel/spring/SpringRouteBuilder.html[SpringRouteBuilder]
+http://camel.apache.org/maven/current/camel-spring/apidocs/org/apache/camel/spring/SpringRouteBuilder.html[SpringRouteBuilder]
 to setup the routes since you will need to setup the spring context with
 the TransactionTemplates that will define the transaction manager
 configuration and policies.
@@ -91,7 +91,7 @@ to your spring xml:
 --------------------------------------------------------
 
 Then in your
-https://www.javadoc.io/doc/org.apache.camel/camel-spring/current/org/apache/camel/spring/SpringRouteBuilder.html[SpringRouteBuilder],
+http://camel.apache.org/maven/current/camel-spring/apidocs/org/apache/camel/spring/SpringRouteBuilder.html[SpringRouteBuilder],
 you just need to create new SpringTransactionPolicy objects for each of
 the templates.
 

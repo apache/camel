@@ -97,7 +97,7 @@ Endpoint to the bean endpoint as output. So consider
 using a *direct:* or *queue:* endpoint as the input.
 
 You can use the `createProxy()` methods on
-https://www.javadoc.io/doc/org.apache.camel/camel-bean/current/org/apache/camel/component/bean/ProxyHelper.html[ProxyHelper]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/bean/ProxyHelper.html[ProxyHelper]
 to create a proxy that will generate exchanges and send them to any
 endpoint:
 

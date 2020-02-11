@@ -13,7 +13,7 @@ threading and concurrency for you in a declarative manner.
 image::eip/EventDrivenConsumerSolution.gif[image]
 
 The Event Driven Consumer is implemented by consumers implementing the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
 interface which is invoked by the xref:message-endpoint.adoc[Message Endpoint]
 when a xref:message.adoc[Message] is available for processing.
 
@@ -21,7 +21,7 @@ when a xref:message.adoc[Message] is available for processing.
 == Example
 
 The following demonstrates a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
 defined in the Camel xref:registry.adoc[Registry] which is
 invoked when an event occurs from a xref:components::jms-component.adoc[JMS] queue.
 
