@@ -67,7 +67,7 @@ public class PropertyBindingException extends RuntimeCamelException {
         String stringValue = value != null ? value.toString() : "";
         String key = propertyName;
         if (optionPrefix != null && optionKey != null) {
-            key = optionPrefix + "." + optionKey;
+            key = optionPrefix.endsWith(".") ? optionPrefix + optionKey : optionPrefix + "." + optionKey;
         }
         if (key != null) {
             return "Error binding property (" + key + "=" + stringValue + ") with name: " + propertyName
