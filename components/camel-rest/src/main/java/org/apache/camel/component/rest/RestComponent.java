@@ -242,6 +242,8 @@ public class RestComponent extends DefaultComponent {
             conf.setScheme(or(conf.getScheme(), from.getScheme()));
             conf.setHost(or(conf.getHost(), from.getHost()));
             conf.setUseXForwardHeaders(or(conf.isUseXForwardHeaders(), from.isUseXForwardHeaders()));
+            conf.setApiHost(or(conf.getApiHost(), from.getApiHost()));
+            conf.setPort(or(conf.getPort(), from.getPort()));
             conf.setContextPath(or(conf.getContextPath(), from.getContextPath()));
             conf.setApiContextPath(or(conf.getApiContextPath(), from.getApiContextPath()));
             conf.setApiContextRouteId(or(conf.getApiContextRouteId(), from.getApiContextRouteId()));
