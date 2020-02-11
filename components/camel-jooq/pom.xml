@@ -47,6 +47,12 @@
             <artifactId>jooq</artifactId>
             <version>${jooq-version}</version>
         </dependency>
+        <!-- jooq needs this API for its source code generator -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${javax-annotation-api-version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
