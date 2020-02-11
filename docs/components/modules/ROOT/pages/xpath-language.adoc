@@ -249,7 +249,7 @@ value from the message and bind it to a method parameter.
 The default XPath annotation has SOAP and XML namespaces available. If
 you want to use your own namespace URIs in an XPath expression you can
 use your own copy of the
-https://www.javadoc.io/doc/org.apache.camel/camel-xpath/current/org/apache/camel/language/xpath/XPath.html[XPath
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/XPath.html[XPath
 annotation] to create whatever namespace prefixes you want to use.
 
 i.e. cut and paste upper code to your own project in a different package
