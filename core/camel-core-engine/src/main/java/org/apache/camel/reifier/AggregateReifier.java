@@ -57,7 +57,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         Expression correlation = createExpression(definition.getExpression());
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        boolean parallel = parseBoolean(definition.getParallelProcessing());
+        boolean parallel = parseBoolean(definition.getParallelProcessing(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
         ExecutorService threadPool = getConfiguredExecutorService("Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
@@ -101,15 +101,16 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         answer.setTimeoutCheckerExecutorService(timeoutThreadPool);
         answer.setShutdownTimeoutCheckerExecutorService(shutdownTimeoutThreadPool);
 
-        if (parseBoolean(definition.getCompletionFromBatchConsumer())
-                && parseBoolean(definition.getDiscardOnAggregationFailure())) {
+        if (parseBoolean(definition.getCompletionFromBatchConsumer(), false)
+                && parseBoolean(definition.getDiscardOnAggregationFailure(), false)) {
             throw new IllegalArgumentException("Cannot use both completionFromBatchConsumer and discardOnAggregationFailure on: " + definition);
         }
 
         // set other options
         answer.setParallelProcessing(parallel);
-        if (definition.getOptimisticLocking() != null) {
-            answer.setOptimisticLocking(parseBoolean(definition.getOptimisticLocking()));
+        Boolean optimisticLocking = parseBoolean(definition.getOptimisticLocking());
+        if (optimisticLocking != null) {
+            answer.setOptimisticLocking(optimisticLocking);
         }
         if (definition.getCompletionPredicate() != null) {
             Predicate predicate = createPredicate(definition.getCompletionPredicate());
@@ -124,45 +125,57 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             Expression expression = createExpression(definition.getCompletionTimeoutExpression());
             answer.setCompletionTimeoutExpression(expression);
         }
-        if (definition.getCompletionTimeout() != null) {
-            answer.setCompletionTimeout(parseLong(definition.getCompletionTimeout()));
+        Long completionTimeout = parseLong(definition.getCompletionTimeout());
+        if (completionTimeout != null) {
+            answer.setCompletionTimeout(completionTimeout);
         }
-        if (definition.getCompletionInterval() != null) {
-            answer.setCompletionInterval(parseLong(definition.getCompletionInterval()));
+        Long completionInterval = parseLong(definition.getCompletionInterval());
+        if (completionInterval != null) {
+            answer.setCompletionInterval(completionInterval);
         }
         if (definition.getCompletionSizeExpression() != null) {
             Expression expression = createExpression(definition.getCompletionSizeExpression());
             answer.setCompletionSizeExpression(expression);
         }
-        if (definition.getCompletionSize() != null) {
-            answer.setCompletionSize(parseInt(definition.getCompletionSize()));
+        Integer completionSize = parseInt(definition.getCompletionSize());
+        if (completionSize != null) {
+            answer.setCompletionSize(completionSize);
         }
-        if (definition.getCompletionFromBatchConsumer() != null) {
-            answer.setCompletionFromBatchConsumer(parseBoolean(definition.getCompletionFromBatchConsumer()));
+        Boolean completionFromBatchConsumer = parseBoolean(definition.getCompletionFromBatchConsumer());
+        if (completionFromBatchConsumer != null) {
+            answer.setCompletionFromBatchConsumer(completionFromBatchConsumer);
         }
-        if (definition.getCompletionOnNewCorrelationGroup() != null) {
-            answer.setCompletionOnNewCorrelationGroup(parseBoolean(definition.getCompletionOnNewCorrelationGroup()));
+        Boolean completionOnNewCorrelationGroup = parseBoolean(definition.getCompletionOnNewCorrelationGroup());
+        if (completionOnNewCorrelationGroup != null) {
+            answer.setCompletionOnNewCorrelationGroup(completionOnNewCorrelationGroup);
         }
-        if (definition.getEagerCheckCompletion() != null) {
-            answer.setEagerCheckCompletion(parseBoolean(definition.getEagerCheckCompletion()));
+        Boolean eagerCheckCompletion = parseBoolean(definition.getEagerCheckCompletion());
+        if (eagerCheckCompletion != null) {
+            answer.setEagerCheckCompletion(eagerCheckCompletion);
         }
-        if (definition.getIgnoreInvalidCorrelationKeys() != null) {
-            answer.setIgnoreInvalidCorrelationKeys(parseBoolean(definition.getIgnoreInvalidCorrelationKeys()));
+        Boolean ignoreInvalidCorrelationKeys = parseBoolean(definition.getIgnoreInvalidCorrelationKeys());
+        if (ignoreInvalidCorrelationKeys != null) {
+            answer.setIgnoreInvalidCorrelationKeys(ignoreInvalidCorrelationKeys);
         }
-        if (definition.getCloseCorrelationKeyOnCompletion() != null) {
-            answer.setCloseCorrelationKeyOnCompletion(parseInt(definition.getCloseCorrelationKeyOnCompletion()));
+        Integer closeCorrelationKeyOnCompletion = parseInt(definition.getCloseCorrelationKeyOnCompletion());
+        if (closeCorrelationKeyOnCompletion != null) {
+            answer.setCloseCorrelationKeyOnCompletion(closeCorrelationKeyOnCompletion);
         }
-        if (definition.getDiscardOnCompletionTimeout() != null) {
-            answer.setDiscardOnCompletionTimeout(parseBoolean(definition.getDiscardOnCompletionTimeout()));
+        Boolean discardOnCompletionTimeout = parseBoolean(definition.getDiscardOnCompletionTimeout());
+        if (discardOnCompletionTimeout != null) {
+            answer.setDiscardOnCompletionTimeout(discardOnCompletionTimeout);
         }
-        if (definition.getDiscardOnAggregationFailure() != null) {
-            answer.setDiscardOnAggregationFailure(parseBoolean(definition.getDiscardOnAggregationFailure()));
+        Boolean discardOnAggregationFailure = parseBoolean(definition.getDiscardOnAggregationFailure());
+        if (discardOnAggregationFailure != null) {
+            answer.setDiscardOnAggregationFailure(discardOnAggregationFailure);
         }
-        if (definition.getForceCompletionOnStop() != null) {
-            answer.setForceCompletionOnStop(parseBoolean(definition.getForceCompletionOnStop()));
+        Boolean forceCompletionOnStop = parseBoolean(definition.getForceCompletionOnStop());
+        if (forceCompletionOnStop != null) {
+            answer.setForceCompletionOnStop(forceCompletionOnStop);
         }
-        if (definition.getCompleteAllOnStop() != null) {
-            answer.setCompleteAllOnStop(parseBoolean(definition.getCompleteAllOnStop()));
+        Boolean completeAllOnStop = parseBoolean(definition.getCompleteAllOnStop());
+        if (completeAllOnStop != null) {
+            answer.setCompleteAllOnStop(completeAllOnStop);
         }
         if (definition.getOptimisticLockRetryPolicy() == null) {
             if (definition.getOptimisticLockRetryPolicyDefinition() != null) {
@@ -174,8 +187,9 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (definition.getAggregateController() != null) {
             answer.setAggregateController(definition.getAggregateController());
         }
-        if (definition.getCompletionTimeoutCheckerInterval() != null) {
-            answer.setCompletionTimeoutCheckerInterval(parseLong(definition.getCompletionTimeoutCheckerInterval()));
+        Long completionTimeoutCheckerInterval = parseLong(definition.getCompletionTimeoutCheckerInterval());
+        if (completionTimeoutCheckerInterval != null) {
+            answer.setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
         }
         return answer;
     }
@@ -192,10 +206,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             policy.setMaximumRetryDelay(parseLong(definition.getMaximumRetryDelay()));
         }
         if (definition.getExponentialBackOff() != null) {
-            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff()));
+            policy.setExponentialBackOff(parseBoolean(definition.getExponentialBackOff(), false));
         }
         if (definition.getRandomBackOff() != null) {
-            policy.setRandomBackOff(parseBoolean(definition.getRandomBackOff()));
+            policy.setRandomBackOff(parseBoolean(definition.getRandomBackOff(), false));
         }
         return policy;
     }
@@ -209,8 +223,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(Boolean.parseBoolean(definition.getStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(Boolean.parseBoolean(definition.getStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {

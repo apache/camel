@@ -28,8 +28,6 @@ import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
 
@@ -51,16 +49,10 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             definition.setRouteScoped(definition.getParent() != null);
         }
 
-        setHandledFromExpressionType();
-        setContinuedFromExpressionType();
-        setRetryWhileFromExpressionType();
-        setOnRedeliveryFromRedeliveryRef();
-        setOnExceptionOccurredFromOnExceptionOccurredRef();
-
         // must validate configuration before creating processor
         definition.validateConfiguration();
 
-        if (definition.getUseOriginalMessage() != null && parseBoolean(definition.getUseOriginalMessage())) {
+        if (parseBoolean(definition.getUseOriginalMessage(), false)) {
             // ensure allow original is turned on
             routeContext.setAllowUseOriginalMessage(true);
         }
@@ -88,7 +80,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             classes = createExceptionClasses(camelContext.getClassResolver());
         }
 
-        if (definition.getUseOriginalMessage() != null && parseBoolean(definition.getUseOriginalMessage())) {
+        if (parseBoolean(definition.getUseOriginalMessage(), false)) {
             // ensure allow original is turned on
             routeContext.setAllowUseOriginalMessage(true);
         }
@@ -119,45 +111,6 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             answer.add(type);
         }
         return answer;
-    }
-
-    private void setHandledFromExpressionType() {
-        // TODO: should not modify
-        if (definition.getHandled() != null && definition.getHandledPolicy() == null && camelContext != null) {
-            definition.handled(createPredicate(definition.getHandled()));
-        }
-    }
-
-    private void setContinuedFromExpressionType() {
-        // TODO: should not modify
-        if (definition.getContinued() != null && definition.getContinuedPolicy() == null && camelContext != null) {
-            definition.continued(createPredicate(definition.getContinued()));
-        }
-    }
-
-    private void setRetryWhileFromExpressionType() {
-        // TODO: should not modify
-        if (definition.getRetryWhile() != null && definition.getRetryWhilePolicy() == null && camelContext != null) {
-            definition.retryWhile(createPredicate(definition.getRetryWhile()));
-        }
-    }
-
-    private void setOnRedeliveryFromRedeliveryRef() {
-        // lookup onRedelivery if ref is provided
-        if (ObjectHelper.isNotEmpty(definition.getOnRedeliveryRef())) {
-            // if ref is provided then use mandatory lookup to fail if not found
-            Processor onRedelivery = CamelContextHelper.mandatoryLookup(camelContext, definition.getOnRedeliveryRef(), Processor.class);
-            definition.setOnRedelivery(onRedelivery);
-        }
-    }
-
-    private void setOnExceptionOccurredFromOnExceptionOccurredRef() {
-        // lookup onRedelivery if ref is provided
-        if (ObjectHelper.isNotEmpty(definition.getOnExceptionOccurredRef())) {
-            // if ref is provided then use mandatory lookup to fail if not found
-            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(camelContext, definition.getOnExceptionOccurredRef(), Processor.class);
-            definition.setOnExceptionOccurred(onExceptionOccurred);
-        }
     }
 
 }

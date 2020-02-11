@@ -17,11 +17,9 @@
 package org.apache.camel.model.language;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,8 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
-import org.apache.camel.model.DefinitionPropertyPlaceholderConfigurer;
-import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -49,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware, ExpressionFactory, DefinitionPropertyPlaceholderConfigurer {
+public class ExpressionDefinition implements Expression, Predicate, ExpressionFactory {
     @XmlAttribute
     @XmlID
     private String id;
@@ -65,9 +61,6 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     private Expression expressionValue;
     @XmlTransient
     private ExpressionDefinition expressionType;
-    // use xs:any to support optional property placeholders
-    @XmlAnyAttribute
-    private Map otherAttributes;
 
     public ExpressionDefinition() {
     }
@@ -166,16 +159,6 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
      */
     public void setTrim(String trim) {
         this.trim = trim;
-    }
-
-    @Override
-    public Map getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    @Override
-    public void setOtherAttributes(Map otherAttributes) {
-        this.otherAttributes = otherAttributes;
     }
 
     /**

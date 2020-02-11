@@ -72,7 +72,6 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -197,8 +196,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             if (dataFormat != null) {
                 if (dataFormat instanceof DataFormatContentTypeHeader) {
                     // is enabled by default so assume true if null
-                    final boolean contentTypeHeader = definition.getContentTypeHeader() == null
-                            || parseBoolean(definition.getContentTypeHeader());
+                    final boolean contentTypeHeader = parseBoolean(definition.getContentTypeHeader(), true);
                     ((DataFormatContentTypeHeader) dataFormat).setContentTypeHeader(contentTypeHeader);
                 }
                 // configure the rest of the options
@@ -235,7 +233,6 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         Map<String, Object> properties = new LinkedHashMap<>();
         prepareDataFormatConfig(properties);
         properties.entrySet().removeIf(e -> e.getValue() == null);
-        addOtherAttributes(definition, properties);
 
         PropertyConfigurer configurer = findPropertyConfigurer(dataFormat, camelContext);
 
@@ -261,7 +258,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         if (configurer == null) {
             final String configurerName = name + "-dataformat-configurer";
-            configurer = camelContext.getRegistry().lookupByNameAndType(configurerName, GeneratedPropertyConfigurer.class);
+            configurer = camelContext.getRegistry().lookupByNameAndType(configurerName, PropertyConfigurer.class);
             if (LOG.isDebugEnabled() && configurer != null) {
                 LOG.debug("Discovered dataformat property configurer using the Camel registry: {} -> {}", configurerName, configurer);
             }
@@ -272,7 +269,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                         .findOptionalClass(name + "-dataformat-configurer", null)
                         .orElse(null);
                 if (clazz != null) {
-                    configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, GeneratedPropertyConfigurer.class);
+                    configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, PropertyConfigurer.class);
                     if (LOG.isDebugEnabled() && configurer != null) {
                         LOG.debug("Discovered dataformat property configurer using the FactoryFinder: {} -> {}", name, configurer);
                     }

@@ -33,8 +33,8 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Processor output = this.createChildProcessor(true);
-        boolean isCopy = definition.getCopy() != null && parseBoolean(definition.getCopy());
-        boolean isWhile = definition.getDoWhile() != null && parseBoolean(definition.getDoWhile());
+        boolean isCopy = parseBoolean(definition.getCopy(), false);
+        boolean isWhile = parseBoolean(definition.getDoWhile(), false);
 
         Predicate predicate = null;
         Expression expression = null;

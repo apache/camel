@@ -402,11 +402,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             Contract contract = new Contract();
             if (definition.getInputType() != null) {
                 contract.setInputType(parseString(definition.getInputType().getUrn()));
-                contract.setValidateInput(parseBoolean(definition.getInputType().getValidate()));
+                contract.setValidateInput(parseBoolean(definition.getInputType().getValidate(), false));
             }
             if (definition.getOutputType() != null) {
                 contract.setOutputType(parseString(definition.getOutputType().getUrn()));
-                contract.setValidateOutput(parseBoolean(definition.getOutputType().getValidate()));
+                contract.setValidateOutput(parseBoolean(definition.getOutputType().getValidate(), false));
             }
             routeContext.addAdvice(new ContractAdvice(contract));
             // make sure to enable data type as its in use when using
@@ -416,7 +416,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // Set route properties
         routeContext.addProperty(Route.ID_PROPERTY, definition.getId());
-        routeContext.addProperty(Route.CUSTOM_ID_PROPERTY, definition.hasCustomIdAssigned() ? "true" : "false");
+        routeContext.addProperty(Route.CUSTOM_ID_PROPERTY, Boolean.toString(definition.hasCustomIdAssigned()));
         routeContext.addProperty(Route.PARENT_PROPERTY, Integer.toHexString(definition.hashCode()));
         routeContext.addProperty(Route.DESCRIPTION_PROPERTY, definition.getDescriptionText());
         if (definition.getGroup() != null) {

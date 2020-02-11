@@ -25,6 +25,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NamedNode;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
@@ -43,6 +44,7 @@ import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.AbstractReifier;
+import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -91,12 +93,34 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     public static ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def, CamelContext camelContext) {
+        Predicate handled = def.getHandledPolicy();
+        if (handled == null && def.getHandled() != null) {
+            handled = ExpressionReifier.reifier(camelContext, def.getHandled()).createPredicate();
+        }
+        Predicate continued = def.getContinuedPolicy();
+        if (continued == null && def.getContinued() != null) {
+            continued = ExpressionReifier.reifier(camelContext, def.getContinued()).createPredicate();
+        }
+        Predicate retryWhile = def.getRetryWhilePolicy();
+        if (retryWhile == null && def.getRetryWhile() != null) {
+            retryWhile = ExpressionReifier.reifier(camelContext, def.getRetryWhile()).createPredicate();
+        }
+        Processor onRedelivery = def.getOnRedelivery();
+        if (onRedelivery == null && def.getOnRedeliveryRef() != null) {
+            onRedelivery = CamelContextHelper.mandatoryLookup(camelContext,
+                    CamelContextHelper.parseText(camelContext, def.getOnRedeliveryRef()), Processor.class);
+        }
+        Processor onExceptionOccurred = def.getOnExceptionOccurred();
+        if (onExceptionOccurred == null && def.getOnExceptionOccurredRef() != null) {
+            onExceptionOccurred = CamelContextHelper.mandatoryLookup(camelContext,
+                    CamelContextHelper.parseText(camelContext, def.getOnExceptionOccurredRef()), Processor.class);
+        }
         return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def),
                                    def.getUseOriginalMessage() != null && CamelContextHelper.parseBoolean(camelContext, def.getUseOriginalMessage()),
                                    def.getUseOriginalBody() != null && CamelContextHelper.parseBoolean(camelContext, def.getUseOriginalBody()),
-                                   ObjectHelper.isNotEmpty(def.getOutputs()), def.getHandledPolicy(),
-                                   def.getContinuedPolicy(), def.getRetryWhilePolicy(), def.getOnRedelivery(),
-                                   def.getOnExceptionOccurred(), def.getRedeliveryPolicyRef(),
+                                   ObjectHelper.isNotEmpty(def.getOutputs()), handled,
+                                   continued, retryWhile, onRedelivery,
+                                   onExceptionOccurred, def.getRedeliveryPolicyRef(),
                                    getRedeliveryPolicy(def.getRedeliveryPolicyType()), def.getExceptions());
     }
 

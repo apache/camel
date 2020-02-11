@@ -45,7 +45,7 @@ public class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoa
                 distributionRatioList.add(parseInt(ratio.trim()));
             }
 
-            boolean isRoundRobin = definition.getRoundRobin() != null && parseBoolean(definition.getRoundRobin());
+            boolean isRoundRobin = parseBoolean(definition.getRoundRobin(), false);
             if (isRoundRobin) {
                 loadBalancer = new WeightedRoundRobinLoadBalancer(distributionRatioList);
             } else {

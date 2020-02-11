@@ -94,7 +94,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
         // create setter for fallback via network
         HystrixCommand.Setter fallbackSetter = null;
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork());
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             // use a different thread pool that is for fallback (should never use the same thread pool as the regular command)
             HystrixThreadPoolKey tpFallbackKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey + "-fallback");
@@ -224,7 +224,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
-            final String ref = definition.getConfigurationRef();
+            final String ref = parseString(definition.getConfigurationRef());
 
             loadProperties(camelContext, properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),

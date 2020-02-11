@@ -35,8 +35,8 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Expression exp = createExpression(definition.getExpression());
-        boolean isShareUnitOfWork = definition.getShareUnitOfWork() != null && Boolean.parseBoolean(definition.getShareUnitOfWork());
-        boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && Boolean.parseBoolean(definition.getIgnoreInvalidEndpoint());
+        boolean isShareUnitOfWork = parseBoolean(definition.getShareUnitOfWork(), false);
+        boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
 
         Enricher enricher = new Enricher(exp);
         enricher.setShareUnitOfWork(isShareUnitOfWork);
@@ -46,7 +46,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
             enricher.setAggregationStrategy(strategy);
         }
         if (definition.getAggregateOnException() != null) {
-            enricher.setAggregateOnException(Boolean.parseBoolean(definition.getAggregateOnException()));
+            enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
 
         return enricher;
@@ -61,8 +61,8 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
             } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(Boolean.parseBoolean(definition.getAggregationStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(Boolean.parseBoolean(definition.getAggregationStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {

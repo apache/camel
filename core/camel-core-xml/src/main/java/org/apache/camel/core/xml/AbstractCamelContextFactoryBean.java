@@ -484,7 +484,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getTransformers() != null) {
             for (TransformerDefinition def : getTransformers().getTransformers()) {
                 // create and register transformers on transformer registry
-                Transformer transformer = TransformerReifier.reifier(def).createTransformer(getContext());
+                Transformer transformer = TransformerReifier.reifier(getContext(), def).createTransformer();
                 getContext().getTransformerRegistry().put(createTransformerKey(def), transformer);
             }
         }

@@ -35,7 +35,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.extension.ComponentExtension;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
@@ -64,8 +63,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
 
-    private volatile GeneratedPropertyConfigurer componentPropertyConfigurer;
-    private volatile GeneratedPropertyConfigurer endpointPropertyConfigurer;
+    private volatile PropertyConfigurer componentPropertyConfigurer;
+    private volatile PropertyConfigurer endpointPropertyConfigurer;
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
     private CamelContext camelContext;
 
@@ -408,14 +407,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                 final Registry registry = getCamelContext().getRegistry();
                 LOG.trace("Discovering optional component property configurer class for component: {}", name);
                 final String componentConfigurerName = name + "-component-configurer";
-                componentPropertyConfigurer = registry.lookupByNameAndType(componentConfigurerName, GeneratedPropertyConfigurer.class);
+                componentPropertyConfigurer = registry.lookupByNameAndType(componentConfigurerName, PropertyConfigurer.class);
                 if (LOG.isDebugEnabled() && componentPropertyConfigurer != null) {
                     LOG.debug("Discovered component property configurer using the Camel registry: {} -> {}", componentConfigurerName, componentPropertyConfigurer);
                 }
                 if (componentPropertyConfigurer == null) {
                     final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
                             .findOptionalClass(name + "-component", null);
-                    clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
+                    clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, PropertyConfigurer.class));
                     if (LOG.isDebugEnabled() && componentPropertyConfigurer != null) {
                         LOG.debug("Discovered component property configurer using the FactoryFinder: {} -> {}", name, componentPropertyConfigurer);
                     }
@@ -423,14 +422,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
                 LOG.trace("Discovering optional endpoint property configurer class for component: {}", name);
                 final String endpointConfigurerName = name + "-endpoint-configurer";
-                endpointPropertyConfigurer = registry.lookupByNameAndType(endpointConfigurerName, GeneratedPropertyConfigurer.class);
+                endpointPropertyConfigurer = registry.lookupByNameAndType(endpointConfigurerName, PropertyConfigurer.class);
                 if (LOG.isDebugEnabled() && endpointPropertyConfigurer != null) {
                     LOG.debug("Discovered endpoint property configurer using the Camel registry: {} -> {}", endpointConfigurerName, endpointPropertyConfigurer);
                 }
                 if (endpointPropertyConfigurer == null) {
                     final Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
                             .findOptionalClass(name + "-endpoint", null);
-                    clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
+                    clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, PropertyConfigurer.class));
                     if (LOG.isDebugEnabled() && endpointPropertyConfigurer != null) {
                         LOG.debug("Discovered endpoint property configurer using the FactoryFinder: {} -> {}", name, endpointPropertyConfigurer);
                     }
@@ -472,7 +471,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * in the {@link #createEndpoint(String, String, Map)} method's implementation.
      *
      * This method will call the {@link Endpoint#configureProperties(Map)} method which
-     * should delegate the the endpoint's {@link GeneratedPropertyConfigurer} instance.
+     * should delegate the the endpoint's {@link PropertyConfigurer} instance.
      * In some rare cases, you need to override this method to explicitely set parameters
      * in case a simple generated configurer can not be used.
      *

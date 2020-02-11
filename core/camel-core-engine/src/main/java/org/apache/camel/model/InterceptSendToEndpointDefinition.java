@@ -148,7 +148,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
             newWhen.setId(when.getId());
             newWhen.setInheritErrorHandler(when.isInheritErrorHandler());
             newWhen.setParent(when.getParent());
-            newWhen.setOtherAttributes(when.getOtherAttributes());
             newWhen.setDescription(when.getDescription());
 
             // move this outputs to the when, expect the first one

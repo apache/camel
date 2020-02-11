@@ -25,7 +25,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.support.CamelContextHelper;
 
 public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression> {
 
@@ -37,7 +36,7 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
     public Expression createExpression() {
         String exp = parseString(definition.getExpression());
         // should be true by default
-        boolean isTrim = definition.getTrim() == null || parseBoolean(definition.getTrim());
+        boolean isTrim = parseBoolean(definition.getTrim(), true);
         if (exp != null && isTrim) {
             exp = exp.trim();
         }

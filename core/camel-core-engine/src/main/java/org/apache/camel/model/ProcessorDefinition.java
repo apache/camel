@@ -73,7 +73,7 @@ import org.slf4j.LoggerFactory;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block, OtherAttributesAware {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlTransient
@@ -86,9 +86,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private ProcessorDefinition<?> parent;
     @XmlTransient
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
-    // use xs:any to support optional property placeholders
-    @XmlAnyAttribute
-    private Map otherAttributes;
     @XmlTransient
     private final int index;
 
@@ -216,36 +213,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // Fluent API
     // -------------------------------------------------------------------------
-
-    /**
-     * Adds a placeholder for the given option
-     * <p/>
-     * Requires using the
-     * {@link org.apache.camel.component.properties.PropertiesComponent}
-     *
-     * @param option the name of the option
-     * @param key the placeholder key
-     * @return the builder
-     */
-    public Type placeholder(String option, String key) {
-        QName name = new QName(Constants.PLACEHOLDER_QNAME, option);
-        return attribute(name, key);
-    }
-
-    /**
-     * Adds an optional attribute
-     *
-     * @param name the name of the attribute
-     * @param value the value
-     * @return the builder
-     */
-    public Type attribute(QName name, Object value) {
-        if (otherAttributes == null) {
-            otherAttributes = new HashMap<>();
-        }
-        otherAttributes.put(name, value);
-        return asType();
-    }
 
     /**
      * Sends the exchange to the given endpoint
@@ -4024,16 +3991,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void setInheritErrorHandler(Boolean inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
-    }
-
-    @Override
-    public Map getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    @Override
-    public void setOtherAttributes(Map otherAttributes) {
-        this.otherAttributes = otherAttributes;
     }
 
     /**

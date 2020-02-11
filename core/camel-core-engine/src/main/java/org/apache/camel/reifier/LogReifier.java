@@ -71,7 +71,7 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
 
         if (logger == null) {
-            String name = definition.getLogName();
+            String name = parseString(definition.getLogName());
             if (name == null) {
                 name = camelContext.getGlobalOption(Exchange.LOG_EIP_NAME);
                 if (name != null) {

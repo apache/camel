@@ -27,15 +27,19 @@ import org.apache.camel.spi.Transformer;
 
 public class EndpointTransformeReifier extends TransformerReifier<EndpointTransformerDefinition> {
 
-    public EndpointTransformeReifier(TransformerDefinition definition) {
-        super((EndpointTransformerDefinition)definition);
+    public EndpointTransformeReifier(CamelContext camelContext, TransformerDefinition definition) {
+        super(camelContext, (EndpointTransformerDefinition)definition);
     }
 
     @Override
-    protected Transformer doCreateTransformer(CamelContext context) {
-        Endpoint endpoint = definition.getUri() != null ? context.getEndpoint(definition.getUri()) : context.getRegistry().lookupByNameAndType(definition.getRef(), Endpoint.class);
+    protected Transformer doCreateTransformer() {
+        Endpoint endpoint = definition.getUri() != null ? camelContext.getEndpoint(definition.getUri())
+                : camelContext.getRegistry().lookupByNameAndType(parseString(definition.getRef()), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
-        return new ProcessorTransformer(context).setProcessor(processor).setModel(definition.getScheme()).setFrom(definition.getFromType()).setTo(definition.getToType());
+        return new ProcessorTransformer(camelContext).setProcessor(processor)
+                .setModel(parseString(definition.getScheme()))
+                .setFrom(parseString(definition.getFromType()))
+                .setTo(parseString(definition.getToType()));
     }
 
 }

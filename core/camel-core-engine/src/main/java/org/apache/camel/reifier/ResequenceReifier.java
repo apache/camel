@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
+import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Resequencer;
@@ -39,24 +40,24 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        // if configured from XML then streamConfig has been set with the
-        // configuration
-        if (definition.getResequencerConfig() != null) {
-            if (definition.getResequencerConfig() instanceof StreamResequencerConfig) {
-                definition.setStreamConfig((StreamResequencerConfig)definition.getResequencerConfig());
-            } else {
-                definition.setBatchConfig((BatchResequencerConfig)definition.getResequencerConfig());
-            }
+        // if configured from XML then streamConfig has been set with the configuration
+        ResequencerConfig resequencer = definition.getResequencerConfig();
+        StreamResequencerConfig stream = definition.getStreamConfig();
+        BatchResequencerConfig batch = definition.getBatchConfig();
+        if (resequencer instanceof StreamResequencerConfig) {
+            stream = (StreamResequencerConfig) resequencer;
+        } else if (resequencer instanceof BatchResequencerConfig) {
+            batch = (BatchResequencerConfig) resequencer;
         }
 
-        if (definition.getStreamConfig() != null) {
-            return createStreamResequencer(routeContext, definition.getStreamConfig());
+        if (stream != null) {
+            return createStreamResequencer(routeContext, stream);
         } else {
-            if (definition.getBatchConfig() == null) {
-                // default as batch mode
-                definition.batch();
+            // default as batch mode
+            if (batch == null) {
+                batch = BatchResequencerConfig.getDefault();
             }
-            return createBatchResequencer(routeContext, definition.getBatchConfig());
+            return createBatchResequencer(routeContext, batch);
         }
     }
 
@@ -81,8 +82,8 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
-        boolean isReverse = config.getReverse() != null && parseBoolean(config.getReverse());
-        boolean isAllowDuplicates = config.getAllowDuplicates() != null && parseBoolean(config.getAllowDuplicates());
+        boolean isReverse = parseBoolean(config.getReverse(), false);
+        boolean isAllowDuplicates = parseBoolean(config.getAllowDuplicates(), false);
 
         Resequencer resequencer = new Resequencer(camelContext, internal, expression, isAllowDuplicates, isReverse);
         resequencer.setBatchSize(parseInt(config.getBatchSize()));
@@ -90,7 +91,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         resequencer.setReverse(isReverse);
         resequencer.setAllowDuplicates(isAllowDuplicates);
         if (config.getIgnoreInvalidExchanges() != null) {
-            resequencer.setIgnoreInvalidExchanges(parseBoolean(config.getIgnoreInvalidExchanges()));
+            resequencer.setIgnoreInvalidExchanges(parseBoolean(config.getIgnoreInvalidExchanges(), false));
         }
         return resequencer;
     }
@@ -131,9 +132,9 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
             resequencer.setDeliveryAttemptInterval(parseLong(config.getDeliveryAttemptInterval()));
         }
         resequencer.setCapacity(parseInt(config.getCapacity()));
-        resequencer.setRejectOld(parseBoolean(config.getRejectOld()));
+        resequencer.setRejectOld(parseBoolean(config.getRejectOld(), false));
         if (config.getIgnoreInvalidExchanges() != null) {
-            resequencer.setIgnoreInvalidExchanges(parseBoolean(config.getIgnoreInvalidExchanges()));
+            resequencer.setIgnoreInvalidExchanges(parseBoolean(config.getIgnoreInvalidExchanges(), false));
         }
         return resequencer;
     }

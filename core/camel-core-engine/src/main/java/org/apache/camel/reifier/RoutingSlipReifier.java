@@ -37,11 +37,14 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
     @Override
     public Processor createProcessor() throws Exception {
         Expression expression = createExpression(definition.getExpression());
-        String delimiter = definition.getUriDelimiter() != null ? definition.getUriDelimiter() : DEFAULT_DELIMITER;
+        String delimiter = parseString(definition.getUriDelimiter());
+        if (delimiter == null) {
+            delimiter = DEFAULT_DELIMITER;
+        }
 
         RoutingSlip routingSlip = new RoutingSlip(camelContext, expression, delimiter);
         if (definition.getIgnoreInvalidEndpoints() != null) {
-            routingSlip.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints()));
+            routingSlip.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }
         if (definition.getCacheSize() != null) {
             routingSlip.setCacheSize(parseInt(definition.getCacheSize()));
