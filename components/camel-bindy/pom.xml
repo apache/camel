@@ -31,14 +31,16 @@
     <name>Camel :: Bindy</name>
     <description>Camel Bindy data format support</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>${icu4j-version}</version>
         </dependency>
 
         <!-- testing -->

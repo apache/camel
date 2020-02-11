@@ -282,6 +282,7 @@
         <hystrix-bundle-version>1.5.18_1</hystrix-bundle-version>
         <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
         <ical4j-version>1.0.7</ical4j-version>
+        <icu4j-version>65.1</icu4j-version>
         <ignite-version>2.7.6</ignite-version>
         <infinispan-version>10.1.1.Final</infinispan-version>
         <influx-java-driver-version>2.17</influx-java-driver-version>
