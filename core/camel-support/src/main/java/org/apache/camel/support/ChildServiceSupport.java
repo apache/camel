@@ -16,8 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
@@ -127,7 +127,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
             if (childServices == null) {
                 synchronized (lock) {
                     if (childServices == null) {
-                        childServices = new CopyOnWriteArrayList<>();
+                        childServices = new ArrayList<>();
                     }
                 }
             }
