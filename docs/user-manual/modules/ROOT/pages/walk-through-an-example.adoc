@@ -16,7 +16,7 @@ etc:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e1]
+ CamelContext context = new DefaultCamelContext();
 ----
 
 There is more than one way of adding a Component to the CamelContext. You can
@@ -26,14 +26,20 @@ xref:components::file-component.adoc[FileComponent]:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e3]
+context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("test-jms:queue:test.queue").to("file://test");
+            }
+        });
 ----
 
 or explicitly - as we do here when we add the JMS Component:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e2]
+ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        // Note we can explicit name the component
+        context.addComponent("test-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 ----
 
 or explicitly using the Component DSL which allows you to configure the components using DSL APIs and register them to the camel context. First you will have the import the maven package for the Component DSL:
@@ -73,7 +79,7 @@ configuration:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e4]
+ProducerTemplate template = context.createProducerTemplate();
 ----
 
 Next you *must* start the camel context. If you are using
@@ -94,7 +100,9 @@ camel:
 
 [source,java]
 ----
-include::{examplesdir}/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[tags=e5]
+for (int i = 0; i < 10; i++) {
+    template.sendBody("test-jms:queue:test.queue", "Test Message: " + i);
+}
 ----
 
 == What happens?

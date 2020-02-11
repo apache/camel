@@ -11,9 +11,23 @@ case and prints it back to the console.
 This is implemented with a Camel route defined in the Spring XML markup
 shown below:
 
-[source,java]
+[source,xml]
 ----
-include::{examplesdir}/examples/camel-example-console/src/main/resources/META-INF/spring/camel-context.xml[tags=e1]
+  <!-- camelContext is the Camel runtime, where we can host Camel routes -->
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <!-- read input from the console using the stream component -->
+      <from uri="stream:in?promptMessage=Enter something: "/>
+      <!-- transform the input to upper case using the simple language -->
+      <!-- you can also use other languages such as groovy, ognl, mvel, javascript etc. -->
+      <transform>
+        <simple>${body.toUpperCase()}</simple>
+      </transform>
+      <!-- and then print to the console -->
+      <to uri="stream:out"/>
+    </route>
+  </camelContext>
+
 ----
 
 This example can be launched from the command line using Maven:

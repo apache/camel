@@ -204,11 +204,5 @@ const examples = series(deleteExamples, createUserManualExamples, createComponen
 
 exports.symlinks = symlinks;
 exports.nav = nav;
-// We moved the examples to the `camel-examples` repository,
-// this made sure that the examples were copied to the
-// correct place for the documentation, according to the
-// Antora directory structure. For now the examples are
-// copied over from `camel-examples` manually.
-//exports.examples = examples;
-//exports.default = series(symlinks, nav, examples);
-exports.default = series(symlinks, nav);
+exports.examples = examples;
+exports.default = series(symlinks, nav, examples);
