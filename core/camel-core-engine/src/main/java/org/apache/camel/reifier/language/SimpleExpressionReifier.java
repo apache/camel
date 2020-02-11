@@ -16,6 +16,9 @@
  */
 package org.apache.camel.reifier.language;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -40,8 +43,9 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
         }
 
         SimpleBuilder answer = new SimpleBuilder(exp);
-        answer.setResultType(CamelContextHelper.convertTo(camelContext, Class.class,
-                or(definition.getResultType(), definition.getResultTypeName())));
+        Map<String, Object> props = new HashMap<>();
+        props.put("resultType", or(definition.getResultType(), definition.getResultTypeName()));
+        setProperties(answer, props);
         return answer;
     }
 

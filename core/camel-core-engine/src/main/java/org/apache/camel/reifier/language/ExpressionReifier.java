@@ -26,7 +26,10 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.Constants;
 import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -47,6 +50,7 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.support.CamelContextHelper;
@@ -106,15 +110,15 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         if (expression == null) {
             if (definition.getExpressionType() != null) {
                 expression = reifier(camelContext, definition.getExpressionType()).createExpression();
-            } else if (definition.getExpression() != null) {
-                ObjectHelper.notNull("language", definition.getLanguage());
+            } else {
+                ObjectHelper.notNull(definition.getLanguage(), "language");
                 Language language = camelContext.resolveLanguage(definition.getLanguage());
                 if (language == null) {
                     throw new NoSuchLanguageException(definition.getLanguage());
                 }
-                String exp = CamelContextHelper.parseText(camelContext, definition.getExpression());
+                String exp = parseString(definition.getExpression());
                 // should be true by default
-                boolean isTrim = definition.getTrim() == null || CamelContextHelper.parseBoolean(camelContext, definition.getTrim());
+                boolean isTrim = definition.getTrim() == null || parseBoolean(definition.getTrim());
                 // trim if configured to trim
                 if (exp != null && isTrim) {
                     exp = exp.trim();
@@ -122,6 +126,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 // resolve the expression as it may be an external script from
                 // the classpath/file etc
                 exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
+                configureLanguage(language);
                 expression = language.createExpression(exp);
                 configureExpression(expression);
             }
@@ -141,14 +146,14 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             } else if (definition.getExpressionValue() != null) {
                 predicate = new ExpressionToPredicateAdapter(definition.getExpressionValue());
             } else if (definition.getExpression() != null) {
-                ObjectHelper.notNull("language", definition.getLanguage());
+                ObjectHelper.notNull(definition.getLanguage(), "language");
                 Language language = camelContext.resolveLanguage(definition.getLanguage());
                 if (language == null) {
                     throw new NoSuchLanguageException(definition.getLanguage());
                 }
-                String exp = CamelContextHelper.parseText(camelContext, definition.getExpression());
+                String exp = parseString(definition.getExpression());
                 // should be true by default
-                boolean isTrim = definition.getTrim() == null || CamelContextHelper.parseBoolean(camelContext, definition.getTrim());
+                boolean isTrim = definition.getTrim() == null || parseBoolean(definition.getTrim());
                 // trim if configured to trim
                 if (exp != null && isTrim) {
                     exp = exp.trim();
@@ -156,7 +161,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 // resolve the expression as it may be an external script from
                 // the classpath/file etc
                 exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
-
+                configureLanguage(language);
                 predicate = language.createPredicate(exp);
                 configurePredicate(predicate);
             }
@@ -166,6 +171,9 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             ((CamelContextAware) predicate).setCamelContext(camelContext);
         }
         return predicate;
+    }
+
+    protected void configureLanguage(Language language) {
     }
 
     protected void configurePredicate(Predicate predicate) {
@@ -188,6 +196,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     protected void setProperties(Object target, Map<String, Object> properties) {
         properties.entrySet().removeIf(e -> e.getValue() == null);
+        addOtherAttributes(definition, properties);
 
         PropertyConfigurer configurer = null;
         if (target instanceof PropertyConfigurerAware) {
@@ -198,14 +207,6 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         PropertyBindingSupport.build()
                 .withConfigurer(configurer)
                 .bind(camelContext, target, properties);
-    }
-
-    protected Object or(Object a, Object b) {
-        return a != null ? a : b;
-    }
-
-    protected Object asRef(String s) {
-        return s != null ? s.startsWith("#") ? s : "#" + s : null;
     }
 
 }

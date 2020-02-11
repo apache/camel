@@ -33,20 +33,6 @@ public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExp
         super(camelContext, (MethodCallExpression) definition);
     }
 
-    @Override
-    public Expression createExpression() {
-        // special for bean language where we need to configure it first
-        Language lan = camelContext.resolveLanguage("bean");
-        configureLanguage(lan);
-        // .. and create expression with null value as we use the configured
-        // properties instead
-        Expression exp = lan.createExpression(null);
-        if (exp instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured)exp).afterPropertiesConfigured(camelContext);
-        }
-        return exp;
-    }
-
     protected void configureLanguage(Language language) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("bean", definition.getInstance());
