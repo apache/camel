@@ -98,4 +98,9 @@ public @interface FixedLengthRecord {
      * Indicates whether too short lines will be ignored
      */
     boolean ignoreMissingChars() default false;
+    
+    /**
+     * Indicates how chars are counted
+     */
+    boolean countGrapheme() default true;
 }

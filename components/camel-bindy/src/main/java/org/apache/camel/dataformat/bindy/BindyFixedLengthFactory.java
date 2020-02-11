@@ -69,6 +69,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private int recordLength;
     private boolean ignoreTrailingChars;
     private boolean ignoreMissingChars;
+    private boolean countGrapheme;
 
     private Class<?> header;
     private Class<?> footer;
@@ -161,7 +162,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         // noop
     }
 
-    public void bind(CamelContext camelContext, String record, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, String recordStr, Map<String, Object> model, int line) throws Exception {
 
         int pos = 1;
         int counterMandatoryFields = 0;
@@ -171,6 +172,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         int length;
         String delimiter;
         Field field;
+        
+        final UnicodeHelper record = new UnicodeHelper(recordStr, (this.countGrapheme) ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS);
 
         // Iterate through the list of positions
         // defined in the @DataField
@@ -217,7 +220,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 }
                 offset += length;
             } else if (!delimiter.equals("")) {
-                String tempToken = record.substring(offset - 1, record.length());
+                final UnicodeHelper tempToken = new UnicodeHelper(record.substring(offset - 1, record.length()), (this.countGrapheme) ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS);
                 token = tempToken.substring(0, tempToken.indexOf(delimiter));
                 // include the delimiter in the offset calculation
                 offset += token.length() + 1;
@@ -604,6 +607,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                 ignoreMissingChars = record.ignoreMissingChars();
                 LOG.debug("Enable ignore missing chars: {}", ignoreMissingChars);
+                
+                countGrapheme = record.countGrapheme();
+                LOG.debug("Enable grapheme counting instead of codepoints: {}", countGrapheme);               
             }
         }
 
@@ -710,6 +716,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      */
     public boolean isIgnoreMissingChars() {
         return ignoreMissingChars;
+    }
+
+    /**
+     * Flag indicating whether graphemes or codepoints are counted.
+     */
+    public boolean isCountGrapheme() {
+        return countGrapheme;
     }
 
 }
