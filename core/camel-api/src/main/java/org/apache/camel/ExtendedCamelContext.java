@@ -30,6 +30,7 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -173,6 +175,26 @@ public interface ExtendedCamelContext extends CamelContext {
      * @return the node id factory
      */
     NodeIdFactory getNodeIdFactory();
+
+    /**
+     * Gets the {@link ComponentResolver} to use.
+     */
+    ComponentResolver getComponentResolver();
+
+    /**
+     * Sets a custom {@link ComponentResolver} to use.
+     */
+    void setComponentResolver(ComponentResolver componentResolver);
+
+    /**
+     * Gets the {@link LanguageResolver} to use.
+     */
+    LanguageResolver getLanguageResolver();
+
+    /**
+     * Sets a custom {@link LanguageResolver} to use.
+     */
+    void setLanguageResolver(LanguageResolver languageResolver);
 
     /**
      * Gets the current data format resolver
