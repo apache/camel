@@ -16,10 +16,8 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -59,8 +57,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.OptionsBuilder;
-import org.jruby.RubyString;
+
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
  * Prepares the camel catalog to include component, data format, and eip
@@ -359,7 +357,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             // check if we have a component label as we want the components to
             // include labels
             try {
-                String text = PackageHelper.loadText(file);
+                String text = loadText(file);
                 ComponentModel model = JsonMapper.generateComponentModel(text);
 
                 String name = asComponentName(file);
@@ -674,40 +672,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // use ascii doctor to convert the adoc files to html so we have
         // documentation in this format as well
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
-
-        int converted = 0;
-
-        for (Path file : adocFiles) {
-            // convert adoc to html as well
-            String fileName = file.getFileName().toString();
-            String newName = fileName.substring(0, fileName.length() - ".adoc".length()) + ".html";
-            Path toHtml = documentsOutDir.resolve(newName);
-
-            if (Files.isRegularFile(toHtml) && Files.getLastModifiedTime(file).compareTo(Files.getLastModifiedTime(toHtml)) < 0) {
-                getLog().debug("Skipping up to date html -> " + toHtml);
-                continue;
-            }
-
-            getLog().debug("Converting ascii document to html -> " + toHtml);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            asciidoctor.convertFile(file.toFile(), OptionsBuilder.options().toStream(new PrintStream(baos) {
-                public void write(RubyString str) {
-                    this.append(str);
-                }
-            }));
-
-            converted++;
-
-            // now fix the html file because we don't want to include certain
-            // lines
-            String data = Stream.of(new String(baos.toByteArray()).split("\n")).filter(line -> !line.contains("% raw %") && !line.contains("% endraw %"))
-                .collect(Collectors.joining("\n")) + "\n";
-            FileUtil.updateFile(toHtml, data);
-        }
-
-        if (converted > 0) {
-            getLog().info("Converted " + converted + " ascii documents to HTML");
-        }
 
         Path all = documentsOutDir.resolve("../docs.properties");
         Set<String> docNames = adocFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
