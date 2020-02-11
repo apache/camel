@@ -45,12 +45,15 @@ import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
@@ -70,10 +73,12 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
 
 public class Activator implements BundleActivator, BundleTrackerCustomizer<Object> {
 
+    public static final String META_INF_CONFIGURER = "META-INF/services/org/apache/camel/configurer/";
     public static final String META_INF_COMPONENT = "META-INF/services/org/apache/camel/component/";
     public static final String META_INF_LANGUAGE = "META-INF/services/org/apache/camel/language/";
     public static final String META_INF_LANGUAGE_RESOLVER = "META-INF/services/org/apache/camel/language/resolver/";
@@ -134,6 +139,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
         LOG.debug("Bundle started: {}", bundle.getSymbolicName());
         if (extenderCapabilityWired(bundle)) {
             List<BaseService> r = new ArrayList<>();
+            registerConfigurers(bundle, r);
             registerComponents(bundle, r);
             registerLanguages(bundle, r);
             registerDataFormats(bundle, r);
@@ -178,6 +184,21 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
         if (r != null) {
             for (BaseService service : r) {
                 service.unregister();
+            }
+        }
+    }
+
+    protected void registerConfigurers(Bundle bundle, List<BaseService> resolvers) {
+        if (canSee(bundle, GeneratedPropertyConfigurer.class)) {
+            Map<String, String> configurers = new HashMap<>();
+            for (Enumeration<?> e = bundle.getEntryPaths(META_INF_CONFIGURER); e != null && e.hasMoreElements();) {
+                String path = (String) e.nextElement();
+                LOG.debug("Found configureer: {} in bundle {}", path, bundle.getSymbolicName());
+                String name = path.substring(path.lastIndexOf("/") + 1);
+                configurers.put(name, path);
+            }
+            if (!configurers.isEmpty()) {
+                resolvers.add(new BundleConfigurerResolver(bundle, configurers));
             }
         }
     }
@@ -240,7 +261,6 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             URL url3 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
             if (url2 != null) {
                 LOG.debug("Found TypeConverterLoader in bundle {}", bundle.getSymbolicName());
-                Set<Class<?>> classes = new LinkedHashSet<>();
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER_LOADER));
 
                 if (LOG.isTraceEnabled()) {
@@ -339,6 +359,26 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
         @Override
         public void register() {
             doRegister(ComponentResolver.class, "component", components.keySet());
+        }
+    }
+
+    protected static class BundleConfigurerResolver extends BaseResolver<GeneratedPropertyConfigurer> implements ConfigurerResolver {
+
+        private final Map<String, String> configurers;
+
+        public BundleConfigurerResolver(Bundle bundle, Map<String, String> configurers) {
+            super(bundle, GeneratedPropertyConfigurer.class);
+            this.configurers = configurers;
+        }
+
+        @Override
+        public GeneratedPropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context) {
+            return createInstance(name, configurers.get(name), context);
+        }
+
+        @Override
+        public void register() {
+            doRegister(ConfigurerResolver.class, "configurer", configurers.keySet());
         }
     }
 
