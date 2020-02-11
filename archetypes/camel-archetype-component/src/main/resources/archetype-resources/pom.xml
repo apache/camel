@@ -45,9 +45,11 @@
   </dependencyManagement>
 
   <dependencies>
+
+    <!-- camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     
     <!-- logging -->
@@ -102,25 +104,41 @@
         </configuration>
       </plugin>
 
-      <!-- generate components meta-data and validate component includes documentation etc -->
+      <!-- generate components meta-data -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
         <version>${camel-version}</version>
         <executions>
           <execution>
-            <id>prepare</id>
+            <id>generate</id>
             <goals>
-              <goal>prepare-components</goal>
+              <goal>generate-component</goal>
             </goals>
-            <phase>generate-resources</phase>
+            <phase>process-classes</phase>
           </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
           <execution>
-            <id>validate</id>
+            <phase>initialize</phase>
             <goals>
-              <goal>validate-components</goal>
+              <goal>add-source</goal>
+              <goal>add-resource</goal>
             </goals>
-            <phase>prepare-package</phase>
+            <configuration>
+              <sources>
+                <source>src/generated/java</source>
+              </sources>
+              <resources>
+                <resource>
+                  <directory>src/generated/resources</directory>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -136,8 +154,16 @@
             <Export-Service>org.apache.camel.spi.ComponentResolver;component=${scheme}</Export-Service>
           </instructions>
         </configuration>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
-
     </plugins>
   </build>
 
