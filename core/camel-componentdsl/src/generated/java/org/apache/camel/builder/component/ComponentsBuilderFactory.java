@@ -473,6 +473,30 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2CwComponentBuilderFactory.aws2Cw();
     }
     /**
+     * AWS 2 DynamoDB (camel-aws2-ddb)
+     * The aws-ddb component is used for storing and retrieving data from
+     * Amazon's DynamoDB service.
+     * 
+     * Category: cloud,database,nosql
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-ddb
+     */
+    static org.apache.camel.builder.component.dsl.Aws2DdbComponentBuilderFactory.Aws2DdbComponentBuilder aws2Ddb() {
+        return org.apache.camel.builder.component.dsl.Aws2DdbComponentBuilderFactory.aws2Ddb();
+    }
+    /**
+     * AWS 2 DynamoDB Streams (camel-aws2-ddb)
+     * The aws-ddbstream component is used for working with Amazon DynamoDB
+     * Streams.
+     * 
+     * Category: cloud,messaging,streams
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-ddb
+     */
+    static org.apache.camel.builder.component.dsl.Aws2DdbstreamComponentBuilderFactory.Aws2DdbstreamComponentBuilder aws2Ddbstream() {
+        return org.apache.camel.builder.component.dsl.Aws2DdbstreamComponentBuilderFactory.aws2Ddbstream();
+    }
+    /**
      * AWS 2 EC2 (camel-aws2-ec2)
      * The aws2-ec2 is used for managing Amazon EC2 instances.
      * 
