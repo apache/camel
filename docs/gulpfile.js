@@ -200,10 +200,11 @@ const symlinks = parallel(
   series(deleteUserManualSymlinks, createUserManualSymlinks)
 );
 const nav = parallel(createComponentNav, createUserManualNav);
-const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
+//const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
 
 exports.symlinks = symlinks;
 exports.nav = nav;
-exports.examples = examples;
-exports.default = series(symlinks, nav, examples);
+//exports.examples = examples;
+//exports.default = series(symlinks, nav, examples);
+exports.default = series(symlinks, nav);
 
