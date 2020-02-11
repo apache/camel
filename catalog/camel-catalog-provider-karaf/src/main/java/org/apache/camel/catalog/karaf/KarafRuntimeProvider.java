@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.impl.CatalogHelper;
 import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.catalog.impl.CatalogHelper;
 
 /**
  * A karaf based {@link RuntimeProvider} which only includes the supported Camel components, data formats, languages and others

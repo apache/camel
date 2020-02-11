@@ -32,7 +32,6 @@ import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -49,6 +48,7 @@ import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
