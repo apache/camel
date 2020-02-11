@@ -434,15 +434,15 @@ provides
 http://cxf.apache.org/docs/jax-rs-client-api.html#JAX-RSClientAPI-CXFWebClientAPI[a
 http centric client API]. You can also invoke this API from
 `camel-cxfrs` producer. You need to specify the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html#HTTP_PATH[HTTP_PATH]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html#HTTP_PATH[HTTP_PATH]
 and
-the https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Exchange.html#HTTP_METHOD[HTTP_METHOD] and
+the http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html#HTTP_METHOD[HTTP_METHOD] and
 let the producer use the http centric client API by using the URI option
 *httpClientAPI* or by setting the message header
-https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_USING_HTTP_API[CxfConstants.CAMEL_CXF_RS_USING_HTTP_API].
+http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfConstants.html#CAMEL_CXF_RS_USING_HTTP_API[CxfConstants.CAMEL_CXF_RS_USING_HTTP_API].
 You can turn the response object to the type class specified with the
 message
-header https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_RESPONSE_CLASS[CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS].
+header http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfConstants.html#CAMEL_CXF_RS_RESPONSE_CLASS[CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS].
 [source,java]
 ----
 Exchange exchange = template.send("direct://http", new Processor() {
@@ -471,7 +471,7 @@ cxfrs URI for the CXFRS http centric client.
 Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13"
 ----
 To support the Dynamical routing, you can override the URI's query
-parameters by using the https://www.javadoc.io/doc/org.apache.camel/camel-cxf-transport/current/org/apache/camel/component/cxf/common/message/CxfConstants.html#CAMEL_CXF_RS_QUERY_MAP[CxfConstants.CAMEL_CXF_RS_QUERY_MAP]
+parameters by using the http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfConstants.html#CAMEL_CXF_RS_QUERY_MAP[CxfConstants.CAMEL_CXF_RS_QUERY_MAP]
 header to set the parameter map for it.
 [source,java]
 ----

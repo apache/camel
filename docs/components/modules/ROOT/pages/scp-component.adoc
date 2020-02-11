@@ -129,6 +129,6 @@ with the following path and query parameters:
 == Limitations
 
 Currently camel-jsch only supports a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 (i.e. copy files to another host). 
 

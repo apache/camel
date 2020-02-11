@@ -135,7 +135,7 @@ from("stomp:queue:test").transform(body().convertToString()).to("mock:result")
 
 Camel supports the Message Endpoint pattern
 using the
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html[Endpoint]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
 interface. Endpoints are usually created by a
 Component and Endpoints are usually referred to in
 the DSL via their URIs.
@@ -143,20 +143,20 @@ the DSL via their URIs.
 From an Endpoint you can use the following methods
 
 *
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createProducer--[createProducer()]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createProducer()[createProducer()]
 will create a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 for sending message exchanges to the endpoint
 *
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createConsumer-org.apache.camel.Processor-[createConsumer()]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
 implements the Event Driven Consumer
 pattern for consuming message exchanges from the endpoint via a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
 when creating a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[Consumer]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Consumer.html[Consumer]
 *
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Endpoint.html#createPollingConsumer--[createPollingConsumer()]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createPollingConsumer()[createPollingConsumer()]
 implements the Polling Consumer pattern for
 consuming message exchanges from the endpoint via a
-https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/PollingConsumer.html[PollingConsumer]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
