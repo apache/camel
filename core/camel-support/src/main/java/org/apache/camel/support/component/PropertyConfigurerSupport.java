@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support.component;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -24,7 +23,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.support.EndpointHelper;
 
 /**
- * Base class used by the camel-apt compiler plugin when it generates source code for fast
+ * Base class used by Camel Package Maven Plugin when it generates source code for fast
  * property configurations via {@link org.apache.camel.spi.PropertyConfigurer}.
  */
 public abstract class PropertyConfigurerSupport {

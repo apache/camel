@@ -201,6 +201,64 @@ To continue using JMX with Camel Spring Boot add the following dependency:
 </dependency>
 ----
 
+=== Custom components
+
+Camel now uses Camel Package Maven Plugin instead of `camel-apt` APT compiler to generate component meta data.
+
+Custom components should then change in the pom.xml from:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>apt</artifactId>
+  <scope>provided</scope>
+</dependency>
+----
+
+To the following:
+
+[source,xml]
+----
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${camel-version}</version>
+        <executions>
+          <execution>
+            <id>generate</id>
+            <goals>
+              <goal>generate-component</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>add-source</goal>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/generated/java</source>
+              </sources>
+              <resources>
+                <resource>
+                  <directory>src/generated/resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+----
+
 === API changes
 
 ==== log changed to private static LOG
