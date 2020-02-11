@@ -19,7 +19,7 @@ documentation before continuing:
 
 To get started with Camel:
 
-1.  Create a `CamelContext`.
+1.  Create a xref:https://camel.apache.org/manual/latest/camelcontext.html[CamelContext].
 2.  Optionally, xref:configuring-camel.adoc[configure components or endpoints].
 3.  Add whatever routing rules you wish using the DSL and `RouteBuilder` or using XML DSL.
 4.  Start the Camel context.
