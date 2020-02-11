@@ -16,16 +16,23 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.model.Constants;
 import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.reifier.language.ExpressionReifier;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
 public abstract class AbstractReifier {
+
+    private static final String PREFIX = "{" + Constants.PLACEHOLDER_QNAME + "}";
 
     protected final RouteContext routeContext;
     protected final CamelContext camelContext;
@@ -75,6 +82,33 @@ public abstract class AbstractReifier {
 
     protected Predicate createPredicate(ExpressionSubElementDefinition expression) {
         return ExpressionReifier.reifier(camelContext, expression).createPredicate();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void addOtherAttributes(Object definition, Map<String, Object> properties) {
+        if (definition instanceof OtherAttributesAware) {
+            Map<Object, Object> others = ((OtherAttributesAware) definition).getOtherAttributes();
+            others.forEach((k, v) -> {
+                String ks = k.toString();
+                if (ks.startsWith(PREFIX) && v instanceof String) {
+                    // value must be enclosed with placeholder tokens
+                    String s = (String) v;
+                    if (!s.startsWith(PropertiesComponent.PREFIX_TOKEN) && !s.endsWith(PropertiesComponent.SUFFIX_TOKEN)) {
+                        s = PropertiesComponent.PREFIX_TOKEN + s + PropertiesComponent.SUFFIX_TOKEN;
+                    }
+                    String kk = ks.substring(PREFIX.length());
+                    properties.put(kk, s);
+                }
+            });
+        }
+    }
+
+    protected Object or(Object a, Object b) {
+        return a != null ? a : b;
+    }
+
+    protected Object asRef(String s) {
+        return s != null ? s.startsWith("#") ? s : "#" + s : null;
     }
 
 }

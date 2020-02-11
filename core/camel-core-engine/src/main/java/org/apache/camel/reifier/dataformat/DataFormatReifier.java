@@ -235,6 +235,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         Map<String, Object> properties = new LinkedHashMap<>();
         prepareDataFormatConfig(properties);
         properties.entrySet().removeIf(e -> e.getValue() == null);
+        addOtherAttributes(definition, properties);
 
         PropertyConfigurer configurer = findPropertyConfigurer(dataFormat, camelContext);
 
@@ -284,13 +285,5 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     }
 
     protected abstract void prepareDataFormatConfig(Map<String, Object> properties);
-
-    protected Object or(Object a, Object b) {
-        return a != null ? a : b;
-    }
-
-    protected Object asRef(String s) {
-        return s != null ? s.startsWith("#") ? s : "#" + s : null;
-    }
 
 }
