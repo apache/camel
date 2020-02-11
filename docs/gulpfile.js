@@ -105,12 +105,12 @@ function titleFrom(file) {
 
 function insertGeneratedNotice() {
     return inject(src('./generated.txt'), {
-               name: 'generated',
-               removeTags: true,
-               transform: (filename, file) => {
-                   return file.contents.toString('utf8');
-               }
-           });
+        name: 'generated',
+        removeTags: true,
+        transform: (filename, file) => {
+            return file.contents.toString('utf8');
+        }
+    });
 }
 
 function insertSourceAttribute() {
@@ -195,16 +195,15 @@ function createComponentExamples() {
 }
 
 const symlinks = parallel(
-  series(deleteComponentSymlinks, createComponentSymlinks),
-  series(deleteComponentImageSymlinks, createComponentImageSymlinks),
-  series(deleteUserManualSymlinks, createUserManualSymlinks)
+    series(deleteComponentSymlinks, createComponentSymlinks),
+    series(deleteComponentImageSymlinks, createComponentImageSymlinks),
+    series(deleteUserManualSymlinks, createUserManualSymlinks)
 );
 const nav = parallel(createComponentNav, createUserManualNav);
-//const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
+const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
 
 exports.symlinks = symlinks;
 exports.nav = nav;
 //exports.examples = examples;
 //exports.default = series(symlinks, nav, examples);
 exports.default = series(symlinks, nav);
-
