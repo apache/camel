@@ -56,7 +56,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.asciidoctor.Asciidoctor;
 
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
@@ -668,10 +667,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         list(documentsOutDir).filter(p -> !newJsons.containsValue(p) && !newJsons.containsValue(p.resolveSibling(p.getFileName().toString().replace(".html", ".adoc"))))
             .forEach(this::delete);
         newJsons.forEach(this::copy);
-
-        // use ascii doctor to convert the adoc files to html so we have
-        // documentation in this format as well
-        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
 
         Path all = documentsOutDir.resolve("../docs.properties");
         Set<String> docNames = adocFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
