@@ -43,32 +43,39 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private Boolean parallelProcessing;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String parallelProcessing;
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
-    private Boolean strategyMethodAllowNull;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String strategyMethodAllowNull;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    private Boolean streaming;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String streaming;
     @XmlAttribute
-    private Boolean stopOnException;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String stopOnException;
     @XmlAttribute
-    @Metadata(defaultValue = "0")
-    private Long timeout;
+    @Metadata(defaultValue = "0", javaType = "java.lang.Long")
+    private String timeout;
     @XmlAttribute
     private String onPrepareRef;
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
-    private Boolean shareUnitOfWork;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String shareUnitOfWork;
     @XmlAttribute
-    private Boolean parallelAggregate;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String parallelAggregate;
     @XmlAttribute
-    private Boolean stopOnAggregateException;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String stopOnAggregateException;
 
     public SplitDefinition() {
     }
@@ -154,7 +161,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition aggregationStrategyMethodAllowNull() {
-        setStrategyMethodAllowNull(true);
+        setStrategyMethodAllowNull(Boolean.toString(true));
         return this;
     }
 
@@ -167,7 +174,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition parallelProcessing() {
-        setParallelProcessing(true);
+        setParallelProcessing(Boolean.toString(true));
         return this;
     }
 
@@ -180,7 +187,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition parallelProcessing(boolean parallelProcessing) {
-        setParallelProcessing(parallelProcessing);
+        setParallelProcessing(Boolean.toString(parallelProcessing));
         return this;
     }
 
@@ -195,7 +202,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition parallelAggregate() {
-        setParallelAggregate(true);
+        setParallelAggregate(Boolean.toString(true));
         return this;
     }
 
@@ -210,7 +217,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition stopOnAggregateException() {
-        setStopOnAggregateException(true);
+        setStopOnAggregateException(Boolean.toString(true));
         return this;
     }
 
@@ -235,7 +242,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition streaming() {
-        setStreaming(true);
+        setStreaming(Boolean.toString(true));
         return this;
     }
 
@@ -256,7 +263,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition stopOnException() {
-        setStopOnException(true);
+        setStopOnException(Boolean.toString(true));
         return this;
     }
 
@@ -326,7 +333,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition timeout(long timeout) {
-        setTimeout(timeout);
+        setTimeout(Long.toString(timeout));
         return this;
     }
 
@@ -339,7 +346,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder.
      */
     public SplitDefinition shareUnitOfWork() {
-        setShareUnitOfWork(true);
+        setShareUnitOfWork(Boolean.toString(true));
         return this;
     }
 
@@ -370,48 +377,44 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public Boolean getParallelProcessing() {
+    public String getParallelProcessing() {
         return parallelProcessing;
     }
 
-    public void setParallelProcessing(Boolean parallelProcessing) {
+    public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 
-    public Boolean getStreaming() {
+    public String getStreaming() {
         return streaming;
     }
 
-    public void setStreaming(Boolean streaming) {
+    public void setStreaming(String streaming) {
         this.streaming = streaming;
     }
 
-    public Boolean getParallelAggregate() {
+    public String getParallelAggregate() {
         return parallelAggregate;
     }
 
-    public void setParallelAggregate(Boolean parallelAggregate) {
+    public void setParallelAggregate(String parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }
 
-    public Boolean getStopOnAggregateException() {
+    public String getStopOnAggregateException() {
         return this.stopOnAggregateException;
     }
 
-    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+    public void setStopOnAggregateException(String stopOnAggregateException) {
         this.stopOnAggregateException = stopOnAggregateException;
     }
 
-    public Boolean getStopOnException() {
+    public String getStopOnException() {
         return stopOnException;
     }
 
-    public void setStopOnException(Boolean stopOnException) {
+    public void setStopOnException(String stopOnException) {
         this.stopOnException = stopOnException;
-    }
-
-    public Boolean isStopOnException() {
-        return stopOnException != null && stopOnException;
     }
 
     @Override
@@ -451,7 +454,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.strategyMethodName = strategyMethodName;
     }
 
-    public Boolean getStrategyMethodAllowNull() {
+    public String getStrategyMethodAllowNull() {
         return strategyMethodAllowNull;
     }
 
@@ -461,7 +464,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * the oldExchange (when no data to enrich), when using POJOs as the
      * AggregationStrategy
      */
-    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
@@ -475,11 +478,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Long getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(Long timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -499,11 +502,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.onPrepare = onPrepare;
     }
 
-    public Boolean getShareUnitOfWork() {
+    public String getShareUnitOfWork() {
         return shareUnitOfWork;
     }
 
-    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+    public void setShareUnitOfWork(String shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
     }
 

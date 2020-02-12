@@ -30,15 +30,15 @@ import org.apache.camel.spi.RouteContext;
 
 public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
-    public CatchReifier(ProcessorDefinition<?> definition) {
-        super(CatchDefinition.class.cast(definition));
+    public CatchReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, CatchDefinition.class.cast(definition));
     }
 
     @Override
-    public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
+    public CatchProcessor createProcessor() throws Exception {
         // create and load exceptions if not done
         if (definition.getExceptionClasses() == null) {
-            definition.setExceptionClasses(createExceptionClasses(routeContext.getCamelContext()));
+            definition.setExceptionClasses(createExceptionClasses(camelContext));
         }
 
         // must have at least one exception
@@ -52,11 +52,11 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
         }
 
         // do catch does not mandate a child processor
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
+        Processor childProcessor = this.createChildProcessor(false);
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {
-            when = definition.getOnWhen().getExpression().createPredicate(routeContext);
+            when = createPredicate(definition.getOnWhen().getExpression());
         }
 
         return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when, null);

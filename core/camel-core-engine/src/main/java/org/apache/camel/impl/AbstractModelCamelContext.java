@@ -283,7 +283,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
             String id = e.getKey();
             DataFormatDefinition def = e.getValue();
             LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
-            DataFormat df = DataFormatReifier.reifier(def).createDataFormat(this);
+            DataFormat df = DataFormatReifier.reifier(this, def).createDataFormat();
             addService(df, true);
             getRegistry().bind(id, df);
         }

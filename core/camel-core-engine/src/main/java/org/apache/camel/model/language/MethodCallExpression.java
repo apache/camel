@@ -22,12 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.AfterPropertiesConfigured;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
@@ -149,48 +143,6 @@ public class MethodCallExpression extends ExpressionDefinition {
             this.beanType = null;
             this.instance = instance;
         }
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (beanType == null && beanTypeName != null) {
-            try {
-                beanType = camelContext.getClassResolver().resolveMandatoryClass(beanTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        // special for bean language where we need to configure it first
-        Language lan = camelContext.resolveLanguage("bean");
-        configureLanguage(camelContext, lan);
-        // .. and create expression with null value as we use the configured
-        // properties instead
-        Expression exp = lan.createExpression(null);
-        if (exp instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured)exp).afterPropertiesConfigured(camelContext);
-        }
-        return exp;
-    }
-
-    protected void configureLanguage(CamelContext camelContext, Language language) {
-        if (instance != null) {
-            setProperty(camelContext, language, "bean", instance);
-        }
-        if (beanType != null) {
-            setProperty(camelContext, language, "beanType", beanType);
-        }
-        if (ref != null) {
-            setProperty(camelContext, language, "ref", ref);
-        }
-        if (method != null) {
-            setProperty(camelContext, language, "method", method);
-        }
-    }
-
-    @Override
-    public Predicate createPredicate(CamelContext camelContext) {
-        return (Predicate)createExpression(camelContext);
     }
 
     private String beanName() {

@@ -42,7 +42,7 @@
             <from uri="direct:start"/>
             <!-- use prop namespace, to define a property placeholder, which maps to
                  option stopOnException={{stop}} -->
-            <multicast prop:stopOnException="stop">
+            <multicast stopOnException="{{stop}}">
                 <to uri="mock:a"/>
                 <throwException ref="damn"/>
                 <to uri="mock:b"/>

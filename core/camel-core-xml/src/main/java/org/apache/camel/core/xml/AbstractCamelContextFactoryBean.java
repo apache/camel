@@ -484,7 +484,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getTransformers() != null) {
             for (TransformerDefinition def : getTransformers().getTransformers()) {
                 // create and register transformers on transformer registry
-                Transformer transformer = TransformerReifier.reifier(def).createTransformer(getContext());
+                Transformer transformer = TransformerReifier.reifier(getContext(), def).createTransformer();
                 getContext().getTransformerRegistry().put(createTransformerKey(def), transformer);
             }
         }
@@ -498,7 +498,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getValidators() != null) {
             for (ValidatorDefinition def : getValidators().getValidators()) {
                 // create and register validators on validator registry
-                Validator validator = ValidatorReifier.reifier(def).createValidator(getContext());
+                Validator validator = ValidatorReifier.reifier(getContext(), def).createValidator();
                 getContext().getValidatorRegistry().put(createValidatorKey(def), validator);
             }
         }

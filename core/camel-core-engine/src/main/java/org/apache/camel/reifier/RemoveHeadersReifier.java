@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.stream.Stream;
+
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemoveHeadersDefinition;
@@ -25,19 +27,23 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RemoveHeadersReifier extends ProcessorReifier<RemoveHeadersDefinition> {
 
-    public RemoveHeadersReifier(ProcessorDefinition<?> definition) {
-        super((RemoveHeadersDefinition)definition);
+    public RemoveHeadersReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (RemoveHeadersDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getPattern(), "patterns", definition);
         if (definition.getExcludePatterns() != null) {
-            return new RemoveHeadersProcessor(definition.getPattern(), definition.getExcludePatterns());
+            return new RemoveHeadersProcessor(parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
         } else if (definition.getExcludePattern() != null) {
-            return new RemoveHeadersProcessor(definition.getPattern(), new String[] {definition.getExcludePattern()});
+            return new RemoveHeadersProcessor(parseString(definition.getPattern()), parseStrings(new String[] {definition.getExcludePattern()}));
         } else {
-            return new RemoveHeadersProcessor(definition.getPattern(), null);
+            return new RemoveHeadersProcessor(parseString(definition.getPattern()), null);
         }
+    }
+
+    private String[] parseStrings(String[] array) {
+        return Stream.of(array).map(this::parseString).toArray(String[]::new);
     }
 }

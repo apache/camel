@@ -16,6 +16,9 @@
  */
 package org.apache.camel.model.language;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -190,6 +193,14 @@ public class XPathExpression extends NamespaceAwareExpression {
         this.headerName = headerName;
     }
 
+    public XPathFactory getXPathFactory() {
+        return xpathFactory;
+    }
+
+    public void setXPathFactory(XPathFactory xpathFactory) {
+        this.xpathFactory = xpathFactory;
+    }
+
     public String getThreadSafety() {
         return threadSafety;
     }
@@ -208,107 +219,6 @@ public class XPathExpression extends NamespaceAwareExpression {
      */
     public void setThreadSafety(String threadSafety) {
         this.threadSafety = threadSafety;
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (documentType == null && documentTypeName != null) {
-            try {
-                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        if (resultType == null && resultTypeName != null) {
-            try {
-                resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        resolveXPathFactory(camelContext);
-        return super.createExpression(camelContext);
-    }
-
-    @Override
-    public Predicate createPredicate(CamelContext camelContext) {
-        if (documentType == null && documentTypeName != null) {
-            try {
-                documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        resolveXPathFactory(camelContext);
-        return super.createPredicate(camelContext);
-    }
-
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        boolean isSaxon = getSaxon() != null && Boolean.parseBoolean(getSaxon());
-        boolean isLogNamespaces = getLogNamespaces() != null && Boolean.parseBoolean(getLogNamespaces());
-
-        if (documentType != null) {
-            setProperty(camelContext, expression, "documentType", documentType);
-        }
-        if (resultType != null) {
-            setProperty(camelContext, expression, "resultType", resultType);
-        }
-        if (isSaxon) {
-            setProperty(camelContext, expression, "useSaxon", true);
-        }
-        if (xpathFactory != null) {
-            setProperty(camelContext, expression, "xPathFactory", xpathFactory);
-        }
-        if (objectModel != null) {
-            setProperty(camelContext, expression, "objectModelUri", objectModel);
-        }
-        if (threadSafety != null) {
-            setProperty(camelContext, expression, "threadSafety", threadSafety);
-        }
-        if (isLogNamespaces) {
-            setProperty(camelContext, expression, "logNamespaces", true);
-        }
-        if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(camelContext, expression, "headerName", getHeaderName());
-        }
-        // moved the super configuration to the bottom so that the namespace
-        // init picks up the newly set XPath Factory
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        boolean isSaxon = getSaxon() != null && Boolean.parseBoolean(getSaxon());
-        boolean isLogNamespaces = getLogNamespaces() != null && Boolean.parseBoolean(getLogNamespaces());
-
-        if (documentType != null) {
-            setProperty(camelContext, predicate, "documentType", documentType);
-        }
-        if (resultType != null) {
-            setProperty(camelContext, predicate, "resultType", resultType);
-        }
-        if (isSaxon) {
-            setProperty(camelContext, predicate, "useSaxon", true);
-        }
-        if (xpathFactory != null) {
-            setProperty(camelContext, predicate, "xPathFactory", xpathFactory);
-        }
-        if (objectModel != null) {
-            setProperty(camelContext, predicate, "objectModelUri", objectModel);
-        }
-        if (threadSafety != null) {
-            setProperty(camelContext, predicate, "threadSafety", threadSafety);
-        }
-        if (isLogNamespaces) {
-            setProperty(camelContext, predicate, "logNamespaces", true);
-        }
-        if (ObjectHelper.isNotEmpty(getHeaderName())) {
-            setProperty(camelContext, predicate, "headerName", getHeaderName());
-        }
-        // moved the super configuration to the bottom so that the namespace
-        // init picks up the newly set XPath Factory
-        super.configurePredicate(camelContext, predicate);
     }
 
     private void resolveXPathFactory(CamelContext camelContext) {

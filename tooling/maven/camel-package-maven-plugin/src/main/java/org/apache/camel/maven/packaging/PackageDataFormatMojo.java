@@ -399,9 +399,6 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return pckName.replace('.', '/');
     }
 
-    /**
-     * Parses the Camel Main configuration java source file.
-     */
     private static List<DataFormatOptionModel> parseConfigurationSource(MavenProject project, String className) throws IOException {
         final List<DataFormatOptionModel> answer = new ArrayList<>();
         File file = new File(project.getBasedir(), "src/main/java/" + className.replace('.', '/') + ".java");

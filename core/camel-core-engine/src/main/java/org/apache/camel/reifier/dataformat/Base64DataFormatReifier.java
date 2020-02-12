@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 
 public class Base64DataFormatReifier extends DataFormatReifier<Base64DataFormat> {
 
-    public Base64DataFormatReifier(DataFormatDefinition definition) {
-        super((Base64DataFormat)definition);
+    public Base64DataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (Base64DataFormat)definition);
     }
 
     @Override

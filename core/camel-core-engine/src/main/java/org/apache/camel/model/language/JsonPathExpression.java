@@ -22,10 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -143,64 +139,6 @@ public class JsonPathExpression extends ExpressionDefinition {
     @Override
     public String getLanguage() {
         return "jsonpath";
-    }
-
-    @Override
-    public Expression createExpression(CamelContext camelContext) {
-        if (resultType == null && resultTypeName != null) {
-            try {
-                resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-        return super.createExpression(camelContext);
-    }
-
-    @Override
-    protected void configureExpression(CamelContext camelContext, Expression expression) {
-        if (resultType != null) {
-            setProperty(camelContext, expression, "resultType", resultType);
-        }
-        if (suppressExceptions != null) {
-            setProperty(camelContext, expression, "suppressExceptions", suppressExceptions);
-        }
-        if (allowSimple != null) {
-            setProperty(camelContext, expression, "allowSimple", allowSimple);
-        }
-        if (allowEasyPredicate != null) {
-            setProperty(camelContext, expression, "allowEasyPredicate", allowEasyPredicate);
-        }
-        if (writeAsString != null) {
-            setProperty(camelContext, expression, "writeAsString", writeAsString);
-        }
-        if (headerName != null) {
-            setProperty(camelContext, expression, "headerName", headerName);
-        }
-        super.configureExpression(camelContext, expression);
-    }
-
-    @Override
-    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
-        if (resultType != null) {
-            setProperty(camelContext, predicate, "resultType", resultType);
-        }
-        if (suppressExceptions != null) {
-            setProperty(camelContext, predicate, "suppressExceptions", suppressExceptions);
-        }
-        if (allowSimple != null) {
-            setProperty(camelContext, predicate, "allowSimple", allowSimple);
-        }
-        if (allowEasyPredicate != null) {
-            setProperty(camelContext, predicate, "allowEasyPredicate", allowEasyPredicate);
-        }
-        if (writeAsString != null) {
-            setProperty(camelContext, predicate, "writeAsString", writeAsString);
-        }
-        if (headerName != null) {
-            setProperty(camelContext, predicate, "headerName", headerName);
-        }
-        super.configurePredicate(camelContext, predicate);
     }
 
 }

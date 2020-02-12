@@ -128,7 +128,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             ErrorHandlerBuilder builder) {
         JtaTransactionErrorHandler answer;
         try {
-            answer = (JtaTransactionErrorHandler) ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, processor);
+            answer = (JtaTransactionErrorHandler) ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

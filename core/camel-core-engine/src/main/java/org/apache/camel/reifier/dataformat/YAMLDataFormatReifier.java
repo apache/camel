@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
@@ -28,8 +29,8 @@ import org.apache.camel.model.dataformat.YAMLTypeFilterType;
 
 public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
 
-    public YAMLDataFormatReifier(DataFormatDefinition definition) {
-        super((YAMLDataFormat)definition);
+    public YAMLDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (YAMLDataFormat)definition);
     }
 
     @Override

@@ -268,7 +268,27 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition stopOnException() {
-        setStopOnException(Boolean.toString(true));
+        return stopOnException(Boolean.toString(true));
+    }
+
+    /**
+     * Will now stop further processing if an exception or failure occurred
+     * during processing of an {@link org.apache.camel.Exchange} and the caused
+     * exception will be thrown.
+     * <p/>
+     * Will also stop if processing the exchange failed (has a fault message) or
+     * an exception was thrown and handled by the error handler (such as using
+     * onException). In all situations the multicast will stop further
+     * processing. This is the same behavior as in pipeline, which is used by
+     * the routing engine.
+     * <p/>
+     * The default behavior is to <b>not</b> stop but continue processing till
+     * the end
+     *
+     * @return the builder
+     */
+    public MulticastDefinition stopOnException(String stopOnException) {
+        setStopOnException(stopOnException);
         return this;
     }
 
@@ -348,7 +368,25 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * @return the builder
      */
     public MulticastDefinition timeout(long timeout) {
-        setTimeout(Long.toString(timeout));
+        return timeout(Long.toString(timeout));
+    }
+
+    /**
+     * Sets a total timeout specified in millis, when using parallel processing.
+     * If the Multicast hasn't been able to send and process all replies within
+     * the given timeframe, then the timeout triggers and the Multicast breaks
+     * out and continues. Notice if you provide a
+     * TimeoutAwareAggregationStrategy then the timeout method is invoked before
+     * breaking out. If the timeout is reached with running tasks still
+     * remaining, certain tasks for which it is difficult for Camel to shut down
+     * in a graceful manner may continue to run. So use this option with a bit
+     * of care.
+     *
+     * @param timeout timeout in millis
+     * @return the builder
+     */
+    public MulticastDefinition timeout(String timeout) {
+        setTimeout(timeout);
         return this;
     }
 

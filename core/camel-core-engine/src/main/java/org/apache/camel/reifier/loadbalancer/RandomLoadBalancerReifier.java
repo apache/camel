@@ -24,12 +24,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class RandomLoadBalancerReifier extends LoadBalancerReifier<RandomLoadBalancerDefinition> {
 
-    public RandomLoadBalancerReifier(LoadBalancerDefinition definition) {
-        super((RandomLoadBalancerDefinition)definition);
+    public RandomLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
+        super(routeContext, (RandomLoadBalancerDefinition)definition);
     }
 
     @Override
-    public LoadBalancer createLoadBalancer(RouteContext routeContext) {
+    public LoadBalancer createLoadBalancer() {
         return new RandomLoadBalancer();
     }
 

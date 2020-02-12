@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.RssDataFormat;
 
 public class RssDataFormatReifier extends DataFormatReifier<RssDataFormat> {
 
-    public RssDataFormatReifier(DataFormatDefinition definition) {
-        super((RssDataFormat)definition);
+    public RssDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (RssDataFormat)definition);
     }
 
     @Override

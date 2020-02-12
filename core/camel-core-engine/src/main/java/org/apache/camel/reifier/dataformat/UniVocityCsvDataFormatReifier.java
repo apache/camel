@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 
 public class UniVocityCsvDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityCsvDataFormat> {
 
-    public UniVocityCsvDataFormatReifier(DataFormatDefinition definition) {
-        super(definition);
+    public UniVocityCsvDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, definition);
     }
 
     @Override

@@ -18,14 +18,15 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
 public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
 
-    public JsonDataFormatReifier(DataFormatDefinition definition) {
-        super((JsonDataFormat)definition);
+    public JsonDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (JsonDataFormat)definition);
     }
 
     @Override

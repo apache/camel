@@ -34,7 +34,6 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -50,8 +49,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
-    public RouteReifier(ProcessorDefinition<?> definition) {
-        super((RouteDefinition)definition);
+    public RouteReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (RouteDefinition) definition);
+    }
+
+    public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
+        super(camelContext, (RouteDefinition) definition);
     }
 
     /**
@@ -94,15 +97,15 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getInput() == null) {
             throw new IllegalArgumentException("RouteDefinition has no input");
         }
-        return new RouteReifier(definition).adviceWith(camelContext, builder);
+        return new RouteReifier(camelContext, definition).adviceWith(builder);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         throw new UnsupportedOperationException("Not implemented for RouteDefinition");
     }
 
-    public Route createRoute(CamelContext camelContext, RouteContext routeContext) {
+    public Route createRoute() {
         try {
             return doCreateRoute(camelContext, routeContext);
         } catch (FailedToCreateRouteException e) {
@@ -114,7 +117,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
     }
 
-    public Endpoint resolveEndpoint(CamelContext camelContext, String uri) throws NoSuchEndpointException {
+    public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
         ObjectHelper.notNull(camelContext, "CamelContext");
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
@@ -145,15 +148,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * Will stop and remove the old route from camel context and add and start
      * this new advised route.
      *
-     * @param camelContext the camel context
      * @param builder the route builder
      * @return a new route which is this route merged with the route builder
      * @throws Exception can be thrown from the route builder
      * @see AdviceWithRouteBuilder
      */
     @SuppressWarnings("deprecation")
-    public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext");
+    public RouteDefinition adviceWith(RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(builder, "RouteBuilder");
 
         log.debug("AdviceWith route before: {}", this);
@@ -359,7 +360,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (endpoint == null) {
             EndpointConsumerBuilder def = definition.getInput().getEndpointConsumerBuilder();
             if (def != null) {
-                endpoint = def.resolve(routeContext.getCamelContext());
+                endpoint = def.resolve(camelContext);
             } else {
                 endpoint = routeContext.resolveEndpoint(definition.getInput().getEndpointUri());
             }
@@ -372,7 +373,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // validate route has output processors
-        if (!ProcessorDefinitionHelper.hasOutputs(definition.getOutputs(), true)) {
+        if (!hasOutputs(definition.getOutputs(), true)) {
             String at = definition.getInput().toString();
             Exception cause = new IllegalArgumentException("Route " + definition.getId() + " has no output processors."
                                                            + " You need to add outputs to the route such as to(\"log:foo\").");
@@ -382,7 +383,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
         for (ProcessorDefinition<?> output : list) {
             try {
-                ProcessorReifier.reifier(output).addRoutes(routeContext);
+                ProcessorReifier.reifier(routeContext, output).addRoutes();
             } catch (Exception e) {
                 throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
             }
@@ -390,7 +391,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         if (definition.getRestBindingDefinition() != null) {
             try {
-                routeContext.addAdvice(new RestBindingReifier(definition.getRestBindingDefinition()).createRestBindingAdvice(routeContext));
+                routeContext.addAdvice(new RestBindingReifier(routeContext, definition.getRestBindingDefinition()).createRestBindingAdvice());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -400,12 +401,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getInputType() != null || definition.getOutputType() != null) {
             Contract contract = new Contract();
             if (definition.getInputType() != null) {
-                contract.setInputType(parseString(routeContext, definition.getInputType().getUrn()));
-                contract.setValidateInput(parseBoolean(routeContext, definition.getInputType().getValidate()));
+                contract.setInputType(parseString(definition.getInputType().getUrn()));
+                contract.setValidateInput(parseBoolean(definition.getInputType().getValidate(), false));
             }
             if (definition.getOutputType() != null) {
-                contract.setOutputType(parseString(routeContext, definition.getOutputType().getUrn()));
-                contract.setValidateOutput(parseBoolean(routeContext, definition.getOutputType().getValidate()));
+                contract.setOutputType(parseString(definition.getOutputType().getUrn()));
+                contract.setValidateOutput(parseBoolean(definition.getOutputType().getValidate(), false));
             }
             routeContext.addAdvice(new ContractAdvice(contract));
             // make sure to enable data type as its in use when using
@@ -415,7 +416,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // Set route properties
         routeContext.addProperty(Route.ID_PROPERTY, definition.getId());
-        routeContext.addProperty(Route.CUSTOM_ID_PROPERTY, definition.hasCustomIdAssigned() ? "true" : "false");
+        routeContext.addProperty(Route.CUSTOM_ID_PROPERTY, Boolean.toString(definition.hasCustomIdAssigned()));
         routeContext.addProperty(Route.PARENT_PROPERTY, Integer.toHexString(definition.hashCode()));
         routeContext.addProperty(Route.DESCRIPTION_PROPERTY, definition.getDescriptionText());
         if (definition.getGroup() != null) {
