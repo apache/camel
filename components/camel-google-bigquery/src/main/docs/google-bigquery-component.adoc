@@ -168,3 +168,5 @@ A insert id can be set on the exchange with the header `GoogleBigQueryConstants.
 query parameter `useAsInsertId`. As an insert id need to be specified per row inserted the exchange header can't
 be used when the payload is a list - if the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
+
+include::camel-spring-boot::page$google-bigquery-starter.adoc[]

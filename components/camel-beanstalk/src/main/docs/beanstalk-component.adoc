@@ -235,3 +235,5 @@ out of buried and/or delayed state to the normal queue.
 
  
 
+
+include::camel-spring-boot::page$beanstalk-starter.adoc[]

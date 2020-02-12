@@ -113,3 +113,5 @@ with the following path and query parameters:
 The timelineType can be one of: public, home, user, mentions or retweetsofme.
 
 
+
+include::camel-spring-boot::page$twitter-starter.adoc[]

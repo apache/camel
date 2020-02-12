@@ -134,3 +134,5 @@ Then you can omit the servers from the endpoint URI
 from("direct:start").to("nsq:myTopic");
 ----
 
+
+include::camel-spring-boot::page$nsq-starter.adoc[]

@@ -316,3 +316,5 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
         .to("jdbc:testdb");
 ----
 
+
+include::camel-spring-boot::page$jdbc-starter.adoc[]

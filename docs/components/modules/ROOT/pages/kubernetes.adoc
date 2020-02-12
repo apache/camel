@@ -148,3 +148,5 @@ from("direct:createPod")
 -------------------------------------------------------------
 
 By using the KubernetesConstants.KUBERNETES_POD_NAME header you can specify your Pod name and pass it to this operation.
+
+include::camel-spring-boot::page$kubernetes-starter.adoc[]

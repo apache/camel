@@ -136,3 +136,5 @@ all the children.
 </route>
 ---------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$jcr-starter.adoc[]

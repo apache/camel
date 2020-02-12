@@ -868,3 +868,5 @@ body in the *inBody* endpoint parameter.
 </blueprint>
 --------------------------------------------------------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$braintree-starter.adoc[]

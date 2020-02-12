@@ -308,3 +308,5 @@ need to add the following dependency to your pom.
 </dependency>
 ----------------------------------------------------------
 
+
+include::camel-spring-boot::page$crypto-starter.adoc[]

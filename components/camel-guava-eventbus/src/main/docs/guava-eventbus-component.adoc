@@ -228,3 +228,5 @@ follows.
 -----------------------------------------------------------------------------------------------------
 from("guava-eventbus:busName?listenerInterface=com.example.MultipleEventsListener").to("seda:queue");
 -----------------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$guava-eventbus-starter.adoc[]

@@ -85,3 +85,5 @@ It also carries the topic on which a message was received (consumer).
 | CamelIgniteMessagingUUID | IgniteConstants.IGNITE_MESSAGING_UUID | UUID |
 This header is filled in with the UUID of the subscription when a message arrives (consumer).
 |=======================================================================
+
+include::camel-spring-boot::page$ignite-starter.adoc[]

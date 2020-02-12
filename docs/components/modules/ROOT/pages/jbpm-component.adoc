@@ -291,3 +291,5 @@ from("direct:start")
         &deploymentId=evaluation");
 ----------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$jbpm-starter.adoc[]

@@ -141,3 +141,5 @@ from("google-calendar-stream://test?markAsRead=true&delay=5000&maxResults=5").to
 This route will consume the next five events starting from the date of polling.
 
    
+
+include::camel-spring-boot::page$google-calendar-starter.adoc[]

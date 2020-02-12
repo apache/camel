@@ -279,3 +279,5 @@ can also implement some customized filters. Please note that `codec` and
 filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
 
+
+include::camel-spring-boot::page$mina-starter.adoc[]

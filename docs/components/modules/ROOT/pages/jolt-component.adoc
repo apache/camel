@@ -134,3 +134,5 @@ from("direct:in").
 
  
 
+
+include::camel-spring-boot::page$jolt-starter.adoc[]

@@ -145,3 +145,5 @@ with the following path and query parameters:
 |`properties` | `Map` | Image properties.
 |=========================================================================
 
+
+include::camel-spring-boot::page$openstack-starter.adoc[]

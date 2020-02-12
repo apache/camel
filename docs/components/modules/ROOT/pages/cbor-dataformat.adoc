@@ -77,3 +77,5 @@ And then you can refer to this id in the route:
   <version>x.x.x</version>
 </dependency>
 -------------------------------------
+
+include::camel-spring-boot::page$cbor-starter.adoc[]

@@ -875,3 +875,5 @@ the key SOAPAction (case-insensitive).
 
  
 
+
+include::camel-spring-boot::page$cxf-starter.adoc[]

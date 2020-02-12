@@ -182,3 +182,5 @@ from("direct:start").
 
  
 
+
+include::camel-spring-boot::page$xmpp-starter.adoc[]

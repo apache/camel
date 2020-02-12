@@ -189,3 +189,5 @@ Regards Camel Riders Bookstore
 {{body}}
 -------------------------------------------------
 
+
+include::camel-spring-boot::page$mustache-starter.adoc[]

@@ -273,3 +273,5 @@ public class BookStoreRecordBean {
     }
 }
 ----
+
+include::camel-spring-boot::page$jooq-starter.adoc[]

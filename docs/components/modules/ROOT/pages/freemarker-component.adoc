@@ -246,3 +246,5 @@ ${body}
 
 And the java code:
 
+
+include::camel-spring-boot::page$freemarker-starter.adoc[]

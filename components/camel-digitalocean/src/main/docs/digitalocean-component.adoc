@@ -469,3 +469,5 @@ from("direct:shutdown")
     .setHeader(DigitalOceanConstants.ID, 34772987)
     .to("digitalocean:droplet?operation=shutdown&oAuthToken=XXXXXX")
 ```
+
+include::camel-spring-boot::page$digitalocean-starter.adoc[]

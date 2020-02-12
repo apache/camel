@@ -408,3 +408,5 @@ Dataset<Row> cars(HiveContext hiveContext) {
     return jsonCars;
 }
 ------------------------------------------------------------------------
+
+include::camel-spring-boot::page$spark-starter.adoc[]

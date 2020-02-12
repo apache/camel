@@ -137,3 +137,5 @@ from("direct:in").
   setHeader("CamelJsltResourceUri").constant(".published").
   to("jslt:dummy");
 ---------------------------------------------------------------------
+
+include::camel-spring-boot::page$jslt-starter.adoc[]

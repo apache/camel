@@ -315,3 +315,5 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
     .to("mock:result");
 --------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$apns-starter.adoc[]

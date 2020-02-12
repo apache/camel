@@ -239,3 +239,5 @@ RouteBuilder builder = new RouteBuilder() {
    }
 };
 -------------------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$lucene-starter.adoc[]

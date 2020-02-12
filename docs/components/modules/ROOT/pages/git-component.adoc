@@ -147,3 +147,5 @@ Below is an example route of a consumer that consumes commit:
 from("git:///tmp/testRepo?type=commit")
                         .to(....)
 ---------------------------------------
+
+include::camel-spring-boot::page$git-starter.adoc[]

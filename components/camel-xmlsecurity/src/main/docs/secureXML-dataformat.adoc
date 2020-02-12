@@ -230,3 +230,5 @@ Spring XML Recipient
 == Dependencies
 
 This data format is provided within the *camel-xmlsecurity* component.
+
+include::camel-spring-boot::page$xmlsecurity-starter.adoc[]

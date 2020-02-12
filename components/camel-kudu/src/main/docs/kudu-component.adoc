@@ -125,3 +125,5 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
     <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
 </dependency>
 ----
+
+include::camel-spring-boot::page$kudu-starter.adoc[]

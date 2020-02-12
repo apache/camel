@@ -316,3 +316,6 @@ consumer endpoint will produce an *ODataFeed* value the first time, and
 from("olingo2://read/Manufacturers?queryParams=#paramsBean&timeUnit=SECONDS&delay=30")
     .to("bean:blah");
 ---------------------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$olingo2-starter.adoc[]
+

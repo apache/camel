@@ -86,3 +86,5 @@ from("direct:marshal").
   to("mock:marshaled");
 ---------------------------------------------------------
 
+
+include::camel-spring-boot::page$xstream-starter.adoc[]

@@ -217,3 +217,5 @@ String getPetJsonById(int petId) {
     return template.requestBodyAndHeaders("petstore:getPetById", null, "petId", petId);
 }
 ----
+
+include::camel-spring-boot::page$rest-openapi-starter.adoc[]

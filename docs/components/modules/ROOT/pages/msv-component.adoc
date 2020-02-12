@@ -129,3 +129,5 @@ based on whether or not the XML matches the given
 http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
 
+
+include::camel-spring-boot::page$msv-starter.adoc[]

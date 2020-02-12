@@ -143,3 +143,5 @@ with the following path and query parameters:
 | `manual_acknowledgement` | `PulsarManualAcknowledgement` | If allowManualAcknowledgement is set, this will contain the object for manually acknowledging the Pulsar message; otherwise it is unset
 |===
 // message-headers options: END
+
+include::camel-spring-boot::page$pulsar-starter.adoc[]

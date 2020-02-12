@@ -124,3 +124,5 @@ At this time, `camel-wordpress` only supports Basic Authentication (more to come
 `from("direct:deletePost").to("wordpress:post:delete?id=9&user=ben&password=password123").to("mock:resultDelete");`
 
 **It's not recommend to use Basic Authentication in production without TLS!!**
+
+include::camel-spring-boot::page$wordpress-starter.adoc[]

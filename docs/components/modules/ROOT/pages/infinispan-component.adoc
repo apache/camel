@@ -820,3 +820,5 @@ XML file as well:
 </camelContext>
 ----
 
+
+include::camel-spring-boot::page$infinispan-starter.adoc[]

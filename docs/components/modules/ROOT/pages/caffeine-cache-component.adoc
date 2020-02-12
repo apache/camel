@@ -131,3 +131,5 @@ Each time you'll use an operation on the cache you'll have two different headers
 CaffeineConstants.ACTION_HAS_RESULT
 CaffeineConstants.ACTION_SUCCEEDED
 ------------------------------------------------------------
+
+include::camel-spring-boot::page$caffeine-starter.adoc[]

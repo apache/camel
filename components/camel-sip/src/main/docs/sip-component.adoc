@@ -233,3 +233,5 @@ Subscriber. It has a separate SIP stackName distinct from Publisher as
 well as Subscriber. While it is set up as a Camel Consumer, it does not
 actually send any messages along the route to the endpoint
 "mock:neverland".
+
+include::camel-spring-boot::page$sip-starter.adoc[]

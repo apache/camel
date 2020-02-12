@@ -179,3 +179,5 @@ expression being used in a filter
 * https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/aggregator.xml[aggregator.xml]
 is a Spring XML test case for the xref:manual::aggregate-eip.adoc[Aggregator] which
 uses a bean method call to test for the completion of the aggregation.
+
+include::camel-spring-boot::page$bean-starter.adoc[]

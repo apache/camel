@@ -130,3 +130,5 @@ the barcode data format as header variable:
  
 
  
+
+include::camel-spring-boot::page$barcode-starter.adoc[]

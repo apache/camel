@@ -226,3 +226,5 @@ You can specify the destination in the following header:
 |Header |Type |Description
 |`irc.sendTo` |`String` |The channel (or the person) name.
 |=====================================================================
+
+include::camel-spring-boot::page$irc-starter.adoc[]

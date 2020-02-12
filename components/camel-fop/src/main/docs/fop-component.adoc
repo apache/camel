@@ -170,3 +170,5 @@ from("file:source/data/xml")
     .to("file:target/data");
 ---------------------------------
 
+
+include::camel-spring-boot::page$fop-starter.adoc[]

@@ -240,3 +240,5 @@ signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
 template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$crypto-starter.adoc[]

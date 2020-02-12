@@ -432,3 +432,5 @@ You need to ensure that your server is exposed to the internet and to pass the r
 *camel.component.webhook.configuration.webhook-external-url* property.
 
 Refer to the *camel-webhook* component documentation for instructions on how to set it.
+
+include::camel-spring-boot::page$telegram-starter.adoc[]

@@ -149,3 +149,5 @@ fromF("kubernetes-services://%s?oauthToken=%s&namespace=default&resourceName=tes
 --------------------------------------------------------------------------------
 
 This consumer will return a list of events on the namespace default for the service test.
+
+include::camel-spring-boot::page$kubernetes-starter.adoc[]

@@ -214,3 +214,5 @@ headers.put(Exchange.FILE_NAME, "filename.txt");
 template.requestBodyAndHeaders("direct:remove", "", headers);
 ------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$mongodb-gridfs-starter.adoc[]

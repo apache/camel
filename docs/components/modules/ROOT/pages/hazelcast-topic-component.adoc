@@ -98,3 +98,5 @@ fromF("hazelcast-%sfoo", HazelcastConstants.TOPIC_PREFIX)
     .otherwise()
       .log("...this should never have happened")
 --------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

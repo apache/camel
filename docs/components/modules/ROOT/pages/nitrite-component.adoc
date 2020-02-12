@@ -187,3 +187,5 @@ from("direct:getByID")
     .to("nitrite:/path/to/database.db?collection=myCollection")
     .to("log:result");
 ----
+
+include::camel-spring-boot::page$nitrite-starter.adoc[]

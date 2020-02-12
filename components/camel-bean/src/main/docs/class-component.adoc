@@ -129,3 +129,5 @@ See more details at the xref:bean-component.adoc[Bean] component as the *class*
 component works in much the same way.
 ====
 
+
+include::camel-spring-boot::page$bean-starter.adoc[]

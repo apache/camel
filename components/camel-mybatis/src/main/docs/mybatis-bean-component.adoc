@@ -157,3 +157,5 @@ public interface AccountService {
 }
 ----
 
+
+include::camel-spring-boot::page$mybatis-starter.adoc[]

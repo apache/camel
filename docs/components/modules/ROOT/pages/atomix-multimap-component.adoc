@@ -91,3 +91,5 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
+include::camel-spring-boot::page$atomix-starter.adoc[]

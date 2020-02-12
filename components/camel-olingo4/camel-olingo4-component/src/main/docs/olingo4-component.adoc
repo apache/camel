@@ -294,3 +294,6 @@ actions that don't expect an input.
 from("direct:...")
     .to("olingo4://action/People");
 ------------------------------------------------------------
+
+include::camel-spring-boot::page$olingo4-starter.adoc[]
+

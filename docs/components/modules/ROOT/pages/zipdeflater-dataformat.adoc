@@ -65,3 +65,5 @@ unmarshalling to avoid errors.
 ----
 from("activemq:queue:MY_QUEUE").unmarshal().zipDeflater().process(new UnZippedMessageProcessor()); 
 ----
+
+include::camel-spring-boot::page$zip-deflater-starter.adoc[]

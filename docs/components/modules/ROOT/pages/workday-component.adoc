@@ -79,3 +79,5 @@ with the following path and query parameters:
 | *tenant* (tenant) | *Required* Workday Tenant name. |  | String
 |===
 // endpoint options: END
+
+include::camel-spring-boot::page$workday-starter.adoc[]

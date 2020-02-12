@@ -259,3 +259,5 @@ URI Options for _server_
 |requestUriPattern |String
 |===
 
+include::camel-spring-boot::page$as2-starter.adoc[]
+

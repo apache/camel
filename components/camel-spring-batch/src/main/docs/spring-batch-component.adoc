@@ -283,3 +283,5 @@ JMS queue.
   </batch:listeners>
 </batch:job>
 -----------------------------------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$spring-batch-starter.adoc[]

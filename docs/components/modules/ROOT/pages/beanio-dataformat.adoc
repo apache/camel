@@ -82,3 +82,5 @@ the download page for the latest versions).
   <version>2.10.0</version>
 </dependency>
 ---------------------------------------
+
+include::camel-spring-boot::page$beanio-starter.adoc[]

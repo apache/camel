@@ -253,3 +253,5 @@ such a command - `echo` - in Windows.
 from("direct:exec").to("exec:cmd?args=/C echo echoString")
 ----------------------------------------------------------
 
+
+include::camel-spring-boot::page$exec-starter.adoc[]

@@ -79,3 +79,5 @@ Camel provide the following ServiceRegistry implementations:
 - camel-zookeeper
 - camel-spring-cloud
 
+
+include::camel-spring-boot::page$service-starter.adoc[]

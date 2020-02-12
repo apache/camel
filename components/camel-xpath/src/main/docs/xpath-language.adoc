@@ -491,3 +491,5 @@ eg to refer to a file on the classpath you can do:
 == Dependencies
 
 The XPath language is part of camel-core.
+
+include::camel-spring-boot::page$xpath-starter.adoc[]

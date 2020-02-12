@@ -459,3 +459,5 @@ The automatic mapping of the Camel servlet can also be disabled.
 | camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
 |=======================================================================
 
+
+include::camel-spring-boot::page$servlet-starter.adoc[]

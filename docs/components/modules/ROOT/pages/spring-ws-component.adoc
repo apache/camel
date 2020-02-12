@@ -615,3 +615,5 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 .to("mock:example").marshal(jaxb);
 --------------------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$spring-ws-starter.adoc[]

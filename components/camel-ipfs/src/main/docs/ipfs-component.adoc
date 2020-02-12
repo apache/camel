@@ -96,3 +96,5 @@ from("direct:start").to("ipfs:add")
 from("direct:start").to("ipfs:get?outdir=target")
 from("direct:start").to("ipfs:cat");
 ---------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$ipfs-starter.adoc[]

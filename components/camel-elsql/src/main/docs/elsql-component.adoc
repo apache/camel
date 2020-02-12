@@ -277,3 +277,5 @@ Notice that there is no existing `Exchange` with message body and headers, so
 the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
 
+
+include::camel-spring-boot::page$elsql-starter.adoc[]

@@ -191,3 +191,5 @@ i.e. You may have an instance in NYC and an instance in SFO. You would configure
 	<route id="routeId" autoStartup="false" routePolicyRef="dnsActivationPolicy">
 	</route>
 ----
+
+include::camel-spring-boot::page$dns-starter.adoc[]

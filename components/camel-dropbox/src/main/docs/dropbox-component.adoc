@@ -426,3 +426,5 @@ Dropbox documentation,
 
 
  
+
+include::camel-spring-boot::page$dropbox-starter.adoc[]

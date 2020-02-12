@@ -290,3 +290,5 @@ http://www.grpc.io/[gRPC project site]
 
 https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 
+
+include::camel-spring-boot::page$grpc-starter.adoc[]

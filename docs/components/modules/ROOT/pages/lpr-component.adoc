@@ -162,3 +162,5 @@ RouteBuilder builder = new RouteBuilder() {
            "&flavor=DocFlavor.INPUT_STREAM")
     }};
 --------------------------------------------------
+
+include::camel-spring-boot::page$printer-starter.adoc[]

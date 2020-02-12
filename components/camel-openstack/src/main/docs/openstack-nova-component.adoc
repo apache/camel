@@ -213,3 +213,5 @@ If you need more precise server settings you can create new object of the type *
 
 |=========================================================================
 
+
+include::camel-spring-boot::page$openstack-starter.adoc[]

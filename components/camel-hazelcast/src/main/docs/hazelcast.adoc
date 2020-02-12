@@ -186,3 +186,5 @@ to reference the service in the hazelcast endpoint.
     </route>
 </camelContext>
 --------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

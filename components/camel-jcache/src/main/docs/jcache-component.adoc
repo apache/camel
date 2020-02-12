@@ -330,3 +330,5 @@ If the determined _key_ is _null_, nothing is looked up or stored in cache.
 In case of an exception during the route, the error handled is called as always. If the exception gets _handled()_,
  the policy stores the Exchange body, otherwise nothing is added to the cache.
  If an exception happens during evaluating the keyExpression, the routing fails, the error handler is called as normally.
+
+include::camel-spring-boot::page$jcache-starter.adoc[]

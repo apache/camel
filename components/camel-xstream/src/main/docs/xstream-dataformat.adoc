@@ -140,3 +140,5 @@ DataFormat instance by setting its type permissions property.
         ...
 
 -------------------------------------------------------------------
+
+include::camel-spring-boot::page$xstream-starter.adoc[]

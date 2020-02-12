@@ -715,3 +715,5 @@ the XML signer endpoint).
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
 
+
+include::camel-spring-boot::page$xmlsecurity-starter.adoc[]

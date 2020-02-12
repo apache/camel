@@ -720,3 +720,5 @@ This provides support for timeout and other complexities you otherwise would nee
 You can find an example with the Apache Camel source code in the examples directory
 under the `camel-example-netty-custom-correlation` directory.
 
+
+include::camel-spring-boot::page$netty-starter.adoc[]

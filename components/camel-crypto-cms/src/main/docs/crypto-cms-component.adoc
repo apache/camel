@@ -403,3 +403,5 @@ from("direct:start")
         <to uri="mock:result" />
     </route>    
 ----
+
+include::camel-spring-boot::page$crypto-cms-starter.adoc[]

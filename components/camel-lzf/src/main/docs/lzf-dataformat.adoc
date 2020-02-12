@@ -67,3 +67,5 @@ substituting the version number for the latest & greatest release.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
+
+include::camel-spring-boot::page$lzf-starter.adoc[]

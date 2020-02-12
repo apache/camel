@@ -143,3 +143,5 @@ from("google-sheets-stream://data?range=A:B&delay=5000&maxResults=5").to("mock:r
 This route will consume the next ten events starting from the date of polling.
 
    
+
+include::camel-spring-boot::page$google-sheets-starter.adoc[]

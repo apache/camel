@@ -163,3 +163,5 @@ try {
         camelContext.stop();
     }
 -----------------------------------
+
+include::camel-spring-boot::page$flink-starter.adoc[]

@@ -168,3 +168,5 @@ exchange is used
 ----------------------------------------------------------------------------------------
 from("someProducingEndpoint").process(someProcessor).to("couchdb:http://localhost:9999")
 ----------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$couchdb-starter.adoc[]

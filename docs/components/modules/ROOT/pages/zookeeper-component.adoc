@@ -226,3 +226,5 @@ Object testPayload = ...
 template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
 ----
 
+
+include::camel-spring-boot::page$zookeeper-starter.adoc[]

@@ -240,3 +240,5 @@ the bodies from a file.
 |`delimiter` |`String` |\z |Specifies the delimiter pattern used by a `java.util.Scanner` to split
 the file into multiple payloads.
 |===
+
+include::camel-spring-boot::page$dataset-starter.adoc[]

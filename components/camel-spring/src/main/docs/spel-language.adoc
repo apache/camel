@@ -156,3 +156,5 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").spel("resource:classpath:myspel.txt")
 ----
 
+
+include::camel-spring-boot::page$spring-starter.adoc[]

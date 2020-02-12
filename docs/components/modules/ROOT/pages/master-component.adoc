@@ -167,3 +167,5 @@ Camel provide the following ClusterService implementations:
 - camel-kubernetes
 - camel-zookeeper
 
+
+include::camel-spring-boot::page$master-starter.adoc[]
