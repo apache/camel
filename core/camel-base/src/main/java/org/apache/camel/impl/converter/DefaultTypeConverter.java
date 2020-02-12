@@ -98,7 +98,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
 
     @Override
     protected void initTypeConverterLoaders() {
-        if (resolver != null) {
+        // only use Camel 2.x annotation based loaders if enabled
+        if (resolver != null && loadTypeConverters)  {
             typeConverterLoaders.add(new FastAnnotationTypeConverterLoader(resolver));
         }
     }
