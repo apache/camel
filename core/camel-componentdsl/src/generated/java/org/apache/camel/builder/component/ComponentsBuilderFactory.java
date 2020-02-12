@@ -1227,18 +1227,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElytronComponentBuilderFactory.elytron();
     }
     /**
-     * Etcd (camel-etcd)
-     * The camel etcd component allows you to work with Etcd, a distributed
-     * reliable key-value store.
-     * 
-     * Category: clustering,database
-     * Since: 2.18
-     * Maven coordinates: org.apache.camel:camel-etcd
-     */
-    static org.apache.camel.builder.component.dsl.EtcdComponentBuilderFactory.EtcdComponentBuilder etcd() {
-        return org.apache.camel.builder.component.dsl.EtcdComponentBuilderFactory.etcd();
-    }
-    /**
      * Etcd Keys (camel-etcd)
      * Camel Etcd support
      * 
