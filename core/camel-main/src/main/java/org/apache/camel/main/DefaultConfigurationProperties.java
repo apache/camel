@@ -39,7 +39,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean jmxEnabled = true;
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
-    private boolean loadTypeConverters = true;
+    private boolean loadTypeConverters;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
