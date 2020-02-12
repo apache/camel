@@ -189,6 +189,6 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint {
     }
 
     private boolean isTableActive(TableDescription tableDescription) {
-        return tableDescription.tableStatus().equals(TableStatus.ACTIVE.toString());
+        return tableDescription.tableStatus().toString().equals(TableStatus.ACTIVE.toString());
     }
 }
