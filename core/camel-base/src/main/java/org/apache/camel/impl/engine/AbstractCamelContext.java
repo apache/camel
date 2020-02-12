@@ -3409,7 +3409,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getClassResolver();
         getNodeIdFactory();
         getProcessorFactory();
-        getStreamCachingStrategy();
         getModelJAXBContextFactory();
         getUuidGenerator();
         getUnitOfWorkFactory();
