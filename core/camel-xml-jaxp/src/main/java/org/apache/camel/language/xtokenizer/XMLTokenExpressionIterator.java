@@ -82,11 +82,15 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "headername":
-            case "headerName": setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            case "mode": setMode(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            case "group": setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value)); return true;
-            default: return false;
+        case "headername":
+        case "headerName": 
+            setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+        case "mode": 
+            setMode(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+        case "group": 
+            setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value)); return true;
+        default: 
+            return false;
         }
     }
 
