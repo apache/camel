@@ -27,15 +27,15 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
 
-    public SetHeaderReifier(ProcessorDefinition<?> definition) {
-        super((SetHeaderDefinition)definition);
+    public SetHeaderReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (SetHeaderDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getName(), "headerName");
-        Expression expr = definition.getExpression().createExpression(routeContext);
-        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(definition.getName(), routeContext.getCamelContext());
+        Expression expr = createExpression(definition.getExpression());
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(parseString(definition.getName()), camelContext);
         return new SetHeaderProcessor(nameExpr, expr);
     }
 }

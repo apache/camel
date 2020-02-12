@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 
 public class GzipDataFormatReifier extends DataFormatReifier<GzipDataFormat> {
 
-    public GzipDataFormatReifier(DataFormatDefinition definition) {
-        super((GzipDataFormat)definition);
+    public GzipDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (GzipDataFormat)definition);
     }
 
     @Override

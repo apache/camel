@@ -33,7 +33,7 @@ public class ResilienceProcessorFactory extends TypedProcessorFactory<CircuitBre
 
     @Override
     public Processor doCreateProcessor(RouteContext routeContext, CircuitBreakerDefinition definition) throws Exception {
-        return new ResilienceReifier(definition).createProcessor(routeContext);
+        return new ResilienceReifier(routeContext, definition).createProcessor();
     }
 
 }

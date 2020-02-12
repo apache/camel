@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 
 public class ZipFileDataFormatReifier extends DataFormatReifier<ZipFileDataFormat> {
 
-    public ZipFileDataFormatReifier(DataFormatDefinition definition) {
-        super((ZipFileDataFormat)definition);
+    public ZipFileDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (ZipFileDataFormat)definition);
     }
 
     @Override

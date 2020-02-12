@@ -28,12 +28,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class FailoverLoadBalancerReifier extends LoadBalancerReifier<FailoverLoadBalancerDefinition> {
 
-    public FailoverLoadBalancerReifier(LoadBalancerDefinition definition) {
-        super((FailoverLoadBalancerDefinition)definition);
+    public FailoverLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
+        super(routeContext, (FailoverLoadBalancerDefinition)definition);
     }
 
     @Override
-    public LoadBalancer createLoadBalancer(RouteContext routeContext) {
+    public LoadBalancer createLoadBalancer() {
         FailOverLoadBalancer answer;
 
         List<Class<?>> classes = new ArrayList<>();
@@ -41,7 +41,7 @@ public class FailoverLoadBalancerReifier extends LoadBalancerReifier<FailoverLoa
             classes.addAll(definition.getExceptionTypes());
         } else if (!definition.getExceptions().isEmpty()) {
             for (String name : definition.getExceptions()) {
-                Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
+                Class<?> type = camelContext.getClassResolver().resolveClass(name);
                 if (type == null) {
                     throw new IllegalArgumentException("Cannot find class: " + name + " in the classpath");
                 }
@@ -58,13 +58,13 @@ public class FailoverLoadBalancerReifier extends LoadBalancerReifier<FailoverLoa
         }
 
         if (definition.getMaximumFailoverAttempts() != null) {
-            answer.setMaximumFailoverAttempts(parseInt(routeContext, definition.getMaximumFailoverAttempts()));
+            answer.setMaximumFailoverAttempts(parseInt(definition.getMaximumFailoverAttempts()));
         }
         if (definition.getRoundRobin() != null) {
-            answer.setRoundRobin(parseBoolean(routeContext, definition.getRoundRobin()));
+            answer.setRoundRobin(parseBoolean(definition.getRoundRobin(), false));
         }
         if (definition.getSticky() != null) {
-            answer.setSticky(parseBoolean(routeContext, definition.getSticky()));
+            answer.setSticky(parseBoolean(definition.getSticky(), false));
         }
 
         return answer;

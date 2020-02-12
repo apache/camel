@@ -19,19 +19,16 @@ package org.apache.camel.component.rest;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConfiguration.RestBindingMode;
+import org.apache.camel.spi.RestConfiguration.RestHostNameResolver;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -237,43 +234,60 @@ public class RestComponent extends DefaultComponent {
             return conf;
         }
         if (from != null) {
-            BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-            Map<String, Object> map = new HashMap<>();
-            beanIntrospection.getProperties(from, map, null, false);
-
-            // Remove properties as they need to be manually managed
-            map.entrySet().removeIf(entry -> entry.getValue() instanceof Map);
-
-            // Copy common options, will override those in conf
-            PropertyBindingSupport.bindProperties(getCamelContext(), conf, map);
-
             // Merge properties
-            mergeProperties(conf::getComponentProperties, from::getComponentProperties, conf::setComponentProperties);
-            mergeProperties(conf::getEndpointProperties, from::getEndpointProperties, conf::setEndpointProperties);
-            mergeProperties(conf::getConsumerProperties, from::getConsumerProperties, conf::setConsumerProperties);
-            mergeProperties(conf::getDataFormatProperties, from::getDataFormatProperties, conf::setDataFormatProperties);
-            mergeProperties(conf::getApiProperties, from::getApiProperties, conf::setApiProperties);
-            mergeProperties(conf::getCorsHeaders, from::getCorsHeaders, conf::setCorsHeaders);
+            conf.setComponent(or(conf.getComponent(), from.getComponent()));
+            conf.setApiComponent(or(conf.getApiComponent(), from.getApiComponent()));
+            conf.setProducerComponent(or(conf.getProducerComponent(), from.getProducerComponent()));
+            conf.setProducerApiDoc(or(conf.getProducerApiDoc(), from.getProducerApiDoc()));
+            conf.setScheme(or(conf.getScheme(), from.getScheme()));
+            conf.setHost(or(conf.getHost(), from.getHost()));
+            conf.setUseXForwardHeaders(or(conf.isUseXForwardHeaders(), from.isUseXForwardHeaders()));
+            conf.setApiHost(or(conf.getApiHost(), from.getApiHost()));
+            conf.setPort(or(conf.getPort(), from.getPort()));
+            conf.setContextPath(or(conf.getContextPath(), from.getContextPath()));
+            conf.setApiContextPath(or(conf.getApiContextPath(), from.getApiContextPath()));
+            conf.setApiContextRouteId(or(conf.getApiContextRouteId(), from.getApiContextRouteId()));
+            conf.setApiContextIdPattern(or(conf.getApiContextIdPattern(), from.getApiContextIdPattern()));
+            conf.setApiContextListing(or(conf.isApiContextListing(), from.isApiContextListing()));
+            conf.setApiVendorExtension(or(conf.isApiVendorExtension(), from.isApiVendorExtension()));
+            conf.setHostNameResolver(or(conf.getHostNameResolver(), from.getHostNameResolver(), RestHostNameResolver.allLocalIp));
+            conf.setBindingMode(or(conf.getBindingMode(), from.getBindingMode(), RestBindingMode.off));
+            conf.setSkipBindingOnErrorCode(or(conf.isSkipBindingOnErrorCode(), from.isSkipBindingOnErrorCode()));
+            conf.setClientRequestValidation(or(conf.isClientRequestValidation(), from.isClientRequestValidation()));
+            conf.setEnableCORS(or(conf.isEnableCORS(), from.isEnableCORS()));
+            conf.setJsonDataFormat(or(conf.getJsonDataFormat(), from.getJsonDataFormat()));
+            conf.setXmlDataFormat(or(conf.getXmlDataFormat(), from.getXmlDataFormat()));
+            conf.setComponentProperties(mergeProperties(conf.getComponentProperties(), from.getComponentProperties()));
+            conf.setEndpointProperties(mergeProperties(conf.getEndpointProperties(), from.getEndpointProperties()));
+            conf.setConsumerProperties(mergeProperties(conf.getConsumerProperties(), from.getConsumerProperties()));
+            conf.setDataFormatProperties(mergeProperties(conf.getDataFormatProperties(), from.getDataFormatProperties()));
+            conf.setApiProperties(mergeProperties(conf.getApiProperties(), from.getApiProperties()));
+            conf.setCorsHeaders(mergeProperties(conf.getCorsHeaders(), from.getCorsHeaders()));
         }
 
         return conf;
     }
 
-    private <T> void mergeProperties(Supplier<Map<String, T>> base, Supplier<Map<String, T>> addons, Consumer<Map<String, T>> consumer) {
-        Map<String, T> baseMap = base.get();
-        Map<String, T> addonsMap = addons.get();
+    private <T> T or(T t1, T t2) {
+        return t2 != null ? t2 : t1;
+    }
 
-        if (baseMap != null || addonsMap != null) {
-            HashMap<String, T> result = new HashMap<>();
-            if (baseMap != null) {
-                result.putAll(baseMap);
-            }
-            if (addonsMap != null) {
-                result.putAll(addonsMap);
-            }
+    private <T> T or(T t1, T t2, T def) {
+        return t2 != null && t2 != def ? t2 : t1;
+    }
 
-            consumer.accept(result);
+    private <T> Map<String, T> mergeProperties(Map<String, T> base, Map<String, T> addons) {
+        if (base != null || addons != null) {
+            Map<String, T> result = new HashMap<>();
+            if (base != null) {
+                result.putAll(base);
+            }
+            if (addons != null) {
+                result.putAll(addons);
+            }
+            return result;
         }
+        return base;
     }
 
     public ComponentVerifierExtension getVerifier() {

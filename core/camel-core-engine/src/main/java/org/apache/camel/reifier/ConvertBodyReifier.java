@@ -24,35 +24,29 @@ import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 
 public class ConvertBodyReifier extends ProcessorReifier<ConvertBodyDefinition> {
 
-    public ConvertBodyReifier(ProcessorDefinition<?> definition) {
-        super(ConvertBodyDefinition.class.cast(definition));
+    public ConvertBodyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, ConvertBodyDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (definition.getTypeClass() == null && definition.getType() != null) {
-            definition.setTypeClass(routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(definition.getType()));
-        }
-
-        // validate charset
-        if (definition.getCharset() != null) {
-            validateCharset(definition.getCharset());
-        }
-
-        return new ConvertBodyProcessor(definition.getTypeClass(), definition.getCharset());
+    public Processor createProcessor() throws Exception {
+        Class<?> typeClass = parse(Class.class, or(definition.getTypeClass(), parseString(definition.getType())));
+        String charset = validateCharset(parseString(definition.getCharset()));
+        return new ConvertBodyProcessor(typeClass, charset);
     }
 
-    public static void validateCharset(String charset) throws UnsupportedCharsetException {
+    public static String validateCharset(String charset) throws UnsupportedCharsetException {
         if (charset != null) {
             if (Charset.isSupported(charset)) {
-                Charset.forName(charset);
-                return;
+                return Charset.forName(charset).name();
             }
+            throw new UnsupportedCharsetException(charset);
         }
-        throw new UnsupportedCharsetException(charset);
+        return null;
     }
 
 }

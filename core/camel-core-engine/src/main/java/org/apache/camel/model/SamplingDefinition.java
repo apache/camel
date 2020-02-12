@@ -39,25 +39,26 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     // second
 
     @XmlAttribute
-    @Metadata(defaultValue = "1")
-    private Long samplePeriod;
+    @Metadata(defaultValue = "1", javaType = "java.lang.Long")
+    private String samplePeriod;
     @XmlAttribute
-    private Long messageFrequency;
+    @Metadata(javaType = "java.lang.Long")
+    private String messageFrequency;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    @Metadata(defaultValue = "SECONDS")
-    private TimeUnit units;
+    @Metadata(defaultValue = "SECONDS", enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS",
+              javaType = "java.util.concurrent.TimeUnit")
+    private String units;
 
     public SamplingDefinition() {
     }
 
     public SamplingDefinition(long samplePeriod, TimeUnit units) {
-        this.samplePeriod = samplePeriod;
-        this.units = units;
+        this.samplePeriod = Long.toString(samplePeriod);
+        this.units = units.name();
     }
 
     public SamplingDefinition(long messageFrequency) {
-        this.messageFrequency = messageFrequency;
+        this.messageFrequency = Long.toString(messageFrequency);
     }
 
     @Override
@@ -74,8 +75,8 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         if (messageFrequency != null) {
             return "1 Exchange per " + getMessageFrequency() + " messages received";
         } else {
-            TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return "1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase(Locale.ENGLISH);
+            String tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS.name();
+            return "1 Exchange per " + getSamplePeriod() + " " + tu.toLowerCase(Locale.ENGLISH);
         }
     }
 
@@ -126,7 +127,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     // Properties
     // -------------------------------------------------------------------------
 
-    public Long getSamplePeriod() {
+    public String getSamplePeriod() {
         return samplePeriod;
     }
 
@@ -134,11 +135,15 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * Sets the sample period during which only a single Exchange will pass
      * through.
      */
-    public void setSamplePeriod(Long samplePeriod) {
+    public void setSamplePeriod(String samplePeriod) {
         this.samplePeriod = samplePeriod;
     }
 
-    public Long getMessageFrequency() {
+    public void setSamplePeriod(long samplePeriod) {
+        this.samplePeriod = Long.toString(samplePeriod);
+    }
+
+    public String getMessageFrequency() {
         return messageFrequency;
     }
 
@@ -146,25 +151,29 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
      * Sets the sample message count which only a single Exchange will pass
      * through after this many received.
      */
-    public void setMessageFrequency(Long messageFrequency) {
+    public void setMessageFrequency(String messageFrequency) {
         this.messageFrequency = messageFrequency;
+    }
+
+    public void setMessageFrequency(long messageFrequency) {
+        this.messageFrequency = Long.toString(messageFrequency);
     }
 
     /**
      * Sets the time units for the sample period, defaulting to seconds.
      */
     public void setUnits(String units) {
-        this.units = TimeUnit.valueOf(units);
+        this.units = units;
     }
 
     /**
      * Sets the time units for the sample period, defaulting to seconds.
      */
     public void setUnits(TimeUnit units) {
-        this.units = units;
+        this.units = units.name();
     }
 
-    public TimeUnit getUnits() {
+    public String getUnits() {
         return units;
     }
 }

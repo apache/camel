@@ -35,42 +35,42 @@ import org.apache.camel.util.URISupport;
 
 public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEndpointDefinition> {
 
-    public InterceptSendToEndpointReifier(ProcessorDefinition<?> definition) {
-        super((InterceptSendToEndpointDefinition)definition);
+    public InterceptSendToEndpointReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (InterceptSendToEndpointDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(final RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // create the before
-        final Processor before = this.createChildProcessor(routeContext, true);
+        final Processor before = this.createChildProcessor(true);
         // create the after
         Processor afterProcessor = null;
         if (definition.getAfterUri() != null) {
-            ToDefinition to = new ToDefinition(parseString(routeContext, definition.getAfterUri()));
+            ToDefinition to = new ToDefinition(parseString(definition.getAfterUri()));
             // at first use custom factory
-            if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-                afterProcessor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, to);
+            if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+                afterProcessor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, to);
             }
             // fallback to default implementation if factory did not create the
             // processor
             if (afterProcessor == null) {
-                afterProcessor = reifier(to).createProcessor(routeContext);
+                afterProcessor = reifier(routeContext, to).createProcessor();
             }
         }
         final Processor after = afterProcessor;
-        final String matchURI = parseString(routeContext, definition.getUri());
+        final String matchURI = parseString(definition.getUri());
 
         // register endpoint callback so we can proxy the endpoint
-        routeContext.getCamelContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(new EndpointStrategy() {
+        camelContext.adapt(ExtendedCamelContext.class).registerEndpointCallback(new EndpointStrategy() {
             public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
                 if (endpoint instanceof DefaultInterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
-                } else if (matchURI == null || matchPattern(routeContext.getCamelContext(), uri, matchURI)) {
+                } else if (matchURI == null || matchPattern(camelContext, uri, matchURI)) {
                     // only proxy if the uri is matched decorate endpoint with
                     // our proxy
                     // should be false by default
-                    boolean skip = definition.getSkipSendToOriginalEndpoint() != null && parseBoolean(routeContext, definition.getSkipSendToOriginalEndpoint());
+                    boolean skip = parseBoolean(definition.getSkipSendToOriginalEndpoint(), false);
                     DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
                     proxy.setBefore(before);
                     proxy.setAfter(after);

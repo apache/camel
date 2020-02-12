@@ -18,13 +18,14 @@ package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 
 public class CryptoDataFormatReifier extends DataFormatReifier<CryptoDataFormat> {
 
-    public CryptoDataFormatReifier(DataFormatDefinition definition) {
-        super((CryptoDataFormat)definition);
+    public CryptoDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (CryptoDataFormat)definition);
     }
 
     @Override

@@ -28,48 +28,48 @@ import org.apache.camel.spi.RouteContext;
 
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
-    public PollEnrichReifier(ProcessorDefinition<?> definition) {
-        super((PollEnrichDefinition)definition);
+    public PollEnrichReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (PollEnrichDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
 
         // if no timeout then we should block, and there use a negative timeout
-        long time = definition.getTimeout() != null ? parseLong(routeContext, definition.getTimeout()) : -1;
-        boolean isIgnoreInvalidEndpoint = definition.getIgnoreInvalidEndpoint() != null && parseBoolean(routeContext, definition.getIgnoreInvalidEndpoint());
-        Expression exp = definition.getExpression().createExpression(routeContext);
+        long time = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : -1;
+        boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
+        Expression exp = createExpression(definition.getExpression());
 
         PollEnricher enricher = new PollEnricher(exp, time);
 
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
         if (strategy == null) {
             enricher.setDefaultAggregationStrategy();
         } else {
             enricher.setAggregationStrategy(strategy);
         }
         if (definition.getAggregateOnException() != null) {
-            enricher.setAggregateOnException(parseBoolean(routeContext, definition.getAggregateOnException()));
+            enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         }
         if (definition.getCacheSize() != null) {
-            enricher.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
+            enricher.setCacheSize(parseInt(definition.getCacheSize()));
         }
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
 
         return enricher;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
+            Object aggStrategy = routeContext.lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(routeContext, definition.getAggregationStrategyMethodAllowNull()));
-                    adapter.setAllowNullOldExchange(parseBoolean(routeContext, definition.getAggregationStrategyMethodAllowNull()));
+                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
@@ -78,7 +78,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(routeContext.getCamelContext());
+            ((CamelContextAware)strategy).setCamelContext(camelContext);
         }
 
         return strategy;

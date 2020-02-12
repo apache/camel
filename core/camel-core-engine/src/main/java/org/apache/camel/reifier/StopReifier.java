@@ -24,12 +24,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class StopReifier extends ProcessorReifier<StopDefinition> {
 
-    public StopReifier(ProcessorDefinition<?> definition) {
-        super((StopDefinition)definition);
+    public StopReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (StopDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         return new StopProcessor();
     }
 }

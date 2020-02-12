@@ -353,7 +353,7 @@ public class DefaultModel implements Model {
         try {
             String id = routeDefinition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
             RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition, id);
-            Route route = new RouteReifier(routeDefinition).createRoute(camelContext, routeContext);
+            Route route = new RouteReifier(routeContext, routeDefinition).createRoute();
             RouteService routeService = new RouteService(route);
             mcc.startRouteService(routeService, true);
         } finally {

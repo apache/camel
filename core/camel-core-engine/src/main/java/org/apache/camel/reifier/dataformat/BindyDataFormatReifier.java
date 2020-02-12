@@ -25,16 +25,16 @@ import org.apache.camel.spi.DataFormat;
 
 public class BindyDataFormatReifier extends DataFormatReifier<BindyDataFormat> {
 
-    public BindyDataFormatReifier(DataFormatDefinition definition) {
-        super((BindyDataFormat)definition);
+    public BindyDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (BindyDataFormat)definition);
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
+    protected DataFormat doCreateDataFormat() {
         if (definition.getClassTypeAsString() == null && definition.getClassType() == null) {
             throw new IllegalArgumentException("Either packages or classType must be specified");
         }
-        return super.doCreateDataFormat(camelContext);
+        return super.doCreateDataFormat();
     }
 
     @Override

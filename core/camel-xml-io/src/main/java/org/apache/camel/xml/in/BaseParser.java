@@ -23,17 +23,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
@@ -203,16 +200,7 @@ public class BaseParser {
             return;
         }
         String fqn = ns.isEmpty() ? name : "{" + ns + "}" + name;
-        if (definition instanceof OtherAttributesAware) {
-            Map<Object, Object> others = ((OtherAttributesAware) definition).getOtherAttributes();
-            if (others == null) {
-                others = new LinkedHashMap<>();
-                ((OtherAttributesAware) definition).setOtherAttributes(others);
-            }
-            others.put(fqn, val);
-        } else {
-            throw new XmlPullParserException("Unsupported attribute '" + fqn + "'");
-        }
+        throw new XmlPullParserException("Unsupported attribute '" + fqn + "'");
     }
 
     protected <T> AttributeHandler<T> noAttributeHandler() {

@@ -32,7 +32,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast().placeholder("stopOnException", "xxx").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
+                from("direct:start").multicast().stopOnException("{{xxx}}").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
             }
         });
         try {
@@ -41,25 +41,6 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         } catch (Exception e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Property with key [xxx] not found in properties from text: {{xxx}}", cause.getMessage());
-        }
-    }
-
-    @Test
-    public void testPlaceholderDslSetterNotFoundTest() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").multicast().placeholder("xxx", "stop").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
-            }
-        });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            PropertyBindingException cause = assertIsInstanceOf(PropertyBindingException.class, e.getCause());
-            assertEquals("xxx", cause.getPropertyName());
-            assertEquals("true", cause.getValue());
-            assertTrue(cause.getMessage().startsWith("Error binding property (xxx=true) with name: xxx on bean: Multicast"));
         }
     }
 
