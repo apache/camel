@@ -1,6 +1,6 @@
-[[etcd-component]]
-= Etcd Component
-:page-source: components/camel-etcd/src/main/docs/etcd-component.adoc
+[[etcd-stats-component]]
+= Etcd Stats Component
+:page-source: components/camel-etcd/src/main/docs/etcd-stats-component.adoc
 
 *Since Camel 2.18*
 
@@ -17,13 +17,13 @@ The camel Etcd component allows you to work with Etcd, a distributed reliable ke
 
 [source,java]
 ----------------------------
-etcd:namespace/path[?options]
+etcd-stats:path[?options]
 ----------------------------
 
 == URI Options
 
 // component options: START
-The Etcd component supports 9 options, which are listed below.
+The Etcd Stats component supports 9 options, which are listed below.
 
 
 
@@ -43,21 +43,20 @@ The Etcd component supports 9 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The Etcd endpoint is configured using URI syntax:
+The Etcd Stats endpoint is configured using URI syntax:
 
 ----
-etcd:namespace/path
+etcd-stats:path
 ----
 
 with the following path and query parameters:
 
-=== Path Parameters (2 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *namespace* | *Required* The API namespace to use. The value can be one of: keys, stats, watch |  | EtcdNamespace
 | *path* | The path the endpoint refers to |  | String
 |===
 
