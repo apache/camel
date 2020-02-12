@@ -94,43 +94,43 @@ class URIScanner {
                 }
 
                 switch (mode) {
-                case KEY:
-                    // if there is a = sign then the key ends and we are in value mode
-                    if (ch == '=') {
-                        mode = Mode.VALUE;
-                        continue;
-                    }
-
-                    if (ch != '&') {
-                        // regular char so add it to the key
-                        key.append(ch);
-                    }
-                    break;
-                case VALUE:
-                    // are we a raw value
-                    isRaw = checkRaw();
-
-                    // if we are in raw mode, then we keep adding until we hit the end marker
-                    if (isRaw) {
-                        value.append(ch);
-
-                        if (isAtEnd(ch, next)) {
-                            // raw value end, so add that as a parameter, and reset flags
-                            addParameter(answer, useRaw || isRaw);
-                            initState();
-                            // skip to next as we are in raw mode and have already added the value
-                            i++;
+                    case KEY:
+                        // if there is a = sign then the key ends and we are in value mode
+                        if (ch == '=') {
+                            mode = Mode.VALUE;
+                            continue;
                         }
-                        continue;
-                    }
 
-                    if (ch != '&') {
-                        // regular char so add it to the value
-                        value.append(ch);
-                    }
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown mode: " + mode);
+                        if (ch != '&') {
+                            // regular char so add it to the key
+                            key.append(ch);
+                        }
+                        break;
+                    case VALUE:
+                        // are we a raw value
+                        isRaw = checkRaw();
+
+                        // if we are in raw mode, then we keep adding until we hit the end marker
+                        if (isRaw) {
+                            value.append(ch);
+
+                            if (isAtEnd(ch, next)) {
+                                // raw value end, so add that as a parameter, and reset flags
+                                addParameter(answer, useRaw || isRaw);
+                                initState();
+                                // skip to next as we are in raw mode and have already added the value
+                                i++;
+                            }
+                            continue;
+                        }
+
+                        if (ch != '&') {
+                            // regular char so add it to the value
+                            value.append(ch);
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown mode: " + mode);
                 }
 
                 // the & denote parameter is ended
