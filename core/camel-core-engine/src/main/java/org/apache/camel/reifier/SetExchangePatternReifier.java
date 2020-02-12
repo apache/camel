@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetExchangePatternDefinition;
@@ -30,6 +31,6 @@ public class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatte
 
     @Override
     public Processor createProcessor() {
-        return new ExchangePatternProcessor(definition.getPattern());
+        return new ExchangePatternProcessor(parse(ExchangePattern.class, definition.getPattern()));
     }
 }

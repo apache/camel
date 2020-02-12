@@ -28,6 +28,8 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -345,11 +347,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // configure shutdown
         if (definition.getShutdownRoute() != null) {
             log.debug("Using ShutdownRoute {} on route: {}", definition.getShutdownRoute(), definition.getId());
-            routeContext.setShutdownRoute(definition.getShutdownRoute());
+            routeContext.setShutdownRoute(parse(ShutdownRoute.class, definition.getShutdownRoute()));
         }
         if (definition.getShutdownRunningTask() != null) {
             log.debug("Using ShutdownRunningTask {} on route: {}", definition.getShutdownRunningTask(), definition.getId());
-            routeContext.setShutdownRunningTask(definition.getShutdownRunningTask());
+            routeContext.setShutdownRunningTask(parse(ShutdownRunningTask.class, definition.getShutdownRunningTask()));
         }
 
         // should inherit the intercept strategies we have defined

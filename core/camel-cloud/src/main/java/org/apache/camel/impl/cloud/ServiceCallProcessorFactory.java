@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
@@ -124,8 +125,9 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
         endpointScheme = ThrowingHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
         endpointUri = ThrowingHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
+        ExchangePattern pattern = CamelContextHelper.parse(camelContext, ExchangePattern.class, definition.getPattern());
 
-        return new DefaultServiceCallProcessor(camelContext, camelContext.resolvePropertyPlaceholders(definition.getName()), endpointScheme, endpointUri, definition.getPattern(),
+        return new DefaultServiceCallProcessor(camelContext, camelContext.resolvePropertyPlaceholders(definition.getName()), endpointScheme, endpointUri, pattern,
                                                loadBalancer, retrieveExpression(camelContext, endpointScheme));
     }
 

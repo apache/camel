@@ -79,7 +79,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         ExecutorService threadPool = getConfiguredExecutorService("OnCompletion", definition, isParallelProcessing);
 
         // should be after consumer by default
-        boolean afterConsumer = definition.getMode() == null || definition.getMode() == OnCompletionMode.AfterConsumer;
+        boolean afterConsumer = definition.getMode() == null || parse(OnCompletionMode.class, definition.getMode()) == OnCompletionMode.AfterConsumer;
 
         OnCompletionProcessor answer = new OnCompletionProcessor(camelContext, internal, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
                                                                  original, afterConsumer);

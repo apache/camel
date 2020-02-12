@@ -47,7 +47,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
-    private ExchangePattern pattern;
+    @Metadata(javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    private String pattern;
     @XmlAttribute
     private String serviceDiscoveryRef;
     @XmlTransient
@@ -99,11 +100,11 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     // Properties
     // *****************************
 
-    public ExchangePattern getPattern() {
+    public String getPattern() {
         return pattern;
     }
 
-    public void setPattern(ExchangePattern pattern) {
+    public void setPattern(String pattern) {
         this.pattern = pattern;
     }
 
@@ -316,6 +317,13 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
     public ServiceCallConfigurationDefinition pattern(ExchangePattern pattern) {
+        return pattern(pattern.name());
+    }
+
+    /**
+     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
+     */
+    public ServiceCallConfigurationDefinition pattern(String pattern) {
         setPattern(pattern);
         return this;
     }

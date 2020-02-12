@@ -67,7 +67,7 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
 
                 JsonDataFormat jsondf = new JsonDataFormat();
                 jsondf.setLibrary(JsonLibrary.Jackson);
-                jsondf.setAllowUnmarshallType(true);
+                jsondf.setAllowUnmarshallType(Boolean.toString(true));
                 jsondf.setUnmarshalType(UserPojoEx.class);
                 transformer()
                     .fromType("json")

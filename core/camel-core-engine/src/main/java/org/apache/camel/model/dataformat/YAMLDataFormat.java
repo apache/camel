@@ -53,14 +53,14 @@ public class YAMLDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String resolver;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean useApplicationContextClassLoader = true;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
+    private String useApplicationContextClassLoader = Boolean.toString(true);
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean prettyFlow = false;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    protected String prettyFlow = Boolean.toString(false);
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean allowAnyType = false;
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    protected String allowAnyType = Boolean.toString(false);
     @XmlElement(name = "typeFilter")
     private List<YAMLTypeFilterDefinition> typeFilters;
 
@@ -170,18 +170,18 @@ public class YAMLDataFormat extends DataFormatDefinition {
         this.resolver = resolver;
     }
 
-    public boolean isUseApplicationContextClassLoader() {
+    public String getUseApplicationContextClassLoader() {
         return useApplicationContextClassLoader;
     }
 
     /**
      * Use ApplicationContextClassLoader as custom ClassLoader
      */
-    public void setUseApplicationContextClassLoader(boolean useApplicationContextClassLoader) {
+    public void setUseApplicationContextClassLoader(String useApplicationContextClassLoader) {
         this.useApplicationContextClassLoader = useApplicationContextClassLoader;
     }
 
-    public boolean isPrettyFlow() {
+    public String getPrettyFlow() {
         return prettyFlow;
     }
 
@@ -189,18 +189,18 @@ public class YAMLDataFormat extends DataFormatDefinition {
      * Force the emitter to produce a pretty YAML document when using the flow
      * style.
      */
-    public void setPrettyFlow(boolean prettyFlow) {
+    public void setPrettyFlow(String prettyFlow) {
         this.prettyFlow = prettyFlow;
     }
 
-    public boolean isAllowAnyType() {
+    public String getAllowAnyType() {
         return allowAnyType;
     }
 
     /**
      * Allow any class to be un-marshaled
      */
-    public void setAllowAnyType(boolean allowAnyType) {
+    public void setAllowAnyType(String allowAnyType) {
         this.allowAnyType = allowAnyType;
     }
 

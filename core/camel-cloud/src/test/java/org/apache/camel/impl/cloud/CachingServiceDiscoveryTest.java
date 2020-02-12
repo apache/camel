@@ -51,7 +51,7 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
         CachingServiceCallServiceDiscoveryConfiguration cachingConf = new CachingServiceCallServiceDiscoveryConfiguration();
         cachingConf.setServiceDiscoveryConfiguration(staticConf);
         cachingConf.timeout(50);
-        cachingConf.setUnits(TimeUnit.MILLISECONDS);
+        cachingConf.setUnits(TimeUnit.MILLISECONDS.name());
 
         CachingServiceDiscovery caching = (CachingServiceDiscovery)cachingConf.newInstance(context);
         StaticServiceDiscovery delegate = (StaticServiceDiscovery)caching.getDelegate();

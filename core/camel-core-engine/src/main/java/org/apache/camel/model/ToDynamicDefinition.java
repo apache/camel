@@ -49,13 +49,16 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @Metadata(required = true)
     private String uri;
     @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
     private String pattern;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String cacheSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
 
     public ToDynamicDefinition() {
@@ -87,7 +90,14 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
     public ToDynamicDefinition pattern(ExchangePattern pattern) {
-        setPattern(pattern.name());
+        return pattern(pattern.name());
+    }
+
+    /**
+     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
+     */
+    public ToDynamicDefinition pattern(String pattern) {
+        setPattern(pattern);
         return this;
     }
 
@@ -101,7 +111,20 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      * @return the builder
      */
     public ToDynamicDefinition cacheSize(int cacheSize) {
-        setCacheSize(Integer.toString(cacheSize));
+        return cacheSize(Integer.toString(cacheSize));
+    }
+
+    /**
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ConsumerCache} which is used to cache and
+     * reuse producers.
+     *
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public ToDynamicDefinition cacheSize(String cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 
@@ -111,8 +134,18 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      *
      * @return the builder
      */
-    public ToDynamicDefinition ignoreInvalidEndpoint() {
-        setIgnoreInvalidEndpoint(Boolean.toString(true));
+    public ToDynamicDefinition ignoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
+        return ignoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
+    }
+
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer
+     * with that endpoint
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition ignoreInvalidEndpoint(String ignoreInvalidEndpoint) {
+        setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         return this;
     }
 
@@ -122,8 +155,28 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      *
      * @return the builder
      */
+    public ToDynamicDefinition allowOptimisedComponents() {
+        return allowOptimisedComponents(true);
+    }
+
+    /**
+     * Whether to allow components to optimise toD if they are
+     * {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
     public ToDynamicDefinition allowOptimisedComponents(boolean allowOptimisedComponents) {
-        setAllowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
+        return allowOptimisedComponents(Boolean.toString(allowOptimisedComponents));
+    }
+
+    /**
+     * Whether to allow components to optimise toD if they are
+     * {@link org.apache.camel.spi.SendDynamicAware}.
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition allowOptimisedComponents(String allowOptimisedComponents) {
+        setAllowOptimisedComponents(allowOptimisedComponents);
         return this;
     }
 

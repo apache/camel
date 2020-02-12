@@ -37,13 +37,16 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "mixed")
     private String multipartSubType = "mixed";
     @XmlAttribute
-    private Boolean multipartWithoutAttachment;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String multipartWithoutAttachment;
     @XmlAttribute
-    private Boolean headersInline;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String headersInline;
     @XmlAttribute
     private String includeHeaders;
     @XmlAttribute
-    private Boolean binaryContent;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String binaryContent;
 
     public MimeMultipartDataFormat() {
         super("mime-multipart");
@@ -62,7 +65,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
         this.multipartSubType = multipartSubType;
     }
 
-    public Boolean getMultipartWithoutAttachment() {
+    public String getMultipartWithoutAttachment() {
         return multipartWithoutAttachment;
     }
 
@@ -72,11 +75,11 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
      * <p>
      * Default is "false".
      */
-    public void setMultipartWithoutAttachment(Boolean multipartWithoutAttachment) {
+    public void setMultipartWithoutAttachment(String multipartWithoutAttachment) {
         this.multipartWithoutAttachment = multipartWithoutAttachment;
     }
 
-    public Boolean getHeadersInline() {
+    public String getHeadersInline() {
         return headersInline;
     }
 
@@ -86,11 +89,11 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
      * <p>
      * Default is "false".
      */
-    public void setHeadersInline(Boolean headersInline) {
+    public void setHeadersInline(String headersInline) {
         this.headersInline = headersInline;
     }
 
-    public Boolean getBinaryContent() {
+    public String getBinaryContent() {
         return binaryContent;
     }
 
@@ -115,7 +118,7 @@ public class MimeMultipartDataFormat extends DataFormatDefinition {
      * <p>
      * Default is "false".
      */
-    public void setBinaryContent(Boolean binaryContent) {
+    public void setBinaryContent(String binaryContent) {
         this.binaryContent = binaryContent;
     }
 }

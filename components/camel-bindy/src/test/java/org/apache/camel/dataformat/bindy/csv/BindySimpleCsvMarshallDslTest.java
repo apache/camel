@@ -94,10 +94,10 @@ public class BindySimpleCsvMarshallDslTest extends AbstractJUnit4SpringContextTe
 
         @Override
         public void configure() {
-            BindyDataFormat bindy = new BindyDataFormat();
-            bindy.setLocale("en");
-            bindy.setClassType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
-            bindy.setType(BindyType.Csv);
+            BindyDataFormat bindy = new BindyDataFormat()
+                    .classType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
+                    .locale("en")
+                    .csv();
 
             from("direct:start").
                 marshal(bindy)

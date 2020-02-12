@@ -32,13 +32,14 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlRpcDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean request;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String request;
 
     public XmlRpcDataFormat() {
         super("xmlrpc");
     }
 
-    public Boolean getRequest() {
+    public String getRequest() {
         return request;
     }
 
@@ -47,7 +48,7 @@ public class XmlRpcDataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default false
      */
-    public void setRequest(Boolean request) {
+    public void setRequest(String request) {
         this.request = request;
     }
 

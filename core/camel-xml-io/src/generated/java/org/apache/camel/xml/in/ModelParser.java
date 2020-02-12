@@ -22,11 +22,7 @@ package org.apache.camel.xml.in;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.ShutdownRoute;
-import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.model.*;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -38,7 +34,6 @@ import org.apache.camel.model.loadbalancer.*;
 import org.apache.camel.model.rest.*;
 import org.apache.camel.model.transformer.*;
 import org.apache.camel.model.validator.*;
-import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.xml.io.XmlPullParserException;
 
 @SuppressWarnings("unused")
@@ -599,7 +594,7 @@ public class ModelParser extends BaseParser {
         return doParse(new OnCompletionDefinition(), (def, key, val) -> {
             switch (key) {
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
-                case "mode": def.setMode(OnCompletionMode.valueOf(val)); break;
+                case "mode": def.setMode(val); break;
                 case "onCompleteOnly": def.setOnCompleteOnly(val); break;
                 case "onFailureOnly": def.setOnFailureOnly(val); break;
                 case "parallelProcessing": def.setParallelProcessing(val); break;
@@ -923,8 +918,8 @@ public class ModelParser extends BaseParser {
                 case "logMask": def.setLogMask(val); break;
                 case "messageHistory": def.setMessageHistory(val); break;
                 case "routePolicyRef": def.setRoutePolicyRef(val); break;
-                case "shutdownRoute": def.setShutdownRoute(ShutdownRoute.valueOf(val)); break;
-                case "shutdownRunningTask": def.setShutdownRunningTask(ShutdownRunningTask.valueOf(val)); break;
+                case "shutdownRoute": def.setShutdownRoute(val); break;
+                case "shutdownRunningTask": def.setShutdownRunningTask(val); break;
                 case "startupOrder": def.setStartupOrder(Integer.valueOf(val)); break;
                 case "streamCache": def.setStreamCache(val); break;
                 case "trace": def.setTrace(val); break;
@@ -1082,7 +1077,7 @@ public class ModelParser extends BaseParser {
     protected SetExchangePatternDefinition doParseSetExchangePatternDefinition() throws IOException, XmlPullParserException {
         return doParse(new SetExchangePatternDefinition(), (def, key, val) -> {
             if ("pattern".equals(key)) {
-                def.setPattern(ExchangePattern.valueOf(val));
+                def.setPattern(val);
                 return true;
             }
             return processorDefinitionAttributeHandler().accept(def, key, val);
@@ -1147,13 +1142,13 @@ public class ModelParser extends BaseParser {
         return doParse(new ThreadPoolProfileDefinition(), (def, key, val) -> {
             switch (key) {
                 case "allowCoreThreadTimeOut": def.setAllowCoreThreadTimeOut(val); break;
-                case "defaultProfile": def.setDefaultProfile(Boolean.valueOf(val)); break;
+                case "defaultProfile": def.setDefaultProfile(val); break;
                 case "keepAliveTime": def.setKeepAliveTime(val); break;
                 case "maxPoolSize": def.setMaxPoolSize(val); break;
                 case "maxQueueSize": def.setMaxQueueSize(val); break;
                 case "poolSize": def.setPoolSize(val); break;
                 case "rejectedPolicy": def.setRejectedPolicy(val); break;
-                case "timeUnit": def.setTimeUnit(TimeUnit.valueOf(val)); break;
+                case "timeUnit": def.setTimeUnit(val); break;
                 default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1169,7 +1164,7 @@ public class ModelParser extends BaseParser {
                 case "maxPoolSize": def.setMaxPoolSize(val); break;
                 case "maxQueueSize": def.setMaxQueueSize(val); break;
                 case "poolSize": def.setPoolSize(val); break;
-                case "rejectedPolicy": def.setRejectedPolicy(ThreadPoolRejectedPolicy.valueOf(val)); break;
+                case "rejectedPolicy": def.setRejectedPolicy(val); break;
                 case "threadName": def.setThreadName(val); break;
                 case "timeUnit": def.setTimeUnit(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
@@ -1315,7 +1310,7 @@ public class ModelParser extends BaseParser {
         return doParse(new CachingServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> {
             switch (key) {
                 case "timeout": def.setTimeout(val); break;
-                case "units": def.setUnits(TimeUnit.valueOf(val)); break;
+                case "units": def.setUnits(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1368,14 +1363,14 @@ public class ModelParser extends BaseParser {
         return doParse(new ConsulServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> {
             switch (key) {
                 case "aclToken": def.setAclToken(val); break;
-                case "blockSeconds": def.setBlockSeconds(Integer.valueOf(val)); break;
-                case "connectTimeoutMillis": def.setConnectTimeoutMillis(Long.valueOf(val)); break;
+                case "blockSeconds": def.setBlockSeconds(val); break;
+                case "connectTimeoutMillis": def.setConnectTimeoutMillis(val); break;
                 case "datacenter": def.setDatacenter(val); break;
                 case "password": def.setPassword(val); break;
-                case "readTimeoutMillis": def.setReadTimeoutMillis(Long.valueOf(val)); break;
+                case "readTimeoutMillis": def.setReadTimeoutMillis(val); break;
                 case "url": def.setUrl(val); break;
                 case "userName": def.setUserName(val); break;
-                case "writeTimeoutMillis": def.setWriteTimeoutMillis(Long.valueOf(val)); break;
+                case "writeTimeoutMillis": def.setWriteTimeoutMillis(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1413,7 +1408,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "password": def.setPassword(val); break;
                 case "servicePath": def.setServicePath(val); break;
-                case "timeout": def.setTimeout(Long.valueOf(val)); break;
+                case "timeout": def.setTimeout(val); break;
                 case "type": def.setType(val); break;
                 case "uris": def.setUris(val); break;
                 case "userName": def.setUserName(val); break;
@@ -1446,7 +1441,7 @@ public class ModelParser extends BaseParser {
                 case "password": def.setPassword(val); break;
                 case "portName": def.setPortName(val); break;
                 case "portProtocol": def.setPortProtocol(val); break;
-                case "trustCerts": def.setTrustCerts(Boolean.valueOf(val)); break;
+                case "trustCerts": def.setTrustCerts(val); break;
                 case "username": def.setUsername(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
@@ -1475,7 +1470,7 @@ public class ModelParser extends BaseParser {
                 case "component": def.setComponent(val); break;
                 case "expressionRef": def.setExpressionRef(val); break;
                 case "loadBalancerRef": def.setLoadBalancerRef(val); break;
-                case "pattern": def.setPattern(ExchangePattern.valueOf(val)); break;
+                case "pattern": def.setPattern(val); break;
                 case "serviceChooserRef": def.setServiceChooserRef(val); break;
                 case "serviceDiscoveryRef": def.setServiceDiscoveryRef(val); break;
                 case "serviceFilterRef": def.setServiceFilterRef(val); break;
@@ -1531,7 +1526,7 @@ public class ModelParser extends BaseParser {
                 case "expressionRef": def.setExpressionRef(val); break;
                 case "loadBalancerRef": def.setLoadBalancerRef(val); break;
                 case "name": def.setName(val); break;
-                case "pattern": def.setPattern(ExchangePattern.valueOf(val)); break;
+                case "pattern": def.setPattern(val); break;
                 case "serviceChooserRef": def.setServiceChooserRef(val); break;
                 case "serviceDiscoveryRef": def.setServiceDiscoveryRef(val); break;
                 case "serviceFilterRef": def.setServiceFilterRef(val); break;
@@ -1697,11 +1692,11 @@ public class ModelParser extends BaseParser {
     protected BindyDataFormat doParseBindyDataFormat() throws IOException, XmlPullParserException {
         return doParse(new BindyDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowEmptyStream": def.setAllowEmptyStream(Boolean.valueOf(val)); break;
+                case "allowEmptyStream": def.setAllowEmptyStream(val); break;
                 case "classType": def.setClassType(val); break;
                 case "locale": def.setLocale(val); break;
-                case "type": def.setType(BindyType.valueOf(val)); break;
-                case "unwrapSingleInstance": def.setUnwrapSingleInstance(Boolean.valueOf(val)); break;
+                case "type": def.setType(val); break;
+                case "unwrapSingleInstance": def.setUnwrapSingleInstance(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1745,33 +1740,33 @@ public class ModelParser extends BaseParser {
     protected CsvDataFormat doParseCsvDataFormat() throws IOException, XmlPullParserException {
         return doParse(new CsvDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowMissingColumnNames": def.setAllowMissingColumnNames(Boolean.valueOf(val)); break;
+                case "allowMissingColumnNames": def.setAllowMissingColumnNames(val); break;
                 case "commentMarker": def.setCommentMarker(val); break;
-                case "commentMarkerDisabled": def.setCommentMarkerDisabled(Boolean.valueOf(val)); break;
+                case "commentMarkerDisabled": def.setCommentMarkerDisabled(val); break;
                 case "delimiter": def.setDelimiter(val); break;
                 case "escape": def.setEscape(val); break;
-                case "escapeDisabled": def.setEscapeDisabled(Boolean.valueOf(val)); break;
+                case "escapeDisabled": def.setEscapeDisabled(val); break;
                 case "formatName": def.setFormatName(val); break;
                 case "formatRef": def.setFormatRef(val); break;
-                case "headerDisabled": def.setHeaderDisabled(Boolean.valueOf(val)); break;
-                case "ignoreEmptyLines": def.setIgnoreEmptyLines(Boolean.valueOf(val)); break;
-                case "ignoreHeaderCase": def.setIgnoreHeaderCase(Boolean.valueOf(val)); break;
-                case "ignoreSurroundingSpaces": def.setIgnoreSurroundingSpaces(Boolean.valueOf(val)); break;
-                case "lazyLoad": def.setLazyLoad(Boolean.valueOf(val)); break;
+                case "headerDisabled": def.setHeaderDisabled(val); break;
+                case "ignoreEmptyLines": def.setIgnoreEmptyLines(val); break;
+                case "ignoreHeaderCase": def.setIgnoreHeaderCase(val); break;
+                case "ignoreSurroundingSpaces": def.setIgnoreSurroundingSpaces(val); break;
+                case "lazyLoad": def.setLazyLoad(val); break;
                 case "marshallerFactoryRef": def.setMarshallerFactoryRef(val); break;
                 case "nullString": def.setNullString(val); break;
-                case "nullStringDisabled": def.setNullStringDisabled(Boolean.valueOf(val)); break;
+                case "nullStringDisabled": def.setNullStringDisabled(val); break;
                 case "quote": def.setQuote(val); break;
-                case "quoteDisabled": def.setQuoteDisabled(Boolean.valueOf(val)); break;
+                case "quoteDisabled": def.setQuoteDisabled(val); break;
                 case "quoteMode": def.setQuoteMode(val); break;
                 case "recordConverterRef": def.setRecordConverterRef(val); break;
                 case "recordSeparator": def.setRecordSeparator(val); break;
                 case "recordSeparatorDisabled": def.setRecordSeparatorDisabled(val); break;
-                case "skipHeaderRecord": def.setSkipHeaderRecord(Boolean.valueOf(val)); break;
-                case "trailingDelimiter": def.setTrailingDelimiter(Boolean.valueOf(val)); break;
-                case "trim": def.setTrim(Boolean.valueOf(val)); break;
-                case "useMaps": def.setUseMaps(Boolean.valueOf(val)); break;
-                case "useOrderedMaps": def.setUseOrderedMaps(Boolean.valueOf(val)); break;
+                case "skipHeaderRecord": def.setSkipHeaderRecord(val); break;
+                case "trailingDelimiter": def.setTrailingDelimiter(val); break;
+                case "trim": def.setTrim(val); break;
+                case "useMaps": def.setUseMaps(val); break;
+                case "useOrderedMaps": def.setUseOrderedMaps(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1813,15 +1808,15 @@ public class ModelParser extends BaseParser {
                 case "dontEncodeElements": def.setDontEncodeElements(asStringSet(val)); break;
                 case "dontStripVersionsFromReferencesAtPaths": def.setDontStripVersionsFromReferencesAtPaths(asStringList(val)); break;
                 case "encodeElements": def.setEncodeElements(asStringSet(val)); break;
-                case "encodeElementsAppliesToChildResourcesOnly": def.setEncodeElementsAppliesToChildResourcesOnly(Boolean.valueOf(val)); break;
+                case "encodeElementsAppliesToChildResourcesOnly": def.setEncodeElementsAppliesToChildResourcesOnly(val); break;
                 case "fhirVersion": def.setFhirVersion(val); break;
-                case "omitResourceId": def.setOmitResourceId(Boolean.valueOf(val)); break;
-                case "overrideResourceIdWithBundleEntryFullUrl": def.setOverrideResourceIdWithBundleEntryFullUrl(Boolean.valueOf(val)); break;
-                case "prettyPrint": def.setPrettyPrint(Boolean.valueOf(val)); break;
+                case "omitResourceId": def.setOmitResourceId(val); break;
+                case "overrideResourceIdWithBundleEntryFullUrl": def.setOverrideResourceIdWithBundleEntryFullUrl(val); break;
+                case "prettyPrint": def.setPrettyPrint(val); break;
                 case "serverBaseUrl": def.setServerBaseUrl(val); break;
-                case "stripVersionsFromReferences": def.setStripVersionsFromReferences(Boolean.valueOf(val)); break;
-                case "summaryMode": def.setSummaryMode(Boolean.valueOf(val)); break;
-                case "suppressNarratives": def.setSuppressNarratives(Boolean.valueOf(val)); break;
+                case "stripVersionsFromReferences": def.setStripVersionsFromReferences(val); break;
+                case "summaryMode": def.setSummaryMode(val); break;
+                case "suppressNarratives": def.setSuppressNarratives(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1834,12 +1829,12 @@ public class ModelParser extends BaseParser {
     protected FlatpackDataFormat doParseFlatpackDataFormat() throws IOException, XmlPullParserException {
         return doParse(new FlatpackDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowShortLines": def.setAllowShortLines(Boolean.valueOf(val)); break;
+                case "allowShortLines": def.setAllowShortLines(val); break;
                 case "definition": def.setDefinition(val); break;
                 case "delimiter": def.setDelimiter(val); break;
-                case "fixed": def.setFixed(Boolean.valueOf(val)); break;
-                case "ignoreExtraColumns": def.setIgnoreExtraColumns(Boolean.valueOf(val)); break;
-                case "ignoreFirstRecord": def.setIgnoreFirstRecord(Boolean.valueOf(val)); break;
+                case "fixed": def.setFixed(val); break;
+                case "ignoreExtraColumns": def.setIgnoreExtraColumns(val); break;
+                case "ignoreFirstRecord": def.setIgnoreFirstRecord(val); break;
                 case "parserFactoryRef": def.setParserFactoryRef(val); break;
                 case "textQualifier": def.setTextQualifier(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -1850,9 +1845,9 @@ public class ModelParser extends BaseParser {
     protected GrokDataFormat doParseGrokDataFormat() throws IOException, XmlPullParserException {
         return doParse(new GrokDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowMultipleMatchesPerLine": def.setAllowMultipleMatchesPerLine(Boolean.valueOf(val)); break;
-                case "flattened": def.setFlattened(Boolean.valueOf(val)); break;
-                case "namedOnly": def.setNamedOnly(Boolean.valueOf(val)); break;
+                case "allowMultipleMatchesPerLine": def.setAllowMultipleMatchesPerLine(val); break;
+                case "flattened": def.setFlattened(val); break;
+                case "namedOnly": def.setNamedOnly(val); break;
                 case "pattern": def.setPattern(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -1866,7 +1861,7 @@ public class ModelParser extends BaseParser {
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
         return doParse(new HL7DataFormat(), (def, key, val) -> {
             if ("validate".equals(key)) {
-                def.setValidate(Boolean.valueOf(val));
+                def.setValidate(val);
                 return true;
             }
             return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -1875,7 +1870,7 @@ public class ModelParser extends BaseParser {
     protected IcalDataFormat doParseIcalDataFormat() throws IOException, XmlPullParserException {
         return doParse(new IcalDataFormat(), (def, key, val) -> {
             if ("validating".equals(key)) {
-                def.setValidating(Boolean.valueOf(val));
+                def.setValidating(val);
                 return true;
             }
             return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -1908,20 +1903,20 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "contextPath": def.setContextPath(val); break;
                 case "encoding": def.setEncoding(val); break;
-                case "filterNonXmlChars": def.setFilterNonXmlChars(Boolean.valueOf(val)); break;
-                case "fragment": def.setFragment(Boolean.valueOf(val)); break;
-                case "ignoreJAXBElement": def.setIgnoreJAXBElement(Boolean.valueOf(val)); break;
+                case "filterNonXmlChars": def.setFilterNonXmlChars(val); break;
+                case "fragment": def.setFragment(val); break;
+                case "ignoreJAXBElement": def.setIgnoreJAXBElement(val); break;
                 case "jaxbProviderProperties": def.setJaxbProviderProperties(val); break;
-                case "mustBeJAXBElement": def.setMustBeJAXBElement(Boolean.valueOf(val)); break;
+                case "mustBeJAXBElement": def.setMustBeJAXBElement(val); break;
                 case "namespacePrefixRef": def.setNamespacePrefixRef(val); break;
                 case "noNamespaceSchemaLocation": def.setNoNamespaceSchemaLocation(val); break;
-                case "objectFactory": def.setObjectFactory(Boolean.valueOf(val)); break;
+                case "objectFactory": def.setObjectFactory(val); break;
                 case "partClass": def.setPartClass(val); break;
                 case "partNamespace": def.setPartNamespace(val); break;
-                case "prettyPrint": def.setPrettyPrint(Boolean.valueOf(val)); break;
+                case "prettyPrint": def.setPrettyPrint(val); break;
                 case "schema": def.setSchema(val); break;
                 case "schemaLocation": def.setSchemaLocation(val); break;
-                case "schemaSeverityLevel": def.setSchemaSeverityLevel(Integer.valueOf(val)); break;
+                case "schemaSeverityLevel": def.setSchemaSeverityLevel(val); break;
                 case "xmlStreamWriterWrapper": def.setXmlStreamWriterWrapper(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -1941,13 +1936,13 @@ public class ModelParser extends BaseParser {
     protected JsonDataFormat doParseJsonDataFormat() throws IOException, XmlPullParserException {
         return doParse(new JsonDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowJmsType": def.setAllowJmsType(Boolean.valueOf(val)); break;
-                case "allowUnmarshallType": def.setAllowUnmarshallType(Boolean.valueOf(val)); break;
-                case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(Boolean.valueOf(val)); break;
+                case "allowJmsType": def.setAllowJmsType(val); break;
+                case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
+                case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
-                case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(Boolean.valueOf(val)); break;
+                case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); break;
                 case "include": def.setInclude(val); break;
                 case "jsonView": def.setJsonView(asClass(val)); break;
                 case "library": def.setLibrary(JsonLibrary.valueOf(val)); break;
@@ -1955,11 +1950,11 @@ public class ModelParser extends BaseParser {
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
                 case "permissions": def.setPermissions(val); break;
-                case "prettyPrint": def.setPrettyPrint(Boolean.valueOf(val)); break;
+                case "prettyPrint": def.setPrettyPrint(val); break;
                 case "timezone": def.setTimezone(val); break;
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
-                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(Boolean.valueOf(val)); break;
-                case "useList": def.setUseList(Boolean.valueOf(val)); break;
+                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
+                case "useList": def.setUseList(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -1968,7 +1963,7 @@ public class ModelParser extends BaseParser {
     protected LZFDataFormat doParseLZFDataFormat() throws IOException, XmlPullParserException {
         return doParse(new LZFDataFormat(), (def, key, val) -> {
             if ("usingParallelCompression".equals(key)) {
-                def.setUsingParallelCompression(Boolean.valueOf(val));
+                def.setUsingParallelCompression(val);
                 return true;
             }
             return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -1977,11 +1972,11 @@ public class ModelParser extends BaseParser {
     protected MimeMultipartDataFormat doParseMimeMultipartDataFormat() throws IOException, XmlPullParserException {
         return doParse(new MimeMultipartDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "binaryContent": def.setBinaryContent(Boolean.valueOf(val)); break;
-                case "headersInline": def.setHeadersInline(Boolean.valueOf(val)); break;
+                case "binaryContent": def.setBinaryContent(val); break;
+                case "headersInline": def.setHeadersInline(val); break;
                 case "includeHeaders": def.setIncludeHeaders(val); break;
                 case "multipartSubType": def.setMultipartSubType(val); break;
-                case "multipartWithoutAttachment": def.setMultipartWithoutAttachment(Boolean.valueOf(val)); break;
+                case "multipartWithoutAttachment": def.setMultipartWithoutAttachment(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2044,9 +2039,9 @@ public class ModelParser extends BaseParser {
     protected TarFileDataFormat doParseTarFileDataFormat() throws IOException, XmlPullParserException {
         return doParse(new TarFileDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowEmptyDirectory": def.setAllowEmptyDirectory(Boolean.valueOf(val)); break;
-                case "preservePathElements": def.setPreservePathElements(Boolean.valueOf(val)); break;
-                case "usingIterator": def.setUsingIterator(Boolean.valueOf(val)); break;
+                case "allowEmptyDirectory": def.setAllowEmptyDirectory(val); break;
+                case "preservePathElements": def.setPreservePathElements(val); break;
+                case "usingIterator": def.setUsingIterator(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2066,7 +2061,7 @@ public class ModelParser extends BaseParser {
         return doParse(new TidyMarkupDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "dataObjectType": def.setDataObjectTypeName(val); break;
-                case "omitXmlDeclaration": def.setOmitXmlDeclaration(Boolean.valueOf(val)); break;
+                case "omitXmlDeclaration": def.setOmitXmlDeclaration(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2077,7 +2072,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "delimiter": def.setDelimiter(val); break;
                 case "quote": def.setQuote(val); break;
-                case "quoteAllFields": def.setQuoteAllFields(Boolean.valueOf(val)); break;
+                case "quoteAllFields": def.setQuoteAllFields(val); break;
                 case "quoteEscape": def.setQuoteEscape(val); break;
                 default: return uniVocityAbstractDataFormatAttributeHandler().accept(def, key, val);
             }
@@ -2087,19 +2082,19 @@ public class ModelParser extends BaseParser {
     protected <T extends UniVocityAbstractDataFormat> AttributeHandler<T> uniVocityAbstractDataFormatAttributeHandler() {
         return (def, key, val) -> {
             switch (key) {
-                case "asMap": def.setAsMap(Boolean.valueOf(val)); break;
+                case "asMap": def.setAsMap(val); break;
                 case "comment": def.setComment(val); break;
                 case "emptyValue": def.setEmptyValue(val); break;
-                case "headerExtractionEnabled": def.setHeaderExtractionEnabled(Boolean.valueOf(val)); break;
-                case "headersDisabled": def.setHeadersDisabled(Boolean.valueOf(val)); break;
-                case "ignoreLeadingWhitespaces": def.setIgnoreLeadingWhitespaces(Boolean.valueOf(val)); break;
-                case "ignoreTrailingWhitespaces": def.setIgnoreTrailingWhitespaces(Boolean.valueOf(val)); break;
-                case "lazyLoad": def.setLazyLoad(Boolean.valueOf(val)); break;
+                case "headerExtractionEnabled": def.setHeaderExtractionEnabled(val); break;
+                case "headersDisabled": def.setHeadersDisabled(val); break;
+                case "ignoreLeadingWhitespaces": def.setIgnoreLeadingWhitespaces(val); break;
+                case "ignoreTrailingWhitespaces": def.setIgnoreTrailingWhitespaces(val); break;
+                case "lazyLoad": def.setLazyLoad(val); break;
                 case "lineSeparator": def.setLineSeparator(val); break;
                 case "normalizedLineSeparator": def.setNormalizedLineSeparator(val); break;
                 case "nullValue": def.setNullValue(val); break;
-                case "numberOfRecordsToRead": def.setNumberOfRecordsToRead(Integer.valueOf(val)); break;
-                case "skipEmptyLines": def.setSkipEmptyLines(Boolean.valueOf(val)); break;
+                case "numberOfRecordsToRead": def.setNumberOfRecordsToRead(val); break;
+                case "skipEmptyLines": def.setSkipEmptyLines(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2127,8 +2122,8 @@ public class ModelParser extends BaseParser {
         return doParse(new UniVocityFixedWidthDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "padding": def.setPadding(val); break;
-                case "recordEndsOnNewline": def.setRecordEndsOnNewline(Boolean.valueOf(val)); break;
-                case "skipTrailingCharsUntilNewline": def.setSkipTrailingCharsUntilNewline(Boolean.valueOf(val)); break;
+                case "recordEndsOnNewline": def.setRecordEndsOnNewline(val); break;
+                case "skipTrailingCharsUntilNewline": def.setSkipTrailingCharsUntilNewline(val); break;
                 default: return uniVocityAbstractDataFormatAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2146,7 +2141,7 @@ public class ModelParser extends BaseParser {
     protected XMLSecurityDataFormat doParseXMLSecurityDataFormat() throws IOException, XmlPullParserException {
         return doParse(new XMLSecurityDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "addKeyValueForEncryptedKey": def.setAddKeyValueForEncryptedKey(Boolean.valueOf(val)); break;
+                case "addKeyValueForEncryptedKey": def.setAddKeyValueForEncryptedKey(val); break;
                 case "digestAlgorithm": def.setDigestAlgorithm(val); break;
                 case "keyCipherAlgorithm": def.setKeyCipherAlgorithm(val); break;
                 case "keyOrTrustStoreParametersRef": def.setKeyOrTrustStoreParametersRef(val); break;
@@ -2156,7 +2151,7 @@ public class ModelParser extends BaseParser {
                 case "passPhraseByte": def.setPassPhraseByte(asByteArray(val)); break;
                 case "recipientKeyAlias": def.setRecipientKeyAlias(val); break;
                 case "secureTag": def.setSecureTag(val); break;
-                case "secureTagContents": def.setSecureTagContents(Boolean.valueOf(val)); break;
+                case "secureTagContents": def.setSecureTagContents(val); break;
                 case "xmlCipherAlgorithm": def.setXmlCipherAlgorithm(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
@@ -2277,7 +2272,7 @@ public class ModelParser extends BaseParser {
     protected XmlRpcDataFormat doParseXmlRpcDataFormat() throws IOException, XmlPullParserException {
         return doParse(new XmlRpcDataFormat(), (def, key, val) -> {
             if ("request".equals(key)) {
-                def.setRequest(Boolean.valueOf(val));
+                def.setRequest(val);
                 return true;
             }
             return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -2286,15 +2281,15 @@ public class ModelParser extends BaseParser {
     protected YAMLDataFormat doParseYAMLDataFormat() throws IOException, XmlPullParserException {
         return doParse(new YAMLDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowAnyType": def.setAllowAnyType(Boolean.valueOf(val)); break;
+                case "allowAnyType": def.setAllowAnyType(val); break;
                 case "constructor": def.setConstructor(val); break;
                 case "dumperOptions": def.setDumperOptions(val); break;
                 case "library": def.setLibrary(YAMLLibrary.valueOf(val)); break;
-                case "prettyFlow": def.setPrettyFlow(Boolean.valueOf(val)); break;
+                case "prettyFlow": def.setPrettyFlow(val); break;
                 case "representer": def.setRepresenter(val); break;
                 case "resolver": def.setResolver(val); break;
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
-                case "useApplicationContextClassLoader": def.setUseApplicationContextClassLoader(Boolean.valueOf(val)); break;
+                case "useApplicationContextClassLoader": def.setUseApplicationContextClassLoader(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2309,7 +2304,7 @@ public class ModelParser extends BaseParser {
     protected YAMLTypeFilterDefinition doParseYAMLTypeFilterDefinition() throws IOException, XmlPullParserException {
         return doParse(new YAMLTypeFilterDefinition(), (def, key, val) -> {
             switch (key) {
-                case "type": def.setType(YAMLTypeFilterType.valueOf(val)); break;
+                case "type": def.setType(val); break;
                 case "value": def.setValue(val); break;
                 default: return false;
             }
@@ -2319,7 +2314,7 @@ public class ModelParser extends BaseParser {
     protected ZipDeflaterDataFormat doParseZipDeflaterDataFormat() throws IOException, XmlPullParserException {
         return doParse(new ZipDeflaterDataFormat(), (def, key, val) -> {
             if ("compressionLevel".equals(key)) {
-                def.setCompressionLevel(Integer.valueOf(val));
+                def.setCompressionLevel(val);
                 return true;
             }
             return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -2328,9 +2323,9 @@ public class ModelParser extends BaseParser {
     protected ZipFileDataFormat doParseZipFileDataFormat() throws IOException, XmlPullParserException {
         return doParse(new ZipFileDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "allowEmptyDirectory": def.setAllowEmptyDirectory(Boolean.valueOf(val)); break;
-                case "preservePathElements": def.setPreservePathElements(Boolean.valueOf(val)); break;
-                case "usingIterator": def.setUsingIterator(Boolean.valueOf(val)); break;
+                case "allowEmptyDirectory": def.setAllowEmptyDirectory(val); break;
+                case "preservePathElements": def.setPreservePathElements(val); break;
+                case "usingIterator": def.setUsingIterator(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -2739,8 +2734,8 @@ public class ModelParser extends BaseParser {
     protected RestSecurityApiKey doParseRestSecurityApiKey() throws IOException, XmlPullParserException {
         return doParse(new RestSecurityApiKey(), (def, key, val) -> {
             switch (key) {
-                case "inHeader": def.setInHeader(Boolean.valueOf(val)); break;
-                case "inQuery": def.setInQuery(Boolean.valueOf(val)); break;
+                case "inHeader": def.setInHeader(val); break;
+                case "inQuery": def.setInQuery(val); break;
                 case "name": def.setName(val); break;
                 default: return restSecurityDefinitionAttributeHandler().accept(def, key, val);
             }

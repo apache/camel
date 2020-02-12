@@ -33,14 +33,14 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipDeflaterDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    @Metadata(defaultValue = "-1")
-    private Integer compressionLevel;
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "-1")
+    private String compressionLevel;
 
     public ZipDeflaterDataFormat() {
         super("zipdeflater");
     }
 
-    public Integer getCompressionLevel() {
+    public String getCompressionLevel() {
         return compressionLevel;
     }
 
@@ -48,7 +48,7 @@ public class ZipDeflaterDataFormat extends DataFormatDefinition {
      * To specify a specific compression between 0-9. -1 is default compression,
      * 0 is no compression, and 9 is best compression.
      */
-    public void setCompressionLevel(Integer compressionLevel) {
+    public void setCompressionLevel(String compressionLevel) {
         this.compressionLevel = compressionLevel;
     }
 }

@@ -42,8 +42,9 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
     @XmlAttribute
-    @Metadata(defaultValue = "AfterConsumer")
-    private OnCompletionMode mode;
+    @Metadata(javaType = "org.apache.camel.model.OnCompletionMode", defaultValue = "AfterConsumer",
+              enums = "AfterConsumer,BeforeConsumer")
+    private String mode;
     @XmlAttribute
     private String onCompleteOnly;
     @XmlAttribute
@@ -132,7 +133,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * @return the builder
      */
     public OnCompletionDefinition modeAfterConsumer() {
-        setMode(OnCompletionMode.AfterConsumer);
+        setMode(OnCompletionMode.AfterConsumer.name());
         return this;
     }
 
@@ -145,7 +146,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * @return the builder
      */
     public OnCompletionDefinition modeBeforeConsumer() {
-        setMode(OnCompletionMode.BeforeConsumer);
+        setMode(OnCompletionMode.BeforeConsumer.name());
         return this;
     }
 
@@ -274,7 +275,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         super.setOutputs(outputs);
     }
 
-    public OnCompletionMode getMode() {
+    public String getMode() {
         return mode;
     }
 
@@ -283,7 +284,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * <p/>
      * The default value is AfterConsumer
      */
-    public void setMode(OnCompletionMode mode) {
+    public void setMode(String mode) {
         this.mode = mode;
     }
 

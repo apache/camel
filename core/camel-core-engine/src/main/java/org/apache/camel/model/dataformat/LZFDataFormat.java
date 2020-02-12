@@ -33,20 +33,21 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LZFDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean usingParallelCompression;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String usingParallelCompression;
 
     public LZFDataFormat() {
         super("lzf");
     }
 
-    public Boolean getUsingParallelCompression() {
+    public String getUsingParallelCompression() {
         return usingParallelCompression;
     }
 
     /**
      * Enable encoding (compress) using multiple processing cores.
      */
-    public void setUsingParallelCompression(Boolean usingParallelCompression) {
+    public void setUsingParallelCompression(String usingParallelCompression) {
         this.usingParallelCompression = usingParallelCompression;
     }
 }
