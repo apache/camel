@@ -1,10 +1,10 @@
 {
   "component": {
     "kind": "component",
-    "scheme": "etcd",
+    "scheme": "etcd-stats",
     "extendsScheme": "",
-    "syntax": "etcd:namespace\/path",
-    "title": "Etcd",
+    "syntax": "etcd-stats:path",
+    "title": "Etcd Stats",
     "description": "The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.",
     "label": "clustering,database",
     "deprecated": false,
@@ -12,7 +12,7 @@
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false,
-    "javaType": "org.apache.camel.component.etcd.EtcdComponent",
+    "javaType": "org.apache.camel.component.etcd.EtcdStatsComponent",
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-etcd",
@@ -30,8 +30,7 @@
     "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Enable usage of global SSL context parameters." }
   },
   "properties": {
-    "namespace": { "kind": "path", "displayName": "Namespace", "group": "common", "label": "", "required": true, "type": "object", "javaType": "org.apache.camel.component.etcd.EtcdNamespace", "enum": [ "keys", "stats", "watch" ], "deprecated": false, "deprecationNote": "", "secret": false, "description": "The API namespace to use" },
-    "path": { "kind": "path", "displayName": "Path", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "secret": false, "description": "The path the endpoint refers to" },
+    "path": { "kind": "path", "displayName": "Path", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The path the endpoint refers to" },
     "recursive": { "kind": "parameter", "displayName": "Recursive", "group": "common", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.etcd.EtcdConfiguration", "configurationField": "configuration", "description": "To apply an action recursively." },
     "servicePath": { "kind": "parameter", "displayName": "Service Path", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "\/services\/", "configurationClass": "org.apache.camel.component.etcd.EtcdConfiguration", "configurationField": "configuration", "description": "The path to look for for service discovery" },
     "timeout": { "kind": "parameter", "displayName": "Timeout", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.etcd.EtcdConfiguration", "configurationField": "configuration", "description": "To set the maximum time an action could take to complete." },

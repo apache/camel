@@ -23,26 +23,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
 
-/**
- * Represents the component that manages {@link AbstractEtcdEndpoint}.
- */
-@Component("etcd")
-public class EtcdComponent extends DefaultComponent implements SSLContextParametersAware {
+public abstract class AbstractEtcdComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private EtcdConfiguration configuration = new EtcdConfiguration();
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
-    public EtcdComponent() {
+    public AbstractEtcdComponent() {
     }
 
-    public EtcdComponent(CamelContext context) {
+    public AbstractEtcdComponent(CamelContext context) {
         super(context);
     }
 
@@ -116,45 +111,6 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
-    }
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String ns = StringHelper.before(remaining, "/");
-        String path = StringHelper.after(remaining, "/");
-
-        if (ns == null) {
-            ns = remaining;
-        }
-        if (path == null) {
-            path = remaining;
-        }
-
-        EtcdNamespace namespace = getCamelContext().getTypeConverter().mandatoryConvertTo(EtcdNamespace.class, ns);
-        EtcdConfiguration configuration = loadConfiguration(parameters);
-
-        if (namespace != null) {
-            // path must start with leading slash
-            if (!path.startsWith("/")) {
-                path = "/" + path;
-            }
-
-            Endpoint endpoint;
-            if (namespace == EtcdNamespace.stats) {
-                endpoint = new EtcdStatsEndpoint(uri, this, configuration, namespace, path);
-            } else if (namespace == EtcdNamespace.watch) {
-                endpoint = new EtcdWatchEndpoint(uri, this, configuration, namespace, path);
-            } else if (namespace == EtcdNamespace.keys) {
-                endpoint = new EtcdKeysEndpoint(uri, this, configuration, namespace, path);
-            } else {
-                throw new IllegalStateException("No endpoint for " + remaining);
-            }
-
-            setProperties(endpoint, parameters);
-            return endpoint;
-        }
-
-        throw new IllegalStateException("No endpoint for " + remaining);
     }
 
     protected EtcdConfiguration loadConfiguration(Map<String, Object> parameters) throws Exception {

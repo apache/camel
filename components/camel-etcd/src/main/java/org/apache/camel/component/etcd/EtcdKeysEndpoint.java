@@ -19,17 +19,20 @@ package org.apache.camel.component.etcd;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.UriEndpoint;
 
+@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-keys", title = "Etcd Keys", producerOnly = true,
+        syntax = "etcd-keys:path", label = "clustering,database")
 public class EtcdKeysEndpoint extends AbstractEtcdEndpoint {
 
     public EtcdKeysEndpoint(
-        String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
-        super(uri, component, configuration, namespace, path);
+            String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
+        super(uri, component, configuration, path);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new EtcdKeysProducer(this, getConfiguration(), getNamespace(), getPath());
+        return new EtcdKeysProducer(this, getConfiguration(), getPath());
     }
 
     @Override

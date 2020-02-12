@@ -16,28 +16,35 @@
  */
 package org.apache.camel.component.etcd;
 
-import org.apache.camel.Exchange;
+import java.util.Map;
 
-public class EtcdStatsProducer extends AbstractEtcdProducer {
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 
-    public EtcdStatsProducer(EtcdStatsEndpoint endpoint, EtcdConfiguration configuration, String path) {
-        super(endpoint, configuration, path);
+@Component("etcd-stats")
+public class EtcdStatsComponent extends AbstractEtcdComponent {
+
+    public EtcdStatsComponent() {
+    }
+
+    public EtcdStatsComponent(CamelContext context) {
+        super(context);
     }
 
     @Override
-    public EtcdStatsEndpoint getEndpoint() {
-        return (EtcdStatsEndpoint) super.getEndpoint();
-    }
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        EtcdConfiguration configuration = loadConfiguration(parameters);
 
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        EtcdStatsEndpoint endpoint = getEndpoint();
-        Object answer = endpoint.getStats(getClient());
-
-        if (answer != null) {
-            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "stats");
-            exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, getPath());
-            exchange.getIn().setBody(answer);
+        // path must start with leading slash
+        String path = remaining;
+        if (!path.startsWith("/")) {
+            path = "/" + path;
         }
+
+        Endpoint endpoint = new EtcdStatsEndpoint(uri, this, configuration, path);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
+
 }

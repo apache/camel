@@ -32,9 +32,6 @@
     <name>Camel :: Etcd</name>
     <description>Camel Etcd support</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
 
         <dependency>

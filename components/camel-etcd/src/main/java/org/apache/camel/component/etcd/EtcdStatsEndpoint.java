@@ -20,17 +20,23 @@ import mousio.etcd4j.EtcdClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * The camel etcd component allows you to work with <a href="https://coreos.com/etcd">Etcd</a>, a distributed reliable key-value store.
+ */
+@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-stats", title = "Etcd Stats",
+        syntax = "etcd-stats:path", label = "clustering,database")
 public class EtcdStatsEndpoint extends AbstractEtcdPollingEndpoint {
 
     public EtcdStatsEndpoint(
-        String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
-        super(uri, component, configuration, namespace, path);
+            String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
+        super(uri, component, configuration, path);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new EtcdStatsProducer(this, getConfiguration(), getNamespace(), getPath());
+        return new EtcdStatsProducer(this, getConfiguration(), getPath());
     }
 
     @Override
