@@ -108,11 +108,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
-            case "resultType": setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
-            case "headername":
-            case "headerName": setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            default: return false;
+        case "resulttype":
+        case "resultType": 
+            setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+        case "headername":
+        case "headerName": 
+            setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+        default: 
+            return false;
         }
     }
     @Override
