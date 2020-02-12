@@ -284,7 +284,7 @@
         <ical4j-version>1.0.7</ical4j-version>
         <icu4j-version>65.1</icu4j-version>
         <ignite-version>2.7.6</ignite-version>
-        <infinispan-version>10.1.1.Final</infinispan-version>
+        <infinispan-version>10.1.2.Final</infinispan-version>
         <influx-java-driver-version>2.17</influx-java-driver-version>
         <influx-java-driver-bundle-version>2.17_1</influx-java-driver-bundle-version>
         <influx-guava-version>20.0</influx-guava-version>
