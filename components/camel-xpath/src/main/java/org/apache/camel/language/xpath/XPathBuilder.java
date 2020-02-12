@@ -176,23 +176,31 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "documenttype":
-            case "documentType": setDocumentType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
-            case "resulttype":
-            case "resultType": setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
-            case "usesaxon":
-            case "useSaxon": setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
-            case "xpathfactory":
-            case "xPathFactory": setXPathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value)); return true;
-            case "objectmodeluri":
-            case "objectModelUri": setObjectModelUri(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            case "threadsafety":
-            case "threadSafety": setThreadSafety(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
-            case "lognamespaces":
-            case "logNamespaces": setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
-            case "headername":
-            case "headerName": setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            default: return false;
+        case "documenttype":
+        case "documentType": 
+            setDocumentType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+        case "resulttype":
+        case "resultType": 
+            setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+        case "usesaxon":
+        case "useSaxon": 
+            setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+        case "xpathfactory":
+        case "xPathFactory": 
+            setXPathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value)); return true;
+        case "objectmodeluri":
+        case "objectModelUri": 
+            setObjectModelUri(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+        case "threadsafety":
+        case "threadSafety": 
+            setThreadSafety(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+        case "lognamespaces":
+        case "logNamespaces": 
+            setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+        case "headername":
+        case "headerName": 
+            setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+        default: return false;
         }
     }
 
