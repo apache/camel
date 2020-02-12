@@ -212,7 +212,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
-    private Boolean loadTypeConverters = Boolean.TRUE;
+    private Boolean loadTypeConverters = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private String mdcLoggingKeysPattern;

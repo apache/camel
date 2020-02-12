@@ -147,6 +147,32 @@ of using XML for beans and Camel XML routes. And a few components such as `camel
 
 But at general then Camel is now lighter in classpath dependency by not requiring to have JAXB present.
 
+=== Package scanning @TypeConverter
+
+Camel has now been configured to not package scan for custom `@Converter` classes on startup.
+Type converters are now loaded and registered in faster way via source code generated loader classes
+by having `@Converter(loader = true)` specified. If you have custom converters and have not migrated to use
+source code generated loaders, you can enable package scanning by setting
+
+[source,java]
+----
+camelContext.setLoadTypeConverters(true);
+----
+
+And in XML:
+[source,xml]
+----
+<camelContext loadTypeConverters="true">
+...
+</camelContext>
+----
+
+And in Spring Boot `application.properties`:
+[source,properties]
+----
+camel.loadTypeConverters=true
+----
+
 === Graceful Shutdown Timeout
 
 When shutting down Camel, then the default timeout has changed from 300 seconds (5 minutes) to 45 seconds.
