@@ -20,8 +20,9 @@ import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EtcdWatchTest extends EtcdTestSupport {
 
@@ -76,7 +77,7 @@ public class EtcdWatchTest extends EtcdTestSupport {
     }
 
     private void testWatch(String mockEndpoint, final String key, int updates) throws Exception {
-        final String[] values = new String[updates];
+        final Object[] values = new String[updates];
         for (int i = 0; i < updates; i++) {
             values[i] = key + "=myValue-" + i;
         }
