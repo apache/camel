@@ -269,7 +269,7 @@ Splunk.
 
 Whenever you require absolute customization, you can create a class that
 implements the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/ExchangeFormatter.html[`ExchangeFormatter`]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/ExchangeFormatter.html[`ExchangeFormatter`]
 interface. Within the `format(Exchange)` method you have access to the
 full Exchange, so you can select and extract the precise information you
 need, format it in a custom manner and return it. The return value will
