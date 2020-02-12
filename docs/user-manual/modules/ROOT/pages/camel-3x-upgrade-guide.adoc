@@ -32,6 +32,25 @@ The option `cache` has been deprecated in favour of the new `scope` option that 
 Setting this to Prototype will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
 ====
 
+=== camel-etcd
+
+The `camel-etcd` component has changed its endpoint syntax from `etcd:action/path` to
+`etcd-keys:path`, `etcd-stats:path`, or `etcd-watch:path`.
+
+For example before
+
+[source,text]
+----
+etcd:stats/leader
+----
+
+Should be changed to
+----
+etcd-stats:leader
+----
+
+This change was needed as the 3 actions could not share the same component/endpoint and had to be separated.
+
 === camel-ftp
 
  The stepwise functionality (stepwise=true) is not supported for stream download (treamDownload=true).
