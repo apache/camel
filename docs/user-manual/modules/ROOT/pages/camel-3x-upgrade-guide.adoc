@@ -445,3 +445,47 @@ Remove the method `getProcessors` from `Pipeline` as you should use the `next` m
 The `@Experimental` annotation is moved from `meta-annotations` JAR to `camel-api`
 and moved from package `org.apache.camel.meta` to `org.apache.camel`.
 And the meta-annotations has been removed.
+
+==== Property Placeholders
+
+The support for out-of-band property placeholders has been removed.
+This means that XML that were using the `http://camel.apache.org/schema/placeholder`
+namespace and that the java builders using the `.placeholder(key, value).` have to
+be modified.
+
+[source,java]
+----
+    from("direct:start")
+        .multicast()
+        .placeholder("stopOnException", "stop")
+        .to("mock:a")
+----
+should be rewritten as:
+[source,java]
+----
+    from("direct:start")
+        .multicast()
+        .stopOnException("{{stop}}")
+        .to("mock:a")
+----
+
+and
+[source,xml]
+----
+   <route>
+        <from uri="direct:start"/>
+        <multicast prop:stopOnException="stop">
+            <to uri="mock:a"/>
+        </multicast>
+    </route>
+ ----
+should be rewritten as:
+[source,xml]
+----
+   <route>
+        <from uri="direct:start"/>
+        <multicast stopOnException="{{stop}}">
+            <to uri="mock:a"/>
+        </multicast>
+    </route>
+ ----
