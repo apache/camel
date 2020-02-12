@@ -22,6 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -78,7 +80,8 @@ public class DefaultRouteContext implements RouteContext {
     private final Map<String, Object> properties = new HashMap<>();
     private ErrorHandlerFactory errorHandlerFactory;
     private Integer startupOrder;
-    private Map<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new HashMap<>();
+    // must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
+    private ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
 
     public DefaultRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
         this.camelContext = camelContext;
