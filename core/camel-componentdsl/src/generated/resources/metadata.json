@@ -2069,26 +2069,6 @@
     "artifactId": "camel-elytron",
     "version": "3.1.0-SNAPSHOT"
   },
-  "EtcdComponentBuilderFactory": {
-    "kind": "component",
-    "scheme": "etcd",
-    "extendsScheme": "",
-    "syntax": "etcd:namespace\/path",
-    "title": "Etcd",
-    "description": "The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.",
-    "label": "clustering,database",
-    "deprecated": false,
-    "deprecationNote": "clustering,database",
-    "async": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false,
-    "javaType": "org.apache.camel.component.etcd.EtcdComponent",
-    "firstVersion": "2.18.0",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-etcd",
-    "version": "3.1.0-SNAPSHOT"
-  },
   "EtcdKeysComponentBuilderFactory": {
     "kind": "component",
     "scheme": "etcd-keys",
