@@ -29,7 +29,7 @@ import java.util.Map;
  * JsonArray is a common non-thread safe data format for a collection of data.
  * The contents of a JsonArray are only validated as JSON values on
  * serialization.
- * 
+ *
  * @see Jsoner
  * @since 2.0.0
  */
@@ -51,7 +51,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * Instantiate a new JsonArray using ArrayList's constructor of the same
      * type.
-     * 
+     *
      * @param collection represents the elements to produce the JsonArray with.
      */
     public JsonArray(final Collection<?> collection) {
@@ -61,7 +61,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes every element of the JsonArray is
      * castable to T before adding it to a collection of Ts.
-     * 
+     *
      * @param <T> represents the type that all of the elements of the JsonArray
      *            should be cast to and the type the collection will contain.
      * @param destination represents where all of the elements of the JsonArray
@@ -80,7 +80,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
      * A convenience method that assumes there is a BigDecimal, Number, or
      * String at the given index. If a Number or String is there it is used to
      * construct a new BigDecimal.
-     * 
+     *
      * @param index representing where the value is expected to be at.
      * @return the value stored at the key or the default provided if the key
      *         doesn't exist.
@@ -110,7 +110,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Boolean or String value at
      * the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a boolean.
      * @throws ClassCastException if there was a value but didn't match the
@@ -129,7 +129,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a byte.
      * @throws ClassCastException if there was a value but didn't match the
@@ -156,7 +156,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Collection value at the
      * given index.
-     * 
+     *
      * @param <T> the kind of collection to expect at the index. Note unless
      *            manually added, collection values will be a JsonArray.
      * @param index represents where the value is expected to be at.
@@ -179,7 +179,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a double.
      * @throws ClassCastException if there was a value but didn't match the
@@ -206,7 +206,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a String value at the given
      * index representing a fully qualified name in dot notation of an enum.
-     * 
+     *
      * @param index representing where the value is expected to be at.
      * @param <T> the Enum type the value at the index is expected to belong to.
      * @return the enum based on the string found at the index, or null if the
@@ -279,7 +279,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a float.
      * @throws ClassCastException if there was a value but didn't match the
@@ -306,7 +306,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a int.
      * @throws ClassCastException if there was a value but didn't match the
@@ -333,7 +333,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a long.
      * @throws ClassCastException if there was a value but didn't match the
@@ -360,7 +360,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Map value at the given
      * index.
-     * 
+     *
      * @param <T> the kind of map to expect at the index. Note unless manually
      *            added, Map values will be a JsonObject.
      * @param index represents where the value is expected to be at.
@@ -383,7 +383,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Number or String value at
      * the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a short.
      * @throws ClassCastException if there was a value but didn't match the
@@ -410,7 +410,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     /**
      * A convenience method that assumes there is a Boolean, Number, or String
      * value at the given index.
-     * 
+     *
      * @param index represents where the value is expected to be at.
      * @return the value at the index provided cast to a String.
      * @throws ClassCastException if there was a value but didn't match the
