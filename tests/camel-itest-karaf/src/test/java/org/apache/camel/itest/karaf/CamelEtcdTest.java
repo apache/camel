@@ -27,7 +27,9 @@ public class CamelEtcdTest extends BaseKarafTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        testComponent(COMPONENT, "etcd-keys");
+        testComponent(COMPONENT, "etcd-stats");
+        testComponent(COMPONENT, "etcd-watch");
     }
 
 }
