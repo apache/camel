@@ -478,6 +478,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 model.setDescription(doc);
             }
         }
+        // project.getDescription may fallback and use parent description
+        if ("Camel Components".equalsIgnoreCase(model.getDescription()) || Strings.isNullOrEmpty(model.getDescription())) {
+            throw new IllegalStateException("Cannot find description to use for component: " + scheme
+                    + ". Add <description> to Maven pom.xml or javadoc to the endpoint: " + endpointClassElement);
+        }
 
         return model;
     }
