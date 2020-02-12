@@ -1239,6 +1239,41 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.EtcdComponentBuilderFactory.etcd();
     }
     /**
+     * Etcd Keys (camel-etcd)
+     * Camel Etcd support
+     * 
+     * Category: clustering,database
+     * Since: 2.18
+     * Maven coordinates: org.apache.camel:camel-etcd
+     */
+    static org.apache.camel.builder.component.dsl.EtcdKeysComponentBuilderFactory.EtcdKeysComponentBuilder etcdKeys() {
+        return org.apache.camel.builder.component.dsl.EtcdKeysComponentBuilderFactory.etcdKeys();
+    }
+    /**
+     * Etcd Stats (camel-etcd)
+     * The camel etcd component allows you to work with Etcd, a distributed
+     * reliable key-value store.
+     * 
+     * Category: clustering,database
+     * Since: 2.18
+     * Maven coordinates: org.apache.camel:camel-etcd
+     */
+    static org.apache.camel.builder.component.dsl.EtcdStatsComponentBuilderFactory.EtcdStatsComponentBuilder etcdStats() {
+        return org.apache.camel.builder.component.dsl.EtcdStatsComponentBuilderFactory.etcdStats();
+    }
+    /**
+     * Etcd Watch (camel-etcd)
+     * The camel etcd component allows you to work with Etcd, a distributed
+     * reliable key-value store.
+     * 
+     * Category: clustering,database
+     * Since: 2.18
+     * Maven coordinates: org.apache.camel:camel-etcd
+     */
+    static org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.EtcdWatchComponentBuilder etcdWatch() {
+        return org.apache.camel.builder.component.dsl.EtcdWatchComponentBuilderFactory.etcdWatch();
+    }
+    /**
      * OSGi EventAdmin (camel-eventadmin)
      * The eventadmin component can be used in an OSGi environment to receive
      * OSGi EventAdmin events and process them.
