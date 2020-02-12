@@ -218,15 +218,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allPropertiesFiles = new TreeSet<>();
 
             Stream.concat(list(componentsDir.toPath()), Stream.of(coreDir.toPath(), baseDir.toPath(), jaxpDir.toPath(), springDir.toPath()))
-                .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath).filter(dir -> Files.isDirectory(dir.resolve("src")))
-                .map(p -> p.resolve("target/classes")).flatMap(PackageHelper::walk).forEach(p -> {
-                    String f = p.getFileName().toString();
-                    if (f.endsWith(PackageHelper.JSON_SUFIX)) {
-                        allJsonFiles.add(p);
-                    } else if (f.equals("component.properties") || f.equals("dataformat.properties") || f.equals("language.properties") || f.equals("other.properties")) {
-                        allPropertiesFiles.add(p);
-                    }
-                });
+                    .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath).filter(dir -> Files.isDirectory(dir.resolve("src")))
+                    .map(p -> p.resolve("target/classes")).flatMap(PackageHelper::walk).forEach(p -> {
+                        String f = p.getFileName().toString();
+                        if (f.endsWith(PackageHelper.JSON_SUFIX)) {
+                            allJsonFiles.add(p);
+                        } else if (f.equals("component.properties") || f.equals("dataformat.properties") || f.equals("language.properties") || f.equals("other.properties")) {
+                            allPropertiesFiles.add(p);
+                        }
+                    });
             allModels = allJsonFiles.stream().collect(Collectors.toMap(p -> p, JsonMapper::generateModel));
 
             executeModel();
@@ -263,7 +263,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Path springTarget1 = springDir.resolve("target/classes/org/apache/camel/spring");
         Path springTarget2 = springDir.resolve("target/classes/org/apache/camel/core/xml");
         jsonFiles = allJsonFiles.stream().filter(p -> p.startsWith(coreDirTarget) || p.startsWith(springTarget1) || p.startsWith(springTarget2))
-            .collect(Collectors.toCollection(TreeSet::new));
+                .collect(Collectors.toCollection(TreeSet::new));
         getLog().info("Found " + jsonFiles.size() + " model json files");
 
         // make sure to create out dir
@@ -295,7 +295,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
             // check all the properties if they have description
             if (model.getOptions().stream().filter(option -> !"outputs".equals(option.getName()) && !"transforms".equals(option.getName())).map(BaseOptionModel::getDescription)
-                .anyMatch(Strings::isNullOrEmpty)) {
+                    .anyMatch(Strings::isNullOrEmpty)) {
                 missingJavaDoc.add(file);
             }
         }
@@ -372,11 +372,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // check all the component options and grab the label(s) they
                 // use
                 model.getComponentOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l)).flatMap(l -> Stream.of(label.split(",")))
-                    .forEach(usedOptionLabels::add);
+                        .forEach(usedOptionLabels::add);
 
                 // check all the endpoint options and grab the label(s) they use
                 model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(l -> !Strings.isNullOrEmpty(l)).flatMap(l -> Stream.of(label.split(",")))
-                    .forEach(usedOptionLabels::add);
+                        .forEach(usedOptionLabels::add);
 
                 long unused = model.getEndpointOptions().stream().map(BaseOptionModel::getLabel).filter(Strings::isNullOrEmpty).count();
                 if (unused >= UNUSED_LABELS_WARN) {
@@ -542,22 +542,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
         jsonFiles = allJsonFiles.stream().filter(p -> {
             Path m = getModule(p);
             switch (m.getFileName().toString()) {
-            case "camel-core-osgi":
-            case "camel-core-xml":
-            case "camel-box":
-            case "camel-http-base":
-            case "camel-http-common":
-            case "camel-jetty-common":
-            case "camel-as2":
-            case "camel-olingo2":
-            case "camel-olingo4":
-            case "camel-servicenow":
-            case "camel-salesforce":
-            case "camel-fhir":
-            case "camel-debezium-common":
-                return false;
-            default:
-                return true;
+                case "camel-core-osgi":
+                case "camel-core-xml":
+                case "camel-box":
+                case "camel-http-base":
+                case "camel-http-common":
+                case "camel-jetty-common":
+                case "camel-as2":
+                case "camel-olingo2":
+                case "camel-olingo4":
+                case "camel-servicenow":
+                case "camel-salesforce":
+                case "camel-fhir":
+                case "camel-debezium-common":
+                    return false;
+                default:
+                    return true;
             }
         }).filter(p -> allModels.get(p) instanceof OtherModel).collect(Collectors.toCollection(TreeSet::new));
 
@@ -645,14 +645,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // find all camel maven modules
         Stream.concat(list(componentsDir.toPath()).filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath),
-                      Stream.of(coreDir.toPath(), baseDir.toPath(), jaxpDir.toPath()))
-            .forEach(dir -> {
-                List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs")).filter(f -> f.getFileName().toString().endsWith(".adoc")).collect(Collectors.toList());
-                if (l.isEmpty()) {
-                    missingAdocFiles.add(dir);
-                }
-                adocFiles.addAll(l);
-            });
+                Stream.of(coreDir.toPath(), baseDir.toPath(), jaxpDir.toPath()))
+                .forEach(dir -> {
+                    List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs")).filter(f -> f.getFileName().toString().endsWith(".adoc")).collect(Collectors.toList());
+                    if (l.isEmpty()) {
+                        missingAdocFiles.add(dir);
+                    }
+                    adocFiles.addAll(l);
+                });
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
 
@@ -665,7 +665,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // Copy all descriptors
         Map<Path, Path> newJsons = map(adocFiles, p -> p, p -> documentsOutDir.resolve(p.getFileName()));
         list(documentsOutDir).filter(p -> !newJsons.containsValue(p) && !newJsons.containsValue(p.resolveSibling(p.getFileName().toString().replace(".html", ".adoc"))))
-            .forEach(this::delete);
+                .forEach(this::delete);
         newJsons.forEach(this::copy);
 
         Path all = documentsOutDir.resolve("../docs.properties");
@@ -688,19 +688,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
         for (String component : components) {
             // special for mail
             switch (component) {
-            case "imap":
-            case "imaps":
-            case "pop3":
-            case "pop3s":
-            case "smtp":
-            case "smtps":
-                component = "mail";
-                break;
-            case "ftp":
-            case "sftp":
-            case "ftps":
-                component = "ftp";
-                break;
+                case "imap":
+                case "imaps":
+                case "pop3":
+                case "pop3s":
+                case "smtp":
+                case "smtps":
+                    component = "mail";
+                    break;
+                case "ftp":
+                case "sftp":
+                case "ftps":
+                    component = "ftp";
+                    break;
             }
             String name = component + "-component";
             if (!docs.contains(name) && (!component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
@@ -1107,35 +1107,35 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private Set<Path> getDuplicates(Set<Path> jsonFiles) {
         Map<String, List<Path>> byName = map(jsonFiles, PrepareCatalogMojo::asComponentName, // key
-                                                                                             // by
-                                                                                             // component
-                                                                                             // name
-                                             Collections::singletonList, // value
-                                                                         // as a
-                                                                         // singleton
-                                                                         // list
-                                             this::concat); // merge lists
+                // by
+                // component
+                // name
+                Collections::singletonList, // value
+                // as a
+                // singleton
+                // list
+                this::concat); // merge lists
         return byName.values().stream().flatMap(l -> l.stream().skip(1)).collect(Collectors.toCollection(TreeSet::new));
     }
 
     private Path getComponentPath(Path dir) {
         switch (dir.getFileName().toString()) {
-        case "camel-as2":
-            return dir.resolve("camel-as2-component");
-        case "camel-salesforce":
-            return dir.resolve("camel-salesforce-component");
-        case "camel-olingo2":
-            return dir.resolve("camel-olingo2-component");
-        case "camel-olingo4":
-            return dir.resolve("camel-olingo4-component");
-        case "camel-box":
-            return dir.resolve("camel-box-component");
-        case "camel-servicenow":
-            return dir.resolve("camel-servicenow-component");
-        case "camel-fhir":
-            return dir.resolve("camel-fhir-component");
-        default:
-            return dir;
+            case "camel-as2":
+                return dir.resolve("camel-as2-component");
+            case "camel-salesforce":
+                return dir.resolve("camel-salesforce-component");
+            case "camel-olingo2":
+                return dir.resolve("camel-olingo2-component");
+            case "camel-olingo4":
+                return dir.resolve("camel-olingo4-component");
+            case "camel-box":
+                return dir.resolve("camel-box-component");
+            case "camel-servicenow":
+                return dir.resolve("camel-servicenow-component");
+            case "camel-fhir":
+                return dir.resolve("camel-fhir-component");
+            default:
+                return dir;
         }
     }
 
