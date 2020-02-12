@@ -113,3 +113,5 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+
+include::camel-spring-boot::page$iec60870-starter.adoc[]

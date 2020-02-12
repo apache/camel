@@ -145,3 +145,5 @@ from("direct:start")
   .to("json-validator:myschema.json")
   .to("mock:end")
 ----
+
+include::camel-spring-boot::page$json-validator-starter.adoc[]

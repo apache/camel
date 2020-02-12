@@ -106,3 +106,5 @@ The Grok dataformat supports 5 options, which are listed below.
 |===
 // dataformat options: END
 ND
+
+include::camel-spring-boot::page$grok-starter.adoc[]

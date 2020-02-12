@@ -246,3 +246,5 @@ Java DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$websocket-starter.adoc[]

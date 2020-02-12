@@ -190,3 +190,5 @@ from("direct:in").
   to("velocity:dummy");
 ------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$mvel-starter.adoc[]

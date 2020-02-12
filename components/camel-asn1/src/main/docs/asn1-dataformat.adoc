@@ -74,3 +74,5 @@ the download page for the latest versions).
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
+
+include::camel-spring-boot::page$asn1-starter.adoc[]

@@ -214,3 +214,5 @@ The example PubNubSensorExample already contains a subscribe key provided by Pub
 The example illustrates the PubNub component subscribing to a infinite stream of sensor data.
 
 
+
+include::camel-spring-boot::page$pubnub-starter.adoc[]

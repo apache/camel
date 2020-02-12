@@ -162,3 +162,5 @@ from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
   .to("optaplanner:/org/foo/barSolverConfig.xml");
 -------------------------------------------------------
 
+
+include::camel-spring-boot::page$optaplanner-starter.adoc[]

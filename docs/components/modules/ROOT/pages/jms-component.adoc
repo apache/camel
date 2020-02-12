@@ -1337,3 +1337,5 @@ wmq.setDestinationResolver(new DestinationResolver() {
 });
 ----------------------------------------------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$jms-starter.adoc[]

@@ -31,3 +31,5 @@ for this component:
 |=======================================================================
 
 
+
+include::camel-spring-boot::page$openstack-starter.adoc[]

@@ -204,3 +204,5 @@ If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
 xref:servlet-component.adoc[Servlet Transport].
 
+
+include::camel-spring-boot::page$undertow-starter.adoc[]

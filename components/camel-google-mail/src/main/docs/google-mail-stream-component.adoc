@@ -136,3 +136,5 @@ from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=5&labels=G
 This route will consume unread messages with labels Github and Apache and it will mark the messages as read.
 
    
+
+include::camel-spring-boot::page$google-mail-starter.adoc[]

@@ -372,3 +372,5 @@ Here is the same using spring xml.
 </route>
 ----------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$jclouds-starter.adoc[]

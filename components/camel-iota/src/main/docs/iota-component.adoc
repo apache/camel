@@ -146,3 +146,5 @@ The following route defined in Spring XML retrieve transfers data
 </route>
 ----
 
+
+include::camel-spring-boot::page$iota-starter.adoc[]

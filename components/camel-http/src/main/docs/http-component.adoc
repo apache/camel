@@ -693,3 +693,5 @@ property.
    <property name="x509HostnameVerifier" ref="hostnameVerifier"/>
 </bean>
 ----------------------------------------------------------------------------
+
+include::camel-spring-boot::page$http-starter.adoc[]

@@ -479,3 +479,5 @@ queryMap.put("q1", "new");
 queryMap.put("q2", "world");
 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);
 ----
+
+include::camel-spring-boot::page$cxf-starter.adoc[]

@@ -615,3 +615,5 @@ running another instance of Jetty outside of the Camel context and
 sharing the same MBeanServer between the instances, you can provide both
 instances with a reference to the same MBeanContainer in order to avoid
 name collisions when registering Jetty MBeans.
+
+include::camel-spring-boot::page$jetty-starter.adoc[]

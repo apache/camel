@@ -142,3 +142,5 @@ The Avro dataformat supports 2 options, which are listed below.
 |===
 // dataformat options: END
 ND
+
+include::camel-spring-boot::page$avro-starter.adoc[]

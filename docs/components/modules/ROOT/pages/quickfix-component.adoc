@@ -593,3 +593,5 @@ Direction : from FIX gateway
 </route>
 ----
 
+
+include::camel-spring-boot::page$quickfix-starter.adoc[]

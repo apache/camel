@@ -329,3 +329,5 @@ using JMX in this fashion:
 DisruptorEndpoint disruptor = context.getEndpoint("disruptor:xxxx");
 int size = disruptor.getBufferSize();
 --------------------------------------------------------------------
+
+include::camel-spring-boot::page$disruptor-starter.adoc[]

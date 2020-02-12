@@ -134,3 +134,5 @@ Routes can also be written using the XML DSL.
     <to uri="log:info"/>
 </route>
 -------------
+
+include::camel-spring-boot::page$cron-starter.adoc[]

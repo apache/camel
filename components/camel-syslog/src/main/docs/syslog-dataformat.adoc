@@ -131,3 +131,5 @@ The same route using xref:mina-component.adoc[Mina Component]
 </camelContext>
 -------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$syslog-starter.adoc[]

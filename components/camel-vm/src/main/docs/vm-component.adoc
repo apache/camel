@@ -136,3 +136,5 @@ deployed in another `.war` application):
 from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
+
+include::camel-spring-boot::page$vm-starter.adoc[]

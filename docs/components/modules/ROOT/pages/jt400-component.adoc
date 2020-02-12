@@ -206,3 +206,5 @@ from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKe
 .to("jms:queue:output");
 -------------------------------------------------------------------------------------------------------
 
+
+include::camel-spring-boot::page$jt400-starter.adoc[]

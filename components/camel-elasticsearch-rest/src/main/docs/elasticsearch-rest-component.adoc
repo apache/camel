@@ -320,3 +320,5 @@ req.types("tweets");
 MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
 Item[] response = template.requestBody("direct:search", request, Item[].class);
 ----
+
+include::camel-spring-boot::page$elasticsearch-rest-starter.adoc[]

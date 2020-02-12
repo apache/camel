@@ -416,3 +416,5 @@ usual:
 </camelContext>
 ----
 
+
+include::camel-spring-boot::page$mybatis-starter.adoc[]

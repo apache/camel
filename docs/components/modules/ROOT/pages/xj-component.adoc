@@ -492,3 +492,5 @@ that aren't allowed in XML element names.
 | boolean | Generate a json boolean
 | null | Generate an empty value, using the word null
 |===
+
+include::camel-spring-boot::page$xj-starter.adoc[]

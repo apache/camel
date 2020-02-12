@@ -71,3 +71,5 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+
+include::camel-spring-boot::page$ical-starter.adoc[]

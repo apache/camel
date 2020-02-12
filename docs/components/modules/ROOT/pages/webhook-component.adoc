@@ -103,3 +103,5 @@ You can append query options to the URI in the following format,
 == Examples
 
 Examples of webhook component are provided in the documentation of the delegate components that support it.
+
+include::camel-spring-boot::page$webhook-starter.adoc[]

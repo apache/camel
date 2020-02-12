@@ -636,3 +636,5 @@ with `name=MetricsMessageHistoryService`.
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
+
+include::camel-spring-boot::page$metrics-starter.adoc[]

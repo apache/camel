@@ -163,3 +163,5 @@ If you want to re-load the file if it rollover/rewritten then you should also tu
 from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDelay=1000&retry=true&fileWatcher=true")
   .to("bean:logService?method=parseLogLine");
 ----
+
+include::camel-spring-boot::page$stream-starter.adoc[]

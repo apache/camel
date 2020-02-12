@@ -207,3 +207,5 @@ to get you started on Schematron.
 * http://www.schematron.com[Schematron official site]. This contains
 links to other resources
 ====
+
+include::camel-spring-boot::page$schematron-starter.adoc[]

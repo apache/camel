@@ -193,3 +193,5 @@ with the following path and query parameters:
 | *useUserKnownHostsFile* (security) | If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts | true | boolean
 |===
 // endpoint options: END
+
+include::camel-spring-boot::page$ftp-starter.adoc[]

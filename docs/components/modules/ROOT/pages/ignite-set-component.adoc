@@ -77,3 +77,5 @@ This endpoint uses the following headers:
 | CamelIgniteSetsOperation | IgniteConstants.IGNITE_SETS_OPERATION | IgniteSetOperation enum |
 Allows you to dynamically change the set operation.
 |=======================================================================
+
+include::camel-spring-boot::page$ignite-starter.adoc[]

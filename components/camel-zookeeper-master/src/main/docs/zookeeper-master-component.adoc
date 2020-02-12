@@ -152,3 +152,5 @@ A little example
         .to("file:target/outbox");
 ----
 
+
+include::camel-spring-boot::page$zookeeper-master-starter.adoc[]

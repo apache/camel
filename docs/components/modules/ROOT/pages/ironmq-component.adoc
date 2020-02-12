@@ -176,3 +176,5 @@ Dequeue from activemq jms and enqueue the messages on IronMQ.
 from("activemq:foo")
   .to("ironmq:testqueue?projectId=myIronMQProjectid&token=myIronMQToken");
 --------------------------------------------------
+
+include::camel-spring-boot::page$ironmq-starter.adoc[]

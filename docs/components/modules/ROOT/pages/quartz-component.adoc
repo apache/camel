@@ -453,3 +453,5 @@ Users can then use the cron component instead of the quartz component, as in the
     from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI")
     .to("activemq:Totally.Rocks");
 ----
+
+include::camel-spring-boot::page$quartz-starter.adoc[]

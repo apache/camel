@@ -13,3 +13,5 @@ provide connectivity to Azure services from Camel.
 |https://azure.microsoft.com/services/storage/blobs[Storage Blob Service] |xref:azure-blob-component.adoc[Azure-Blob] |Supports storing and retrieving of blobs
 |https://azure.microsoft.com/services/storage/queues[Storage Queue Service] |xref:azure-queue-component.adoc[Azure-Queue] |Supports storing and retrieving of messages in the queues
 |=======================================================================
+
+include::camel-spring-boot::page$azure-starter.adoc[]

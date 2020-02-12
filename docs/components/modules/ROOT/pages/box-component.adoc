@@ -795,3 +795,6 @@ from("direct:foo")
     .to("box://files/download")
     .to("file://...");
 ----
+
+include::camel-spring-boot::page$box-starter.adoc[]
+

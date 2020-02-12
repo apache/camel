@@ -193,3 +193,5 @@ And the equivalent Spring sample:
 
  
 
+
+include::camel-spring-boot::page$atmosphere-websocket-starter.adoc[]

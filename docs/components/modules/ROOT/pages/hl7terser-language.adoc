@@ -132,3 +132,5 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
       // acknowledgement
       .transform(ack())
 ----
+
+include::camel-spring-boot::page$hl7-starter.adoc[]

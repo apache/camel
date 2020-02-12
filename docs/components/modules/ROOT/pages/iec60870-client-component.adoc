@@ -129,3 +129,5 @@ The final connection options will be evaluated in the following order:
 * Apply +protocolOptions+ if present
 * Apply +dataModuleOptions+ if present
 * Apply all explicit connection parameters (e.g. +timeZone+)
+
+include::camel-spring-boot::page$iec60870-starter.adoc[]

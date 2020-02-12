@@ -121,3 +121,5 @@ from("direct:get")
 .toF("hazelcast-%sbar", HazelcastConstants.RINGBUFFER_PREFIX)
 .to("seda:out");
 -----------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

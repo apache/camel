@@ -19,3 +19,5 @@ for this component:
 </dependency>
 ----
 
+
+include::camel-spring-boot::page$hystrix-starter.adoc[]

@@ -124,3 +124,5 @@ vertxComponent.setVertx(vertx);
 camelContext.addComponent("vertx", vertxComponent);
 -----------------------------------------------------
 
+
+include::camel-spring-boot::page$vertx-starter.adoc[]

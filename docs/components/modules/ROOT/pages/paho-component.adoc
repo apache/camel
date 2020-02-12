@@ -216,3 +216,5 @@ from("direct:test")
     .setHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, simple("${header.customerId}"))
     .to("paho:some/target/queue");
 ----
+
+include::camel-spring-boot::page$paho-starter.adoc[]

@@ -60,3 +60,5 @@ from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZipped
 
 This data format is provided in *camel-core* so no additional
 dependencies is needed.
+
+include::camel-spring-boot::page$zip-deflater-starter.adoc[]

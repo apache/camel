@@ -114,3 +114,5 @@ https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encrypt
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
 
+
+include::camel-spring-boot::page$pdf-starter.adoc[]

@@ -127,3 +127,5 @@ with the following path and query parameters:
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
+
+include::camel-spring-boot::page$elytron-starter.adoc[]

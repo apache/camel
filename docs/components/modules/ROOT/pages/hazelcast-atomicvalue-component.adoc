@@ -216,3 +216,5 @@ Spring DSL:
     <to uri="hazelcast-atomicvalue:foo" />
 </route>
 -----------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

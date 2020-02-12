@@ -191,3 +191,5 @@ starting the route. To do that you use the repeatCount option as shown:
 </route>
 ----
 
+
+include::camel-spring-boot::page$timer-starter.adoc[]

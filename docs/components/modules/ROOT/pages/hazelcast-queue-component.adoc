@@ -227,3 +227,5 @@ fromF("hazelcast-%smm", HazelcastConstants.QUEUE_PREFIX)
     .otherwise()
         .log("fail!");
 -------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

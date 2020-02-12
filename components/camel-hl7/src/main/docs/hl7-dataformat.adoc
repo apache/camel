@@ -405,3 +405,5 @@ repository].
 </dependency>
 ----
 
+
+include::camel-spring-boot::page$hl7-starter.adoc[]

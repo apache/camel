@@ -314,3 +314,5 @@ In the example above, get takes only one parameter, so `singleParameter`
 is used and `getProcessor` will receive Value class directly in body,
 while `putProcessor` will receive an array of size 2 with String key and
 Value value filled as array contents.
+
+include::camel-spring-boot::page$avro-starter.adoc[]

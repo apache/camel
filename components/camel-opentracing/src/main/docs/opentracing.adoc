@@ -97,3 +97,5 @@ How this agent is used will be specific to how you execute your application. _Se
 
 You can find an example demonstrating the three ways to configure OpenTracing here:
 https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing]
+
+include::camel-spring-boot::page$opentracing-starter.adoc[]

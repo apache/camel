@@ -215,3 +215,5 @@ Header Variables inside the response message:
 
 |`CamelHazelcastCacheType` |`String` |the type of the cache - here replicatedmap
 |=======================================================================
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

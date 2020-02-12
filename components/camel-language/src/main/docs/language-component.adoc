@@ -147,3 +147,5 @@ updated script is used:
 You can refer to the resource similar to the
 other xref:language-component.adoc[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
+
+include::camel-spring-boot::page$language-starter.adoc[]

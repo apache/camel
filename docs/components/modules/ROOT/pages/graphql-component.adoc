@@ -165,3 +165,5 @@ public JsonObject addBookMutationVariables() {
 from("direct:start")
     .to("graphql://http://example.com/graphql?graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
 ----
+
+include::camel-spring-boot::page$graphql-starter.adoc[]

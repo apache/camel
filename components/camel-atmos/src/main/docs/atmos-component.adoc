@@ -155,3 +155,5 @@ exhange
 DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
 -------------------------------
 
+
+include::camel-spring-boot::page$atmos-starter.adoc[]

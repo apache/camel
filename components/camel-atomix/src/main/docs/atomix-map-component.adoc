@@ -199,3 +199,5 @@ FluentProducerTemplate.on(context)
     .to("direct:start")
     .send();
 ----
+
+include::camel-spring-boot::page$atomix-starter.adoc[]

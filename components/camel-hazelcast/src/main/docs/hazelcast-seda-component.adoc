@@ -117,3 +117,5 @@ Spring DSL:
   <to uri="mock:result" />
 </route>
 -----------------------------------
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

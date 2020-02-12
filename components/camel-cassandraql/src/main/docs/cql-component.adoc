@@ -283,3 +283,5 @@ Arrays.asList("davsclaus", "Claus", "Ibsen")
 The same approach can be used for updating or querying the table.
 
 
+
+include::camel-spring-boot::page$cassandraql-starter.adoc[]

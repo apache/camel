@@ -1859,3 +1859,5 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 --------------------------------------
+
+include::camel-spring-boot::page$bindy-starter.adoc[]

@@ -17,3 +17,5 @@ for this component:
 </dependency>
 ----
 
+
+include::camel-spring-boot::page$lra-starter.adoc[]

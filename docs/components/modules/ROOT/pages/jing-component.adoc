@@ -123,3 +123,5 @@ schema (which is supplied on the classpath).
         </route>
     </camelContext>
 ----
+
+include::camel-spring-boot::page$jing-starter.adoc[]

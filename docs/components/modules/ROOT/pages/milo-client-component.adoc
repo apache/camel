@@ -214,3 +214,5 @@ The known security policy URIs and enum literals are can be seen here: https://g
 
 **Note:** In any case security policies are considered case sensitive.
 
+
+include::camel-spring-boot::page$milo-starter.adoc[]

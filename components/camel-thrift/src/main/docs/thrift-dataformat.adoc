@@ -155,3 +155,5 @@ To use Thrift in your camel routes you need to add the a dependency on
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
+
+include::camel-spring-boot::page$thrift-starter.adoc[]

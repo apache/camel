@@ -141,3 +141,6 @@ with the following path and query parameters:
 | *username* (security) | Username to use for basic authentication |  | String
 |===
 // endpoint options: END
+
+include::camel-spring-boot::page$fhir-starter.adoc[]
+

@@ -135,3 +135,5 @@ And the sample using spring DSL:
 See also samples from the xref:seda-component.adoc[SEDA] component, how they can
 be used together.
 
+
+include::camel-spring-boot::page$direct-starter.adoc[]

@@ -143,3 +143,5 @@ And the sample using spring DSL:
 </route>
 ----
 
+
+include::camel-spring-boot::page$directvm-starter.adoc[]

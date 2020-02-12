@@ -1011,3 +1011,5 @@ object to a `Map`, which is in turn used to initialise a new
 
 This type converter is auto-discovered, so you don't need to configure anything manually.
 
+
+include::camel-spring-boot::page$mongodb-starter.adoc[]

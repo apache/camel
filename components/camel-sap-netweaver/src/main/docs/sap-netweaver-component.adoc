@@ -200,3 +200,5 @@ Destination city: SAN FRANCISCO
 Destination airport: SFO
 -------------------------------
 
+
+include::camel-spring-boot::page$sap-netweaver-starter.adoc[]

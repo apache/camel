@@ -436,3 +436,5 @@ Spring DSL based configuration of endpoint
   <to uri="ahc:https://localhost/foo?sslContextParameters=#sslContextParameters"/>
 ...
 ----------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$ahc-starter.adoc[]

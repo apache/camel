@@ -323,3 +323,6 @@ FluentProducerTemplate.on(context)
     .to("direct:servicenow")
     .send();
 -------------------------------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$servicenow-starter.adoc[]
+

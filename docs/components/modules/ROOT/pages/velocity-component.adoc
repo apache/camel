@@ -273,3 +273,5 @@ ${body}
 
 And the java code:
 
+
+include::camel-spring-boot::page$velocity-starter.adoc[]

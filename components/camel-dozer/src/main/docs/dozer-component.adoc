@@ -293,3 +293,5 @@ An example of mapping a message header into a target field:
 Note that any properties within your expression must be escaped with "\"
 to prevent an error when Dozer attempts to resolve variable values
 defined using the EL.
+
+include::camel-spring-boot::page$dozer-starter.adoc[]

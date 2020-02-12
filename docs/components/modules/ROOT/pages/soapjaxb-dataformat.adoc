@@ -237,3 +237,5 @@ following dependency to your pom.
   <version>x.y.z</version>
 </dependency>
 -------------------------------------
+
+include::camel-spring-boot::page$soap-starter.adoc[]

@@ -203,3 +203,5 @@ from("direct:send")
 from("nats:mytopic?maxMessages=5&queueName=myqueue")
   .to("mock:result");
 ----
+
+include::camel-spring-boot::page$nats-starter.adoc[]

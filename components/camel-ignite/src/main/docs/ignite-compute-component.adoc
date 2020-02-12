@@ -109,3 +109,5 @@ Affinity cache name for the AFFINITY_CALL and AFFINITY_RUN operations.
 | CamelIgniteComputeAffinityKey | IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY | Object |
 Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
 |=======================================================================
+
+include::camel-spring-boot::page$ignite-starter.adoc[]

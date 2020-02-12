@@ -317,3 +317,5 @@ SedaEndpoint seda = context.getEndpoint("seda:xxxx");
 int size = seda.getExchanges().size();
 ----
 
+
+include::camel-spring-boot::page$seda-starter.adoc[]

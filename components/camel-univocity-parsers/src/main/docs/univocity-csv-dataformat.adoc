@@ -168,3 +168,5 @@ All the rows can either:
     <to uri="mock:result"/>
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$univocity-parsers-starter.adoc[]

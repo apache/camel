@@ -320,3 +320,5 @@ CamelFacebook.query header.
         .setHeader("CamelFacebook.query", header("bar"))
         .to("facebook://posts");
 --------------------------------------------------------
+
+include::camel-spring-boot::page$facebook-starter.adoc[]
