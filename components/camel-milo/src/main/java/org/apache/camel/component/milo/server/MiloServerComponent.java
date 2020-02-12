@@ -355,7 +355,9 @@ public class MiloServerComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        this.server.shutdown();
+        if (this.server != null) {
+            this.server.shutdown();
+        }
         super.doStop();
 
         this.runOnStop.forEach(runnable -> {
