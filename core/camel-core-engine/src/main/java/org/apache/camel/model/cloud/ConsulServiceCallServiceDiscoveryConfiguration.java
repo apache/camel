@@ -43,14 +43,17 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     @Metadata(label = "security")
     private String password;
     @XmlAttribute
-    private Long connectTimeoutMillis;
+    @Metadata(javaType = "java.lang.Long")
+    private String connectTimeoutMillis;
     @XmlAttribute
-    private Long readTimeoutMillis;
+    @Metadata(javaType = "java.lang.Long")
+    private String readTimeoutMillis;
     @XmlAttribute
-    private Long writeTimeoutMillis;
+    @Metadata(javaType = "java.lang.Long")
+    private String writeTimeoutMillis;
     @XmlAttribute
-    @Metadata(defaultValue = "10")
-    private Integer blockSeconds = 10;
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "10")
+    private String blockSeconds = Integer.toString(10);
     @XmlTransient
     private SSLContextParameters sslContextParameters;
 
@@ -121,47 +124,47 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
         this.password = password;
     }
 
-    public Long getConnectTimeoutMillis() {
+    public String getConnectTimeoutMillis() {
         return connectTimeoutMillis;
     }
 
     /**
      * Connect timeout for OkHttpClient
      */
-    public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
+    public void setConnectTimeoutMillis(String connectTimeoutMillis) {
         this.connectTimeoutMillis = connectTimeoutMillis;
     }
 
-    public Long getReadTimeoutMillis() {
+    public String getReadTimeoutMillis() {
         return readTimeoutMillis;
     }
 
     /**
      * Read timeout for OkHttpClient
      */
-    public void setReadTimeoutMillis(Long readTimeoutMillis) {
+    public void setReadTimeoutMillis(String readTimeoutMillis) {
         this.readTimeoutMillis = readTimeoutMillis;
     }
 
-    public Long getWriteTimeoutMillis() {
+    public String getWriteTimeoutMillis() {
         return writeTimeoutMillis;
     }
 
     /**
      * Write timeout for OkHttpClient
      */
-    public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
+    public void setWriteTimeoutMillis(String writeTimeoutMillis) {
         this.writeTimeoutMillis = writeTimeoutMillis;
     }
 
-    public Integer getBlockSeconds() {
+    public String getBlockSeconds() {
         return blockSeconds;
     }
 
     /**
      * The seconds to wait for a watch event, default 10 seconds
      */
-    public void setBlockSeconds(Integer blockSeconds) {
+    public void setBlockSeconds(String blockSeconds) {
         this.blockSeconds = blockSeconds;
     }
 
@@ -223,7 +226,14 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     /**
      * Connect timeout for OkHttpClient
      */
-    public ConsulServiceCallServiceDiscoveryConfiguration connectTimeoutMillis(Long connectTimeoutMillis) {
+    public ConsulServiceCallServiceDiscoveryConfiguration connectTimeoutMillis(long connectTimeoutMillis) {
+        return connectTimeoutMillis(Long.toString(connectTimeoutMillis));
+    }
+
+    /**
+     * Connect timeout for OkHttpClient
+     */
+    public ConsulServiceCallServiceDiscoveryConfiguration connectTimeoutMillis(String connectTimeoutMillis) {
         setConnectTimeoutMillis(connectTimeoutMillis);
         return this;
     }
@@ -232,6 +242,13 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
      * Read timeout for OkHttpClient
      */
     public ConsulServiceCallServiceDiscoveryConfiguration readTimeoutMillis(Long readTimeoutMillis) {
+        return readTimeoutMillis(Long.toString(readTimeoutMillis));
+    }
+
+    /**
+     * Read timeout for OkHttpClient
+     */
+    public ConsulServiceCallServiceDiscoveryConfiguration readTimeoutMillis(String readTimeoutMillis) {
         setReadTimeoutMillis(readTimeoutMillis);
         return this;
     }
@@ -240,6 +257,13 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
      * Write timeout for OkHttpClient
      */
     public ConsulServiceCallServiceDiscoveryConfiguration writeTimeoutMillis(Long writeTimeoutMillis) {
+        return writeTimeoutMillis(Long.toString(writeTimeoutMillis));
+    }
+
+    /**
+     * Write timeout for OkHttpClient
+     */
+    public ConsulServiceCallServiceDiscoveryConfiguration writeTimeoutMillis(String writeTimeoutMillis) {
         setWriteTimeoutMillis(writeTimeoutMillis);
         return this;
     }
@@ -248,6 +272,13 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
      * The seconds to wait for a watch event, default 10 seconds
      */
     public ConsulServiceCallServiceDiscoveryConfiguration blockSeconds(Integer blockSeconds) {
+        return blockSeconds(Integer.toString(blockSeconds));
+    }
+
+    /**
+     * The seconds to wait for a watch event, default 10 seconds
+     */
+    public ConsulServiceCallServiceDiscoveryConfiguration blockSeconds(String blockSeconds) {
         setBlockSeconds(blockSeconds);
         return this;
     }

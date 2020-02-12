@@ -42,31 +42,39 @@ public class CsvDataFormat extends DataFormatDefinition {
     @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180")
     private String formatName;
     @XmlAttribute
-    private Boolean commentMarkerDisabled;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String commentMarkerDisabled;
     @XmlAttribute
     private String commentMarker;
     @XmlAttribute
     private String delimiter;
     @XmlAttribute
-    private Boolean escapeDisabled;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String escapeDisabled;
     @XmlAttribute
     private String escape;
     @XmlAttribute
-    private Boolean headerDisabled;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String headerDisabled;
     @XmlElement
     private List<String> header;
     @XmlAttribute
-    private Boolean allowMissingColumnNames;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowMissingColumnNames;
     @XmlAttribute
-    private Boolean ignoreEmptyLines;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreEmptyLines;
     @XmlAttribute
-    private Boolean ignoreSurroundingSpaces;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreSurroundingSpaces;
     @XmlAttribute
-    private Boolean nullStringDisabled;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String nullStringDisabled;
     @XmlAttribute
     private String nullString;
     @XmlAttribute
-    private Boolean quoteDisabled;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String quoteDisabled;
     @XmlAttribute
     private String quote;
     @XmlAttribute
@@ -74,26 +82,33 @@ public class CsvDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String recordSeparator;
     @XmlAttribute
-    private Boolean skipHeaderRecord;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String skipHeaderRecord;
     @XmlAttribute
     private String quoteMode;
     @XmlAttribute
-    private Boolean ignoreHeaderCase;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreHeaderCase;
     @XmlAttribute
-    private Boolean trim;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String trim;
     @XmlAttribute
-    private Boolean trailingDelimiter;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String trailingDelimiter;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String marshallerFactoryRef;
 
     // Unmarshall options
     @XmlAttribute
-    private Boolean lazyLoad;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String lazyLoad;
     @XmlAttribute
-    private Boolean useMaps;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String useMaps;
     @XmlAttribute
-    private Boolean useOrderedMaps;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String useOrderedMaps;
     @XmlAttribute
     private String recordConverterRef;
 
@@ -108,7 +123,7 @@ public class CsvDataFormat extends DataFormatDefinition {
 
     public CsvDataFormat(boolean lazyLoad) {
         this();
-        setLazyLoad(lazyLoad);
+        setLazyLoad(Boolean.toString(lazyLoad));
     }
 
     /**
@@ -156,14 +171,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.formatName = formatName;
     }
 
-    public Boolean getCommentMarkerDisabled() {
+    public String getCommentMarkerDisabled() {
         return commentMarkerDisabled;
     }
 
     /**
      * Disables the comment marker of the reference format.
      */
-    public void setCommentMarkerDisabled(Boolean commentMarkerDisabled) {
+    public void setCommentMarkerDisabled(String commentMarkerDisabled) {
         this.commentMarkerDisabled = commentMarkerDisabled;
     }
 
@@ -191,14 +206,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.delimiter = delimiter;
     }
 
-    public Boolean getEscapeDisabled() {
+    public String getEscapeDisabled() {
         return escapeDisabled;
     }
 
     /**
      * Use for disabling using escape character
      */
-    public void setEscapeDisabled(Boolean escapeDisabled) {
+    public void setEscapeDisabled(String escapeDisabled) {
         this.escapeDisabled = escapeDisabled;
     }
 
@@ -216,11 +231,11 @@ public class CsvDataFormat extends DataFormatDefinition {
     /**
      * Use for disabling headers
      */
-    public Boolean getHeaderDisabled() {
+    public String getHeaderDisabled() {
         return headerDisabled;
     }
 
-    public void setHeaderDisabled(Boolean headerDisabled) {
+    public void setHeaderDisabled(String headerDisabled) {
         this.headerDisabled = headerDisabled;
     }
 
@@ -235,47 +250,47 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.header = header;
     }
 
-    public Boolean getAllowMissingColumnNames() {
+    public String getAllowMissingColumnNames() {
         return allowMissingColumnNames;
     }
 
     /**
      * Whether to allow missing column names.
      */
-    public void setAllowMissingColumnNames(Boolean allowMissingColumnNames) {
+    public void setAllowMissingColumnNames(String allowMissingColumnNames) {
         this.allowMissingColumnNames = allowMissingColumnNames;
     }
 
-    public Boolean getIgnoreEmptyLines() {
+    public String getIgnoreEmptyLines() {
         return ignoreEmptyLines;
     }
 
     /**
      * Whether to ignore empty lines.
      */
-    public void setIgnoreEmptyLines(Boolean ignoreEmptyLines) {
+    public void setIgnoreEmptyLines(String ignoreEmptyLines) {
         this.ignoreEmptyLines = ignoreEmptyLines;
     }
 
-    public Boolean getIgnoreSurroundingSpaces() {
+    public String getIgnoreSurroundingSpaces() {
         return ignoreSurroundingSpaces;
     }
 
     /**
      * Whether to ignore surrounding spaces
      */
-    public void setIgnoreSurroundingSpaces(Boolean ignoreSurroundingSpaces) {
+    public void setIgnoreSurroundingSpaces(String ignoreSurroundingSpaces) {
         this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
     }
 
-    public Boolean getNullStringDisabled() {
+    public String getNullStringDisabled() {
         return nullStringDisabled;
     }
 
     /**
      * Used to disable null strings
      */
-    public void setNullStringDisabled(Boolean nullStringDisabled) {
+    public void setNullStringDisabled(String nullStringDisabled) {
         this.nullStringDisabled = nullStringDisabled;
     }
 
@@ -290,14 +305,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.nullString = nullString;
     }
 
-    public Boolean getQuoteDisabled() {
+    public String getQuoteDisabled() {
         return quoteDisabled;
     }
 
     /**
      * Used to disable quotes
      */
-    public void setQuoteDisabled(Boolean quoteDisabled) {
+    public void setQuoteDisabled(String quoteDisabled) {
         this.quoteDisabled = quoteDisabled;
     }
 
@@ -335,14 +350,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.recordSeparator = recordSeparator;
     }
 
-    public Boolean getSkipHeaderRecord() {
+    public String getSkipHeaderRecord() {
         return skipHeaderRecord;
     }
 
     /**
      * Whether to skip the header record in the output
      */
-    public void setSkipHeaderRecord(Boolean skipHeaderRecord) {
+    public void setSkipHeaderRecord(String skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
     }
 
@@ -357,7 +372,7 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.quoteMode = quoteMode;
     }
 
-    public Boolean getLazyLoad() {
+    public String getLazyLoad() {
         return lazyLoad;
     }
 
@@ -365,11 +380,11 @@ public class CsvDataFormat extends DataFormatDefinition {
      * Whether the unmarshalling should produce an iterator that reads the lines
      * on the fly or if all the lines must be read at one.
      */
-    public void setLazyLoad(Boolean lazyLoad) {
+    public void setLazyLoad(String lazyLoad) {
         this.lazyLoad = lazyLoad;
     }
 
-    public Boolean getUseMaps() {
+    public String getUseMaps() {
         return useMaps;
     }
 
@@ -378,11 +393,11 @@ public class CsvDataFormat extends DataFormatDefinition {
      * values instead of lists. It requires to have header (either defined or
      * collected).
      */
-    public void setUseMaps(Boolean useMaps) {
+    public void setUseMaps(String useMaps) {
         this.useMaps = useMaps;
     }
 
-    public Boolean getUseOrderedMaps() {
+    public String getUseOrderedMaps() {
         return useOrderedMaps;
     }
 
@@ -391,7 +406,7 @@ public class CsvDataFormat extends DataFormatDefinition {
      * the lines values instead of lists. It requires to have header (either
      * defined or collected).
      */
-    public void setUseOrderedMaps(Boolean useOrderedMaps) {
+    public void setUseOrderedMaps(String useOrderedMaps) {
         this.useOrderedMaps = useOrderedMaps;
     }
 
@@ -410,33 +425,33 @@ public class CsvDataFormat extends DataFormatDefinition {
     /**
      * Sets whether or not to trim leading and trailing blanks.
      */
-    public void setTrim(Boolean trim) {
+    public void setTrim(String trim) {
         this.trim = trim;
     }
 
-    public Boolean getTrim() {
+    public String getTrim() {
         return trim;
     }
 
     /**
      * Sets whether or not to ignore case when accessing header names.
      */
-    public void setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
+    public void setIgnoreHeaderCase(String ignoreHeaderCase) {
         this.ignoreHeaderCase = ignoreHeaderCase;
     }
 
-    public Boolean getIgnoreHeaderCase() {
+    public String getIgnoreHeaderCase() {
         return ignoreHeaderCase;
     }
 
     /**
      * Sets whether or not to add a trailing delimiter.
      */
-    public void setTrailingDelimiter(Boolean trailingDelimiter) {
+    public void setTrailingDelimiter(String trailingDelimiter) {
         this.trailingDelimiter = trailingDelimiter;
     }
 
-    public Boolean getTrailingDelimiter() {
+    public String getTrailingDelimiter() {
         return trailingDelimiter;
     }
 

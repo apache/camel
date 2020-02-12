@@ -37,22 +37,28 @@ public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String schema;
     @XmlAttribute
-    @Metadata(enums = "0,1,2", defaultValue = "0")
-    private Integer schemaSeverityLevel;
+    @Metadata(javaType = "java.lang.Integer", enums = "0,1,2", defaultValue = "0")
+    private String schemaSeverityLevel;
     @XmlAttribute
-    private Boolean prettyPrint;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String prettyPrint;
     @XmlAttribute
-    private Boolean objectFactory;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String objectFactory;
     @XmlAttribute
-    private Boolean ignoreJAXBElement;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreJAXBElement;
     @XmlAttribute
-    private Boolean mustBeJAXBElement;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String mustBeJAXBElement;
     @XmlAttribute
-    private Boolean filterNonXmlChars;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String filterNonXmlChars;
     @XmlAttribute
     private String encoding;
     @XmlAttribute
-    private Boolean fragment;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String fragment;
     // Partial encoding
     @XmlAttribute
     private String partClass;
@@ -77,7 +83,7 @@ public class JaxbDataFormat extends DataFormatDefinition {
 
     public JaxbDataFormat(boolean prettyPrint) {
         this();
-        setPrettyPrint(prettyPrint);
+        setPrettyPrint(Boolean.toString(prettyPrint));
     }
 
     public String getContextPath() {
@@ -105,7 +111,7 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.schema = schema;
     }
 
-    public Integer getSchemaSeverityLevel() {
+    public String getSchemaSeverityLevel() {
         return schemaSeverityLevel;
     }
 
@@ -116,11 +122,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
      * error (warning, error or fatal error) will trigger JAXB to stop. There
      * are the following three levels: 0=warning, 1=error, 2=fatal error.
      */
-    public void setSchemaSeverityLevel(Integer schemaSeverityLevel) {
+    public void setSchemaSeverityLevel(String schemaSeverityLevel) {
         this.schemaSeverityLevel = schemaSeverityLevel;
     }
 
-    public Boolean getPrettyPrint() {
+    public String getPrettyPrint() {
         return prettyPrint;
     }
 
@@ -129,11 +135,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default false.
      */
-    public void setPrettyPrint(Boolean prettyPrint) {
+    public void setPrettyPrint(String prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
 
-    public Boolean getObjectFactory() {
+    public String getObjectFactory() {
         return objectFactory;
     }
 
@@ -142,11 +148,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
      * during marshalling. This only applies to POJO classes that has not been
      * annotated with JAXB and providing jaxb.index descriptor files.
      */
-    public void setObjectFactory(Boolean objectFactory) {
+    public void setObjectFactory(String objectFactory) {
         this.objectFactory = objectFactory;
     }
 
-    public Boolean getIgnoreJAXBElement() {
+    public String getIgnoreJAXBElement() {
         return ignoreJAXBElement;
     }
 
@@ -154,11 +160,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
      * Whether to ignore JAXBElement elements - only needed to be set to false
      * in very special use-cases.
      */
-    public void setIgnoreJAXBElement(Boolean ignoreJAXBElement) {
+    public void setIgnoreJAXBElement(String ignoreJAXBElement) {
         this.ignoreJAXBElement = ignoreJAXBElement;
     }
 
-    public Boolean getMustBeJAXBElement() {
+    public String getMustBeJAXBElement() {
         return mustBeJAXBElement;
     }
 
@@ -167,7 +173,7 @@ public class JaxbDataFormat extends DataFormatDefinition {
      * not then it fails. This option can be set to false to relax that, such as
      * when the data is already in XML format.
      */
-    public void setMustBeJAXBElement(Boolean mustBeJAXBElement) {
+    public void setMustBeJAXBElement(String mustBeJAXBElement) {
         this.mustBeJAXBElement = mustBeJAXBElement;
     }
 
@@ -180,22 +186,22 @@ public class JaxbDataFormat extends DataFormatDefinition {
      * behaviours you need set property partClass. Camel will pass this class to
      * JAXB's unmarshaler.
      */
-    public void setFragment(Boolean fragment) {
+    public void setFragment(String fragment) {
         this.fragment = fragment;
     }
 
-    public Boolean getFragment() {
+    public String getFragment() {
         return fragment;
     }
 
-    public Boolean getFilterNonXmlChars() {
+    public String getFilterNonXmlChars() {
         return filterNonXmlChars;
     }
 
     /**
      * To ignore non xml characheters and replace them with an empty space.
      */
-    public void setFilterNonXmlChars(Boolean filterNonXmlChars) {
+    public void setFilterNonXmlChars(String filterNonXmlChars) {
         this.filterNonXmlChars = filterNonXmlChars;
     }
 

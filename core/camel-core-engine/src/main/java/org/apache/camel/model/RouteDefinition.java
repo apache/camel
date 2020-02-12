@@ -66,8 +66,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
     private Integer startupOrder;
     private List<RoutePolicy> routePolicies;
     private String routePolicyRef;
-    private ShutdownRoute shutdownRoute;
-    private ShutdownRunningTask shutdownRunningTask;
+    private String shutdownRoute;
+    private String shutdownRunningTask;
     private String errorHandlerRef;
     private ErrorHandlerFactory errorHandlerFactory;
     // keep state whether the error handler is context scoped or not
@@ -498,6 +498,16 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * @return the builder
      */
     public RouteDefinition shutdownRoute(ShutdownRoute shutdownRoute) {
+        return shutdownRoute(shutdownRoute.name());
+    }
+
+    /**
+     * Configures a shutdown route option.
+     *
+     * @param shutdownRoute the option to use when shutting down this route
+     * @return the builder
+     */
+    public RouteDefinition shutdownRoute(String shutdownRoute) {
         setShutdownRoute(shutdownRoute);
         return this;
     }
@@ -510,6 +520,17 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * @return the builder
      */
     public RouteDefinition shutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+        return shutdownRunningTask(shutdownRunningTask.name());
+    }
+
+    /**
+     * Configures a shutdown running task option.
+     *
+     * @param shutdownRunningTask the option to use when shutting down and how
+     *            to act upon running tasks.
+     * @return the builder
+     */
+    public RouteDefinition shutdownRunningTask(String shutdownRunningTask) {
         setShutdownRunningTask(shutdownRunningTask);
         return this;
     }
@@ -882,7 +903,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         this.routePolicies = routePolicies;
     }
 
-    public ShutdownRoute getShutdownRoute() {
+    public String getShutdownRoute() {
         return shutdownRoute;
     }
 
@@ -890,15 +911,15 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * To control how to shutdown the route.
      */
     @XmlAttribute
-    @Metadata(defaultValue = "Default")
-    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
+    @Metadata(javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default", enums = "Default,Defer")
+    public void setShutdownRoute(String shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
 
     /**
      * To control how to shutdown the route.
      */
-    public ShutdownRunningTask getShutdownRunningTask() {
+    public String getShutdownRunningTask() {
         return shutdownRunningTask;
     }
 
@@ -906,8 +927,8 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
      * To control how to shutdown the route.
      */
     @XmlAttribute
-    @Metadata(defaultValue = "CompleteCurrentTaskOnly")
-    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+    @Metadata(javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly", enums = "CompleteCurrentTaskOnly,CompleteAllTasks")
+    public void setShutdownRunningTask(String shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
 

@@ -34,8 +34,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean validate;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String validate;
     @XmlTransient
     private Object parser;
 
@@ -43,12 +43,7 @@ public class HL7DataFormat extends DataFormatDefinition {
         super("hl7");
     }
 
-    public boolean isValidate() {
-        // defaults to true if not configured
-        return validate != null ? validate : true;
-    }
-
-    public Boolean getValidate() {
+    public String getValidate() {
         return validate;
     }
 
@@ -57,7 +52,7 @@ public class HL7DataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default true.
      */
-    public void setValidate(Boolean validate) {
+    public void setValidate(String validate) {
         this.validate = validate;
     }
 

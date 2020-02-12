@@ -106,7 +106,17 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition timePeriodMillis(long timePeriodMillis) {
-        setTimePeriodMillis(Long.toString(timePeriodMillis));
+        return timePeriodMillis(Long.toString(timePeriodMillis));
+    }
+
+    /**
+     * Sets the time period during which the maximum request count is valid for
+     *
+     * @param timePeriodMillis period in millis
+     * @return the builder
+     */
+    public ThrottleDefinition timePeriodMillis(String timePeriodMillis) {
+        setTimePeriodMillis(timePeriodMillis);
         return this;
     }
 
@@ -123,6 +133,18 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
+     * Sets the time period during which the maximum request count per period
+     *
+     * @param maximumRequestsPerPeriod the maximum request count number per time
+     *            period
+     * @return the builder
+     */
+    public ThrottleDefinition maximumRequestsPerPeriod(String maximumRequestsPerPeriod) {
+        setExpression(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumRequestsPerPeriod)));
+        return this;
+    }
+
+    /**
      * Whether or not the caller should run the task when it was rejected by the
      * thread pool.
      * <p/>
@@ -132,7 +154,20 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition callerRunsWhenRejected(boolean callerRunsWhenRejected) {
-        setCallerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
+        return callerRunsWhenRejected(Boolean.toString(callerRunsWhenRejected));
+    }
+
+    /**
+     * Whether or not the caller should run the task when it was rejected by the
+     * thread pool.
+     * <p/>
+     * Is by default <tt>true</tt>
+     *
+     * @param callerRunsWhenRejected whether or not the caller should run
+     * @return the builder
+     */
+    public ThrottleDefinition callerRunsWhenRejected(String callerRunsWhenRejected) {
+        setCallerRunsWhenRejected(callerRunsWhenRejected);
         return this;
     }
 
@@ -143,7 +178,27 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition asyncDelayed() {
-        setAsyncDelayed(Boolean.toString(true));
+        return asyncDelayed(true);
+    }
+
+    /**
+     * Enables asynchronous delay which means the thread will <b>not</b> block
+     * while delaying.
+     *
+     * @return the builder
+     */
+    public ThrottleDefinition asyncDelayed(boolean asyncDelayed) {
+        return asyncDelayed(Boolean.toString(asyncDelayed));
+    }
+
+    /**
+     * Enables asynchronous delay which means the thread will <b>not</b> block
+     * while delaying.
+     *
+     * @return the builder
+     */
+    public ThrottleDefinition asyncDelayed(String asyncDelayed) {
+        setAsyncDelayed(asyncDelayed);
         return this;
     }
 
@@ -158,7 +213,21 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return the builder
      */
     public ThrottleDefinition rejectExecution(boolean rejectExecution) {
-        setRejectExecution(Boolean.toString(rejectExecution));
+        return rejectExecution(Boolean.toString(rejectExecution));
+    }
+
+    /**
+     * Whether or not throttler throws the ThrottlerRejectedExecutionException
+     * when the exchange exceeds the request limit
+     * <p/>
+     * Is by default <tt>false</tt>
+     *
+     * @param rejectExecution throw the RejectExecutionException if the exchange
+     *            exceeds the request limit
+     * @return the builder
+     */
+    public ThrottleDefinition rejectExecution(String rejectExecution) {
+        setRejectExecution(rejectExecution);
         return this;
     }
 

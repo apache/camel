@@ -229,7 +229,7 @@ public class RestOpenApiReader {
                     auth.type = "apiKey";
                     auth.description = rs.getDescription();
                     auth.name = rs.getName();
-                    if (rs.getInHeader() != null && rs.getInHeader()) {
+                    if (rs.getInHeader() != null && Boolean.parseBoolean(rs.getInHeader())) {
                         auth.in = "header";
                     } else {
                         auth.in = "query";
@@ -303,7 +303,7 @@ public class RestOpenApiReader {
                     auth.type = "apiKey";
                     auth.description = rs.getDescription();
                     auth.name = rs.getName();
-                    if (rs.getInHeader() != null && rs.getInHeader()) {
+                    if (rs.getInHeader() != null && Boolean.parseBoolean(rs.getInHeader())) {
                         auth.in = "header";
                     } else {
                         auth.in = "query";

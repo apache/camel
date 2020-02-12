@@ -60,6 +60,9 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         if (definition.getIgnoreInvalidEndpoint() != null) {
             processor.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
         }
+        if  (definition.getAllowOptimisedComponents() != null) {
+            processor.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
+        }
         return processor;
     }
 

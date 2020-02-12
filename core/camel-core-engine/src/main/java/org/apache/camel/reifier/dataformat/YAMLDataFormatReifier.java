@@ -43,9 +43,9 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
     protected void configureSnakeDataFormat(Map<String, Object> properties) {
         properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         properties.put("classLoader", definition.getClassLoader());
-        properties.put("useApplicationContextClassLoader", definition.isUseApplicationContextClassLoader());
-        properties.put("prettyFlow", definition.isPrettyFlow());
-        properties.put("allowAnyType", definition.isAllowAnyType());
+        properties.put("useApplicationContextClassLoader", definition.getUseApplicationContextClassLoader());
+        properties.put("prettyFlow", definition.getPrettyFlow());
+        properties.put("allowAnyType", definition.getAllowAnyType());
         properties.put("typeFilterDefinitions", getTypeFilterDefinitions());
         properties.put("constructor", definition.getConstructor());
         properties.put("representer", definition.getRepresenter());
@@ -57,10 +57,10 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
         if (definition.getTypeFilters() != null && !definition.getTypeFilters().isEmpty()) {
             List<String> typeFilterDefinitions = new ArrayList<>(definition.getTypeFilters().size());
             for (YAMLTypeFilterDefinition definition : definition.getTypeFilters()) {
-                String value = definition.getValue();
+                String value = parseString(definition.getValue());
 
                 if (!value.startsWith("type") && !value.startsWith("regexp")) {
-                    YAMLTypeFilterType type = definition.getType();
+                    YAMLTypeFilterType type = parse(YAMLTypeFilterType.class, definition.getType());
                     if (type == null) {
                         type = YAMLTypeFilterType.type;
                     }

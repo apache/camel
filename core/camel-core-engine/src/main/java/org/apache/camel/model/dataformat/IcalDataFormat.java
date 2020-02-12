@@ -32,20 +32,21 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IcalDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean validating;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String validating;
 
     public IcalDataFormat() {
         super("ical");
     }
 
-    public Boolean getValidating() {
+    public String getValidating() {
         return validating;
     }
 
     /**
      * Whether to validate.
      */
-    public void setValidating(Boolean validating) {
+    public void setValidating(String validating) {
         this.validating = validating;
     }
 

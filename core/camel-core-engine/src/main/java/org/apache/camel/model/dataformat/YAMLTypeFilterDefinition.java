@@ -30,7 +30,8 @@ public final class YAMLTypeFilterDefinition {
     @XmlAttribute
     private String value;
     @XmlAttribute
-    private YAMLTypeFilterType type;
+    @Metadata(javaType = "org.apache.camel.model.dataformat.YAMLTypeFilterType")
+    private String type;
 
     public String getValue() {
         return value;
@@ -43,14 +44,14 @@ public final class YAMLTypeFilterDefinition {
         this.value = value;
     }
 
-    public YAMLTypeFilterType getType() {
+    public String getType() {
         return type;
     }
 
     /**
      * Whether to filter by class type or regular expression
      */
-    public void setType(YAMLTypeFilterType type) {
+    public void setType(String type) {
         this.type = type;
     }
 }

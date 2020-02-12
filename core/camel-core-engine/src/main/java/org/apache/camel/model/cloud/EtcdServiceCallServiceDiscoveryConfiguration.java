@@ -38,7 +38,8 @@ public class EtcdServiceCallServiceDiscoveryConfiguration extends ServiceCallSer
     @Metadata(label = "security")
     private String password;
     @XmlAttribute
-    private Long timeout;
+    @Metadata(javaType = "java.lang.Long")
+    private String timeout;
     @XmlAttribute
     @Metadata(defaultValue = "/services/")
     private String servicePath = "/services/";
@@ -93,14 +94,14 @@ public class EtcdServiceCallServiceDiscoveryConfiguration extends ServiceCallSer
         this.password = password;
     }
 
-    public Long getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
     /**
      * To set the maximum time an action could take to complete.
      */
-    public void setTimeout(Long timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -169,6 +170,13 @@ public class EtcdServiceCallServiceDiscoveryConfiguration extends ServiceCallSer
      * To set the maximum time an action could take to complete.
      */
     public EtcdServiceCallServiceDiscoveryConfiguration timeout(Long timeout) {
+        return timeout(Long.toString(timeout));
+    }
+
+    /**
+     * To set the maximum time an action could take to complete.
+     */
+    public EtcdServiceCallServiceDiscoveryConfiguration timeout(String timeout) {
         setTimeout(timeout);
         return this;
     }

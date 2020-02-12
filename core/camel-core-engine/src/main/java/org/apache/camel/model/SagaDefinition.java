@@ -42,11 +42,11 @@ import org.apache.camel.util.ObjectHelper;
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     @XmlAttribute
-    @Metadata(defaultValue = "REQUIRED", enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
+    @Metadata(javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED", enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
     private String propagation;
 
     @XmlAttribute
-    @Metadata(defaultValue = "AUTO", enums = "AUTO,MANUAL")
+    @Metadata(javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO", enums = "AUTO,MANUAL")
     private String completionMode;
 
     @XmlAttribute
@@ -242,6 +242,10 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         return this;
     }
 
+    public SagaDefinition propagation(String propagation) {
+        return propagation(propagation);
+    }
+
     public SagaDefinition propagation(SagaPropagation propagation) {
         setPropagation(propagation.name());
         return this;
@@ -258,7 +262,11 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     }
 
     public SagaDefinition completionMode(SagaCompletionMode completionMode) {
-        setCompletionMode(completionMode.name());
+        return completionMode(completionMode.name());
+    }
+
+    public SagaDefinition completionMode(String completionMode) {
+        setCompletionMode(completionMode);
         return this;
     }
 

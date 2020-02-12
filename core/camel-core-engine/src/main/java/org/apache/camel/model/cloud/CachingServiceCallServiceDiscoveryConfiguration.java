@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.TimeUnitAdapter;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-discovery")
@@ -39,9 +38,9 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
     @Metadata(defaultValue = "60", javaType = "java.lang.Integer")
     private String timeout = Integer.toString(60);
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    @Metadata(defaultValue = "SECONDS")
-    private TimeUnit units = TimeUnit.SECONDS;
+    @Metadata(javaType = "java.util.concurrent.TimeUnit", defaultValue = "SECONDS",
+            enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+    private String units = TimeUnit.SECONDS.name();
     @XmlElements({@XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
                   @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
                   @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
@@ -73,14 +72,14 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
         this.timeout = timeout;
     }
 
-    public TimeUnit getUnits() {
+    public String getUnits() {
         return units;
     }
 
     /**
      * Set the time unit for the timeout.
      */
-    public void setUnits(TimeUnit units) {
+    public void setUnits(String units) {
         this.units = units;
     }
 
@@ -103,7 +102,14 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
      * Set the time the services will be retained.
      */
     public CachingServiceCallServiceDiscoveryConfiguration timeout(int timeout) {
-        setTimeout(Integer.toString(timeout));
+        return timeout(Integer.toString(timeout));
+    }
+
+    /**
+     * Set the time the services will be retained.
+     */
+    public CachingServiceCallServiceDiscoveryConfiguration timeout(String timeout) {
+        setTimeout(timeout);
         return this;
     }
 
@@ -111,6 +117,13 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
      * Set the time unit for the timeout.
      */
     public CachingServiceCallServiceDiscoveryConfiguration units(TimeUnit units) {
+        return units(units.name());
+    }
+
+    /**
+     * Set the time unit for the timeout.
+     */
+    public CachingServiceCallServiceDiscoveryConfiguration units(String units) {
         setUnits(units);
         return this;
     }

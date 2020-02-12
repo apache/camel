@@ -208,10 +208,10 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(Order.class);
-                bindy.setLocale("en");
-                bindy.setType(BindyType.Fixed);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(Order.class)
+                        .locale("en")
+                        .type(BindyType.Fixed);
 
                 from(URI_DIRECT_MARSHALL)
                     .marshal(bindy)

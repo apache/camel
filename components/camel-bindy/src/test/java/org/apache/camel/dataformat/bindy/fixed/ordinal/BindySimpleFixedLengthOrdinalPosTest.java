@@ -111,7 +111,7 @@ public class BindySimpleFixedLengthOrdinalPosTest extends CamelTestSupport {
                 BindyDataFormat bindy = new BindyDataFormat();
                 bindy.setClassType(BindySimpleFixedLengthOrdinalPosTest.Order.class);
                 bindy.setLocale("en");
-                bindy.setType(BindyType.Fixed);
+                bindy.type(BindyType.Fixed);
 
                 from(URI_DIRECT_MARSHALL)
                     .marshal(bindy)

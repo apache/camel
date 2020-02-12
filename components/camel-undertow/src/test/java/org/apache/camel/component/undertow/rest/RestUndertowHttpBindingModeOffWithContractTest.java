@@ -59,7 +59,7 @@ public class RestUndertowHttpBindingModeOffWithContractTest extends BaseUndertow
 
                 JsonDataFormat jsondf = new JsonDataFormat();
                 jsondf.setLibrary(JsonLibrary.Jackson);
-                jsondf.setAllowUnmarshallType(true);
+                jsondf.allowUnmarshallType(true);
                 jsondf.setUnmarshalType(UserPojoEx.class);
                 transformer()
                     .fromType("json")

@@ -147,7 +147,7 @@ public class RestSwaggerReader {
                     ApiKeyAuthDefinition auth = new ApiKeyAuthDefinition();
                     auth.setDescription(rs.getDescription());
                     auth.setName(rs.getName());
-                    if (rs.getInHeader() != null && rs.getInHeader()) {
+                    if (rs.getInHeader() != null && Boolean.parseBoolean(rs.getInHeader())) {
                         auth.setIn(In.HEADER);
                     } else {
                         auth.setIn(In.QUERY);

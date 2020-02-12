@@ -33,25 +33,28 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
-    private Boolean usingIterator;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String usingIterator;
     @XmlAttribute
-    private Boolean allowEmptyDirectory;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowEmptyDirectory;
     @XmlAttribute
-    private Boolean preservePathElements;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String preservePathElements;
 
     public ZipFileDataFormat() {
         super("zipfile");
     }
 
-    public Boolean getUsingIterator() {
+    public String getUsingIterator() {
         return usingIterator;
     }
 
-    public Boolean getAllowEmptyDirectory() {
+    public String getAllowEmptyDirectory() {
         return allowEmptyDirectory;
     }
 
-    public Boolean getPreservePathElements() {
+    public String getPreservePathElements() {
         return preservePathElements;
     }
 
@@ -60,7 +63,7 @@ public class ZipFileDataFormat extends DataFormatDefinition {
      * allows to work with the splitter EIP, to split the data using an iterator
      * in a streaming mode.
      */
-    public void setUsingIterator(Boolean usingIterator) {
+    public void setUsingIterator(String usingIterator) {
         this.usingIterator = usingIterator;
     }
 
@@ -68,7 +71,7 @@ public class ZipFileDataFormat extends DataFormatDefinition {
      * If the zip file has more then one entry, setting this option to true,
      * allows to get the iterator even if the directory is empty
      */
-    public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
+    public void setAllowEmptyDirectory(String allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
@@ -76,7 +79,7 @@ public class ZipFileDataFormat extends DataFormatDefinition {
      * If the file name contains path elements, setting this option to true,
      * allows the path to be maintained in the zip file.
      */
-    public void setPreservePathElements(Boolean preservePathElements) {
+    public void setPreservePathElements(String preservePathElements) {
         this.preservePathElements = preservePathElements;
     }
 

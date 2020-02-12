@@ -107,7 +107,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
                 return threadPoolProfile.getRejectedPolicy();
             }
         }
-        return definition.getRejectedPolicy();
+        return parse(ThreadPoolRejectedPolicy.class, definition.getRejectedPolicy());
     }
 
 }

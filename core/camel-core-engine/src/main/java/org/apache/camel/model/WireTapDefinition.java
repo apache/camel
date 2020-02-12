@@ -54,10 +54,10 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String copy;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String dynamicUri;
     @XmlAttribute
     private String onPrepareRef;
@@ -136,8 +136,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @return the builder
      */
     public WireTapDefinition<Type> copy() {
-        setCopy(Boolean.toString(true));
-        return this;
+        return copy(true);
     }
 
     /**
@@ -148,7 +147,18 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @return the builder
      */
     public WireTapDefinition<Type> copy(boolean copy) {
-        setCopy(Boolean.toString(copy));
+        return copy(Boolean.toString(copy));
+    }
+
+    /**
+     * Uses a copy of the original exchange
+     *
+     * @param copy if it is true camel will copy the original exchange, if it is
+     *            false camel will not copy the original exchange
+     * @return the builder
+     */
+    public WireTapDefinition<Type> copy(String copy) {
+        setCopy(copy);
         return this;
     }
 
@@ -163,7 +173,21 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      * @return the builder
      */
     public WireTapDefinition<Type> dynamicUri(boolean dynamicUri) {
-        setDynamicUri(Boolean.toString(dynamicUri));
+        return dynamicUri(Boolean.toString(dynamicUri));
+    }
+
+    /**
+     * Whether the uri is dynamic or static. If the uri is dynamic then the
+     * simple language is used to evaluate a dynamic uri to use as the wire-tap
+     * destination, for each incoming message. This works similar to how the
+     * <tt>toD</tt> EIP pattern works. If static then the uri is used as-is as
+     * the wire-tap destination.
+     *
+     * @param dynamicUri whether to use dynamic or static uris
+     * @return the builder
+     */
+    public WireTapDefinition<Type> dynamicUri(String dynamicUri) {
+        setDynamicUri(dynamicUri);
         return this;
     }
 
@@ -264,7 +288,21 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      */
     @Override
     public WireTapDefinition<Type> cacheSize(int cacheSize) {
-        setCacheSize(Integer.toString(cacheSize));
+        return cacheSize(Integer.toString(cacheSize));
+    }
+
+    /**
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
+     * reuse producers, when uris are reused.
+     *
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    @Override
+    public WireTapDefinition<Type> cacheSize(String cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 
@@ -274,7 +312,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
      *
      * @return the builder
      */
-    @Override
     public WireTapDefinition<Type> ignoreInvalidEndpoint() {
         setIgnoreInvalidEndpoint(Boolean.toString(true));
         return this;

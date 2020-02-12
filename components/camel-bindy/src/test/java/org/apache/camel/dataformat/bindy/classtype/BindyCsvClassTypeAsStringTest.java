@@ -107,10 +107,10 @@ public class BindyCsvClassTypeAsStringTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
-                bindy.setLocale("en");
-                bindy.setType(BindyType.Csv);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
+                        .locale("en")
+                        .csv();
 
                 from("direct:in")
                     .marshal(bindy)
