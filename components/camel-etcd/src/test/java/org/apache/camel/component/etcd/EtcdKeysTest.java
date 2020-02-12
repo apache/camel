@@ -26,12 +26,17 @@ import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class EtcdKeysTest extends EtcdTestSupport {
 
-    @Test(expected = EtcdException.class)
+    @Test
     public void testKeys() throws Exception {
         final String path = "/camel/" + UUID.randomUUID().toString();
         final String value = UUID.randomUUID().toString();
@@ -102,9 +107,9 @@ public class EtcdKeysTest extends EtcdTestSupport {
         // VALIDATION
         // *******************************************
 
-        client.get(path).send().get();
-
-        fail("EtcdException should have been thrown");
+        assertThrows(EtcdException.class, () -> {
+            client.get(path).send().get();
+        });
     }
 
     @Override

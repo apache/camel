@@ -27,9 +27,8 @@ import mousio.etcd4j.EtcdClient;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.etcd.EtcdHelper;
-import org.apache.camel.component.etcd.EtcdTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.component.etcd.support.EtcdTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class EtcdServiceCallRouteTest extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
@@ -66,10 +65,9 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
     }
 
     @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
+    protected void cleanupResources() throws Exception {
         client.deleteDir("/services/").recursive().send().get();
+        super.cleanupResources();
     }
 
     // *************************************************************************
@@ -99,6 +97,7 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
                     .serviceCall()
                         .name(SERVICE_NAME)
                         .etcdServiceDiscovery()
+                            .uris(getClientUri())
                             .type("on-demand")
                         .endParent()
                     .to("log:org.apache.camel.component.etcd.processor.service?level=INFO&showAll=true&multiline=true")
