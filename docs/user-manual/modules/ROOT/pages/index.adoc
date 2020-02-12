@@ -217,7 +217,6 @@ camel routes without them knowing
 ** xref:components::ehcache-component.adoc[Ehcache]
 ** xref:components::elasticsearch-rest-component.adoc[Elastichsearch Rest]
 ** xref:components::elsql-component.adoc[ElSQL]
-** xref:components::etcd-component.adoc[etcd]
 ** xref:components::exec-component.adoc[Exec]
 ** xref:components::facebook-component.adoc[Facebook]
 ** xref:components::fhir-component.adoc[FHIR]
