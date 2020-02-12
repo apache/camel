@@ -113,7 +113,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 }
                 String exp = parseString(definition.getExpression());
                 // should be true by default
-                boolean isTrim =parseBoolean(definition.getTrim(), true);
+                boolean isTrim = parseBoolean(definition.getTrim(), true);
                 // trim if configured to trim
                 if (exp != null && isTrim) {
                     exp = exp.trim();
