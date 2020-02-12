@@ -188,7 +188,7 @@
         <elytron-web>1.7.0.CR3</elytron-web>
         <eddsa-version>0.3.0</eddsa-version>
         <embedmongo-version>2.1.1</embedmongo-version>
-        <etcd4j-version>2.17.0</etcd4j-version>
+        <etcd4j-version>2.18.0</etcd4j-version>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
         <fabric8-maven-plugin-version>4.3.1</fabric8-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
