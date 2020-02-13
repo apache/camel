@@ -31,7 +31,7 @@ import org.apache.camel.support.ScheduledPollConsumer;
 public class YammerUserPollingConsumer extends ScheduledPollConsumer {
     private final YammerEndpoint endpoint;
     private final String apiUrl;
-    
+
     public YammerUserPollingConsumer(YammerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
@@ -42,30 +42,30 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
         apiUrl = getApiUrl();
     }
 
-    private String getApiUrl() throws Exception {    
+    private String getApiUrl() throws Exception {
         StringBuilder url = new StringBuilder();
-        
+
         String function = endpoint.getConfig().getFunction();
         switch (YammerFunctionType.fromUri(function)) {
-        case USERS:
-            url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append(function);
-            url.append(".json");
-            break;
-        case CURRENT:
-            url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append("users/");
-            url.append(function);
-            url.append(".json");
-            break;
-        default:
-            throw new Exception(String.format("%s is not a valid Yammer user function type.", function));
-        }        
-        
+            case USERS:
+                url.append(YammerConstants.YAMMER_BASE_API_URL);
+                url.append(function);
+                url.append(".json");
+                break;
+            case CURRENT:
+                url.append(YammerConstants.YAMMER_BASE_API_URL);
+                url.append("users/");
+                url.append(function);
+                url.append(".json");
+                break;
+            default:
+                throw new Exception(String.format("%s is not a valid Yammer user function type.", function));
+        }
+
         return url.toString();
     }
 
-    
+
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();
@@ -77,18 +77,18 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 String function = endpoint.getConfig().getFunction();
                 switch (YammerFunctionType.fromUri(function)) {
-                case USERS:
-                    List<User> users = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
-                    exchange.getIn().setBody(users);                   
-                    break;
-                case CURRENT:
-                    User user = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructType(User.class));
-                    exchange.getIn().setBody(user);                                       
-                    break;
-                default:
-                    throw new Exception(String.format("%s is not a valid Yammer user function type.", function));
-                }    
-                
+                    case USERS:
+                        List<User> users = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+                        exchange.getIn().setBody(users);
+                        break;
+                    case CURRENT:
+                        User user = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructType(User.class));
+                        exchange.getIn().setBody(user);
+                        break;
+                    default:
+                        throw new Exception(String.format("%s is not a valid Yammer user function type.", function));
+                }
+
             } else {
                 exchange.getIn().setBody(jsonBody);
             }
