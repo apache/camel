@@ -18,51 +18,41 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.kafka.embedded.EmbeddedKafkaBroker;
-import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
+    private static final String CONFLUENT_PLATFORM_VERSION = "5.3.1";
 
     @ClassRule
-    public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(AvailablePortFinder.getNextAvailable());
-
-    @ClassRule
-    public static EmbeddedKafkaBroker kafkaBroker = new EmbeddedKafkaBroker(0, AvailablePortFinder.getNextAvailable(), zookeeper.getConnection(), new Properties());
+    public static KafkaContainer kafkaBroker = new KafkaContainer(CONFLUENT_PLATFORM_VERSION)
+        .withEmbeddedZookeeper()
+        .waitingFor(Wait.forListeningPort());
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
     @BeforeClass
     public static void beforeClass() {
-        LOG.info("### Embedded Zookeeper connection: " + zookeeper.getConnection());
-        LOG.info("### Embedded Kafka cluster broker list: " + kafkaBroker.getBrokerList());
+        LOG.info("### Embedded Kafka cluster broker list: " + kafkaBroker.getBootstrapServers());
     }
 
     protected Properties getDefaultProperties() {
+        LOG.info("Connecting to Kafka {}", kafkaBroker.getBootstrapServers());
+
         Properties props = new Properties();
-        LOG.info("Connecting to Kafka port {}", kafkaBroker.getPort());
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBrokerList());
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBootstrapServers());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
         props.put(ProducerConfig.ACKS_CONFIG, "1");
         return props;
-    }
-
-    @BindToRegistry("prop")
-    public Properties loadProperties() throws Exception {
-        Properties prop = new Properties();
-        prop.setProperty("zookeeperPort", "" + getZookeeperPort());
-        prop.setProperty("kafkaPort", "" + getKafkaPort());
-        return prop;
     }
 
     @Override
@@ -72,18 +62,13 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
         KafkaComponent kafka = new KafkaComponent(context);
         kafka.init();
-        kafka.setBrokers("localhost:" + getKafkaPort());
+        kafka.setBrokers(kafkaBroker.getBootstrapServers());
         context.addComponent("kafka", kafka);
 
         return context;
     }
 
-    protected static int getZookeeperPort() {
-        return zookeeper.getPort();
+    protected static String getBootstrapServers() {
+        return kafkaBroker.getBootstrapServers();
     }
-
-    protected static int getKafkaPort() {
-        return kafkaBroker.getPort();
-    }
-
 }
