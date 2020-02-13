@@ -160,14 +160,14 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
     public static String[] getSupportedSignatureAlgorithmNamesForKey(Key key) {
 
         switch (key.getAlgorithm()) {
-        case "DSA":
-            return DSA_SIGNING_ALGORITHMS;
-        case "RSA":
-            return RSA_SIGNING_ALGORITHMS;
-        case "EC":
-            return EC_SIGNING_ALGORITHMS;
-        default:
-            return new String[0];
+            case "DSA":
+                return DSA_SIGNING_ALGORITHMS;
+            case "RSA":
+                return RSA_SIGNING_ALGORITHMS;
+            case "EC":
+                return EC_SIGNING_ALGORITHMS;
+            default:
+                return new String[0];
         }
     }
 
