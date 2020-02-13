@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-## This script runs the camel-itest-karaf in a more reliable way
+## This script runs the camel-itest-osgi in a more reliable way
 ## than Maven surefire will do as it can hang after a while
 ## The script also kills each karaf container after a test to ensure there is no Java JVMs
 ## danging around.
