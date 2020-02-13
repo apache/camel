@@ -112,7 +112,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     }
 
     private BulkheadConfig configureBulkHead(Resilience4jConfigurationCommon config) {
-        if (parseBoolean(config.getBulkheadEnabled(), true)) {
+        if (!parseBoolean(config.getBulkheadEnabled(), false)) {
             return null;
         }
 
@@ -127,7 +127,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     }
 
     private TimeLimiterConfig configureTimeLimiter(Resilience4jConfigurationCommon config) {
-        if (parseBoolean(config.getTimeoutEnabled(), true)) {
+        if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return null;
         }
 
@@ -142,7 +142,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     }
 
     private void configureTimeoutExecutorService(ResilienceProcessor processor, RouteContext routeContext, Resilience4jConfigurationCommon config) {
-        if (parseBoolean(config.getTimeoutEnabled(), true)) {
+        if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return;
         }
 
