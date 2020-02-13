@@ -1,8 +1,11 @@
-[[aws-ses-component]]
-= AWS Simple Email Service Component
-:page-source: components/camel-aws2-ses/bin/src/main/docs/aws-ses-component.adoc
+[[aws2-ses-component]]
+= AWS 2 Simple Email Service Component
+:page-source: components/camel-aws2-ses/src/main/docs/aws2-ses-component.adoc
 
-*Since Camel 2.9*
+*Since Camel 3.1*
+
+*Since Camel 3.1*
+
 
 // HEADER START
 *Only producer is supported*
@@ -21,7 +24,7 @@ https://aws.amazon.com/ses[Amazon SES].
 
 [source,java]
 ------------------------
-aws-ses://from[?options]
+aws2-ses://from[?options]
 ------------------------
 
 You can append query options to the URI in the following format,
@@ -31,7 +34,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Email Service component supports 6 options, which are listed below.
+The AWS 2 Simple Email Service component supports 6 options, which are listed below.
 
 
 
@@ -43,7 +46,7 @@ The AWS Simple Email Service component supports 6 options, which are listed belo
 | *region* (producer) | The region in which SES client needs to work |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | The AWS SES default configuration |  | SesConfiguration
+| *configuration* (advanced) | The AWS SES default configuration |  | Ses2Configuration
 |===
 // component options: END
 
@@ -51,10 +54,10 @@ The AWS Simple Email Service component supports 6 options, which are listed belo
 
 
 // endpoint options: START
-The AWS Simple Email Service endpoint is configured using URI syntax:
+The AWS 2 Simple Email Service endpoint is configured using URI syntax:
 
 ----
-aws-ses:from
+aws2-ses:from
 ----
 
 with the following path and query parameters:
@@ -75,7 +78,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonSESClient* (producer) | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmailService
+| *amazonSESClient* (producer) | To use the AmazonSimpleEmailService as the client |  | SesClient
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
@@ -131,37 +134,24 @@ the https://aws.amazon.com/ses[Amazon's SES].
 |`CamelAwsSesMessageId` |`String` |The Amazon SES message ID.
 |=======================================================================
 
-=== Advanced AmazonSimpleEmailService configuration
+=== Advanced SesClient configuration
 
-If you need more control over the `AmazonSimpleEmailService` instance
+If you need more control over the `SesClient` instance
 configuration you can create your own instance and refer to it from the
 URI:
 
 [source,java]
 -------------------------------------------------------------
 from("direct:start")
-.to("aws-ses://example@example.com?amazonSESClient=#client");
+.to("aws2-ses://example@example.com?amazonSESClient=#client");
 -------------------------------------------------------------
 
-The `#client` refers to a `AmazonSimpleEmailService` in the
+The `#client` refers to a `SesClient` in the
 Registry.
 
-For example if your Camel Application is running behind a firewall:
+== Automatic detection of SesClient client in registry
 
-[source,java]
-----------------------------------------------------------------------------------------------------------
-AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
-ClientConfiguration clientConfiguration = new ClientConfiguration();
-clientConfiguration.setProxyHost("http://myProxyHost");
-clientConfiguration.setProxyPort(8080);
-AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(awsCredentials, clientConfiguration);
-
-registry.bind("client", client);
-----------------------------------------------------------------------------------------------------------
-
-== Automatic detection of AmazonSimpleEmailService client in registry
-
-The component is capable of detecting the presence of an AmazonSimpleEmailService bean into the registry.
+The component is capable of detecting the presence of an SesClient bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -173,7 +163,7 @@ from("direct:start")
     .setHeader(SesConstants.SUBJECT, constant("This is my subject"))
     .setHeader(SesConstants.TO, constant(Collections.singletonList("to@example.com"))
     .setBody(constant("This is my message text."))
-    .to("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+    .to("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
 --------------------------------------------------------------------------------
 
 == Dependencies
@@ -186,7 +176,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws-ses</artifactId>
+    <artifactId>camel-aws2-ses</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
