@@ -67,59 +67,59 @@ public class BlobServiceProducer extends DefaultProducer {
             operation = BlobServiceOperations.listBlobs;
         } else {
             switch (operation) {
-            case getBlob:
-                getBlob(exchange);
-                break;
-            case deleteBlob:
-                deleteBlob(exchange);
-                break;    
-            case listBlobs:
-                listBlobs(exchange);
-                break;
-            case updateBlockBlob:
-                updateBlockBlob(exchange);
-                break;
-            case uploadBlobBlocks:
-                uploadBlobBlocks(exchange);
-                break;
-            case commitBlobBlockList:
-                commitBlobBlockList(exchange);
-                break;
-            case getBlobBlockList:
-                getBlobBlockList(exchange);
-                break;    
-            case createAppendBlob:
-                createAppendBlob(exchange);
-                break;    
-            case updateAppendBlob:
-                updateAppendBlob(exchange);
-                break;
-            case createPageBlob:
-                createPageBlob(exchange);
-                break;
-            case updatePageBlob:
-                uploadPageBlob(exchange);
-                break;
-            case resizePageBlob:
-                resizePageBlob(exchange);
-                break;
-            case clearPageBlob:
-                clearPageBlob(exchange);
-                break;
-            case getPageBlobRanges:
-                getPageBlobRanges(exchange);
-                break;    
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+                case getBlob:
+                    getBlob(exchange);
+                    break;
+                case deleteBlob:
+                    deleteBlob(exchange);
+                    break;
+                case listBlobs:
+                    listBlobs(exchange);
+                    break;
+                case updateBlockBlob:
+                    updateBlockBlob(exchange);
+                    break;
+                case uploadBlobBlocks:
+                    uploadBlobBlocks(exchange);
+                    break;
+                case commitBlobBlockList:
+                    commitBlobBlockList(exchange);
+                    break;
+                case getBlobBlockList:
+                    getBlobBlockList(exchange);
+                    break;
+                case createAppendBlob:
+                    createAppendBlob(exchange);
+                    break;
+                case updateAppendBlob:
+                    updateAppendBlob(exchange);
+                    break;
+                case createPageBlob:
+                    createPageBlob(exchange);
+                    break;
+                case updatePageBlob:
+                    uploadPageBlob(exchange);
+                    break;
+                case resizePageBlob:
+                    resizePageBlob(exchange);
+                    break;
+                case clearPageBlob:
+                    clearPageBlob(exchange);
+                    break;
+                case getPageBlobRanges:
+                    getPageBlobRanges(exchange);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported operation");
             }
-        }     
+        }
     }
-    
+
     private void listBlobs(Exchange exchange) throws Exception {
         CloudBlobContainer client = BlobServiceUtil.createBlobContainerClient(getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         LOG.trace("Getting the blob list from the container [{}] from exchange [{}]...",
-                  getConfiguration().getContainerName(), exchange);
+                getConfiguration().getContainerName(), exchange);
         BlobServiceConfiguration cfg = getConfiguration();
         EnumSet<BlobListingDetails> details = null;
         Object detailsObject = exchange.getIn().getHeader(BlobServiceConstants.BLOB_LISTING_DETAILS);
@@ -130,101 +130,101 @@ public class BlobServiceProducer extends DefaultProducer {
         } else if (detailsObject instanceof BlobListingDetails) {
             details = EnumSet.of((BlobListingDetails)detailsObject);
         }
-        Iterable<ListBlobItem> items = 
-            client.listBlobs(cfg.getBlobPrefix(), cfg.isUseFlatListing(), 
-                             details, opts.getRequestOpts(), opts.getOpContext());
+        Iterable<ListBlobItem> items =
+                client.listBlobs(cfg.getBlobPrefix(), cfg.isUseFlatListing(),
+                        details, opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(items);
     }
-    
+
     private void updateBlockBlob(Exchange exchange) throws Exception {
         CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
         configureCloudBlobForWrite(client);
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
-        
+
         InputStream inputStream = getInputStreamFromExchange(exchange);
-        
+
         LOG.trace("Putting a block blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
         try {
             client.upload(inputStream, -1,
-                          opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         } finally {
             closeInputStreamIfNeeded(inputStream);
         }
     }
-    
+
     private void uploadBlobBlocks(Exchange exchange) throws Exception {
         Object object = exchange.getIn().getMandatoryBody();
-        
+
         List<BlobBlock> blobBlocks = null;
         if (object instanceof List) {
             blobBlocks = (List<BlobBlock>) object;
         } else if (object instanceof BlobBlock) {
             blobBlocks = Collections.singletonList((BlobBlock)object);
-        } 
+        }
         if (blobBlocks == null || blobBlocks.isEmpty()) {
             throw new IllegalArgumentException("Illegal storageBlocks payload");
         }
-        
+
         CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
         configureCloudBlobForWrite(client);
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
-        
+
         LOG.trace("Putting a blob [{}] from blocks from exchange [{}]...", getConfiguration().getBlobName(), exchange);
         List<BlockEntry> blockEntries = new LinkedList<>();
         for (BlobBlock blobBlock : blobBlocks) {
             blockEntries.add(blobBlock.getBlockEntry());
-            client.uploadBlock(blobBlock.getBlockEntry().getId(), blobBlock.getBlockStream(), -1, 
-                               opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+            client.uploadBlock(blobBlock.getBlockEntry().getId(), blobBlock.getBlockStream(), -1,
+                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         }
-        Boolean commitBlockListLater = exchange.getIn().getHeader(BlobServiceConstants.COMMIT_BLOCK_LIST_LATER, 
-                                                                  Boolean.class);
+        Boolean commitBlockListLater = exchange.getIn().getHeader(BlobServiceConstants.COMMIT_BLOCK_LIST_LATER,
+                Boolean.class);
         if (Boolean.TRUE != commitBlockListLater) {
-            client.commitBlockList(blockEntries, 
-                                   opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+            client.commitBlockList(blockEntries,
+                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         }
     }
-    
+
     private void commitBlobBlockList(Exchange exchange) throws Exception {
         Object object = exchange.getIn().getMandatoryBody();
-        
+
         List<BlockEntry> blockEntries = null;
         if (object instanceof List) {
             blockEntries = (List<BlockEntry>) object;
         } else if (object instanceof BlockEntry) {
             blockEntries = Collections.singletonList((BlockEntry)object);
-        } 
+        }
         if (blockEntries == null || blockEntries.isEmpty()) {
             throw new IllegalArgumentException("Illegal commit block list payload");
         }
-        
+
         CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
-        
+
         LOG.trace("Putting a blob [{}] block list from exchange [{}]...", getConfiguration().getBlobName(), exchange);
-        client.commitBlockList(blockEntries, 
-                               opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+        client.commitBlockList(blockEntries,
+                opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
     }
-    
+
     private void getBlob(Exchange exchange) throws Exception {
         BlobServiceUtil.getBlob(exchange, getConfiguration());
     }
-    
+
     private void deleteBlob(Exchange exchange) throws Exception {
         switch (getConfiguration().getBlobType()) {
-        case blockblob:
-            deleteBlockBlob(exchange);
-            break;
-        case appendblob:
-            deleteAppendBlob(exchange);
-            break;
-        case pageblob:
-            deletePageBlob(exchange);
-            break;    
-        default:
-            throw new IllegalArgumentException("Unsupported blob type");
+            case blockblob:
+                deleteBlockBlob(exchange);
+                break;
+            case appendblob:
+                deleteAppendBlob(exchange);
+                break;
+            case pageblob:
+                deletePageBlob(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported blob type");
         }
     }
-    
+
     private void getBlobBlockList(Exchange exchange) throws Exception {
         CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
@@ -234,15 +234,15 @@ public class BlobServiceProducer extends DefaultProducer {
             filter = BlockListingFilter.COMMITTED;
         }
         List<BlockEntry> blockEntries =
-            client.downloadBlockList(filter, opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                client.downloadBlockList(filter, opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(blockEntries);
     }
-    
+
     private void deleteBlockBlob(Exchange exchange) throws Exception {
         CloudBlockBlob client = BlobServiceUtil.createBlockBlobClient(getConfiguration());
         doDeleteBlock(client, exchange);
     }
-    
+
     private void createAppendBlob(Exchange exchange) throws Exception {
         CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
@@ -252,9 +252,9 @@ public class BlobServiceProducer extends DefaultProducer {
         }
         doCreateAppendBlob(client, opts, exchange);
     }
-    
-    private void doCreateAppendBlob(CloudAppendBlob client, BlobServiceRequestOptions opts, Exchange exchange) 
-        throws Exception {
+
+    private void doCreateAppendBlob(CloudAppendBlob client, BlobServiceRequestOptions opts, Exchange exchange)
+            throws Exception {
         LOG.trace("Creating an append blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
         try {
             client.createOrReplace(opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
@@ -264,7 +264,7 @@ public class BlobServiceProducer extends DefaultProducer {
             }
         }
         ExchangeUtil.getMessageForResponse(exchange)
-            .setHeader(BlobServiceConstants.APPEND_BLOCK_CREATED, Boolean.TRUE);
+                .setHeader(BlobServiceConstants.APPEND_BLOCK_CREATED, Boolean.TRUE);
     }
 
     private void updateAppendBlob(Exchange exchange) throws Exception {
@@ -275,28 +275,28 @@ public class BlobServiceProducer extends DefaultProducer {
             // Default: do not reset the blob content if the blob already exists
             opts.setAccessCond(AccessCondition.generateIfNotExistsCondition());
         }
-        
-        Boolean appendBlobCreated = exchange.getIn().getHeader(BlobServiceConstants.APPEND_BLOCK_CREATED, 
-                                                                  Boolean.class);
+
+        Boolean appendBlobCreated = exchange.getIn().getHeader(BlobServiceConstants.APPEND_BLOCK_CREATED,
+                Boolean.class);
         if (Boolean.TRUE != appendBlobCreated) {
             doCreateAppendBlob(client, opts, exchange);
         }
-        
+
         InputStream inputStream = getInputStreamFromExchange(exchange);
         try {
             client.appendBlock(inputStream, -1,
-                               opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         } finally {
             closeInputStreamIfNeeded(inputStream);
         }
-    }    
-    
+    }
+
     private void deleteAppendBlob(Exchange exchange) throws Exception {
         CloudAppendBlob client = BlobServiceUtil.createAppendBlobClient(getConfiguration());
         doDeleteBlock(client, exchange);
     }
-    
-    
+
+
     private void createPageBlob(Exchange exchange) throws Exception {
         CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
@@ -306,27 +306,27 @@ public class BlobServiceProducer extends DefaultProducer {
         }
         doCreatePageBlob(client, opts, exchange);
     }
-    
-    private void doCreatePageBlob(CloudPageBlob client, BlobServiceRequestOptions opts, Exchange exchange) 
-        throws Exception {
+
+    private void doCreatePageBlob(CloudPageBlob client, BlobServiceRequestOptions opts, Exchange exchange)
+            throws Exception {
         LOG.trace("Creating a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
         Long pageSize = getPageBlobSize(exchange);
         try {
             client.create(pageSize,
-                          opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         } catch (StorageException ex) {
             if (ex.getHttpStatusCode() != 409) {
                 throw ex;
             }
         }
         ExchangeUtil.getMessageForResponse(exchange)
-            .setHeader(BlobServiceConstants.PAGE_BLOCK_CREATED, Boolean.TRUE);
-        
+                .setHeader(BlobServiceConstants.PAGE_BLOCK_CREATED, Boolean.TRUE);
+
     }
-    
+
     private void uploadPageBlob(Exchange exchange) throws Exception {
         LOG.trace("Updating a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
-        
+
         CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
         configureCloudBlobForWrite(client);
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
@@ -334,32 +334,32 @@ public class BlobServiceProducer extends DefaultProducer {
             // Default: do not reset the blob content if the blob already exists
             opts.setAccessCond(AccessCondition.generateIfNotExistsCondition());
         }
-        
-        Boolean pageBlobCreated = exchange.getIn().getHeader(BlobServiceConstants.PAGE_BLOCK_CREATED, 
-                                                                  Boolean.class);
+
+        Boolean pageBlobCreated = exchange.getIn().getHeader(BlobServiceConstants.PAGE_BLOCK_CREATED,
+                Boolean.class);
         if (Boolean.TRUE != pageBlobCreated) {
             doCreatePageBlob(client, opts, exchange);
         }
         InputStream inputStream = getInputStreamFromExchange(exchange);
         doUpdatePageBlob(client, inputStream, opts, exchange);
-        
+
     }
-    
+
     private void resizePageBlob(Exchange exchange) throws Exception {
         LOG.trace("Resizing a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
-        
+
         CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         Long pageSize = getPageBlobSize(exchange);
         client.resize(pageSize, opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
     }
-    
+
     private void clearPageBlob(Exchange exchange) throws Exception {
         LOG.trace("Clearing a page blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
-                
+
         CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
-        
+
         Long blobOffset = getConfiguration().getBlobOffset();
         Long blobDataLength = getConfiguration().getDataLength();
         PageRange range = exchange.getIn().getHeader(BlobServiceConstants.PAGE_BLOB_RANGE, PageRange.class);
@@ -367,16 +367,16 @@ public class BlobServiceProducer extends DefaultProducer {
             blobOffset = range.getStartOffset();
             blobDataLength = range.getEndOffset() - range.getStartOffset();
         }
-        if (blobDataLength == null) {        
-            blobDataLength = blobOffset == 0 ? getPageBlobSize(exchange) : 512L; 
+        if (blobDataLength == null) {
+            blobDataLength = blobOffset == 0 ? getPageBlobSize(exchange) : 512L;
         }
         client.clearPages(blobOffset, blobDataLength,
-                          opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
     }
-    
-    private void doUpdatePageBlob(CloudPageBlob client, InputStream is, BlobServiceRequestOptions opts, Exchange exchange) 
-        throws Exception {
-        
+
+    private void doUpdatePageBlob(CloudPageBlob client, InputStream is, BlobServiceRequestOptions opts, Exchange exchange)
+            throws Exception {
+
         Long blobOffset = getConfiguration().getBlobOffset();
         Long blobDataLength = getConfiguration().getDataLength();
         PageRange range = exchange.getIn().getHeader(BlobServiceConstants.PAGE_BLOB_RANGE, PageRange.class);
@@ -384,33 +384,33 @@ public class BlobServiceProducer extends DefaultProducer {
             blobOffset = range.getStartOffset();
             blobDataLength = range.getEndOffset() - range.getStartOffset();
         }
-        if (blobDataLength == null) {        
-            blobDataLength = (long)is.available(); 
+        if (blobDataLength == null) {
+            blobDataLength = (long)is.available();
         }
         try {
             client.uploadPages(is, blobOffset, blobDataLength,
-                           opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         } finally {
-            closeInputStreamIfNeeded(is);    
+            closeInputStreamIfNeeded(is);
         }
-        
+
     }
-    
+
     private void getPageBlobRanges(Exchange exchange) throws Exception {
         CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
         BlobServiceUtil.configureCloudBlobForRead(client, getConfiguration());
         BlobServiceRequestOptions opts = BlobServiceUtil.getRequestOptions(exchange);
         LOG.trace("Getting the page blob ranges [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
-        List<PageRange> ranges = 
-            client.downloadPageRanges(opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+        List<PageRange> ranges =
+                client.downloadPageRanges(opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         ExchangeUtil.getMessageForResponse(exchange).setBody(ranges);
     }
-    
+
     private void deletePageBlob(Exchange exchange) throws Exception {
         CloudPageBlob client = BlobServiceUtil.createPageBlobClient(getConfiguration());
         doDeleteBlock(client, exchange);
     }
-    
+
     private Long getPageBlobSize(Exchange exchange) {
         Long pageSize = exchange.getIn().getHeader(BlobServiceConstants.PAGE_BLOB_SIZE, Long.class);
         if (pageSize == null) {
@@ -419,7 +419,7 @@ public class BlobServiceProducer extends DefaultProducer {
         return pageSize;
     }
 
-    
+
     private void doDeleteBlock(CloudBlob client, Exchange exchange) throws Exception {
         LOG.trace("Deleting a blob [{}] from exchange [{}]...", getConfiguration().getBlobName(), exchange);
         client.delete();
@@ -429,7 +429,7 @@ public class BlobServiceProducer extends DefaultProducer {
         String charset = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
         return charset == null ? "UTF-8" : charset;
     }
-    
+
     private void configureCloudBlobForWrite(CloudBlob client) {
         if (getConfiguration().getStreamWriteSize() > 0) {
             client.setStreamWriteSizeInBytes(getConfiguration().getStreamWriteSize());
@@ -460,7 +460,7 @@ public class BlobServiceProducer extends DefaultProducer {
     public BlobServiceEndpoint getEndpoint() {
         return (BlobServiceEndpoint) super.getEndpoint();
     }
-    
+
     private InputStream getInputStreamFromExchange(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
 
@@ -488,7 +488,7 @@ public class BlobServiceProducer extends DefaultProducer {
 
         return is;
     }
-    
+
     private void closeInputStreamIfNeeded(InputStream inputStream) throws IOException {
         if (getConfiguration().isCloseStreamAfterWrite()) {
             inputStream.close();
