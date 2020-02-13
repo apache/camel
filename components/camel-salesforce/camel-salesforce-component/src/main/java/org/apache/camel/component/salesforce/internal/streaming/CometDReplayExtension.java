@@ -96,12 +96,12 @@ public class CometDReplayExtension extends Adapter {
     @Override
     public boolean rcvMeta(ClientSession session, Message.Mutable message) {
         switch (message.getChannel()) {
-        case Channel.META_HANDSHAKE:
-            Map<String, Object> ext = message.getExt(false);
-            this.supported.set(ext != null && Boolean.TRUE.equals(ext.get(EXTENSION_NAME)));
-            break;
-        default:
-            break;
+            case Channel.META_HANDSHAKE:
+                Map<String, Object> ext = message.getExt(false);
+                this.supported.set(ext != null && Boolean.TRUE.equals(ext.get(EXTENSION_NAME)));
+                break;
+            default:
+                break;
         }
         return true;
     }
@@ -109,16 +109,16 @@ public class CometDReplayExtension extends Adapter {
     @Override
     public boolean sendMeta(ClientSession session, Message.Mutable message) {
         switch (message.getChannel()) {
-        case Channel.META_HANDSHAKE:
-            message.getExt(true).put(EXTENSION_NAME, Boolean.TRUE);
-            break;
-        case Channel.META_SUBSCRIBE:
-            if (supported.get()) {
-                message.getExt(true).put(EXTENSION_NAME, dataMap);
-            }
-            break;
-        default:
-            break;
+            case Channel.META_HANDSHAKE:
+                message.getExt(true).put(EXTENSION_NAME, Boolean.TRUE);
+                break;
+            case Channel.META_SUBSCRIBE:
+                if (supported.get()) {
+                    message.getExt(true).put(EXTENSION_NAME, dataMap);
+                }
+                break;
+            default:
+                break;
         }
         return true;
     }
