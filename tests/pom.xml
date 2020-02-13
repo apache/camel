@@ -76,7 +76,6 @@
         <profile>
             <id>release</id>
             <modules>
-                <module>camel-itest-karaf</module>
                 <module>camel-itest-osgi</module>
                 <module>camel-itest-performance</module>
                 <module>camel-performance</module>
@@ -87,7 +86,6 @@
         <profile>
             <id>osgi.test</id>
             <modules>
-                <module>camel-itest-karaf</module>
                 <module>camel-itest-osgi</module>
             </modules>
         </profile>
