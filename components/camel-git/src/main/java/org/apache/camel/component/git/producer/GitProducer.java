@@ -93,104 +93,104 @@ public class GitProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case GitOperation.CLONE_OPERATION:
-            doClone(exchange, operation);
-            break;
+            case GitOperation.CLONE_OPERATION:
+                doClone(exchange, operation);
+                break;
 
-        case GitOperation.CHECKOUT_OPERATION:
-            doCheckout(exchange, operation);
-            break;
+            case GitOperation.CHECKOUT_OPERATION:
+                doCheckout(exchange, operation);
+                break;
 
-        case GitOperation.INIT_OPERATION:
-            doInit(exchange, operation);
-            break;
+            case GitOperation.INIT_OPERATION:
+                doInit(exchange, operation);
+                break;
 
-        case GitOperation.ADD_OPERATION:
-            doAdd(exchange, operation);
-            break;
+            case GitOperation.ADD_OPERATION:
+                doAdd(exchange, operation);
+                break;
 
-        case GitOperation.CHERRYPICK_OPERATION:
-            doCherryPick(exchange, operation);
-            break;
+            case GitOperation.CHERRYPICK_OPERATION:
+                doCherryPick(exchange, operation);
+                break;
 
-        case GitOperation.REMOVE_OPERATION:
-            doRemove(exchange, operation);
-            break;
+            case GitOperation.REMOVE_OPERATION:
+                doRemove(exchange, operation);
+                break;
 
-        case GitOperation.COMMIT_OPERATION:
-            doCommit(exchange, operation);
-            break;
+            case GitOperation.COMMIT_OPERATION:
+                doCommit(exchange, operation);
+                break;
 
-        case GitOperation.COMMIT_ALL_OPERATION:
-            doCommitAll(exchange, operation);
-            break;
+            case GitOperation.COMMIT_ALL_OPERATION:
+                doCommitAll(exchange, operation);
+                break;
 
-        case GitOperation.CREATE_BRANCH_OPERATION:
-            doCreateBranch(exchange, operation);
-            break;
+            case GitOperation.CREATE_BRANCH_OPERATION:
+                doCreateBranch(exchange, operation);
+                break;
 
-        case GitOperation.DELETE_BRANCH_OPERATION:
-            doDeleteBranch(exchange, operation);
-            break;
+            case GitOperation.DELETE_BRANCH_OPERATION:
+                doDeleteBranch(exchange, operation);
+                break;
 
-        case GitOperation.STATUS_OPERATION:
-            doStatus(exchange, operation);
-            break;
+            case GitOperation.STATUS_OPERATION:
+                doStatus(exchange, operation);
+                break;
 
-        case GitOperation.LOG_OPERATION:
-            doLog(exchange, operation);
-            break;
+            case GitOperation.LOG_OPERATION:
+                doLog(exchange, operation);
+                break;
 
-        case GitOperation.PUSH_OPERATION:
-            doPush(exchange, operation);
-            break;
+            case GitOperation.PUSH_OPERATION:
+                doPush(exchange, operation);
+                break;
 
-        case GitOperation.PUSH_TAG_OPERATION:
-            doPushTag(exchange, operation);
-            break;
+            case GitOperation.PUSH_TAG_OPERATION:
+                doPushTag(exchange, operation);
+                break;
 
-        case GitOperation.PULL_OPERATION:
-            doPull(exchange, operation);
-            break;
+            case GitOperation.PULL_OPERATION:
+                doPull(exchange, operation);
+                break;
 
-        case GitOperation.MERGE_OPERATION:
-            doMerge(exchange, operation);
-            break;
+            case GitOperation.MERGE_OPERATION:
+                doMerge(exchange, operation);
+                break;
 
-        case GitOperation.CREATE_TAG_OPERATION:
-            doCreateTag(exchange, operation);
-            break;
+            case GitOperation.CREATE_TAG_OPERATION:
+                doCreateTag(exchange, operation);
+                break;
 
-        case GitOperation.DELETE_TAG_OPERATION:
-            doDeleteTag(exchange, operation);
-            break;
+            case GitOperation.DELETE_TAG_OPERATION:
+                doDeleteTag(exchange, operation);
+                break;
 
-        case GitOperation.SHOW_BRANCHES_OPERATION:
-            doShowBranches(exchange, operation);
-            break;
+            case GitOperation.SHOW_BRANCHES_OPERATION:
+                doShowBranches(exchange, operation);
+                break;
 
-        case GitOperation.SHOW_TAGS_OPERATION:
-            doShowTags(exchange, operation);
-            break;
+            case GitOperation.SHOW_TAGS_OPERATION:
+                doShowTags(exchange, operation);
+                break;
 
-        case GitOperation.CLEAN_OPERATION:
-            doClean(exchange, operation);
-            break;
+            case GitOperation.CLEAN_OPERATION:
+                doClean(exchange, operation);
+                break;
 
-        case GitOperation.GC_OPERATION:
-            doGc(exchange, operation);
-            break;
+            case GitOperation.GC_OPERATION:
+                doGc(exchange, operation);
+                break;
 
-        case GitOperation.REMOTE_ADD_OPERATION:
-            doRemoteAdd(exchange, operation);
-            break;
+            case GitOperation.REMOTE_ADD_OPERATION:
+                doRemoteAdd(exchange, operation);
+                break;
 
-        case GitOperation.REMOTE_LIST_OPERATION:
-            doRemoteList(exchange, operation);
-            break;
+            case GitOperation.REMOTE_LIST_OPERATION:
+                doRemoteList(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -300,7 +300,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
-            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
@@ -334,7 +334,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
-            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
@@ -624,11 +624,11 @@ public class GitProducer extends DefaultProducer {
         Repository repo = null;
         try {
             repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan
-                // environment
-                // GIT_*
-                // variables
-                .findGitDir() // scan up the file system tree
-                .build();
+                    // environment
+                    // GIT_*
+                    // variables
+                    .findGitDir() // scan up the file system tree
+                    .build();
         } catch (IOException e) {
             LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
             throw e;
