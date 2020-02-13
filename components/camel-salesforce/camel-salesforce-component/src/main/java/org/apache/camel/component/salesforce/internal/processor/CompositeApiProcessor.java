@@ -72,14 +72,14 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         try {
             switch (operationName) {
-            case COMPOSITE_TREE:
-                return processInternal(SObjectTree.class, exchange, compositeClient::submitCompositeTree, this::processCompositeTreeResponse, callback);
-            case COMPOSITE_BATCH:
-                return processInternal(SObjectBatch.class, exchange, compositeClient::submitCompositeBatch, this::processCompositeBatchResponse, callback);
-            case COMPOSITE:
-                return processInternal(SObjectComposite.class, exchange, compositeClient::submitComposite, this::processCompositeResponse, callback);
-            default:
-                throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
+                case COMPOSITE_TREE:
+                    return processInternal(SObjectTree.class, exchange, compositeClient::submitCompositeTree, this::processCompositeTreeResponse, callback);
+                case COMPOSITE_BATCH:
+                    return processInternal(SObjectBatch.class, exchange, compositeClient::submitCompositeBatch, this::processCompositeBatchResponse, callback);
+                case COMPOSITE:
+                    return processInternal(SObjectComposite.class, exchange, compositeClient::submitComposite, this::processCompositeResponse, callback);
+                default:
+                    throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (final SalesforceException e) {
             return processException(exchange, callback, e);
@@ -180,7 +180,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 
     <T, R> boolean processInternal(final Class<T> bodyType, final Exchange exchange, final CompositeApiClient.Operation<T, R> clientOperation,
                                    final ResponseHandler<R> responseHandler, final AsyncCallback callback)
-        throws SalesforceException {
+            throws SalesforceException {
 
         final T body;
 
@@ -192,7 +192,7 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         }
 
         clientOperation.submit(body, determineHeaders(exchange),
-        (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders, exception, callback));
+            (response, responseHeaders, exception) -> responseHandler.handleResponse(exchange, response, responseHeaders, exception, callback));
 
         return false;
     }

@@ -373,14 +373,14 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             if (requestDto != null) {
                 // guard against requests that do not support bodies
                 switch (request.getMethod()) {
-                case "PUT":
-                case "PATCH":
-                case "POST":
-                    request.content(new InputStreamContentProvider(requestDto));
-                    request.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
-                    break;
-                default:
-                    // ignore body for other methods
+                    case "PUT":
+                    case "PATCH":
+                    case "POST":
+                        request.content(new InputStreamContentProvider(requestDto));
+                        request.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+                        break;
+                    default:
+                        // ignore body for other methods
                 }
             }
 

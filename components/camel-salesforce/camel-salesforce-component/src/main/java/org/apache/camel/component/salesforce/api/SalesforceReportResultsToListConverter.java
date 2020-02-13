@@ -69,17 +69,17 @@ public final class SalesforceReportResultsToListConverter {
         }
 
         switch (reportResults.getReportMetadata().getReportFormat()) {
-        case TABULAR:
-            results = convertTabularResults(reportResults, exchange);
-            break;
-        case SUMMARY:
-            results = convertSummaryResults(reportResults, exchange);
-            break;
-        case MATRIX:
-            results = convertMatrixResults(reportResults, exchange);
-            break;
-        default:
-            // ignore
+            case TABULAR:
+                results = convertTabularResults(reportResults, exchange);
+                break;
+            case SUMMARY:
+                results = convertSummaryResults(reportResults, exchange);
+                break;
+            case MATRIX:
+                results = convertMatrixResults(reportResults, exchange);
+                break;
+            default:
+                // ignore
         }
 
         return results;
@@ -285,7 +285,7 @@ public final class SalesforceReportResultsToListConverter {
             final String summaryKey = getGroupTotalKey(keyPrefix, downGroup, groupKey);
 
             addSummaryValues(result, includeDetails, columnNames, newPrefix, reportResults.getReportMetadata().getAggregates(),
-                             reportResults.getFactMap().get(summaryKey).getAggregates());
+                    reportResults.getFactMap().get(summaryKey).getAggregates());
         }
     }
 

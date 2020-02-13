@@ -121,74 +121,74 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         try {
             // call Operation using REST client
             switch (operationName) {
-            case GET_VERSIONS:
-                processGetVersions(exchange, callback);
-                break;
-            case GET_RESOURCES:
-                processGetResources(exchange, callback);
-                break;
-            case GET_GLOBAL_OBJECTS:
-                processGetGlobalObjects(exchange, callback);
-                break;
-            case GET_BASIC_INFO:
-                processGetBasicInfo(exchange, callback);
-                break;
-            case GET_DESCRIPTION:
-                processGetDescription(exchange, callback);
-                break;
-            case GET_SOBJECT:
-                processGetSobject(exchange, callback);
-                break;
-            case CREATE_SOBJECT:
-                processCreateSobject(exchange, callback);
-                break;
-            case UPDATE_SOBJECT:
-                processUpdateSobject(exchange, callback);
-                break;
-            case DELETE_SOBJECT:
-                processDeleteSobject(exchange, callback);
-                break;
-            case GET_SOBJECT_WITH_ID:
-                processGetSobjectWithId(exchange, callback);
-                break;
-            case UPSERT_SOBJECT:
-                processUpsertSobject(exchange, callback);
-                break;
-            case DELETE_SOBJECT_WITH_ID:
-                processDeleteSobjectWithId(exchange, callback);
-                break;
-            case GET_BLOB_FIELD:
-                processGetBlobField(exchange, callback);
-                break;
-            case QUERY:
-                processQuery(exchange, callback);
-                break;
-            case QUERY_MORE:
-                processQueryMore(exchange, callback);
-                break;
-            case QUERY_ALL:
-                processQueryAll(exchange, callback);
-                break;
-            case SEARCH:
-                processSearch(exchange, callback);
-                break;
-            case APEX_CALL:
-                processApexCall(exchange, callback);
-                break;
-            case RECENT:
-                processRecent(exchange, callback);
-                break;
-            case LIMITS:
-                processLimits(exchange, callback);
-                break;
-            case APPROVAL:
-                processApproval(exchange, callback);
-                break;
-            case APPROVALS:
-                processApprovals(exchange, callback);
-                break;
-            default:
-                throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
+                case GET_VERSIONS:
+                    processGetVersions(exchange, callback);
+                    break;
+                case GET_RESOURCES:
+                    processGetResources(exchange, callback);
+                    break;
+                case GET_GLOBAL_OBJECTS:
+                    processGetGlobalObjects(exchange, callback);
+                    break;
+                case GET_BASIC_INFO:
+                    processGetBasicInfo(exchange, callback);
+                    break;
+                case GET_DESCRIPTION:
+                    processGetDescription(exchange, callback);
+                    break;
+                case GET_SOBJECT:
+                    processGetSobject(exchange, callback);
+                    break;
+                case CREATE_SOBJECT:
+                    processCreateSobject(exchange, callback);
+                    break;
+                case UPDATE_SOBJECT:
+                    processUpdateSobject(exchange, callback);
+                    break;
+                case DELETE_SOBJECT:
+                    processDeleteSobject(exchange, callback);
+                    break;
+                case GET_SOBJECT_WITH_ID:
+                    processGetSobjectWithId(exchange, callback);
+                    break;
+                case UPSERT_SOBJECT:
+                    processUpsertSobject(exchange, callback);
+                    break;
+                case DELETE_SOBJECT_WITH_ID:
+                    processDeleteSobjectWithId(exchange, callback);
+                    break;
+                case GET_BLOB_FIELD:
+                    processGetBlobField(exchange, callback);
+                    break;
+                case QUERY:
+                    processQuery(exchange, callback);
+                    break;
+                case QUERY_MORE:
+                    processQueryMore(exchange, callback);
+                    break;
+                case QUERY_ALL:
+                    processQueryAll(exchange, callback);
+                    break;
+                case SEARCH:
+                    processSearch(exchange, callback);
+                    break;
+                case APEX_CALL:
+                    processApexCall(exchange, callback);
+                    break;
+                case RECENT:
+                    processRecent(exchange, callback);
+                    break;
+                case LIMITS:
+                    processLimits(exchange, callback);
+                    break;
+                case APPROVAL:
+                    processApproval(exchange, callback);
+                    break;
+                case APPROVALS:
+                    processApprovals(exchange, callback);
+                    break;
+                default:
+                    throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(String.format("Error processing %s: [%s] \"%s\"", operationName.value(), e.getStatusCode(), e.getMessage()), e));
@@ -248,7 +248,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
             // use header values as template and apply them to the body
             final List<ApprovalRequest> requests = StreamSupport.stream(approvalRequests.spliterator(), false).map(value -> converter.convertTo(ApprovalRequest.class, value))
-                .map(request -> request.applyTemplate(approvalHeader)).collect(Collectors.toList());
+                    .map(request -> request.applyTemplate(approvalHeader)).collect(Collectors.toList());
 
             requestsBody = new ApprovalRequests(requests);
         } else {
@@ -701,7 +701,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     /**
      * Returns {@link InputStream} to serialized form of the given object.
-     * 
+     *
      * @param object object to serialize
      * @return stream to read serialized object from
      */
