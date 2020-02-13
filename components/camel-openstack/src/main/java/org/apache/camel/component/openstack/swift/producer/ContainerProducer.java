@@ -45,32 +45,32 @@ public class ContainerProducer extends AbstractOpenstackProducer {
         String operation = getOperation(exchange);
 
         switch (operation) {
-        case OpenstackConstants.CREATE:
-            doCreate(exchange);
-            break;
-        case OpenstackConstants.GET:
-            doGet(exchange);
-            break;
-        case OpenstackConstants.GET_ALL:
-            doGetAll(exchange);
-            break;
-        case OpenstackConstants.UPDATE:
-            doUpdate(exchange);
-            break;
-        case OpenstackConstants.DELETE:
-            doDelete(exchange);
-            break;
-        case SwiftConstants.GET_METADATA:
-            doGetMetadata(exchange);
-            break;
-        case SwiftConstants.CREATE_UPDATE_METADATA:
-            doUpdateMetadata(exchange);
-            break;
-        case SwiftConstants.DELETE_METADATA:
-            doDeleteMetadata(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            case OpenstackConstants.CREATE:
+                doCreate(exchange);
+                break;
+            case OpenstackConstants.GET:
+                doGet(exchange);
+                break;
+            case OpenstackConstants.GET_ALL:
+                doGetAll(exchange);
+                break;
+            case OpenstackConstants.UPDATE:
+                doUpdate(exchange);
+                break;
+            case OpenstackConstants.DELETE:
+                doDelete(exchange);
+                break;
+            case SwiftConstants.GET_METADATA:
+                doGetMetadata(exchange);
+                break;
+            case SwiftConstants.CREATE_UPDATE_METADATA:
+                doUpdateMetadata(exchange);
+                break;
+            case SwiftConstants.DELETE_METADATA:
+                doDeleteMetadata(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

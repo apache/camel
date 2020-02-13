@@ -43,23 +43,23 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
         String operation = getOperation(exchange);
 
         switch (operation) {
-        case OpenstackConstants.CREATE:
-            doCreate(exchange);
-            break;
-        case OpenstackConstants.GET:
-            doGet(exchange);
-            break;
-        case OpenstackConstants.GET_ALL:
-            doGetAll(exchange);
-            break;
-        case OpenstackConstants.UPDATE:
-            doUpdate(exchange);
-            break;
-        case OpenstackConstants.DELETE:
-            doDelete(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            case OpenstackConstants.CREATE:
+                doCreate(exchange);
+                break;
+            case OpenstackConstants.GET:
+                doGet(exchange);
+                break;
+            case OpenstackConstants.GET_ALL:
+                doGetAll(exchange);
+                break;
+            case OpenstackConstants.UPDATE:
+                doUpdate(exchange);
+                break;
+            case OpenstackConstants.DELETE:
+                doDelete(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
