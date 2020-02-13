@@ -6675,26 +6675,6 @@
     "artifactId": "camel-xj",
     "version": "3.1.0-SNAPSHOT"
   },
-  "XmlsecurityComponentBuilderFactory": {
-    "kind": "component",
-    "scheme": "xmlsecurity",
-    "extendsScheme": "",
-    "syntax": "xmlsecurity:command:name",
-    "title": "XML Security",
-    "description": "Used to sign and verify exchanges using the XML signature specification.",
-    "label": "security,transformation",
-    "deprecated": false,
-    "deprecationNote": "security,transformation",
-    "async": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.apache.camel.component.xmlsecurity.XmlSignatureComponent",
-    "firstVersion": "2.12.0",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-xmlsecurity",
-    "version": "3.1.0-SNAPSHOT"
-  },
   "XmlsecuritySignComponentBuilderFactory": {
     "kind": "component",
     "scheme": "xmlsecurity-sign",

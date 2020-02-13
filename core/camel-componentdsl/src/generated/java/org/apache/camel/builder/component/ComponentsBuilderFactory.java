@@ -3905,17 +3905,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.XjComponentBuilderFactory.xj();
     }
     /**
-     * XML Security (camel-xmlsecurity)
-     * Used to sign and verify exchanges using the XML signature specification.
-     * 
-     * Category: security,transformation
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     */
-    static org.apache.camel.builder.component.dsl.XmlsecurityComponentBuilderFactory.XmlsecurityComponentBuilder xmlsecurity() {
-        return org.apache.camel.builder.component.dsl.XmlsecurityComponentBuilderFactory.xmlsecurity();
-    }
-    /**
      * XML Security Sign (camel-xmlsecurity)
      * Used to sign exchanges using the XML signature specification.
      * 
