@@ -285,7 +285,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpPut(createUri(resourcePath, null)),
-                request -> writeContent(edm, (HttpPut)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
+            request -> writeContent(edm, (HttpPut)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
     }
 
     @Override
@@ -311,7 +311,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpPatch(createUri(resourcePath, null)),
-                request -> writeContent(edm, (HttpPatch)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
+            request -> writeContent(edm, (HttpPatch)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
     }
 
     @Override
@@ -320,7 +320,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpMerge(createUri(resourcePath, null)),
-                request -> writeContent(edm, (HttpMerge)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
+            request -> writeContent(edm, (HttpMerge)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
     }
 
     @Override
