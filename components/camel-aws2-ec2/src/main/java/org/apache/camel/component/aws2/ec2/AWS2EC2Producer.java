@@ -71,41 +71,41 @@ public class AWS2EC2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case createAndRunInstances:
-            createAndRunInstance(getEndpoint().getEc2Client(), exchange);
-            break;
-        case startInstances:
-            startInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case stopInstances:
-            stopInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case terminateInstances:
-            terminateInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case describeInstances:
-            describeInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case describeInstancesStatus:
-            describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
-            break;
-        case rebootInstances:
-            rebootInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case monitorInstances:
-            monitorInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case unmonitorInstances:
-            unmonitorInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case createTags:
-            createTags(getEndpoint().getEc2Client(), exchange);
-            break;
-        case deleteTags:
-            deleteTags(getEndpoint().getEc2Client(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case createAndRunInstances:
+                createAndRunInstance(getEndpoint().getEc2Client(), exchange);
+                break;
+            case startInstances:
+                startInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case stopInstances:
+                stopInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case terminateInstances:
+                terminateInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case describeInstances:
+                describeInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case describeInstancesStatus:
+                describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
+                break;
+            case rebootInstances:
+                rebootInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case monitorInstances:
+                monitorInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case unmonitorInstances:
+                unmonitorInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case createTags:
+                createTags(getEndpoint().getEc2Client(), exchange);
+                break;
+            case deleteTags:
+                deleteTags(getEndpoint().getEc2Client(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
