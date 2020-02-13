@@ -60,32 +60,32 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_DEPLOYMENTS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_DEPLOYMENTS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_DEPLOYMENTS_BY_LABELS_OPERATION:
-            doListDeploymentsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_DEPLOYMENTS_BY_LABELS_OPERATION:
+                doListDeploymentsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_DEPLOYMENT:
-            doGetDeployment(exchange, operation);
-            break;
+            case KubernetesOperations.GET_DEPLOYMENT:
+                doGetDeployment(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_DEPLOYMENT:
-            doDeleteDeployment(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_DEPLOYMENT:
+                doDeleteDeployment(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_DEPLOYMENT:
-            doCreateDeployment(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_DEPLOYMENT:
+                doCreateDeployment(exchange, operation);
+                break;
 
-        case KubernetesOperations.SCALE_DEPLOYMENT:
-            doScaleDeployment(exchange, operation);
-            break;
+            case KubernetesOperations.SCALE_DEPLOYMENT:
+                doScaleDeployment(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -100,7 +100,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         DeploymentList deploymentList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
         NonNamespaceOperation<Deployment, DeploymentList, DoneableDeployment, RollableScalableResource<Deployment, DoneableDeployment>> deployments = getEndpoint()
-            .getKubernetesClient().apps().deployments();
+                .getKubernetesClient().apps().deployments();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             deployments.withLabel(entry.getKey(), entry.getValue());
         }

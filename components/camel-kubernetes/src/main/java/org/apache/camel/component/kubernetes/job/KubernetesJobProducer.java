@@ -60,28 +60,28 @@ public class KubernetesJobProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_JOB:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_JOB:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_JOB_BY_LABELS_OPERATION:
-            doListJobByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_JOB_BY_LABELS_OPERATION:
+                doListJobByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_JOB_OPERATION:
-            doGetJob(exchange, operation);
-            break;
+            case KubernetesOperations.GET_JOB_OPERATION:
+                doGetJob(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_JOB_OPERATION:
-            doCreateJob(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_JOB_OPERATION:
+                doCreateJob(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_JOB_OPERATION:
-            doDeleteJob(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_JOB_OPERATION:
+                doDeleteJob(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
