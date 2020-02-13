@@ -49,7 +49,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         try {
             SantuarioUtil.initializeSantuario();
             SantuarioUtil.addSantuarioJSR105Provider();
-        } catch (Throwable t) { //NOPMD
+        } catch (Throwable t) {
             // provider not in classpath, ignore and fall back to jre default
             LOG.info("Cannot add the SantuarioJSR105Provider due to {0}, fall back to JRE default.", t);
         }
