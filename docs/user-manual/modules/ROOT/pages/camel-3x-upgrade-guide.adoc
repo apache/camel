@@ -138,6 +138,25 @@ Should be changed to
 ipfs:add
 ----
 
+=== camel-xmlsecurity
+
+The `camel-xmlsecurity` component has changed its endpoint syntax from `xmlsecurity:command/name` to
+`xmlsecurity-sign:name`, `xmlsecurity-verify:name`.
+
+For example before
+
+[source,text]
+----
+xmlsecurity:verify/foo
+----
+
+Should be changed to
+----
+xmlsecurity-verify:foo
+----
+
+This change was needed as the 2 commands could not share the same component/endpoint and had to be separated.
+
 === spi-annotations
 
 The `spi-annotations` JAR is mandatory but was mistakenly defined as optional scope. The content of this JAR
