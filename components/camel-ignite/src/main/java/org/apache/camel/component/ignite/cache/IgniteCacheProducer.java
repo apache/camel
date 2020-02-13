@@ -58,36 +58,36 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
 
         switch (cacheOperationFor(exchange)) {
 
-        case GET:
-            doGet(in, out);
-            break;
+            case GET:
+                doGet(in, out);
+                break;
 
-        case PUT:
-            doPut(in, out);
-            break;
+            case PUT:
+                doPut(in, out);
+                break;
 
-        case QUERY:
-            doQuery(in, out, exchange);
-            break;
+            case QUERY:
+                doQuery(in, out, exchange);
+                break;
 
-        case REMOVE:
-            doRemove(in, out);
-            break;
+            case REMOVE:
+                doRemove(in, out);
+                break;
 
-        case CLEAR:
-            doClear(in, out);
-            break;
+            case CLEAR:
+                doClear(in, out);
+                break;
 
-        case SIZE:
-            doSize(in, out);
-            break;
+            case SIZE:
+                doSize(in, out);
+                break;
 
-        case REBALANCE:
-            doRebalance(in, out);
-            break;
+            case REBALANCE:
+                doRebalance(in, out);
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         callback.done(false);
