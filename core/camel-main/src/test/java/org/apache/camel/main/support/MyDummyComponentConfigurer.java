@@ -32,21 +32,21 @@ public class MyDummyComponentConfigurer extends PropertyConfigurerSupport implem
 
     private static boolean doConfigure(CamelContext camelContext, Object component, String name, Object value) {
         switch (name) {
-        case "configuration":
-            ((MyDummyComponent) component).setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
-            return true;
-        default:
-            return false;
+            case "configuration":
+                ((MyDummyComponent) component).setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
+                return true;
+            default:
+                return false;
         }
     }
 
     private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object component, String name, Object value) {
         switch (name.toLowerCase()) {
-        case "configuration":
-            ((MyDummyComponent) component).setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
-            return true;
-        default:
-            return false;
+            case "configuration":
+                ((MyDummyComponent) component).setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
+                return true;
+            default:
+                return false;
         }
     }
 }
