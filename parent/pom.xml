@@ -393,7 +393,6 @@
         <jt400-version>10.2</jt400-version>
         <jt400-bundle-version>10.2_1</jt400-bundle-version>
         <juel-bundle-version>2.1.3_1</juel-bundle-version>
-        <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
         <junit-bundle-version>4.11_1</junit-bundle-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
         <junit-version>4.12</junit-version>
