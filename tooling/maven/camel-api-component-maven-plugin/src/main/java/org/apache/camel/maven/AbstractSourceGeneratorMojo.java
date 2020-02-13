@@ -40,19 +40,19 @@ public abstract class AbstractSourceGeneratorMojo extends AbstractGeneratorMojo 
 
     protected void setCompileSourceRoots() {
         switch (addCompileSourceRoots) {
-        case source:
-            project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
-            project.addCompileSourceRoot(generatedTestDir.getAbsolutePath());
-            break;
-        case test:
-            project.addTestCompileSourceRoot(generatedSrcDir.getAbsolutePath());
-            project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
-            break;
-        case all:
-            project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
-            project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
-            break;
-        default:
+            case source:
+                project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
+                project.addCompileSourceRoot(generatedTestDir.getAbsolutePath());
+                break;
+            case test:
+                project.addTestCompileSourceRoot(generatedSrcDir.getAbsolutePath());
+                project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
+                break;
+            case all:
+                project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
+                project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
+                break;
+            default:
         }
     }
 

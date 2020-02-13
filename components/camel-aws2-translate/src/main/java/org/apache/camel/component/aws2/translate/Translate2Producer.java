@@ -48,11 +48,11 @@ public class Translate2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case translateText:
-            translateText(getEndpoint().getTranslateClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case translateText:
+                translateText(getEndpoint().getTranslateClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

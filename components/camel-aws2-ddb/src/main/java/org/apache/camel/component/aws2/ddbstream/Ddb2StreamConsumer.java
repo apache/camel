@@ -56,12 +56,12 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         GetRecordsResponse result;
         try {
             GetRecordsRequest.Builder req = GetRecordsRequest.builder().shardIterator(shardIteratorHandler.getShardIterator(null))
-                .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
+                    .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req.build());
         } catch (ExpiredIteratorException e) {
             LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
             GetRecordsRequest.Builder req = GetRecordsRequest.builder().shardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
-                .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
+                    .limit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req.build());
         }
         List<Record> records = result.records();
@@ -113,15 +113,15 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
             condition = BigIntComparisons.Conditions.LT;
         }
         switch (getEndpoint().getConfiguration().getIteratorType()) {
-        case AFTER_SEQUENCE_NUMBER:
-            condition = BigIntComparisons.Conditions.LT;
-            providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
-            break;
-        case AT_SEQUENCE_NUMBER:
-            condition = BigIntComparisons.Conditions.LTEQ;
-            providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
-            break;
-        default:
+            case AFTER_SEQUENCE_NUMBER:
+                condition = BigIntComparisons.Conditions.LT;
+                providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
+                break;
+            case AT_SEQUENCE_NUMBER:
+                condition = BigIntComparisons.Conditions.LTEQ;
+                providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
+                break;
+            default:
         }
         for (Record record : records) {
             BigInteger recordSeqNum = new BigInteger(record.dynamodb().sequenceNumber());

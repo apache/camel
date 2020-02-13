@@ -159,14 +159,14 @@ public class SalesforceLoginConfig {
 
         if (hasPassword && hasRefreshToken || hasPassword && hasKeystore || hasRefreshToken && hasKeystore) {
             throw new IllegalArgumentException("The provided authentication configuration can be used in multiple ways"
-                                               + " for instance both with username/password and refresh_token. Either remove some of the configuration"
-                                               + " options, so that authentication method can be auto-determined or explicitly set the authentication" + " type.");
+                    + " for instance both with username/password and refresh_token. Either remove some of the configuration"
+                    + " options, so that authentication method can be auto-determined or explicitly set the authentication" + " type.");
         }
 
         throw new IllegalArgumentException("You must specify parameters aligned with one of the supported authentication methods:"
-                                           + " for username and password authentication: userName, password, clientSecret;"
-                                           + " for refresh token authentication: refreshToken, clientSecret;"
-                                           + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
+                + " for username and password authentication: userName, password, clientSecret;"
+                + " for refresh token authentication: refreshToken, clientSecret;"
+                + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
     }
 
     public void setType(AuthenticationType type) {
@@ -214,28 +214,28 @@ public class SalesforceLoginConfig {
         final AuthenticationType type = getType();
 
         switch (type) {
-        case USERNAME_PASSWORD:
-            ObjectHelper.notNull(userName, "userName (username/password authentication)");
-            ObjectHelper.notNull(password, "password (username/password authentication)");
-            ObjectHelper.notNull(clientSecret, "clientSecret (username/password authentication)");
-            break;
-        case REFRESH_TOKEN:
-            ObjectHelper.notNull(refreshToken, "refreshToken (authentication with refresh token)");
-            ObjectHelper.notNull(clientSecret, "clientSecret (authentication with refresh token)");
-            break;
-        case JWT:
-            ObjectHelper.notNull(userName, "userName (JWT authentication)");
-            ObjectHelper.notNull(keystore, "keystore (JWT authentication)");
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown authentication type: " + type);
+            case USERNAME_PASSWORD:
+                ObjectHelper.notNull(userName, "userName (username/password authentication)");
+                ObjectHelper.notNull(password, "password (username/password authentication)");
+                ObjectHelper.notNull(clientSecret, "clientSecret (username/password authentication)");
+                break;
+            case REFRESH_TOKEN:
+                ObjectHelper.notNull(refreshToken, "refreshToken (authentication with refresh token)");
+                ObjectHelper.notNull(clientSecret, "clientSecret (authentication with refresh token)");
+                break;
+            case JWT:
+                ObjectHelper.notNull(userName, "userName (JWT authentication)");
+                ObjectHelper.notNull(keystore, "keystore (JWT authentication)");
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown authentication type: " + type);
         }
     }
 
     @Override
     public String toString() {
         return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + "," + "clientId='" + clientId + '\'' + ", clientSecret='********'"
-               + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'" + password + '\'' + ", keystore=********'" + keystore + '\''
-               + ", lazyLogin=" + lazyLogin + ']';
+                + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'" + password + '\'' + ", keystore=********'" + keystore + '\''
+                + ", lazyLogin=" + lazyLogin + ']';
     }
 }

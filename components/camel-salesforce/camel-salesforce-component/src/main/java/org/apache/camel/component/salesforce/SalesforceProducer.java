@@ -68,46 +68,46 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
     private static boolean isBulkOperation(OperationName operationName) {
         switch (operationName) {
-        case CREATE_JOB:
-        case GET_JOB:
-        case CLOSE_JOB:
-        case ABORT_JOB:
-        case CREATE_BATCH:
-        case GET_BATCH:
-        case GET_ALL_BATCHES:
-        case GET_REQUEST:
-        case GET_RESULTS:
-        case CREATE_BATCH_QUERY:
-        case GET_QUERY_RESULT_IDS:
-        case GET_QUERY_RESULT:
-            return true;
-        default:
-            return false;
+            case CREATE_JOB:
+            case GET_JOB:
+            case CLOSE_JOB:
+            case ABORT_JOB:
+            case CREATE_BATCH:
+            case GET_BATCH:
+            case GET_ALL_BATCHES:
+            case GET_REQUEST:
+            case GET_RESULTS:
+            case CREATE_BATCH_QUERY:
+            case GET_QUERY_RESULT_IDS:
+            case GET_QUERY_RESULT:
+                return true;
+            default:
+                return false;
         }
     }
 
     private static boolean isAnalyticsOperation(OperationName operationName) {
         switch (operationName) {
-        case GET_RECENT_REPORTS:
-        case GET_REPORT_DESCRIPTION:
-        case EXECUTE_SYNCREPORT:
-        case EXECUTE_ASYNCREPORT:
-        case GET_REPORT_INSTANCES:
-        case GET_REPORT_RESULTS:
-            return true;
-        default:
-            return false;
+            case GET_RECENT_REPORTS:
+            case GET_REPORT_DESCRIPTION:
+            case EXECUTE_SYNCREPORT:
+            case EXECUTE_ASYNCREPORT:
+            case GET_REPORT_INSTANCES:
+            case GET_REPORT_RESULTS:
+                return true;
+            default:
+                return false;
         }
     }
 
     private static boolean isCompositeOperation(OperationName operationName) {
         switch (operationName) {
-        case COMPOSITE_TREE:
-        case COMPOSITE_BATCH:
-        case COMPOSITE:
-            return true;
-        default:
-            return false;
+            case COMPOSITE_TREE:
+            case COMPOSITE_BATCH:
+            case COMPOSITE:
+                return true;
+            default:
+                return false;
         }
     }
 

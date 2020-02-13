@@ -60,28 +60,28 @@ public class KubernetesHPAProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_HPA:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_HPA:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_HPA_BY_LABELS_OPERATION:
-            doListHPAByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_HPA_BY_LABELS_OPERATION:
+                doListHPAByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_HPA_OPERATION:
-            doGetHPA(exchange, operation);
-            break;
+            case KubernetesOperations.GET_HPA_OPERATION:
+                doGetHPA(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_HPA_OPERATION:
-            doCreateHPA(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_HPA_OPERATION:
+                doCreateHPA(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_HPA_OPERATION:
-            doDeleteHPA(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_HPA_OPERATION:
+                doDeleteHPA(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -100,7 +100,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
         }
 
         FilterWatchListMultiDeletable<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Boolean, Watch, Watcher<HorizontalPodAutoscaler>> hpas = getEndpoint()
-            .getKubernetesClient().autoscaling().horizontalPodAutoscalers();
+                .getKubernetesClient().autoscaling().horizontalPodAutoscalers();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             hpas.withLabel(entry.getKey(), entry.getValue());
         }

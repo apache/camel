@@ -564,7 +564,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         Tracing brave = null;
         if (camelContext.isUseMDCLogging()) {
             brave = Tracing.newBuilder().currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder().addScopeDecorator(MDCScopeDecorator.create()).build())
-                .localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
+                    .localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
         } else {
             brave = Tracing.newBuilder().localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
         }
@@ -760,14 +760,14 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         @Override
         public boolean isEnabled(CamelEvent event) {
             switch (event.getType()) {
-            case ExchangeSending:
-            case ExchangeSent:
-            case ExchangeCreated:
-            case ExchangeCompleted:
-            case ExchangeFailed:
-                return true;
-            default:
-                return false;
+                case ExchangeSending:
+                case ExchangeSent:
+                case ExchangeCreated:
+                case ExchangeCompleted:
+                case ExchangeFailed:
+                    return true;
+                default:
+                    return false;
             }
         }
 

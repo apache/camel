@@ -241,14 +241,14 @@ public class ApnsServiceFactory implements CamelContextAware {
         }
 
         switch (getConnectionStrategy()) {
-        case QUEUE:
-            builder.asQueued();
-            break;
-        case POOL:
-            builder.asPool(getPoolSize());
-            break;
-        default:
-            break;
+            case QUEUE:
+                builder.asQueued();
+                break;
+            case POOL:
+                builder.asPool(getPoolSize());
+                break;
+            default:
+                break;
         }
     }
 
@@ -258,15 +258,15 @@ public class ApnsServiceFactory implements CamelContextAware {
         }
 
         switch (getReconnectionPolicy()) {
-        case EVERY_HALF_HOUR:
-            builder.withReconnectPolicy(ReconnectPolicy.Provided.EVERY_HALF_HOUR);
-            break;
-        case EVERY_NOTIFICATION:
-            builder.withReconnectPolicy(ReconnectPolicy.Provided.EVERY_NOTIFICATION);
-            break;
-        default:
-            builder.withReconnectPolicy(ReconnectPolicy.Provided.NEVER);
-            break;
+            case EVERY_HALF_HOUR:
+                builder.withReconnectPolicy(ReconnectPolicy.Provided.EVERY_HALF_HOUR);
+                break;
+            case EVERY_NOTIFICATION:
+                builder.withReconnectPolicy(ReconnectPolicy.Provided.EVERY_NOTIFICATION);
+                break;
+            default:
+                builder.withReconnectPolicy(ReconnectPolicy.Provided.NEVER);
+                break;
         }
     }
 

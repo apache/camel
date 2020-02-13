@@ -141,17 +141,17 @@ public class SalesforceConsumer extends DefaultConsumer {
         final org.apache.camel.Message in = exchange.getIn();
 
         switch (messageKind) {
-        case PUSH_TOPIC:
-            createPushTopicMessage(message, in);
-            break;
-        case PLATFORM_EVENT:
-            createPlatformEventMessage(message, in);
-            break;
-        case CHANGE_EVENT:
-            createChangeEventMessage(message, in);
-            break;
-        default:
-            throw new IllegalStateException("Unknown message kind: " + messageKind);
+            case PUSH_TOPIC:
+                createPushTopicMessage(message, in);
+                break;
+            case PLATFORM_EVENT:
+                createPlatformEventMessage(message, in);
+                break;
+            case CHANGE_EVENT:
+                createChangeEventMessage(message, in);
+                break;
+            default:
+                throw new IllegalStateException("Unknown message kind: " + messageKind);
         }
 
         try {

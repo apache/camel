@@ -99,7 +99,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + PEOPLE + "?delay=2&sendEmptyMessageWhenIdle=true&splitResult=false&filterAlreadySeen=true")
-                    .to("mock:consumer-alreadyseen");
+                        .to("mock:consumer-alreadyseen");
             }
         };
         addRouteAndStartContext(builder);
@@ -150,7 +150,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + PEOPLE + "?delay=2&sendEmptyMessageWhenIdle=false&splitResult=false&filterAlreadySeen=true")
-                    .to("mock:consumer-alreadyseen");
+                        .to("mock:consumer-alreadyseen");
             }
         };
         addRouteAndStartContext(builder);
@@ -188,7 +188,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&"
-                     + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
+                        + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
             }
         };
         addRouteAndStartContext(builder);
@@ -238,7 +238,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&"
-                     + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
+                        + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
             }
         };
         addRouteAndStartContext(builder);
@@ -293,16 +293,16 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             assertNotNull(nameProperty);
 
             switch (i) {
-            case 0:
-                assertEquals("russellwhyte", nameProperty.getValue().toString());
-                break;
-            case 1:
-                assertEquals("scottketchum", nameProperty.getValue().toString());
-                break;
-            case 2:
-                assertEquals("ronaldmundy", nameProperty.getValue().toString());
-                break;
-            default:
+                case 0:
+                    assertEquals("russellwhyte", nameProperty.getValue().toString());
+                    break;
+                case 1:
+                    assertEquals("scottketchum", nameProperty.getValue().toString());
+                    break;
+                case 2:
+                    assertEquals("ronaldmundy", nameProperty.getValue().toString());
+                    break;
+                default:
             }
         }
     }

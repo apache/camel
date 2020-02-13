@@ -84,19 +84,19 @@ public class JoltEndpoint extends ResourceEndpoint {
                 // getResourceAsInputStream also considers the content cache
                 Object spec = JsonUtils.jsonToObject(getResourceAsInputStream());
                 switch(this.transformDsl) {
-                case Shiftr:
-                    this.transform = new Shiftr(spec);
-                    break;
-                case Defaultr:
-                    this.transform = new Defaultr(spec);
-                    break;
-                case Removr:
-                    this.transform = new Removr(spec);
-                    break;
-                case Chainr:
-                default:
-                    this.transform = Chainr.fromSpec(spec);
-                    break;
+                    case Shiftr:
+                        this.transform = new Shiftr(spec);
+                        break;
+                    case Defaultr:
+                        this.transform = new Defaultr(spec);
+                        break;
+                    case Removr:
+                        this.transform = new Removr(spec);
+                        break;
+                    case Chainr:
+                    default:
+                        this.transform = Chainr.fromSpec(spec);
+                        break;
                 }
             }
 

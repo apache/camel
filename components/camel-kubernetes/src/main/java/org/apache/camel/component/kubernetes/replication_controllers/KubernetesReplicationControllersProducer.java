@@ -63,32 +63,32 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_REPLICATION_CONTROLLERS_OPERATION:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_REPLICATION_CONTROLLERS_OPERATION:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_REPLICATION_CONTROLLERS_BY_LABELS_OPERATION:
-            doListReplicationControllersByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_REPLICATION_CONTROLLERS_BY_LABELS_OPERATION:
+                doListReplicationControllersByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_REPLICATION_CONTROLLER_OPERATION:
-            doGetReplicationController(exchange, operation);
-            break;
+            case KubernetesOperations.GET_REPLICATION_CONTROLLER_OPERATION:
+                doGetReplicationController(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_REPLICATION_CONTROLLER_OPERATION:
-            doCreateReplicationController(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_REPLICATION_CONTROLLER_OPERATION:
+                doCreateReplicationController(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_REPLICATION_CONTROLLER_OPERATION:
-            doDeleteReplicationController(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_REPLICATION_CONTROLLER_OPERATION:
+                doDeleteReplicationController(exchange, operation);
+                break;
 
-        case KubernetesOperations.SCALE_REPLICATION_CONTROLLER_OPERATION:
-            doScaleReplicationController(exchange, operation);
-            break;
+            case KubernetesOperations.SCALE_REPLICATION_CONTROLLER_OPERATION:
+                doScaleReplicationController(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -112,14 +112,14 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         if (!ObjectHelper.isEmpty(namespaceName)) {
 
             NonNamespaceOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, RollableScalableResource<ReplicationController, DoneableReplicationController>> replicationControllers = getEndpoint()
-                .getKubernetesClient().replicationControllers().inNamespace(namespaceName);
+                    .getKubernetesClient().replicationControllers().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 replicationControllers.withLabel(entry.getKey(), entry.getValue());
             }
             rcList = replicationControllers.list();
         } else {
             FilterWatchListMultiDeletable<ReplicationController, ReplicationControllerList, Boolean, Watch, Watcher<ReplicationController>> replicationControllers = getEndpoint()
-                .getKubernetesClient().replicationControllers().inAnyNamespace();
+                    .getKubernetesClient().replicationControllers().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 replicationControllers.withLabel(entry.getKey(), entry.getValue());
             }

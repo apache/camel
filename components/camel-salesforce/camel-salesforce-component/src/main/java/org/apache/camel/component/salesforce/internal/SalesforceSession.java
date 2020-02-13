@@ -143,7 +143,7 @@ public class SalesforceSession implements Service {
     /**
      * Creates login request, allows SalesforceSecurityHandler to create a login
      * request for a failed authentication conversation
-     * 
+     *
      * @return login POST request.
      */
     public Request getLoginRequest(HttpConversation conversation) {
@@ -156,23 +156,23 @@ public class SalesforceSession implements Service {
 
         final AuthenticationType type = config.getType();
         switch (type) {
-        case USERNAME_PASSWORD:
-            fields.put("client_secret", config.getClientSecret());
-            fields.put("grant_type", "password");
-            fields.put("username", config.getUserName());
-            fields.put("password", config.getPassword());
-            break;
-        case REFRESH_TOKEN:
-            fields.put("client_secret", config.getClientSecret());
-            fields.put("grant_type", "refresh_token");
-            fields.put("refresh_token", config.getRefreshToken());
-            break;
-        case JWT:
-            fields.put("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
-            fields.put("assertion", generateJwtAssertion());
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported login configuration type: " + type);
+            case USERNAME_PASSWORD:
+                fields.put("client_secret", config.getClientSecret());
+                fields.put("grant_type", "password");
+                fields.put("username", config.getUserName());
+                fields.put("password", config.getPassword());
+                break;
+            case REFRESH_TOKEN:
+                fields.put("client_secret", config.getClientSecret());
+                fields.put("grant_type", "refresh_token");
+                fields.put("refresh_token", config.getRefreshToken());
+                break;
+            case JWT:
+                fields.put("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
+                fields.put("assertion", generateJwtAssertion());
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported login configuration type: " + type);
         }
 
         final Request post;
@@ -189,7 +189,7 @@ public class SalesforceSession implements Service {
         final long utcPlusWindow = Clock.systemUTC().millis() / 1000 + JWT_CLAIM_WINDOW;
 
         final StringBuilder claim = new StringBuilder().append("{\"iss\":\"").append(config.getClientId()).append("\",\"sub\":\"").append(config.getUserName())
-            .append("\",\"aud\":\"").append(config.getLoginUrl()).append("\",\"exp\":\"").append(utcPlusWindow).append("\"}");
+                .append("\",\"aud\":\"").append(config.getLoginUrl()).append("\",\"exp\":\"").append(utcPlusWindow).append("\"}");
 
         final StringBuilder token = new StringBuilder(JWT_HEADER).append('.').append(Base64.getUrlEncoder().encodeToString(claim.toString().getBytes(StandardCharsets.UTF_8)));
 
@@ -243,42 +243,42 @@ public class SalesforceSession implements Service {
 
         try {
             switch (responseStatus) {
-            case HttpStatus.OK_200:
-                // parse the response to get token
-                LoginToken token = objectMapper.readValue(responseContent, LoginToken.class);
+                case HttpStatus.OK_200:
+                    // parse the response to get token
+                    LoginToken token = objectMapper.readValue(responseContent, LoginToken.class);
 
-                // don't log token or instance URL for security reasons
-                LOG.info("Login successful");
-                accessToken = token.getAccessToken();
-                instanceUrl = Optional.ofNullable(config.getInstanceUrl()).orElse(token.getInstanceUrl());
-                // strip trailing '/'
-                int lastChar = instanceUrl.length() - 1;
-                if (instanceUrl.charAt(lastChar) == '/') {
-                    instanceUrl = instanceUrl.substring(0, lastChar);
-                }
-
-                // notify all session listeners
-                for (SalesforceSessionListener listener : listeners) {
-                    try {
-                        listener.onLogin(accessToken, instanceUrl);
-                    } catch (Throwable t) {
-                        LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
+                    // don't log token or instance URL for security reasons
+                    LOG.info("Login successful");
+                    accessToken = token.getAccessToken();
+                    instanceUrl = Optional.ofNullable(config.getInstanceUrl()).orElse(token.getInstanceUrl());
+                    // strip trailing '/'
+                    int lastChar = instanceUrl.length() - 1;
+                    if (instanceUrl.charAt(lastChar) == '/') {
+                        instanceUrl = instanceUrl.substring(0, lastChar);
                     }
-                }
 
-                break;
+                    // notify all session listeners
+                    for (SalesforceSessionListener listener : listeners) {
+                        try {
+                            listener.onLogin(accessToken, instanceUrl);
+                        } catch (Throwable t) {
+                            LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
+                        }
+                    }
 
-            case HttpStatus.BAD_REQUEST_400:
-                // parse the response to get error
-                final LoginError error = objectMapper.readValue(responseContent, LoginError.class);
-                final String errorCode = error.getError();
-                final String msg = String.format("Login error code:[%s] description:[%s]", error.getError(), error.getErrorDescription());
-                final List<RestError> errors = new ArrayList<>();
-                errors.add(new RestError(errorCode, msg));
-                throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
+                    break;
 
-            default:
-                throw new SalesforceException(String.format("Login error status:[%s] reason:[%s]", responseStatus, loginResponse.getReason()), responseStatus);
+                case HttpStatus.BAD_REQUEST_400:
+                    // parse the response to get error
+                    final LoginError error = objectMapper.readValue(responseContent, LoginError.class);
+                    final String errorCode = error.getError();
+                    final String msg = String.format("Login error code:[%s] description:[%s]", error.getError(), error.getErrorDescription());
+                    final List<RestError> errors = new ArrayList<>();
+                    errors.add(new RestError(errorCode, msg));
+                    throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
+
+                default:
+                    throw new SalesforceException(String.format("Login error status:[%s] reason:[%s]", responseStatus, loginResponse.getReason()), responseStatus);
             }
         } catch (IOException e) {
             String msg = "Login error: response parse exception " + e.getMessage();

@@ -91,32 +91,32 @@ public class S3Producer extends DefaultProducer {
             }
         } else {
             switch (operation) {
-            case copyObject:
-                copyObject(getEndpoint().getS3Client(), exchange);
-                break;
-            case deleteObject:
-                deleteObject(getEndpoint().getS3Client(), exchange);
-                break;
-            case listBuckets:
-                listBuckets(getEndpoint().getS3Client(), exchange);
-                break;
-            case deleteBucket:
-                deleteBucket(getEndpoint().getS3Client(), exchange);
-                break;
-            case downloadLink:
-                createDownloadLink(getEndpoint().getS3Client(), exchange);
-                break;
-            case listObjects:
-                listObjects(getEndpoint().getS3Client(), exchange);
-                break;
-            case getObject:
-                getObject(getEndpoint().getS3Client(), exchange);
-                break;
-            case getObjectRange:
-                getObjectRange(getEndpoint().getS3Client(), exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+                case copyObject:
+                    copyObject(getEndpoint().getS3Client(), exchange);
+                    break;
+                case deleteObject:
+                    deleteObject(getEndpoint().getS3Client(), exchange);
+                    break;
+                case listBuckets:
+                    listBuckets(getEndpoint().getS3Client(), exchange);
+                    break;
+                case deleteBucket:
+                    deleteBucket(getEndpoint().getS3Client(), exchange);
+                    break;
+                case downloadLink:
+                    createDownloadLink(getEndpoint().getS3Client(), exchange);
+                    break;
+                case listObjects:
+                    listObjects(getEndpoint().getS3Client(), exchange);
+                    break;
+                case getObject:
+                    getObject(getEndpoint().getS3Client(), exchange);
+                    break;
+                case getObjectRange:
+                    getObjectRange(getEndpoint().getS3Client(), exchange);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported operation");
             }
         }
     }
@@ -186,7 +186,7 @@ public class S3Producer extends DefaultProducer {
                 partSize = Math.min(partSize, contentLength - filePosition);
 
                 UploadPartRequest uploadRequest = new UploadPartRequest().withBucketName(getConfiguration().getBucketName()).withKey(keyName)
-                    .withUploadId(initResponse.getUploadId()).withPartNumber(part).withFileOffset(filePosition).withFile(filePayload).withPartSize(partSize);
+                        .withUploadId(initResponse.getUploadId()).withPartNumber(part).withFileOffset(filePosition).withFile(filePayload).withPartSize(partSize);
 
                 LOG.trace("Uploading part [{}] for {}", part, keyName);
                 partETags.add(getEndpoint().getS3Client().uploadPart(uploadRequest).getPartETag());

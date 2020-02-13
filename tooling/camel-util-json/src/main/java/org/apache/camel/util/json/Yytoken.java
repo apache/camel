@@ -18,7 +18,7 @@ package org.apache.camel.util.json;
 
 /**
  * Represents structural entities in JSON.
- * 
+ *
  * @since 2.0.0
  */
 class Yytoken {
@@ -60,30 +60,30 @@ class Yytoken {
          * unless it is a datum token.
          */
         switch (type) {
-        case COLON:
-            this.value = ":";
-            break;
-        case COMMA:
-            this.value = ",";
-            break;
-        case END:
-            this.value = "";
-            break;
-        case LEFT_BRACE:
-            this.value = "{";
-            break;
-        case LEFT_SQUARE:
-            this.value = "[";
-            break;
-        case RIGHT_BRACE:
-            this.value = "}";
-            break;
-        case RIGHT_SQUARE:
-            this.value = "]";
-            break;
-        default:
-            this.value = value;
-            break;
+            case COLON:
+                this.value = ":";
+                break;
+            case COMMA:
+                this.value = ",";
+                break;
+            case END:
+                this.value = "";
+                break;
+            case LEFT_BRACE:
+                this.value = "{";
+                break;
+            case LEFT_SQUARE:
+                this.value = "[";
+                break;
+            case RIGHT_BRACE:
+                this.value = "}";
+                break;
+            case RIGHT_SQUARE:
+                this.value = "]";
+                break;
+            default:
+                this.value = value;
+                break;
         }
         this.type = type;
     }

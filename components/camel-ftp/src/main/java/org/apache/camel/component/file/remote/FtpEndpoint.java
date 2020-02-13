@@ -44,12 +44,12 @@ import org.slf4j.LoggerFactory;
  * The ftp component is used for uploading or downloading files from FTP
  * servers.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP", syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName", label = "file", 
-excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                    + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                    + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                    + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                    + "renameUsingCopy")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP", syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName", label = "file",
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                + "renameUsingCopy")
 @ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
@@ -124,7 +124,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     /**
      * Default Existing File Move Strategy
-     * 
+     *
      * @return the default implementation for ftp components
      */
     private FileMoveExistingStrategy createDefaultFtpMoveExistingFileStrategy() {
@@ -201,8 +201,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created FTPClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
-                      + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}", client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
-                      client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
+                            + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}", client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
+                    client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
         }
 
         FtpOperations operations = new FtpOperations(client, getFtpClientConfig());
@@ -386,12 +386,12 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         // and therefore you need to be able to control that
         PathSeparator pathSeparator = getConfiguration().getSeparator();
         switch (pathSeparator) {
-        case Windows:
-            return '\\';
-        case UNIX:
-            return '/';
-        default:
-            return super.getFileSeparator();
+            case Windows:
+                return '\\';
+            case UNIX:
+                return '/';
+            default:
+                return super.getFileSeparator();
         }
     }
 }

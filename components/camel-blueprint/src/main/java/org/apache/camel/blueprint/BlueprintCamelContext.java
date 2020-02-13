@@ -108,7 +108,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     public void setBundleStateService(BlueprintCamelStateService bundleStateService) {
         this.bundleStateService = bundleStateService;
     }
-   
+
     @Override
     public void doInit() throws Exception {
         LOG.trace("init {}", this);
@@ -151,30 +151,30 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             String eventTypeString;
 
             switch (event.getType()) {
-            case BlueprintEvent.CREATING:
-                eventTypeString = "CREATING";
-                break;
-            case BlueprintEvent.CREATED:
-                eventTypeString = "CREATED";
-                break;
-            case BlueprintEvent.DESTROYING:
-                eventTypeString = "DESTROYING";
-                break;
-            case BlueprintEvent.DESTROYED:
-                eventTypeString = "DESTROYED";
-                break;
-            case BlueprintEvent.GRACE_PERIOD:
-                eventTypeString = "GRACE_PERIOD";
-                break;
-            case BlueprintEvent.WAITING:
-                eventTypeString = "WAITING";
-                break;
-            case BlueprintEvent.FAILURE:
-                eventTypeString = "FAILURE";
-                break;
-            default:
-                eventTypeString = "UNKNOWN";
-                break;
+                case BlueprintEvent.CREATING:
+                    eventTypeString = "CREATING";
+                    break;
+                case BlueprintEvent.CREATED:
+                    eventTypeString = "CREATED";
+                    break;
+                case BlueprintEvent.DESTROYING:
+                    eventTypeString = "DESTROYING";
+                    break;
+                case BlueprintEvent.DESTROYED:
+                    eventTypeString = "DESTROYED";
+                    break;
+                case BlueprintEvent.GRACE_PERIOD:
+                    eventTypeString = "GRACE_PERIOD";
+                    break;
+                case BlueprintEvent.WAITING:
+                    eventTypeString = "WAITING";
+                    break;
+                case BlueprintEvent.FAILURE:
+                    eventTypeString = "FAILURE";
+                    break;
+                default:
+                    eventTypeString = "UNKNOWN";
+                    break;
             }
 
             LOG.debug("Received BlueprintEvent[replay={} type={} bundle={}] {}", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
@@ -198,21 +198,21 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             String eventTypeString;
 
             switch (event.getType()) {
-            case ServiceEvent.REGISTERED:
-                eventTypeString = "REGISTERED";
-                break;
-            case ServiceEvent.MODIFIED:
-                eventTypeString = "MODIFIED";
-                break;
-            case ServiceEvent.UNREGISTERING:
-                eventTypeString = "UNREGISTERING";
-                break;
-            case ServiceEvent.MODIFIED_ENDMATCH:
-                eventTypeString = "MODIFIED_ENDMATCH";
-                break;
-            default:
-                eventTypeString = "UNKNOWN";
-                break;
+                case ServiceEvent.REGISTERED:
+                    eventTypeString = "REGISTERED";
+                    break;
+                case ServiceEvent.MODIFIED:
+                    eventTypeString = "MODIFIED";
+                    break;
+                case ServiceEvent.UNREGISTERING:
+                    eventTypeString = "UNREGISTERING";
+                    break;
+                case ServiceEvent.MODIFIED_ENDMATCH:
+                    eventTypeString = "MODIFIED_ENDMATCH";
+                    break;
+                default:
+                    eventTypeString = "UNKNOWN";
+                    break;
             }
 
             // use trace logging as this is very noisy

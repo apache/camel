@@ -48,11 +48,11 @@ public class ObjectConverterTest extends Assert {
     public void testIterable() {
         for (final String name : (Iterable<String>)ObjectConverter.iterable("Claus,Jonathan")) {
             switch (name) {
-            case "Claus":
-            case "Jonathan":
-                break;
-            default:
-                fail();
+                case "Claus":
+                case "Jonathan":
+                    break;
+                default:
+                    fail();
             }
         }
     }

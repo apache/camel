@@ -70,17 +70,17 @@ public class SqsProducer extends DefaultProducer {
             processSingleMessage(exchange);
         } else {
             switch (operation) {
-            case sendBatchMessage:
-                sendBatchMessage(getClient(), exchange);
-                break;
-            case deleteMessage:
-                deleteMessage(getClient(), exchange);
-                break;
-            case listQueues:
-                listQueues(getClient(), exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+                case sendBatchMessage:
+                    sendBatchMessage(getClient(), exchange);
+                    break;
+                case deleteMessage:
+                    deleteMessage(getClient(), exchange);
+                    break;
+                case listQueues:
+                    listQueues(getClient(), exchange);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported operation");
             }
         }
     }

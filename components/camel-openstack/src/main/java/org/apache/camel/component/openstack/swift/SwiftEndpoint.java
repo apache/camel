@@ -68,12 +68,12 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (subsystem) {
-        case SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS:
-            return new ObjectProducer(this, createClient());
-        case SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS:
-            return new ContainerProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS:
+                return new ObjectProducer(this, createClient());
+            case SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS:
+                return new ContainerProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 

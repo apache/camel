@@ -199,15 +199,15 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }
                         updateResource(configurerSourceOutDir.toPath(),
-                                       pn.replace('.', '/') + "/" + cn + "Configurer.java",
-                                       generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
+                                pn.replace('.', '/') + "/" + cn + "Configurer.java",
+                                generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
                         updateResource(configurerResourceOutDir.toPath(),
-                                       "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer",
-                                       generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
+                                "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat-configurer",
+                                generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
                     }
                 } else {
                     throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion()
-                                                     + ".jar file. Make sure camel-core has been built first.");
+                            + ".jar file. Make sure camel-core has been built first.");
                 }
             }
         } catch (Exception e) {
@@ -270,37 +270,37 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
             if ("type".equals(option.getName()) && "bindy".equals(model.getModelName())) {
                 switch (name) {
-                case "bindy-csv":
-                    option.setDefaultValue("Csv");
-                    break;
-                case "bindy-fixed":
-                    option.setDefaultValue("Fixed");
-                    break;
-                case "bindy-kvp":
-                    option.setDefaultValue("KeyValue");
-                    break;
-                default:
+                    case "bindy-csv":
+                        option.setDefaultValue("Csv");
+                        break;
+                    case "bindy-fixed":
+                        option.setDefaultValue("Fixed");
+                        break;
+                    case "bindy-kvp":
+                        option.setDefaultValue("KeyValue");
+                        break;
+                    default:
                 }
 
             }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
-                case "json-gson":
-                    option.setDefaultValue("Gson");
-                    break;
-                case "json-jackson":
-                    option.setDefaultValue("Jackson");
-                    break;
-                case "json-johnzon":
-                    option.setDefaultValue("Johnzon");
-                    break;
-                case "json-fastson":
-                    option.setDefaultValue("Fastjson");
-                    break;
-                case "json-xstream":
-                    option.setDefaultValue("XStream");
-                    break;
-                default:
+                    case "json-gson":
+                        option.setDefaultValue("Gson");
+                        break;
+                    case "json-jackson":
+                        option.setDefaultValue("Jackson");
+                        break;
+                    case "json-johnzon":
+                        option.setDefaultValue("Johnzon");
+                        break;
+                    case "json-fastson":
+                        option.setDefaultValue("Fastjson");
+                        break;
+                    case "json-xstream":
+                        option.setDefaultValue("XStream");
+                        break;
+                    default:
                 }
             }
             model.addOption(option);
@@ -353,18 +353,18 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
     private static String asModelFirstVersion(String name, String firstVersion) {
         switch (name) {
-        case "json-gson":
-            return "2.10.0";
-        case "json-jackson":
-            return "2.0.0";
-        case "json-johnzon":
-            return "2.18.0";
-        case "json-xstream":
-            return "2.0.0";
-        case "json-fastjson":
-            return "2.20.0";
-        default:
-            return firstVersion;
+            case "json-gson":
+                return "2.10.0";
+            case "json-jackson":
+                return "2.0.0";
+            case "json-johnzon":
+                return "2.18.0";
+            case "json-xstream":
+                return "2.0.0";
+            case "json-fastjson":
+                return "2.20.0";
+            default:
+                return firstVersion;
         }
     }
 

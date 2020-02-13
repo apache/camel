@@ -102,37 +102,37 @@ public class JcrProducer extends DefaultProducer {
         }
         return result;
     }
-    
+
     private Class<?> classForJCRType(Property property) throws RepositoryException {
         switch (property.getType()) {
-        case PropertyType.STRING:
-            return String.class;
-        case PropertyType.BINARY:
-            return InputStream.class;
-        case PropertyType.BOOLEAN:
-            return Boolean.class;
-        case PropertyType.LONG:
-            return Long.class;
-        case PropertyType.DOUBLE:
-            return Double.class;
-        case PropertyType.DECIMAL:
-            return BigDecimal.class;
-        case PropertyType.DATE:
-            return Calendar.class;
-        case PropertyType.NAME:
-            return String.class;
-        case PropertyType.PATH:
-            return String.class;
-        case PropertyType.REFERENCE:
-            return String.class;
-        case PropertyType.WEAKREFERENCE:
-            return String.class;
-        case PropertyType.URI:
-            return String.class;
-        case PropertyType.UNDEFINED:
-            return String.class;
-        default:
-            throw new IllegalArgumentException("unknown type: " + property.getType());
+            case PropertyType.STRING:
+                return String.class;
+            case PropertyType.BINARY:
+                return InputStream.class;
+            case PropertyType.BOOLEAN:
+                return Boolean.class;
+            case PropertyType.LONG:
+                return Long.class;
+            case PropertyType.DOUBLE:
+                return Double.class;
+            case PropertyType.DECIMAL:
+                return BigDecimal.class;
+            case PropertyType.DATE:
+                return Calendar.class;
+            case PropertyType.NAME:
+                return String.class;
+            case PropertyType.PATH:
+                return String.class;
+            case PropertyType.REFERENCE:
+                return String.class;
+            case PropertyType.WEAKREFERENCE:
+                return String.class;
+            case PropertyType.URI:
+                return String.class;
+            case PropertyType.UNDEFINED:
+                return String.class;
+            default:
+                throw new IllegalArgumentException("unknown type: " + property.getType());
         }
     }
 
@@ -171,7 +171,7 @@ public class JcrProducer extends DefaultProducer {
     }
 
     protected Session openSession() throws RepositoryException {
-        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) { 
+        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) {
             return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
         } else {
             return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(), getJcrEndpoint().getWorkspaceName());

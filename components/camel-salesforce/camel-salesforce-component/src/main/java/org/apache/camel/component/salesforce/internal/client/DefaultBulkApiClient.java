@@ -380,21 +380,21 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         String result = null;
 
         switch (type) {
-        case CSV:
-            result = "text/csv";
-            break;
+            case CSV:
+                result = "text/csv";
+                break;
 
-        case XML:
-            result = "application/xml";
-            break;
+            case XML:
+                result = "application/xml";
+                break;
 
-        case ZIP_CSV:
-        case ZIP_XML:
-            result = type.toString().toLowerCase().replace('_', '/');
-            break;
+            case ZIP_CSV:
+            case ZIP_XML:
+                result = type.toString().toLowerCase().replace('_', '/');
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         return result;

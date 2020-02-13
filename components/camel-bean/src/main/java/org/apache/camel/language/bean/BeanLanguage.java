@@ -55,17 +55,17 @@ public class BeanLanguage extends LanguageSupport implements GeneratedPropertyCo
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bean": 
-            setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value)); return true;
-        case "beantype":
-        case "beanType": 
-            setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
-        case "ref": 
-            setRef(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-        case "method": 
-            setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-        default: 
-            return false;
+            case "bean":
+                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value)); return true;
+            case "beantype":
+            case "beanType":
+                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+            case "ref":
+                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "method":
+                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            default:
+                return false;
         }
     }
 

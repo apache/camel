@@ -63,20 +63,20 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_BUILD_CONFIGS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_BUILD_CONFIGS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_BUILD_CONFIGS_BY_LABELS_OPERATION:
-            doListBuildConfigsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_BUILD_CONFIGS_BY_LABELS_OPERATION:
+                doListBuildConfigsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_BUILD_CONFIG_OPERATION:
-            doGetBuildConfig(exchange, operation);
-            break;
+            case KubernetesOperations.GET_BUILD_CONFIG_OPERATION:
+                doGetBuildConfig(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

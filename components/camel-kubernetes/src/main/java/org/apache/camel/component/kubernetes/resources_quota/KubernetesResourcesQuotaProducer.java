@@ -61,28 +61,28 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_RESOURCES_QUOTA:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_RESOURCES_QUOTA:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
-            doListResourceQuotasByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SECRETS_BY_LABELS_OPERATION:
+                doListResourceQuotasByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_RESOURCE_QUOTA_OPERATION:
-            doGetResourceQuota(exchange, operation);
-            break;
+            case KubernetesOperations.GET_RESOURCE_QUOTA_OPERATION:
+                doGetResourceQuota(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_RESOURCE_QUOTA_OPERATION:
-            doCreateResourceQuota(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_RESOURCE_QUOTA_OPERATION:
+                doCreateResourceQuota(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
-            doDeleteResourceQuota(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
+                doDeleteResourceQuota(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

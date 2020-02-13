@@ -35,32 +35,32 @@ public final class RegexUtil {
         for (int i = 0; i < wildcard.length(); i++) {
             final char c = wildcard.charAt(i);
             switch (c) {
-            case '*':
-                sb.append(".*?");
-                break;
-            case '?':
-                sb.append(".");
-                break;
-            // chars that have magic regex meaning. They need quoting to be taken literally
-            case '$':
-            case '(':
-            case ')':
-            case '+':
-            case '-':
-            case '.':
-            case '[':
-            case '\\':
-            case ']':
-            case '^':
-            case '{':
-            case '|':
-            case '}':
-                sb.append('\\');
-                sb.append(c);
-                break;
-            default:
-                sb.append(c);
-                break;
+                case '*':
+                    sb.append(".*?");
+                    break;
+                case '?':
+                    sb.append(".");
+                    break;
+                // chars that have magic regex meaning. They need quoting to be taken literally
+                case '$':
+                case '(':
+                case ')':
+                case '+':
+                case '-':
+                case '.':
+                case '[':
+                case '\\':
+                case ']':
+                case '^':
+                case '{':
+                case '|':
+                case '}':
+                    sb.append('\\');
+                    sb.append(c);
+                    break;
+                default:
+                    sb.append(c);
+                    break;
             }
         }
         return sb.toString();

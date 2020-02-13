@@ -71,16 +71,16 @@ public class NeutronEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (getSubsystem()) {
-        case NeutronConstants.NEUTRON_NETWORK_SUBSYSTEM:
-            return new NetworkProducer(this, createClient());
-        case NeutronConstants.NEUTRON_SUBNETS_SYSTEM:
-            return new SubnetProducer(this, createClient());
-        case NeutronConstants.NEUTRON_PORT_SYSTEM:
-            return new PortProducer(this, createClient());
-        case NeutronConstants.NEUTRON_ROUTER_SYSTEM:
-            return new RouterProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case NeutronConstants.NEUTRON_NETWORK_SUBSYSTEM:
+                return new NetworkProducer(this, createClient());
+            case NeutronConstants.NEUTRON_SUBNETS_SYSTEM:
+                return new SubnetProducer(this, createClient());
+            case NeutronConstants.NEUTRON_PORT_SYSTEM:
+                return new PortProducer(this, createClient());
+            case NeutronConstants.NEUTRON_ROUTER_SYSTEM:
+                return new RouterProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 

@@ -96,37 +96,37 @@ class XMLStreamReaderInputStream extends InputStream {
                 while (reader.hasNext()) {
                     int code = reader.next();
                     switch (code) {
-                    case XMLStreamConstants.END_DOCUMENT:
-                        writer.writeEndDocument();
-                        break;
-                    case XMLStreamConstants.START_ELEMENT:
-                        QName qname = reader.getName();
-                        writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
-                        for (int i = 0; i < reader.getAttributeCount(); i++) {
-                            String namespaceUri = reader.getAttributeNamespace(i);
-                            writer.writeAttribute(reader.getAttributePrefix(i), namespaceUri == null ? "" : namespaceUri, reader.getAttributeLocalName(i),
-                                                  reader.getAttributeValue(i));
-                        }
-                        for (int i = 0; i < reader.getNamespaceCount(); i++) {
-                            String namespacePrefix = reader.getNamespacePrefix(i);
-                            String namespaceURI = reader.getNamespaceURI(i);
-                            writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix, namespaceURI == null ? "" : namespaceURI);
-                        }
-                        break;
-                    case XMLStreamConstants.END_ELEMENT:
-                        writer.writeEndElement();
-                        break;
-                    case XMLStreamConstants.CHARACTERS:
-                        writer.writeCharacters(reader.getText());
-                        break;
-                    case XMLStreamConstants.COMMENT:
-                        writer.writeComment(reader.getText());
-                        break;
-                    case XMLStreamConstants.CDATA:
-                        writer.writeCData(reader.getText());
-                        break;
-                    default:
-                        break;
+                        case XMLStreamConstants.END_DOCUMENT:
+                            writer.writeEndDocument();
+                            break;
+                        case XMLStreamConstants.START_ELEMENT:
+                            QName qname = reader.getName();
+                            writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
+                            for (int i = 0; i < reader.getAttributeCount(); i++) {
+                                String namespaceUri = reader.getAttributeNamespace(i);
+                                writer.writeAttribute(reader.getAttributePrefix(i), namespaceUri == null ? "" : namespaceUri, reader.getAttributeLocalName(i),
+                                        reader.getAttributeValue(i));
+                            }
+                            for (int i = 0; i < reader.getNamespaceCount(); i++) {
+                                String namespacePrefix = reader.getNamespacePrefix(i);
+                                String namespaceURI = reader.getNamespaceURI(i);
+                                writer.writeNamespace(namespacePrefix == null ? "" : namespacePrefix, namespaceURI == null ? "" : namespaceURI);
+                            }
+                            break;
+                        case XMLStreamConstants.END_ELEMENT:
+                            writer.writeEndElement();
+                            break;
+                        case XMLStreamConstants.CHARACTERS:
+                            writer.writeCharacters(reader.getText());
+                            break;
+                        case XMLStreamConstants.COMMENT:
+                            writer.writeComment(reader.getText());
+                            break;
+                        case XMLStreamConstants.CDATA:
+                            writer.writeCData(reader.getText());
+                            break;
+                        default:
+                            break;
                     }
 
                     // check if the chunk is full

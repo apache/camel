@@ -49,24 +49,24 @@ public enum HttpMethods implements Expression {
 
     public HttpRequestBase createMethod(final String url) {
         switch (this) {
-        case GET:
-            return new HttpGet(url);
-        case PATCH:
-            return new HttpPatch(url);
-        case POST:
-            return new HttpPost(url);
-        case PUT:
-            return new HttpPut(url);
-        case DELETE:
-            return new HttpDelete(url);
-        case HEAD:
-            return new HttpHead(url);
-        case OPTIONS:
-            return new HttpOptions(url);
-        case TRACE:
-            return new HttpTrace(url);
-        default:
-            throw new RuntimeException("no such method " + this);
+            case GET:
+                return new HttpGet(url);
+            case PATCH:
+                return new HttpPatch(url);
+            case POST:
+                return new HttpPost(url);
+            case PUT:
+                return new HttpPut(url);
+            case DELETE:
+                return new HttpDelete(url);
+            case HEAD:
+                return new HttpHead(url);
+            case OPTIONS:
+                return new HttpOptions(url);
+            case TRACE:
+                return new HttpTrace(url);
+            default:
+                throw new RuntimeException("no such method " + this);
         }
     }
 

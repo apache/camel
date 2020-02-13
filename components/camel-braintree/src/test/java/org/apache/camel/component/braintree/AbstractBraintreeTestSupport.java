@@ -91,23 +91,23 @@ public class AbstractBraintreeTestSupport extends CamelTestSupport {
         AuthenticationType configurationType = getAuthenticationType();
         LOG.info(String.format("Test using %s configuration profile", configurationType));
         switch (configurationType) {
-        case PUBLIC_PRIVATE_KEYS:
-            addOptionIfMissing(options, "environment", "CAMEL_BRAINTREE_ENVIRONMENT");
-            addOptionIfMissing(options, "merchantId", "CAMEL_BRAINTREE_MERCHANT_ID");
-            addOptionIfMissing(options, "publicKey", "CAMEL_BRAINTREE_PUBLIC_KEY");
-            addOptionIfMissing(options, "privateKey", "CAMEL_BRAINTREE_PRIVATE_KEY");
-            options.remove("accessToken");
-            options.remove("clientId");
-            break;
-        case ACCESS_TOKEN:
-            addOptionIfMissing(options, "accessToken", "CAMEL_BRAINTREE_ACCESS_TOKEN");
-            options.remove("environment");
-            options.remove("merchantId");
-            options.remove("publicKey");
-            options.remove("privateKey");
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported configuration type");
+            case PUBLIC_PRIVATE_KEYS:
+                addOptionIfMissing(options, "environment", "CAMEL_BRAINTREE_ENVIRONMENT");
+                addOptionIfMissing(options, "merchantId", "CAMEL_BRAINTREE_MERCHANT_ID");
+                addOptionIfMissing(options, "publicKey", "CAMEL_BRAINTREE_PUBLIC_KEY");
+                addOptionIfMissing(options, "privateKey", "CAMEL_BRAINTREE_PRIVATE_KEY");
+                options.remove("accessToken");
+                options.remove("clientId");
+                break;
+            case ACCESS_TOKEN:
+                addOptionIfMissing(options, "accessToken", "CAMEL_BRAINTREE_ACCESS_TOKEN");
+                options.remove("environment");
+                options.remove("merchantId");
+                options.remove("publicKey");
+                options.remove("privateKey");
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported configuration type");
         }
 
         final BraintreeConfiguration configuration = new BraintreeConfiguration();

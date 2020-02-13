@@ -577,7 +577,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             boolean valid = oldExchange == null || answer.getExchangeId().equals(oldExchange.getExchangeId());
             if (!valid && aggregateRepositoryWarned.compareAndSet(false, true)) {
                 LOG.warn("AggregationStrategy should return the oldExchange instance instead of the newExchange whenever possible"
-                    + " as otherwise this can lead to unexpected behavior with some RecoverableAggregationRepository implementations");
+                        + " as otherwise this can lead to unexpected behavior with some RecoverableAggregationRepository implementations");
             }
         }
 
@@ -827,30 +827,30 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
             String completedBy = exchange.getProperty(Exchange.AGGREGATED_COMPLETED_BY, String.class);
             switch (completedBy) {
-            case COMPLETED_BY_INTERVAL:
-                completedByInterval.incrementAndGet();
-                break;
-            case COMPLETED_BY_TIMEOUT:
-                completedByTimeout.incrementAndGet();
-                break;
-            case COMPLETED_BY_FORCE:
-                completedByForce.incrementAndGet();
-                break;
-            case COMPLETED_BY_CONSUMER:
-                completedByBatchConsumer.incrementAndGet();
-                break;
-            case COMPLETED_BY_PREDICATE:
-                completedByPredicate.incrementAndGet();
-                break;
-            case COMPLETED_BY_SIZE:
-                completedBySize.incrementAndGet();
-                break;
-            case COMPLETED_BY_STRATEGY:
-                completedByStrategy.incrementAndGet();
-                break;
-            default:
-                LOG.error("Invalid value of {} property: {}", Exchange.AGGREGATED_COMPLETED_BY, exchange);
-                break;
+                case COMPLETED_BY_INTERVAL:
+                    completedByInterval.incrementAndGet();
+                    break;
+                case COMPLETED_BY_TIMEOUT:
+                    completedByTimeout.incrementAndGet();
+                    break;
+                case COMPLETED_BY_FORCE:
+                    completedByForce.incrementAndGet();
+                    break;
+                case COMPLETED_BY_CONSUMER:
+                    completedByBatchConsumer.incrementAndGet();
+                    break;
+                case COMPLETED_BY_PREDICATE:
+                    completedByPredicate.incrementAndGet();
+                    break;
+                case COMPLETED_BY_SIZE:
+                    completedBySize.incrementAndGet();
+                    break;
+                case COMPLETED_BY_STRATEGY:
+                    completedByStrategy.incrementAndGet();
+                    break;
+                default:
+                    LOG.error("Invalid value of {} property: {}", Exchange.AGGREGATED_COMPLETED_BY, exchange);
+                    break;
             }
         }
 
@@ -1264,7 +1264,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
             if (optimisticLocking && evictionStolen) {
                 log.debug("Another Camel instance has already successfully correlated or processed this timeout eviction "
-                          + "for exchange with id: {} and correlation id: {}", exchangeId, key);
+                        + "for exchange with id: {} and correlation id: {}", exchangeId, key);
             }
         }
     }

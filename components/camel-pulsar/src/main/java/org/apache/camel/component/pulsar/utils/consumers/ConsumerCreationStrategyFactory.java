@@ -41,14 +41,14 @@ public final class ConsumerCreationStrategyFactory {
         final SubscriptionType type = subscriptionType == null ? SubscriptionType.EXCLUSIVE : subscriptionType;
 
         switch (type) {
-        case SHARED:
-            return new SharedConsumerStrategy(pulsarConsumer);
-        case EXCLUSIVE:
-            return new ExclusiveConsumerStrategy(pulsarConsumer);
-        case FAILOVER:
-            return new FailoverConsumerStrategy(pulsarConsumer);
-        default:
-            return new ExclusiveConsumerStrategy(pulsarConsumer);
+            case SHARED:
+                return new SharedConsumerStrategy(pulsarConsumer);
+            case EXCLUSIVE:
+                return new ExclusiveConsumerStrategy(pulsarConsumer);
+            case FAILOVER:
+                return new FailoverConsumerStrategy(pulsarConsumer);
+            default:
+                return new ExclusiveConsumerStrategy(pulsarConsumer);
         }
     }
 }

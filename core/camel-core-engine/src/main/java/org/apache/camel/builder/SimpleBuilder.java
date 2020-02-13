@@ -72,11 +72,11 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "resulttype":
-        case "resultType": 
-            setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
-        default: 
-            return false;
+            case "resulttype":
+            case "resultType":
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+            default:
+                return false;
         }
     }
 

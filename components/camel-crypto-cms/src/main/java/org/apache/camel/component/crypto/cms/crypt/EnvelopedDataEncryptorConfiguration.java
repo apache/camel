@@ -224,36 +224,36 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
         } else if (AES_CBC_PKCS5_PADDING.equals(getContentEncryptionAlgorithm())) {
 
             switch (getSecretKeyLength()) {
-            case 256:
-                algorithmId = CMSAlgorithm.AES256_CBC;
-                break;
-            case 192:
-                algorithmId = CMSAlgorithm.AES192_CBC;
-                break;
-            case 128:
-                algorithmId = CMSAlgorithm.AES128_CBC;
-                break;
+                case 256:
+                    algorithmId = CMSAlgorithm.AES256_CBC;
+                    break;
+                case 192:
+                    algorithmId = CMSAlgorithm.AES192_CBC;
+                    break;
+                case 128:
+                    algorithmId = CMSAlgorithm.AES128_CBC;
+                    break;
 
-            default:
-                // should not happen, has already been checked
-                throw new IllegalStateException("Unsupported secret key length " + getSecretKeyLength() + " for algorithm AES");
+                default:
+                    // should not happen, has already been checked
+                    throw new IllegalStateException("Unsupported secret key length " + getSecretKeyLength() + " for algorithm AES");
             }
 
         } else if (CAMELLIA_CBC_PKCS5_PADDING.equals(getContentEncryptionAlgorithm())) {
 
             switch (getSecretKeyLength()) {
-            case 256:
-                algorithmId = CMSAlgorithm.CAMELLIA256_CBC;
-                break;
-            case 192:
-                algorithmId = CMSAlgorithm.CAMELLIA192_CBC;
-                break;
-            case 128:
-                algorithmId = CMSAlgorithm.CAMELLIA128_CBC;
-                break;
-            default:
-                // should not happen, has already been checked
-                throw new IllegalStateException("Unsupported secret key length " + getSecretKeyLength() + " for algorithm Camellia");
+                case 256:
+                    algorithmId = CMSAlgorithm.CAMELLIA256_CBC;
+                    break;
+                case 192:
+                    algorithmId = CMSAlgorithm.CAMELLIA192_CBC;
+                    break;
+                case 128:
+                    algorithmId = CMSAlgorithm.CAMELLIA128_CBC;
+                    break;
+                default:
+                    // should not happen, has already been checked
+                    throw new IllegalStateException("Unsupported secret key length " + getSecretKeyLength() + " for algorithm Camellia");
             }
 
         } else if (RC2_CBC_PKCS5_PADDING.equals(getContentEncryptionAlgorithm())) {
@@ -273,7 +273,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
 
     /**
      * Content encryption algorithm.
-     * 
+     *
      * @return algorithm Id
      */
     public ASN1ObjectIdentifier getAlgorithmID() {
