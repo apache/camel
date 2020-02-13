@@ -101,17 +101,17 @@ public class KubernetesLeadershipController implements Service {
 
     private void refreshStatus() {
         switch (currentState) {
-        case NOT_LEADER:
-            refreshStatusNotLeader();
-            break;
-        case BECOMING_LEADER:
-            refreshStatusBecomingLeader();
-            break;
-        case LEADER:
-            refreshStatusLeader();
-            break;
-        default:
-            throw new RuntimeException("Unsupported state " + currentState);
+            case NOT_LEADER:
+                refreshStatusNotLeader();
+                break;
+            case BECOMING_LEADER:
+                refreshStatusBecomingLeader();
+                break;
+            case LEADER:
+                refreshStatusLeader();
+                break;
+            default:
+                throw new RuntimeException("Unsupported state " + currentState);
         }
     }
 
@@ -160,7 +160,7 @@ public class KubernetesLeadershipController implements Service {
         }
 
         this.leaderNotifier.refreshLeadership(Optional.ofNullable(this.latestLeaderInfo.getLeader()), System.currentTimeMillis(), this.lockConfiguration.getLeaseDurationMillis(),
-                                              this.latestLeaderInfo.getMembers());
+                this.latestLeaderInfo.getMembers());
         rescheduleAfterDelay();
     }
 
@@ -174,7 +174,7 @@ public class KubernetesLeadershipController implements Service {
         // old version of the pod to shut down
         long delay = this.lockConfiguration.getLeaseDurationMillis();
         LOG.info("{} Current pod owns the leadership, but it will be effective in {} seconds...", logPrefix(),
-                 new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
+                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
 
         try {
             Thread.sleep(delay);
@@ -199,7 +199,7 @@ public class KubernetesLeadershipController implements Service {
         if (this.latestLeaderInfo.isValidLeader(this.lockConfiguration.getPodName())) {
             LOG.debug("{} Current Pod is still the leader", logPrefix());
             this.leaderNotifier.refreshLeadership(Optional.of(this.lockConfiguration.getPodName()), timeBeforePulling, this.lockConfiguration.getRenewDeadlineMillis(),
-                                                  this.latestLeaderInfo.getMembers());
+                    this.latestLeaderInfo.getMembers());
             rescheduleAfterDelay();
             return;
         } else {
@@ -215,7 +215,7 @@ public class KubernetesLeadershipController implements Service {
 
     private void rescheduleAfterDelay() {
         this.serializedExecutor.schedule(this::refreshStatus, jitter(this.lockConfiguration.getRetryPeriodMillis(), this.lockConfiguration.getJitterFactor()),
-                                         TimeUnit.MILLISECONDS);
+                TimeUnit.MILLISECONDS);
     }
 
     private boolean lookupNewLeaderInfo() {
@@ -275,8 +275,8 @@ public class KubernetesLeadershipController implements Service {
             } catch (Exception ex) {
                 // Suppress exception
                 LOG.warn(logPrefix()
-                         + " Unable to create the ConfigMap, it may have been created by other cluster members concurrently. If the problem persists, check if the service account has "
-                         + "the right " + "permissions to create it");
+                        + " Unable to create the ConfigMap, it may have been created by other cluster members concurrently. If the problem persists, check if the service account has "
+                        + "the right " + "permissions to create it");
                 LOG.debug(logPrefix() + " Exception while trying to create the ConfigMap", ex);
                 return false;
             }
@@ -290,7 +290,7 @@ public class KubernetesLeadershipController implements Service {
                 try {
                     ConfigMap updatedConfigMap = ConfigMapLockUtils.getConfigMapWithNewLeader(configMap, newLeaderInfo);
                     kubernetesClient.configMaps().inNamespace(this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient))
-                        .withName(this.lockConfiguration.getConfigMapName()).lockResourceVersion(configMap.getMetadata().getResourceVersion()).replace(updatedConfigMap);
+                            .withName(this.lockConfiguration.getConfigMapName()).lockResourceVersion(configMap.getMetadata().getResourceVersion()).replace(updatedConfigMap);
 
                     LOG.debug("{} ConfigMap {} successfully updated", logPrefix(), this.lockConfiguration.getConfigMapName());
                     updateLatestLeaderInfo(updatedConfigMap, members);
@@ -318,12 +318,12 @@ public class KubernetesLeadershipController implements Service {
 
     private ConfigMap pullConfigMap() {
         return kubernetesClient.configMaps().inNamespace(this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient))
-            .withName(this.lockConfiguration.getConfigMapName()).get();
+                .withName(this.lockConfiguration.getConfigMapName()).get();
     }
 
     private Set<String> pullClusterMembers() {
         List<Pod> pods = kubernetesClient.pods().inNamespace(this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient))
-            .withLabels(this.lockConfiguration.getClusterLabels()).list().getItems();
+                .withLabels(this.lockConfiguration.getClusterLabels()).list().getItems();
 
         return pods.stream().map(pod -> pod.getMetadata().getName()).collect(Collectors.toSet());
     }

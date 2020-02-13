@@ -63,20 +63,20 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_BUILD:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_BUILD:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_BUILD_BY_LABELS_OPERATION:
-            doListBuildByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_BUILD_BY_LABELS_OPERATION:
+                doListBuildByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_BUILD_OPERATION:
-            doGetBuild(exchange, operation);
-            break;
+            case KubernetesOperations.GET_BUILD_OPERATION:
+                doGetBuild(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -91,14 +91,14 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             NonNamespaceOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient()
-                .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
+                    .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         } else {
             FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch, Watcher<Build>> builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
-                .inAnyNamespace();
+                    .inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }

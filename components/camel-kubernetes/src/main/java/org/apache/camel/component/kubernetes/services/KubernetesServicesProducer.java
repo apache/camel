@@ -63,28 +63,28 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_SERVICES_OPERATION:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICES_OPERATION:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SERVICES_BY_LABELS_OPERATION:
-            doListServiceByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICES_BY_LABELS_OPERATION:
+                doListServiceByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_SERVICE_OPERATION:
-            doGetService(exchange, operation);
-            break;
+            case KubernetesOperations.GET_SERVICE_OPERATION:
+                doGetService(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_SERVICE_OPERATION:
-            doCreateService(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_SERVICE_OPERATION:
+                doCreateService(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_SERVICE_OPERATION:
-            doDeleteService(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_SERVICE_OPERATION:
+                doDeleteService(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

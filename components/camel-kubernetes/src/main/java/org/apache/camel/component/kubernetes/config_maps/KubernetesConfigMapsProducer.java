@@ -60,28 +60,28 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_CONFIGMAPS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_CONFIGMAPS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_CONFIGMAPS_BY_LABELS_OPERATION:
-            doListConfigMapsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_CONFIGMAPS_BY_LABELS_OPERATION:
+                doListConfigMapsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_CONFIGMAP_OPERATION:
-            doGetConfigMap(exchange, operation);
-            break;
+            case KubernetesOperations.GET_CONFIGMAP_OPERATION:
+                doGetConfigMap(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_CONFIGMAP_OPERATION:
-            doCreateConfigMap(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_CONFIGMAP_OPERATION:
+                doCreateConfigMap(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_CONFIGMAP_OPERATION:
-            doDeleteConfigMap(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_CONFIGMAP_OPERATION:
+                doDeleteConfigMap(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
