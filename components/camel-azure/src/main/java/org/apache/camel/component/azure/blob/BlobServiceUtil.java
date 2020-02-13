@@ -45,24 +45,24 @@ public final class BlobServiceUtil {
     }
 
     public static void getBlob(Exchange exchange, BlobServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         switch (cfg.getBlobType()) {
-        case blockblob:
-            getBlockBlob(exchange, cfg);
-            break;
-        case appendblob:
-            getAppendBlob(exchange, cfg);
-            break;
-        case pageblob:
-            getPageBlob(exchange, cfg);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported blob type");
+            case blockblob:
+                getBlockBlob(exchange, cfg);
+                break;
+            case appendblob:
+                getAppendBlob(exchange, cfg);
+                break;
+            case pageblob:
+                getPageBlob(exchange, cfg);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported blob type");
         }
     }
 
     private static void getBlockBlob(Exchange exchange, BlobServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         CloudBlockBlob client = createBlockBlobClient(cfg);
         doGetBlob(client, exchange, cfg);
     }
@@ -78,7 +78,7 @@ public final class BlobServiceUtil {
     }
 
     private static void doGetBlob(CloudBlob client, Exchange exchange, BlobServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         BlobServiceUtil.configureCloudBlobForRead(client, cfg);
         BlobServiceRequestOptions opts = getRequestOptions(exchange);
         LOG.trace("Getting a blob [{}] from exchange [{}]...", cfg.getBlobName(), exchange);
@@ -88,14 +88,14 @@ public final class BlobServiceUtil {
             if (fileDir != null) {
                 File file = new File(fileDir, getBlobFileName(cfg));
                 ExchangeUtil.getMessageForResponse(exchange).setBody(file);
-                os = new FileOutputStream(file);  
+                os = new FileOutputStream(file);
             }
         }
         try {
             if (os == null) {
                 // Let the producers like file: deal with it
                 InputStream blobStream = client.openInputStream(
-                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                        opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
                 exchange.getIn().setBody(blobStream);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, getBlobFileName(cfg));
             } else {
@@ -109,7 +109,7 @@ public final class BlobServiceUtil {
                     }
                 }
                 client.downloadRange(blobOffset, blobDataLength, os,
-                                     opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                        opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
             }
         } finally {
             if (os != null && cfg.isCloseStreamAfterRead()) {
@@ -122,14 +122,14 @@ public final class BlobServiceUtil {
     }
 
     public static CloudBlobContainer createBlobContainerClient(BlobServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         URI uri = prepareStorageBlobUri(cfg, false);
         StorageCredentials creds = getAccountCredentials(cfg);
         return new CloudBlobContainer(uri, creds);
     }
 
     public static CloudBlockBlob createBlockBlobClient(BlobServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         CloudBlockBlob client = (CloudBlockBlob) getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
@@ -140,7 +140,7 @@ public final class BlobServiceUtil {
     }
 
     public static CloudAppendBlob createAppendBlobClient(BlobServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         CloudAppendBlob client = (CloudAppendBlob) getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
@@ -151,7 +151,7 @@ public final class BlobServiceUtil {
     }
 
     public static CloudPageBlob createPageBlobClient(BlobServiceConfiguration cfg)
-        throws Exception {
+            throws Exception {
         CloudPageBlob client = (CloudPageBlob) getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
@@ -203,13 +203,13 @@ public final class BlobServiceUtil {
 
         StringBuilder uriBuilder = new StringBuilder();
         uriBuilder.append("https://")
-            .append(cfg.getAccountName())
-            .append(BlobServiceConstants.SERVICE_URI_SEGMENT)
-            .append("/")
-            .append(cfg.getContainerName());
+                .append(cfg.getAccountName())
+                .append(BlobServiceConstants.SERVICE_URI_SEGMENT)
+                .append("/")
+                .append(cfg.getContainerName());
         if (cfg.getBlobName() != null) {
             uriBuilder.append("/")
-                .append(cfg.getBlobName());
+                    .append(cfg.getBlobName());
         }
         return URI.create(uriBuilder.toString());
     }
@@ -217,18 +217,18 @@ public final class BlobServiceUtil {
 
     public static BlobServiceRequestOptions getRequestOptions(Exchange exchange) {
         BlobServiceRequestOptions opts = exchange.getIn().getHeader(
-            BlobServiceConstants.BLOB_SERVICE_REQUEST_OPTIONS, BlobServiceRequestOptions.class);
+                BlobServiceConstants.BLOB_SERVICE_REQUEST_OPTIONS, BlobServiceRequestOptions.class);
         if (opts != null) {
             return opts;
         } else {
             opts = new BlobServiceRequestOptions();
         }
         AccessCondition accessCond =
-            exchange.getIn().getHeader(BlobServiceConstants.ACCESS_CONDITION, AccessCondition.class);
+                exchange.getIn().getHeader(BlobServiceConstants.ACCESS_CONDITION, AccessCondition.class);
         BlobRequestOptions requestOpts =
-            exchange.getIn().getHeader(BlobServiceConstants.BLOB_REQUEST_OPTIONS, BlobRequestOptions.class);
+                exchange.getIn().getHeader(BlobServiceConstants.BLOB_REQUEST_OPTIONS, BlobRequestOptions.class);
         OperationContext opContext =
-            exchange.getIn().getHeader(BlobServiceConstants.OPERATION_CONTEXT, OperationContext.class);
+                exchange.getIn().getHeader(BlobServiceConstants.OPERATION_CONTEXT, OperationContext.class);
         opts.setAccessCond(accessCond);
         opts.setOpContext(opContext);
         opts.setRequestOpts(requestOpts);
