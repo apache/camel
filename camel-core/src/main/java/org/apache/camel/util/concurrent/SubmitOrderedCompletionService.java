@@ -63,7 +63,22 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
 
         public long getDelay(TimeUnit unit) {
             // if the answer is 0 then this task is ready to be taken
-            return id - index.get();
+            long answer = id - index.get();
+            if (answer <= 0) {
+                return answer;
+            }
+            // okay this task is not ready yet, and we don't really know when it would be
+            // so we have to return a delay value of one time unit
+            if (TimeUnit.NANOSECONDS == unit) {
+                // okay this is too fast so use a little more delay to avoid CPU burning cycles
+                // To avoid aligh with java 11 impl of
+                // "java.util.concurrent.locks.AbstractQueuedSynchronizer.SPIN_FOR_TIMEOUT_THRESHOLD", otherwise
+                // no sleep with very high CPU usage
+                answer = 1001L;
+            } else {
+                answer = unit.convert(1, unit);
+            }
+            return answer;
         }
 
         @SuppressWarnings("unchecked")
