@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.ses;
 
-import org.apache.camel.component.aws2.ses.Ses2Component;
-import org.apache.camel.component.aws2.ses.Ses2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -29,15 +27,15 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
         Ses2Component component = new Ses2Component(context);
-        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws-ses://from@example.com");
+        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws-ses://from@example.com");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalSESClientMisconfiguration() throws Exception {
 
         Ses2Component component = new Ses2Component(context);
-        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws-ses://from@example.com");
+        Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws-ses://from@example.com");
     }
 }

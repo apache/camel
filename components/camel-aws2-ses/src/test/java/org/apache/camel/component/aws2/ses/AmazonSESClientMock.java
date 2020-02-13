@@ -34,7 +34,7 @@ public class AmazonSESClientMock implements SesClient {
         this.sendEmailRequest = sendEmailRequest;
         return SendEmailResponse.builder().messageId("1").build();
     }
-    
+
     @Override
     public SendRawEmailResponse sendRawEmail(SendRawEmailRequest sendRawEmailRequest) {
         this.sendRawEmailRequest = sendRawEmailRequest;
@@ -44,20 +44,20 @@ public class AmazonSESClientMock implements SesClient {
     public SendEmailRequest getSendEmailRequest() {
         return sendEmailRequest;
     }
-    
+
     public SendRawEmailRequest getSendRawEmailRequest() {
         return sendRawEmailRequest;
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 }

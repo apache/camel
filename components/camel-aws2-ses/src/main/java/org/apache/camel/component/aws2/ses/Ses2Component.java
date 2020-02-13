@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.ses.SesClient;
 
 @Component("aws2-ses")
@@ -113,7 +112,7 @@ public class Ses2Component extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(Ses2Configuration configuration) {
         Set<SesClient> clients = getCamelContext().getRegistry().findByType(SesClient.class);
         if (clients.size() == 1) {

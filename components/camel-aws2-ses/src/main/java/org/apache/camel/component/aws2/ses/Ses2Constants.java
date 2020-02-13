@@ -20,10 +20,10 @@ package org.apache.camel.component.aws2.ses;
  * Constants used in Camel AWS SES component
  */
 public interface Ses2Constants {
-    
+
     String FROM = "CamelAwsSesFrom";
     String MESSAGE_ID = "CamelAwsSesMessageId";
-    String REPLY_TO_ADDRESSES = "CamelAwsSesReplyToAddresses";    
+    String REPLY_TO_ADDRESSES = "CamelAwsSesReplyToAddresses";
     String RETURN_PATH = "CamelAwsSesReturnPath";
     String SUBJECT = "CamelAwsSesSubject";
     String TO = "CamelAwsSesTo";

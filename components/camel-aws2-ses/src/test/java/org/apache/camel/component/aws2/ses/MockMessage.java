@@ -105,7 +105,7 @@ public class MockMessage extends Message {
     @Override
     public void setText(String text) throws MessagingException {
     }
-    
+
     @Override
     public void setContent(Multipart mp) throws MessagingException {
     }
@@ -120,13 +120,11 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setHeader(String headername, String headervalue)
-        throws MessagingException {
+    public void setHeader(String headername, String headervalue) throws MessagingException {
     }
 
     @Override
-    public void addHeader(String headername, String headervalue)
-        throws MessagingException {
+    public void addHeader(String headername, String headervalue) throws MessagingException {
     }
 
     @Override
@@ -139,14 +137,12 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public Enumeration<Header> getMatchingHeaders(String[] headernames)
-        throws MessagingException {
+    public Enumeration<Header> getMatchingHeaders(String[] headernames) throws MessagingException {
         return null;
     }
 
     @Override
-    public Enumeration<Header> getNonMatchingHeaders(String[] headernames)
-        throws MessagingException {
+    public Enumeration<Header> getNonMatchingHeaders(String[] headernames) throws MessagingException {
         return null;
     }
 
@@ -168,19 +164,16 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public Address[] getRecipients(RecipientType type)
-        throws MessagingException {
+    public Address[] getRecipients(RecipientType type) throws MessagingException {
         return null;
     }
 
     @Override
-    public void setRecipients(RecipientType type, Address[] addresses)
-        throws MessagingException {
+    public void setRecipients(RecipientType type, Address[] addresses) throws MessagingException {
     }
 
     @Override
-    public void addRecipients(RecipientType type, Address[] addresses)
-        throws MessagingException {
+    public void addRecipients(RecipientType type, Address[] addresses) throws MessagingException {
     }
 
     @Override

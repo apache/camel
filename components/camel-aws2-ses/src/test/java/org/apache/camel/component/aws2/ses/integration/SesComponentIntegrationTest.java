@@ -48,8 +48,7 @@ public class SesComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+                from("direct:start").to("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
             }
         };
     }
