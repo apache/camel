@@ -37,7 +37,6 @@ import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegis
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
-import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -74,12 +73,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
      */
     @Parameter
     protected File sourcesOutputDir;
-
-    /**
-     * Component DSL Pom file
-     */
-    @Parameter
-    protected File componentDslPom;
 
     /**
      * Component Metadata file
@@ -130,9 +123,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
         if (outputResourcesDir == null) {
             outputResourcesDir = root.resolve("src/generated/resources").toFile();
-        }
-        if (componentDslPom == null) {
-            componentDslPom = root.resolve("pom.xml").toFile();
         }
         if (componentsMetadata == null) {
             componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
@@ -194,9 +184,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
         // Create components DSL entry builder factories
         syncAndGenerateComponentsBuilderFactories(componentCachedModels);
-
-        // Update componentsDsl pom file
-        syncPomFile(componentDslPom, componentsDslMetadataRegistry.getComponentCacheFromMemory());
     }
 
     private ComponentDslBuilderFactoryGenerator syncAndGenerateSpecificComponentsBuilderFactories(final ComponentModel componentModel) throws MojoFailureException {
@@ -222,43 +209,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
         getLog().info("Regenerate " + componentsBuilderFactoryGenerator.getGeneratedClassName());
-    }
-
-    private void syncPomFile(final File pomFile, final Map<String, ComponentModel> componentsModels) throws MojoExecutionException {
-        final String startMainComponentImportMarker = "<!-- START: camel components import -->";
-        final String endMainComponentImportMarker = "<!-- END: camel components import -->";
-
-        if (!pomFile.exists()) {
-            throw new MojoExecutionException("Pom file " + pomFile.getPath() + " does not exist");
-        }
-
-        try {
-            final String pomText = loadText(pomFile);
-
-            final String before = Strings.before(pomText, startMainComponentImportMarker).trim();
-            final String after = Strings.after(pomText, endMainComponentImportMarker).trim();
-
-            final String updatedPom = before + "\n\t\t" + startMainComponentImportMarker + "\n"
-                    + componentsModels.values().stream()
-                        .map(this::generateDependencyModule)
-                        .sorted()
-                        .distinct()
-                        .collect(Collectors.joining())
-                    + "\t\t"
-                    + endMainComponentImportMarker + "\n\t\t" + after;
-            updateResource(buildContext, componentDslPom.toPath(), updatedPom);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error reading file " + pomFile + " Reason: " + e, e);
-        }
-    }
-
-    private String generateDependencyModule(final ComponentModel model) {
-        return "\t\t<dependency>\n"
-                + "\t\t\t<groupId>" + model.getGroupId() + "</groupId>\n"
-                + "\t\t\t<artifactId>" + model.getArtifactId() + "</artifactId>\n"
-                + "\t\t\t<scope>provided</scope>\n"
-                + "\t\t\t<version>${project.version}</version>\n"
-                + "\t\t</dependency>\n";
     }
 
     protected static String loadJson(File file) {

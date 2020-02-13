@@ -47,6 +47,15 @@
         <module>camel-main-maven-plugin</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-allcomponents</artifactId>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

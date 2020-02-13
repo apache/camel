@@ -53,11 +53,6 @@
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-endpointdsl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-testcontainers</artifactId>
             <scope>test</scope>
         </dependency>

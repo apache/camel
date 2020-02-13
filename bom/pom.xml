@@ -59,6 +59,9 @@
                         <includes>
                             <include>org.apache.camel:*</include>
                         </includes>
+                        <excludes>
+                            <exclude>org.apache.camel:camel-allcomponents</exclude>
+                        </excludes>
                     </dependencies>
 
                     <sourcePom>${basedir}/target-template-pom.xml</sourcePom>
