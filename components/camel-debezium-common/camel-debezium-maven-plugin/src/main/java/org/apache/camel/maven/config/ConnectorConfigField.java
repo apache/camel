@@ -104,14 +104,14 @@ public class ConnectorConfigField {
 
     private Class<?> getType(final ConfigDef.Type type) {
         switch (type) {
-        case INT: return Integer.TYPE;
-        case SHORT: return Short.TYPE;
-        case DOUBLE: return Double.TYPE;
-        case STRING: case PASSWORD: case CLASS: case LIST:
-            return String.class;
-        case BOOLEAN: return Boolean.TYPE;
-        case LONG: return Long.TYPE;
-        default: throw new IllegalArgumentException(String.format("Type '%s' is not supported", type.name()));
+            case INT: return Integer.TYPE;
+            case SHORT: return Short.TYPE;
+            case DOUBLE: return Double.TYPE;
+            case STRING: case PASSWORD: case CLASS: case LIST:
+                return String.class;
+            case BOOLEAN: return Boolean.TYPE;
+            case LONG: return Long.TYPE;
+            default: throw new IllegalArgumentException(String.format("Type '%s' is not supported", type.name()));
         }
     }
 
