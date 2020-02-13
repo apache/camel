@@ -396,7 +396,6 @@ camel routes without them knowing
 ** xref:components::web3j-component.adoc[Web3j Ethereum Blockchain]
 ** xref:components::wordpress-component.adoc[Wordpress]
 ** xref:components::xchange-component.adoc[XChange]
-** xref:components::xmlsecurity-component.adoc[XML Security]
 ** xref:components::xmpp-component.adoc[XMPP]
 ** xref:components::xj-component.adoc[XJ]
 ** xref:components::xquery-component.adoc[XQuery]

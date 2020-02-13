@@ -2,6 +2,8 @@
 = XML Security Sign Component
 :page-source: components/camel-xmlsecurity/src/main/docs/xmlsecurity-sign-component.adoc
 *Since Camel 2.12*
+*Since Camel 2.12*
+
 
 
 *Since Camel 2.12*
@@ -158,8 +160,8 @@ URI format:
 
 [source]
 ----
-xmlsecurity:sign:name[?options]
-xmlsecurity:verify:name[?options]
+xmlsecurity-sign:name[?options]
+xmlsecurity-verify:name[?options]
 ----
 
 * With the signer endpoint, you can generate a XML signature for the
@@ -180,8 +182,8 @@ The following example shows the basic usage of the component.
 
 [source,java]
 ----
-from("direct:enveloping").to("xmlsecurity:sign://enveloping?keyAccessor=#accessor",
-                             "xmlsecurity:verify://enveloping?keySelector=#selector",
+from("direct:enveloping").to("xmlsecurity-sign://enveloping?keyAccessor=#accessor",
+                             "xmlsecurity-verify://enveloping?keySelector=#selector",
                              "mock:result")
 ----
 
@@ -190,8 +192,8 @@ In Spring XML:
 [source,xml]
 ----
 <from uri="direct:enveloping" />
-    <to uri="xmlsecurity:sign://enveloping?keyAccessor=#accessor" />
-    <to uri="xmlsecurity:verify://enveloping?keySelector=#selector" />
+    <to uri="xmlsecurity-sign://enveloping?keyAccessor=#accessor" />
+    <to uri="xmlsecurity-verify://enveloping?keySelector=#selector" />
 <to uri="mock:result" />
 ----
 
@@ -446,8 +448,8 @@ element `A`.
 [source,java]
 ----
 from("direct:detached")
-  .to("xmlsecurity:sign://detached?keyAccessor=#keyAccessorBeant&xpathsToIdAttributes=#xpathsToIdAttributesBean&schemaResourceUri=Test.xsd")
-  .to("xmlsecurity:verify://detached?keySelector=#keySelectorBean&schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd")
+  .to("xmlsecurity-sign://detached?keyAccessor=#keyAccessorBeant&xpathsToIdAttributes=#xpathsToIdAttributesBean&schemaResourceUri=Test.xsd")
+  .to("xmlsecurity-verify://detached?keySelector=#keySelectorBean&schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd")
   .to("mock:result");
 ----
 
@@ -476,9 +478,9 @@ from("direct:detached")
 ...
  <from uri="direct:detached" />
       <to
-          uri="xmlsecurity:sign://detached?keyAccessor=#keyAccessorBean&amp;xpathsToIdAttributes=#xpathsToIdAttributesBean&amp;schemaResourceUri=Test.xsd" />
+          uri="xmlsecurity-sign://detached?keyAccessor=#keyAccessorBean&amp;xpathsToIdAttributes=#xpathsToIdAttributesBean&amp;schemaResourceUri=Test.xsd" />
       <to
-          uri="xmlsecurity:verify://detached?keySelector=#keySelectorBean&amp;schemaResourceUri=Test.xsd" />
+          uri="xmlsecurity-verify://detached?keySelector=#keySelectorBean&amp;schemaResourceUri=Test.xsd" />
       <to uri="mock:result" />
 ----
 
@@ -619,7 +621,7 @@ beanRegistry.bind("xmlSignatureProperties",props);
 beanRegistry.bind("keyAccessorDefault",keyAccessor);
  
 // you must reference the properties bean in the "xmlsecurity" URI
-from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties")
+from("direct:xades").to("xmlsecurity-sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties")
              .to("mock:result");
 ----
 
@@ -630,7 +632,7 @@ from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefaul
 ...
 <from uri="direct:xades" />
     <to
-        uri="xmlsecurity:sign://xades?keyAccessor=#accessorRsa&amp;properties=#xadesProperties" />
+        uri="xmlsecurity-sign://xades?keyAccessor=#accessorRsa&amp;properties=#xadesProperties" />
     <to uri="mock:result" />
 ...
 <bean id="xadesProperties"
