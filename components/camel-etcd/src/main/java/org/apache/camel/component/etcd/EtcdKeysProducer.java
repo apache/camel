@@ -49,20 +49,20 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         StringHelper.notEmpty(action, EtcdConstants.ETCD_ACTION);
 
         switch(action) {
-        case EtcdConstants.ETCD_KEYS_ACTION_SET:
-            processSet(getClient(), path, exchange);
-            break;
-        case EtcdConstants.ETCD_KEYS_ACTION_GET:
-            processGet(getClient(), path, exchange);
-            break;
-        case EtcdConstants.ETCD_KEYS_ACTION_DELETE:
-            processDel(getClient(), path, false, exchange);
-            break;
-        case EtcdConstants.ETCD_KEYS_ACTION_DELETE_DIR:
-            processDel(getClient(), path, true, exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown action " + action);
+            case EtcdConstants.ETCD_KEYS_ACTION_SET:
+                processSet(getClient(), path, exchange);
+                break;
+            case EtcdConstants.ETCD_KEYS_ACTION_GET:
+                processGet(getClient(), path, exchange);
+                break;
+            case EtcdConstants.ETCD_KEYS_ACTION_DELETE:
+                processDel(getClient(), path, false, exchange);
+                break;
+            case EtcdConstants.ETCD_KEYS_ACTION_DELETE_DIR:
+                processDel(getClient(), path, true, exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown action " + action);
         }
     }
 
