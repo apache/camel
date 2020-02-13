@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 324 in 259 JAR artifacts (1 deprecated)
+Number of Components: 325 in 259 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -642,7 +642,9 @@ Number of Components: 324 in 259 JAR artifacts (1 deprecated)
 
 | xref:xj-component.adoc[XJ] (camel-xj) | 3.0 | Transforms json/xml message back and forth using a XSLT.
 
-| xref:xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) | 2.12 | Used to sign and verify exchanges using the XML signature specification.
+| xref:xmlsecurity-sign-component.adoc[XML Security Sign] (camel-xmlsecurity) | 2.12 | Used to sign exchanges using the XML signature specification.
+
+| xref:xmlsecurity-verify-component.adoc[XML Security Verify] (camel-xmlsecurity) | 2.12 | Used to verify exchanges using the XML signature specification.
 
 | xref:xmpp-component.adoc[XMPP] (camel-xmpp) | 1.0 | To send and receive messages from a XMPP (chat) server.
 

@@ -16,7 +16,26 @@
  */
 package org.apache.camel.component.xmlsecurity;
 
-public enum XmlCommand {
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
 
-    sign, verify
+public class XmlSecurityProducer extends DefaultAsyncProducer {
+
+    private final AsyncProcessor processor;
+
+    public XmlSecurityProducer(Endpoint endpoint, Processor processor) {
+        super(endpoint);
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        return processor.process(exchange, callback);
+    }
 }
+

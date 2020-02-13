@@ -125,7 +125,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                     return true;
                 }
             });
-        } catch (Throwable t) { //NOPMD
+        } catch (Throwable t) {
             //ignore
         }
         org.apache.xml.security.Init.init();
@@ -139,7 +139,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                         return false;
                     }
                 });
-            } catch (Throwable t) { //NOPMD
+            } catch (Throwable t) {
                 //ignore
             }
         }

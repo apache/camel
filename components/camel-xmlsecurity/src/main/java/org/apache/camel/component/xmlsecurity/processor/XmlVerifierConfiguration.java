@@ -30,21 +30,21 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
 
-    @UriParam(label = "verify")
+    @UriParam
     private KeySelector keySelector;
-    @UriParam(label = "verify")
+    @UriParam
     private XmlSignatureChecker xmlSignatureChecker;
-    @UriParam(label = "verify")
+    @UriParam
     private XmlSignature2Message xmlSignature2Message = new DefaultXmlSignature2Message();
-    @UriParam(label = "verify")
+    @UriParam
     private ValidationFailedHandler validationFailedHandler = new DefaultValidationFailedHandler();
-    @UriParam(label = "verify", javaType = "java.lang.String")
+    @UriParam
     private Object outputNodeSearch;
-    @UriParam(label = "verify", defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
+    @UriParam(defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
     private String outputNodeSearchType = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
-    @UriParam(label = "verify", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private Boolean removeSignatureElements = Boolean.FALSE;
-    @UriParam(label = "verify", defaultValue = "true")
+    @UriParam(defaultValue = "true")
     private Boolean secureValidation = Boolean.TRUE;
 
     public XmlVerifierConfiguration() {
