@@ -263,18 +263,18 @@ public abstract class ServiceSupport implements StatefulService {
     @Override
     public ServiceStatus getStatus() {
         switch (status) {
-        case STARTING:
-            return ServiceStatus.Starting;
-        case STARTED:
-            return ServiceStatus.Started;
-        case SUSPENDING:
-            return ServiceStatus.Suspending;
-        case SUSPENDED:
-            return ServiceStatus.Suspended;
-        case STOPPING:
-            return ServiceStatus.Stopping;
-        default:
-            return ServiceStatus.Stopped;
+            case STARTING:
+                return ServiceStatus.Starting;
+            case STARTED:
+                return ServiceStatus.Started;
+            case SUSPENDING:
+                return ServiceStatus.Suspending;
+            case SUSPENDED:
+                return ServiceStatus.Suspended;
+            case STOPPING:
+                return ServiceStatus.Stopping;
+            default:
+                return ServiceStatus.Stopped;
         }
     }
 
@@ -368,7 +368,7 @@ public abstract class ServiceSupport implements StatefulService {
      * Implementations override this method to support customized start/stop.
      * <p/>
      * <b>Important: </b> See {@link #doStop()} for more details.
-     * 
+     *
      * @see #doStop()
      */
     protected abstract void doStart() throws Exception;
@@ -382,8 +382,8 @@ public abstract class ServiceSupport implements StatefulService {
      * been started). The method is <b>always</b> called to allow the service
      * to do custom logic when the service is being stopped, such as when
      * {@link org.apache.camel.CamelContext} is shutting down.
-     * 
-     * @see #doStart() 
+     *
+     * @see #doStart()
      */
     protected abstract void doStop() throws Exception;
 

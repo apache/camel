@@ -39,10 +39,10 @@ public enum ExchangePattern {
      */
     public boolean isOutCapable() {
         switch (this) {
-        case InOnly:
-            return false;
-        default:
-            return true;
+            case InOnly:
+                return false;
+            default:
+                return true;
         }
     }
 
