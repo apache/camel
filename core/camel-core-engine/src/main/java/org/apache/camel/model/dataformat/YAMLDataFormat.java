@@ -57,10 +57,10 @@ public class YAMLDataFormat extends DataFormatDefinition {
     private String useApplicationContextClassLoader = Boolean.toString(true);
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
-    protected String prettyFlow = Boolean.toString(false);
+    private String prettyFlow = Boolean.toString(false);
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
-    protected String allowAnyType = Boolean.toString(false);
+    private String allowAnyType = Boolean.toString(false);
     @XmlElement(name = "typeFilter")
     private List<YAMLTypeFilterDefinition> typeFilters;
 
