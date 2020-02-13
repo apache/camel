@@ -575,7 +575,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Simple Email Service (camel-aws2-ses)
-     * The aws-ses component is used for sending emails with Amazon's SES
+     * The aws2-ses component is used for sending emails with Amazon's SES
      * service.
      * 
      * Category: cloud,mail
