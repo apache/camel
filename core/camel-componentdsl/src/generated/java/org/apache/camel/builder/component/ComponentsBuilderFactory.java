@@ -574,6 +574,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2MskComponentBuilderFactory.aws2Msk();
     }
     /**
+     * AWS 2 Simple Email Service (camel-aws2-ses)
+     * The aws-ses component is used for sending emails with Amazon's SES
+     * service.
+     * 
+     * Category: cloud,mail
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-ses
+     */
+    static org.apache.camel.builder.component.dsl.Aws2SesComponentBuilderFactory.Aws2SesComponentBuilder aws2Ses() {
+        return org.apache.camel.builder.component.dsl.Aws2SesComponentBuilderFactory.aws2Ses();
+    }
+    /**
      * AWS 2 Translate (camel-aws2-translate)
      * The aws2-translate component is used for managing Amazon Translate
      * 
