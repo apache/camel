@@ -56,26 +56,26 @@ public class KMS2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listKeys:
-            listKeys(getEndpoint().getKmsClient(), exchange);
-            break;
-        case createKey:
-            createKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        case disableKey:
-            disableKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        case enableKey:
-            enableKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        case scheduleKeyDeletion:
-            scheduleKeyDeletion(getEndpoint().getKmsClient(), exchange);
-            break;
-        case describeKey:
-            describeKey(getEndpoint().getKmsClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listKeys:
+                listKeys(getEndpoint().getKmsClient(), exchange);
+                break;
+            case createKey:
+                createKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            case disableKey:
+                disableKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            case enableKey:
+                enableKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            case scheduleKeyDeletion:
+                scheduleKeyDeletion(getEndpoint().getKmsClient(), exchange);
+                break;
+            case describeKey:
+                describeKey(getEndpoint().getKmsClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
