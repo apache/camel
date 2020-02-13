@@ -51,7 +51,7 @@ class XMLStreamReaderReader extends Reader {
 
     @Override
     public void close() throws IOException {
-        
+
     }
 
     @Override
@@ -88,37 +88,37 @@ class XMLStreamReaderReader extends Reader {
                 while (reader.hasNext()) {
                     int code = reader.next();
                     switch (code) {
-                    case XMLStreamConstants.END_DOCUMENT:
-                        writer.writeEndDocument();
-                        break;
-                    case XMLStreamConstants.START_ELEMENT:
-                        QName qname = reader.getName();
-                        writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
-                        for (int i = 0; i < reader.getAttributeCount(); i++) {
-                            writer.writeAttribute(
-                                    reader.getAttributePrefix(i), reader.getAttributeNamespace(i), reader.getAttributeLocalName(i), 
-                                    reader.getAttributeValue(i));
-                        }
-                        for (int i = 0; i < reader.getNamespaceCount(); i++) {
-                            writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
-                        }
-                        break;
-                    case XMLStreamConstants.END_ELEMENT:
-                        writer.writeEndElement();
-                        break;
-                    case XMLStreamConstants.CHARACTERS:
-                        writer.writeCharacters(reader.getText());
-                        break;
-                    case XMLStreamConstants.COMMENT:
-                        writer.writeComment(reader.getText());
-                        break;
-                    case XMLStreamConstants.CDATA:
-                        writer.writeCData(reader.getText());
-                        break;
-                    default:
-                        break;
+                        case XMLStreamConstants.END_DOCUMENT:
+                            writer.writeEndDocument();
+                            break;
+                        case XMLStreamConstants.START_ELEMENT:
+                            QName qname = reader.getName();
+                            writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
+                            for (int i = 0; i < reader.getAttributeCount(); i++) {
+                                writer.writeAttribute(
+                                        reader.getAttributePrefix(i), reader.getAttributeNamespace(i), reader.getAttributeLocalName(i),
+                                        reader.getAttributeValue(i));
+                            }
+                            for (int i = 0; i < reader.getNamespaceCount(); i++) {
+                                writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+                            }
+                            break;
+                        case XMLStreamConstants.END_ELEMENT:
+                            writer.writeEndElement();
+                            break;
+                        case XMLStreamConstants.CHARACTERS:
+                            writer.writeCharacters(reader.getText());
+                            break;
+                        case XMLStreamConstants.COMMENT:
+                            writer.writeComment(reader.getText());
+                            break;
+                        case XMLStreamConstants.CDATA:
+                            writer.writeCData(reader.getText());
+                            break;
+                        default:
+                            break;
                     }
-                    
+
                     // check if the chunk is full
                     final int csize = buffer.length - bpos;
                     if (chunk.size() > csize) {
@@ -129,7 +129,7 @@ class XMLStreamReaderReader extends Reader {
                     }
                 }
             }
-            final int csize = chunk.size() < buffer.length - bpos ? chunk.size() : buffer.length - bpos; 
+            final int csize = chunk.size() < buffer.length - bpos ? chunk.size() : buffer.length - bpos;
             if (csize > 0) {
                 System.arraycopy(chunk.getCharArray(), 0, buffer, bpos, csize);
                 bpos += csize;
