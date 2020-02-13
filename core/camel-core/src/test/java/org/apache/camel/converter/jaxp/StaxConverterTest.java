@@ -133,23 +133,23 @@ public class StaxConverterTest extends ContextTestSupport {
             while (reader.hasNext()) {
                 reader.next();
                 switch (reader.getEventType()) {
-                case XMLStreamConstants.START_DOCUMENT:
-                    writer.writeStartDocument();
-                    break;
-                case XMLStreamConstants.END_DOCUMENT:
-                    writer.writeEndDocument();
-                    break;
-                case XMLStreamConstants.START_ELEMENT:
-                    writer.writeStartElement(reader.getName().getLocalPart());
-                    break;
-                case XMLStreamConstants.CHARACTERS:
-                    writer.writeCharacters(reader.getText());
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    writer.writeEndElement();
-                    break;
-                default:
-                    break;
+                    case XMLStreamConstants.START_DOCUMENT:
+                        writer.writeStartDocument();
+                        break;
+                    case XMLStreamConstants.END_DOCUMENT:
+                        writer.writeEndDocument();
+                        break;
+                    case XMLStreamConstants.START_ELEMENT:
+                        writer.writeStartElement(reader.getName().getLocalPart());
+                        break;
+                    case XMLStreamConstants.CHARACTERS:
+                        writer.writeCharacters(reader.getText());
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        writer.writeEndElement();
+                        break;
+                    default:
+                        break;
                 }
             }
         } finally {

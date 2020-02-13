@@ -61,17 +61,17 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
 
         for (int i = 0; i < messageCount; i++) {
             switch (i % 3) {
-            case 0:
-                template.sendBody("seda:foo", XMLTEST1);
-                break;
-            case 1:
-                template.sendBody("seda:foo", XMLTEST2);
-                break;
-            case 2:
-                template.sendBody("seda:foo", XMLTEST3);
-                break;
-            default:
-                break;
+                case 0:
+                    template.sendBody("seda:foo", XMLTEST1);
+                    break;
+                case 1:
+                    template.sendBody("seda:foo", XMLTEST2);
+                    break;
+                case 2:
+                    template.sendBody("seda:foo", XMLTEST3);
+                    break;
+                default:
+                    break;
             }
         }
 

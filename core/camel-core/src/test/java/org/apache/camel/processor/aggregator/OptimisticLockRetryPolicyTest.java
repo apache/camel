@@ -65,15 +65,15 @@ public class OptimisticLockRetryPolicyTest extends Assert {
             long elapsed = doDelay(policy, i);
 
             switch (i) {
-            case 0:
-                assertDelay(50L, elapsed);
-                break;
-            case 1:
-                assertDelay(100L, elapsed);
-                break;
-            default:
-                assertDelay(100L, elapsed);
-                break;
+                case 0:
+                    assertDelay(50L, elapsed);
+                    break;
+                case 1:
+                    assertDelay(100L, elapsed);
+                    break;
+                default:
+                    assertDelay(100L, elapsed);
+                    break;
             }
         }
     }
@@ -104,12 +104,12 @@ public class OptimisticLockRetryPolicyTest extends Assert {
 
         for (int i = 0; i < 10; i++) {
             switch (i) {
-            case 0:
-            case 1:
-                assertTrue(policy.shouldRetry(i));
-                break;
-            default:
-                assertFalse(policy.shouldRetry(i));
+                case 0:
+                case 1:
+                    assertTrue(policy.shouldRetry(i));
+                    break;
+                default:
+                    assertFalse(policy.shouldRetry(i));
             }
         }
     }
