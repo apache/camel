@@ -114,46 +114,46 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
                 MockResponse mockResponse = new MockResponse();
 
                 switch (recordedRequest.getMethod()) {
-                case HttpMethod.GET:
-                    try {
-                        if (recordedRequest.getPath().endsWith("/" + TEST_CREATE_MANUFACTURER)) {
+                    case HttpMethod.GET:
+                        try {
+                            if (recordedRequest.getPath().endsWith("/" + TEST_CREATE_MANUFACTURER)) {
 
-                            ODataResponse odataResponse = EntityProvider.writeEntry(TEST_FORMAT.getMimeType(), manufacturersSet, getEntityData(),
-                                                                                    EntityProviderWriteProperties.serviceRoot(getServiceUrl().uri()).build());
-                            InputStream entityStream = odataResponse.getEntityAsStream();
-                            mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode());
-                            mockResponse.setBody(new Buffer().readFrom(entityStream));
-                            return mockResponse;
+                                ODataResponse odataResponse = EntityProvider.writeEntry(TEST_FORMAT.getMimeType(), manufacturersSet, getEntityData(),
+                                        EntityProviderWriteProperties.serviceRoot(getServiceUrl().uri()).build());
+                                InputStream entityStream = odataResponse.getEntityAsStream();
+                                mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode());
+                                mockResponse.setBody(new Buffer().readFrom(entityStream));
+                                return mockResponse;
 
-                        } else if (recordedRequest.getPath().endsWith("/" + Olingo2AppImpl.METADATA)) {
+                            } else if (recordedRequest.getPath().endsWith("/" + Olingo2AppImpl.METADATA)) {
 
-                            EdmServiceMetadata serviceMetadata = edm.getServiceMetadata();
-                            return mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode())
-                                .addHeader(ODataHttpHeaders.DATASERVICEVERSION, serviceMetadata.getDataServiceVersion())
-                                .setBody(new Buffer().readFrom(serviceMetadata.getMetadata()));
+                                EdmServiceMetadata serviceMetadata = edm.getServiceMetadata();
+                                return mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode())
+                                        .addHeader(ODataHttpHeaders.DATASERVICEVERSION, serviceMetadata.getDataServiceVersion())
+                                        .setBody(new Buffer().readFrom(serviceMetadata.getMetadata()));
+                            }
+
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
                         }
+                        break;
+                    case HttpMethod.PATCH:
+                    case HttpMethod.PUT:
+                    case HttpMethod.POST:
+                    case HttpMethod.DELETE:
+                        //
+                        // Objective of the test:
+                        // The Read has to have been called by
+                        // Olingo2AppImpl.argumentWithETag
+                        // which should then populate the IF-MATCH header with the
+                        // eTag value.
+                        // Verify the eTag value is present.
+                        //
+                        assertNotNull(recordedRequest.getHeader(HttpHeader.IF_MATCH.asString()));
 
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    break;
-                case HttpMethod.PATCH:
-                case HttpMethod.PUT:
-                case HttpMethod.POST:
-                case HttpMethod.DELETE:
-                    //
-                    // Objective of the test:
-                    // The Read has to have been called by
-                    // Olingo2AppImpl.argumentWithETag
-                    // which should then populate the IF-MATCH header with the
-                    // eTag value.
-                    // Verify the eTag value is present.
-                    //
-                    assertNotNull(recordedRequest.getHeader(HttpHeader.IF_MATCH.asString()));
-
-                    return mockResponse.setResponseCode(HttpStatusCodes.NO_CONTENT.getStatusCode());
-                default:
-                    break;
+                        return mockResponse.setResponseCode(HttpStatusCodes.NO_CONTENT.getStatusCode());
+                    default:
+                        break;
                 }
 
                 mockResponse.setResponseCode(HttpStatusCodes.NOT_FOUND.getStatusCode()).setBody("{ status: \"Not Found\"}");
