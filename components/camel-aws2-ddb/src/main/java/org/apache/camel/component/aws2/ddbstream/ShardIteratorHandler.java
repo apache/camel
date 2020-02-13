@@ -58,12 +58,12 @@ class ShardIteratorHandler {
         if (currentShardIterator == null) {
             ListStreamsResponse streamsListResult = getClient().listStreams(ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
             final String streamArn = streamsListResult.streams().get(0).streamArn(); // XXX
-                                                                                     // assumes
-                                                                                     // there
-                                                                                     // is
-                                                                                     // only
-                                                                                     // one
-                                                                                     // stream
+            // assumes
+            // there
+            // is
+            // only
+            // one
+            // stream
             DescribeStreamResponse streamDescriptionResult = getClient().describeStream(DescribeStreamRequest.builder().streamArn(streamArn).build());
             shardList.addAll(streamDescriptionResult.streamDescription().shards());
 
@@ -86,39 +86,39 @@ class ShardIteratorHandler {
     private GetShardIteratorRequest buildGetShardIteratorRequest(final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
         GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder().streamArn(streamArn).shardId(currentShard.shardId()).shardIteratorType(iteratorType);
         switch (iteratorType) {
-        case AFTER_SEQUENCE_NUMBER:
-        case AT_SEQUENCE_NUMBER:
-            // if you request with a sequence number that is LESS than the
-            // start of the shard, you get a HTTP 400 from AWS.
-            // So only add the sequence number if the endpoints
-            // sequence number is less than or equal to the starting
-            // sequence for the shard.
-            // Otherwise change the shart iterator type to trim_horizon
-            // because we get a 400 when we use one of the
-            // {at,after}_sequence_number iterator types and don't supply
-            // a sequence number.
-            if (BigIntComparisons.Conditions.LTEQ.matches(new BigInteger(currentShard.sequenceNumberRange().startingSequenceNumber()), new BigInteger(sequenceNumber))) {
-                req.sequenceNumber(sequenceNumber);
-            } else {
-                req.shardIteratorType(ShardIteratorType.TRIM_HORIZON);
-            }
-            break;
-        default:
+            case AFTER_SEQUENCE_NUMBER:
+            case AT_SEQUENCE_NUMBER:
+                // if you request with a sequence number that is LESS than the
+                // start of the shard, you get a HTTP 400 from AWS.
+                // So only add the sequence number if the endpoints
+                // sequence number is less than or equal to the starting
+                // sequence for the shard.
+                // Otherwise change the shart iterator type to trim_horizon
+                // because we get a 400 when we use one of the
+                // {at,after}_sequence_number iterator types and don't supply
+                // a sequence number.
+                if (BigIntComparisons.Conditions.LTEQ.matches(new BigInteger(currentShard.sequenceNumberRange().startingSequenceNumber()), new BigInteger(sequenceNumber))) {
+                    req.sequenceNumber(sequenceNumber);
+                } else {
+                    req.shardIteratorType(ShardIteratorType.TRIM_HORIZON);
+                }
+                break;
+            default:
         }
         return req.build();
     }
 
     private Shard resolveNewShard(ShardIteratorType type, String resumeFrom) {
         switch (type) {
-        case AFTER_SEQUENCE_NUMBER:
-            return shardList.afterSeq(resumeFrom != null ? resumeFrom : getEndpoint().getSequenceNumber());
-        case AT_SEQUENCE_NUMBER:
-            return shardList.atSeq(getEndpoint().getSequenceNumber());
-        case TRIM_HORIZON:
-            return shardList.first();
-        case LATEST:
-        default:
-            return shardList.last();
+            case AFTER_SEQUENCE_NUMBER:
+                return shardList.afterSeq(resumeFrom != null ? resumeFrom : getEndpoint().getSequenceNumber());
+            case AT_SEQUENCE_NUMBER:
+                return shardList.atSeq(getEndpoint().getSequenceNumber());
+            case TRIM_HORIZON:
+                return shardList.first();
+            case LATEST:
+            default:
+                return shardList.last();
         }
     }
 
