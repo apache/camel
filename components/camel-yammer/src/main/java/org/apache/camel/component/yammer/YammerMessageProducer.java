@@ -27,36 +27,36 @@ public class YammerMessageProducer extends DefaultProducer {
 
     private final YammerEndpoint endpoint;
     private final String apiUrl;
-    
+
     public YammerMessageProducer(YammerEndpoint endpoint) throws Exception {
         super(endpoint);
         this.endpoint = endpoint;
         apiUrl = getApiUrl();
     }
 
-    private String getApiUrl() throws Exception {    
+    private String getApiUrl() throws Exception {
         StringBuilder url = new StringBuilder();
-        
+
         String function = endpoint.getConfig().getFunction();
         switch (YammerFunctionType.fromUri(function)) {
-        case MESSAGES:
-            url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append(function);
-            url.append(".json");
-            break;
-        default:
-            throw new Exception(String.format("%s is not a valid Yammer message producer function type.", function));
-        }        
-        
+            case MESSAGES:
+                url.append(YammerConstants.YAMMER_BASE_API_URL);
+                url.append(function);
+                url.append(".json");
+                break;
+            default:
+                throw new Exception(String.format("%s is not a valid Yammer message producer function type.", function));
+        }
+
         return url.toString();
     }
-    
+
     @Override
     public void process(Exchange exchange) throws Exception {
-        String body = exchange.getIn().getBody(String.class);               
-       
-        String jsonBody = endpoint.getConfig().getRequestor(apiUrl).post("?body=" + URLEncoder.encode(body, "UTF-8"));   
-        
+        String body = exchange.getIn().getBody(String.class);
+
+        String jsonBody = endpoint.getConfig().getRequestor(apiUrl).post("?body=" + URLEncoder.encode(body, "UTF-8"));
+
         // we set the body to the message that was created on the server
         if (!endpoint.getConfig().isUseJson()) {
             ObjectMapper jsonMapper = new ObjectMapper();
