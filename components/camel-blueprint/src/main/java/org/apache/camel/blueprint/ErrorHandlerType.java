@@ -40,14 +40,14 @@ public enum ErrorHandlerType {
      */
     public Class<? extends ErrorHandlerBuilder> getTypeAsClass() {
         switch (this) {
-        case DefaultErrorHandler:
-            return DefaultErrorHandlerBuilder.class;
-        case DeadLetterChannel:
-            return DeadLetterChannelBuilder.class;
-        case NoErrorHandler:
-            return NoErrorHandlerBuilder.class;
-        default:
-            throw new IllegalArgumentException("Unknown error handler: " + this);
+            case DefaultErrorHandler:
+                return DefaultErrorHandlerBuilder.class;
+            case DeadLetterChannel:
+                return DeadLetterChannelBuilder.class;
+            case NoErrorHandler:
+                return NoErrorHandlerBuilder.class;
+            default:
+                throw new IllegalArgumentException("Unknown error handler: " + this);
         }
     }
 
