@@ -54,39 +54,39 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
 
         try {
             switch (executionTypeFor(exchange)) {
-            
-            case CALL:
-                doCall(exchange, callback, compute);
-                break;
-                
-            case BROADCAST:
-                doBroadcast(exchange, callback, compute);
-                break;
-                
-            case EXECUTE:
-                doExecute(exchange, callback, compute);
-                break;
-                
-            case RUN:
-                doRun(exchange, callback, compute);
-                break;
-                
-            case APPLY:
-                doApply(exchange, callback, compute);
-                break;
-                
-            case AFFINITY_CALL:
-                doAffinityCall(exchange, callback, compute);
-                break;
-                
-            case AFFINITY_RUN:
-                doAffinityRun(exchange, callback, compute);
-                break;
-                
-            default:
-                exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Compute producer."));
-                callback.done(false);
-                return false;
+
+                case CALL:
+                    doCall(exchange, callback, compute);
+                    break;
+
+                case BROADCAST:
+                    doBroadcast(exchange, callback, compute);
+                    break;
+
+                case EXECUTE:
+                    doExecute(exchange, callback, compute);
+                    break;
+
+                case RUN:
+                    doRun(exchange, callback, compute);
+                    break;
+
+                case APPLY:
+                    doApply(exchange, callback, compute);
+                    break;
+
+                case AFFINITY_CALL:
+                    doAffinityCall(exchange, callback, compute);
+                    break;
+
+                case AFFINITY_RUN:
+                    doAffinityRun(exchange, callback, compute);
+                    break;
+
+                default:
+                    exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Compute producer."));
+                    callback.done(false);
+                    return false;
             }
 
             compute.future().listen(IgniteInCamelClosure.create(exchange, callback));
