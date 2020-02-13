@@ -124,12 +124,12 @@ public final class Hl7Util {
 
         for (int i = 0; i < validationLength; ++i) {
             switch (hl7Bytes[i]) {
-            case MllpProtocolConstants.START_OF_BLOCK:
-                return String.format("HL7 payload contains an embedded START_OF_BLOCK {%#x, ASCII <VT>} at index %d", hl7Bytes[i], i);
-            case MllpProtocolConstants.END_OF_BLOCK:
-                return String.format("HL7 payload contains an embedded END_OF_BLOCK {%#x, ASCII <FS>} at index %d", hl7Bytes[i], i);
-            default:
-                // continue on
+                case MllpProtocolConstants.START_OF_BLOCK:
+                    return String.format("HL7 payload contains an embedded START_OF_BLOCK {%#x, ASCII <VT>} at index %d", hl7Bytes[i], i);
+                case MllpProtocolConstants.END_OF_BLOCK:
+                    return String.format("HL7 payload contains an embedded END_OF_BLOCK {%#x, ASCII <FS>} at index %d", hl7Bytes[i], i);
+                default:
+                    // continue on
             }
         }
 
@@ -194,12 +194,12 @@ public final class Hl7Util {
 
 
     public static void generateAcknowledgementPayload(MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, String acknowledgementCode)
-        throws MllpAcknowledgementGenerationException {
+            throws MllpAcknowledgementGenerationException {
         generateAcknowledgementPayload(mllpSocketBuffer, hl7MessageBytes, acknowledgementCode, null);
     }
 
     public static void generateAcknowledgementPayload(MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, String acknowledgementCode, String msa3)
-        throws MllpAcknowledgementGenerationException {
+            throws MllpAcknowledgementGenerationException {
         if (hl7MessageBytes == null) {
             throw new MllpAcknowledgementGenerationException("Null HL7 message received for parsing operation");
         }
