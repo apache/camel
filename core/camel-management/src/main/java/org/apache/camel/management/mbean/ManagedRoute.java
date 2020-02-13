@@ -123,9 +123,9 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 final String val = context.getTypeConverter().convertTo(String.class, entry.getValue());
 
                 CompositeData data = new CompositeDataSupport(
-                    ct,
-                    new String[]{"key", "value"},
-                    new Object[]{key, val}
+                        ct,
+                        new String[]{"key", "value"},
+                        new Object[]{key, val}
                 );
 
                 answer.put(data);
