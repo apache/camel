@@ -181,7 +181,7 @@ public final class ThriftUtils {
         }
         return processorInstance;
     }
-    
+
     private static TProtocol constructSyncProtocol(TTransport transport, ThriftExchangeProtocol exchangeProtocol,
                                                    final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType) {
         if (negotiationType == ThriftNegotiationType.SSL) {
@@ -191,32 +191,32 @@ public final class ThriftUtils {
             return new TBinaryProtocol(new TZlibTransport(transport));
         } else {
             switch (exchangeProtocol) {
-            case BINARY:
-                return new TBinaryProtocol(new TFramedTransport(transport));
-            case JSON:
-                return new TJSONProtocol(new TFramedTransport(transport));
-            case SJSON:
-                return new TSimpleJSONProtocol(new TFramedTransport(transport));
-            case COMPACT:
-                return new TCompactProtocol(new TFramedTransport(transport));
-            default:
-                throw new IllegalArgumentException("Exchange protocol " + exchangeProtocol + " not implemented");
+                case BINARY:
+                    return new TBinaryProtocol(new TFramedTransport(transport));
+                case JSON:
+                    return new TJSONProtocol(new TFramedTransport(transport));
+                case SJSON:
+                    return new TSimpleJSONProtocol(new TFramedTransport(transport));
+                case COMPACT:
+                    return new TCompactProtocol(new TFramedTransport(transport));
+                default:
+                    throw new IllegalArgumentException("Exchange protocol " + exchangeProtocol + " not implemented");
             }
         }
     }
-    
+
     private static TProtocolFactory constructAsyncProtocol(ThriftExchangeProtocol exchangeProtocol) {
         switch (exchangeProtocol) {
-        case BINARY:
-            return new TBinaryProtocol.Factory();
-        case JSON:
-            return new TJSONProtocol.Factory();
-        case SJSON:
-            return new TSimpleJSONProtocol.Factory();
-        case COMPACT:
-            return new TCompactProtocol.Factory();
-        default:
-            throw new IllegalArgumentException("Exchange protocol " + exchangeProtocol + " not implemented");    
+            case BINARY:
+                return new TBinaryProtocol.Factory();
+            case JSON:
+                return new TJSONProtocol.Factory();
+            case SJSON:
+                return new TSimpleJSONProtocol.Factory();
+            case COMPACT:
+                return new TCompactProtocol.Factory();
+            default:
+                throw new IllegalArgumentException("Exchange protocol " + exchangeProtocol + " not implemented");
         }
     }
 
