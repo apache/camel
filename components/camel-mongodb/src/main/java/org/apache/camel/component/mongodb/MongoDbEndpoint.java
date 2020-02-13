@@ -60,7 +60,7 @@ import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable
  * Component for working with documents stored in MongoDB database.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
-    label = "database,nosql")
+        label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
@@ -158,14 +158,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         Consumer consumer;
 
         switch (dbConsumerType) {
-        case tailable:
-            consumer = new MongoDbTailableCursorConsumer(this, processor);
-            break;
-        case changeStreams:
-            consumer = new MongoDbChangeStreamsConsumer(this, processor);
-            break;
-        default:
-            throw new CamelMongoDbException("Consumer type not supported: " + dbConsumerType);
+            case tailable:
+                consumer = new MongoDbTailableCursorConsumer(this, processor);
+                break;
+            case changeStreams:
+                consumer = new MongoDbChangeStreamsConsumer(this, processor);
+                break;
+            default:
+                throw new CamelMongoDbException("Consumer type not supported: " + dbConsumerType);
         }
 
         configureConsumer(consumer);
@@ -198,7 +198,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         // against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
         if (!ObjectHelper.isEmpty(dbConsumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb) || !ObjectHelper.isEmpty(tailTrackCollection)
-            || !ObjectHelper.isEmpty(tailTrackField) || cursorRegenerationDelay != 1000L) {
+                || !ObjectHelper.isEmpty(tailTrackField) || cursorRegenerationDelay != 1000L) {
             throw new IllegalArgumentException("dbConsumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
         }
     }
@@ -557,7 +557,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public MongoDbTailTrackingConfig getTailTrackingConfig() {
         if (tailTrackingConfig == null) {
             tailTrackingConfig = new MongoDbTailTrackingConfig(persistentTailTracking, tailTrackIncreasingField, tailTrackDb == null ? database : tailTrackDb, tailTrackCollection,
-                                                               tailTrackField, getPersistentId());
+                    tailTrackField, getPersistentId());
         }
         return tailTrackingConfig;
     }
