@@ -77,9 +77,9 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
 
@@ -131,9 +131,9 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
         final Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
@@ -168,9 +168,9 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
         Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
@@ -203,9 +203,9 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
         NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
@@ -255,10 +255,10 @@ public class GroupTest {
         NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
 
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .connectionTimeoutMs(6000)
-            .sessionTimeoutMs(6000)
-            .retryPolicy(new RetryNTimes(10, 100));
+                .connectString("localhost:" + port)
+                .connectionTimeoutMs(6000)
+                .sessionTimeoutMs(6000)
+                .retryPolicy(new RetryNTimes(10, 100));
         CuratorFramework curator = builder.build();
         curator.start();
         curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
@@ -294,9 +294,9 @@ public class GroupTest {
         NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
         curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
         String groupNode = "/singletons/test" + System.currentTimeMillis();
@@ -351,18 +351,18 @@ public class GroupTest {
         @Override
         public void groupEvent(Group<NodeState> group, GroupEvent event) {
             switch (event) {
-            case CONNECTED:
-            case CHANGED:
-                connected.countDown();
-                if (group.isMaster()) {
-                    master.countDown();
-                }
-                break;
-            case DISCONNECTED:
-                disconnected.countDown();
-                break;
-            default:
-                // noop
+                case CONNECTED:
+                case CHANGED:
+                    connected.countDown();
+                    if (group.isMaster()) {
+                        master.countDown();
+                    }
+                    break;
+                case DISCONNECTED:
+                    disconnected.countDown();
+                    break;
+                default:
+                    // noop
             }
         }
 
