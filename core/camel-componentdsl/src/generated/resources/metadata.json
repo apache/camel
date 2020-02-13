@@ -567,7 +567,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ses:from",
     "title": "AWS 2 Simple Email Service",
-    "description": "The aws-ses component is used for sending emails with Amazon's SES service.",
+    "description": "The aws2-ses component is used for sending emails with Amazon's SES service.",
     "label": "cloud,mail",
     "deprecated": false,
     "deprecationNote": "cloud,mail",

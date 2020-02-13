@@ -39,7 +39,7 @@ import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
 import software.amazon.awssdk.services.ses.model.SendRawEmailResponse;
 
 /**
- * A Producer which sends messages to the Amazon Simple Email Service
+ * A Producer which sends messages to the Amazon Simple Email Service SDK v2
  * <a href="http://aws.amazon.com/ses/">AWS SES</a>
  */
 public class Ses2Producer extends DefaultProducer {

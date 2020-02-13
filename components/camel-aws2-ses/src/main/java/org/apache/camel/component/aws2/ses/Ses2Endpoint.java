@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.SesClientBuilder;
 
 /**
- * The aws-ses component is used for sending emails with Amazon's SES service.
+ * The aws2-ses component is used for sending emails with Amazon's SES service.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ses", title = "AWS 2 Simple Email Service", syntax = "aws2-ses:from", producerOnly = true, label = "cloud,mail")
 public class Ses2Endpoint extends DefaultEndpoint {
