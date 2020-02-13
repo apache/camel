@@ -64,17 +64,17 @@ public class InfluxDbProducer extends DefaultProducer {
         String dataBaseName = calculateDatabaseName(exchange);
         String retentionPolicy = calculateRetentionPolicy(exchange);
         switch (endpoint.getOperation()) {
-        case InfluxDbOperations.INSERT:
-            doInsert(exchange, dataBaseName, retentionPolicy);
-            break;
-        case InfluxDbOperations.QUERY:
-            doQuery(exchange, dataBaseName, retentionPolicy);
-            break;
-        case InfluxDbOperations.PING:
-            doPing(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
+            case InfluxDbOperations.INSERT:
+                doInsert(exchange, dataBaseName, retentionPolicy);
+                break;
+            case InfluxDbOperations.QUERY:
+                doQuery(exchange, dataBaseName, retentionPolicy);
+                break;
+            case InfluxDbOperations.PING:
+                doPing(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
         }
     }
 
@@ -84,7 +84,7 @@ public class InfluxDbProducer extends DefaultProducer {
 
             try {
                 LOG.debug("Writing point {}", p.lineProtocol());
-                
+
                 if (!connection.databaseExists(dataBaseName)) {
                     LOG.debug("Database {} doesn't exist. Creating it...", dataBaseName);
                     connection.createDatabase(dataBaseName);
@@ -113,7 +113,7 @@ public class InfluxDbProducer extends DefaultProducer {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resultSet);
     }
-    
+
     private void doPing(Exchange exchange) {
         Pong result = connection.ping();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
@@ -139,7 +139,7 @@ public class InfluxDbProducer extends DefaultProducer {
 
         return endpoint.getDatabaseName();
     }
-    
+
     private String calculateQuery(Exchange exchange) {
         String query = exchange.getIn().getHeader(InfluxDbConstants.INFLUXDB_QUERY, String.class);
 
@@ -148,7 +148,7 @@ public class InfluxDbProducer extends DefaultProducer {
         } else {
             query = endpoint.getQuery();
         }
-        
+
         if (ObjectHelper.isEmpty(query)) {
             throw new IllegalArgumentException("The query option must be set if you want to run a query operation");
         }
