@@ -115,7 +115,6 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <!-- prepare the catalog, readme files, etc. -->
