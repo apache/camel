@@ -396,39 +396,39 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         @Override
         public boolean isEnabled(int level) {
             switch (level) {
-            case FATAL:
-                // use ERROR as FATAL
-                return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
-            case ERROR:
-                return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
-            case WARN:
-                return loggingLevel.isEnabled(LoggingLevel.WARN) && LOG.isWarnEnabled();
-            case INFO:
-                return loggingLevel.isEnabled(LoggingLevel.INFO) && LOG.isInfoEnabled();
-            default:
-                return loggingLevel.isEnabled(LoggingLevel.DEBUG) && LOG.isDebugEnabled();
+                case FATAL:
+                    // use ERROR as FATAL
+                    return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
+                case ERROR:
+                    return loggingLevel.isEnabled(LoggingLevel.ERROR) && LOG.isErrorEnabled();
+                case WARN:
+                    return loggingLevel.isEnabled(LoggingLevel.WARN) && LOG.isWarnEnabled();
+                case INFO:
+                    return loggingLevel.isEnabled(LoggingLevel.INFO) && LOG.isInfoEnabled();
+                default:
+                    return loggingLevel.isEnabled(LoggingLevel.DEBUG) && LOG.isDebugEnabled();
             }
         }
 
         @Override
         public void log(int level, String message) {
             switch (level) {
-            case FATAL:
-                // use ERROR as FATAL
-                LOG.error("JSCH -> {}", message);
-                break;
-            case ERROR:
-                LOG.error("JSCH -> {}", message);
-                break;
-            case WARN:
-                LOG.warn("JSCH -> {}", message);
-                break;
-            case INFO:
-                LOG.info("JSCH -> {}", message);
-                break;
-            default:
-                LOG.debug("JSCH -> {}", message);
-                break;
+                case FATAL:
+                    // use ERROR as FATAL
+                    LOG.error("JSCH -> {}", message);
+                    break;
+                case ERROR:
+                    LOG.error("JSCH -> {}", message);
+                    break;
+                case WARN:
+                    LOG.warn("JSCH -> {}", message);
+                    break;
+                case INFO:
+                    LOG.info("JSCH -> {}", message);
+                    break;
+                default:
+                    LOG.debug("JSCH -> {}", message);
+                    break;
             }
         }
     }
