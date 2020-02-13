@@ -61,17 +61,17 @@ public class PdfProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object result;
         switch (pdfConfiguration.getOperation()) {
-        case append:
-            result = doAppend(exchange);
-            break;
-        case create:
-            result = doCreate(exchange);
-            break;
-        case extractText:
-            result = doExtractText(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown operation %s", pdfConfiguration.getOperation()));
+            case append:
+                result = doAppend(exchange);
+                break;
+            case create:
+                result = doCreate(exchange);
+                break;
+            case extractText:
+                result = doExtractText(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Unknown operation %s", pdfConfiguration.getOperation()));
         }
         // propagate headers
         exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
@@ -136,15 +136,15 @@ public class PdfProducer extends DefaultProducer {
     private TextProcessingAbstractFactory createTextProcessingFactory(PdfConfiguration pdfConfiguration) {
         TextProcessingAbstractFactory result;
         switch (pdfConfiguration.getTextProcessingFactory()) {
-        case autoFormatting:
-            result = new AutoFormattedWriterAbstractFactory(pdfConfiguration);
-            break;
-        case lineTermination:
-            result = new LineTerminationWriterAbstractFactory(pdfConfiguration);
-            break;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown text processing factory %s",
-                    pdfConfiguration.getTextProcessingFactory()));
+            case autoFormatting:
+                result = new AutoFormattedWriterAbstractFactory(pdfConfiguration);
+                break;
+            case lineTermination:
+                result = new LineTerminationWriterAbstractFactory(pdfConfiguration);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Unknown text processing factory %s",
+                        pdfConfiguration.getTextProcessingFactory()));
         }
         return result;
     }
