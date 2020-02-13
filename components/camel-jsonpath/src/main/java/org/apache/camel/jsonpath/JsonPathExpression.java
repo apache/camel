@@ -61,19 +61,19 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "resulttype":
-            case "resultType": setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
-            case "suppressexceptions":
-            case "suppressExceptions": setSuppressExceptions(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
-            case "allowsimple":
-            case "allowSimple": setAllowSimple(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
-            case "alloweasypredicate":
-            case "allowEasyPredicate": setAllowEasyPredicate(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
-            case "writeasstring":
-            case "writeAsString": setWriteAsString(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
-            case "headername":
-            case "headerName": setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-            default: return false;
+        case "resulttype":
+        case "resultType": setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+        case "suppressexceptions":
+        case "suppressExceptions": setSuppressExceptions(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+        case "allowsimple":
+        case "allowSimple": setAllowSimple(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+        case "alloweasypredicate":
+        case "allowEasyPredicate": setAllowEasyPredicate(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+        case "writeasstring":
+        case "writeAsString": setWriteAsString(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+        case "headername":
+        case "headerName": setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+        default: return false;
         }
     }
 
