@@ -16,7 +16,7 @@ There are many ways you can help make Camel a better piece of software - please 
 * <<if-you-find-a-bug-or-problem,If you find a bug or problem>>
 * <<working-on-the-code,Working on the code>>
 * <<running-checkstyle,Running checkstyle>>
-* <<checking-karaf-and-spring-boot-integration-tests,Checking Karaf and Spring Boot Integration Tests>>
+* <<verify-karaf-features,Verify Karaf features>>
 * <<apache-camel-committers-should-work-on-the-asf-git-repo,Apache Camel committers should work on the ASF git repo>>
 * <<creating-patches,Creating patches>>
 * <<pull-request-at-github,Pull request at Github>>
@@ -88,19 +88,14 @@ Please remember to run this check on your code changes before submitting a patch
  cd camel-ftp
  mvn clean install -Psourcecheck
 
-[#checking-karaf-and-spring-boot-integration-tests]
-== Checking Karaf and Spring Boot Integration Tests
+[#verify-karaf-features]
+== Verify Karaf features
 
-Apache Camel source code has a set of Integration Test for Karaf and Spring Boot platform.
-If your contribution modifies dependencies of a specific component, you can check the behavior on these two platforms in this way:
+To check a new Karaf feature or an existing one you should run a verification on the features.xml file. You'll need to follow these steps:
+First thing to be done is running a full build of Camel. Then
 
- cd tests/camel-itest-karaf
- mvn clean test -Dtest=Camel<component_name>Test
-
-And for Spring Boot:
-
- cd tests/camel-itest-spring-boot
- mvn clean test -Dtest=Camel<component_name>Test
+ cd platform/karaf/features/
+ mvn clean install
 
 [#apache-camel-committers-should-work-on-the-asf-git-repo]
 == Apache Camel committers should work on the ASF git repo
