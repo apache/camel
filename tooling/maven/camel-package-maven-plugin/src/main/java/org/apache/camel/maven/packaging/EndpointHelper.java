@@ -163,20 +163,20 @@ public final class EndpointHelper {
 
     private static int groupScore(String group) {
         switch (group) {
-        case "common":
-            return 1;
-        case "common (advanced)":
-            return 2;
-        case "consumer":
-            return 3;
-        case "consumer (advanced)":
-            return 4;
-        case "producer":
-            return 5;
-        case "producer (advanced)":
-            return 6;
-        default:
-            return 9;
+            case "common":
+                return 1;
+            case "common (advanced)":
+                return 2;
+            case "consumer":
+                return 3;
+            case "consumer (advanced)":
+                return 4;
+            case "producer":
+                return 5;
+            case "producer (advanced)":
+                return 6;
+            default:
+                return 9;
         }
     }
 

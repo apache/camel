@@ -52,20 +52,20 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         switch (config.getFunctionType()) {
-        case MESSAGES:
-        case ALGO:
-        case FOLLOWING:
-        case MY_FEED:
-        case PRIVATE:
-        case SENT:
-        case RECEIVED:
-            return new YammerMessagePollingConsumer(this, processor);
-        case USERS:
-        case CURRENT:
-            return new YammerUserPollingConsumer(this, processor);
-        default:
-            throw new Exception(String.format("%s is not a valid Yammer function type.", config.getFunction()));
-        }  
+            case MESSAGES:
+            case ALGO:
+            case FOLLOWING:
+            case MY_FEED:
+            case PRIVATE:
+            case SENT:
+            case RECEIVED:
+                return new YammerMessagePollingConsumer(this, processor);
+            case USERS:
+            case CURRENT:
+                return new YammerUserPollingConsumer(this, processor);
+            default:
+                throw new Exception(String.format("%s is not a valid Yammer function type.", config.getFunction()));
+        }
 
     }
 

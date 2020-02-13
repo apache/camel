@@ -69,18 +69,18 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (getSubsystem()) {
-        case KeystoneConstants.REGIONS:
-            return new RegionProducer(this, createClient());
-        case KeystoneConstants.DOMAINS:
-            return new DomainProducer(this, createClient());
-        case KeystoneConstants.PROJECTS:
-            return new ProjectProducer(this, createClient());
-        case KeystoneConstants.USERS:
-            return new UserProducer(this, createClient());
-        case KeystoneConstants.GROUPS:
-            return new GroupProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case KeystoneConstants.REGIONS:
+                return new RegionProducer(this, createClient());
+            case KeystoneConstants.DOMAINS:
+                return new DomainProducer(this, createClient());
+            case KeystoneConstants.PROJECTS:
+                return new ProjectProducer(this, createClient());
+            case KeystoneConstants.USERS:
+                return new UserProducer(this, createClient());
+            case KeystoneConstants.GROUPS:
+                return new GroupProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 

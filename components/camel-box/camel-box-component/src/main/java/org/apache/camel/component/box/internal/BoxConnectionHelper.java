@@ -68,15 +68,15 @@ public final class BoxConnectionHelper {
                     "Box API connection failed: Authentication type not specified in configuration");
         }
         switch (configuration.getAuthenticationType()) {
-        case BoxConfiguration.APP_ENTERPRISE_AUTHENTICATION:
-            return createAppEnterpriseAuthenticatedConnection(configuration);
-        case BoxConfiguration.APP_USER_AUTHENTICATION:
-            return createAppUserAuthenticatedConnection(configuration);
-        case BoxConfiguration.STANDARD_AUTHENTICATION:
-            return createStandardAuthenticatedConnection(configuration);
-        default:
-            throw new RuntimeCamelException(String.format("Box API connection failed: Invalid authentication type '%s'",
-                    configuration.getAuthenticationType()));
+            case BoxConfiguration.APP_ENTERPRISE_AUTHENTICATION:
+                return createAppEnterpriseAuthenticatedConnection(configuration);
+            case BoxConfiguration.APP_USER_AUTHENTICATION:
+                return createAppUserAuthenticatedConnection(configuration);
+            case BoxConfiguration.STANDARD_AUTHENTICATION:
+                return createStandardAuthenticatedConnection(configuration);
+            default:
+                throw new RuntimeCamelException(String.format("Box API connection failed: Invalid authentication type '%s'",
+                        configuration.getAuthenticationType()));
         }
     }
 

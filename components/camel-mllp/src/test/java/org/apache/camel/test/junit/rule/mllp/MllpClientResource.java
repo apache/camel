@@ -347,18 +347,18 @@ public class MllpClientResource extends ExternalResource {
             while (readingMessage) {
                 int nextByte = inputStream.read();
                 switch (nextByte) {
-                case -1:
-                    throw new MllpJUnitResourceCorruptFrameException("Reached end of stream before END_OF_BLOCK");
-                case START_OF_BLOCK:
-                    throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
-                case END_OF_BLOCK:
-                    if (END_OF_DATA != inputStream.read()) {
-                        throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
-                    }
-                    readingMessage = false;
-                    break;
-                default:
-                    acknowledgement.append((char) nextByte);
+                    case -1:
+                        throw new MllpJUnitResourceCorruptFrameException("Reached end of stream before END_OF_BLOCK");
+                    case START_OF_BLOCK:
+                        throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
+                    case END_OF_BLOCK:
+                        if (END_OF_DATA != inputStream.read()) {
+                            throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
+                        }
+                        readingMessage = false;
+                        break;
+                    default:
+                        acknowledgement.append((char) nextByte);
                 }
             }
         } catch (SocketTimeoutException timeoutEx) {

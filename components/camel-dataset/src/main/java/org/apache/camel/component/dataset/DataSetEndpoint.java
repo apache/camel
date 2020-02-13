@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * Camel will use the throughput logger when sending dataset's.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
-    label = "core,testing", lenientProperties = true)
+        label = "core,testing", lenientProperties = true)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
@@ -214,14 +214,14 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
      */
     public void setDataSetIndex(String dataSetIndex) {
         switch (dataSetIndex) {
-        case "off":
-        case "lenient":
-        case "strict":
-            this.dataSetIndex = dataSetIndex;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid value specified for the dataSetIndex URI parameter:" + dataSetIndex
-                    + "Supported values are strict, lenient and off ");
+            case "off":
+            case "lenient":
+            case "strict":
+                this.dataSetIndex = dataSetIndex;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid value specified for the dataSetIndex URI parameter:" + dataSetIndex
+                        + "Supported values are strict, lenient and off ");
         }
     }
 
@@ -258,23 +258,23 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
         switch (getDataSetIndex()) {
-        case "off":
-            break;
-        case "strict":
-            long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
-            assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
-            break;
-        case "lenient":
-        default:
-            // Validate the header value if it is present
-            Long dataSetIndexHeaderValue = actual.getIn().getHeader(Exchange.DATASET_INDEX, Long.class);
-            if (dataSetIndexHeaderValue != null) {
-                assertEquals("Header: " + Exchange.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
-            } else {
-                // set the header if it isn't there
-                actual.getIn().setHeader(Exchange.DATASET_INDEX, index);
-            }
-            break;
+            case "off":
+                break;
+            case "strict":
+                long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
+                assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+                break;
+            case "lenient":
+            default:
+                // Validate the header value if it is present
+                Long dataSetIndexHeaderValue = actual.getIn().getHeader(Exchange.DATASET_INDEX, Long.class);
+                if (dataSetIndexHeaderValue != null) {
+                    assertEquals("Header: " + Exchange.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
+                } else {
+                    // set the header if it isn't there
+                    actual.getIn().setHeader(Exchange.DATASET_INDEX, index);
+                }
+                break;
         }
 
         getDataSet().assertMessageExpected(this, expected, actual, index);

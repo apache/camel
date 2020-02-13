@@ -53,20 +53,20 @@ public class MSK2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listClusters:
-            listClusters(getEndpoint().getMskClient(), exchange);
-            break;
-        case createCluster:
-            createCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case deleteCluster:
-            deleteCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case describeCluster:
-            describeCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listClusters:
+                listClusters(getEndpoint().getMskClient(), exchange);
+                break;
+            case createCluster:
+                createCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case deleteCluster:
+                deleteCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case describeCluster:
+                describeCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

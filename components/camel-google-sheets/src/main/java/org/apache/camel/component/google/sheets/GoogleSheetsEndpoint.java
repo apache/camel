@@ -78,14 +78,14 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
     @Override
     protected void afterConfigureProperties() {
         switch (apiName) {
-        case SPREADSHEETS:
-            apiProxy = getClient().spreadsheets();
-            break;
-        case DATA:
-            apiProxy = getClient().spreadsheets().values();
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid API name " + apiName);
+            case SPREADSHEETS:
+                apiProxy = getClient().spreadsheets();
+                break;
+            case DATA:
+                apiProxy = getClient().spreadsheets().values();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 

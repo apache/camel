@@ -53,17 +53,17 @@ public final class DslHelper {
         String convertedText = CaseUtils.toCamelCase(schema, false, '-', '+');
         if (convertedText != null) {
             switch (convertedText) {
-            case "class":
-                convertedText = "clas";
-                break;
-            case "package":
-                convertedText = "packag";
-                break;
-            case "rest":
-                convertedText = "restEndpoint";
-                break;
-            default:
-                break;
+                case "class":
+                    convertedText = "clas";
+                    break;
+                case "package":
+                    convertedText = "packag";
+                    break;
+                case "rest":
+                    convertedText = "restEndpoint";
+                    break;
+                default:
+                    break;
             }
         }
         return convertedText;

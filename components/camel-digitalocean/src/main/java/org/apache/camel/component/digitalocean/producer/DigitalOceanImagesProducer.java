@@ -43,32 +43,32 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         switch (determineOperation(exchange)) {
 
-        case list:
-            getImages(exchange);
-            break;
-        case ownList:
-            getUserImages(exchange);
-            break;
-        case listActions:
-            getImageActions(exchange);
-            break;
-        case get:
-            getImage(exchange);
-            break;
-        case update:
-            updateImage(exchange);
-            break;
-        case delete:
-            deleteImage(exchange);
-            break;
-        case transfer:
-            transferImage(exchange);
-            break;
-        case convert:
-            convertImageToSnapshot(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case list:
+                getImages(exchange);
+                break;
+            case ownList:
+                getUserImages(exchange);
+                break;
+            case listActions:
+                getImageActions(exchange);
+                break;
+            case get:
+                getImage(exchange);
+                break;
+            case update:
+                updateImage(exchange);
+                break;
+            case delete:
+                deleteImage(exchange);
+                break;
+            case transfer:
+                transferImage(exchange);
+                break;
+            case convert:
+                convertImageToSnapshot(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

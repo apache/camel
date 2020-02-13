@@ -62,26 +62,26 @@ public class MQ2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listBrokers:
-            listBrokers(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case createBroker:
-            createBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case deleteBroker:
-            deleteBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case rebootBroker:
-            rebootBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case updateBroker:
-            updateBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case describeBroker:
-            describeBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listBrokers:
+                listBrokers(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case createBroker:
+                createBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case deleteBroker:
+                deleteBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case rebootBroker:
+                rebootBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case updateBroker:
+                updateBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case describeBroker:
+                describeBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

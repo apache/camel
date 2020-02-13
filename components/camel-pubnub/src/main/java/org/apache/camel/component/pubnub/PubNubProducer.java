@@ -60,36 +60,36 @@ public class PubNubProducer extends DefaultAsyncProducer {
         LOG.debug("Executing {} operation", operation);
         try {
             switch (operation) {
-            case PUBLISH: {
-                doPublish(exchange, callback);
-                break;
-            }
-            case FIRE: {
-                doFire(exchange, callback);
-                break;
-            }
-            case GETHISTORY: {
-                doGetHistory(exchange, callback);
-                break;
-            }
-            case GETSTATE: {
-                doGetState(exchange, callback);
-                break;
-            }
-            case HERENOW: {
-                doHereNow(exchange, callback);
-                break;
-            }
-            case SETSTATE: {
-                doSetState(exchange, callback);
-                break;
-            }
-            case WHERENOW: {
-                doWhereNow(exchange, callback);
-                break;
-            }
-            default:
-                throw new UnsupportedOperationException(operation.toString());
+                case PUBLISH: {
+                    doPublish(exchange, callback);
+                    break;
+                }
+                case FIRE: {
+                    doFire(exchange, callback);
+                    break;
+                }
+                case GETHISTORY: {
+                    doGetHistory(exchange, callback);
+                    break;
+                }
+                case GETSTATE: {
+                    doGetState(exchange, callback);
+                    break;
+                }
+                case HERENOW: {
+                    doHereNow(exchange, callback);
+                    break;
+                }
+                case SETSTATE: {
+                    doSetState(exchange, callback);
+                    break;
+                }
+                case WHERENOW: {
+                    doWhereNow(exchange, callback);
+                    break;
+                }
+                default:
+                    throw new UnsupportedOperationException(operation.toString());
             }
         } catch (Exception e) {
             exchange.setException(e);
@@ -107,19 +107,19 @@ public class PubNubProducer extends DefaultAsyncProducer {
         }
         LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
-            .publish()
-            .message(body)
-            .channel(getChannel(exchange))
-            .usePOST(true)
-            .async(new PNCallback<PNPublishResult>() {
-                @Override
-                public void onResponse(PNPublishResult result, PNStatus status) {
-                    if (!status.isError()) {
-                        exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, result.getTimetoken());
+                .publish()
+                .message(body)
+                .channel(getChannel(exchange))
+                .usePOST(true)
+                .async(new PNCallback<PNPublishResult>() {
+                    @Override
+                    public void onResponse(PNPublishResult result, PNStatus status) {
+                        if (!status.isError()) {
+                            exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, result.getTimetoken());
+                        }
+                        processMessage(exchange, callback, status, null);
                     }
-                    processMessage(exchange, callback, status, null);
-                }
-            });
+                });
     }
 
     private void doFire(Exchange exchange, AsyncCallback callback) {
@@ -130,31 +130,31 @@ public class PubNubProducer extends DefaultAsyncProducer {
         }
         LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
-            .fire()
-            .message(body)
-            .channel(getChannel(exchange))
-            .async(new PNCallback<PNPublishResult>() {
-                @Override
-                public void onResponse(PNPublishResult result, PNStatus status) {
-                    if (!status.isError()) {
-                        exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, result.getTimetoken());
+                .fire()
+                .message(body)
+                .channel(getChannel(exchange))
+                .async(new PNCallback<PNPublishResult>() {
+                    @Override
+                    public void onResponse(PNPublishResult result, PNStatus status) {
+                        if (!status.isError()) {
+                            exchange.getIn().setHeader(PubNubConstants.TIMETOKEN, result.getTimetoken());
+                        }
+                        processMessage(exchange, callback, status, null);
                     }
-                    processMessage(exchange, callback, status, null);
-                }
-            });
+                });
     }
 
     private void doGetHistory(Exchange exchange, AsyncCallback callback) {
         endpoint.getPubnub()
-            .history()
-            .channel(getChannel(exchange))
-            .async(new PNCallback<PNHistoryResult>() {
-                @Override
-                public void onResponse(PNHistoryResult result, PNStatus status) {
-                    LOG.debug("Got history message [{}]", result);
-                    processMessage(exchange, callback, status, result.getMessages());
-                }
-            });
+                .history()
+                .channel(getChannel(exchange))
+                .async(new PNCallback<PNHistoryResult>() {
+                    @Override
+                    public void onResponse(PNHistoryResult result, PNStatus status) {
+                        LOG.debug("Got history message [{}]", result);
+                        processMessage(exchange, callback, status, result.getMessages());
+                    }
+                });
     }
 
     private void doSetState(Exchange exchange, AsyncCallback callback) {
@@ -165,58 +165,58 @@ public class PubNubProducer extends DefaultAsyncProducer {
         }
         LOG.debug("Sending setState [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
-            .setPresenceState()
-            .channels(Arrays.asList(getChannel(exchange)))
-            .state(body)
-            .uuid(getUUID(exchange))
-            .async(new PNCallback<PNSetStateResult>() {
-                public void onResponse(PNSetStateResult result, PNStatus status) {
-                    LOG.debug("Got setState responsee [{}]", result);
-                    processMessage(exchange, callback, status, result);
-                }
-            });
+                .setPresenceState()
+                .channels(Arrays.asList(getChannel(exchange)))
+                .state(body)
+                .uuid(getUUID(exchange))
+                .async(new PNCallback<PNSetStateResult>() {
+                    public void onResponse(PNSetStateResult result, PNStatus status) {
+                        LOG.debug("Got setState responsee [{}]", result);
+                        processMessage(exchange, callback, status, result);
+                    }
+                });
     }
 
     private void doGetState(Exchange exchange, AsyncCallback callback) {
         endpoint.getPubnub()
-            .getPresenceState()
-            .channels(Arrays.asList(getChannel(exchange)))
-            .uuid(getUUID(exchange))
-            .async(new PNCallback<PNGetStateResult>() {
-                @Override
-                public void onResponse(PNGetStateResult result, PNStatus status) {
-                    LOG.debug("Got state [{}]", result.getStateByUUID());
-                    processMessage(exchange, callback, status, result);
-                }
-            });
+                .getPresenceState()
+                .channels(Arrays.asList(getChannel(exchange)))
+                .uuid(getUUID(exchange))
+                .async(new PNCallback<PNGetStateResult>() {
+                    @Override
+                    public void onResponse(PNGetStateResult result, PNStatus status) {
+                        LOG.debug("Got state [{}]", result.getStateByUUID());
+                        processMessage(exchange, callback, status, result);
+                    }
+                });
     }
 
     private void doHereNow(Exchange exchange, AsyncCallback callback) {
         endpoint.getPubnub()
-            .hereNow()
-            .channels(Arrays.asList(getChannel(exchange)))
-            .includeState(true)
-            .includeUUIDs(true)
-            .async(new PNCallback<PNHereNowResult>() {
-                @Override
-                public void onResponse(PNHereNowResult result, PNStatus status) {
-                    LOG.debug("Got herNow message [{}]", result);
-                    processMessage(exchange, callback, status, result);
-                }
-            });
+                .hereNow()
+                .channels(Arrays.asList(getChannel(exchange)))
+                .includeState(true)
+                .includeUUIDs(true)
+                .async(new PNCallback<PNHereNowResult>() {
+                    @Override
+                    public void onResponse(PNHereNowResult result, PNStatus status) {
+                        LOG.debug("Got herNow message [{}]", result);
+                        processMessage(exchange, callback, status, result);
+                    }
+                });
     }
 
     private void doWhereNow(Exchange exchange, AsyncCallback callback) {
         endpoint.getPubnub()
-            .whereNow()
-            .uuid(getUUID(exchange))
-            .async(new PNCallback<PNWhereNowResult>() {
-                @Override
-                public void onResponse(PNWhereNowResult result, PNStatus status) {
-                    LOG.debug("Got whereNow message [{}]", result.getChannels());
-                    processMessage(exchange, callback, status, result.getChannels());
-                }
-            });
+                .whereNow()
+                .uuid(getUUID(exchange))
+                .async(new PNCallback<PNWhereNowResult>() {
+                    @Override
+                    public void onResponse(PNWhereNowResult result, PNStatus status) {
+                        LOG.debug("Got whereNow message [{}]", result.getChannels());
+                        processMessage(exchange, callback, status, result.getChannels());
+                    }
+                });
     }
 
     private void processMessage(Exchange exchange, AsyncCallback callback, PNStatus status, Object body) {

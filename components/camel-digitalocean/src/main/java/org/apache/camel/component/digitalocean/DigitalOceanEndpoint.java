@@ -66,30 +66,30 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
         LOG.trace("Resolve producer digitalocean endpoint {{}}", configuration.getResource());
 
         switch (configuration.getResource()) {
-        case account:
-            return new DigitalOceanAccountProducer(this, configuration);
-        case actions:
-            return new DigitalOceanActionsProducer(this, configuration);
-        case blockStorages:
-            return new DigitalOceanBlockStoragesProducer(this, configuration);
-        case droplets:
-            return new DigitalOceanDropletsProducer(this, configuration);
-        case images:
-            return new DigitalOceanImagesProducer(this, configuration);
-        case snapshots:
-            return new DigitalOceanSnapshotsProducer(this, configuration);
-        case keys:
-            return new DigitalOceanKeysProducer(this, configuration);
-        case regions:
-            return new DigitalOceanRegionsProducer(this, configuration);
-        case sizes:
-            return new DigitalOceanSizesProducer(this, configuration);
-        case floatingIPs:
-            return new DigitalOceanFloatingIPsProducer(this, configuration);
-        case tags:
-            return new DigitalOceanTagsProducer(this, configuration);
-        default:
-            throw new UnsupportedOperationException("Operation specified is not valid for producer");
+            case account:
+                return new DigitalOceanAccountProducer(this, configuration);
+            case actions:
+                return new DigitalOceanActionsProducer(this, configuration);
+            case blockStorages:
+                return new DigitalOceanBlockStoragesProducer(this, configuration);
+            case droplets:
+                return new DigitalOceanDropletsProducer(this, configuration);
+            case images:
+                return new DigitalOceanImagesProducer(this, configuration);
+            case snapshots:
+                return new DigitalOceanSnapshotsProducer(this, configuration);
+            case keys:
+                return new DigitalOceanKeysProducer(this, configuration);
+            case regions:
+                return new DigitalOceanRegionsProducer(this, configuration);
+            case sizes:
+                return new DigitalOceanSizesProducer(this, configuration);
+            case floatingIPs:
+                return new DigitalOceanFloatingIPsProducer(this, configuration);
+            case tags:
+                return new DigitalOceanTagsProducer(this, configuration);
+            default:
+                throw new UnsupportedOperationException("Operation specified is not valid for producer");
         }
 
     }
@@ -108,14 +108,14 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
         } else if (configuration.getHttpProxyHost() != null && configuration.getHttpProxyPort() != null) {
 
             HttpClientBuilder builder = HttpClients.custom()
-                .useSystemProperties()
-                .setProxy(new HttpHost(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()));
+                    .useSystemProperties()
+                    .setProxy(new HttpHost(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()));
 
             if (configuration.getHttpProxyUser() != null && configuration.getHttpProxyPassword() != null) {
                 BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
                 credsProvider.setCredentials(
-                    new AuthScope(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()),
-                    new UsernamePasswordCredentials(configuration.getHttpProxyUser(), configuration.getHttpProxyPassword()));
+                        new AuthScope(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()),
+                        new UsernamePasswordCredentials(configuration.getHttpProxyUser(), configuration.getHttpProxyPassword()));
                 builder.setDefaultCredentialsProvider(credsProvider);
 
             }

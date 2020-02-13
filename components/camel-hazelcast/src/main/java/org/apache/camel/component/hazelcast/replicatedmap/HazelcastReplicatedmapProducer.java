@@ -51,32 +51,32 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
         final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-        case PUT:
-            this.put(oid, exchange);
-            break;
+            case PUT:
+                this.put(oid, exchange);
+                break;
 
-        case GET:
-            this.get(oid, exchange);
-            break;
+            case GET:
+                this.get(oid, exchange);
+                break;
 
-        case DELETE:
-            this.delete(oid);
-            break;
+            case DELETE:
+                this.delete(oid);
+                break;
 
-        case CLEAR:
-            this.clear(exchange);
-            break;
-            
-        case CONTAINS_KEY:
-            this.containsKey(oid, exchange);
-            break;
-            
-        case CONTAINS_VALUE:
-            this.containsValue(exchange);
-            break;
-            
-        default:
-            throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
+            case CLEAR:
+                this.clear(exchange);
+                break;
+
+            case CONTAINS_KEY:
+                this.containsKey(oid, exchange);
+                break;
+
+            case CONTAINS_VALUE:
+                this.containsValue(exchange);
+                break;
+
+            default:
+                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
@@ -99,7 +99,7 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
     private void clear(Exchange exchange) {
         this.cache.clear();
     }
-    
+
     private void containsKey(Object oid, Exchange exchange) {
         exchange.getOut().setBody(this.cache.containsKey(oid));
     }

@@ -48,14 +48,14 @@ public class EtcdStatsEndpoint extends AbstractEtcdPollingEndpoint {
 
     Object getStats(EtcdClient client) {
         switch (getPath()) {
-        case EtcdConstants.ETCD_LEADER_STATS_PATH:
-            return client.getLeaderStats();
-        case EtcdConstants.ETCD_SELF_STATS_PATH:
-            return client.getSelfStats();
-        case EtcdConstants.ETCD_STORE_STATS_PATH:
-            return client.getStoreStats();
-        default:
-            throw new IllegalStateException("No stats for " + getPath());
+            case EtcdConstants.ETCD_LEADER_STATS_PATH:
+                return client.getLeaderStats();
+            case EtcdConstants.ETCD_SELF_STATS_PATH:
+                return client.getSelfStats();
+            case EtcdConstants.ETCD_STORE_STATS_PATH:
+                return client.getStoreStats();
+            default:
+                throw new IllegalStateException("No stats for " + getPath());
         }
     }
 }

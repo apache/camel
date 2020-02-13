@@ -95,14 +95,14 @@ public class XJEndpoint extends XsltSaxonEndpoint {
      */
     protected void configureOutput(XsltBuilder xsltBuilder, String output) throws Exception {
         switch (this.transformDirection) {
-        case JSON2XML:
-            super.configureOutput(xsltBuilder, output);
-            break;
-        case XML2JSON:
-            configureJsonOutput(xsltBuilder, output);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown transformation direction: " + this.transformDirection);
+            case JSON2XML:
+                super.configureOutput(xsltBuilder, output);
+                break;
+            case XML2JSON:
+                configureJsonOutput(xsltBuilder, output);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown transformation direction: " + this.transformDirection);
         }
     }
 

@@ -66,17 +66,17 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
         final Class<?> type;
 
         switch (configuration.getOperation()) {
-        case NONE:
-            type = configuration.getEntityType();
-            break;
-        case EXECUTE:
-            type = Query.class;
-            break;
-        case FETCH:
-            type = ResultQuery.class;
-            break;
-        default:
-            throw new UnsupportedOperationException("Operation: " + configuration.getOperation());
+            case NONE:
+                type = configuration.getEntityType();
+                break;
+            case EXECUTE:
+                type = Query.class;
+                break;
+            case FETCH:
+                type = ResultQuery.class;
+                break;
+            default:
+                throw new UnsupportedOperationException("Operation: " + configuration.getOperation());
         }
 
         return new Expression() {

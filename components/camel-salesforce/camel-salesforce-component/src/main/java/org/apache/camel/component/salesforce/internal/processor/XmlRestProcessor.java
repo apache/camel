@@ -73,88 +73,88 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     protected void processRequest(Exchange exchange) throws SalesforceException {
 
         switch (operationName) {
-        case GET_VERSIONS:
-            exchange.setProperty(RESPONSE_CLASS, Versions.class);
-            break;
+            case GET_VERSIONS:
+                exchange.setProperty(RESPONSE_CLASS, Versions.class);
+                break;
 
-        case GET_RESOURCES:
-            exchange.setProperty(RESPONSE_CLASS, RestResources.class);
-            break;
+            case GET_RESOURCES:
+                exchange.setProperty(RESPONSE_CLASS, RestResources.class);
+                break;
 
-        case GET_GLOBAL_OBJECTS:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
-            break;
+            case GET_GLOBAL_OBJECTS:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
+                break;
 
-        case GET_BASIC_INFO:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
+            case GET_BASIC_INFO:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
 
-            // need to add alias for Salesforce XML that uses SObject name as
-            // root element
-            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
-            break;
+                // need to add alias for Salesforce XML that uses SObject name as
+                // root element
+                exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
+                break;
 
-        case GET_DESCRIPTION:
-            // handle in built response types
-            exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
+            case GET_DESCRIPTION:
+                // handle in built response types
+                exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
 
-            // need to add alias for Salesforce XML that uses SObject name as
-            // root element
-            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
-            break;
+                // need to add alias for Salesforce XML that uses SObject name as
+                // root element
+                exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
+                break;
 
-        case GET_SOBJECT:
-            // need to add alias for Salesforce XML that uses SObject name as
-            // root element
-            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
-            break;
+            case GET_SOBJECT:
+                // need to add alias for Salesforce XML that uses SObject name as
+                // root element
+                exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
+                break;
 
-        case CREATE_SOBJECT:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-            break;
+            case CREATE_SOBJECT:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+                break;
 
-        case GET_SOBJECT_WITH_ID:
-            // need to add alias for Salesforce XML that uses SObject name as
-            // root element
-            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
-            break;
+            case GET_SOBJECT_WITH_ID:
+                // need to add alias for Salesforce XML that uses SObject name as
+                // root element
+                exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
+                break;
 
-        case UPSERT_SOBJECT:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-            break;
+            case UPSERT_SOBJECT:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+                break;
 
-        case QUERY:
-        case QUERY_ALL:
-        case QUERY_MORE:
-            // need to add alias for Salesforce XML that uses SObject name as
-            // root element
-            exchange.setProperty(RESPONSE_ALIAS, "QueryResult");
-            break;
+            case QUERY:
+            case QUERY_ALL:
+            case QUERY_MORE:
+                // need to add alias for Salesforce XML that uses SObject name as
+                // root element
+                exchange.setProperty(RESPONSE_ALIAS, "QueryResult");
+                break;
 
-        case SEARCH:
-            // handle known response type
-            exchange.setProperty(RESPONSE_CLASS, SearchResults.class);
-            break;
+            case SEARCH:
+                // handle known response type
+                exchange.setProperty(RESPONSE_CLASS, SearchResults.class);
+                break;
 
-        case APEX_CALL:
-            // need to add alias for Salesforce XML that uses SObject name as
-            // root element
-            exchange.setProperty(RESPONSE_ALIAS, "response");
-            break;
+            case APEX_CALL:
+                // need to add alias for Salesforce XML that uses SObject name as
+                // root element
+                exchange.setProperty(RESPONSE_ALIAS, "response");
+                break;
 
-        case APPROVAL:
-            exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
-            break;
-        case APPROVALS:
-            throw new SalesforceException("Fetching of approvals (as of 18.11.2016) with XML format results in HTTP status 500." + " To fetch approvals please use JSON format.",
-                                          0);
+            case APPROVAL:
+                exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
+                break;
+            case APPROVALS:
+                throw new SalesforceException("Fetching of approvals (as of 18.11.2016) with XML format results in HTTP status 500." + " To fetch approvals please use JSON format.",
+                        0);
 
-        default:
-            // ignore, some operations do not require alias or class exchange
-            // properties
+            default:
+                // ignore, some operations do not require alias or class exchange
+                // properties
         }
     }
 

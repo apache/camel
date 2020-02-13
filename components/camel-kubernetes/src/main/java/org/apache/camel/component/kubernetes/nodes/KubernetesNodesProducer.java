@@ -60,28 +60,28 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_NODES:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NODES:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_NODES_BY_LABELS_OPERATION:
-            doListNodesByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NODES_BY_LABELS_OPERATION:
+                doListNodesByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_NODE_OPERATION:
-            doGetNode(exchange, operation);
-            break;
+            case KubernetesOperations.GET_NODE_OPERATION:
+                doGetNode(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_NODE_OPERATION:
-            doCreateNode(exchange, operation);
-            break;
-            
-        case KubernetesOperations.DELETE_NODE_OPERATION:
-            doDeleteNode(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_NODE_OPERATION:
+                doCreateNode(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            case KubernetesOperations.DELETE_NODE_OPERATION:
+                doDeleteNode(exchange, operation);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -137,7 +137,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(node);
     }
-    
+
     protected void doDeleteNode(Exchange exchange, String operation) throws Exception {
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(nodeName)) {

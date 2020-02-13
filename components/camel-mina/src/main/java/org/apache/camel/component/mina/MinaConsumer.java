@@ -163,7 +163,7 @@ public class MinaConsumer extends DefaultConsumer {
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using vm protocol"
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
     }
 
@@ -250,9 +250,9 @@ public class MinaConsumer extends DefaultConsumer {
             addCodecFactory(service, codecFactory);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                          new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                        new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
                 LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
-                          codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
+                        codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
             }
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
@@ -284,7 +284,7 @@ public class MinaConsumer extends DefaultConsumer {
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using datagram protocol, " + configuration.getProtocol()
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
     }
 
@@ -315,18 +315,18 @@ public class MinaConsumer extends DefaultConsumer {
         }
 
         switch (delimiter) {
-        case DEFAULT:
-            return LineDelimiter.DEFAULT;
-        case AUTO:
-            return LineDelimiter.AUTO;
-        case UNIX:
-            return LineDelimiter.UNIX;
-        case WINDOWS:
-            return LineDelimiter.WINDOWS;
-        case MAC:
-            return LineDelimiter.MAC;
-        default:
-            throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
+            case DEFAULT:
+                return LineDelimiter.DEFAULT;
+            case AUTO:
+                return LineDelimiter.AUTO;
+            case UNIX:
+                return LineDelimiter.UNIX;
+            case WINDOWS:
+                return LineDelimiter.WINDOWS;
+            case MAC:
+                return LineDelimiter.MAC;
+            default:
+                throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
         }
     }
 

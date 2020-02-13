@@ -62,7 +62,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     private AS2ServerConnection as2ServerConnection;
 
     public AS2Endpoint(String uri, AS2Component component,
-                         AS2ApiName apiName, String methodName, AS2Configuration endpointConfiguration) {
+                       AS2ApiName apiName, String methodName, AS2Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, AS2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
@@ -92,7 +92,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         return consumer;
     }
 
-    
+
     public String getRequestUri() {
         return configuration.getRequestUri();
     }
@@ -132,7 +132,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setAs2To(String as2To) {
         configuration.setAs2To(as2To);
     }
-    
+
     public AS2MessageStructure getAs2MessageStructure() {
         return configuration.getAs2MessageStructure();
     }
@@ -140,7 +140,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setAs2MessageStructure(AS2MessageStructure as2MessageStructure) {
         configuration.setAs2MessageStructure(as2MessageStructure);
     }
-    
+
     public ContentType getEdiMessageType() {
         return configuration.getEdiMessageType();
     }
@@ -148,7 +148,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setEdiMessageContentType(ContentType ediMessageType) {
         configuration.setEdiMessageType(ediMessageType);
     }
-    
+
     public String getEdiMessageTransferEncoding() {
         return configuration.getEdiMessageTransferEncoding();
     }
@@ -156,19 +156,19 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setEdiMessageTransferEncoding(String ediMessageTransferEncoding) {
         configuration.setEdiMessageTransferEncoding(ediMessageTransferEncoding);
     }
-    
+
     public AS2SignatureAlgorithm getSigningAlgorithm() {
         return configuration.getSigningAlgorithm();
     }
-    
+
     public void setSigningAlgorithm(AS2SignatureAlgorithm signingAlgorithm) {
         configuration.setSigningAlgorithm(signingAlgorithm);
     }
-    
+
     public Certificate[] getSigningCertificateChain() {
         return configuration.getSigningCertificateChain();
     }
-    
+
     public void setSigningCertificateChain(Certificate[] signingCertificateChain) {
         configuration.setSigningCertificateChain(signingCertificateChain);
     }
@@ -196,27 +196,27 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setDispositionNotificationTo(String dispositionNotificationTo) {
         configuration.setDispositionNotificationTo(dispositionNotificationTo);
     }
-    
+
     public String[] getSignedReceiptMicAlgorithms() {
         return configuration.getSignedReceiptMicAlgorithms();
     }
-    
+
     public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
         configuration.setSignedReceiptMicAlgorithms(signedReceiptMicAlgorithms);
     }
-    
+
     public AS2EncryptionAlgorithm getEncryptingAlgorithm() {
         return configuration.getEncryptingAlgorithm();
     }
-    
+
     public void setEncryptingAlgorithm(AS2EncryptionAlgorithm encryptingAlgorithm) {
         configuration.setEncryptingAlgorithm(encryptingAlgorithm);
     }
-    
+
     public Certificate[] getEncryptingCertificateChain() {
         return configuration.getEncryptingCertificateChain();
     }
-    
+
     public void setEncryptingCertificateChain(Certificate[] encryptingCertificateChain) {
         configuration.setEncryptingCertificateChain(encryptingCertificateChain);
     }
@@ -235,14 +235,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     protected void afterConfigureProperties() {
         // create HTTP connection eagerly, a good way to validate configuration
         switch (apiName) {
-        case CLIENT:
-            createAS2ClientConnection();
-            break;
-        case SERVER:
-            createAS2ServerConnection();
-            break;
-        default:
-            break;
+            case CLIENT:
+                createAS2ClientConnection();
+                break;
+            case SERVER:
+                createAS2ServerConnection();
+                break;
+            default:
+                break;
         }
     }
 
@@ -256,14 +256,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     private void createApiProxy(ApiMethod method, Map<String, Object> args) {
         switch (apiName) {
-        case CLIENT:
-            apiProxy = new AS2ClientManager(getAS2ClientConnection());
-            break;
-        case SERVER:
-            apiProxy = new AS2ServerManager(getAS2ServerConnection());
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid API name " + apiName);
+            case CLIENT:
+                apiProxy = new AS2ClientManager(getAS2ClientConnection());
+                break;
+            case SERVER:
+                apiProxy = new AS2ServerManager(getAS2ServerConnection());
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 

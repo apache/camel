@@ -52,20 +52,20 @@ public class EKS2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listClusters:
-            listClusters(getEndpoint().getEksClient(), exchange);
-            break;
-        case describeCluster:
-            describeCluster(getEndpoint().getEksClient(), exchange);
-            break;
-        case createCluster:
-            createCluster(getEndpoint().getEksClient(), exchange);
-            break;
-        case deleteCluster:
-            deleteCluster(getEndpoint().getEksClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listClusters:
+                listClusters(getEndpoint().getEksClient(), exchange);
+                break;
+            case describeCluster:
+                describeCluster(getEndpoint().getEksClient(), exchange);
+                break;
+            case createCluster:
+                createCluster(getEndpoint().getEksClient(), exchange);
+                break;
+            case deleteCluster:
+                deleteCluster(getEndpoint().getEksClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

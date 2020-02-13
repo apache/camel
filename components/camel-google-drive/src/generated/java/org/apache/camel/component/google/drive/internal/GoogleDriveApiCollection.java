@@ -115,45 +115,45 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
     public GoogleDriveConfiguration getEndpointConfiguration(GoogleDriveApiName apiName) {
         GoogleDriveConfiguration result = null;
         switch (apiName) {
-        case DRIVE_ABOUT:
-            result = new DriveAboutEndpointConfiguration();
-            break;
-        case DRIVE_APPS:
-            result = new DriveAppsEndpointConfiguration();
-            break;
-        case DRIVE_CHANGES:
-            result = new DriveChangesEndpointConfiguration();
-            break;
-        case DRIVE_CHANNELS:
-            result = new DriveChannelsEndpointConfiguration();
-            break;
-        case DRIVE_CHILDREN:
-            result = new DriveChildrenEndpointConfiguration();
-            break;
-        case DRIVE_COMMENTS:
-            result = new DriveCommentsEndpointConfiguration();
-            break;
-        case DRIVE_FILES:
-            result = new DriveFilesEndpointConfiguration();
-            break;
-        case DRIVE_PARENTS:
-            result = new DriveParentsEndpointConfiguration();
-            break;
-        case DRIVE_PERMISSIONS:
-            result = new DrivePermissionsEndpointConfiguration();
-            break;
-        case DRIVE_PROPERTIES:
-            result = new DrivePropertiesEndpointConfiguration();
-            break;
-        case DRIVE_REALTIME:
-            result = new DriveRealtimeEndpointConfiguration();
-            break;
-        case DRIVE_REPLIES:
-            result = new DriveRepliesEndpointConfiguration();
-            break;
-        case DRIVE_REVISIONS:
-            result = new DriveRevisionsEndpointConfiguration();
-            break;
+            case DRIVE_ABOUT:
+                result = new DriveAboutEndpointConfiguration();
+                break;
+            case DRIVE_APPS:
+                result = new DriveAppsEndpointConfiguration();
+                break;
+            case DRIVE_CHANGES:
+                result = new DriveChangesEndpointConfiguration();
+                break;
+            case DRIVE_CHANNELS:
+                result = new DriveChannelsEndpointConfiguration();
+                break;
+            case DRIVE_CHILDREN:
+                result = new DriveChildrenEndpointConfiguration();
+                break;
+            case DRIVE_COMMENTS:
+                result = new DriveCommentsEndpointConfiguration();
+                break;
+            case DRIVE_FILES:
+                result = new DriveFilesEndpointConfiguration();
+                break;
+            case DRIVE_PARENTS:
+                result = new DriveParentsEndpointConfiguration();
+                break;
+            case DRIVE_PERMISSIONS:
+                result = new DrivePermissionsEndpointConfiguration();
+                break;
+            case DRIVE_PROPERTIES:
+                result = new DrivePropertiesEndpointConfiguration();
+                break;
+            case DRIVE_REALTIME:
+                result = new DriveRealtimeEndpointConfiguration();
+                break;
+            case DRIVE_REPLIES:
+                result = new DriveRepliesEndpointConfiguration();
+                break;
+            case DRIVE_REVISIONS:
+                result = new DriveRevisionsEndpointConfiguration();
+                break;
         }
         return result;
     }

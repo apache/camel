@@ -66,16 +66,16 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
         currentShardIterator = result.getNextShardIterator();
         if (isShardClosed) {
             switch (getEndpoint().getConfiguration().getShardClosed()) {
-            case ignore:
-                LOG.warn("The shard {} is in closed state", currentShardIterator);
-                break;
-            case silent:
-                break;
-            case fail:
-                LOG.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
-                throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
-            default:
-                throw new IllegalArgumentException("Unsupported shard closed strategy");
+                case ignore:
+                    LOG.warn("The shard {} is in closed state", currentShardIterator);
+                    break;
+                case silent:
+                    break;
+                case fail:
+                    LOG.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                    throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                default:
+                    throw new IllegalArgumentException("Unsupported shard closed strategy");
             }
         }
 
@@ -135,7 +135,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
             LOG.debug("ShardId is: {}", shardId);
 
             GetShardIteratorRequest req = new GetShardIteratorRequest().withStreamName(getEndpoint().getConfiguration().getStreamName()).withShardId(shardId)
-                .withShardIteratorType(getEndpoint().getConfiguration().getIteratorType());
+                    .withShardIteratorType(getEndpoint().getConfiguration().getIteratorType());
 
             if (hasSequenceNumber()) {
                 req.withStartingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
@@ -158,7 +158,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
 
     private boolean hasSequenceNumber() {
         return !getEndpoint().getConfiguration().getSequenceNumber().isEmpty()
-               && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                   || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
+                && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
     }
 }

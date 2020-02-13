@@ -67,47 +67,47 @@ public class IAM2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listAccessKeys:
-            listAccessKeys(getEndpoint().getIamClient(), exchange);
-            break;
-        case createAccessKey:
-            createAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteAccessKey:
-            deleteAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case updateAccessKey:
-            updateAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case createUser:
-            createUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteUser:
-            deleteUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case getUser:
-            getUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case listUsers:
-            listUsers(getEndpoint().getIamClient(), exchange);
-            break;
-        case createGroup:
-            createGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteGroup:
-            deleteGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case listGroups:
-            listGroups(getEndpoint().getIamClient(), exchange);
-            break;
-        case addUserToGroup:
-            addUserToGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case removeUserFromGroup:
-            removeUserFromGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listAccessKeys:
+                listAccessKeys(getEndpoint().getIamClient(), exchange);
+                break;
+            case createAccessKey:
+                createAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteAccessKey:
+                deleteAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case updateAccessKey:
+                updateAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case createUser:
+                createUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteUser:
+                deleteUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case getUser:
+                getUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case listUsers:
+                listUsers(getEndpoint().getIamClient(), exchange);
+                break;
+            case createGroup:
+                createGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteGroup:
+                deleteGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case listGroups:
+                listGroups(getEndpoint().getIamClient(), exchange);
+                break;
+            case addUserToGroup:
+                addUserToGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case removeUserFromGroup:
+                removeUserFromGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

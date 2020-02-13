@@ -984,16 +984,16 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private boolean hasOutput(EipModel model) {
         switch (model.getName()) {
-        // if we are route/rest then we accept output
-        case "route":
-        case "rest":
-            return true;
-        // special for transacted/policy which should not have output
-        case "policy":
-        case "transacted":
-            return false;
-        default:
-            return model.getOptions().stream().anyMatch(option -> "outputs".equals(option.getName()));
+            // if we are route/rest then we accept output
+            case "route":
+            case "rest":
+                return true;
+            // special for transacted/policy which should not have output
+            case "policy":
+            case "transacted":
+                return false;
+            default:
+                return model.getOptions().stream().anyMatch(option -> "outputs".equals(option.getName()));
         }
     }
 

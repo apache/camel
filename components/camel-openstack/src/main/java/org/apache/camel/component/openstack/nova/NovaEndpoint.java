@@ -70,14 +70,14 @@ public class NovaEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (getSubsystem()) {
-        case NovaConstants.NOVA_SUBSYSTEM_FLAVORS:
-            return new FlavorsProducer(this, createClient());
-        case NovaConstants.NOVA_SUBSYSTEM_SERVERS:
-            return new ServerProducer(this, createClient());
-        case NovaConstants.NOVA_SUBSYSTEM_KEYPAIRS:
-            return new KeypairProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case NovaConstants.NOVA_SUBSYSTEM_FLAVORS:
+                return new FlavorsProducer(this, createClient());
+            case NovaConstants.NOVA_SUBSYSTEM_SERVERS:
+                return new ServerProducer(this, createClient());
+            case NovaConstants.NOVA_SUBSYSTEM_KEYPAIRS:
+                return new KeypairProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 

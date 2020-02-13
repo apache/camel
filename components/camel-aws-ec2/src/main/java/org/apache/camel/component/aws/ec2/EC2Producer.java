@@ -70,41 +70,41 @@ public class EC2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case createAndRunInstances:
-            createAndRunInstance(getEndpoint().getEc2Client(), exchange);
-            break;
-        case startInstances:
-            startInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case stopInstances:
-            stopInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case terminateInstances:
-            terminateInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case describeInstances:
-            describeInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case describeInstancesStatus:
-            describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
-            break;
-        case rebootInstances:
-            rebootInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case monitorInstances:
-            monitorInstances(getEndpoint().getEc2Client(), exchange);
-            break;
-        case unmonitorInstances:
-            unmonitorInstances(getEndpoint().getEc2Client(), exchange);
-            break; 
-        case createTags:
-            createTags(getEndpoint().getEc2Client(), exchange);
-            break;
-        case deleteTags:
-            deleteTags(getEndpoint().getEc2Client(), exchange);
-            break; 
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case createAndRunInstances:
+                createAndRunInstance(getEndpoint().getEc2Client(), exchange);
+                break;
+            case startInstances:
+                startInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case stopInstances:
+                stopInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case terminateInstances:
+                terminateInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case describeInstances:
+                describeInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case describeInstancesStatus:
+                describeInstancesStatus(getEndpoint().getEc2Client(), exchange);
+                break;
+            case rebootInstances:
+                rebootInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case monitorInstances:
+                monitorInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case unmonitorInstances:
+                unmonitorInstances(getEndpoint().getEc2Client(), exchange);
+                break;
+            case createTags:
+                createTags(getEndpoint().getEc2Client(), exchange);
+                break;
+            case deleteTags:
+                deleteTags(getEndpoint().getEc2Client(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -132,7 +132,7 @@ public class EC2Producer extends DefaultProducer {
     public EC2Endpoint getEndpoint() {
         return (EC2Endpoint) super.getEndpoint();
     }
-    
+
     private void createAndRunInstance(AmazonEC2 ec2Client, Exchange exchange) {
         String ami;
         InstanceType instanceType;
@@ -168,7 +168,7 @@ public class EC2Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_KERNEL_ID))) {
             String kernelId = exchange.getIn().getHeader(EC2Constants.INSTANCE_KERNEL_ID, String.class);
             request.withKernelId(kernelId);
-        }       
+        }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_EBS_OPTIMIZED))) {
             boolean ebsOptimized = exchange.getIn().getHeader(EC2Constants.INSTANCE_EBS_OPTIMIZED, Boolean.class);
             request.withEbsOptimized(ebsOptimized);
@@ -204,7 +204,7 @@ public class EC2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void startInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         StartInstancesRequest request = new StartInstancesRequest();
@@ -223,9 +223,9 @@ public class EC2Producer extends DefaultProducer {
         }
         LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
-        message.setBody(result);        
+        message.setBody(result);
     }
-    
+
     private void stopInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         StopInstancesRequest request = new StopInstancesRequest();
@@ -244,9 +244,9 @@ public class EC2Producer extends DefaultProducer {
         }
         LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
-        message.setBody(result);        
+        message.setBody(result);
     }
-    
+
     private void terminateInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         TerminateInstancesRequest request = new TerminateInstancesRequest();
@@ -265,16 +265,16 @@ public class EC2Producer extends DefaultProducer {
         }
         LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
-        message.setBody(result);        
+        message.setBody(result);
     }
-    
+
     private void describeInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
             instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
             request.withInstanceIds(instanceIds);
-        } 
+        }
         DescribeInstancesResult result;
         try {
             result = ec2Client.describeInstances(request);
@@ -283,16 +283,16 @@ public class EC2Producer extends DefaultProducer {
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
-        message.setBody(result);        
+        message.setBody(result);
     }
-    
+
     private void describeInstancesStatus(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
             instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
             request.withInstanceIds(instanceIds);
-        } 
+        }
         DescribeInstanceStatusResult result;
         try {
             result = ec2Client.describeInstanceStatus(request);
@@ -301,9 +301,9 @@ public class EC2Producer extends DefaultProducer {
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
-        message.setBody(result);        
+        message.setBody(result);
     }
-    
+
     private void rebootInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         RebootInstancesRequest request = new RebootInstancesRequest();
@@ -321,7 +321,7 @@ public class EC2Producer extends DefaultProducer {
             throw ase;
         }
     }
-    
+
     private void monitorInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         MonitorInstancesRequest request = new MonitorInstancesRequest();
@@ -340,9 +340,9 @@ public class EC2Producer extends DefaultProducer {
         }
         LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
-        message.setBody(result); 
+        message.setBody(result);
     }
-    
+
     private void unmonitorInstances(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         UnmonitorInstancesRequest request = new UnmonitorInstancesRequest();
@@ -361,9 +361,9 @@ public class EC2Producer extends DefaultProducer {
         }
         LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
-        message.setBody(result); 
+        message.setBody(result);
     }
-    
+
     private void createTags(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         Collection tags;
@@ -389,9 +389,9 @@ public class EC2Producer extends DefaultProducer {
         }
         LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
-        message.setBody(result); 
+        message.setBody(result);
     }
-    
+
     private void deleteTags(AmazonEC2 ec2Client, Exchange exchange) {
         Collection instanceIds;
         Collection tags;
@@ -417,9 +417,9 @@ public class EC2Producer extends DefaultProducer {
         }
         LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
-        message.setBody(result); 
+        message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

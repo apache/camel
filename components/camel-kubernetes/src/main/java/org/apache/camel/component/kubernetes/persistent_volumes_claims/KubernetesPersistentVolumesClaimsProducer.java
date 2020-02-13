@@ -63,28 +63,28 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_PERSISTENT_VOLUMES_CLAIMS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PERSISTENT_VOLUMES_CLAIMS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_PERSISTENT_VOLUMES_CLAIMS_BY_LABELS_OPERATION:
-            doListPersistentVolumesClaimsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PERSISTENT_VOLUMES_CLAIMS_BY_LABELS_OPERATION:
+                doListPersistentVolumesClaimsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_PERSISTENT_VOLUME_CLAIM_OPERATION:
-            doGetPersistentVolumeClaim(exchange, operation);
-            break;
+            case KubernetesOperations.GET_PERSISTENT_VOLUME_CLAIM_OPERATION:
+                doGetPersistentVolumeClaim(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_PERSISTENT_VOLUME_CLAIM_OPERATION:
-            doCreatePersistentVolumeClaim(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_PERSISTENT_VOLUME_CLAIM_OPERATION:
+                doCreatePersistentVolumeClaim(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_PERSISTENT_VOLUME_CLAIM_OPERATION:
-            doDeletePersistentVolumeClaim(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_PERSISTENT_VOLUME_CLAIM_OPERATION:
+                doDeletePersistentVolumeClaim(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -101,14 +101,14 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             NonNamespaceOperation<PersistentVolumeClaim, PersistentVolumeClaimList, DoneablePersistentVolumeClaim, Resource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs = getEndpoint()
-                .getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName);
+                    .getKubernetesClient().persistentVolumeClaims().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 pvcs.withLabel(entry.getKey(), entry.getValue());
             }
             pvcList = pvcs.list();
         } else {
             FilterWatchListMultiDeletable<PersistentVolumeClaim, PersistentVolumeClaimList, Boolean, Watch, Watcher<PersistentVolumeClaim>> pvcs = getEndpoint()
-                .getKubernetesClient().persistentVolumeClaims().inAnyNamespace();
+                    .getKubernetesClient().persistentVolumeClaims().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 pvcs.withLabel(entry.getKey(), entry.getValue());
             }
