@@ -53,20 +53,20 @@ public class MSKProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listClusters:
-            listClusters(getEndpoint().getMskClient(), exchange);
-            break;
-        case createCluster:
-            createCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case deleteCluster:
-            deleteCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case describeCluster:
-            describeCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listClusters:
+                listClusters(getEndpoint().getMskClient(), exchange);
+                break;
+            case createCluster:
+                createCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case deleteCluster:
+                deleteCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case describeCluster:
+                describeCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -167,7 +167,7 @@ public class MSKProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeCluster(AWSKafka mskClient, Exchange exchange) {
         DescribeClusterRequest request = new DescribeClusterRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.CLUSTER_ARN))) {
