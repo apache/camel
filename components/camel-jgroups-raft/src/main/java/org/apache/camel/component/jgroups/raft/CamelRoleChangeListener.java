@@ -46,20 +46,20 @@ public class CamelRoleChangeListener implements RAFT.RoleChange {
         LOG.trace("New Role {} received.", role);
         Exchange exchange = endpoint.createExchange();
         switch (role) {
-        case Leader:
-            exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.LEADER);
-            processExchange(role, exchange);
-            break;
-        case Follower:
-            exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.FOLLOWER);
-            processExchange(role, exchange);
-            break;
-        case Candidate:
-            exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.CANDIDATE);
-            processExchange(role, exchange);
-            break;
-        default:
-            throw new JGroupsRaftException("Role [" + role + "] unknown.");
+            case Leader:
+                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.LEADER);
+                processExchange(role, exchange);
+                break;
+            case Follower:
+                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.FOLLOWER);
+                processExchange(role, exchange);
+                break;
+            case Candidate:
+                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.CANDIDATE);
+                processExchange(role, exchange);
+                break;
+            default:
+                throw new JGroupsRaftException("Role [" + role + "] unknown.");
         }
     }
 
