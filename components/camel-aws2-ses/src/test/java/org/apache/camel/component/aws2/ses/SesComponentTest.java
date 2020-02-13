@@ -23,20 +23,18 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.ses.Ses2Constants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 
 public class SesComponentTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSESClient")
     private AmazonSESClientMock sesClient = new AmazonSESClientMock();
-    
+
     @BindToRegistry("toList")
     private List<String> toList = Arrays.asList("to1@example.com", "to2@example.com");
-    
+
     @BindToRegistry("replyToList")
     private List<String> replyToList = Arrays.asList("replyTo1@example.com", "replyTo2@example.com");
 
@@ -48,9 +46,9 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("1", exchange.getIn().getHeader(Ses2Constants.MESSAGE_ID));
-        
+
         SendEmailRequest sendEmailRequest = sesClient.getSendEmailRequest();
         assertEquals("from@example.com", sendEmailRequest.source());
         assertEquals(2, getTo(sendEmailRequest).size());
@@ -63,7 +61,7 @@ public class SesComponentTest extends CamelTestSupport {
         assertEquals("Subject", getSubject(sendEmailRequest));
         assertEquals("This is my message text.", getBody(sendEmailRequest));
     }
-    
+
     @Test
     public void sendInOutMessageUsingUrlOptions() throws Exception {
         Exchange exchange = template.request("direct:start", new Processor() {
@@ -72,7 +70,7 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("1", exchange.getMessage().getHeader(Ses2Constants.MESSAGE_ID));
     }
 
@@ -82,15 +80,13 @@ public class SesComponentTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("This is my message text.");
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
-                exchange.getIn().setHeader(Ses2Constants.TO,
-                        Arrays.asList("anotherTo1@example.com", "anotherTo2@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.TO, Arrays.asList("anotherTo1@example.com", "anotherTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.RETURN_PATH, "anotherBounce@example.com");
-                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
-                        Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES, Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
             }
         });
-        
+
         assertEquals("1", exchange.getIn().getHeader(Ses2Constants.MESSAGE_ID));
 
         SendEmailRequest sendEmailRequest = sesClient.getSendEmailRequest();
@@ -111,13 +107,8 @@ public class SesComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("aws2-ses://from@example.com"
-                        + "?to=#toList"
-                        + "&subject=Subject"
-                        + "&returnPath=bounce@example.com"
-                        + "&replyToAddresses=#replyToList"
-                        + "&amazonSESClient=#amazonSESClient");
+                from("direct:start").to("aws2-ses://from@example.com" + "?to=#toList" + "&subject=Subject" + "&returnPath=bounce@example.com" + "&replyToAddresses=#replyToList"
+                                        + "&amazonSESClient=#amazonSESClient");
             }
         };
     }

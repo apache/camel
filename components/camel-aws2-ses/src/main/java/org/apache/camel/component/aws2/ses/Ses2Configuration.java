@@ -19,19 +19,19 @@ package org.apache.camel.component.aws2.ses;
 import java.util.Arrays;
 import java.util.List;
 
-import software.amazon.awssdk.core.Protocol;
-import software.amazon.awssdk.services.ses.SesClient;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import software.amazon.awssdk.core.Protocol;
+import software.amazon.awssdk.services.ses.SesClient;
 
 @UriParams
 public class Ses2Configuration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String from;
     @UriParam
     private SesClient amazonSESClient;
@@ -94,14 +94,16 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
+     * List of destination email address. Can be overriden with 'CamelAwsSesTo'
+     * header.
      */
     public void setTo(List<String> to) {
         this.to = to;
     }
 
     /**
-     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
+     * List of destination email address. Can be overriden with 'CamelAwsSesTo'
+     * header.
      */
     public void setTo(String to) {
         this.to = Arrays.asList(to.split(","));
@@ -123,38 +125,41 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * The subject which is used if the message header 'CamelAwsSesSubject' is not present.
+     * The subject which is used if the message header 'CamelAwsSesSubject' is
+     * not present.
      */
     public void setSubject(String subject) {
         this.subject = subject;
     }
-    
+
     public String getReturnPath() {
         return returnPath;
     }
 
     /**
-     * The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header.
+     * The email address to which bounce notifications are to be forwarded,
+     * override it using 'CamelAwsSesReturnPath' header.
      */
     public void setReturnPath(String returnPath) {
         this.returnPath = returnPath;
     }
-    
+
     public List<String> getReplyToAddresses() {
         return replyToAddresses;
     }
 
     /**
-     * List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header.
+     * List of reply-to email address(es) for the message, override it using
+     * 'CamelAwsSesReplyToAddresses' header.
      */
     public void setReplyToAddresses(List<String> replyToAddresses) {
         this.replyToAddresses = replyToAddresses;
     }
-    
+
     public void setReplyToAddresses(String replyToAddresses) {
         this.replyToAddresses = Arrays.asList(replyToAddresses.split(","));
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -165,7 +170,7 @@ public class Ses2Configuration implements Cloneable {
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
-    
+
     public String getProxyHost() {
         return proxyHost;
     }
@@ -187,19 +192,20 @@ public class Ses2Configuration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     public String getRegion() {
         return region;
     }
 
     /**
-     * The region in which SES client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which SES client needs to work. When using this parameter,
+     * the configuration will expect the capitalized name of the region (for
+     * example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     // *************************************************
     //
     // *************************************************

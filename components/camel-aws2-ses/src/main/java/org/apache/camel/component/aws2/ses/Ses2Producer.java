@@ -29,7 +29,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.ses.model.Body;
 import software.amazon.awssdk.services.ses.model.Content;
@@ -48,7 +47,7 @@ public class Ses2Producer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(Ses2Producer.class);
 
     private transient String sesProducerToString;
-    
+
     public Ses2Producer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -82,7 +81,7 @@ public class Ses2Producer extends DefaultProducer {
 
         return request.build();
     }
-    
+
     private SendRawEmailRequest createRawMailRequest(Exchange exchange) throws Exception {
         SendRawEmailRequest.Builder request = SendRawEmailRequest.builder();
         request.source(determineFrom(exchange));
@@ -92,7 +91,7 @@ public class Ses2Producer extends DefaultProducer {
     }
 
     private software.amazon.awssdk.services.ses.model.Message createMessage(Exchange exchange) {
-    	software.amazon.awssdk.services.ses.model.Message.Builder message = software.amazon.awssdk.services.ses.model.Message.builder();
+        software.amazon.awssdk.services.ses.model.Message.Builder message = software.amazon.awssdk.services.ses.model.Message.builder();
         Boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
         String content = exchange.getIn().getBody(String.class);
         if (isHtmlEmail) {
@@ -103,9 +102,9 @@ public class Ses2Producer extends DefaultProducer {
         message.subject(Content.builder().data(determineSubject(exchange)).build());
         return message.build();
     }
-    
+
     private software.amazon.awssdk.services.ses.model.RawMessage createRawMessage(Exchange exchange) throws Exception {
-    	software.amazon.awssdk.services.ses.model.RawMessage.Builder message = software.amazon.awssdk.services.ses.model.RawMessage.builder();
+        software.amazon.awssdk.services.ses.model.RawMessage.Builder message = software.amazon.awssdk.services.ses.model.RawMessage.builder();
         javax.mail.Message content = exchange.getIn().getBody(javax.mail.Message.class);
         OutputStream byteOutput = new ByteArrayOutputStream();
         try {
@@ -118,7 +117,7 @@ public class Ses2Producer extends DefaultProducer {
         message.data(SdkBytes.fromByteBuffer(ByteBuffer.wrap(messageByteArray)));
         return message.build();
     }
-    
+
     @SuppressWarnings("unchecked")
     private Collection<String> determineReplyToAddresses(Exchange exchange) {
         List<String> replyToAddresses = exchange.getIn().getHeader(Ses2Constants.REPLY_TO_ADDRESSES, List.class);
@@ -127,7 +126,7 @@ public class Ses2Producer extends DefaultProducer {
         }
         return replyToAddresses;
     }
-    
+
     private String determineReturnPath(Exchange exchange) {
         String returnPath = exchange.getIn().getHeader(Ses2Constants.RETURN_PATH, String.class);
         if (returnPath == null) {
@@ -144,7 +143,7 @@ public class Ses2Producer extends DefaultProducer {
         }
         return Destination.builder().toAddresses(to).build();
     }
-    
+
     @SuppressWarnings("unchecked")
     private List determineRawTo(Exchange exchange) {
         List<String> to = exchange.getIn().getHeader(Ses2Constants.TO, List.class);
@@ -184,9 +183,9 @@ public class Ses2Producer extends DefaultProducer {
 
     @Override
     public Ses2Endpoint getEndpoint() {
-        return (Ses2Endpoint) super.getEndpoint();
+        return (Ses2Endpoint)super.getEndpoint();
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -50,15 +49,13 @@ public class Ses2Endpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
     }
-    
+
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        sesClient = configuration.getAmazonSESClient() != null
-            ? configuration.getAmazonSESClient()
-            : createSESClient();
+        sesClient = configuration.getAmazonSESClient() != null ? configuration.getAmazonSESClient() : createSESClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonSESClient())) {
@@ -88,7 +85,7 @@ public class Ses2Endpoint extends DefaultEndpoint {
     }
 
     private SesClient createSESClient() {
-    	SesClient client = null;
+        SesClient client = null;
         SesClientBuilder clientBuilder = SesClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;

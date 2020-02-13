@@ -21,25 +21,23 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws2.ses.Ses2Constants;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
 
 public class SesComponentSpringTest extends CamelSpringTestSupport {
-    
+
     private AmazonSESClientMock sesClient;
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+
         sesClient = context.getRegistry().lookupByNameAndType("amazonSESClient", AmazonSESClientMock.class);
     }
 
@@ -51,15 +49,15 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("1", exchange.getIn().getHeader(Ses2Constants.MESSAGE_ID));
-        
+
         SendEmailRequest sendEmailRequest = sesClient.getSendEmailRequest();
         assertEquals("from@example.com", sendEmailRequest.source());
         assertEquals("bounce@example.com", sendEmailRequest.returnPath());
         assertEquals("This is my message text.", getBody(sendEmailRequest));
     }
-    
+
     @Test
     public void sendInOutMessageUsingUrlOptions() throws Exception {
         Exchange exchange = template.request("direct:start", new Processor() {
@@ -68,22 +66,22 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("1", exchange.getMessage().getHeader(Ses2Constants.MESSAGE_ID));
     }
-    
+
     @Test
     public void sendRawMessage() throws Exception {
-        final MockMessage mess = new MockMessage();  
+        final MockMessage mess = new MockMessage();
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(mess);
             }
         });
-        
+
         assertEquals("1", exchange.getMessage().getHeader(Ses2Constants.MESSAGE_ID));
-        
+
         SendRawEmailRequest sendRawEmailRequest = sesClient.getSendRawEmailRequest();
         assertEquals("from@example.com", sendRawEmailRequest.source());
     }
@@ -94,15 +92,13 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("This is my message text.");
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
-                exchange.getIn().setHeader(Ses2Constants.TO,
-                        Arrays.asList("anotherTo1@example.com", "anotherTo2@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.TO, Arrays.asList("anotherTo1@example.com", "anotherTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.RETURN_PATH, "anotherBounce@example.com");
-                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
-                        Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
+                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES, Arrays.asList("anotherReplyTo1@example.com", "anotherReplyTo2@example.com"));
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
             }
         });
-        
+
         assertEquals("1", exchange.getIn().getHeader(Ses2Constants.MESSAGE_ID));
 
         SendEmailRequest sendEmailRequest = sesClient.getSendEmailRequest();
@@ -117,11 +113,10 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
         assertEquals("anotherSubject", getSubject(sendEmailRequest));
         assertEquals("This is my message text.", getBody(sendEmailRequest));
     }
-    
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/aws2/ses/SESComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/ses/SESComponentSpringTest-context.xml");
     }
 
     private String getBody(SendEmailRequest sendEmailRequest) {
@@ -135,7 +130,7 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
     private List<String> getTo(SendEmailRequest sendEmailRequest) {
         return sendEmailRequest.destination().toAddresses();
     }
-    
+
     private List<String> getTo(SendRawEmailRequest sendEmailRequest) {
         return sendEmailRequest.destinations();
     }
