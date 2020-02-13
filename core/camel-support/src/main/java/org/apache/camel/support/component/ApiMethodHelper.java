@@ -149,8 +149,8 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 final Class<?> previousType = tmpValidArguments.get(argName);
                 if (previousType != null && previousType != argType) {
                     throw new IllegalArgumentException(String.format(
-                        "Argument %s has ambiguous types (%s, %s) across methods!",
-                        name, previousType, argType));
+                            "Argument %s has ambiguous types (%s, %s) across methods!",
+                            name, previousType, argType));
                 } else if (previousType == null) {
                     tmpValidArguments.put(argName, argType);
                 }
@@ -199,7 +199,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
                     if (!ambiguousMethods.isEmpty()) {
                         throw new IllegalArgumentException(
-                            String.format("Ambiguous alias %s for methods %s", entry.getKey(), ambiguousMethods));
+                                String.format("Ambiguous alias %s for methods %s", entry.getKey(), ambiguousMethods));
                     }
                 }
             }
@@ -254,7 +254,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             final List<ApiMethod> filteredSet = filterMethods(methods, MatchType.SUBSET, argNames);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Found {} filtered methods for {}",
-                    filteredSet.size(), name + argNames.toString().replace('[', '(').replace(']', ')'));
+                        filteredSet.size(), name + argNames.toString().replace('[', '(').replace(']', ')'));
             }
             return filteredSet;
         }
@@ -300,51 +300,51 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         for (ApiMethod method : methods) {
             final List<String> methodArgs = method.getArgNames();
             switch (matchType) {
-            case EXACT:
-                // method must take all args, and no more
-                if (methodArgs.containsAll(argNames) && argNames.containsAll(methodArgs)) {
-                    result.add(method);
-                }
-                break;
-            case SUBSET:
-                // all args are required, method may take more
-                if (methodArgs.containsAll(argNames)) {
-                    result.add(method);
-                }
-                break;
-            default:
-            case SUPER_SET:
-                // all method args must be present
-                if (argNames.containsAll(methodArgs)) {
-                    if (methodArgs.containsAll(argNames)) {
-                        // prefer exact match to avoid unused args
+                case EXACT:
+                    // method must take all args, and no more
+                    if (methodArgs.containsAll(argNames) && argNames.containsAll(methodArgs)) {
                         result.add(method);
-                    } else if (result.isEmpty()) {
-                        // if result is empty, add method to extra args list
-                        if (extraArgs == null) {
-                            extraArgs = new ArrayList<>();
-                        }
-                        // method takes a subset, unused args
-                        extraArgs.add(method);
                     }
-                } else if (result.isEmpty() && extraArgs == null) {
-                    // avoid looking for nullable args by checking for empty result and extraArgs
-                    if (withNullableArgsList != null && withNullableArgsList.containsAll(methodArgs)) {
-                        if (nullArgs == null) {
-                            nullArgs = new ArrayList<>();
-                        }
-                        nullArgs.add(method);
+                    break;
+                case SUBSET:
+                    // all args are required, method may take more
+                    if (methodArgs.containsAll(argNames)) {
+                        result.add(method);
                     }
-                }
-                break;
+                    break;
+                default:
+                case SUPER_SET:
+                    // all method args must be present
+                    if (argNames.containsAll(methodArgs)) {
+                        if (methodArgs.containsAll(argNames)) {
+                            // prefer exact match to avoid unused args
+                            result.add(method);
+                        } else if (result.isEmpty()) {
+                            // if result is empty, add method to extra args list
+                            if (extraArgs == null) {
+                                extraArgs = new ArrayList<>();
+                            }
+                            // method takes a subset, unused args
+                            extraArgs.add(method);
+                        }
+                    } else if (result.isEmpty() && extraArgs == null) {
+                        // avoid looking for nullable args by checking for empty result and extraArgs
+                        if (withNullableArgsList != null && withNullableArgsList.containsAll(methodArgs)) {
+                            if (nullArgs == null) {
+                                nullArgs = new ArrayList<>();
+                            }
+                            nullArgs.add(method);
+                        }
+                    }
+                    break;
             }
         }
 
         List<ApiMethod> methodList = result.isEmpty()
-            ? extraArgs == null
+                ? extraArgs == null
                 ? nullArgs
                 : extraArgs
-            : result;
+                : result;
 
         // preference order is exact match, matches with extra args, matches with null args
         return methodList != null ? Collections.unmodifiableList(methodList) : Collections.emptyList();
@@ -451,7 +451,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @throws org.apache.camel.RuntimeCamelException on errors
      */
     public static Object invokeMethod(Object proxy, ApiMethod method, Map<String, Object> properties)
-        throws RuntimeCamelException {
+            throws RuntimeCamelException {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Invoking {} with arguments {}", method.getName(), properties);
@@ -495,7 +495,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     }
                 } else {
                     throw new IllegalArgumentException(
-                        String.format("Cannot convert %s to %s", value.getClass(), type));
+                            String.format("Cannot convert %s to %s", value.getClass(), type));
                 }
             }
 
@@ -511,7 +511,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 e = (cause != null) ? cause : e;
             }
             throw new RuntimeCamelException(
-                String.format("Error invoking %s with %s: %s", method.getName(), properties, e.getMessage()), e);
+                    String.format("Error invoking %s with %s: %s", method.getName(), properties, e.getMessage()), e);
         }
     }
 
