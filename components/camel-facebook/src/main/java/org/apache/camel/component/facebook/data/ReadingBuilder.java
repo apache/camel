@@ -88,18 +88,18 @@ public final class ReadingBuilder {
         if (locale != null) {
             String[] args = locale.toString().split(",");
             switch (args.length) {
-            case  1:
-                reading.locale(new Locale(args[0]));
-                break;
-            case  2:
-                reading.locale(new Locale(args[0], args[1]));
-                break;
-            case  3:
-                reading.locale(new Locale(args[0], args[1], args[2]));
-                break;
-            default:
-                throw new IllegalArgumentException(String.format("Invalid value for property 'locale' %s, "
-                    + "must be of the form [language][,country][,variant]", locale.toString()));
+                case  1:
+                    reading.locale(new Locale(args[0]));
+                    break;
+                case  2:
+                    reading.locale(new Locale(args[0], args[1]));
+                    break;
+                case  3:
+                    reading.locale(new Locale(args[0], args[1], args[2]));
+                    break;
+                default:
+                    throw new IllegalArgumentException(String.format("Invalid value for property 'locale' %s, "
+                            + "must be of the form [language][,country][,variant]", locale.toString()));
             }
         }
         final Object with = readingProperties.remove("with");

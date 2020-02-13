@@ -43,15 +43,15 @@ public final class FacebookMethodsTypeHelper {
 
     // maps method name to FacebookMethodsType
     private static final Map<String, List<FacebookMethodsType>> METHOD_MAP =
-        new HashMap<>();
+            new HashMap<>();
 
     // maps method name to method arguments of the form Class type1, String name1, Class type2, String name2,...
     private static final Map<String, List<Object>> ARGUMENTS_MAP =
-        new HashMap<>();
+            new HashMap<>();
 
     // maps argument name to argument type
     private static final Map<String, Class<?>> VALID_ARGUMENTS =
-        new HashMap<>();
+            new HashMap<>();
 
     static {
         final FacebookMethodsType[] methods = FacebookMethodsType.values();
@@ -90,8 +90,8 @@ public final class FacebookMethodsTypeHelper {
                 final Class<?> previousType = VALID_ARGUMENTS.get(argName);
                 if (previousType != null && previousType != argType) {
                     throw new ExceptionInInitializerError(String.format(
-                        "Argument %s has ambiguous types (%s, %s) across methods!",
-                        name, previousType, argType));
+                            "Argument %s has ambiguous types (%s, %s) across methods!",
+                            name, previousType, argType));
                 } else if (previousType == null) {
                     VALID_ARGUMENTS.put(argName, argType);
                 }
@@ -127,7 +127,7 @@ public final class FacebookMethodsTypeHelper {
             final List<FacebookMethodsType> filteredSet = filterMethods(methods, MatchType.SUBSET, argNames);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Found {} filtered methods for {}",
-                    filteredSet.size(), name + Arrays.toString(argNames).replace('[', '(').replace(']', ')'));
+                        filteredSet.size(), name + Arrays.toString(argNames).replace('[', '(').replace(']', ')'));
             }
             return filteredSet;
         }
@@ -152,31 +152,31 @@ public final class FacebookMethodsTypeHelper {
         for (FacebookMethodsType method : methods) {
             final List<String> methodArgs = method.getArgNames();
             switch (matchType) {
-            case EXACT:
-                // method must take all args, and no more
-                if (methodArgs.containsAll(argsList) && argsList.containsAll(methodArgs)) {
-                    result.add(method);
-                }
-                break;
-            case SUBSET:
-                // all args are required, method may take more
-                if (methodArgs.containsAll(argsList)) {
-                    result.add(method);
-                }
-                break;
-            default:
-            case SUPER_SET:
-                // all method args must be present
-                if (argsList.containsAll(methodArgs)) {
-                    if (methodArgs.containsAll(argsList)) {
-                        // prefer exact match to avoid unused args
+                case EXACT:
+                    // method must take all args, and no more
+                    if (methodArgs.containsAll(argsList) && argsList.containsAll(methodArgs)) {
                         result.add(method);
-                    } else {
-                        // method takes a subset, unused args
-                        extraArgs.add(method);
                     }
-                }
-                break;
+                    break;
+                case SUBSET:
+                    // all args are required, method may take more
+                    if (methodArgs.containsAll(argsList)) {
+                        result.add(method);
+                    }
+                    break;
+                default:
+                case SUPER_SET:
+                    // all method args must be present
+                    if (argsList.containsAll(methodArgs)) {
+                        if (methodArgs.containsAll(argsList)) {
+                            // prefer exact match to avoid unused args
+                            result.add(method);
+                        } else {
+                            // method takes a subset, unused args
+                            extraArgs.add(method);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -207,18 +207,18 @@ public final class FacebookMethodsTypeHelper {
             throw new IllegalArgumentException("Parameters style cannot be null");
         }
         switch (style) {
-        case EXACT:
-            return getArguments(name);
-        case GET:
-            return getArguments(convertToGetMethod(name));
-        case SEARCH:
-            return getArguments(convertToSearchMethod(name));
-        case GET_AND_SEARCH:
-        default:
-            final List<Object> arguments = new ArrayList<>();
-            arguments.addAll(getArguments(convertToGetMethod(name)));
-            arguments.addAll(getArguments(convertToSearchMethod(name)));
-            return Collections.unmodifiableList(arguments);
+            case EXACT:
+                return getArguments(name);
+            case GET:
+                return getArguments(convertToGetMethod(name));
+            case SEARCH:
+                return getArguments(convertToSearchMethod(name));
+            case GET_AND_SEARCH:
+            default:
+                final List<Object> arguments = new ArrayList<>();
+                arguments.addAll(getArguments(convertToGetMethod(name)));
+                arguments.addAll(getArguments(convertToSearchMethod(name)));
+                return Collections.unmodifiableList(arguments);
         }
     }
 
@@ -298,7 +298,7 @@ public final class FacebookMethodsTypeHelper {
      * @throws RuntimeCamelException on errors
      */
     public static Object invokeMethod(Facebook facebook, FacebookMethodsType method, Map<String, Object> properties)
-        throws RuntimeCamelException {
+            throws RuntimeCamelException {
 
         LOG.debug("Invoking {} with arguments {}", method.getName(), properties);
 
@@ -328,7 +328,7 @@ public final class FacebookMethodsTypeHelper {
                     }
                     value = array;
                 } else if (value.getClass().isArray()
-                    && type.getComponentType().isAssignableFrom(value.getClass().getComponentType())) {
+                        && type.getComponentType().isAssignableFrom(value.getClass().getComponentType())) {
                     // convert derived array to super array
                     final int size = Array.getLength(value);
                     Object array = Array.newInstance(type.getComponentType(), size);
@@ -338,7 +338,7 @@ public final class FacebookMethodsTypeHelper {
                     value = array;
                 } else {
                     throw new IllegalArgumentException(
-                        String.format("Cannot convert %s to %s", value.getClass(), type));
+                            String.format("Cannot convert %s to %s", value.getClass(), type));
                 }
             }
 
@@ -357,7 +357,7 @@ public final class FacebookMethodsTypeHelper {
                 msg = e.getMessage();
             }
             throw new RuntimeCamelException(
-                String.format("Error invoking %s with %s: %s", method.getName(), properties, msg), e);
+                    String.format("Error invoking %s with %s: %s", method.getName(), properties, msg), e);
         }
     }
 
