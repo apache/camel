@@ -66,10 +66,10 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param rollbackLoggingLevel    logging level to use for logging transaction rollback occurred
      * @param onExceptionOccurredProcessor  a custom {@link org.apache.camel.Processor} to process the {@link org.apache.camel.Exchange} just after an exception was thrown.
      */
-    public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, 
-            Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
-            TransactionTemplate transactionTemplate, Predicate retryWhile, ScheduledExecutorService executorService,
-            LoggingLevel rollbackLoggingLevel, Processor onExceptionOccurredProcessor) {
+    public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
+                                   Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
+                                   TransactionTemplate transactionTemplate, Predicate retryWhile, ScheduledExecutorService executorService,
+                                   LoggingLevel rollbackLoggingLevel, Processor onExceptionOccurredProcessor) {
 
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, false, false, retryWhile,
                 executorService, null, onExceptionOccurredProcessor);
@@ -99,9 +99,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     public void process(Exchange exchange) {
         // we have to run this synchronously as Spring Transaction does *not* support
         // using multiple threads to span a transaction
-        if (transactionTemplate.getPropagationBehavior() != TransactionDefinition.PROPAGATION_REQUIRES_NEW 
-            && exchange.getUnitOfWork() != null 
-            && exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
+        if (transactionTemplate.getPropagationBehavior() != TransactionDefinition.PROPAGATION_REQUIRES_NEW
+                && exchange.getUnitOfWork() != null
+                && exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
             // already transacted by this transaction template
             // so lets just let the error handler process it
             processByErrorHandler(exchange);
@@ -166,7 +166,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 Exception cause = exchange.getException();
                 if (cause != null) {
                     LOG.debug("Transaction rollback (" + transactionKey + ") redelivered(" + redelivered + ") for "
-                        + ids + " due exchange was marked for rollbackOnlyLast and caught: ", cause);
+                            + ids + " due exchange was marked for rollbackOnlyLast and caught: ", cause);
                 } else {
                     LOG.debug("Transaction rollback ({}) redelivered({}) for {} "
                             + "due exchange was marked for rollbackOnlyLast", new Object[]{transactionKey, redelivered, ids});
@@ -303,29 +303,29 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     private static String propagationBehaviorToString(int propagationBehavior) {
         String rc;
         switch (propagationBehavior) {
-        case TransactionDefinition.PROPAGATION_MANDATORY:
-            rc = "PROPAGATION_MANDATORY";
-            break;
-        case TransactionDefinition.PROPAGATION_NESTED:
-            rc = "PROPAGATION_NESTED";
-            break;
-        case TransactionDefinition.PROPAGATION_NEVER:
-            rc = "PROPAGATION_NEVER";
-            break;
-        case TransactionDefinition.PROPAGATION_NOT_SUPPORTED:
-            rc = "PROPAGATION_NOT_SUPPORTED";
-            break;
-        case TransactionDefinition.PROPAGATION_REQUIRED:
-            rc = "PROPAGATION_REQUIRED";
-            break;
-        case TransactionDefinition.PROPAGATION_REQUIRES_NEW:
-            rc = "PROPAGATION_REQUIRES_NEW";
-            break;
-        case TransactionDefinition.PROPAGATION_SUPPORTS:
-            rc = "PROPAGATION_SUPPORTS";
-            break;
-        default:
-            rc = "UNKNOWN";
+            case TransactionDefinition.PROPAGATION_MANDATORY:
+                rc = "PROPAGATION_MANDATORY";
+                break;
+            case TransactionDefinition.PROPAGATION_NESTED:
+                rc = "PROPAGATION_NESTED";
+                break;
+            case TransactionDefinition.PROPAGATION_NEVER:
+                rc = "PROPAGATION_NEVER";
+                break;
+            case TransactionDefinition.PROPAGATION_NOT_SUPPORTED:
+                rc = "PROPAGATION_NOT_SUPPORTED";
+                break;
+            case TransactionDefinition.PROPAGATION_REQUIRED:
+                rc = "PROPAGATION_REQUIRED";
+                break;
+            case TransactionDefinition.PROPAGATION_REQUIRES_NEW:
+                rc = "PROPAGATION_REQUIRES_NEW";
+                break;
+            case TransactionDefinition.PROPAGATION_SUPPORTS:
+                rc = "PROPAGATION_SUPPORTS";
+                break;
+            default:
+                rc = "UNKNOWN";
         }
         return rc;
     }
