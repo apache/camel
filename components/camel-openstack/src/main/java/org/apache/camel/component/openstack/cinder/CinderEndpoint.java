@@ -68,12 +68,12 @@ public class CinderEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (getSubsystem()) {
-        case CinderConstants.VOLUMES:
-            return new VolumeProducer(this, createClient());
-        case CinderConstants.SNAPSHOTS:
-            return new SnapshotProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case CinderConstants.VOLUMES:
+                return new VolumeProducer(this, createClient());
+            case CinderConstants.SNAPSHOTS:
+                return new SnapshotProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 
