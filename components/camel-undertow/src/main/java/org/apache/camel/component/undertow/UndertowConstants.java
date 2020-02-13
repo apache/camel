@@ -60,14 +60,14 @@ public final class UndertowConstants {
 
         public static EventType ofCode(int code) {
             switch (code) {
-            case 1:
-                return ONOPEN;
-            case 0:
-                return ONCLOSE;
-            case -1:
-                return ONERROR;
-            default:
-                throw new IllegalArgumentException("Cannot find an " + EventType.class.getName() + " for code " + code);
+                case 1:
+                    return ONOPEN;
+                case 0:
+                    return ONCLOSE;
+                case -1:
+                    return ONERROR;
+                default:
+                    throw new IllegalArgumentException("Cannot find an " + EventType.class.getName() + " for code " + code);
             }
         }
     }
