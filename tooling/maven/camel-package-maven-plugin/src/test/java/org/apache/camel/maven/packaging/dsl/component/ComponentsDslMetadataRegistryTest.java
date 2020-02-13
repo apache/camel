@@ -19,6 +19,8 @@ package org.apache.camel.maven.packaging.dsl.component;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 import org.apache.camel.tooling.model.ComponentModel;
@@ -36,13 +38,16 @@ class ComponentsDslMetadataRegistryTest {
     public void testIfSyncCorrectly() throws IOException {
         final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component2.json")).getFile()));
         final File metadata = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/component_metadata.json")).getFile());
+        final File metadataWork = metadata.toPath().resolveSibling("component_metadata_work.json").toFile();
 
-        final String metadataJson = PackageHelper.loadText(metadata);
+        Files.copy(metadata.toPath(), metadataWork.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        final String metadataJson = PackageHelper.loadText(metadataWork);
 
         final File classesDir = FileSystems.getDefault().getPath(".").resolve("src/test/java/org/apache/camel/maven/packaging/dsl/component").toFile();
 
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
-        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(classesDir, metadata);
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(classesDir, metadataWork);
 
         // check for size
         assertEquals(2, componentsDslMetadataRegistry.getComponentCacheFromMemory().size());
@@ -57,7 +62,7 @@ class ComponentsDslMetadataRegistryTest {
         // first it adds to he memory cache and then it sync the metadata file by checking existing classes and delete whatever not presented there
         componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, "ComponentsDslMetadataRegistryTest");
 
-        final String updatedMetadataJson = PackageHelper.loadText(metadata);
+        final String updatedMetadataJson = PackageHelper.loadText(metadataWork);
 
         // check for the size
         assertEquals(1, componentsDslMetadataRegistry.getComponentCacheFromMemory().size());
