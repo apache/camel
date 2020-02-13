@@ -1272,12 +1272,12 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     @SuppressWarnings("unchecked")
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
-        case Unmarshal:
-            return (T)processorType.unmarshal(dataFormatType);
-        case Marshal:
-            return (T)processorType.marshal(dataFormatType);
-        default:
-            throw new IllegalArgumentException("Unknown DataFormat operation: " + operation);
+            case Unmarshal:
+                return (T)processorType.unmarshal(dataFormatType);
+            case Marshal:
+                return (T)processorType.marshal(dataFormatType);
+            default:
+                throw new IllegalArgumentException("Unknown DataFormat operation: " + operation);
         }
     }
 }
