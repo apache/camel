@@ -106,8 +106,8 @@ public class JiraEndpoint extends DefaultEndpoint {
         } else {
             LOG.info("Jira OAuth authentication.");
             JiraOAuthAuthenticationHandler oAuthHandler = new JiraOAuthAuthenticationHandler(configuration.getConsumerKey(),
-            configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
-            configuration.getJiraUrl());
+                    configuration.getVerificationCode(), configuration.getPrivateKey(), configuration.getAccessToken(),
+                    configuration.getJiraUrl());
             client = factory.create(jiraServerUri, oAuthHandler);
         }
     }
@@ -123,30 +123,30 @@ public class JiraEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() {
         switch (type) {
-        case ADDISSUE:
-            return new AddIssueProducer(this);
-        case ATTACH:
-            return new AttachFileProducer(this);
-        case ADDCOMMENT:
-            return new AddCommentProducer(this);
-        case WATCHERS:
-            return new WatcherProducer(this);
-        case DELETEISSUE:
-            return new DeleteIssueProducer(this);
-        case UPDATEISSUE:
-            return new UpdateIssueProducer(this);
-        case TRANSITIONISSUE:
-            return new TransitionIssueProducer(this);
-        case ADDISSUELINK:
-            return new AddIssueLinkProducer(this);
-        case ADDWORKLOG:
-            return new AddWorkLogProducer(this);
-        case FETCHISSUE:
-            return new FetchIssueProducer(this);
-        case FETCHCOMMENTS:
-            return new FetchCommentsProducer(this);
-        default:
-            throw new IllegalArgumentException("Producer does not support type: " + type);
+            case ADDISSUE:
+                return new AddIssueProducer(this);
+            case ATTACH:
+                return new AttachFileProducer(this);
+            case ADDCOMMENT:
+                return new AddCommentProducer(this);
+            case WATCHERS:
+                return new WatcherProducer(this);
+            case DELETEISSUE:
+                return new DeleteIssueProducer(this);
+            case UPDATEISSUE:
+                return new UpdateIssueProducer(this);
+            case TRANSITIONISSUE:
+                return new TransitionIssueProducer(this);
+            case ADDISSUELINK:
+                return new AddIssueLinkProducer(this);
+            case ADDWORKLOG:
+                return new AddWorkLogProducer(this);
+            case FETCHISSUE:
+                return new FetchIssueProducer(this);
+            case FETCHCOMMENTS:
+                return new FetchCommentsProducer(this);
+            default:
+                throw new IllegalArgumentException("Producer does not support type: " + type);
         }
     }
 
