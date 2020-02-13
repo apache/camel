@@ -53,7 +53,6 @@
 * xref:aws2-kms-component.adoc[AWS 2 KMS Component]
 * xref:aws2-mq-component.adoc[AWS 2 MQ Component]
 * xref:aws2-msk-component.adoc[AWS 2 MSK Component]
-* xref:aws-ses-component.adoc[AWS Simple Email Service Component]
 * xref:aws2-ses-component.adoc[AWS 2 Simple Email Service Component]
 * xref:aws2-translate-component.adoc[AWS 2 Translate Component]
 * xref:azure-blob-component.adoc[Azure Storage Blob Service Component]
