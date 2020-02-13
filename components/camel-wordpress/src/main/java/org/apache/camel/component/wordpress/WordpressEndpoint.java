@@ -87,12 +87,12 @@ public class WordpressEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
-        case post:
-            return new WordpressPostProducer(this);
-        case user:
-            return new WordpressUserProducer(this);
-        default:
-            break;
+            case post:
+                return new WordpressPostProducer(this);
+            case user:
+                return new WordpressUserProducer(this);
+            default:
+                break;
         }
         throw new UnsupportedOperationException(String.format("Operation '%s' not supported.", operation));
     }
@@ -100,12 +100,12 @@ public class WordpressEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
-        case post:
-            return new WordpressPostConsumer(this, processor);
-        case user:
-            return new WordpressUserConsumer(this, processor);
-        default:
-            break;
+            case post:
+                return new WordpressPostConsumer(this, processor);
+            case user:
+                return new WordpressUserConsumer(this, processor);
+            default:
+                break;
         }
         throw new UnsupportedOperationException(String.format("Operation '%s' not supported.", operation));
     }
