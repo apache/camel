@@ -63,7 +63,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Ignore;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -104,6 +103,7 @@ import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class XmlSignatureTest extends CamelTestSupport {
