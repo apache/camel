@@ -31,7 +31,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
     private final CamelSWFWorkflowClient camelSWFClient;
     private SWFEndpoint endpoint;
     private SWFConfiguration configuration;
-    
+
     private transient String swfWorkflowProducerToString;
 
     public SWFWorkflowProducer(SWFEndpoint endpoint, CamelSWFWorkflowClient camelSWFClient) {
@@ -50,42 +50,42 @@ public class SWFWorkflowProducer extends DefaultProducer {
             Operation operation = getOperation(exchange);
             switch (operation) {
 
-            case CANCEL:
-                camelSWFClient.requestCancelWorkflowExecution(getWorkflowId(exchange), getRunId(exchange));
-                break;
+                case CANCEL:
+                    camelSWFClient.requestCancelWorkflowExecution(getWorkflowId(exchange), getRunId(exchange));
+                    break;
 
-            case GET_STATE:
-                Object state = camelSWFClient.getWorkflowExecutionState(getWorkflowId(exchange), getRunId(exchange), getResultType(exchange));
-                endpoint.setResult(exchange, state);
-                break;
+                case GET_STATE:
+                    Object state = camelSWFClient.getWorkflowExecutionState(getWorkflowId(exchange), getRunId(exchange), getResultType(exchange));
+                    endpoint.setResult(exchange, state);
+                    break;
 
-            case DESCRIBE:
-                Map<String, Object> workflowInfo = camelSWFClient.describeWorkflowInstance(getWorkflowId(exchange), getRunId(exchange));
-                endpoint.setResult(exchange, workflowInfo);
-                break;
+                case DESCRIBE:
+                    Map<String, Object> workflowInfo = camelSWFClient.describeWorkflowInstance(getWorkflowId(exchange), getRunId(exchange));
+                    endpoint.setResult(exchange, workflowInfo);
+                    break;
 
-            case GET_HISTORY:
-                Object history = camelSWFClient.getWorkflowExecutionHistory(getWorkflowId(exchange), getRunId(exchange));
-                endpoint.setResult(exchange, history);
-                break;
+                case GET_HISTORY:
+                    Object history = camelSWFClient.getWorkflowExecutionHistory(getWorkflowId(exchange), getRunId(exchange));
+                    endpoint.setResult(exchange, history);
+                    break;
 
-            case START:
-                String[] ids = camelSWFClient.startWorkflowExecution(getWorkflowId(exchange), getRunId(exchange),
-                        getEventName(exchange), getVersion(exchange), getArguments(exchange), getTags(exchange));
-                setHeader(exchange, SWFConstants.WORKFLOW_ID, ids[0]);
-                setHeader(exchange, SWFConstants.RUN_ID, ids[1]);
-                break;
+                case START:
+                    String[] ids = camelSWFClient.startWorkflowExecution(getWorkflowId(exchange), getRunId(exchange),
+                            getEventName(exchange), getVersion(exchange), getArguments(exchange), getTags(exchange));
+                    setHeader(exchange, SWFConstants.WORKFLOW_ID, ids[0]);
+                    setHeader(exchange, SWFConstants.RUN_ID, ids[1]);
+                    break;
 
-            case SIGNAL:
-                camelSWFClient.signalWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getSignalName(exchange), getArguments(exchange));
-                break;
+                case SIGNAL:
+                    camelSWFClient.signalWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getSignalName(exchange), getArguments(exchange));
+                    break;
 
-            case TERMINATE:
-                camelSWFClient.terminateWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getReason(exchange), getDetails(exchange), getChildPolicy(exchange));
-                break;
+                case TERMINATE:
+                    camelSWFClient.terminateWorkflowExecution(getWorkflowId(exchange), getRunId(exchange), getReason(exchange), getDetails(exchange), getChildPolicy(exchange));
+                    break;
 
-            default:
-                throw new UnsupportedOperationException(operation.toString());
+                default:
+                    throw new UnsupportedOperationException(operation.toString());
             }
 
         } catch (Throwable throwable) {
@@ -102,7 +102,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
         String version = exchange.getIn().getHeader(SWFConstants.VERSION, String.class);
         return version != null ? version : configuration.getVersion();
     }
-    
+
     private List<String> getTags(Exchange exchange) {
         return exchange.getIn().getHeader(SWFConstants.TAGS, List.class);
     }
