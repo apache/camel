@@ -82,15 +82,15 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             throw new IllegalStateException("Can only configure our own instance !");
         }
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "headername":
-        case "headerName": 
-            setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-        case "mode": 
-            setMode(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
-        case "group": 
-            setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value)); return true;
-        default: 
-            return false;
+            case "headername":
+            case "headerName":
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "mode":
+                setMode(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "group":
+                setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value)); return true;
+            default:
+                return false;
         }
     }
 
@@ -111,7 +111,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     public void setMode(String mode) {
         this.mode = mode != null ? mode.charAt(0) : 0;
     }
-    
+
     public int getGroup() {
         return group;
     }
@@ -190,7 +190,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
         }
     }
-    
+
 
     static class XMLTokenIterator implements Iterator<Object>, Closeable {
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
@@ -215,7 +215,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private boolean compliant;
 
         private Object nextToken;
-        
+
         XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in) throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
             this.splitpath = new AttributedQName[sl.length];
@@ -224,12 +224,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 if (s.length() > 0) {
                     int d = s.indexOf(':');
                     String pfx = d > 0 ? s.substring(0, d) : "";
-                    this.splitpath[i] = 
-                        new AttributedQName(
-                            "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
+                    this.splitpath[i] =
+                            new AttributedQName(
+                                    "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
                 }
             }
-            
+
             this.mode = mode != 0 ? mode : 'i';
             this.group = group > 0 ? group : 1;
             this.in = new RecordableReader(in);
@@ -244,7 +244,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
 
             this.path = new ArrayList<>();
-            
+
             // wrapped mode needs the segments and the injected mode needs the namespaces
             if (this.mode == 'w') {
                 this.segments = new ArrayList<>();
@@ -255,18 +255,18 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             // when grouping the tokens, allocate the storage to temporarily store tokens. 
             if (this.group > 1) {
                 this.tokens = new ArrayList<>();
-            }       
+            }
             this.nextToken = getNextToken();
         }
-        
+
         private boolean isDoS() {
             return splitpath[index] == null;
         }
-        
+
         private AttributedQName current() {
             return splitpath[index + (isDoS() ? 1 : 0)];
         }
-        
+
         private AttributedQName ancestor() {
             return index == 0 ? null : splitpath[index - 1];
         }
@@ -277,19 +277,19 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
             index++;
         }
-        
+
         private void up() {
             index--;
         }
-        
+
         private boolean isBottom() {
             return index == splitpath.length - (isDoS() ? 2 : 1);
         }
-        
+
         private boolean isTop() {
             return index == 0;
         }
-        
+
         private int readNext() throws XMLStreamException {
             int c = code;
             if (c > 0) {
@@ -299,7 +299,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             }
             return c;
         }
-        
+
         private String getCurrentText() {
             int pos = reader.getLocation().getCharacterOffset();
             String txt = in.getText(pos - consumed);
@@ -325,11 +325,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private String popSegment() {
             return segments.remove(segments.size() - 1);
         }
-        
+
         private QName peekLog() {
             return segmentlog.get(segmentlog.size() - 1);
         }
-        
+
         private QName popLog() {
             return segmentlog.remove(segmentlog.size() - 1);
         }
@@ -378,12 +378,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private String getCurrentToken() throws XMLStreamException {
             readCurrent(true);
             popName();
-            
+
             String token = createContextualToken(getCurrentText());
             if (mode == 'i') {
                 popNamespaces();
             }
-            
+
             return token;
         }
 
@@ -417,12 +417,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 if (quote == 0) {
                     quote = '"';
                 }
-                boolean empty = stag.endsWith("/>"); 
+                boolean empty = stag.endsWith("/>");
                 sb.append(token, 0, stag.length() - (empty ? 2 : 1));
                 for (Entry<String, String> e : getCurrentNamespaceBindings().entrySet()) {
                     if (!skip.contains(e.getKey())) {
                         sb.append(e.getKey().length() == 0 ? " xmlns" : " xmlns:")
-                            .append(e.getKey()).append("=").append(quote).append(e.getValue()).append(quote);
+                                .append(e.getKey()).append("=").append(quote).append(e.getValue()).append(quote);
                     }
                 }
                 sb.append(token, stag.length() - (empty ? 2 : 1), token.length());
@@ -452,7 +452,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private String getGroupedToken() {
             StringBuilder sb = new StringBuilder();
             if (mode == 'w') {
-                 // for wrapped
+                // for wrapped
                 for (int i = 0; i < segments.size(); i++) {
                     sb.append(segments.get(i));
                 }
@@ -474,118 +474,118 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             tokens.clear();
             return sb.toString();
         }
-        
+
         private String getNextToken() throws XMLStreamException {
             int xcode = 0;
             while (xcode != XMLStreamConstants.END_DOCUMENT) {
                 xcode = readNext();
 
                 switch (xcode) {
-                case XMLStreamConstants.START_ELEMENT:
-                    depth++;
-                    QName name = reader.getName();
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("se={}; depth={}; trackdepth={}", name, depth, trackdepth);
-                    }
-                    
-                    String token = getCurrentText();
-                    // perform the second compliance test
-                    if (!compliant) {
-                        if (token != null && token.startsWith("<") && !token.startsWith("<?")) {
-                            LOG.error("XMLStreamReader not supporting Location");
-                            throw new XMLStreamException("reader not supporting Location");
+                    case XMLStreamConstants.START_ELEMENT:
+                        depth++;
+                        QName name = reader.getName();
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("se={}; depth={}; trackdepth={}", name, depth, trackdepth);
                         }
-                        compliant = true;
-                    }
 
-                    LOG.trace("token={}", token);
-                    if (!backtrack && mode == 'w') {
-                        pushSegment(name, token);
-                    }
-                    pushName(name);
-                    if (mode == 'i') {
-                        pushNamespaces(reader);
-                    }
-                    backtrack = false;
-                    if (current().matches(name)) {
-                        // mark the position of the match in the segments list
-                        if (isBottom()) {
-                            // final match
-                            token = getCurrentToken();
-                            backtrack = true;
-                            trackdepth = depth;
-                            if (group > 1) {
-                                tokens.add(token);
-                                if (group == tokens.size()) {
-                                    return getGroupedToken();
+                        String token = getCurrentText();
+                        // perform the second compliance test
+                        if (!compliant) {
+                            if (token != null && token.startsWith("<") && !token.startsWith("<?")) {
+                                LOG.error("XMLStreamReader not supporting Location");
+                                throw new XMLStreamException("reader not supporting Location");
+                            }
+                            compliant = true;
+                        }
+
+                        LOG.trace("token={}", token);
+                        if (!backtrack && mode == 'w') {
+                            pushSegment(name, token);
+                        }
+                        pushName(name);
+                        if (mode == 'i') {
+                            pushNamespaces(reader);
+                        }
+                        backtrack = false;
+                        if (current().matches(name)) {
+                            // mark the position of the match in the segments list
+                            if (isBottom()) {
+                                // final match
+                                token = getCurrentToken();
+                                backtrack = true;
+                                trackdepth = depth;
+                                if (group > 1) {
+                                    tokens.add(token);
+                                    if (group == tokens.size()) {
+                                        return getGroupedToken();
+                                    }
+                                } else {
+                                    return token;
                                 }
                             } else {
-                                return token;    
+                                // intermediary match
+                                down();
                             }
+                        } else if (isDoS()) {
+                            // continue
                         } else {
-                            // intermediary match
-                            down();
+                            // skip
+                            readCurrent(false);
                         }
-                    } else if (isDoS()) {
-                        // continue
-                    } else {
-                        // skip
-                        readCurrent(false);
-                    }
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    if ((backtrack || (trackdepth > 0 && depth == trackdepth))
-                        && (mode == 'w' && group > 1 && tokens.size() > 0)) {
-                        // flush the left over using the current context
-                        code = XMLStreamConstants.END_ELEMENT;
-                        return getGroupedToken();
-                    }
-
-                    depth--;
-                    QName endname = reader.getName();
-                    LOG.trace("ee={}", endname);
-                    
-                    popName();
-                    if (mode == 'i') {
-                        popNamespaces();
-                    }
-                    
-                    int pc = 0;
-                    if (backtrack || (trackdepth > 0 && depth == trackdepth - 1)) {
-                        // reactive backtrack if not backtracking and update the track depth
-                        backtrack = true;
-                        trackdepth--;
-                        if (mode == 'w') {
-                            while (!endname.equals(peekLog())) {
-                                pc++;
-                                popLog();
-                            }
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        if ((backtrack || (trackdepth > 0 && depth == trackdepth))
+                                && (mode == 'w' && group > 1 && tokens.size() > 0)) {
+                            // flush the left over using the current context
+                            code = XMLStreamConstants.END_ELEMENT;
+                            return getGroupedToken();
                         }
-                    }
 
-                    if (backtrack) {
-                        if (mode == 'w') {
-                            for (int i = 0; i < pc; i++) {
-                                popSegment();
+                        depth--;
+                        QName endname = reader.getName();
+                        LOG.trace("ee={}", endname);
+
+                        popName();
+                        if (mode == 'i') {
+                            popNamespaces();
+                        }
+
+                        int pc = 0;
+                        if (backtrack || (trackdepth > 0 && depth == trackdepth - 1)) {
+                            // reactive backtrack if not backtracking and update the track depth
+                            backtrack = true;
+                            trackdepth--;
+                            if (mode == 'w') {
+                                while (!endname.equals(peekLog())) {
+                                    pc++;
+                                    popLog();
+                                }
                             }
                         }
 
-                        if ((ancestor() == null && !isTop())
-                            || (ancestor() != null && ancestor().matches(endname))) {
-                            up();
+                        if (backtrack) {
+                            if (mode == 'w') {
+                                for (int i = 0; i < pc; i++) {
+                                    popSegment();
+                                }
+                            }
+
+                            if ((ancestor() == null && !isTop())
+                                    || (ancestor() != null && ancestor().matches(endname))) {
+                                up();
+                            }
                         }
-                    }
-                    break;
-                case XMLStreamConstants.END_DOCUMENT:
-                    LOG.trace("depth={}", depth);
-                    if (group > 1 && tokens.size() > 0) {
-                        // flush the left over before really going EoD
-                        code = XMLStreamConstants.END_DOCUMENT;
-                        return getGroupedToken();
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    case XMLStreamConstants.END_DOCUMENT:
+                        LOG.trace("depth={}", depth);
+                        if (group > 1 && tokens.size() > 0) {
+                            // flush the left over before really going EoD
+                            code = XMLStreamConstants.END_DOCUMENT;
+                            return getGroupedToken();
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
             return null;
@@ -634,7 +634,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private static final long serialVersionUID = 9878370226894144L;
         private Pattern lcpattern;
         private boolean nsany;
-        
+
         AttributedQName(String localPart) {
             super(localPart);
             checkWildcard("", localPart);
@@ -652,11 +652,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         public boolean matches(QName qname) {
             return (nsany || getNamespaceURI().equals(qname.getNamespaceURI()))
-                && (lcpattern != null 
-                ? lcpattern.matcher(qname.getLocalPart()).matches() 
-                : getLocalPart().equals(qname.getLocalPart()));
+                    && (lcpattern != null
+                    ? lcpattern.matcher(qname.getLocalPart()).matches()
+                    : getLocalPart().equals(qname.getLocalPart()));
         }
-        
+
         private void checkWildcard(String nsa, String lcp) {
             nsany = "*".equals(nsa);
             boolean wc = false;
@@ -672,18 +672,18 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 for (int i = 0; i < lcp.length(); i++) {
                     char c = lcp.charAt(i);
                     switch (c) {
-                    case '.':
-                        sb.append("\\.");
-                        break;
-                    case '*':
-                        sb.append(".*");
-                        break;
-                    case '?':
-                        sb.append('.');
-                        break;
-                    default:
-                        sb.append(c);
-                        break;
+                        case '.':
+                            sb.append("\\.");
+                            break;
+                        case '*':
+                            sb.append(".*");
+                            break;
+                        case '?':
+                            sb.append('.');
+                            break;
+                        default:
+                            sb.append(c);
+                            break;
                     }
                 }
                 lcpattern = Pattern.compile(sb.toString());

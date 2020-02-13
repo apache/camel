@@ -64,90 +64,90 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         try {
             while (true) {
                 switch (streamReader.getEventType()) {
-                // Attributes are handled in START_ELEMENT
-                case XMLStreamConstants.ATTRIBUTE:
-                    break;
-                case XMLStreamConstants.CDATA: {
-                    if (lexicalHandler != null) {
-                        lexicalHandler.startCDATA();
-                    }
-                    int length = streamReader.getTextLength();
-                    int start = streamReader.getTextStart();
-                    char[] chars = streamReader.getTextCharacters();
-                    contentHandler.characters(chars, start, length);
-                    if (lexicalHandler != null) {
-                        lexicalHandler.endCDATA();
-                    }
-                    break;
-                }
-                case XMLStreamConstants.CHARACTERS: {
-                    int length = streamReader.getTextLength();
-                    int start = streamReader.getTextStart();
-                    char[] chars = streamReader.getTextCharacters();
-                    contentHandler.characters(chars, start, length);
-                    break;
-                }
-                case XMLStreamConstants.SPACE: {
-                    int length = streamReader.getTextLength();
-                    int start = streamReader.getTextStart();
-                    char[] chars = streamReader.getTextCharacters();
-                    contentHandler.ignorableWhitespace(chars, start, length);
-                    break;
-                }
-                case XMLStreamConstants.COMMENT:
-                    if (lexicalHandler != null) {
+                    // Attributes are handled in START_ELEMENT
+                    case XMLStreamConstants.ATTRIBUTE:
+                        break;
+                    case XMLStreamConstants.CDATA: {
+                        if (lexicalHandler != null) {
+                            lexicalHandler.startCDATA();
+                        }
                         int length = streamReader.getTextLength();
                         int start = streamReader.getTextStart();
                         char[] chars = streamReader.getTextCharacters();
-                        lexicalHandler.comment(chars, start, length);
+                        contentHandler.characters(chars, start, length);
+                        if (lexicalHandler != null) {
+                            lexicalHandler.endCDATA();
+                        }
+                        break;
                     }
-                    break;
-                case XMLStreamConstants.DTD:
-                    break;
-                case XMLStreamConstants.END_DOCUMENT:
-                    contentHandler.endDocument();
-                    return;
-                case XMLStreamConstants.END_ELEMENT: {
-                    String uri = nullToEmpty(streamReader.getNamespaceURI());
-                    String localName = streamReader.getLocalName();
-                    String qname = getPrefixedName(streamReader.getPrefix(), localName);
-                    contentHandler.endElement(uri, localName, qname);
+                    case XMLStreamConstants.CHARACTERS: {
+                        int length = streamReader.getTextLength();
+                        int start = streamReader.getTextStart();
+                        char[] chars = streamReader.getTextCharacters();
+                        contentHandler.characters(chars, start, length);
+                        break;
+                    }
+                    case XMLStreamConstants.SPACE: {
+                        int length = streamReader.getTextLength();
+                        int start = streamReader.getTextStart();
+                        char[] chars = streamReader.getTextCharacters();
+                        contentHandler.ignorableWhitespace(chars, start, length);
+                        break;
+                    }
+                    case XMLStreamConstants.COMMENT:
+                        if (lexicalHandler != null) {
+                            int length = streamReader.getTextLength();
+                            int start = streamReader.getTextStart();
+                            char[] chars = streamReader.getTextCharacters();
+                            lexicalHandler.comment(chars, start, length);
+                        }
+                        break;
+                    case XMLStreamConstants.DTD:
+                        break;
+                    case XMLStreamConstants.END_DOCUMENT:
+                        contentHandler.endDocument();
+                        return;
+                    case XMLStreamConstants.END_ELEMENT: {
+                        String uri = nullToEmpty(streamReader.getNamespaceURI());
+                        String localName = streamReader.getLocalName();
+                        String qname = getPrefixedName(streamReader.getPrefix(), localName);
+                        contentHandler.endElement(uri, localName, qname);
 
-                    // namespaces
-                    for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
-                        String nsPrefix = streamReader.getNamespacePrefix(i);
-                        contentHandler.endPrefixMapping(nsPrefix);
+                        // namespaces
+                        for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
+                            String nsPrefix = streamReader.getNamespacePrefix(i);
+                            contentHandler.endPrefixMapping(nsPrefix);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case XMLStreamConstants.ENTITY_DECLARATION:
-                case XMLStreamConstants.ENTITY_REFERENCE:
-                case XMLStreamConstants.NAMESPACE:
-                case XMLStreamConstants.NOTATION_DECLARATION:
-                    break;
-                case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                    break;
-                case XMLStreamConstants.START_DOCUMENT:
-                    contentHandler.startDocument();
-                    break;
-                case XMLStreamConstants.START_ELEMENT: {
-                    // namespaces
-                    for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
-                        String nsPrefix = nullToEmpty(streamReader.getNamespacePrefix(i));
-                        String nsUri = nullToEmpty(streamReader.getNamespaceURI(i));
-                        contentHandler.startPrefixMapping(nsPrefix, nsUri);
-                    }
+                    case XMLStreamConstants.ENTITY_DECLARATION:
+                    case XMLStreamConstants.ENTITY_REFERENCE:
+                    case XMLStreamConstants.NAMESPACE:
+                    case XMLStreamConstants.NOTATION_DECLARATION:
+                        break;
+                    case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                        break;
+                    case XMLStreamConstants.START_DOCUMENT:
+                        contentHandler.startDocument();
+                        break;
+                    case XMLStreamConstants.START_ELEMENT: {
+                        // namespaces
+                        for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
+                            String nsPrefix = nullToEmpty(streamReader.getNamespacePrefix(i));
+                            String nsUri = nullToEmpty(streamReader.getNamespaceURI(i));
+                            contentHandler.startPrefixMapping(nsPrefix, nsUri);
+                        }
 
-                    String uri = nullToEmpty(streamReader.getNamespaceURI());
-                    String localName = streamReader.getLocalName();
-                    String qname = getPrefixedName(streamReader.getPrefix(), localName);
-                    attributes.init();
-                    contentHandler.startElement(uri, localName, qname, attributes);
-                    attributes.reset();
-                    break;
-                }
-                default:
-                    break;
+                        String uri = nullToEmpty(streamReader.getNamespaceURI());
+                        String localName = streamReader.getLocalName();
+                        String qname = getPrefixedName(streamReader.getPrefix(), localName);
+                        attributes.init();
+                        contentHandler.startElement(uri, localName, qname, attributes);
+                        attributes.reset();
+                        break;
+                    }
+                    default:
+                        break;
                 }
                 if (!streamReader.hasNext()) {
                     return;
@@ -158,8 +158,8 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
             SAXParseException spe;
             if (e.getLocation() != null) {
                 spe = new SAXParseException(e.getMessage(), null, null,
-                                            e.getLocation().getLineNumber(),
-                                            e.getLocation().getColumnNumber(), e);
+                        e.getLocation().getLineNumber(),
+                        e.getLocation().getColumnNumber(), e);
             } else {
                 spe = new SAXParseException(e.getMessage(), null, null, -1, -1, e);
             }
@@ -290,7 +290,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
 
     @Override
     public void setFeature(String name, boolean value)
-        throws SAXNotRecognizedException, SAXNotSupportedException {
+            throws SAXNotRecognizedException, SAXNotSupportedException {
     }
 
     @Override
@@ -300,7 +300,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
 
     @Override
     public void setProperty(String name, Object value)
-        throws SAXNotRecognizedException, SAXNotSupportedException {
+            throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
             lexicalHandler = (LexicalHandler) value;
         } else {
@@ -330,7 +330,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
     public void setContentHandler(ContentHandler handler) {
         this.contentHandler = handler;
         if (handler instanceof LexicalHandler
-            && lexicalHandler == null) {
+                && lexicalHandler == null) {
             lexicalHandler = (LexicalHandler)handler;
         }
     }
