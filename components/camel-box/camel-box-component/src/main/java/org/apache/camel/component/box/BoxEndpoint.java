@@ -135,38 +135,38 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     private void createApiProxy(Map<String, Object> args) {
         switch (apiName) {
-        case COLLABORATIONS:
-            apiProxy = new BoxCollaborationsManager(getBoxConnection());
-            break;
-        case COMMENTS:
-            apiProxy = new BoxCommentsManager(getBoxConnection());
-            break;
-        case EVENT_LOGS:
-            apiProxy = new BoxEventLogsManager(getBoxConnection());
-            break;
-        case EVENTS:
-            apiProxy = new BoxEventsManager(getBoxConnection());
-            break;
-        case FILES:
-            apiProxy = new BoxFilesManager(getBoxConnection());
-            break;
-        case FOLDERS:
-            apiProxy = new BoxFoldersManager(getBoxConnection());
-            break;
-        case GROUPS:
-            apiProxy = new BoxGroupsManager(getBoxConnection());
-            break;
-        case SEARCH:
-            apiProxy = new BoxSearchManager(getBoxConnection());
-            break;
-        case TASKS:
-            apiProxy = new BoxTasksManager(getBoxConnection());
-            break;
-        case USERS:
-            apiProxy = new BoxUsersManager(getBoxConnection());
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid API name " + apiName);
+            case COLLABORATIONS:
+                apiProxy = new BoxCollaborationsManager(getBoxConnection());
+                break;
+            case COMMENTS:
+                apiProxy = new BoxCommentsManager(getBoxConnection());
+                break;
+            case EVENT_LOGS:
+                apiProxy = new BoxEventLogsManager(getBoxConnection());
+                break;
+            case EVENTS:
+                apiProxy = new BoxEventsManager(getBoxConnection());
+                break;
+            case FILES:
+                apiProxy = new BoxFilesManager(getBoxConnection());
+                break;
+            case FOLDERS:
+                apiProxy = new BoxFoldersManager(getBoxConnection());
+                break;
+            case GROUPS:
+                apiProxy = new BoxGroupsManager(getBoxConnection());
+                break;
+            case SEARCH:
+                apiProxy = new BoxSearchManager(getBoxConnection());
+                break;
+            case TASKS:
+                apiProxy = new BoxTasksManager(getBoxConnection());
+                break;
+            case USERS:
+                apiProxy = new BoxUsersManager(getBoxConnection());
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 }
