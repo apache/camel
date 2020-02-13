@@ -37,42 +37,42 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
-    @UriParam(label = "sign")
+    @UriParam
     private XPathFilterParameterSpec parentXpath;
-    @UriParam(label = "sign")
+    @UriParam
     private List<XPathFilterParameterSpec> xpathsToIdAttributes = Collections.emptyList();
-    @UriParam(label = "sign")
+    @UriParam
     private List<AlgorithmMethod> transformMethods = Collections.singletonList(XmlSignatureHelper
             .getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
-    @UriParam(label = "sign")
+    @UriParam
     private KeyAccessor keyAccessor;
-    @UriParam(label = "sign", defaultValue = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
+    @UriParam(defaultValue = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
     private AlgorithmMethod canonicalizationMethod = new XmlSignatureTransform(CanonicalizationMethod.INCLUSIVE);
-    @UriParam(label = "sign", defaultValue = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
+    @UriParam(defaultValue = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
     private String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-    @UriParam(label = "sign")
+    @UriParam
     private String digestAlgorithm;
-    @UriParam(label = "sign", defaultValue = "true")
+    @UriParam(defaultValue = "true")
     private Boolean addKeyInfoReference = Boolean.TRUE;
-    @UriParam(label = "sign", defaultValue = "ds")
+    @UriParam(defaultValue = "ds")
     private String prefixForXmlSignatureNamespace = "ds";
-    @UriParam(label = "sign")
+    @UriParam
     private String contentObjectId;
-    @UriParam(label = "sign")
+    @UriParam
     private String signatureId;
-    @UriParam(label = "sign")
+    @UriParam
     private String contentReferenceUri;
-    @UriParam(label = "sign")
+    @UriParam
     private String contentReferenceType;
-    @UriParam(label = "sign")
+    @UriParam
     private String parentLocalName;
-    @UriParam(label = "sign")
+    @UriParam
     private String parentNamespace;
-    @UriParam(label = "sign", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private Boolean plainText = Boolean.FALSE;
-    @UriParam(label = "sign", defaultValue = "UTF-8")
+    @UriParam(defaultValue = "UTF-8")
     private String plainTextEncoding = "UTF-8";
-    @UriParam(label = "sign")
+    @UriParam
     private XmlSignatureProperties properties;
 
     public XmlSignerConfiguration() {

@@ -80,7 +80,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception { //NOPMD
+    public void process(Exchange exchange) throws Exception {
         InputStream stream = exchange.getIn().getMandatoryBody(InputStream.class);
         try {
             // lets setup the out message before we invoke the signing
@@ -99,7 +99,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected void verify(InputStream input, final Message out) throws Exception { //NOPMD
+    protected void verify(InputStream input, final Message out) throws Exception {
         LOG.debug("Verification of XML signature document started");
         final Document doc = parseInput(input, out);
 
@@ -173,7 +173,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     private void map2Message(final List<Reference> refs, final List<XMLObject> objs, Message out, final Document messageBodyDocument)
-        throws Exception { //NOPMD
+        throws Exception {
 
         XmlSignature2Message.Input refsAndObjects = new XmlSignature2Message.Input() {
 
@@ -235,7 +235,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean handleSignatureValidationFailed(DOMValidateContext valContext, XMLSignature signature) throws Exception { //NOPMD
+    protected boolean handleSignatureValidationFailed(DOMValidateContext valContext, XMLSignature signature) throws Exception {
         ValidationFailedHandler handler = getConfiguration().getValidationFailedHandler();
         LOG.debug("handleSignatureValidationFailed called");
         try {
@@ -284,7 +284,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
 
     }
 
-    protected Document parseInput(InputStream is, Message message) throws Exception { //NOPMD
+    protected Document parseInput(InputStream is, Message message) throws Exception {
         try {
             ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
             Schema schema = getSchema(message);
