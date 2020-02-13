@@ -63,7 +63,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> imp
     @Metadata(defaultValue = "Threads")
     private String threadName;
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", enums="Abort,CallerRuns,DiscardOldest,Discard")
+    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", enums = "Abort,CallerRuns,DiscardOldest,Discard")
     private String rejectedPolicy;
     @XmlAttribute
     @Metadata(defaultValue = "true")
