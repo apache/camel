@@ -42,10 +42,10 @@ public class WorkdayEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         switch (workdayConfiguration.getEntity()) {
-        case report:
-            return new WorkdayReportProducer(this);
-        default:
-            throw new UnsupportedOperationException(String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
+            case report:
+                return new WorkdayReportProducer(this);
+            default:
+                throw new UnsupportedOperationException(String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
         }
     }
 
