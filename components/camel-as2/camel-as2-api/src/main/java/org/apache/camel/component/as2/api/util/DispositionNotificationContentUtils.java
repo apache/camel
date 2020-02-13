@@ -156,94 +156,94 @@ public final class DispositionNotificationContentUtils {
             final CharArrayBuffer fieldLine = dispositionNotificationFields.get(i);
             final Field field = parseDispositionField(fieldLine);
             switch(field.getName().toLowerCase()) {
-            case REPORTING_UA: {
-                if (field.getElements().length < 1) {
-                    throw new ParseException("Invalid '" + MDNField.REPORTING_UA + "' field: UA name is missing");
+                case REPORTING_UA: {
+                    if (field.getElements().length < 1) {
+                        throw new ParseException("Invalid '" + MDNField.REPORTING_UA + "' field: UA name is missing");
+                    }
+                    reportingUA = field.getValue();
+                    break;
                 }
-                reportingUA = field.getValue();
-                break;
-            }
-            case MDN_GATEWAY: {
-                Element[] elements = field.getElements();
-                if (elements.length < 2) {
-                    throw new ParseException("Invalid '" + MDNField.MDN_GATEWAY + "' field: MTA name is missing");
+                case MDN_GATEWAY: {
+                    Element[] elements = field.getElements();
+                    if (elements.length < 2) {
+                        throw new ParseException("Invalid '" + MDNField.MDN_GATEWAY + "' field: MTA name is missing");
+                    }
+                    mtaName = elements[1].getValue();
+                    break;
                 }
-                mtaName = elements[1].getValue();
-                break;
-            }
-            case FINAL_RECIPIENT: {
-                Element[] elements = field.getElements();
-                if (elements.length < 2) {
-                    throw new ParseException("Invalid '" + MDNField.FINAL_RECIPIENT + "' field: recipient address is missing");
+                case FINAL_RECIPIENT: {
+                    Element[] elements = field.getElements();
+                    if (elements.length < 2) {
+                        throw new ParseException("Invalid '" + MDNField.FINAL_RECIPIENT + "' field: recipient address is missing");
+                    }
+                    finalRecipient = elements[1].getValue();
+                    break;
                 }
-                finalRecipient = elements[1].getValue();
-                break;
-            }
-            case ORIGINAL_MESSAGE_ID: {
-                originalMessageId = field.getValue();
-                break;
-            }
-            case DISPOSITION: {
-                Element[] elements = field.getElements();
-                if (elements.length < 2) {
-                    throw new ParseException("Invalid '" + MDNField.DISPOSITION + "' field: " + field.getValue());
+                case ORIGINAL_MESSAGE_ID: {
+                    originalMessageId = field.getValue();
+                    break;
                 }
-                dispositionMode = DispositionMode.parseDispositionMode(elements[0].getValue());
-                if (dispositionMode == null) {
-                    throw new ParseException("Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '" + elements[0].getValue() + "'");
-                }
+                case DISPOSITION: {
+                    Element[] elements = field.getElements();
+                    if (elements.length < 2) {
+                        throw new ParseException("Invalid '" + MDNField.DISPOSITION + "' field: " + field.getValue());
+                    }
+                    dispositionMode = DispositionMode.parseDispositionMode(elements[0].getValue());
+                    if (dispositionMode == null) {
+                        throw new ParseException("Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '" + elements[0].getValue() + "'");
+                    }
 
-                String dispositionTypeString = elements[1].getValue();
-                int slash = dispositionTypeString.indexOf('/');
-                if (slash == -1) {
-                    dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString);
-                } else {
-                    dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString.substring(0, slash));
-                    dispositionModifier = AS2DispositionModifier.parseDispositionType(dispositionTypeString.substring(slash + 1));
+                    String dispositionTypeString = elements[1].getValue();
+                    int slash = dispositionTypeString.indexOf('/');
+                    if (slash == -1) {
+                        dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString);
+                    } else {
+                        dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString.substring(0, slash));
+                        dispositionModifier = AS2DispositionModifier.parseDispositionType(dispositionTypeString.substring(slash + 1));
+                    }
+                    break;
                 }
-                break;
-            }
-            case FAILURE:
-                failures.add(field.getValue());
-                break;
-            case ERROR:
-                errors.add(field.getValue());
-                break;
-            case WARNING:
-                warnings.add(field.getValue());
-                break;
-            case RECEIVED_CONTENT_MIC: {
-                Element[] elements = field.getElements();
-                if (elements.length < 1) {
-                    throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: MIC is missing");
+                case FAILURE:
+                    failures.add(field.getValue());
+                    break;
+                case ERROR:
+                    errors.add(field.getValue());
+                    break;
+                case WARNING:
+                    warnings.add(field.getValue());
+                    break;
+                case RECEIVED_CONTENT_MIC: {
+                    Element[] elements = field.getElements();
+                    if (elements.length < 1) {
+                        throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: MIC is missing");
+                    }
+                    Element element = elements[0];
+                    String[] parameters = element.getParameters();
+                    if (parameters.length < 1) {
+                        throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: digest algorithm ID is missing");
+                    }
+                    String digestAlgorithmId = parameters[0];
+                    String encodedMessageDigest = element.getValue();
+                    receivedContentMic = new ReceivedContentMic(digestAlgorithmId, encodedMessageDigest);
+                    break;
                 }
-                Element element = elements[0];
-                String[] parameters = element.getParameters();
-                if (parameters.length < 1) {
-                    throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: digest algorithm ID is missing");
-                }
-                String digestAlgorithmId = parameters[0];
-                String encodedMessageDigest = element.getValue();
-                receivedContentMic = new ReceivedContentMic(digestAlgorithmId, encodedMessageDigest);
-                break;
-            }
-            default: // Extension Field
-                extensionFields.put(field.getName(), field.getValue());
+                default: // Extension Field
+                    extensionFields.put(field.getName(), field.getValue());
             }
         }
 
         return new AS2MessageDispositionNotificationEntity(reportingUA,
-                                                            mtaName,
-                                                            finalRecipient,
-                                                            originalMessageId,
-                                                            dispositionMode,
-                                                            dispositionType,
-                                                            dispositionModifier,
-                                                            failures.toArray(new String[failures.size()]),
-                                                            errors.toArray(new String[errors.size()]),
-                                                            warnings.toArray(new String[warnings.size()]),
-                                                            extensionFields,
-                                                            receivedContentMic);
+                mtaName,
+                finalRecipient,
+                originalMessageId,
+                dispositionMode,
+                dispositionType,
+                dispositionModifier,
+                failures.toArray(new String[failures.size()]),
+                errors.toArray(new String[errors.size()]),
+                warnings.toArray(new String[warnings.size()]),
+                extensionFields,
+                receivedContentMic);
     }
 
     public static Field parseDispositionField(CharArrayBuffer fieldLine) {
