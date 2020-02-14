@@ -45,6 +45,8 @@ public class ApiProxy {
 
     private String[] nullableOptions;
 
+    private String classPrefix;
+
     private List<ApiMethodAlias> aliases = Collections.emptyList();
 
     public String getApiName() {
@@ -125,6 +127,14 @@ public class ApiProxy {
 
     public void setAliases(List<ApiMethodAlias> aliases) {
         this.aliases = aliases;
+    }
+
+    public String getClassPrefix() {
+        return classPrefix;
+    }
+
+    public void setClassPrefix(String classPrefix) {
+        this.classPrefix = classPrefix;
     }
 
     public void validate() throws MojoExecutionException {

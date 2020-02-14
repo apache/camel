@@ -42,6 +42,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     @Parameter(required = true, property = PREFIX + "proxyClass")
     protected String proxyClass;
 
+    @Parameter
+    protected String classPrefix;
+
     // cached fields
     private Class<?> proxyType;
 
@@ -121,7 +124,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private String getEnumName() throws MojoExecutionException {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
-        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
+        String prefix = classPrefix != null ? classPrefix : "";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
     }
 
     private VelocityContext getApiTestContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
@@ -143,7 +147,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private String getUnitTestName() throws MojoExecutionException {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
-        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "IntegrationTest";
+        String prefix = classPrefix != null ? classPrefix : "";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "IntegrationTest";
     }
 
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
@@ -205,7 +210,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private String getConfigName() throws MojoExecutionException {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
-        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
+        String prefix = classPrefix != null ? classPrefix : "";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
     }
 
     private String getProxyClassWithCanonicalName(String proxyClass) {
