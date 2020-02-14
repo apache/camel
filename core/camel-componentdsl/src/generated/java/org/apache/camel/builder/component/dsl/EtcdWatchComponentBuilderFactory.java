@@ -70,6 +70,19 @@ public interface EtcdWatchComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the common configuration shared among endpoints.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
+         * 
+         * Group: consumer
+         */
+        default EtcdWatchComponentBuilder configuration(
+                org.apache.camel.component.etcd.EtcdConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * The password to use for basic authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -130,19 +143,6 @@ public interface EtcdWatchComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the common configuration shared among endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default EtcdWatchComponentBuilder configuration(
-                org.apache.camel.component.etcd.EtcdConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -173,12 +173,12 @@ public interface EtcdWatchComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((EtcdWatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "configuration": ((EtcdWatchComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
             case "password": ((EtcdWatchComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": ((EtcdWatchComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "uris": ((EtcdWatchComponent) component).setUris((java.lang.String) value); return true;
             case "userName": ((EtcdWatchComponent) component).setUserName((java.lang.String) value); return true;
             case "basicPropertyBinding": ((EtcdWatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((EtcdWatchComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
             case "useGlobalSslContextParameters": ((EtcdWatchComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }

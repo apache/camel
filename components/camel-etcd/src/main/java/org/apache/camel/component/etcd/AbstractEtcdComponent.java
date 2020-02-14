@@ -20,16 +20,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.util.StringHelper;
 
 public abstract class AbstractEtcdComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(label = "advanced")
+    @Metadata
     private EtcdConfiguration configuration = new EtcdConfiguration();
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;

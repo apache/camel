@@ -49,6 +49,19 @@ public interface EtcdKeysComponentBuilderFactory {
             extends
                 ComponentBuilder<EtcdKeysComponent> {
         /**
+         * Sets the common configuration shared among endpoints.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
+         * 
+         * Group: producer
+         */
+        default EtcdKeysComponentBuilder configuration(
+                org.apache.camel.component.etcd.EtcdConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -130,19 +143,6 @@ public interface EtcdKeysComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the common configuration shared among endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default EtcdKeysComponentBuilder configuration(
-                org.apache.camel.component.etcd.EtcdConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -172,13 +172,13 @@ public interface EtcdKeysComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((EtcdKeysComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
             case "lazyStartProducer": ((EtcdKeysComponent) component).setLazyStartProducer((boolean) value); return true;
             case "password": ((EtcdKeysComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": ((EtcdKeysComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "uris": ((EtcdKeysComponent) component).setUris((java.lang.String) value); return true;
             case "userName": ((EtcdKeysComponent) component).setUserName((java.lang.String) value); return true;
             case "basicPropertyBinding": ((EtcdKeysComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((EtcdKeysComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
             case "useGlobalSslContextParameters": ((EtcdKeysComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
