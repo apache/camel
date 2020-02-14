@@ -137,7 +137,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.createEndpoint("aws-sns://MyTopic?secretKey=yyy");
+        component.createEndpoint("aws2-sns://MyTopic?secretKey=yyy");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -211,6 +211,6 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonSNSClient", mock);
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
+        component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
     }
 }
