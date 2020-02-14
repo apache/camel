@@ -23,7 +23,7 @@ import org.apache.camel.support.DefaultEndpoint;
 
 public abstract class AbstractEtcdEndpoint extends DefaultEndpoint implements EtcdEndpoint {
 
-    @UriPath(label = "common",description = "The path the endpoint refers to")
+    @UriPath(label = "common", description = "The path the endpoint refers to")
     private final String path;
     @UriParam
     private final EtcdConfiguration configuration;
