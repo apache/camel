@@ -15,15 +15,15 @@ public class EtcdKeysEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EtcdKeysEndpoint target = (EtcdKeysEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
         case "servicepath":
         case "servicePath": target.getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "uris": target.getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "timetolive":
         case "timeToLive": target.getConfiguration().setTimeToLive(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "uris": target.getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;

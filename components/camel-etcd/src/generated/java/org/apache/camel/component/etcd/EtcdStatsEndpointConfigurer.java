@@ -31,7 +31,7 @@ public class EtcdStatsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fromindex":
-        case "fromIndex": target.getConfiguration().setFromIndex(property(camelContext, java.lang.Long.class, value)); return true;
+        case "fromIndex": target.getConfiguration().setFromIndex(property(camelContext, long.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "lazystartproducer":

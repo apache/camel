@@ -40,6 +40,7 @@ public class DockerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxPerRouteConnections": target.getConfiguration().setMaxPerRouteConnections(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.getConfiguration().setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "parameters": target.getConfiguration().setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "serveraddress":
         case "serverAddress": target.getConfiguration().setServerAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "socket": target.getConfiguration().setSocket(property(camelContext, boolean.class, value)); return true;

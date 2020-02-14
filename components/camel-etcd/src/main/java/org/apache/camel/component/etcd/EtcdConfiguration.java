@@ -28,7 +28,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class EtcdConfiguration implements CamelContextAware, Cloneable {
 
-    @UriParam(defaultValue = EtcdConstants.ETCD_DEFAULT_URIS)
+    @UriParam(label = "common", defaultValue = EtcdConstants.ETCD_DEFAULT_URIS)
     private String uris = EtcdConstants.ETCD_DEFAULT_URIS;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -36,16 +36,16 @@ public class EtcdConfiguration implements CamelContextAware, Cloneable {
     private String userName;
     @UriParam(label = "security", secret = true)
     private String password;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "To send an empty message in case of timeout watching for a key.")
     private boolean sendEmptyExchangeOnTimeout;
     @UriParam
     private boolean recursive;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "To set the lifespan of a key in milliseconds.")
     private Integer timeToLive;
     @UriParam
     private Long timeout;
-    @UriParam(label = "consumer,advanced", defaultValue = "0")
-    private Long fromIndex = 0L;
+    @UriParam(label = "consumer,advanced", defaultValue = "0", description = "The index to watch from")
+    private long fromIndex;
     @UriParam(defaultValue = "/services/")
     private String servicePath = "/services/";
 
@@ -161,14 +161,14 @@ public class EtcdConfiguration implements CamelContextAware, Cloneable {
         this.timeout = timeout;
     }
 
-    public Long getFromIndex() {
+    public long getFromIndex() {
         return fromIndex;
     }
 
     /**
      * The index to watch from
      */
-    public void setFromIndex(Long fromIndex) {
+    public void setFromIndex(long fromIndex) {
         this.fromIndex = fromIndex;
     }
 

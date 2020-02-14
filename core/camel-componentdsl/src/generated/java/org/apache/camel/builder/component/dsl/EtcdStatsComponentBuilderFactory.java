@@ -51,6 +51,19 @@ public interface EtcdStatsComponentBuilderFactory {
             extends
                 ComponentBuilder<EtcdStatsComponent> {
         /**
+         * Sets the common configuration shared among endpoints.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default EtcdStatsComponentBuilder configuration(
+                org.apache.camel.component.etcd.EtcdConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * The password to use for basic authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -151,19 +164,6 @@ public interface EtcdStatsComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the common configuration shared among endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default EtcdStatsComponentBuilder configuration(
-                org.apache.camel.component.etcd.EtcdConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -193,6 +193,7 @@ public interface EtcdStatsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((EtcdStatsComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
             case "password": ((EtcdStatsComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": ((EtcdStatsComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "uris": ((EtcdStatsComponent) component).setUris((java.lang.String) value); return true;
@@ -200,7 +201,6 @@ public interface EtcdStatsComponentBuilderFactory {
             case "bridgeErrorHandler": ((EtcdStatsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((EtcdStatsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((EtcdStatsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((EtcdStatsComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
             case "useGlobalSslContextParameters": ((EtcdStatsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }

@@ -32,9 +32,10 @@ import org.apache.camel.support.DefaultComponent;
 @Component("docker")
 public class DockerComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
-    private DockerConfiguration configuration = new DockerConfiguration();
     private Map<DockerClientProfile, DockerClient> clients = new HashMap<>();
+
+    @Metadata
+    private DockerConfiguration configuration = new DockerConfiguration();
 
     public DockerComponent() {
     }

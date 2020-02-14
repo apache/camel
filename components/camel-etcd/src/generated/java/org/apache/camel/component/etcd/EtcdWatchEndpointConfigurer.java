@@ -18,18 +18,18 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "sendemptyexchangeontimeout":
-        case "sendEmptyExchangeOnTimeout": target.getConfiguration().setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "servicepath":
         case "servicePath": target.getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "uris": target.getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendemptyexchangeontimeout":
+        case "sendEmptyExchangeOnTimeout": target.getConfiguration().setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fromindex":
-        case "fromIndex": target.getConfiguration().setFromIndex(property(camelContext, java.lang.Long.class, value)); return true;
+        case "fromIndex": target.getConfiguration().setFromIndex(property(camelContext, long.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
