@@ -79,10 +79,14 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch-rest://elasticsearch?hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:index").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:deleteIndex").to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:indexWithReplication").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:start")
+                    .to("elasticsearch-rest://elasticsearch");
+                from("direct:index")
+                    .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
+                from("direct:deleteIndex")
+                    .to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter");
+                from("direct:indexWithReplication")
+                    .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
             }
         };
     }

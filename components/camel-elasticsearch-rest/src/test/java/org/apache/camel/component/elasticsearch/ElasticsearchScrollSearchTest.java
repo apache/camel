@@ -131,15 +131,15 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:scroll-index")
-                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + TWITTER_ES_INDEX_NAME);
                 from("direct:scroll-search")
-                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=" + TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=" + TWITTER_ES_INDEX_NAME);
 
                 from("direct:scroll-n-split-index")
-                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME);
                 from("direct:scroll-n-split-search")
                         .to("elasticsearch-rest://elasticsearch?"
-                                + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT)
+                                + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME)
                         .split()
                         .body()
                         .streaming()
