@@ -26,10 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class ElasticsearchRestComponentVerifierExtensionTest extends CamelTestSupport {
-
-    // *************************************************
-    // Tests (parameters)
-    // *************************************************
     @Override
     public boolean isUseRouteBuilder() {
         return false;

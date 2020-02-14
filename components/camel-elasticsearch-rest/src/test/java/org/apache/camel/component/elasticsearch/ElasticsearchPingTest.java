@@ -32,7 +32,8 @@ public class ElasticsearchPingTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:ping").to("elasticsearch-rest://elasticsearch?operation=Ping&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:ping")
+                    .to("elasticsearch-rest://elasticsearch?operation=Ping");
             }
         };
     }
