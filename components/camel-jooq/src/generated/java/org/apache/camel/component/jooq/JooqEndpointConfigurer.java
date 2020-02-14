@@ -15,6 +15,8 @@ public class JooqEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JooqEndpoint target = (JooqEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "databaseconfiguration":
+        case "databaseConfiguration": target.getConfiguration().setDatabaseConfiguration(property(camelContext, org.jooq.Configuration.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumedelete":
