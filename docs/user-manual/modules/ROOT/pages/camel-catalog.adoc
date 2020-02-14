@@ -1,0 +1,55 @@
+[[CamelCatalog]]
+= Camel Catalog
+
+*Since Camel 2.17*
+
+Each release includes a catalog with all sorts of information about what’s included in the release.
+
+The catalog is shipped in an independent standalone camel-catalog JAR containing the following information:
+
+- List of all components, data formats, languages, EIPs, and everything else in the
+release
+- Curated lists for Spring Boot and Apache Karaf runtime
+- JSON schema with extensive details for every option
+- Human-readable documentation for every option
+- Categorization of options (for example, find all database components)
+- XML schema for the XML DSLs
+- Maven Archetype Catalog of all the Camel archetypes
+- Component documentation as ascii doc
+- Validator for Camel endpoint and Simple language
+- API to create Camel endpoint URLs
+- Java API
+
+The catalog provides a wealth of information that tooling can tap into and use.
+
+For example, Camel tooling for IDEA, Eclipse and VSCode uses the catalog in the editor
+to know all details about every EIP and component Camel supports.
+
+The Camel Maven validation plugin uses the catalog during validation of all the
+Camel endpoints found while scanning the source code.
+
+== Layout of camel-catalog
+
+JAR includes the information using the following directory layout:
+
+[source,text]
+----
+org
+└── apache
+  └── camel
+    └── catalog
+      ├── archetypes (Maven archetype catalog)
+      ├── components (JSON schema)
+      ├── dataformats (JSON schema)
+      ├── docs (Ascii docs)
+      ├── languages (JSON schema)
+      ├── main (JSON schema)
+      ├── models (JSON schema)
+      ├── others (JSON schema)
+      └── schemas (XML schema)
+----
+
+Each directory contains files with the information. Every Camel component is included
+as JSON schema files in the components directory. For example, the Timer component
+is included in the file timer.json.
+
