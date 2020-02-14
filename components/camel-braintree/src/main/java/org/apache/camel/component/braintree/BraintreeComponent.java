@@ -34,6 +34,9 @@ import org.apache.camel.support.component.AbstractApiComponent;
 @Component("braintree")
 public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, BraintreeConfiguration, BraintreeApiCollection> {
 
+    @Metadata
+    private BraintreeConfiguration configuration;
+
     @Metadata(label = "advanced,logging", defaultValue = "true")
     private boolean logHandlerEnabled = true;
 
@@ -59,6 +62,7 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         endpointConfiguration.setLogHandlerEnabled(logHandlerEnabled);
+        this.configuration = configuration;
         return new BraintreeEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
@@ -77,7 +81,7 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
 
     /**
      * Sets whether to enable the BraintreeLogHandler. It may be desirable to set this to
-     * 'false' where an existing JUL - SLF4J logger bridge is on the classpath.
+     * false where an existing JUL - SLF4J logger bridge is on the classpath.
      */
     public void setLogHandlerEnabled(boolean logHandlerEnabled) {
         this.logHandlerEnabled = logHandlerEnabled;
