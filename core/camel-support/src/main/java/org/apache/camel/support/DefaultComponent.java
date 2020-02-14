@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
@@ -258,6 +259,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
         if (!endpoint.isLenientProperties()) {
             validateParameters(uri, parameters, null);
+        }
+
+        // allow custom configuration after properties has been configured
+        if (endpoint instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) endpoint).afterPropertiesConfigured(getCamelContext());
         }
 
         afterConfiguration(uri, path, endpoint, parameters);
