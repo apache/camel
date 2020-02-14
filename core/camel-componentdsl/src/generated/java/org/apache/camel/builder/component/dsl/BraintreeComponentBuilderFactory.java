@@ -119,7 +119,7 @@ public interface BraintreeComponentBuilderFactory {
         }
         /**
          * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * to set this to false where an existing JUL - SLF4J logger bridge is
          * on the classpath.
          * 
          * The option is a: <code>boolean</code> type.

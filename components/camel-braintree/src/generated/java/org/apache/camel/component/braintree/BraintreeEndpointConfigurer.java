@@ -20,10 +20,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "merchantid":
         case "merchantId": target.getConfiguration().setMerchantId(property(camelContext, java.lang.String.class, value)); return true;
-        case "privatekey":
-        case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "publickey":
-        case "publicKey": target.getConfiguration().setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "sendemptymessagewhenidle":
@@ -36,17 +32,11 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "accesstoken":
-        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "httpreadtimeout":
         case "httpReadTimeout": target.getConfiguration().setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "httploglevel":
-        case "httpLogLevel": target.getConfiguration().setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
-        case "loghandlerenabled":
-        case "logHandlerEnabled": target.getConfiguration().setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -72,10 +62,22 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "httploglevel":
+        case "httpLogLevel": target.getConfiguration().setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "httplogname":
+        case "httpLogName": target.getConfiguration().setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
+        case "loghandlerenabled":
+        case "logHandlerEnabled": target.getConfiguration().setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekey":
+        case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "publickey":
+        case "publicKey": target.getConfiguration().setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

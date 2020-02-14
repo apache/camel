@@ -49,41 +49,29 @@ public class BraintreeConfiguration {
 
     @UriParam
     private String environment;
-
     @UriParam
     private String merchantId;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String publicKey;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privateKey;
-
-    @UriParam
-    @Metadata(label = "advanced")
+    @UriParam(label = "security", secret = true)
     private String accessToken;
 
-    @UriParam
-    @Metadata(label = "proxy")
+    @UriParam(label = "proxy")
     private String proxyHost;
-
-    @UriParam
-    @Metadata(label = "proxy")
+    @UriParam(label = "proxy")
     private Integer proxyPort;
 
-    @UriParam(javaType = "java.lang.String")
-    @Metadata(label = "advanced,logging")
+    @UriParam(label = "logging", javaType = "java.lang.String")
     private Level httpLogLevel;
-
-    @Metadata(label = "advanced,logging")
+    @UriParam(label = "logging", defaultValue = "Braintree")
     private String httpLogName;
-
-    @UriParam(defaultValue = "true")
-    @Metadata(label = "advanced,logging")
+    @UriParam(label = "logging", defaultValue = "true")
     private boolean logHandlerEnabled = true;
 
-    @UriParam
-    @Metadata(label = "advanced")
+    @UriParam(label = "advanced")
     private Integer httpReadTimeout;
 
     public BraintreeApiName getApiName() {
@@ -209,7 +197,7 @@ public class BraintreeConfiguration {
     }
 
     /**
-     * Set log category to use to log http calls, default "Braintree"
+     * Set log category to use to log http calls.
      */
     public void setHttpLogName(String httpLogName) {
         this.httpLogName = httpLogName;
