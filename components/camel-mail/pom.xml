@@ -123,41 +123,40 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.sun.mail</groupId>
+                                    <artifactId>jakarta.mail</artifactId>
+                                    <version>${jakarta-mail-version}</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.basedir}/src/generated/resources</outputDirectory>
+                                    <includes>
+                                        META-INF/javamail.default.address.map,
+                                        META-INF/javamail.default.providers
+                                    </includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- required to make MailMimeDecodeHeadersTest work on operating systems with a different default encoding -->
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>com.sun.mail:jakarta.mail</include>
-                                </includes>
-                            </artifactSet>
-                            <filters>
-                                <filter>
-                                    <artifact>com.sun.mail:jakarta.mail</artifact>
-                                    <includes>
-                                        <include>META-INF/javamail.default.address.map</include>
-                                        <include>META-INF/javamail.default.providers</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-                            <minimizeJar>true</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
