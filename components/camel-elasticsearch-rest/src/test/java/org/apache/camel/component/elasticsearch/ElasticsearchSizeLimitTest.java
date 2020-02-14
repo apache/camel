@@ -18,8 +18,10 @@ package org.apache.camel.component.elasticsearch;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.awaitility.Awaitility;
 import org.elasticsearch.search.SearchHits;
 import org.junit.Test;
 
@@ -34,10 +36,13 @@ public class ElasticsearchSizeLimitTest extends ElasticsearchBaseTest {
         String indexId4 = template.requestBody("direct:index", getContent("content3"), String.class);
 
         String query = "{\"query\":{\"match_all\": {}}}";
-        SearchHits searchWithSizeTwo = template.requestBody("direct:searchWithSizeTwo", query, SearchHits.class);
-        SearchHits searchFrom3 = template.requestBody("direct:searchFrom3", query, SearchHits.class);
-        assertEquals(2, searchWithSizeTwo.getHits().length);
-        assertEquals(1, searchFrom3.getHits().length);
+
+        // the result may see stale data so use Awaitility
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> {
+            SearchHits searchWithSizeTwo = template.requestBody("direct:searchWithSizeTwo", query, SearchHits.class);
+            SearchHits searchFrom3 = template.requestBody("direct:searchFrom3", query, SearchHits.class);
+            return searchWithSizeTwo.getHits().length == 2 && searchFrom3.getHits().length == 1;
+        });
     }
 
     @Override
