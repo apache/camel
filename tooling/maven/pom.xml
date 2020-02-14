@@ -41,6 +41,7 @@
         <module>camel-restdsl-swagger-plugin</module>
         <module>camel-restdsl-openapi-plugin</module>
         <module>camel-javadoc-plugin</module>
+        <module>camel-resources-plugin</module>
     </modules>
 
     <!-- Apply to children. -->
