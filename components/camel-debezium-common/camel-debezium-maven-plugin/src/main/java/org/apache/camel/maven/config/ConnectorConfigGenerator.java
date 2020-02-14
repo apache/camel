@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven.config;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -101,12 +99,6 @@ public final class ConnectorConfigGenerator {
 
     public String getPackageName() {
         return PACKAGE_NAME;
-    }
-
-    public void printGeneratedClass(final OutputStream outputStream) {
-        final PrintStream printStreams = new PrintStream(outputStream, true);
-        printStreams.println(printClassAsString());
-        printStreams.close();
     }
 
     public String printClassAsString() {
