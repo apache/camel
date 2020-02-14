@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.mongodb.AbstractMongoDbTest;
-import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
-
     // We simulate the presence of an authenticated user
     @BeforeEach
     public void createAuthorizationUser() {
@@ -40,10 +38,6 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    protected MongoDbComponent getComponent() {
-        return context().getComponent(SCHEME, MongoDbComponent.class);
     }
 
     protected ComponentVerifierExtension getExtension() {
@@ -57,7 +51,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionOK() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", HOST);
+        parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         //Given
@@ -84,7 +78,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionMissingParams() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", HOST);
+        parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         //Given
         ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
@@ -97,7 +91,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionNotAuthenticated() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", HOST);
+        parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", "wrongPassword");
         //Given
@@ -111,7 +105,7 @@ public class MongoDbVerifierExtensionTest extends AbstractMongoDbTest {
     public void verifyConnectionAdminDBKO() {
         //When
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("host", HOST);
+        parameters.put("host", container.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
         parameters.put("adminDB", "someAdminDB");
