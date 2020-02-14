@@ -587,7 +587,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Simple Notification System (camel-aws2-sns)
-     * The aws-sns component is used for sending messages to an Amazon Simple
+     * The aws2-sns component is used for sending messages to an Amazon Simple
      * Notification Topic.
      * 
      * Category: cloud,mobile,messaging

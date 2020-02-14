@@ -587,7 +587,7 @@
     "extendsScheme": "",
     "syntax": "aws2-sns:topicNameOrArn",
     "title": "AWS 2 Simple Notification System",
-    "description": "The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.",
+    "description": "The aws2-sns component is used for sending messages to an Amazon Simple Notification Topic.",
     "label": "cloud,mobile,messaging",
     "deprecated": false,
     "deprecationNote": "cloud,mobile,messaging",
