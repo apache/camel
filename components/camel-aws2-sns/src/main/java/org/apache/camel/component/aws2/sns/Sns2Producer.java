@@ -33,15 +33,14 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.PublishResponse;
 
 /**
- * A Producer which sends messages to the Amazon Web Service Simple Notification Service
- * <a href="http://aws.amazon.com/sns/">AWS SNS</a>
+ * A Producer which sends messages to the Amazon Web Service Simple Notification
+ * Service <a href="http://aws.amazon.com/sns/">AWS SNS</a>
  */
 public class Sns2Producer extends DefaultProducer {
 
@@ -95,7 +94,8 @@ public class Sns2Producer extends DefaultProducer {
         Map<String, MessageAttributeValue> result = new HashMap<>();
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         for (Entry<String, Object> entry : headers.entrySet()) {
-            // only put the message header which is not filtered into the message attribute
+            // only put the message header which is not filtered into the
+            // message attribute
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 Object value = entry.getValue();
                 if (value instanceof String && !((String)value).isEmpty()) {
@@ -104,25 +104,25 @@ public class Sns2Producer extends DefaultProducer {
                     mav.stringValue((String)value);
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof ByteBuffer) {
-                	MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
+                    MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("Binary");
                     mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer)value));
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Date) {
-                	MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
+                    MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String");
                     mav.stringValue(value.toString());
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof List) {
-                    String resultString = ((List<?>) value).stream()
-                            .map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
-                            .collect(Collectors.joining(", "));
+                    String resultString = ((List<?>)value).stream().map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
+                        .collect(Collectors.joining(", "));
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String.Array");
                     mav.stringValue("[" + resultString + "]");
                     result.put(entry.getKey(), mav.build());
                 } else {
-                    // cannot translate the message header to message attribute value
+                    // cannot translate the message header to message attribute
+                    // value
                     LOG.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());
                 }
             }
@@ -144,7 +144,7 @@ public class Sns2Producer extends DefaultProducer {
 
     @Override
     public Sns2Endpoint getEndpoint() {
-        return (Sns2Endpoint) super.getEndpoint();
+        return (Sns2Endpoint)super.getEndpoint();
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

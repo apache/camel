@@ -19,7 +19,6 @@ package org.apache.camel.component.aws2.sns;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -151,7 +150,7 @@ public class Sns2Configuration implements Cloneable {
     public void setMessageStructure(String messageStructure) {
         this.messageStructure = messageStructure;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -190,8 +189,9 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which SNS client needs to work. When using this parameter,
+     * the configuration will expect the capitalized name of the region (for
+     * example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;

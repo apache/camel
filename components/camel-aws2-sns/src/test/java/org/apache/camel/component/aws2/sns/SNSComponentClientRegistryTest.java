@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.sns;
 
-import org.apache.camel.component.aws2.sns.Sns2Component;
-import org.apache.camel.component.aws2.sns.Sns2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -29,15 +27,15 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic");
+        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalSNSClientMisconfiguration() throws Exception {
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic");
+        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic");
     }
 }

@@ -19,13 +19,12 @@ package org.apache.camel.component.aws2.sns;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws2.sns.Sns2Constants;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SnsComponentSpringTest extends CamelSpringTestSupport {
-    
+
     @Test
     public void sendInOnly() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -34,10 +33,10 @@ public class SnsComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getIn().getHeader(Sns2Constants.MESSAGE_ID));
     }
-    
+
     @Test
     public void sendInOut() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
@@ -46,7 +45,7 @@ public class SnsComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
     }
 

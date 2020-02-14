@@ -19,36 +19,33 @@ package org.apache.camel.component.aws2.sns;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 @Component("aws2-sns")
 public class Sns2Component extends DefaultComponent {
-    
+
     @Metadata
     private String accessKey;
     @Metadata
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private Sns2Configuration configuration;
-    
+
     public Sns2Component() {
         this(null);
     }
 
     public Sns2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new Sns2ComponentVerifierExtension());
     }
 
@@ -58,7 +55,7 @@ public class Sns2Component extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
-        Sns2Configuration configuration =  this.configuration != null ? this.configuration.copy() : new Sns2Configuration();
+        Sns2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Sns2Configuration();
         if (remaining.startsWith("arn:")) {
             String[] parts = remaining.split(":");
             if (parts.length != 6 || !parts[2].equals("sns")) {
@@ -81,7 +78,7 @@ public class Sns2Component extends DefaultComponent {
 
         return endpoint;
     }
-    
+
     public Sns2Configuration getConfiguration() {
         return configuration;
     }
@@ -114,7 +111,7 @@ public class Sns2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     /**
      * The region in which SNS client needs to work
      */
@@ -125,7 +122,7 @@ public class Sns2Component extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(Sns2Configuration configuration) {
         Set<SnsClient> clients = getCamelContext().getRegistry().findByType(SnsClient.class);
         if (clients.size() == 1) {

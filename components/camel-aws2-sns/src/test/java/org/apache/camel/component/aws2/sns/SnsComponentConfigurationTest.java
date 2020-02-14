@@ -16,25 +16,23 @@
  */
 package org.apache.camel.component.aws2.sns;
 
-import org.apache.camel.component.aws2.sns.Sns2Component;
-import org.apache.camel.component.aws2.sns.Sns2Endpoint;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
 public class SnsComponentConfigurationTest extends CamelTestSupport {
-    
+
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
-        
+
         context.getRegistry().bind("amazonSNSClient", mock);
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
-        
+        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
+
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -43,11 +41,11 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getPolicy());
     }
-    
+
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy");
+        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -61,11 +59,12 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalArnConfiguration() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
-        
+
         context.getRegistry().bind("amazonSNSClient", mock);
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://arn:aws:sns:us-east-1:account:MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
+        Sns2Endpoint endpoint = (Sns2Endpoint)component
+            .createEndpoint("aws2-sns://arn:aws:sns:us-east-1:account:MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy");
 
         assertNull(endpoint.getConfiguration().getTopicName());
         assertEquals("arn:aws:sns:us-east-1:account:MyTopic", endpoint.getConfiguration().getTopicArn());
@@ -74,12 +73,12 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
-        
+
         context.getRegistry().bind("amazonSNSClient", mock);
-        
+
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
-        
+        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
+
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertNull(endpoint.getConfiguration().getAccessKey());
         assertNull(endpoint.getConfiguration().getSecretKey());
@@ -87,44 +86,44 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getPolicy());
         endpoint.start();
-        
+
         assertEquals("arn:aws:sns:us-east-1:541925086079:MyTopic", endpoint.getConfiguration().getTopicArn());
-        
+
         endpoint.stop();
     }
-    
+
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
-    
+
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
-        
+
         context.getRegistry().bind("amazonSNSClient", mock);
-        
+
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy"
-                + "&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,"
-                + "%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message");
-        
+        Sns2Endpoint endpoint = (Sns2Endpoint)component
+            .createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy"
+                            + "&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,"
+                            + "%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message");
+
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getTopicArn());
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
         assertEquals("The subject message", endpoint.getConfiguration().getSubject());
-        assertEquals(
-                "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"1\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Action\":[\"sns:Subscribe\"]}]}",
-                endpoint.getConfiguration().getPolicy());
+        assertEquals("{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"1\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Action\":[\"sns:Subscribe\"]}]}",
+                     endpoint.getConfiguration().getPolicy());
     }
-    
+
     @Test
     public void createEndpointWithSQSSubscription() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
-        
+
         context.getRegistry().bind("amazonSNSClient", mock);
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&" 
-        + "accessKey=xxx&secretKey=yyy&queueUrl=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
-        
+        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&"
+                                                                       + "accessKey=xxx&secretKey=yyy&queueUrl=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
+
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -134,31 +133,31 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getPolicy());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         component.createEndpoint("aws-sns://MyTopic?secretKey=yyy");
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         Sns2Component component = new Sns2Component(context);
         component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx");
     }
-    
+
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic");
-        
+
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
@@ -166,13 +165,13 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
         Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
     @Test
     public void createEndpointWithoutAutocreation() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
@@ -180,22 +179,23 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
         Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&autoCreateTopic=false");
-        
+
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
         assertEquals(false, endpoint.getConfiguration().isAutoCreateTopic());
     }
-    
+
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
-        Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        Sns2Endpoint endpoint = (Sns2Endpoint)component
+            .createEndpoint("aws2-sns://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
@@ -203,11 +203,11 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
         assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
-    
+
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
-        
+
         context.getRegistry().bind("amazonSNSClient", mock);
 
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);

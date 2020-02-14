@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.sns;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
@@ -30,12 +31,10 @@ import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesResponse;
 import software.amazon.awssdk.services.sns.model.Topic;
 
-import org.junit.Assert;
-
 public class AmazonSNSClientMock implements SnsClient {
-    
+
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
-    
+
     public AmazonSNSClientMock() {
     }
 
@@ -56,26 +55,26 @@ public class AmazonSNSClientMock implements SnsClient {
     public PublishResponse publish(PublishRequest publishRequest) {
         return PublishResponse.builder().messageId("dcc8ce7a-7f18-4385-bedd-b97984b4363c").build();
     }
-    
+
     @Override
     public ListTopicsResponse listTopics(ListTopicsRequest listTopicRequest) {
-    	ListTopicsResponse.Builder res = ListTopicsResponse.builder();
-        Topic topic = Topic.builder().topicArn(DEFAULT_TOPIC_ARN).build(); 
+        ListTopicsResponse.Builder res = ListTopicsResponse.builder();
+        Topic topic = Topic.builder().topicArn(DEFAULT_TOPIC_ARN).build();
         List<Topic> list = new ArrayList<>();
         list.add(topic);
         res.topics(list);
         return res.build();
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 }

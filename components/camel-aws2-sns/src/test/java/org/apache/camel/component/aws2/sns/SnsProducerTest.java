@@ -21,15 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.sns.Sns2Endpoint;
-import org.apache.camel.component.aws2.sns.Sns2HeaderFilterStrategy;
-import org.apache.camel.component.aws2.sns.Sns2Producer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
 
 import static org.hamcrest.CoreMatchers.is;
