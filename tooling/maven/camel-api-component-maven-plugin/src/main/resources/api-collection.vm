@@ -85,6 +85,7 @@ public final class $collectionName extends ApiCollection<${apiNameEnum}, ${compo
     public $componentConfig getEndpointConfiguration(${apiNameEnum} apiName) {
         $componentConfig result = null;
         switch (apiName) {
+#foreach( $api in $apis )
             case ${helper.getEnumConstant($api.ApiName)}:
                 result = new ${helper.getEndpointConfig($api.ProxyClass, $api.ClassPrefix)}();
                 break;
