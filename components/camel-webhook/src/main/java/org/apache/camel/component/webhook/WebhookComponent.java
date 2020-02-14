@@ -58,6 +58,8 @@ public class WebhookComponent extends DefaultComponent {
 
         RestConfiguration restConfig = getCamelContext().getRestConfiguration(config.getWebhookComponentName(), true);
         config.setRestConfiguration(restConfig);
+        
+        endpoint.afterPropertiesConfigured(getCamelContext());
 
         return endpoint;
     }
