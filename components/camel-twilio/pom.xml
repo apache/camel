@@ -278,6 +278,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.address -->
                                 <api>
                                     <apiName>address-dependent-phone-number</apiName>
+                                    <classPrefix>Address</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.address.DependentPhoneNumber
                                     </proxyClass>
                                     <fromJavadoc>
@@ -288,6 +289,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.availablephonenumbercountry -->
                                 <api>
                                     <apiName>available-phone-number-country-local</apiName>
+                                    <classPrefix>AvailablePhoneNumberCountry</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local
                                     </proxyClass>
                                     <fromJavadoc>
@@ -297,6 +299,7 @@
                                 </api>
                                 <api>
                                     <apiName>available-phone-number-country-mobile</apiName>
+                                    <classPrefix>AvailablePhoneNumberCountry</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.availablephonenumbercountry.Mobile
                                     </proxyClass>
                                     <fromJavadoc>
@@ -306,6 +309,7 @@
                                 </api>
                                 <api>
                                     <apiName>available-phone-number-country-toll-free</apiName>
+                                    <classPrefix>AvailablePhoneNumberCountry</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.availablephonenumbercountry.TollFree
                                     </proxyClass>
                                     <fromJavadoc>
@@ -316,6 +320,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.call -->
                                 <api>
                                     <apiName>call-feedback</apiName>
+                                    <classPrefix>Call</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.call.Feedback</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -324,6 +329,7 @@
                                 </api>
                                 <api>
                                     <apiName>call-feedback-summary</apiName>
+                                    <classPrefix>Call</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.call.FeedbackSummary</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -332,6 +338,7 @@
                                 </api>
                                 <api>
                                     <apiName>call-notification</apiName>
+                                    <classPrefix>Call</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.call.Notification</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -340,6 +347,7 @@
                                 </api>
                                 <api>
                                     <apiName>call-recording</apiName>
+                                    <classPrefix>Call</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.call.Recording</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -349,6 +357,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.conference -->
                                 <api>
                                     <apiName>conference-participant</apiName>
+                                    <classPrefix>Conference</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.conference.Participant</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -358,6 +367,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.incomingphonenumber -->
                                 <api>
                                     <apiName>incoming-phone-number-local</apiName>
+                                    <classPrefix>IncomingPhoneNumber</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.incomingphonenumber.Local</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -366,8 +376,8 @@
                                 </api>
                                 <api>
                                     <apiName>incoming-phone-number-mobile</apiName>
-                                    <proxyClass>com.twilio.rest.api.v2010.account.incomingphonenumber.Mobile
-                                    </proxyClass>
+                                    <classPrefix>IncomingPhoneNumber</classPrefix>
+                                    <proxyClass>com.twilio.rest.api.v2010.account.incomingphonenumber.Mobile</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
                                         <includeStaticMethods>true</includeStaticMethods>
@@ -375,8 +385,8 @@
                                 </api>
                                 <api>
                                     <apiName>incoming-phone-number-toll-free</apiName>
-                                    <proxyClass>com.twilio.rest.api.v2010.account.incomingphonenumber.TollFree
-                                    </proxyClass>
+                                    <classPrefix>IncomingPhoneNumber</classPrefix>
+                                    <proxyClass>com.twilio.rest.api.v2010.account.incomingphonenumber.TollFree</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
                                         <includeStaticMethods>true</includeStaticMethods>
@@ -385,6 +395,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.message -->
                                 <api>
                                     <apiName>message-feedback</apiName>
+                                    <classPrefix>Message</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.message.Feedback</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -393,6 +404,7 @@
                                 </api>
                                 <api>
                                     <apiName>message-media</apiName>
+                                    <classPrefix>Message</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.message.Media</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -402,6 +414,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.queue -->
                                 <api>
                                     <apiName>queue-member</apiName>
+                                    <classPrefix>Queue</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.queue.Member</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -411,6 +424,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.recording -->
                                 <api>
                                     <apiName>recording-add-on-result</apiName>
+                                    <classPrefix>Recording</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.recording.AddOnResult</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -419,6 +433,7 @@
                                 </api>
                                 <api>
                                     <apiName>recording-transcription</apiName>
+                                    <classPrefix>Recording</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.recording.Transcription</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -428,8 +443,8 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.recording.addonresult -->
                                 <api>
                                     <apiName>recording-add-on-result-payload</apiName>
-                                    <proxyClass>com.twilio.rest.api.v2010.account.recording.addonresult.Payload
-                                    </proxyClass>
+                                    <classPrefix>RecordingAddOnResult</classPrefix>
+                                    <proxyClass>com.twilio.rest.api.v2010.account.recording.addonresult.Payload</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
                                         <includeStaticMethods>true</includeStaticMethods>
@@ -438,6 +453,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.sip -->
                                 <api>
                                     <apiName>sip-credential-list</apiName>
+                                    <classPrefix>Sip</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.sip.CredentialList</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -446,6 +462,7 @@
                                 </api>
                                 <api>
                                     <apiName>sip-domain</apiName>
+                                    <classPrefix>Sip</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.sip.Domain</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -454,6 +471,7 @@
                                 </api>
                                 <api>
                                     <apiName>sip-ip-access-control-list</apiName>
+                                    <classPrefix>Sip</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.sip.IpAccessControlList</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -463,8 +481,8 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.sip.credentiallist -->
                                 <api>
                                     <apiName>sip-credential-list-credential</apiName>
-                                    <proxyClass>com.twilio.rest.api.v2010.account.sip.credentiallist.Credential
-                                    </proxyClass>
+                                    <classPrefix>Sip</classPrefix>
+                                    <proxyClass>com.twilio.rest.api.v2010.account.sip.credentiallist.Credential</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
                                         <includeStaticMethods>true</includeStaticMethods>
@@ -473,8 +491,8 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.sip.domain -->
                                 <api>
                                     <apiName>sip-domain-credential-list-mapping</apiName>
-                                    <proxyClass>com.twilio.rest.api.v2010.account.sip.domain.CredentialListMapping
-                                    </proxyClass>
+                                    <classPrefix>SipDomain</classPrefix>
+                                    <proxyClass>com.twilio.rest.api.v2010.account.sip.domain.CredentialListMapping</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
                                         <includeStaticMethods>true</includeStaticMethods>
@@ -482,9 +500,8 @@
                                 </api>
                                 <api>
                                     <apiName>sip-domain-ip-access-control-list-mapping</apiName>
-                                    <proxyClass>
-                                        com.twilio.rest.api.v2010.account.sip.domain.IpAccessControlListMapping
-                                    </proxyClass>
+                                    <classPrefix>SipDomain</classPrefix>
+                                    <proxyClass>com.twilio.rest.api.v2010.account.sip.domain.IpAccessControlListMapping</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
                                         <includeStaticMethods>true</includeStaticMethods>
@@ -493,6 +510,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist -->
                                 <api>
                                     <apiName>sip-ip-access-control-list-ip-address</apiName>
+                                    <classPrefix>SipIpAccessControlList</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddress
                                     </proxyClass>
                                     <fromJavadoc>
@@ -503,6 +521,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.usage -->
                                 <api>
                                     <apiName>usage-record</apiName>
+                                    <classPrefix>Usage</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.Record</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -511,6 +530,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-trigger</apiName>
+                                    <classPrefix>Usage</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.Trigger</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -520,6 +540,7 @@
                                 <!-- Package: com.twilio.rest.api.v2010.account.usage.record -->
                                 <api>
                                     <apiName>usage-record-all-time</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.AllTime</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -528,6 +549,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-record-daily</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.Daily</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -536,6 +558,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-record-last-month</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.LastMonth</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -544,6 +567,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-record-monthly</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.Monthly</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -552,6 +576,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-record-this-month</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.ThisMonth</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -560,6 +585,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-record-today</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.Today</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -568,6 +594,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-record-yearly</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.Yearly</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
@@ -576,6 +603,7 @@
                                 </api>
                                 <api>
                                     <apiName>usage-record-yesterday</apiName>
+                                    <classPrefix>UsageRecord</classPrefix>
                                     <proxyClass>com.twilio.rest.api.v2010.account.usage.record.Yesterday</proxyClass>
                                     <fromJavadoc>
                                         <includeMethods>creator|deleter|fetcher|reader|updater</includeMethods>
