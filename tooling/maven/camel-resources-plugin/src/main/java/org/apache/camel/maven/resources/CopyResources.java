@@ -40,8 +40,14 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenReaderFilter;
 
-@Mojo( name = "copy-resources", threadSafe = true )
+@Mojo(name = "copy-resources", threadSafe = true)
 public class CopyResources extends AbstractMojo {
+
+    public static final List<String> NON_FILTERED_EXTENSIONS =
+            Collections.unmodifiableList(Arrays.asList("jpg", "jpeg", "gif", "bmp", "png"));
+
+    @Parameter(property = "project", required = true, readonly = true)
+    protected MavenProject project;
 
     @Parameter
     private String encoding = "UTF-8";
@@ -49,18 +55,15 @@ public class CopyResources extends AbstractMojo {
     /**
      * The output directory into which to copy the resources.
      */
-    @Parameter( required = true )
+    @Parameter(required = true)
     private File outputDirectory;
 
     /**
      * The list of resources we want to transfer. See the Maven Model for a
      * description of how to code the resources element.
      */
-    @Parameter( required = true )
+    @Parameter(required = true)
     private List<Resource> resources;
-
-    @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
 
     @Component
     private MavenSession session;
@@ -100,15 +103,12 @@ public class CopyResources extends AbstractMojo {
                     } else {
                         FileUtil.updateFile(file, output.resolve(dir.relativize(file)));
                     }
-                };
+                }
             }
-        } catch (IOException| MavenFilteringException e) {
+        } catch (IOException | MavenFilteringException e) {
             throw new MojoFailureException("Unable to copy resources", e);
         }
     }
-
-    public static final List<String> NON_FILTERED_EXTENSIONS =
-            Collections.unmodifiableList(Arrays.asList("jpg", "jpeg", "gif", "bmp", "png" ));
 
     protected boolean isFiltering(Resource resource, Path file) {
         if (resource.isFiltering()) {
