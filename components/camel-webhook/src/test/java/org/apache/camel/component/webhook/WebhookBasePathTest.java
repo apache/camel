@@ -41,7 +41,7 @@ public class WebhookBasePathTest extends WebhookTestBase {
     @Test
     public void testAutoPath() {
         String result = template.requestBody("netty-http:http://localhost:" + port + "/base"
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"), "", String.class);
+                + WebhookUtils.computeDefaultPath("wb-delegate://auto"), "", String.class);
         assertEquals("auto: webhook", result);
     }
 

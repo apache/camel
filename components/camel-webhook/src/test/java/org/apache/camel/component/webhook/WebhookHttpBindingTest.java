@@ -31,11 +31,11 @@ public class WebhookHttpBindingTest extends WebhookTestBase {
     @Test
     public void testWrapper() {
         String result = template.requestBody("netty-http:http://localhost:" + port
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"), "", String.class);
+                + WebhookUtils.computeDefaultPath("wb-delegate://xx"), "", String.class);
         assertEquals("msg: webhook", result);
 
         result = template.requestBodyAndHeader("netty-http:http://localhost:" + port
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"), "", Exchange.HTTP_METHOD, "PUT", String.class);
+                + WebhookUtils.computeDefaultPath("wb-delegate://xx"), "", Exchange.HTTP_METHOD, "PUT", String.class);
         assertEquals("msg: webhook", result);
     }
 
