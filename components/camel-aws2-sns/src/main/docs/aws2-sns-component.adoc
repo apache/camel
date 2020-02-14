@@ -1,7 +1,8 @@
-[[aws-sns-component]]
-= AWS Simple Notification System Component
+= AWS 2 Simple Notification System Component
 
 *Since Camel 2.8*
+*Since Camel 3.1*
+
 
 // HEADER START
 *Only producer is supported*
@@ -22,7 +23,7 @@ https://aws.amazon.com/sns[Amazon SNS].
 
 [source,java]
 -----------------------------
-aws-sns://topicNameOrArn[?options]
+aws2-sns://topicNameOrArn[?options]
 -----------------------------
 
 The topic will be created if they don't already exists. +
@@ -33,7 +34,7 @@ The topic will be created if they don't already exists. +
 
 
 // component options: START
-The AWS Simple Notification System component supports 6 options, which are listed below.
+The AWS 2 Simple Notification System component supports 6 options, which are listed below.
 
 
 
@@ -45,7 +46,7 @@ The AWS Simple Notification System component supports 6 options, which are liste
 | *region* (producer) | The region in which SNS client needs to work |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | The AWS SNS default configuration |  | SnsConfiguration
+| *configuration* (advanced) | The AWS SNS default configuration |  | Sns2Configuration
 |===
 // component options: END
 
@@ -54,10 +55,10 @@ The AWS Simple Notification System component supports 6 options, which are liste
 
 
 // endpoint options: START
-The AWS Simple Notification System endpoint is configured using URI syntax:
+The AWS 2 Simple Notification System endpoint is configured using URI syntax:
 
 ----
-aws-sns:topicNameOrArn
+aws2-sns:topicNameOrArn
 ----
 
 with the following path and query parameters:
@@ -72,14 +73,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
-| *amazonSQSClient* (producer) | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
+| *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | SnsClient
 | *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
@@ -100,9 +100,6 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
-
-
-
 
 
 Required SNS component options
@@ -134,30 +131,17 @@ the https://aws.amazon.com/sns[Amazon's SNS].
 
 === Advanced AmazonSNS configuration
 
-If you need more control over the `AmazonSNS` instance configuration you
+If you need more control over the `SnsClient` instance configuration you
 can create your own instance and refer to it from the URI:
 
 [source,java]
 -------------------------------------------------
 from("direct:start")
-.to("aws-sns://MyTopic?amazonSNSClient=#client");
+.to("aws2-sns://MyTopic?amazonSNSClient=#client");
 -------------------------------------------------
 
 The `#client` refers to a `AmazonSNS` in the
 Registry.
-
-For example if your Camel Application is running behind a firewall:
-
-[source,java]
---------------------------------------------------------------------------------------
-AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
-ClientConfiguration clientConfiguration = new ClientConfiguration();
-clientConfiguration.setProxyHost("http://myProxyHost");
-clientConfiguration.setProxyPort(8080);
-AmazonSNS client = new AmazonSNSClient(awsCredentials, clientConfiguration);
-
-registry.bind("client", client);
---------------------------------------------------------------------------------------
 
 === Create a subscription between an AWS SNS Topic and an AWS SQS Queue
 
@@ -166,11 +150,11 @@ You can create a subscription of an SQS Queue to an SNS Topic in this way:
 [source,java]
 -------------------------------------------------
 from("direct:start")
-.to("aws-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&amazonSQSClient=#amazonSQSClient&subscribeSNStoSQS=true&queueUrl=https://sqs.eu-central-1.amazonaws.com/780410022472/test-camel");
+.to("aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&subscribeSNStoSQS=true&queueUrl=https://sqs.eu-central-1.amazonaws.com/780410022472/test-camel");
 -------------------------------------------------
 
-The `#amazonSNSClient` refers to a `AmazonSNS` in the
-Registry, while the `#amazonSQSClient` refers to an `AmazonSQS` client.
+The `#amazonSNSClient` refers to a `SnsClient` in the
+Registry.
 By specifying `subscribeSNStoSQS` to true and a `queueUrl` of an existing SQS Queue,
 you'll be able to subscribe your SQS Queue to your SNS Topic.
 
@@ -178,7 +162,7 @@ At this point you can consume messages coming from SNS Topic through your SQS Qu
 
 [source,java]
 -------------------------------------------------
-from("aws-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5")
+from("aws2-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5")
     .to(...);
 -------------------------------------------------
 
@@ -187,9 +171,9 @@ from("aws-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessages
 With the option `autoCreateTopic` users are able to avoid the autocreation of an SNS Topic in case it doesn't exist. The default for this option is `true`.
 If set to false any operation on a not-existent topic in AWS won't be successful and an error will be returned.
 
-== Automatic detection of AmazonSNS client in registry
+== Automatic detection of SnsClient client in registry
 
-The component is capable of detecting the presence of an AmazonSNS bean into the registry.
+The component is capable of detecting the presence of an SnsClient bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -203,7 +187,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws-sns</artifactId>
+    <artifactId>camel-aws2-sns</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
