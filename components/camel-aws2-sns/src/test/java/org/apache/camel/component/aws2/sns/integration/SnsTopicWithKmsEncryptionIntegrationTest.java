@@ -27,7 +27,7 @@ import org.junit.Test;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
-    
+
     @Test
     public void sendInOnly() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -36,10 +36,10 @@ public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertNotNull(exchange.getIn().getHeader(Sns2Constants.MESSAGE_ID));
     }
-    
+
     @Test
     public void sendInOut() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
@@ -48,10 +48,10 @@ public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertNotNull(exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
