@@ -586,6 +586,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2SesComponentBuilderFactory.aws2Ses();
     }
     /**
+     * AWS 2 Simple Notification System (camel-aws2-sns)
+     * The aws-sns component is used for sending messages to an Amazon Simple
+     * Notification Topic.
+     * 
+     * Category: cloud,mobile,messaging
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-sns
+     */
+    static org.apache.camel.builder.component.dsl.Aws2SnsComponentBuilderFactory.Aws2SnsComponentBuilder aws2Sns() {
+        return org.apache.camel.builder.component.dsl.Aws2SnsComponentBuilderFactory.aws2Sns();
+    }
+    /**
      * AWS 2 Translate (camel-aws2-translate)
      * The aws2-translate component is used for managing Amazon Translate
      * 
