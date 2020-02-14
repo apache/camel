@@ -19,7 +19,6 @@ package org.apache.camel.component.aws2.sns;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.sns.SnsClient;
 
