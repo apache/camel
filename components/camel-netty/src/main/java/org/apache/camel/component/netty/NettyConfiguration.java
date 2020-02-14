@@ -375,27 +375,19 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         this.encoders = encoders;
     }
 
-    public ChannelHandler getEncoder() {
-        return encoders.isEmpty() ? null : encoders.get(0);
-    }
-
     /**
-     * A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
+     * Adds a custom ChannelHandler class that can be used to perform special marshalling of outbound payloads.
      */
-    public void setEncoder(ChannelHandler encoder) {
+    public void addEncoder(ChannelHandler encoder) {
         if (!encoders.contains(encoder)) {
             encoders.add(encoder);
         }
     }
 
-    public ChannelHandler getDecoder() {
-        return decoders.isEmpty() ? null : decoders.get(0);
-    }
-
     /**
-     * A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
+     * Adds a custom ChannelHandler class that can be used to perform special marshalling of inbound payloads.
      */
-    public void setDecoder(ChannelHandler decoder) {
+    public void addDecoder(ChannelHandler decoder) {
         if (!decoders.contains(decoder)) {
             decoders.add(decoder);
         }
