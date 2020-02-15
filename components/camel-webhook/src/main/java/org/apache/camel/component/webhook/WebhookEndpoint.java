@@ -23,6 +23,7 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -40,13 +41,15 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
     private static final Logger LOG = LoggerFactory.getLogger(WebhookEndpoint.class);
 
     private WebhookCapableEndpoint delegateEndpoint;
+    private RestConfiguration restConfiguration;
 
     @UriParam(label = "advanced")
     private WebhookConfiguration configuration;
 
-    public WebhookEndpoint(String uri, WebhookComponent component, WebhookConfiguration configuration) {
+    public WebhookEndpoint(String uri, WebhookComponent component, WebhookConfiguration configuration, RestConfiguration restConfiguration) {
         super(uri, component);
         this.configuration = configuration;
+        this.restConfiguration = restConfiguration;
     }
 
     @Override
@@ -58,14 +61,14 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
     public Consumer createConsumer(Processor processor) throws Exception {
         RestConsumerFactory factory = WebhookUtils.locateRestConsumerFactory(getCamelContext(), configuration);
 
-        String path = configuration.computeFullPath(false);
-        String serverUrl = configuration.computeServerUriPrefix();
+        String path = configuration.computeFullPath(restConfiguration, false);
+        String serverUrl = WebhookComponent.computeServerUriPrefix(restConfiguration);
         String url = serverUrl + path;
 
         Processor handler = delegateEndpoint.createWebhookHandler(processor);
 
         return new MultiRestConsumer(getCamelContext(), factory, this, handler, delegateEndpoint.getWebhookMethods(), url, path,
-                configuration.getRestConfiguration(), this::configureConsumer);
+                restConfiguration, this::configureConsumer);
     }
 
     @Override

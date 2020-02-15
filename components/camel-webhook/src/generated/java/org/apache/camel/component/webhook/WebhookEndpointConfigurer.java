@@ -15,6 +15,8 @@ public class WebhookEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebhookEndpoint target = (WebhookEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "webhookautoregister":
         case "webhookAutoRegister": target.getConfiguration().setWebhookAutoRegister(property(camelContext, boolean.class, value)); return true;
         case "webhookbasepath":
@@ -25,8 +27,6 @@ public class WebhookEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "webhookExternalUrl": target.getConfiguration().setWebhookExternalUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "webhookpath":
         case "webhookPath": target.getConfiguration().setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":

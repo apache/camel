@@ -49,7 +49,6 @@ public class MultiRestConsumer extends DefaultConsumer {
                     null, null, null, config, Collections.emptyMap());
             configurer.configure(consumer);
 
-
             context.getRestRegistry().addRestService(consumer, url, url, path, null, method,
                     null, null, null, null, null, null);
 
@@ -74,18 +73,18 @@ public class MultiRestConsumer extends DefaultConsumer {
 
     @Override
     public void doStop() throws Exception {
-        super.doStop();
         for (Consumer consumer : this.delegateConsumers) {
             ServiceHelper.stopService(consumer);
         }
+        super.doStop();
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
         for (Consumer consumer : this.delegateConsumers) {
             ServiceHelper.stopAndShutdownService(consumer);
         }
+        super.doShutdown();
     }
 
     @FunctionalInterface
