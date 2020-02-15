@@ -275,6 +275,6 @@ exchange.setProperty("camel.client.customtags", customTags);
 If you are using Spring Boot then you can add the `camel-zipkin-starter` dependency, and turn on zipkin by annotating the main class with `@CamelZipkin`.
 You can then configure camel-zipkin in the `application.properties` file where you can configure the hostname and port number for the Zipkin Server, and all the other options as listed in the options table above.
 
-You can find an example of this in the https://github.com/apache/camel/tree/master/examples/camel-example-zipkin[camel-example-zipkin]
+You can find an example of this in the https://github.com/apache/camel-examples/tree/master/examples/camel-example-zipkin[camel-example-zipkin]
 
 include::camel-spring-boot::page$zipkin-starter.adoc[]
