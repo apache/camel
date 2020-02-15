@@ -176,6 +176,10 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     @Override
     protected TypeConverterRegistry createTypeConverterRegistry() {
         TypeConverter typeConverter = getTypeConverter();
+        // type converter is also registry so create type converter
+        if (typeConverter == null) {
+            typeConverter = createTypeConverter();
+        }
         if (typeConverter instanceof TypeConverterRegistry) {
             return (TypeConverterRegistry)typeConverter;
         }

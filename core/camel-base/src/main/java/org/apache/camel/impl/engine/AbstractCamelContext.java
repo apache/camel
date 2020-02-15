@@ -345,6 +345,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             LRUCacheFactory.init();
         }
 
+        // setup type converter eager as its highly in use and should not be lazy initialized
+        setTypeConverter(createTypeConverter());
+
         // setup management first since end users may use it to add event
         // notifiers using the management strategy before the CamelContext has been started
         setupManagement(null);
@@ -1699,13 +1702,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public TypeConverter getTypeConverter() {
-        if (typeConverter == null) {
-            synchronized (lock) {
-                if (typeConverter == null) {
-                    setTypeConverter(createTypeConverter());
-                }
-            }
-        }
         return typeConverter;
     }
 
