@@ -85,6 +85,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "ignoreUnsupportedCharset": target.getConfiguration().setIgnoreUnsupportedCharset(property(camelContext, boolean.class, value)); return true;
         case "ignoreurischeme":
         case "ignoreUriScheme": target.getConfiguration().setIgnoreUriScheme(property(camelContext, boolean.class, value)); return true;
+        case "javamailproperties":
+        case "javaMailProperties": target.getConfiguration().setJavaMailProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "session": target.getConfiguration().setSession(property(camelContext, javax.mail.Session.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "useinlineattachments":
