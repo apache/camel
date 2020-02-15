@@ -44,7 +44,8 @@ public class MailConfiguration implements Cloneable {
     private transient Map<Message.RecipientType, String> recipients = new HashMap<>();
 
     // protocol is implied by component name so it should not be in UriPath
-    private String protocol;
+    private transient String protocol;
+
     @UriPath @Metadata(required = true)
     private String host;
     @UriPath
@@ -147,7 +148,7 @@ public class MailConfiguration implements Cloneable {
         if (!isIgnoreUriScheme()) {
             String scheme = uri.getScheme();
             if (scheme != null) {
-                setProtocol(scheme);
+                configureProtocol(scheme);
             }
         }
 
@@ -392,7 +393,7 @@ public class MailConfiguration implements Cloneable {
     /**
      * The protocol for communicating with the mail server
      */
-    public void setProtocol(String protocol) {
+    public void configureProtocol(String protocol) {
         this.protocol = protocol;
     }
 
