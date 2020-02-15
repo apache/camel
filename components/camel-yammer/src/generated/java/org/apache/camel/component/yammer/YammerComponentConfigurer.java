@@ -22,6 +22,7 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.apache.camel.component.yammer.YammerConfiguration.class, value)); return true;
+        case "requestor": target.setRequestor(property(camelContext, org.apache.camel.component.yammer.ApiRequestor.class, value)); return true;
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "consumerkey":

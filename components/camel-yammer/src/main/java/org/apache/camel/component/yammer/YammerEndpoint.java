@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.yammer;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -45,13 +46,18 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public YammerComponent getComponent() {
+        return (YammerComponent) super.getComponent();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new YammerMessageProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        switch (config.getFunctionType()) {
+        switch (config.getFunction()) {
             case MESSAGES:
             case ALGO:
             case FOLLOWING:
@@ -59,10 +65,14 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
             case PRIVATE:
             case SENT:
             case RECEIVED:
-                return new YammerMessagePollingConsumer(this, processor);
+                YammerMessagePollingConsumer answer = new YammerMessagePollingConsumer(this, processor);
+                configureConsumer(answer);
+                return answer;
             case USERS:
             case CURRENT:
-                return new YammerUserPollingConsumer(this, processor);
+                YammerUserPollingConsumer answer2 = new YammerUserPollingConsumer(this, processor);
+                configureConsumer(answer2);
+                return answer2;
             default:
                 throw new Exception(String.format("%s is not a valid Yammer function type.", config.getFunction()));
         }

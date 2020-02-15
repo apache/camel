@@ -119,6 +119,19 @@ public interface YammerComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default YammerComponentBuilder requestor(
+                org.apache.camel.component.yammer.ApiRequestor requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
          * The access token.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -173,6 +186,7 @@ public interface YammerComponentBuilderFactory {
             case "lazyStartProducer": ((YammerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((YammerComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "config": ((YammerComponent) component).setConfig((org.apache.camel.component.yammer.YammerConfiguration) value); return true;
+            case "requestor": ((YammerComponent) component).setRequestor((org.apache.camel.component.yammer.ApiRequestor) value); return true;
             case "accessToken": ((YammerComponent) component).setAccessToken((java.lang.String) value); return true;
             case "consumerKey": ((YammerComponent) component).setConsumerKey((java.lang.String) value); return true;
             case "consumerSecret": ((YammerComponent) component).setConsumerSecret((java.lang.String) value); return true;

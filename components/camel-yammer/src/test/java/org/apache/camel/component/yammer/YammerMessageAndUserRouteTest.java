@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.yammer;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,20 +32,21 @@ public class YammerMessageAndUserRouteTest extends CamelTestSupport {
     private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
 
     @Override
-    @Before
-    public void setUp() throws Exception { 
-        super.setUp();
-       
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
         YammerEndpoint messagesEndpoint = context.getEndpoint(YAMMER_MESSAGES_CONSUMER, YammerEndpoint.class);
         YammerEndpoint usersEndpoint = context.getEndpoint(YAMMER_CURRENT_USER_CONSUMER, YammerEndpoint.class);
 
         String messages = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/messages.json"));
         messagesEndpoint.getConfig().setRequestor(new TestApiRequestor(messages));
-        
+
         String users = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/user.json"));
         usersEndpoint.getConfig().setRequestor(new TestApiRequestor(users));
+
+        return context;
     }
-    
+
     @Test
     public void testConsumeAllMessages() throws Exception {
         MockEndpoint messagesMock = getMockEndpoint("mock:messages");

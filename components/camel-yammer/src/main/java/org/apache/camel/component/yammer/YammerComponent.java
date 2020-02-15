@@ -37,6 +37,8 @@ public class YammerComponent extends DefaultComponent {
     private String accessToken;
     @Metadata(label = "advanced")
     private YammerConfiguration config;
+    @Metadata(label = "advanced")
+    private ApiRequestor requestor;
     
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -50,8 +52,8 @@ public class YammerComponent extends DefaultComponent {
         endpointConfig.setConsumerKey(consumerKey);
         endpointConfig.setConsumerSecret(consumerSecret);
         endpointConfig.setAccessToken(accessToken);
-        endpointConfig.setFunction(remaining);
-        endpointConfig.setFunctionType(YammerFunctionType.fromUri(remaining));
+        endpointConfig.setFunction(YammerFunctionType.fromUri(remaining));
+        endpointConfig.setRequestor(requestor);
         
         Endpoint endpoint = new YammerEndpoint(uri, this, endpointConfig);
         setProperties(endpoint, parameters);
@@ -100,5 +102,16 @@ public class YammerComponent extends DefaultComponent {
      */
     public void setConfig(YammerConfiguration config) {
         this.config = config;
+    }
+
+    public ApiRequestor getRequestor() {
+        return requestor;
+    }
+
+    /**
+     * To use a specific requester to communicate with Yammer.
+     */
+    public void setRequestor(ApiRequestor requestor) {
+        this.requestor = requestor;
     }
 }
