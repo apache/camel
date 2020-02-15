@@ -20,58 +20,65 @@ import com.mongodb.client.MongoClient;
 import org.apache.camel.Endpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
-
     @Test
     public void checkConnectionFromProperties() {
-        MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb:anyName?mongoConnection=#myDb&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
-                MongoDbEndpoint.class);
+        MongoClient client = container.createClient();
+
+        context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
+        context.getRegistry().bind("myDb", client);
+
+        MongoDbEndpoint testEndpoint = context.getEndpoint("mongodb:anyName?mongoConnection=#myDb", MongoDbEndpoint.class);
+
         assertNotEquals("myDb", testEndpoint.getConnectionBean());
-        assertEquals(mongo, testEndpoint.getMongoConnection());
+        assertEquals(client, testEndpoint.getMongoConnection());
     }
 
     @Test
     public void checkConnectionFromBean() {
-        MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
-                MongoDbEndpoint.class);
+        MongoClient client = container.createClient();
+
+        context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
+        context.getRegistry().bind("myDb", client);
+
+        MongoDbEndpoint testEndpoint = context.getEndpoint("mongodb:myDb", MongoDbEndpoint.class);
         assertEquals("myDb", testEndpoint.getConnectionBean());
-        assertEquals(mongo, testEndpoint.getMongoConnection());
+        assertEquals(client, testEndpoint.getMongoConnection());
     }
+
 
     @Test
     public void checkConnectionBothExisting() {
-        MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb:myDb?mongoConnection=#myDbS&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
-                MongoDbEndpoint.class);
+        MongoClient client1 = container.createClient();
+        MongoClient client2 = container.createClient();
+
+        context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
+        context.getRegistry().bind("myDb", client1);
+        context.getRegistry().bind("myDbS", client2);
+
+        MongoDbEndpoint testEndpoint = context.getEndpoint("mongodb:myDb?mongoConnection=#myDbS", MongoDbEndpoint.class);
+        MongoClient myDbS = context.getRegistry().lookupByNameAndType("myDbS", MongoClient.class);
+
         assertEquals("myDb", testEndpoint.getConnectionBean());
-        MongoClient myDbS = applicationContext.getBean("myDbS", MongoClient.class);
         assertEquals(myDbS, testEndpoint.getMongoConnection());
     }
 
     @Test
     public void checkMissingConnection() {
-        assertThrows(Exception.class, () -> {
-            MongoDbEndpoint testEndpoint = context
-                .getEndpoint("mongodb:anythingNotRelated?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true", MongoDbEndpoint.class);
-        });
+        context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
+        assertThrows(Exception.class, () -> context.getEndpoint("mongodb:anythingNotRelated", MongoDbEndpoint.class));
     }
 
     @Test
     public void checkConnectionOnComponent() throws Exception {
-        MongoDbComponent component = context.getComponent("mongodb", MongoDbComponent.class);
-        MongoClient myDbS = applicationContext.getBean("myDbS", MongoClient.class);
-        component.setMongoConnection(myDbS);
-        Endpoint endpoint = component.createEndpoint("mongodb:justARouteName?database={{mongodb.testDb}}&collection="
-                + "{{mongodb.testCollection}}&operation=count&dynamicity=true");
-        assertIsInstanceOf(MongoDbEndpoint.class, endpoint);
-        assertEquals(myDbS, ((MongoDbEndpoint) endpoint).getMongoConnection());
-    }
+        Endpoint endpoint = context.getEndpoint("mongodb:justARouteName");
 
+        assertIsInstanceOf(MongoDbEndpoint.class, endpoint);
+        assertEquals(mongo, ((MongoDbEndpoint) endpoint).getMongoConnection());
+    }
 }

@@ -17,14 +17,13 @@
 package org.apache.camel.component.mongodb;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
@@ -32,6 +31,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
@@ -47,7 +47,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.BATCH_SIZE;
@@ -330,7 +329,7 @@ public class MongoDbProducer extends DefaultProducer {
 
     private Function<Exchange, Object> createDoDistinct() {
         return exchange -> {
-            Iterable<String> result = new ArrayList<>();
+            List<String> result = new ArrayList<>();
             MongoCollection<Document> dbCol = calculateCollection(exchange);
 
             // get the parameters out of the Exchange Header
@@ -344,8 +343,8 @@ public class MongoDbProducer extends DefaultProducer {
             }
 
             try {
-                ret.iterator().forEachRemaining(((List<String>) result)::add);
-                exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<String>) result).size());
+                ret.iterator().forEachRemaining(result::add);
+                exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, result.size());
             } finally {
                 ret.iterator().close();
             }
@@ -484,9 +483,8 @@ public class MongoDbProducer extends DefaultProducer {
                 } else {
                     result = dbCol.updateMany(updateCriteria, objNew, options);
                 }
-                if (result.isModifiedCountAvailable()) {
-                    exchange.getMessage().setHeader(RECORDS_AFFECTED, result.getModifiedCount());
-                }
+
+                exchange.getMessage().setHeader(RECORDS_AFFECTED, result.getModifiedCount());
                 exchange.getMessage().setHeader(RECORDS_MATCHED, result.getMatchedCount());
                 return result;
             } catch (InvalidPayloadException e) {
@@ -518,22 +516,22 @@ public class MongoDbProducer extends DefaultProducer {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
                 @SuppressWarnings("unchecked")
                 List<Bson> query = exchange.getIn().getMandatoryBody((Class<List<Bson>>)Class.class.cast(List.class));
-                
+
                 // Allow body to be a pipeline
                 // @see http://docs.mongodb.org/manual/core/aggregation/
                 List<Bson> queryList;
                 if (query != null) {
-                    queryList = query.stream().collect(Collectors.toList());
+                    queryList = new ArrayList<>(query);
                 } else {
-                    queryList = Arrays.asList(Bson.class.cast(exchange.getIn().getMandatoryBody(Bson.class)));
+                    queryList = Collections.singletonList(exchange.getIn().getMandatoryBody(Bson.class));
                 }
-                
+
                 // The number to skip must be in body query
                 AggregateIterable<Document> aggregationResult = dbCol.aggregate(queryList);
-                
+
                 // get the batch size
                 Integer batchSize = exchange.getIn().getHeader(MongoDbConstants.BATCH_SIZE, Integer.class);
-                
+
                 if (batchSize != null) {
                     aggregationResult.batchSize(batchSize);
                 }
@@ -553,7 +551,7 @@ public class MongoDbProducer extends DefaultProducer {
                 } else {
                     result = aggregationResult;
                 }
-                
+
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for aggregate", e);
@@ -603,7 +601,7 @@ public class MongoDbProducer extends DefaultProducer {
             try {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
                 Document saveObj = exchange.getIn().getMandatoryBody(Document.class);
-                UpdateOptions options = new UpdateOptions().upsert(true);
+                ReplaceOptions options = new ReplaceOptions().upsert(true);
                 UpdateResult result;
                 if (null == saveObj.get(MONGO_ID)) {
                     result = dbCol.replaceOne(Filters.where("false"), saveObj, options);
@@ -618,7 +616,7 @@ public class MongoDbProducer extends DefaultProducer {
             }
         };
     }
-    
+
     private Function<Exchange, Object> createDoBulkWrite() {
         return exchange -> {
             try {
@@ -630,9 +628,7 @@ public class MongoDbProducer extends DefaultProducer {
                 @SuppressWarnings("unchecked")
                 List<WriteModel<Document>> requests = exchange.getIn().getMandatoryBody((Class<List<WriteModel<Document>>>)Class.class.cast(List.class));
 
-                BulkWriteResult result = dbCol.bulkWrite(requests, options);
-                return result;
-
+                return dbCol.bulkWrite(requests, options);
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for bulk write", e);
             }
