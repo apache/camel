@@ -196,6 +196,7 @@
                     <configuration>
                         <excludeSubProjects>false</excludeSubProjects>
                         <excludes>
+                            <exclude>**/generated/**</exclude>
                             <exclude>**/generated.txt</exclude>
                             <exclude>**/*.json</exclude>
                             <exclude>**/README</exclude>
@@ -242,6 +243,7 @@
                             <!-- camel-salesforce BSD license from salesforce developers -->
                             <exclude>**/CometDReplayExtension.java</exclude>
                             <exclude>**/LICENSE-SALESFORCE.txt</exclude>
+                            <exclude>**/LICENSE-ICU4J.txt</exclude>
                             <!-- camel-as2 -->
                             <exclude>**/mdnDescription.vm</exclude>
                             <!-- camel-jbpm -->
@@ -278,6 +280,7 @@
                             <exclude>
                                 **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
                             </exclude>
+                            <exclude>**/META-INF/MANIFEST.MF</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                         </excludes>
