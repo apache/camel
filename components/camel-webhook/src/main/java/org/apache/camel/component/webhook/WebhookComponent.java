@@ -17,14 +17,21 @@
 package org.apache.camel.component.webhook;
 
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -48,16 +55,15 @@ public class WebhookComponent extends DefaultComponent {
         }
 
         WebhookConfiguration config = configuration != null ? configuration.copy() : new WebhookConfiguration();
-        WebhookEndpoint endpoint = new WebhookEndpoint(uri, this, config);
+        RestConfiguration restConfig = getCamelContext().getRestConfiguration(config.getWebhookComponentName(), true);
+
+        WebhookEndpoint endpoint = new WebhookEndpoint(uri, this, config, restConfig);
         setProperties(endpoint, parameters);
         // we need to apply the params here
         if (parameters != null && !parameters.isEmpty()) {
             delegateUri = delegateUri + "?" + resolveDelegateUriQuery(uri, parameters);
         }
         endpoint.getConfiguration().setEndpointUri(delegateUri);
-
-        RestConfiguration restConfig = getCamelContext().getRestConfiguration(config.getWebhookComponentName(), true);
-        config.setRestConfiguration(restConfig);
 
         return endpoint;
     }
@@ -87,6 +93,58 @@ public class WebhookComponent extends DefaultComponent {
      */
     public void setConfiguration(WebhookConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+     * Computes the URL of the webhook that should be used to bind the REST endpoint locally.
+     */
+    public static String computeServerUriPrefix(RestConfiguration restConfiguration) throws UnknownHostException {
+        // if no explicit port/host configured, then use port from rest configuration
+        String scheme = "http";
+        String host = "";
+        int port = 80;
+
+        if (restConfiguration.getScheme() != null) {
+            scheme = restConfiguration.getScheme();
+        }
+        if (restConfiguration.getHost() != null) {
+            host = restConfiguration.getHost();
+        }
+        int num = restConfiguration.getPort();
+        if (num > 0) {
+            port = num;
+        }
+
+        // if no explicit hostname set then resolve the hostname
+        if (ObjectHelper.isEmpty(host)) {
+            if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                host = "0.0.0.0";
+            } else if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                host = HostUtils.getLocalHostName();
+            } else if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                host = HostUtils.getLocalIp();
+            }
+        }
+
+        return scheme + "://" + host + (port != 80 ? ":" + port : "");
+    }
+
+    /**
+     * A default path is computed for the webhook if not provided by the user.
+     * It uses a hash of the delegate endpoint in order for it to be reproducible.
+     *
+     * This is not random on purpose.
+     */
+    public static String computeDefaultPath(String uri) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(uri.getBytes(StandardCharsets.UTF_8));
+            byte[] digest = md.digest();
+
+            return "/" + Base64.getUrlEncoder().encodeToString(digest);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeCamelException("Cannot compute default webhook path", e);
+        }
     }
 
 }
