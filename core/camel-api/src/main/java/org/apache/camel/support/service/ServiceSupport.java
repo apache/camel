@@ -74,9 +74,10 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public void init() {
-        if (status <= BUILDED) {
+        // allow to initialize again if failed
+        if (status <= BUILDED || status >= FAILED) {
             synchronized (lock) {
-                if (status <= BUILDED) {
+                if (status <= BUILDED || status >= FAILED) {
                     LOG.trace("Initializing service: {}", this);
                     try {
                         doInit();

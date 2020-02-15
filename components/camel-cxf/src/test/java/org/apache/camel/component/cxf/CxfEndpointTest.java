@@ -57,6 +57,8 @@ public class CxfEndpointTest extends Assert {
     @Test
     public void testSettingContinucationTimout() throws Exception {
         CamelContext context = new DefaultCamelContext();
+        context.start();
+
         CxfEndpoint endpoint = context.getEndpoint(routerEndpointURI + "&continuationTimeout=800000",
                 CxfEndpoint.class);
         assertEquals("Get a wrong continucationTimeout value", 800000, endpoint.getContinuationTimeout());
@@ -67,7 +69,11 @@ public class CxfEndpointTest extends Assert {
 
         ClassPathXmlApplicationContext ctx =
                 new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/CxfEndpointBeans.xml"});
-        CxfComponent cxfComponent = new CxfComponent(new SpringCamelContext(ctx));
+
+        SpringCamelContext context = new SpringCamelContext(ctx);
+        context.start();
+
+        CxfComponent cxfComponent = new CxfComponent(context);
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
 
         assertEquals("Got the wrong endpoint address", endpoint.getAddress(),
@@ -85,7 +91,11 @@ public class CxfEndpointTest extends Assert {
 
         ExtensionManagerBus newBus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         newBus.setId("newCXF");
-        CxfComponent cxfComponent = new CxfComponent(new DefaultCamelContext());
+
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        CxfComponent cxfComponent = new CxfComponent(context);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI);
         endpoint.setBus(newBus);
         CamelCxfClientImpl client = (CamelCxfClientImpl)endpoint.createClient();
@@ -104,6 +114,8 @@ public class CxfEndpointTest extends Assert {
         Processor processor = mock(Processor.class);
         registry.bind("myConfigurer", configurer);
         CamelContext camelContext = new DefaultCamelContext(registry);
+        camelContext.start();
+
         CxfComponent cxfComponent = new CxfComponent(camelContext);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfConfigurer=#myConfigurer");
 

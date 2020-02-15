@@ -65,7 +65,6 @@ import org.apache.camel.PropertyInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.spi.CamelEvent;
@@ -348,12 +347,12 @@ public class CdiCamelExtension implements Extension {
     }
 
     private SyntheticBean<?> camelContextBean(BeanManager manager, Class<?> beanClass, Annotation... qualifiers) {
-        SyntheticAnnotated annotated = new SyntheticAnnotated(DefaultCamelContext.class,
-            manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(), beanClass, qualifiers);
-        return new SyntheticBean<>(manager, annotated, DefaultCamelContext.class,
+        SyntheticAnnotated annotated = new SyntheticAnnotated(CdiCamelContext.class,
+            manager.createAnnotatedType(CdiCamelContext.class).getTypeClosure(), beanClass, qualifiers);
+        return new SyntheticBean<>(manager, annotated, CdiCamelContext.class,
             environment.camelContextInjectionTarget(
-                new SyntheticInjectionTarget<>(DefaultCamelContext::new), annotated, manager, this), bean ->
-            "Default Camel context bean with qualifiers " + bean.getQualifiers());
+                new SyntheticInjectionTarget<>(CdiCamelContext::new), annotated, manager, this), bean ->
+            "CdiCamelContext bean with qualifiers " + bean.getQualifiers());
     }
 
     private void afterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager manager) {

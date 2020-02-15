@@ -673,7 +673,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     //-----------------------------------------------------------------------
 
     /**
-     * Returns the type converter used to coerce types from one type to another
+     * Returns the type converter used to coerce types from one type to another.
+     * <p/>
+     * Notice that this {@link CamelContext} should be at least initialized before you can get the type converter.
      *
      * @return the converter
      */

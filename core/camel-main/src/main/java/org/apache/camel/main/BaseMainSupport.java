@@ -574,6 +574,9 @@ public abstract class BaseMainSupport extends ServiceSupport {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        // ensure camel is initialized
+        camelContext.init();
+
         configurePropertiesService(camelContext);
 
         // allow to do configuration before its started
