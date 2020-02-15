@@ -40,9 +40,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 public class MailConfiguration implements Cloneable {
 
-    private ClassLoader applicationClassLoader;
-    private Properties javaMailProperties;
-    private Map<Message.RecipientType, String> recipients = new HashMap<>();
+    private transient ClassLoader applicationClassLoader;
+    private transient Map<Message.RecipientType, String> recipients = new HashMap<>();
 
     // protocol is implied by component name so it should not be in UriPath
     private String protocol;
@@ -114,6 +113,8 @@ public class MailConfiguration implements Cloneable {
     private Properties additionalJavaMailProperties;
     @UriParam(label = "advanced")
     private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
+    @UriParam(label = "advanced")
+    private Properties javaMailProperties;
 
     public MailConfiguration() {
     }
