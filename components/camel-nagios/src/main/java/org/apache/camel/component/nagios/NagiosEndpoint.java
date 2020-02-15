@@ -92,10 +92,10 @@ public class NagiosEndpoint extends DefaultEndpoint {
 
         if (sender == null) {
             if (isSendSync()) {
-                sender = new NagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
+                sender = new NagiosPassiveCheckSender(getConfiguration().getOrCreateNagiosSettings());
             } else {
                 // use a non blocking sender
-                sender = new NonBlockingNagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
+                sender = new NonBlockingNagiosPassiveCheckSender(getConfiguration().getOrCreateNagiosSettings());
             }
         }
     }
