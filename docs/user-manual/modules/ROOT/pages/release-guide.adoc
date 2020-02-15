@@ -1,5 +1,7 @@
 [[ReleaseGuide-ReleaseGuide]]
-= How to Create and Announce a Camel Release
+= Release Guide
+
+This guide covers how to create and announce a Camel release.
 
 [[ReleaseGuide-Prequisites]]
 == Prequisites
