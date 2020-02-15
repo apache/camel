@@ -33,7 +33,7 @@ public class MailUsingOwnComponentTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         MailConfiguration config = new MailConfiguration();
-        config.setProtocol("smtp");
+        config.configureProtocol("smtp");
         config.setUsername("james");
         config.setHost("localhost");
         config.setPort(25);
