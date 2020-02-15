@@ -310,7 +310,7 @@ public class MethodInfo {
         LOG.trace("Setting bean invocation result : {}", result);
 
         // the bean component forces OUT if the MEP is OUT capable
-        boolean out = ExchangeHelper.isOutCapable(exchange) || exchange.hasOut();
+        boolean out = exchange.hasOut() || ExchangeHelper.isOutCapable(exchange);
         Message old;
         if (out) {
             old = exchange.getOut();
