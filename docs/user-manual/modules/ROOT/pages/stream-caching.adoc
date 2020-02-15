@@ -147,11 +147,11 @@ You set these properties on the `CamelContext` as shown below, where we use a 1 
 
 [source,java]
 ----
-context.getProperties().put(CachedOutputStream.TEMP_DIR, "/tmp/cachedir");
-context.getProperties().put(CachedOutputStream.THRESHOLD, "1048576");
-context.getProperties().put(CachedOutputStream.BUFFER_SIZE, "131072");
+context.getGlobalOptions().put(CachedOutputStream.TEMP_DIR, "/tmp/cachedir");
+context.getGlobalOptions().put(CachedOutputStream.THRESHOLD, "1048576");
+context.getGlobalOptions().put(CachedOutputStream.BUFFER_SIZE, "131072");
 // to enable encryption using RC4
-// context.getProperties().put(CachedOutputStream.CIPHER_TRANSFORMATION, "RC4");
+// context.getGlobalOptions().put(CachedOutputStream.CIPHER_TRANSFORMATION, "RC4");
 ----
 
 And in XML you do:
@@ -176,7 +176,7 @@ You can disable spooling to disk by setting a threshold of 0 or a negative value
 [source,java]
 ----
 // disable spooling to disk
-context.getProperties().put(CachedOutputStream.THRESHOLD, "-1");
+context.getGlobalOptions().put(CachedOutputStream.THRESHOLD, "-1");
 ----
 
 And in XML you do:

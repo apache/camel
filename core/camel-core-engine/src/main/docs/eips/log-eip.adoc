@@ -131,7 +131,7 @@ By default the log name is the route id. If you want to use a different log name
 You can configure a global log name that is used instead of the route id, eg
 [source,java]
 ----
-camelContext.getProperties().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
+camelContext.getGlobalOptions().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
 ----
 
 And in XML

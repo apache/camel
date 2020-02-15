@@ -10,7 +10,7 @@ You can configure the default maximum cache size by setting the
 
 [source,java]
 ----
-getCamelContext().getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "50");
+getCamelContext().getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "50");
 ----
 
 And in Spring XML its done as:
