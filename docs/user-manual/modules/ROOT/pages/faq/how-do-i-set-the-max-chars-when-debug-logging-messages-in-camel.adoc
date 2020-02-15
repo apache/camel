@@ -35,7 +35,7 @@ chars:
 
 [source,java]
 ----
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "500");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "500");
 ----
 
 [[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-CustomizingfromSpringDSL]]
