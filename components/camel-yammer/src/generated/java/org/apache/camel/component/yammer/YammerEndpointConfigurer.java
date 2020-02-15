@@ -40,6 +40,7 @@ public class YammerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "requestor": target.getConfig().setRequestor(property(camelContext, org.apache.camel.component.yammer.ApiRequestor.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;

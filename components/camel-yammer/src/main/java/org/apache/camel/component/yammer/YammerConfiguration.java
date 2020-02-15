@@ -24,9 +24,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class YammerConfiguration {
 
-    @UriPath(name = "function") @Metadata(required = true)
-    private YammerFunctionType functionType;
-    private String function;
+    @UriPath @Metadata(required = true)
+    private YammerFunctionType function;
     @UriParam(label = "security") @Metadata(required = true, secret = true)
     private String consumerKey;
     @UriParam(label = "security") @Metadata(required = true, secret = true)
@@ -47,6 +46,7 @@ public class YammerConfiguration {
     private String threaded;
     @UriParam(label = "consumer")
     private String userId;
+    @UriParam(label = "advanced")
     private ApiRequestor requestor;
 
     public String getConsumerKey() {
@@ -93,25 +93,14 @@ public class YammerConfiguration {
         this.accessToken = accessToken;
     }
 
-    public YammerFunctionType getFunctionType() {
-        return functionType;
-    }
-
-    /**
-     * The function to use
-     */
-    public void setFunctionType(YammerFunctionType functionType) {
-        this.functionType = functionType;
-    }
-
-    public String getFunction() {
+    public YammerFunctionType getFunction() {
         return function;
     }
 
     /**
      * The function to use
      */
-    public void setFunction(String function) {
+    public void setFunction(YammerFunctionType function) {
         this.function = function;
     }
 
@@ -124,17 +113,6 @@ public class YammerConfiguration {
      */
     public void setUseJson(boolean useJson) {
         this.useJson = useJson;
-    }
-
-    public ApiRequestor getRequestor(String apiUrl) throws Exception {
-        if (requestor == null) {
-            requestor = new ScribeApiRequestor(apiUrl, getAccessToken()); 
-        }
-        return requestor;
-    }
-
-    public void setRequestor(ApiRequestor requestor) {
-        this.requestor = requestor;
     }
 
     public int getLimit() {
@@ -199,4 +177,14 @@ public class YammerConfiguration {
         this.userId = userId;
     }
 
+    public ApiRequestor getRequestor() {
+        return requestor;
+    }
+
+    /**
+     * To use a specific requester to communicate with Yammer.
+     */
+    public void setRequestor(ApiRequestor requestor) {
+        this.requestor = requestor;
+    }
 }
