@@ -338,6 +338,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
     }
 
+    /**
+     * Whether to eager create {@link TypeConverter} during initialization of CamelContext.
+     * This is enabled by default to optimize camel-core.
+     */
+    protected boolean eagerCreateTypeConverter() {
+        return true;
+    }
+
     @Override
     public void doInit() throws Exception {
         if (initialization != Initialization.Lazy) {
@@ -346,7 +354,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
 
         // setup type converter eager as its highly in use and should not be lazy initialized
-        setTypeConverter(createTypeConverter());
+        if (eagerCreateTypeConverter()) {
+            getOrCreateTypeConverter();
+        }
 
         // setup management first since end users may use it to add event
         // notifiers using the management strategy before the CamelContext has been started
@@ -1702,6 +1712,17 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public TypeConverter getTypeConverter() {
+        return typeConverter;
+    }
+
+    protected TypeConverter getOrCreateTypeConverter() {
+        if (typeConverter == null) {
+            synchronized (lock) {
+                if (typeConverter == null) {
+                    setTypeConverter(createTypeConverter());
+                }
+            }
+        }
         return typeConverter;
     }
 
