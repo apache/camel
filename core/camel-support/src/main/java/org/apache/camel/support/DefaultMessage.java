@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,6 +24,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.HeadersMapFactory;
 
 /**
@@ -48,12 +48,18 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public DefaultMessage(CamelContext camelContext) {
-        setCamelContext(camelContext);
+        this.camelContext = (ExtendedCamelContext) camelContext;
+        this.typeConverter = camelContext.getTypeConverter();
     }
 
     @Override
     public Object getHeader(String name) {
-        if (hasHeaders()) {
+        if (headers == null) {
+            // force creating headers
+            headers = createHeaders();
+        }
+
+        if (!headers.isEmpty()) {
             return headers.get(name);
         } else {
             return null;
@@ -63,7 +69,13 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public Object getHeader(String name, Object defaultValue) {
         Object answer = null;
-        if (hasHeaders()) {
+
+        if (headers == null) {
+            // force creating headers
+            headers = createHeaders();
+        }
+
+        if (!headers.isEmpty()) {
             answer = headers.get(name);
         }
         return answer != null ? answer : defaultValue;
@@ -72,7 +84,13 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public Object getHeader(String name, Supplier<Object> defaultValueSupplier) {
         Object answer = null;
-        if (hasHeaders()) {
+
+        if (headers == null) {
+            // force creating headers
+            headers = createHeaders();
+        }
+
+        if (!headers.isEmpty()) {
             answer = headers.get(name);
         }
         return answer != null ? answer : defaultValueSupplier.get();
@@ -82,7 +100,13 @@ public class DefaultMessage extends MessageSupport {
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
         Object value = null;
-        if (hasHeaders()) {
+
+        if (headers == null) {
+            // force creating headers
+            headers = createHeaders();
+        }
+
+        if (!headers.isEmpty()) {
             value = headers.get(name);
         }
         if (value == null) {
@@ -111,7 +135,13 @@ public class DefaultMessage extends MessageSupport {
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
         Object value = null;
-        if (hasHeaders()) {
+
+        if (headers == null) {
+            // force creating headers
+            headers = createHeaders();
+        }
+
+        if (!headers.isEmpty()) {
             value = headers.get(name);
         }
         if (value == null) {
@@ -175,7 +205,11 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public Object removeHeader(String name) {
-        if (!hasHeaders()) {
+        if (headers == null) {
+            // force creating headers
+            headers = createHeaders();
+        }
+        if (headers.isEmpty()) {
             return null;
         }
         return headers.remove(name);
@@ -188,7 +222,11 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public boolean removeHeaders(String pattern, String... excludePatterns) {
-        if (!hasHeaders()) {
+        if (headers == null) {
+            // force creating headers
+            headers = createHeaders();
+        }
+        if (headers.isEmpty()) {
             return false;
         }
 
@@ -239,11 +277,11 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public boolean hasHeaders() {
-        if (!hasPopulatedHeaders()) {
+        if (headers == null) {
             // force creating headers
-            getHeaders();
+            headers = createHeaders();
         }
-        return headers != null && !headers.isEmpty();
+        return !headers.isEmpty();
     }
 
     @Override
