@@ -48,6 +48,7 @@ import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverters;
+import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
@@ -126,6 +127,46 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @SuppressWarnings("unchecked")
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        // optimize for a few common conversions
+        if (value != null) {
+            if (type.isInstance(value)) {
+                // same instance
+                return (T) value;
+            }
+            if (type == boolean.class) {
+                // primitive boolean which must return a value so throw exception if not possible
+                Object answer = ObjectConverter.toBoolean(value);
+                if (answer == null) {
+                    throw new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean");
+                }
+                return (T) answer;
+            } else if (type == Boolean.class && (value instanceof String)) {
+                // String -> Boolean
+                String str = (String) value;
+                if ("true".equalsIgnoreCase(str)) {
+                    return (T) Boolean.TRUE;
+                } else if ("false".equalsIgnoreCase(str)) {
+                    return (T) Boolean.FALSE;
+                }
+            } else if (type.isPrimitive()) {
+                // okay its a wrapper -> primitive then return as-is for some common types
+                Class cls = value.getClass();
+                if (cls == Integer.class || cls == Long.class) {
+                    return (T) value;
+                }
+            } else if (type == String.class) {
+                // okay its a primitive -> string then return as-is for some common types
+                Class cls = value.getClass();
+                if (cls.isPrimitive()
+                        || cls == Boolean.class || cls == boolean.class
+                        || cls == Integer.class || cls == int.class
+                        || cls == Long.class || cls == long.class) {
+                    return (T) value.toString();
+                }
+            }
+            // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
+        }
+
         return (T) doConvertTo(type, exchange, value, false, false);
     }
 
@@ -137,6 +178,46 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @SuppressWarnings("unchecked")
     @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
+        // optimize for a few common conversions
+        if (value != null) {
+            if (type.isInstance(value)) {
+                // same instance
+                return (T) value;
+            }
+            if (type == boolean.class) {
+                // primitive boolean which must return a value so throw exception if not possible
+                Object answer = ObjectConverter.toBoolean(value);
+                if (answer == null) {
+                    throw new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean");
+                }
+                return (T) answer;
+            } else if (type == Boolean.class && (value instanceof String)) {
+                // String -> Boolean
+                String str = (String) value;
+                if ("true".equalsIgnoreCase(str)) {
+                    return (T) Boolean.TRUE;
+                } else if ("false".equalsIgnoreCase(str)) {
+                    return (T) Boolean.FALSE;
+                }
+            } else if (type.isPrimitive()) {
+                // okay its a wrapper -> primitive then return as-is for some common types
+                Class cls = value.getClass();
+                if (cls == Integer.class || cls == Long.class) {
+                    return (T) value;
+                }
+            } else if (type == String.class) {
+                // okay its a primitive -> string then return as-is for some common types
+                Class cls = value.getClass();
+                if (cls.isPrimitive()
+                        || cls == Boolean.class || cls == boolean.class
+                        || cls == Integer.class || cls == int.class
+                        || cls == Long.class || cls == long.class) {
+                    return (T) value.toString();
+                }
+            }
+            // NOTE: we cannot optimize any more if value is String as it may be time pattern and other patterns
+        }
+
         Object answer = doConvertTo(type, exchange, value, true, false);
         if (answer == null) {
             // Could not find suitable conversion
@@ -156,7 +237,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return (T) doConvertTo(type, exchange, value, false, true);
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean mandatory, final boolean tryConvert) {
+    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value,
+                                 final boolean mandatory, final boolean tryConvert) {
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value, tryConvert);
@@ -192,7 +274,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) throws Exception {
+    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value,
+                                 final boolean tryConvert) throws Exception {
         boolean trace = LOG.isTraceEnabled();
         boolean statisticsEnabled = statistics.isStatisticsEnabled();
 
@@ -411,7 +494,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
-    private void addCoreFallbackTypeConverterToList(TypeConverter typeConverter, boolean canPromote, List<FallbackTypeConverter> converters) {
+    private void addCoreFallbackTypeConverterToList(TypeConverter typeConverter, boolean canPromote, List<
+            FallbackTypeConverter> converters) {
         LOG.trace("Adding core fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
@@ -496,7 +580,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 TypeConverter converter = typeMappings.getFirst(
                         toType::isAssignableFrom,
                         // skip Object based we do them last
-                    from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
+                        from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
                 if (converter != null) {
                     return converter;
                 }
@@ -653,7 +737,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
-    protected TypeConversionException createTypeConversionException(Exchange exchange, Class<?> type, Object value, Throwable cause) {
+    protected TypeConversionException createTypeConversionException(Exchange exchange, Class<?> type, Object
+            value, Throwable cause) {
         if (cause instanceof TypeConversionException) {
             if (((TypeConversionException) cause).getToType() == type) {
                 return (TypeConversionException) cause;
@@ -708,7 +793,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         if (resolver == null && camelContext != null) {
             resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
         }
-        initTypeConverterLoaders();
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();
         // add to string first as it will then be last in the last as to string can nearly
@@ -726,12 +810,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         // add all core fallback converters at once which is faster (profiler)
         fallbackConverters.addAll(fallbacks);
-    }
-
-    protected void initTypeConverterLoaders() {
-        if (resolver != null) {
-            typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
-        }
     }
 
     @Override
