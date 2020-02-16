@@ -70,7 +70,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *endpointUri* | The delegate uri. Must belong to a component that supports webhooks. |  | String
+| *endpointUri* | *Required* The delegate uri. Must belong to a component that supports webhooks. |  | String
 |===
 
 
@@ -80,12 +80,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *webhookAutoRegister* (common) | Automatically register the webhook at startup and unregister it on shutdown. | true | boolean
-| *webhookBasePath* (common) | The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random string, so that it cannot be guessed by unauthorized parties. |  | String
-| *webhookComponentName* (common) | The Camel Rest component to use for the REST transport, such as netty-http. |  | String
-| *webhookExternalUrl* (common) | The URL of the current service as seen by the webhook provider |  | String
-| *webhookPath* (common) | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *webhookAutoRegister* (consumer) | Automatically register the webhook at startup and unregister it on shutdown. | true | boolean
+| *webhookBasePath* (consumer) | The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random string, so that it cannot be guessed by unauthorized parties. |  | String
+| *webhookComponentName* (consumer) | The Camel Rest component to use for the REST transport, such as netty-http. |  | String
+| *webhookExternalUrl* (consumer) | The URL of the current service as seen by the webhook provider |  | String
+| *webhookPath* (consumer) | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

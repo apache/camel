@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.RestConfiguration;
 
 /**
  * A {@code WebhookCapableEndpoint} is a special kind of endpoint that is able to operate in webhook mode if required.
@@ -44,7 +45,7 @@ public interface WebhookCapableEndpoint extends Endpoint {
      * Register the webhook at the remote site using endpoint specific instruction.
      * <p>
      * Additional configuration is injected into the endpoint using the
-     * {@link WebhookCapableEndpoint#setWebhookConfiguration(WebhookConfiguration)} method.
+     * setWebhookConfiguration method.
      *
      * @throws Exception if something goes wrong during the registration.
      */
@@ -54,7 +55,7 @@ public interface WebhookCapableEndpoint extends Endpoint {
      * Unregister the webhook at the remote site using endpoint specific instruction.
      * <p>
      * Additional configuration is injected into the endpoint using the
-     * {@link WebhookCapableEndpoint#setWebhookConfiguration(WebhookConfiguration)} method.
+     * setWebhookConfiguration method.
      *
      * @throws Exception if something goes wrong during the un-registration.
      */
@@ -64,8 +65,9 @@ public interface WebhookCapableEndpoint extends Endpoint {
      * Used by the workflow manager to inject webhook configuration options.
      *
      * @param webhookConfiguration the webhook configuration options.
+     * @param restConfiguration    the webhook rest configuration options.
      */
-    void setWebhookConfiguration(WebhookConfiguration webhookConfiguration);
+    void setWebhookConfiguration(WebhookConfiguration webhookConfiguration, RestConfiguration restConfiguration);
 
     /**
      * Used by the endpoint to enlist the HTTP methods it's able to handle.

@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
@@ -49,6 +50,7 @@ public class TestEndpoint extends DefaultEndpoint implements WebhookCapableEndpo
     private Function<Processor, Consumer> consumer;
 
     private WebhookConfiguration webhookConfiguration;
+    private RestConfiguration restConfiguration;
 
     private boolean singleton;
 
@@ -89,8 +91,9 @@ public class TestEndpoint extends DefaultEndpoint implements WebhookCapableEndpo
     }
 
     @Override
-    public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration) {
+    public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration, RestConfiguration restConfiguration) {
         this.webhookConfiguration = webhookConfiguration;
+        this.restConfiguration = restConfiguration;
     }
 
     public WebhookConfiguration getWebhookConfiguration() {
