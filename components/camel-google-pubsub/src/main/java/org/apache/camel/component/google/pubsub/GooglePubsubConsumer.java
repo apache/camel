@@ -67,7 +67,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
             } else {
                 executor.shutdownNow();
             }
