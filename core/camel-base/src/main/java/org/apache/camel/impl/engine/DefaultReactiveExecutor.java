@@ -160,8 +160,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                     executor.runningWorkers.decrementAndGet();
                 }
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Queuing reactive work: {}", runnable);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Queuing reactive work: {}", runnable);
                 }
             }
         }
