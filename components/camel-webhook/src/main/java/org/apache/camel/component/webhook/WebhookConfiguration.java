@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.webhook;
 
+import java.net.UnknownHostException;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+
+import static org.apache.camel.component.webhook.WebhookComponent.computeServerUriPrefix;
 
 /**
  * Configuration class for the webhook component.
@@ -67,6 +71,21 @@ public class WebhookConfiguration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * Computes the external URL of the webhook as seen by the remote webhook provider.
+     *
+     * @param restConfiguration rest configuration
+     * @return the webhook external URL
+     */
+    public String computeFullExternalUrl(RestConfiguration restConfiguration) throws UnknownHostException {
+        String externalServerUrl = this.webhookExternalUrl;
+        if (externalServerUrl == null) {
+            externalServerUrl = computeServerUriPrefix(restConfiguration);
+        }
+        String path = computeFullPath(restConfiguration, true);
+        return externalServerUrl + path;
     }
 
     /**

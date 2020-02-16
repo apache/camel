@@ -29,6 +29,7 @@ import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
 import org.apache.camel.component.webhook.WebhookCapableEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -58,6 +59,7 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     private int bufferSize = 4 * 1024;
 
     private WebhookConfiguration webhookConfiguration;
+    private RestConfiguration restConfiguration;
 
     private AsyncHttpClient client;
     private TelegramService telegramService;
@@ -136,7 +138,7 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @Override
     public void registerWebhook() throws Exception {
-        if (!telegramService.setWebhook(webhookConfiguration.computeFullExternalUrl())) {
+        if (!telegramService.setWebhook(webhookConfiguration.computeFullExternalUrl(restConfiguration))) {
             throw new RuntimeCamelException("The Telegram API refused to register a webhook");
         }
     }
@@ -153,8 +155,9 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     }
 
     @Override
-    public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration) {
+    public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration, RestConfiguration restConfiguration) {
         this.webhookConfiguration = webhookConfiguration;
+        this.restConfiguration = restConfiguration;
     }
 
     @Override

@@ -79,7 +79,7 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
             throw new IllegalArgumentException("The provided endpoint is not capable of being used in webhook mode: " + configuration.getEndpointUri());
         }
         delegateEndpoint = (WebhookCapableEndpoint) delegate;
-        delegateEndpoint.setWebhookConfiguration(configuration);
+        delegateEndpoint.setWebhookConfiguration(configuration, restConfiguration);
     }
 
     @Override
