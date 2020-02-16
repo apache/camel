@@ -19,6 +19,7 @@ package org.apache.camel.component.sql.stored;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
@@ -71,7 +72,7 @@ public class ProducerBatchInvalidTest extends CamelTestSupport {
             ResolveEndpointFailedException refe = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, refe.getCause());
             assertEquals("batch", pbe.getPropertyName());
-            assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
+            assertIsInstanceOf(TypeConversionException.class, pbe.getCause());
             assertEquals("[true, true]", pbe.getValue().toString());
         }
     }

@@ -137,7 +137,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 // primitive boolean which must return a value so throw exception if not possible
                 Object answer = ObjectConverter.toBoolean(value);
                 if (answer == null) {
-                    throw new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean");
+                    throw new TypeConversionException(value, type, new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
             } else if (type == Boolean.class && (value instanceof String)) {
@@ -188,7 +188,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 // primitive boolean which must return a value so throw exception if not possible
                 Object answer = ObjectConverter.toBoolean(value);
                 if (answer == null) {
-                    throw new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean");
+                    throw new TypeConversionException(value, type, new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean"));
                 }
                 return (T) answer;
             } else if (type == Boolean.class && (value instanceof String)) {
