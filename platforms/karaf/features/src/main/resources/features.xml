@@ -1151,7 +1151,7 @@
     <bundle dependency='true'>wrap:mvn:io.grpc/grpc-alts/${grpc-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.grpc/grpc-grpclb/${grpc-version}</bundle>
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java-util/${protobuf-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.conscrypt/conscrypt-openjdk-uber/${conscrypt-uber-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.threeten/threetenbp/${threetenbp-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
@@ -1165,7 +1165,7 @@
     <bundle dependency='true'>wrap:mvn:com.google.auto.value/auto-value-annotations/${google-auto-value-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-http-client-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:commons-logging/commons-logging/${commons-logging-version}</bundle>
+    <bundle dependency='true'>mvn:commons-logging/commons-logging/${commons-logging-version}</bundle>
     <bundle dependency='true'>wrap:mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.j2objc/j2objc-annotations/${google-j2objc-version}</bundle>
