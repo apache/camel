@@ -578,9 +578,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
                 // lets try classes derived from this toType
                 TypeConverter converter = typeMappings.getFirst(
-                        toType::isAssignableFrom,
-                        // skip Object based we do them last
-                        from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
+                    toType::isAssignableFrom,
+                    // skip Object based we do them last
+                    from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
                 if (converter != null) {
                     return converter;
                 }
