@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
-import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
@@ -39,8 +38,7 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
     @Test
     public void testWebhookCall() throws Exception {
         WebhookConfiguration config = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
-        RestConfiguration rest = context().getRestConfiguration();
-        String url = config.computeFullExternalUrl(rest);
+        String url = config.computeFullExternalUrl();
 
         try (InputStream content = getClass().getClassLoader().getResourceAsStream("messages/webhook-call.json")) {
             MockEndpoint mock = getMockEndpoint("mock:endpoint");

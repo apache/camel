@@ -17,6 +17,10 @@
 package org.apache.camel.component.webhook;
 
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -24,14 +28,16 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
-import static org.apache.camel.component.webhook.WebhookComponent.computeServerUriPrefix;
+import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Configuration class for the webhook component.
  */
 @UriParams
 public class WebhookConfiguration implements Cloneable {
+
+    private transient RestConfiguration restConfiguration;
 
     /*
      * Note: all properties start with the 'webhook' prefix to avoid collision with the delegate endpoint.
@@ -73,33 +79,41 @@ public class WebhookConfiguration implements Cloneable {
         }
     }
 
+    // cannot use getter/setter as its not a regular option
+    public void storeConfiguration(RestConfiguration restConfiguration) {
+        this.restConfiguration = restConfiguration;
+    }
+
+    // cannot use getter/setter as its not a regular option
+    public RestConfiguration retrieveRestConfiguration() {
+        return restConfiguration;
+    }
+
     /**
      * Computes the external URL of the webhook as seen by the remote webhook provider.
      *
-     * @param restConfiguration rest configuration
      * @return the webhook external URL
      */
-    public String computeFullExternalUrl(RestConfiguration restConfiguration) throws UnknownHostException {
+    public String computeFullExternalUrl() throws UnknownHostException {
         String externalServerUrl = this.webhookExternalUrl;
         if (externalServerUrl == null) {
-            externalServerUrl = computeServerUriPrefix(restConfiguration);
+            externalServerUrl = computeServerUriPrefix();
         }
-        String path = computeFullPath(restConfiguration, true);
+        String path = computeFullPath(true);
         return externalServerUrl + path;
     }
 
     /**
      * Computes the path part of the webhook.
      *
-     * @param restConfiguration rest configuration
      * @param external indicates if it's the path seen by the external provider or the internal one.
      * @return the webhook full path
      */
-    public String computeFullPath(RestConfiguration restConfiguration, boolean external) {
+    public String computeFullPath(boolean external) {
         // calculate the url to the rest service
         String path = webhookPath;
         if (path == null) {
-            path = WebhookComponent.computeDefaultPath(endpointUri);
+            path = computeDefaultPath(endpointUri);
         } else if (!path.startsWith("/")) {
             path = "/" + path;
         }
@@ -124,6 +138,58 @@ public class WebhookConfiguration implements Cloneable {
         }
 
         return path;
+    }
+
+    /**
+     * Computes the URL of the webhook that should be used to bind the REST endpoint locally.
+     */
+    public String computeServerUriPrefix() throws UnknownHostException {
+        // if no explicit port/host configured, then use port from rest configuration
+        String scheme = "http";
+        String host = "";
+        int port = 80;
+
+        if (restConfiguration.getScheme() != null) {
+            scheme = restConfiguration.getScheme();
+        }
+        if (restConfiguration.getHost() != null) {
+            host = restConfiguration.getHost();
+        }
+        int num = restConfiguration.getPort();
+        if (num > 0) {
+            port = num;
+        }
+
+        // if no explicit hostname set then resolve the hostname
+        if (ObjectHelper.isEmpty(host)) {
+            if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                host = "0.0.0.0";
+            } else if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                host = HostUtils.getLocalHostName();
+            } else if (restConfiguration.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                host = HostUtils.getLocalIp();
+            }
+        }
+
+        return scheme + "://" + host + (port != 80 ? ":" + port : "");
+    }
+
+    /**
+     * A default path is computed for the webhook if not provided by the user.
+     * It uses a hash of the delegate endpoint in order for it to be reproducible.
+     *
+     * This is not random on purpose.
+     */
+    public static String computeDefaultPath(String uri) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(uri.getBytes(StandardCharsets.UTF_8));
+            byte[] digest = md.digest();
+
+            return "/" + Base64.getUrlEncoder().encodeToString(digest);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeCamelException("Cannot compute default webhook path", e);
+        }
     }
 
     public String getEndpointUri() {
