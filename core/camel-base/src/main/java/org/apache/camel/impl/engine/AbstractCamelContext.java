@@ -834,6 +834,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
+        // ensure CamelContext are initialized before we can get an endpoint
         init();
 
         StringHelper.notEmpty(uri, "uri");
