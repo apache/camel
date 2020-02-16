@@ -89,8 +89,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
                 MessageReceiver messageReceiver = new CamelMessageReceiver(endpoint, processor);
 
-                Subscriber subscriber = Subscriber.newBuilder(subscriptionName, messageReceiver)
-                        .setParallelPullCount(1).build();
+                Subscriber subscriber = Subscriber.newBuilder(subscriptionName, messageReceiver).build();
                 try {
                     subscriber.startAsync().awaitRunning();
                     subscriber.awaitTerminated();
