@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,8 +159,8 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 boolean isRequeueHeaderSet = false;
                 try {
                     isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
-                } catch (TypeConversionException e) {
-                    LOG.warn("Header [{}] with value=[{}] evaluated as [false]", RabbitMQConstants.REQUEUE, e.getValue());
+                } catch (Exception e) {
+                    // ignore as its an invalid header
                 }
 
                 // processing failed, then reject and handle the exception
