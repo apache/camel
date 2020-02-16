@@ -65,9 +65,8 @@ public interface WebhookCapableEndpoint extends Endpoint {
      * Used by the workflow manager to inject webhook configuration options.
      *
      * @param webhookConfiguration the webhook configuration options.
-     * @param restConfiguration    the webhook rest configuration options.
      */
-    void setWebhookConfiguration(WebhookConfiguration webhookConfiguration, RestConfiguration restConfiguration);
+    void setWebhookConfiguration(WebhookConfiguration webhookConfiguration);
 
     /**
      * Used by the endpoint to enlist the HTTP methods it's able to handle.
