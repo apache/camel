@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.jms.Connection;
+import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
@@ -51,6 +52,17 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         @Override
         public MessageProducerResources makeObject() throws Exception {
             return doCreateProducerModel(createSession());
+        }
+
+        @Override
+        public boolean validateObject(MessageProducerResources obj) {
+            try {
+                obj.getSession().getAcknowledgeMode();
+                return true;
+            } catch (JMSException ex) {
+                LOG.error("Cannot validate session", ex);
+            }
+            return false;
         }
 
         @Override
@@ -90,10 +102,12 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
-            setProducers(new GenericObjectPool<>(new MessageProducerResourcesFactory()));
-            getProducers().setMaxActive(getProducerCount());
-            getProducers().setMaxIdle(getProducerCount());
-            getProducers().setLifo(false);
+            GenericObjectPool<MessageProducerResources> producers = new GenericObjectPool<>(new MessageProducerResourcesFactory());
+            setProducers(producers);
+            producers.setMaxActive(getProducerCount());
+            producers.setMaxIdle(getProducerCount());
+            producers.setTestOnBorrow(getEndpoint().getComponent().isConnectionTestOnBorrow());
+            producers.setLifo(false);
             if (getEndpoint().isPrefillPool()) {
                 if (getEndpoint().isAsyncStartListener()) {
                     asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {

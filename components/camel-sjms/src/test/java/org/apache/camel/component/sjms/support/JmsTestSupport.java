@@ -181,4 +181,22 @@ public class JmsTestSupport extends CamelTestSupport {
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
         return new Jms11ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, true, false);
     }
+
+    public void reconnect() throws Exception {
+        log.info("Closing JMS Session");
+        getSession().close();
+        log.info("Closing JMS Connection");
+        connection.stop();
+        log.info("Stopping the ActiveMQ Broker");
+        broker.stop();
+        broker.waitUntilStopped();
+        broker.start(true);
+        broker.waitUntilStarted();
+
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+        setupFactoryExternal(connectionFactory);
+        connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    }
 }

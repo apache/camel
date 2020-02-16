@@ -20,6 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.jms.Connection;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -190,6 +192,11 @@ public class SjmsConsumer extends DefaultConsumer {
             MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, getEndpoint());
             MessageListener handler = createMessageHandler(session);
             messageConsumer.setMessageListener(handler);
+
+            ExceptionListener exceptionListener = conn.getExceptionListener();
+            if (!(exceptionListener instanceof ReconnectExceptionListener)) {
+                conn.setExceptionListener(new ReconnectExceptionListener(exceptionListener));
+            }
 
             answer = new MessageConsumerResources(session, messageConsumer);
         } catch (Exception e) {
@@ -369,4 +376,25 @@ public class SjmsConsumer extends DefaultConsumer {
         return getEndpoint().getTransactionBatchTimeout();
     }
 
+    private class ReconnectExceptionListener implements ExceptionListener {
+        private final ExceptionListener nestedExceptionListener;
+
+        private ReconnectExceptionListener(ExceptionListener nestedExceptionListener) {
+            this.nestedExceptionListener = nestedExceptionListener;
+        }
+
+        @Override
+        public void onException(JMSException exception) {
+            if (nestedExceptionListener != null) {
+                nestedExceptionListener.onException(exception);
+            }
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    stop();
+                    start();
+                }
+            });
+        }
+    }
 }
