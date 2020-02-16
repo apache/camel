@@ -37,7 +37,7 @@ public class DebeziumMySqlComponentTest {
         params.put("databaseUser", "dbz");
         params.put("databasePassword", "pwd");
         params.put("databaseServerName", "test");
-        params.put("databaseServerId", 1234);
+        params.put("databaseServerId", "1234");
         params.put("databaseHistoryFileFilename", "/db_history_file_test");
 
         final String remaining = "test_name";
@@ -60,7 +60,7 @@ public class DebeziumMySqlComponentTest {
         assertEquals("dbz", configuration.getDatabaseUser());
         assertEquals("pwd", configuration.getDatabasePassword());
         assertEquals("test", configuration.getDatabaseServerName());
-        assertEquals(1234, configuration.getDatabaseServerId());
+        assertEquals(1234L, configuration.getDatabaseServerId());
         assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileFilename());
     }
 

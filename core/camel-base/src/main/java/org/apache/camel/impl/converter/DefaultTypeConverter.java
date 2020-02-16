@@ -17,6 +17,7 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -31,10 +32,11 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation will load type converters up-front on startup.
  */
-public class DefaultTypeConverter extends BaseTypeConverterRegistry {
+public class DefaultTypeConverter extends BaseTypeConverterRegistry implements AnnotationScanTypeConverters {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTypeConverter.class);
 
+    private volatile boolean loadTypeConvertersDone;
     private final boolean loadTypeConverters;
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector,
@@ -73,8 +75,35 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
         // core type converters is always loaded which does not use any classpath scanning and therefore is fast
         loadCoreAndFastTypeConverters();
 
+        String time = TimeUtils.printDuration(watch.taken());
+        LOG.debug("Loaded {} type converters in {}", typeMappings.size(), time);
+
+        if (!loadTypeConvertersDone && isLoadTypeConverters()) {
+            scanTypeConverters();
+        }
+    }
+
+    private boolean isLoadTypeConverters() {
+        boolean load = loadTypeConverters;
+        if (camelContext != null) {
+            // camel context can override
+            load = camelContext.isLoadTypeConverters();
+        }
+        return load;
+    }
+
+    @Override
+    public void scanTypeConverters() throws Exception {
+        StopWatch watch = new StopWatch();
+
         // we are using backwards compatible legacy mode to detect additional converters
-        if (loadTypeConverters) {
+        if (!loadTypeConvertersDone) {
+            loadTypeConvertersDone = true;
+
+            if (resolver != null) {
+                typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+            }
+
             int fast = typeMappings.size();
             // load type converters up front
             loadTypeConverters();
@@ -93,15 +122,6 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
         }
 
         String time = TimeUtils.printDuration(watch.taken());
-        LOG.debug("Loaded {} type converters in {}", typeMappings.size(), time);
+        LOG.debug("Scanned {} type converters in {}", typeMappings.size(), time);
     }
-
-    @Override
-    protected void initTypeConverterLoaders() {
-        // only use Camel 2.x annotation based loaders if enabled
-        if (resolver != null && loadTypeConverters)  {
-            typeConverterLoaders.add(new FastAnnotationTypeConverterLoader(resolver));
-        }
-    }
-
 }

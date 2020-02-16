@@ -80,6 +80,7 @@ import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
+import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -2512,6 +2513,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     protected void doStartCamel() throws Exception {
+        // ensure additional type converters is loaded
+        if (loadTypeConverters && typeConverter instanceof AnnotationScanTypeConverters) {
+            ((AnnotationScanTypeConverters) typeConverter).scanTypeConverters();
+        }
 
         // custom properties may use property placeholders so resolve those
         // early on

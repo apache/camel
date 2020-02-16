@@ -46,7 +46,7 @@ public class CouchDbComponentTest extends CamelTestSupport {
         params.put("createDatabase", true);
         params.put("username", "coldplay");
         params.put("password", "chrism");
-        params.put("heartbeat", 1000);
+        params.put("heartbeat", "1000");
         params.put("style", "gothic");
         params.put("deletes", false);
         params.put("updates", false);
