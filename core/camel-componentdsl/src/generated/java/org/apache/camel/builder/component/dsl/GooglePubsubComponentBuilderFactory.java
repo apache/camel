@@ -89,6 +89,43 @@ public interface GooglePubsubComponentBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of producers to cache. This could be increased if you
+         * have producers for lots of different topics.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default GooglePubsubComponentBuilder publisherCacheSize(
+                int publisherCacheSize) {
+            doSetProperty("publisherCacheSize", publisherCacheSize);
+            return this;
+        }
+        /**
+         * How many milliseconds should each producer stay alive in the cache.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default GooglePubsubComponentBuilder publisherCacheTimeout(
+                int publisherCacheTimeout) {
+            doSetProperty("publisherCacheTimeout", publisherCacheTimeout);
+            return this;
+        }
+        /**
+         * How many milliseconds should a producer be allowed to terminate.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default GooglePubsubComponentBuilder publisherTerminationTimeout(
+                int publisherTerminationTimeout) {
+            doSetProperty("publisherTerminationTimeout", publisherTerminationTimeout);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -121,6 +158,9 @@ public interface GooglePubsubComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "publisherCacheSize": ((GooglePubsubComponent) component).setPublisherCacheSize((int) value); return true;
+            case "publisherCacheTimeout": ((GooglePubsubComponent) component).setPublisherCacheTimeout((int) value); return true;
+            case "publisherTerminationTimeout": ((GooglePubsubComponent) component).setPublisherTerminationTimeout((int) value); return true;
             case "basicPropertyBinding": ((GooglePubsubComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
