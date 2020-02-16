@@ -94,7 +94,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
         List<ApiFuture<String>> messageIdFutures = new ArrayList<>();
         try {
-            Publisher publisher = endpoint.getPublisher(topicName);
+            Publisher publisher = endpoint.getComponent().getPublisher(topicName);
 
             for (Exchange exchange : exchanges) {
                 Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);

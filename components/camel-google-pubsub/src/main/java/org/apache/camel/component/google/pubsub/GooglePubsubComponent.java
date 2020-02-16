@@ -17,8 +17,15 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -27,6 +34,43 @@ import org.apache.camel.support.DefaultComponent;
  */
 @Component("google-pubsub")
 public class GooglePubsubComponent extends DefaultComponent {
+
+    @Metadata(
+            label = "producer",
+            description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics."
+    )
+    private int publisherCacheSize = 100;
+
+    @Metadata(
+            label = "producer",
+            description = "How many milliseconds should each producer stay alive in the cache."
+    )
+    private int publisherCacheTimeout = 180000;
+
+    @Metadata(
+            label = "producer",
+            description = "How many milliseconds should a producer be allowed to terminate."
+    )
+    private int publisherTerminationTimeout = 60000;
+
+    private RemovalListener<String, Publisher> removalListener = removal -> {
+        Publisher publisher = removal.getValue();
+        if (publisher == null) {
+            return;
+        }
+        publisher.shutdown();
+        try {
+            publisher.awaitTermination(publisherTerminationTimeout, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    };
+
+    private Cache<String, Publisher> cachedPublishers = CacheBuilder.newBuilder()
+            .expireAfterWrite(publisherCacheTimeout, TimeUnit.MILLISECONDS)
+            .maximumSize(publisherCacheSize)
+            .removalListener(removalListener)
+            .build();
 
     public GooglePubsubComponent() {
     }
@@ -47,6 +91,40 @@ public class GooglePubsubComponent extends DefaultComponent {
         setProperties(pubsubEndpoint, parameters);
 
         return pubsubEndpoint;
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        cachedPublishers.cleanUp();
+        super.doShutdown();
+    }
+
+    public Publisher getPublisher(String topicName) throws ExecutionException {
+        return cachedPublishers.get(topicName, () -> Publisher.newBuilder(topicName).build());
+    }
+
+    public int getPublisherCacheSize() {
+        return publisherCacheSize;
+    }
+
+    public void setPublisherCacheSize(int publisherCacheSize) {
+        this.publisherCacheSize = publisherCacheSize;
+    }
+
+    public int getPublisherCacheTimeout() {
+        return publisherCacheTimeout;
+    }
+
+    public void setPublisherCacheTimeout(int publisherCacheTimeout) {
+        this.publisherCacheTimeout = publisherCacheTimeout;
+    }
+
+    public int getPublisherTerminationTimeout() {
+        return publisherTerminationTimeout;
+    }
+
+    public void setPublisherTerminationTimeout(int publisherTerminationTimeout) {
+        this.publisherTerminationTimeout = publisherTerminationTimeout;
     }
 }
 

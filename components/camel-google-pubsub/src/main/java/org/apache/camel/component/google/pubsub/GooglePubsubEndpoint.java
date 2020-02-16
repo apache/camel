@@ -65,25 +65,6 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE", description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
 
-    private RemovalListener<String, Publisher> removalListener = removal -> {
-        Publisher publisher = removal.getValue();
-        if (publisher == null) {
-            return;
-        }
-        publisher.shutdown();
-        try {
-            publisher.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    };
-
-    private Cache<String, Publisher> cachedPublishers = CacheBuilder.newBuilder()
-            .expireAfterWrite(3, TimeUnit.MINUTES)
-            .maximumSize(100)
-            .removalListener(removalListener)
-            .build();
-
     public GooglePubsubEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
 
@@ -174,9 +155,5 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void setAckMode(GooglePubsubConstants.AckMode ackMode) {
         this.ackMode = ackMode;
-    }
-
-    public Publisher getPublisher(String topicName) throws ExecutionException {
-        return cachedPublishers.get(topicName, () -> Publisher.newBuilder(topicName).build());
     }
 }
