@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.zookeeper.cloud;
 
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import java.util.Collections;
+
+import org.apache.camel.component.zookeeper.ZooKeeperContainer;
+import org.apache.camel.test.testcontainers.ContainerPropertiesFunction;
+import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -26,17 +29,17 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
-import org.junit.After;
 import org.junit.Test;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.testcontainers.containers.GenericContainer;
 
-public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport {
-    private static final int SERVER_PORT = 9001;
+public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTestSupport {
     private static final String SERVICE_NAME = "http-service";
     private static final String SERVICE_PATH = "/camel";
 
-    private ZooKeeperTestSupport.TestZookeeperServer server;
     private CuratorFramework curator;
     private ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> discovery;
 
@@ -45,14 +48,16 @@ public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport 
     // ***********************
 
     @Override
+    public GenericContainer createContainer() {
+        return new ZooKeeperContainer();
+    }
+
+    @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        server = new ZooKeeperTestSupport.TestZookeeperServer(SERVER_PORT, true);
-        ZooKeeperTestSupport.waitForServerUp("127.0.0.1:" + SERVER_PORT, 1000);
-
         curator = CuratorFrameworkFactory.builder()
-            .connectString("127.0.0.1:" + SERVER_PORT)
+            .connectString(getContainerHost(ZooKeeperContainer.CONTAINER_NAME) + ":" + getContainerPort(ZooKeeperContainer.CONTAINER_NAME, ZooKeeperContainer.CLIENT_PORT))
             .retryPolicy(new ExponentialBackoffRetry(1000, 3))
             .build();
 
@@ -91,16 +96,11 @@ public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport 
     }
 
     @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
 
         CloseableUtils.closeQuietly(discovery);
         CloseableUtils.closeQuietly(curator);
-
-        if (server != null) {
-            server.shutdown();
-        }
     }
 
     // ***********************
@@ -125,6 +125,16 @@ public class SpringZooKeeperServiceCallRouteTest extends CamelSpringTestSupport 
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/zookeeper/cloud/SpringZooKeeperServiceCallRouteTest.xml");
+        GenericApplicationContext applicationContext = new GenericApplicationContext();
+        applicationContext.getBeanFactory().registerSingleton(
+            "zkProperties",
+            new ContainerPropertiesFunction(Collections.singletonList(getContainer(ZooKeeperContainer.CONTAINER_NAME))));
+
+        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
+        xmlReader.loadBeanDefinitions(new ClassPathResource("org/apache/camel/component/zookeeper/cloud/SpringZooKeeperServiceCallRouteTest.xml"));
+
+        applicationContext.refresh();
+
+        return applicationContext;
     }
 }

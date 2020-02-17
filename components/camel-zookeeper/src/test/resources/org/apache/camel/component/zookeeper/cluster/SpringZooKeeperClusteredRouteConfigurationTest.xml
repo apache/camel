@@ -25,11 +25,22 @@
          http://camel.apache.org/schema/spring
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+  <bean id="zkContainer" class="org.apache.camel.component.zookeeper.ZooKeeperContainer" init-method="start" destroy-method="start">
+    <constructor-arg>
+      <value>zookeeper</value>
+    </constructor-arg>
+  </bean>
+
+  <bean id="zkConnectString" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="zkContainer"/>
+    <property name="targetMethod" value="getConnectionString">
+    </property>
+  </bean>
 
   <bean id="cluster-service" class="org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService">
     <property name="id" value="node-1"/>
     <property name="basePath" value="/camel/cluster"/>
-    <property name="nodes" value="localhost:2181"/>
+    <property name="nodes" ref="zkConnectString"/>
   </bean>
 
   <bean id="cluster-policy" class="org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory" factory-method="forNamespace">

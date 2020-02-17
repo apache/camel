@@ -27,18 +27,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport.TestZookeeperServer;
+import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ZooKeeperClusteredRoutePolicyFactoryTest {
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClusteredRoutePolicyFactoryTest.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
@@ -51,14 +48,15 @@ public final class ZooKeeperClusteredRoutePolicyFactoryTest {
 
     @Test
     public void test() throws Exception {
-        TestZookeeperServer server = null;
+        ZooKeeperContainer container = null;
 
         try {
-            server = new TestZookeeperServer(PORT, true);
-            ZooKeeperTestSupport.waitForServerUp("localhost:" + PORT, 1000);
+            container = new ZooKeeperContainer();
+            container.start();
 
+            String connectString = container.getConnectionString();
             for (String id : CLIENTS) {
-                SCHEDULER.submit(() -> run(id));
+                SCHEDULER.submit(() -> run(connectString, id));
             }
 
             LATCH.await(1, TimeUnit.MINUTES);
@@ -67,8 +65,8 @@ public final class ZooKeeperClusteredRoutePolicyFactoryTest {
             Assert.assertEquals(CLIENTS.size(), RESULTS.size());
             Assert.assertTrue(RESULTS.containsAll(CLIENTS));
         } finally {
-            if (server != null) {
-                server.shutdown();
+            if (container != null) {
+                container.stop();
             }
         }
     }
@@ -77,14 +75,14 @@ public final class ZooKeeperClusteredRoutePolicyFactoryTest {
     // Run a Camel node
     // ************************************
 
-    private static void run(String id) {
+    private static void run(String connectString, String id) {
         try {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
 
             ZooKeeperClusterService service = new ZooKeeperClusterService();
             service.setId("node-" + id);
-            service.setNodes("localhost:" + PORT);
+            service.setNodes(connectString);
             service.setBasePath("/camel");
 
             DefaultCamelContext context = new DefaultCamelContext();
