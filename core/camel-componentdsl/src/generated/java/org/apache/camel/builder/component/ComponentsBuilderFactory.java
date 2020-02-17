@@ -598,6 +598,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2SnsComponentBuilderFactory.aws2Sns();
     }
     /**
+     * AWS 2 Simple Queue Service (camel-aws2-sqs)
+     * The aws-sqs component is used for sending and receiving messages to
+     * Amazon's SQS service.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-aws2-sqs
+     */
+    static org.apache.camel.builder.component.dsl.Aws2SqsComponentBuilderFactory.Aws2SqsComponentBuilder aws2Sqs() {
+        return org.apache.camel.builder.component.dsl.Aws2SqsComponentBuilderFactory.aws2Sqs();
+    }
+    /**
      * AWS 2 Translate (camel-aws2-translate)
      * The aws2-translate component is used for managing Amazon Translate
      * 
