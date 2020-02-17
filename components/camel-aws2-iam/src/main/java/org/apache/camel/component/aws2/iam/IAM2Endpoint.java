@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.iam.IamClient;
 import software.amazon.awssdk.services.iam.IamClientBuilder;
 
 /**
- * The aws-iam is used for managing Amazon IAM
+ * The aws2-iam is used for managing Amazon IAM
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-iam", title = "AWS 2 IAM", syntax = "aws2-iam:label", producerOnly = true, label = "cloud,management")
 public class IAM2Endpoint extends ScheduledPollEndpoint {
