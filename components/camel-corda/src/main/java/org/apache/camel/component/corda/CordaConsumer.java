@@ -78,7 +78,7 @@ public class CordaConsumer extends DefaultConsumer {
         PageSpecification pageSpec = configuration.getPageSpecification();
         Sort sorting = configuration.getSort();
 
-        DataFeed<Vault.Page<ContractState>, Vault.Update<ContractState>> pageUpdateDataFeed = null;
+        DataFeed<Vault.Page<ContractState>, Vault.Update<ContractState>> pageUpdateDataFeed;
         switch (configuration.getOperation()) {
 
             case VAULT_TRACK:
@@ -174,7 +174,7 @@ public class CordaConsumer extends DefaultConsumer {
             case START_TRACKED_FLOW_DYNAMIC:
                 LOG.debug("subscribing for operation: " + START_TRACKED_FLOW_DYNAMIC);
 
-                FlowProgressHandle<Object> objectFlowProgressHandle = cordaRPCOps.startTrackedFlowDynamic(configuration.getFlowLociClass(), configuration.getArguments());
+                FlowProgressHandle<Object> objectFlowProgressHandle = cordaRPCOps.startTrackedFlowDynamic(configuration.getFlowLogicClass(), configuration.getFlowLogicArguments());
                 Object result = objectFlowProgressHandle.getReturnValue().get();
                 Observable<String> progress = objectFlowProgressHandle.getProgress();
                 processSnapshot(exchange, result);

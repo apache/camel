@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.corda;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCConnection;
 import net.corda.core.messaging.CordaRPCOps;
@@ -26,10 +23,8 @@ import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
@@ -71,7 +66,7 @@ public class CordaEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        NetworkHostAndPort rpcAddress = new NetworkHostAndPort(configuration.getHost(), configuration.getPort());
+        NetworkHostAndPort rpcAddress = new NetworkHostAndPort(configuration.retrieveHost(), configuration.retrievePort());
         CordaRPCClient rpcClient = new CordaRPCClient(rpcAddress);
         rpcConnection = rpcClient.start(this.configuration.getUsername(), this.configuration.getPassword());
         proxy = rpcConnection.getProxy();
