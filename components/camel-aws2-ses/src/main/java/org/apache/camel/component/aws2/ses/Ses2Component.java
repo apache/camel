@@ -26,6 +26,9 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.ses.SesClient;
 
+/**
+ * For working with Amazon ECS SDK v2.
+ */
 @Component("aws2-ses")
 public class Ses2Component extends DefaultComponent {
 
