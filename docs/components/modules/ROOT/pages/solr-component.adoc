@@ -138,6 +138,8 @@ bean]
 
 |COMMIT |n/a |performs a commit on any pending index changes
 
+|SOFT_COMMIT |n/a |performs a `soft commit` (without guarantee that Lucene index files are written to stable storage; useful for Near Real Time operations) on any pending index changes
+
 |ROLLBACK |n/a |performs a rollback on any pending index changes
 
 |OPTIMIZE |n/a |performs a commit on any pending index changes and then runs the
