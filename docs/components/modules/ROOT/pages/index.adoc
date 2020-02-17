@@ -58,7 +58,7 @@ Number of Components: 328 in 262 JAR artifacts (1 deprecated)
 
 | xref:aws2-eks-component.adoc[AWS 2 EKS] (camel-aws2-eks) | 3.1 | The aws2-eks is used for managing Amazon EKS
 
-| xref:aws2-iam-component.adoc[AWS 2 IAM] (camel-aws2-iam) | 3.1 | The aws-iam is used for managing Amazon IAM
+| xref:aws2-iam-component.adoc[AWS 2 IAM] (camel-aws2-iam) | 3.1 | The aws2-iam is used for managing Amazon IAM
 
 | xref:aws2-kms-component.adoc[AWS 2 KMS] (camel-aws2-kms) | 3.1 | The aws2-kms is used for managing Amazon KMS
 
