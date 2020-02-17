@@ -723,20 +723,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // allow any custom logic before we create the processor
             reifier(routeContext, output).preCreateProcessor();
 
-//            // resolve properties before we create the processor
-//            ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, output);
-
-//            // also resolve properties and constant fields on embedded expressions
-//            ProcessorDefinition<?> me = output;
-//            if (me instanceof ExpressionNode) {
-//                ExpressionNode exp = (ExpressionNode)me;
-//                ExpressionDefinition expressionDefinition = exp.getExpression();
-//                if (expressionDefinition != null) {
-//                    // resolve properties before we create the processor
-//                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
-//                }
-//            }
-
             Processor processor = createProcessor(output);
 
             // inject id
@@ -793,20 +779,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         // allow any custom logic before we create the processor
         preCreateProcessor();
-
-//        // resolve properties before we create the processor
-//        ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, definition);
-
-//        // also resolve properties and constant fields on embedded expressions
-//        ProcessorDefinition<?> me = definition;
-//        if (me instanceof ExpressionNode) {
-//            ExpressionNode exp = (ExpressionNode)me;
-//            ExpressionDefinition expressionDefinition = exp.getExpression();
-//            if (expressionDefinition != null) {
-//                // resolve properties before we create the processor
-//                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, expressionDefinition);
-//            }
-//        }
 
         // at first use custom factory
         if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {

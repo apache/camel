@@ -66,13 +66,6 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 exp = whenClause.getExpression();
             }
 
-//            // also resolve properties and constant fields on embedded
-//            // expressions in the when clauses
-//            if (exp != null) {
-//                // resolve properties before we create the processor
-//                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, exp);
-//            }
-
             FilterProcessor filter = (FilterProcessor)createProcessor(whenClause);
             filters.add(filter);
         }
