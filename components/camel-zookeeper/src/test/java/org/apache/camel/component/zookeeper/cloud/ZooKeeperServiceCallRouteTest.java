@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
+import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
@@ -32,7 +32,6 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
-import org.junit.After;
 import org.junit.Test;
 
 public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
@@ -41,7 +40,7 @@ public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
     private static final int SERVICE_COUNT = 5;
     private static final String SERVICE_PATH = "/camel";
 
-    private ZooKeeperTestSupport.TestZookeeperServer server;
+    protected ZooKeeperContainer container;
     private CuratorFramework curator;
     private ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> discovery;
     private List<ServiceInstance<ZooKeeperServiceDiscovery.MetaData>> instances;
@@ -55,11 +54,11 @@ public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        server = new ZooKeeperTestSupport.TestZookeeperServer(SERVER_PORT, true);
-        ZooKeeperTestSupport.waitForServerUp("127.0.0.1:" + SERVER_PORT, 1000);
+        container = new ZooKeeperContainer();
+        container.start();
 
         curator = CuratorFrameworkFactory.builder()
-            .connectString("127.0.0.1:" + SERVER_PORT)
+            .connectString(container.getConnectionString())
             .retryPolicy(new ExponentialBackoffRetry(1000, 3))
             .build();
 
@@ -90,7 +89,6 @@ public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
     }
 
     @Override
-    @After
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -105,7 +103,9 @@ public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
         CloseableUtils.closeQuietly(discovery);
         CloseableUtils.closeQuietly(curator);
 
-        server.shutdown();
+        if (container != null) {
+            container.stop();
+        }
     }
 
     // *************************************************************************
@@ -136,7 +136,7 @@ public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {
                         .name(SERVICE_NAME)
                         .component("http")
                         .defaultLoadBalancer()
-                        .zookeeperServiceDiscovery("127.0.0.1:" + SERVER_PORT, SERVICE_PATH)
+                        .zookeeperServiceDiscovery(container.getConnectionString(), SERVICE_PATH)
                         .end()
                     .to("log:org.apache.camel.component.zookeeper.cloud?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");
