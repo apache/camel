@@ -19,6 +19,7 @@ package org.apache.camel.component.solr;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Optional;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -116,7 +117,7 @@ public class SolrEndpoint extends DefaultEndpoint {
     private CloudSolrClient getCloudServer() {
         CloudSolrClient rVal = null;
         if (this.getZkHost() != null && this.getCollection() != null) {
-            rVal = new CloudSolrClient.Builder().withZkHost(zkHost).build();
+            rVal = new CloudSolrClient.Builder(java.util.Arrays.asList(zkHost), Optional.empty()).build();
             rVal.setDefaultCollection(this.getCollection());
         }
         return rVal;
@@ -131,19 +132,24 @@ public class SolrEndpoint extends DefaultEndpoint {
             ref = new SolrComponent.SolrServerReference();
             CloudSolrClient cloudServer = getCloudServer();
             if (cloudServer == null) {
-                HttpSolrClient solrServer = new HttpSolrClient.Builder(url).build();                
-                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient.Builder(url).withQueueSize(streamingQueueSize).withThreadCount(streamingThreadCount).build();
-                
-                // set the properties on the solr server               
+                HttpSolrClient.Builder solrServerBuilder = new HttpSolrClient.Builder(url);
+                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient.Builder(url)
+                        .withQueueSize(streamingQueueSize)
+                        .withThreadCount(streamingThreadCount)
+                        .build();
                 if (soTimeout != null) {
-                    solrServer.setSoTimeout(soTimeout);
+                    solrServerBuilder.withSocketTimeout(soTimeout);
                 }
                 if (connectionTimeout != null) {
-                    solrServer.setConnectionTimeout(connectionTimeout);
+                    solrServerBuilder.withConnectionTimeout(connectionTimeout);
                 }                
+
+                HttpSolrClient solrServer = solrServerBuilder.build();
+                // set the properties on the solr server
                 if (followRedirects != null) {
                     solrServer.setFollowRedirects(followRedirects);
-                }                
+                }
+
                 ref.setSolrServer(solrServer);
                 ref.setUpdateSolrServer(solrStreamingServer);
             }
