@@ -198,14 +198,18 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         super(routeContext);
         this.definition = definition;
         // its okay to override the reifier strategy
-        this.routeContext.getCamelContext().adapt(ExtendedCamelContext.class).setReifierStrategy(this);
+        if (routeContext != null && routeContext.getCamelContext() != null) {
+            routeContext.getCamelContext().adapt(ExtendedCamelContext.class).setReifierStrategy(this);
+        }
     }
 
     public ProcessorReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
-        // its okay to override the reifier strategy
-        this.camelContext.adapt(ExtendedCamelContext.class).setReifierStrategy(this);
+        if (camelContext != null) {
+            // its okay to override the reifier strategy
+            camelContext.adapt(ExtendedCamelContext.class).setReifierStrategy(this);
+        }
     }
 
     public static void registerReifier(Class<?> processorClass, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
