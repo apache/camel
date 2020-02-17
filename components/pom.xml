@@ -134,6 +134,7 @@
         <module>camel-aws2-mq</module>
         <module>camel-aws2-ses</module>
         <module>camel-aws2-sns</module>
+        <module>camel-aws2-sqs</module>
         <module>camel-aws2-translate</module>
         <module>camel-aws-xray</module>
         <module>camel-azure</module>

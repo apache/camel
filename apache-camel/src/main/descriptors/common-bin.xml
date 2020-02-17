@@ -96,6 +96,7 @@
         <include>org.apache.camel:camel-aws2-msk</include>
         <include>org.apache.camel:camel-aws2-ses</include>
         <include>org.apache.camel:camel-aws2-sns</include>
+        <include>org.apache.camel:camel-aws2-sqs</include>
         <include>org.apache.camel:camel-aws2-translate</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
