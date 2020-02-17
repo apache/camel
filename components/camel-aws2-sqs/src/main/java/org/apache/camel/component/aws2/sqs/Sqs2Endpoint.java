@@ -56,7 +56,7 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 
 /**
- * The aws-sqs component is used for sending and receiving messages to Amazon's
+ * The aws2-sqs component is used for sending and receiving messages to Amazon's
  * SQS service.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-sqs", title = "AWS 2 Simple Queue Service", syntax = "aws2-sqs:queueNameOrArn", label = "cloud,messaging")

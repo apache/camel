@@ -372,10 +372,10 @@ public class Sqs2Configuration implements Cloneable {
     }
 
     /**
-     * Specify the queue region which could be used with queueOwnerAWSAccountId
-     * to build the service URL. When using this parameter, the configuration
-     * will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which ECS client needs to work. When using this
+     * parameter, the configuration will expect the lowercase name of the
+     * region (for example ap-east-1) You'll need to use the name
+     * Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
