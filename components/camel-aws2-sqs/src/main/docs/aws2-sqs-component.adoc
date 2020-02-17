@@ -16,6 +16,11 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SQS. More information is available at
 https://aws.amazon.com/sqs[Amazon SQS].
 
+[NOTE]
+====
+The AWS2 SQS component is not supported in OSGI
+====
+
 == URI Format
 
 [source,java]
