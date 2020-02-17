@@ -34,7 +34,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -125,7 +124,7 @@ public class Sqs2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         } else {
-        	SendMessageBatchRequest req = exchange.getIn().getBody(SendMessageBatchRequest.class);
+            SendMessageBatchRequest req = exchange.getIn().getBody(SendMessageBatchRequest.class);
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(req);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
@@ -252,7 +251,7 @@ public class Sqs2Producer extends DefaultProducer {
                 } else if (value instanceof ByteBuffer) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("Binary");
-                    mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
+                    mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer)value));
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Boolean) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();

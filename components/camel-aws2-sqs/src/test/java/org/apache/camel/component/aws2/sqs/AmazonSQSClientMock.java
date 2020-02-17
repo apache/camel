@@ -68,7 +68,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     @Override
     public ListQueuesResponse listQueues(ListQueuesRequest request) {
-    	ListQueuesResponse.Builder result = ListQueuesResponse.builder();
+        ListQueuesResponse.Builder result = ListQueuesResponse.builder();
         List<String> queues = new ArrayList<>();
         queues.add("queue1");
         queues.add("queue2");
@@ -92,15 +92,13 @@ public class AmazonSQSClientMock implements SqsClient {
         message.md5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
         message.messageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
         message.receiptHandle("0NNAq8PwvXsyZkR6yu4nQ07FGxNmOBWi5zC9+4QMqJZ0DJ3gVOmjI2Gh/oFnb0IeJqy5Zc8kH4JX7GVpfjcEDjaAPSeOkXQZRcaBqt"
-                                 + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
+                              + "4lOtyfj0kcclVV/zS7aenhfhX5Ixfgz/rHhsJwtCPPvTAdgQFGYrqaHly+etJiawiNPVc=");
 
         synchronized (messages) {
             messages.add(message.build());
         }
 
-        return SendMessageResponse.builder()
-        .messageId("f6fb6f99-5eb2-4be4-9b15-144774141458")
-        .md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee").build();
+        return SendMessageResponse.builder().messageId("f6fb6f99-5eb2-4be4-9b15-144774141458").md5OfMessageBody("6a1559560f67c5e7a7d5d838bf0272ee").build();
     }
 
     @Override
@@ -213,15 +211,15 @@ public class AmazonSQSClientMock implements SqsClient {
         return result.build();
     }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
 }

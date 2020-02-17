@@ -19,19 +19,18 @@ package org.apache.camel.component.aws2.sqs;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
-import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
+
 
 public class SqsComponentSpringTest extends CamelSpringTestSupport {
 
