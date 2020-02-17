@@ -16,9 +16,6 @@
  */
 package org.apache.camel.language.simple;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
@@ -29,70 +26,73 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class SimpleTokenizer {
 
-    private static final List<SimpleTokenType> KNOWN_TOKENS = new ArrayList<>();
+    // keep this number in sync with tokens list
+    private static final int NUMBER_OF_TOKENS = 47;
+
+    private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
     // optimise to be able to quick check for start functions
     private static final String[] FUNCTION_START = new String[]{"${", "$simple{"};
 
     static {
         // add known tokens
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "$simple{"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionEnd, "}"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, " "));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\t"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\n"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\r"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.singleQuote, "'"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.doubleQuote, "\""));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "true"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "false"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.nullValue, "null"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.escape, "\\"));
+        KNOWN_TOKENS[0] = new SimpleTokenType(TokenType.functionStart, "${");
+        KNOWN_TOKENS[1] = new SimpleTokenType(TokenType.functionStart, "$simple{");
+        KNOWN_TOKENS[2] = new SimpleTokenType(TokenType.functionEnd, "}");
+        KNOWN_TOKENS[3] = new SimpleTokenType(TokenType.whiteSpace, " ");
+        KNOWN_TOKENS[4] = new SimpleTokenType(TokenType.whiteSpace, "\t");
+        KNOWN_TOKENS[5] = new SimpleTokenType(TokenType.whiteSpace, "\n");
+        KNOWN_TOKENS[6] = new SimpleTokenType(TokenType.whiteSpace, "\r");
+        KNOWN_TOKENS[7] = new SimpleTokenType(TokenType.singleQuote, "'");
+        KNOWN_TOKENS[8] = new SimpleTokenType(TokenType.doubleQuote, "\"");
+        KNOWN_TOKENS[9] = new SimpleTokenType(TokenType.booleanValue, "true");
+        KNOWN_TOKENS[10] = new SimpleTokenType(TokenType.booleanValue, "false");
+        KNOWN_TOKENS[11] = new SimpleTokenType(TokenType.nullValue, "null");
+        KNOWN_TOKENS[12] = new SimpleTokenType(TokenType.escape, "\\");
 
         // binary operators
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "=="));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "=~"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, ">="));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "<="));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, ">"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "<"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!=~"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!="));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not is"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!is"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "is"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not contains"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!contains"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "contains"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!~~"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "~~"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not regex"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!regex"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "regex"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not in"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!in"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "in"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not range"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "!range"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "range"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "startsWith"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "starts with"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "endsWith"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "ends with"));
+        KNOWN_TOKENS[13] = new SimpleTokenType(TokenType.binaryOperator, "==");
+        KNOWN_TOKENS[14] = new SimpleTokenType(TokenType.binaryOperator, "=~");
+        KNOWN_TOKENS[15] = new SimpleTokenType(TokenType.binaryOperator, ">=");
+        KNOWN_TOKENS[16] = new SimpleTokenType(TokenType.binaryOperator, "<=");
+        KNOWN_TOKENS[17] = new SimpleTokenType(TokenType.binaryOperator, ">");
+        KNOWN_TOKENS[18] = new SimpleTokenType(TokenType.binaryOperator, "<");
+        KNOWN_TOKENS[19] = new SimpleTokenType(TokenType.binaryOperator, "!=~");
+        KNOWN_TOKENS[20] = new SimpleTokenType(TokenType.binaryOperator, "!=");
+        KNOWN_TOKENS[21] = new SimpleTokenType(TokenType.binaryOperator, "not is");
+        KNOWN_TOKENS[22] = new SimpleTokenType(TokenType.binaryOperator, "!is");
+        KNOWN_TOKENS[23] = new SimpleTokenType(TokenType.binaryOperator, "is");
+        KNOWN_TOKENS[24] = new SimpleTokenType(TokenType.binaryOperator, "not contains");
+        KNOWN_TOKENS[25] = new SimpleTokenType(TokenType.binaryOperator, "!contains");
+        KNOWN_TOKENS[26] = new SimpleTokenType(TokenType.binaryOperator, "contains");
+        KNOWN_TOKENS[27] = new SimpleTokenType(TokenType.binaryOperator, "!~~");
+        KNOWN_TOKENS[28] = new SimpleTokenType(TokenType.binaryOperator, "~~");
+        KNOWN_TOKENS[29] = new SimpleTokenType(TokenType.binaryOperator, "not regex");
+        KNOWN_TOKENS[30] = new SimpleTokenType(TokenType.binaryOperator, "!regex");
+        KNOWN_TOKENS[31] = new SimpleTokenType(TokenType.binaryOperator, "regex");
+        KNOWN_TOKENS[32] = new SimpleTokenType(TokenType.binaryOperator, "not in");
+        KNOWN_TOKENS[33] = new SimpleTokenType(TokenType.binaryOperator, "!in");
+        KNOWN_TOKENS[34] = new SimpleTokenType(TokenType.binaryOperator, "in");
+        KNOWN_TOKENS[35] = new SimpleTokenType(TokenType.binaryOperator, "not range");
+        KNOWN_TOKENS[36] = new SimpleTokenType(TokenType.binaryOperator, "!range");
+        KNOWN_TOKENS[37] = new SimpleTokenType(TokenType.binaryOperator, "range");
+        KNOWN_TOKENS[38] = new SimpleTokenType(TokenType.binaryOperator, "startsWith");
+        KNOWN_TOKENS[39] = new SimpleTokenType(TokenType.binaryOperator, "starts with");
+        KNOWN_TOKENS[40] = new SimpleTokenType(TokenType.binaryOperator, "endsWith");
+        KNOWN_TOKENS[41] = new SimpleTokenType(TokenType.binaryOperator, "ends with");
 
         // unary operators
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.unaryOperator, "++"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.unaryOperator, "--"));
+        KNOWN_TOKENS[42] = new SimpleTokenType(TokenType.unaryOperator, "++");
+        KNOWN_TOKENS[43] = new SimpleTokenType(TokenType.unaryOperator, "--");
 
         // logical operators
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.logicalOperator, "&&"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.logicalOperator, "||"));
+        KNOWN_TOKENS[44] = new SimpleTokenType(TokenType.logicalOperator, "&&");
+        KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
         //binary operator 
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.minusValue, "-"));
+        KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.minusValue, "-");
     }
 
     private SimpleTokenizer() {
@@ -202,11 +202,11 @@ public final class SimpleTokenizer {
 
         // it could be any of the known tokens
         String text = expression.substring(index);
-        for (SimpleTokenType token : KNOWN_TOKENS) {
-            if (acceptType(token.getType(), filters)) {
-                if (acceptToken(token, text, expression, index)) {
-                    return new SimpleToken(token, index);
-                }
+        for (int i = 0; i < NUMBER_OF_TOKENS; i++) {
+            SimpleTokenType token = KNOWN_TOKENS[i];
+            if (acceptType(token.getType(), filters)
+                    && acceptToken(token, text, expression, index)) {
+                return new SimpleToken(token, index);
             }
         }
 
@@ -230,35 +230,23 @@ public final class SimpleTokenizer {
 
     private static boolean acceptToken(SimpleTokenType token, String text, String expression, int index) {
         if (token.isUnary() && text.startsWith(token.getValue())) {
-            SimpleTokenType functionEndToken = getFunctionEndToken();
-            if (functionEndToken != null) {
-                int endLen = functionEndToken.getValue().length();
+            int endLen = 1;
 
-                // special check for unary as the previous must be a function end, and the next a whitespace
-                // to ensure unary operators is only applied on functions as intended
-                int len = token.getValue().length();
+            // special check for unary as the previous must be a function end, and the next a whitespace
+            // to ensure unary operators is only applied on functions as intended
+            int len = token.getValue().length();
 
-                String previous = "";
-                if (index - endLen >= 0) {
-                    previous = expression.substring(index - endLen, index);
-                }
-                String after = text.substring(len);
-                boolean whiteSpace = ObjectHelper.isEmpty(after) || after.startsWith(" ");
-                boolean functionEnd = previous.equals(functionEndToken.getValue());
-                return functionEnd && whiteSpace;
+            String previous = "";
+            if (index - endLen >= 0) {
+                previous = expression.substring(index - endLen, index);
             }
+            String after = text.substring(len);
+            boolean whiteSpace = ObjectHelper.isEmpty(after) || after.startsWith(" ");
+            boolean functionEnd = previous.equals("}");
+            return functionEnd && whiteSpace;
         }
 
         return text.startsWith(token.getValue());
-    }
-
-    private static SimpleTokenType getFunctionEndToken() {
-        for (SimpleTokenType token : KNOWN_TOKENS) {
-            if (token.isFunctionEnd()) {
-                return token;
-            }
-        }
-        return null;
     }
 
 }
