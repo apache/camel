@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.iam.IamClient;
 
 /**
- * For working with Amazon IAM.
+ * For working with Amazon IAM SDK v2.
  */
 @Component("aws2-iam")
 public class IAM2Component extends DefaultComponent {

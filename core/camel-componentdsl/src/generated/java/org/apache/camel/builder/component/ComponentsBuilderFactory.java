@@ -531,7 +531,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 IAM (camel-aws2-iam)
-     * The aws-iam is used for managing Amazon IAM
+     * The aws2-iam is used for managing Amazon IAM
      * 
      * Category: cloud,management
      * Since: 3.1
