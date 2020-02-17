@@ -27,6 +27,9 @@ import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
+/**
+ * For working with Amazon SQS SDK v2.
+ */
 @Component("aws2-sqs")
 public class Sqs2Component extends DefaultComponent {
 
