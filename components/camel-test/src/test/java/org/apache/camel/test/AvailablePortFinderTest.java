@@ -25,6 +25,10 @@ import java.net.ServerSocket;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+
 public class AvailablePortFinderTest {
 
     @Test
@@ -56,4 +60,31 @@ public class AvailablePortFinderTest {
         socket.close();
     }
 
+    @Test
+    public void testAvailablePortFinderPropertiesFunction() throws Exception {
+        AvailablePortFinderPropertiesFunction function = new AvailablePortFinderPropertiesFunction();
+
+        assertThat(function.apply("test")).isSameAs(function.apply("test"));
+        assertThat(function.apply("")).isEqualTo("");
+        assertThat(function.apply(null)).isNull();
+
+        // range
+        assertThat(Integer.parseInt(function.apply("test:1024-49151"))).isBetween(1024, 49150);
+
+        // validation
+        assertThatThrownBy(() -> function.apply("test:")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> function.apply("test:-")).isInstanceOf(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> function.apply("test:1024"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Unable to parse from range");
+
+        assertThatThrownBy(() -> function.apply("test:1024-"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Unable to parse to range");
+
+        assertThatThrownBy(() -> function.apply("test:-1234"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Unable to parse from range");
+    }
 }
