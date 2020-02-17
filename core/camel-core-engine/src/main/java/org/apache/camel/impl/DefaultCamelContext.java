@@ -61,7 +61,6 @@ import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
 import org.apache.camel.impl.engine.RuntimeCamelCatalogResolver;
 import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -172,7 +171,9 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     @Override
     protected void disallowAddingNewRoutes() {
         // we no longer need reifiers so clear its map (danger)
-        ProcessorReifier.dangerClearReifiers();
+        if (getReifierStrategy() != null) {
+            getReifierStrategy().clearReifiers();
+        }
     }
 
     @Override

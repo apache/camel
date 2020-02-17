@@ -108,6 +108,7 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.CamelContextHelper;
@@ -115,7 +116,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier {
+public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier implements ReifierStrategy {
 
     private static final Map<Class<?>, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
     static {
@@ -196,23 +197,23 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public ProcessorReifier(RouteContext routeContext, T definition) {
         super(routeContext);
         this.definition = definition;
+        // its okay to override the reifier strategy
+        this.routeContext.getCamelContext().adapt(ExtendedCamelContext.class).setReifierStrategy(this);
     }
 
     public ProcessorReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
+        // its okay to override the reifier strategy
+        this.camelContext.adapt(ExtendedCamelContext.class).setReifierStrategy(this);
     }
 
     public static void registerReifier(Class<?> processorClass, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
         PROCESSORS.put(processorClass, creator);
     }
 
-    /**
-     * DANGER: Clears the refifiers map.
-     * After this the JVM with Camel cannot add new routes (using same classloader to load this class).
-     * Clearing this map allows Camel to reduce memory footprint.
-     */
-    public static void dangerClearReifiers() {
+    @Override
+    public void clearReifiers() {
         PROCESSORS.clear();
     }
 
