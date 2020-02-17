@@ -17,10 +17,10 @@
 package org.apache.camel.core.osgi;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultManagementNameStrategy;
+import org.apache.camel.util.StringHelper;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -54,16 +54,14 @@ public class OsgiManagementNameStrategy extends DefaultManagementNameStrategy {
     protected String customResolveManagementName(String pattern, String answer) {
         String bundleId = "" + bundleContext.getBundle().getBundleId();
         String symbolicName = bundleContext.getBundle().getSymbolicName();
-        if (symbolicName != null) {
-            symbolicName = Matcher.quoteReplacement(symbolicName);
-        } else {
+        if (symbolicName == null) {
             symbolicName = "";
         }
-        String version = Matcher.quoteReplacement(bundleContext.getBundle().getVersion().toString());
+        String version = bundleContext.getBundle().getVersion().toString();
 
-        answer = answer.replaceFirst("#bundleId#", bundleId);
-        answer = answer.replaceFirst("#symbolicName#", symbolicName);
-        answer = answer.replaceFirst("#version#", version);
+        answer = StringHelper.replaceAll(answer, "#bundleId#", bundleId);
+        answer = StringHelper.replaceAll(answer, "#symbolicName#", symbolicName);
+        answer = StringHelper.replaceAll(answer, "#version#", version);
 
         // we got a candidate then find a free name
         // true = check fist if the candidate as-is is free, if not then use the counter

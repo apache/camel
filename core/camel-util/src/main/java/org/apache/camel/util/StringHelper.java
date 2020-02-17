@@ -253,7 +253,7 @@ public final class StringHelper {
      * @throws IllegalArgumentException if the input arguments is invalid
      */
     public static String replaceAll(String input, String from, String to) {
-        // TODO: Use String.replace instead of this method when using JDK11+ as its much faster there
+        // TODO: Use String.replace instead of this method when using JDK11 as minimum (as its much faster in JDK 11 onwards)
 
         if (ObjectHelper.isEmpty(input)) {
             return input;
