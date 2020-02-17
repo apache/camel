@@ -601,6 +601,26 @@
     "artifactId": "camel-aws2-sns",
     "version": "3.1.0-SNAPSHOT"
   },
+  "Aws2SqsComponentBuilderFactory": {
+    "kind": "component",
+    "scheme": "aws2-sqs",
+    "extendsScheme": "",
+    "syntax": "aws2-sqs:queueNameOrArn",
+    "title": "AWS 2 Simple Queue Service",
+    "description": "The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.",
+    "label": "cloud,messaging",
+    "deprecated": false,
+    "deprecationNote": "cloud,messaging",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.aws2.sqs.Sqs2Component",
+    "firstVersion": "3.1.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-sqs",
+    "version": "3.1.0-SNAPSHOT"
+  },
   "Aws2TranslateComponentBuilderFactory": {
     "kind": "component",
     "scheme": "aws2-translate",

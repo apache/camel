@@ -1,0 +1,361 @@
+[[aws-sqs-component]]
+= AWS Simple Queue Service Component
+
+*Since Camel 2.6*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+The sqs component supports sending and receiving messages to
+https://aws.amazon.com/sqs[Amazon's SQS] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon SQS. More information is available at
+https://aws.amazon.com/sqs[Amazon SQS].
+
+== URI Format
+
+[source,java]
+------------------------------
+aws-sqs://queueNameOrArn[?options]
+------------------------------
+
+The queue will be created if they don't already exists. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS Simple Queue Service component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessKey* (common) | Amazon AWS Access Key |  | String
+| *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
+| *secretKey* (common) | Amazon AWS Secret Key |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *configuration* (advanced) | The AWS SQS default configuration |  | SqsConfiguration
+|===
+// component options: END
+
+
+
+
+
+
+
+
+// endpoint options: START
+The AWS Simple Queue Service endpoint is configured using URI syntax:
+
+----
+aws-sqs:queueNameOrArn
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *queueNameOrArn* | *Required* Queue name or ARN |  | String
+|===
+
+
+=== Query Parameters (58 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonAWSHost* (common) | The hostname of the Amazon AWS cloud. | amazonaws.com | String
+| *amazonSQSClient* (common) | To use the AmazonSQS as client |  | AmazonSQS
+| *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
+| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
+| *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
+| *proxyProtocol* (common) | To define a proxy protocol when instantiating the SQS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
+| *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *concurrentConsumers* (consumer) | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | int
+| *defaultVisibilityTimeout* (consumer) | The default visibility timeout (in seconds) |  | Integer
+| *deleteAfterRead* (consumer) | Delete message from SQS after it has been read | true | boolean
+| *deleteIfFiltered* (consumer) | Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter. If 'false' and exchange does not make it through a Camel filter upstream in the route, then don't send DeleteMessage. | true | boolean
+| *extendMessageVisibility* (consumer) | If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at Amazon docs. | false | boolean
+| *kmsDataKeyReusePeriodSeconds* (consumer) | The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again. An integer representing seconds, between 60 seconds (1 minute) and 86,400 seconds (24 hours). Default: 300 (5 minutes). |  | Integer
+| *kmsMasterKeyId* (consumer) | The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. |  | String
+| *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited, but use 0 or negative number to disable it as unlimited. |  | int
+| *messageAttributeNames* (consumer) | A list of message attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *serverSideEncryptionEnabled* (consumer) | Define if Server Side Encryption is enabled or not on the queue | false | boolean
+| *visibilityTimeout* (consumer) | The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout attribute permanently. |  | Integer
+| *waitTimeSeconds* (consumer) | Duration in seconds (0 to 20) that the ReceiveMessage action call will wait until a message is in the queue to include in the response. |  | Integer
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *delaySeconds* (producer) | Delay sending messages for a number of seconds. |  | Integer
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageDeduplicationIdStrategy* (producer) | Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. The value can be one of: useExchangeId, useContentBasedDeduplication | useExchangeId | MessageDeduplicationIdStrategy
+| *messageGroupIdStrategy* (producer) | Only for FIFO queues. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. The value can be one of: useConstant, useExchangeId, usePropertyValue |  | MessageGroupIdStrategy
+| *operation* (producer) | The operation to do in case the user don't want to send only a message. The value can be one of: sendBatchMessage, deleteMessage, listQueues |  | SqsOperations
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *delayQueue* (advanced) | Define if you want to apply delaySeconds option to the queue or on single messages | false | boolean
+| *queueUrl* (advanced) | To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored. This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. The value can be one of: none, spring, quartz | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *proxyHost* (proxy) | To define a proxy host when instantiating the SQS client |  | String
+| *proxyPort* (proxy) | To define a proxy port when instantiating the SQS client |  | Integer
+| *maximumMessageSize* (queue) | The maximumMessageSize (in bytes) an SQS message can contain for this queue. |  | Integer
+| *messageRetentionPeriod* (queue) | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
+| *policy* (queue) | The policy for this queue |  | String
+| *receiveMessageWaitTimeSeconds* (queue) | If you do not specify WaitTimeSeconds in the request, the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait. |  | Integer
+| *redrivePolicy* (queue) | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs. |  | String
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+
+
+
+
+
+Required SQS component options
+
+You have to provide the amazonSQSClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/sqs[Amazon's SQS].
+
+== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the Aggregator
+aggregate this number of messages.
+
+== Usage
+
+=== Message headers set by the SQS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSqsMD5OfBody` |`String` |The MD5 checksum of the Amazon SQS message.
+
+|`CamelAwsSqsMessageId` |`String` |The Amazon SQS message ID.
+
+|`CamelAwsSqsDelaySeconds` |`Integer` |The delay seconds that the Amazon SQS message can be
+see by others.
+|=======================================================================
+
+=== Message headers set by the SQS consumer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSqsMD5OfBody` |`String` |The MD5 checksum of the Amazon SQS message.
+
+|`CamelAwsSqsMessageId` |`String` |The Amazon SQS message ID. 
+
+|`CamelAwsSqsReceiptHandle` |`String` |The Amazon SQS message receipt handle.
+
+|`CamelAwsSqsMessageAttributes` |`Map<String, String>` |The Amazon SQS message attributes.
+|=======================================================================
+
+=== Advanced AmazonSQS configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the AmazonSQS instance configuration, you can
+create your own instance:
+
+[source,java]
+--------------------------------------------------------------------------------------
+AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
+
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+
+AmazonSQS client = new AmazonSQSClient(awsCredentials, clientConfiguration);
+
+registry.bind("client", client);
+--------------------------------------------------------------------------------------
+
+and refer to it in your Camel aws-sqs component configuration:
+
+[source,java]
+---------------------------------------------------------------------------------
+from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+---------------------------------------------------------------------------------
+
+=== Creating or updating an SQS Queue
+
+In the SQS Component, when an endpoint is started, a check is executed to obtain information 
+about the existence of the queue or not. You're able to customize the creation through the QueueAttributeName 
+mapping with the SQSConfiguration option.
+
+[source,java]
+---------------------------------------------------------------------------------
+from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+---------------------------------------------------------------------------------
+
+In this example if the MyQueue queue is not already created on AWS (and the autoCreateQueue option is set to true), it will be created with default parameters from the 
+SQS configuration. If it's already up on AWS, the SQS configuration options will be used to override the existent AWS configuration.
+
+=== DelayQueue VS Delay for Single message
+
+When the option delayQueue is set to true, the SQS Queue will be a DelayQueue with the
+DelaySeconds option as delay. For more information about DelayQueue you can read the https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html[AWS SQS documentation].
+One important information to take into account is the following:
+
+- For standard queues, the per-queue delay setting is not retroactive—changing the setting doesn't affect the delay of messages already in the queue.
+- For FIFO queues, the per-queue delay setting is retroactive—changing the setting affects the delay of messages already in the queue.
+
+as stated in the official documentation. If you want to specify a delay on single messages, you can ignore the delayQueue option, while you can set this option 
+to true, if you need to add a fixed delay to all messages enqueued.
+
+=== Server Side Encryption
+
+There is a set of Server Side Encryption attributes for a queue. The related option are serverSideEncryptionEnabled, keyMasterKeyId and kmsDataKeyReusePeriod.
+The SSE is disabled by default. You need to explicitly set the option to true and set the related parameters as queue attributes.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws-sqs</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+== JMS-style Selectors
+
+SQS does not allow selectors, but you can effectively achieve this by
+using the Camel Filter EIP and setting an
+appropriate `visibilityTimeout`. When SQS dispatches a message, it will
+wait up to the visibility timeout before it will try to dispatch the
+message to a different consumer unless a DeleteMessage is received. By
+default, Camel will always send the DeleteMessage at the end of the
+route, unless the route ended in failure. To achieve appropriate
+filtering and not send the DeleteMessage even on successful completion
+of the route, use a Filter:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("aws-sqs://MyQueue?amazonSQSClient=#client&defaultVisibilityTimeout=5000&deleteIfFiltered=false&deleteAfterRead=false")
+.filter("${header.login} == true")
+.to("mock:result");
+------------------------------------------------------------------------------------------------------
+
+In the above code, if an exchange doesn't have an appropriate header, it
+will not make it through the filter AND also not be deleted from the SQS
+queue. After 5000 milliseconds, the message will become visible to other
+consumers.
+
+== Available Producer Operations
+- single message (default)
+- sendBatchMessage
+- deleteMessage
+- listQueues
+
+== Send Batch Message
+
+You can set a `SendMessageBatchRequest` or an `Iterable`
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage")).to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `SendMessageBatchResult` instance, that you can examinate to check what messages were successfull and what not.
+The id set on each message of the batch will be a Random UUID.
+
+== Delete single Message
+
+Use deleteMessage operation to delete a single message. You'll need to set a receipt handle header for the message you want to delete.
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
+  .setHeader(SqsConstants.RECEIPT_HANDLE, constant("123456"))
+  .to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `DeleteMessageResult` instance, that you can use to check if the message was deleted or not.
+
+== List Queues
+
+Use listQueues operation to list queues.
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("listQueues")).to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `ListQueuesResult` instance, that you can examinate to check the actual queues.
+
+== Queue Autocreation
+
+With the option `autoCreateQueue` users are able to avoid the autocreation of an SQS Queue in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent queue in AWS won't be successful and an error will be returned.
+
+== Automatic detection of AmazonSQS client in registry
+
+The component is capable of detecting the presence of an AmazonSQS bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+== Send Batch Message and Message Deduplication Strategy
+
+In case you're using a SendBatchMessage Operation, you can set two different kind of Message Deduplication Strategy:
+- useExchangeId
+- useContentBasedDeduplication
+
+The first one will use a ExchangeIdMessageDeduplicationIdStrategy, that will use the Exchange ID as parameter
+The other one will use a NullMessageDeduplicationIdStrategy, that will use the body as deduplication element.
+
+In case of send batch message operation, you'll need to use the `useContentBasedDeduplication` and on the Queue you're pointing you'll need to enable the `content based deduplication` option.
+
+
+include::camel-spring-boot::page$aws-sqs-starter.adoc[]
