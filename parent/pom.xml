@@ -649,7 +649,7 @@
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
         <weld3-version>3.0.5.Final</weld3-version>
         <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
-        <wildfly-elytron>1.11.0.CR3</wildfly-elytron>
+        <wildfly-elytron>1.11.2.Final</wildfly-elytron>
         <wiremock-version>2.24.1</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>5.2.1</woodstox-core-version>
