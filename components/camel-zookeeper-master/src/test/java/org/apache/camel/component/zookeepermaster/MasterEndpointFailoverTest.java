@@ -42,17 +42,15 @@ public class MasterEndpointFailoverTest {
     protected MockEndpoint result1Endpoint;
     protected MockEndpoint result2Endpoint;
     protected AtomicInteger messageCounter = new AtomicInteger(1);
-    protected ZKServerFactoryBean serverFactoryBean = new ZKServerFactoryBean();
+    protected ZKContainer zkContainer = new ZKContainer();
     protected CuratorFactoryBean zkClientBean = new CuratorFactoryBean();
 
     @Before
     public void beforeRun() throws Exception {
-        System.out.println("Starting ZK server!");
-        serverFactoryBean.setPort(9004);
-        serverFactoryBean.afterPropertiesSet();
+        zkContainer.start();
 
         // Create the zkClientBean
-        zkClientBean.setConnectString("localhost:9004");
+        zkClientBean.setConnectString(zkContainer.getConnectionString());
         CuratorFramework client = zkClientBean.getObject();
 
         // Need to bind the zookeeper client with the name "curator"
@@ -101,21 +99,21 @@ public class MasterEndpointFailoverTest {
         ServiceHelper.stopService(consumerContext2);
         ServiceHelper.stopService(producerContext);
         zkClientBean.destroy();
-        serverFactoryBean.destroy();
+        zkContainer.stop();
     }
 
     @Test
     public void testEndpoint() throws Exception {
-        System.out.println("Starting consumerContext1");
+        LOG.info("Starting consumerContext1");
 
         ServiceHelper.startService(consumerContext1);
         assertMessageReceived(result1Endpoint, result2Endpoint);
 
-        System.out.println("Starting consumerContext2");
+        LOG.info("Starting consumerContext2");
         ServiceHelper.startService(consumerContext2);
         assertMessageReceivedLoop(result1Endpoint, result2Endpoint, 3);
 
-        System.out.println("Stopping consumerContext1");
+        LOG.info("Stopping consumerContext1");
         ServiceHelper.stopService(consumerContext1);
         assertMessageReceivedLoop(result2Endpoint, result1Endpoint, 3);
     }
