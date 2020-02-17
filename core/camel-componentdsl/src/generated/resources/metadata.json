@@ -607,7 +607,7 @@
     "extendsScheme": "",
     "syntax": "aws2-sqs:queueNameOrArn",
     "title": "AWS 2 Simple Queue Service",
-    "description": "The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.",
+    "description": "The aws2-sqs component is used for sending and receiving messages to Amazon's SQS service.",
     "label": "cloud,messaging",
     "deprecated": false,
     "deprecationNote": "cloud,messaging",

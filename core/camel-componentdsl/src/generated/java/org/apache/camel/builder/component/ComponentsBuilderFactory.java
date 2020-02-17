@@ -599,7 +599,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Simple Queue Service (camel-aws2-sqs)
-     * The aws-sqs component is used for sending and receiving messages to
+     * The aws2-sqs component is used for sending and receiving messages to
      * Amazon's SQS service.
      * 
      * Category: cloud,messaging
