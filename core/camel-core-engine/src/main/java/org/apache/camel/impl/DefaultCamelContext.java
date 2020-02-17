@@ -61,6 +61,7 @@ import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
 import org.apache.camel.impl.engine.RuntimeCamelCatalogResolver;
 import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
+import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -166,6 +167,12 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
      */
     public DefaultCamelContext(boolean init) {
         super(init);
+    }
+
+    @Override
+    protected void disallowAddingNewRoutes() {
+        // we no longer need reifiers so clear its map (danger)
+        ProcessorReifier.dangerClearReifiers();
     }
 
     @Override
@@ -399,6 +406,5 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     protected ReactiveExecutor createReactiveExecutor() {
         return new ReactiveExecutorResolver().resolve(this);
     }
-
 
 }
