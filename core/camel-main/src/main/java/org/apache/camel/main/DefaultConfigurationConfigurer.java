@@ -86,18 +86,19 @@ public final class DefaultConfigurationConfigurer {
      * @param config       the configuration
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
-        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
         if (config.getBeanIntrospectionLoggingLevel() != null) {
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
+            ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
-        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().afterPropertiesConfigured(camelContext);
+        ecc.getBeanIntrospection().afterPropertiesConfigured(camelContext);
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }
 
         if (config.getName() != null) {
-            camelContext.adapt(ExtendedCamelContext.class).setName(config.getName());
+            ecc.setName(config.getName());
         }
 
         if (config.getShutdownTimeout() > 0) {
@@ -152,6 +153,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
+        ecc.setAllowAddingNewRoutes(config.isAllowAddingNewRoutes());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());

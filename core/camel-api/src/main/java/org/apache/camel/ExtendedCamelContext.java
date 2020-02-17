@@ -458,4 +458,24 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
 
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    void setAllowAddingNewRoutes(boolean allowAddingNewRoutes);
+
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    boolean isAllowAddingNewRoutes();
+
 }

@@ -207,6 +207,15 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         PROCESSORS.put(processorClass, creator);
     }
 
+    /**
+     * DANGER: Clears the refifiers map.
+     * After this the JVM with Camel cannot add new routes (using same classloader to load this class).
+     * Clearing this map allows Camel to reduce memory footprint.
+     */
+    public static void dangerClearReifiers() {
+        PROCESSORS.clear();
+    }
+
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
         BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier = PROCESSORS.get(definition.getClass());
         if (reifier != null) {

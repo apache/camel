@@ -66,6 +66,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
+    private boolean allowAddingNewRoutes = true;
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxCreateConnector;
@@ -630,6 +631,30 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setUseBreadcrumb(boolean useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public boolean isAllowAddingNewRoutes() {
+        return allowAddingNewRoutes;
+    }
+
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
+        this.allowAddingNewRoutes = allowAddingNewRoutes;
     }
 
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
@@ -1294,6 +1319,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withUseDataType(boolean useDataType) {
         this.useDataType = useDataType;
+        return (T) this;
+    }
+
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public T withAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
+        this.allowAddingNewRoutes = allowAddingNewRoutes;
         return (T) this;
     }
 

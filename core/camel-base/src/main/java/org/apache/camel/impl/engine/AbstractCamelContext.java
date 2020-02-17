@@ -221,6 +221,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
+    private boolean allowAddingNewRoutes = true;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -1136,6 +1137,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     public void addRoute(Route route) {
+        if (isStarted() && !isAllowAddingNewRoutes()) {
+            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
+        }
+
         synchronized (this.routes) {
             this.routes.add(route);
         }
@@ -1143,6 +1148,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void addRoutes(final RoutesBuilder builder) throws Exception {
+        if (isStarted() && !isAllowAddingNewRoutes()) {
+            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
+        }
+
         init();
         LOG.debug("Adding routes from builder: {}", builder);
         doWithDefinedClassLoader(() -> builder.addRoutesToCamelContext(AbstractCamelContext.this));
@@ -1866,6 +1875,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public boolean isAllowAddingNewRoutes() {
+        return allowAddingNewRoutes;
+    }
+
+    @Override
+    public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
+        this.allowAddingNewRoutes = allowAddingNewRoutes;
+    }
+
+    @Override
     public Registry getRegistry() {
         if (registry == null) {
             synchronized (lock) {
@@ -2437,6 +2456,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 LOG.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
             }
 
+            if (!isAllowAddingNewRoutes()) {
+                LOG.info("Adding new routes after CamelContext has started is now allowed");
+                disallowAddingNewRoutes();
+            }
+
             // okay the routes has been started so emit event that CamelContext
             // has started (here at the end)
             EventHelper.notifyCamelContextStarted(this);
@@ -2453,6 +2477,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
     }
+
+    /**
+     * Strategy invoked when adding new routes after CamelContext has been started is not allowed.
+     * This is used to do some internal optimizations.
+     */
+    protected abstract void disallowAddingNewRoutes();
 
     @Override
     public void stop() {
