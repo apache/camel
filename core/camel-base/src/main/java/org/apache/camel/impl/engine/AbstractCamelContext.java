@@ -2458,6 +2458,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     }
                 }
 
+                if (!isAllowAddingNewRoutes()) {
+                    LOG.info("Adding new routes after CamelContext has started is not allowed");
+                    disallowAddingNewRoutes();
+                }
+
                 final Collection<Route> controlledRoutes = getRouteController().getControlledRoutes();
                 if (controlledRoutes.isEmpty()) {
                     LOG.info("Total {} routes, of which {} are started", getRoutes().size(), started);
@@ -2466,11 +2471,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                              getRouteController().getClass().getName());
                 }
                 LOG.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
-            }
-
-            if (!isAllowAddingNewRoutes()) {
-                LOG.info("Adding new routes after CamelContext has started is now allowed");
-                disallowAddingNewRoutes();
             }
 
             // okay the routes has been started so emit event that CamelContext
