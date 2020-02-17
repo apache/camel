@@ -51,6 +51,12 @@
             <version>${microprofile-health-version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- smallrye health uses cdi api -->
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${cdi-api-2.0-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -66,16 +72,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.smallrye</groupId>
+            <groupId>io.smallrye.config</groupId>
             <artifactId>smallrye-config</artifactId>
             <version>${smallrye-config-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- smallrye health uses cdi api -->
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${cdi-api-2.0-version}</version>
             <scope>test</scope>
         </dependency>
 
