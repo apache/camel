@@ -36,7 +36,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
@@ -315,7 +314,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         @Override
         public void run() {
-            ChangeMessageVisibilityRequest.Builder request = ChangeMessageVisibilityRequest.builder().queueUrl(getQueueUrl()).visibilityTimeout(repeatSeconds).receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
+            ChangeMessageVisibilityRequest.Builder request = ChangeMessageVisibilityRequest.builder().queueUrl(getQueueUrl()).visibilityTimeout(repeatSeconds)
+                .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
 
             try {
                 LOG.trace("Extending visibility window by {} seconds for exchange {}", this.repeatSeconds, this.exchange);

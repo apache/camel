@@ -24,7 +24,8 @@ import org.junit.Test;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
+ * sendEmptyMessageWhenIdle property is set and a polling event yields no
+ * results.
  */
 public class SqsConsumerIdleMessageTest extends CamelTestSupport {
 

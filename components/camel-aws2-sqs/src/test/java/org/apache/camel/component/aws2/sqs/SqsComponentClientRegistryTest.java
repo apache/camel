@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-import org.apache.camel.component.aws2.sqs.Sqs2Component;
-import org.apache.camel.component.aws2.sqs.Sqs2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

@@ -27,7 +27,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.sqs.model.Message;
 
 public class SqsConcurrentConsumerTest extends CamelTestSupport {

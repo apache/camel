@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-import org.apache.camel.component.aws2.sqs.Sqs2Component;
-import org.apache.camel.component.aws2.sqs.Sqs2Configuration;
-import org.apache.camel.component.aws2.sqs.Sqs2Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 public class SqsEndpointExplicitQueueUrlTest extends Assert {
