@@ -51,6 +51,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
@@ -477,5 +478,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * As this affects the entire JVM where Camel JARs are on the classpath.
      */
     boolean isAllowAddingNewRoutes();
+
+    /**
+     * Sets the {@link ReifierStrategy} to use.
+     */
+    void setReifierStrategy(ReifierStrategy refierStrategy);
+
+    /**
+     * Gets the {@link ReifierStrategy} to use.
+     */
+    ReifierStrategy getReifierStrategy();
 
 }

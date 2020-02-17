@@ -125,6 +125,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
@@ -222,6 +223,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private boolean allowAddingNewRoutes = true;
+    private ReifierStrategy reifierStrategy;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -1882,6 +1884,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
         this.allowAddingNewRoutes = allowAddingNewRoutes;
+    }
+
+    @Override
+    public ReifierStrategy getReifierStrategy() {
+        return reifierStrategy;
+    }
+
+    @Override
+    public void setReifierStrategy(ReifierStrategy reifierStrategy) {
+        this.reifierStrategy = reifierStrategy;
     }
 
     @Override
