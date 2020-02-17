@@ -46,7 +46,7 @@ public abstract class BaseSimpleParser {
     protected SimpleToken token;
     protected int previousIndex;
     protected int index;
-    protected boolean allowEscape = true;
+    protected boolean allowEscape;
 
     protected BaseSimpleParser(String expression, boolean allowEscape) {
         this.expression = expression;

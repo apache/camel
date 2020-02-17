@@ -145,6 +145,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
                 LOG.debug("Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
                         cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
+            cachePredicate.clear();
         }
         if (cacheExpression instanceof LRUCache) {
             if (LOG.isDebugEnabled()) {
@@ -152,6 +153,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
                 LOG.debug("Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
                         cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
+            cacheExpression.clear();
         }
     }
 
