@@ -19,7 +19,6 @@ package org.apache.camel.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,7 +61,10 @@ import org.slf4j.LoggerFactory;
 public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
+    private static final String[] EXCLUDED_METHOD_NAMES = new String[]{
+            "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
+            "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
+    };
     private final CamelContext camelContext;
     private final BeanComponent component;
     private final Class<?> type;
@@ -77,22 +79,6 @@ public class BeanInfo {
     private Map<Method, MethodInfo> methodMap = new HashMap<>();
     private boolean publicConstructors;
     private boolean publicNoArgConstructors;
-
-    static {
-        // exclude all java.lang.Object methods as we dont want to invoke them
-        EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getDeclaredMethods()));
-        // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
-        EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getDeclaredMethods()));
-        // Remove private methods
-        EXCLUDED_METHODS.removeIf(m -> Modifier.isPrivate(m.getModifiers()));
-        try {
-            // but keep toString as this method is okay
-            EXCLUDED_METHODS.remove(Object.class.getDeclaredMethod("toString"));
-            EXCLUDED_METHODS.remove(Proxy.class.getDeclaredMethod("toString"));
-        } catch (Throwable e) {
-            // ignore
-        }
-    }
 
     public BeanInfo(CamelContext camelContext, Class<?> type) {
         this(camelContext, type, createParameterMappingStrategy(camelContext));
@@ -886,10 +872,10 @@ public class BeanInfo {
      * @return true if valid, false to skip the method
      */
     protected boolean isValidMethod(Class<?> clazz, Method method) {
-        // must not be in the excluded list
-        for (Method excluded : EXCLUDED_METHODS) {
-            if (org.apache.camel.util.ObjectHelper.isOverridingMethod(excluded, method)) {
-                // the method is overriding an excluded method so its not valid
+        // method name must not be in the excluded list
+        String name = method.getName();
+        for (String s : EXCLUDED_METHOD_NAMES) {
+            if (name.equals(s)) {
                 return false;
             }
         }
