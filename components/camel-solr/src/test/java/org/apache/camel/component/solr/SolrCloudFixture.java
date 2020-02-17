@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.log4j.Logger;
@@ -82,7 +84,7 @@ public class SolrCloudFixture {
             }
         }
 
-        solrClient = new CloudSolrClient.Builder().withZkHost(zkAddr).build();
+        solrClient = new CloudSolrClient.Builder(Arrays.asList(zkAddr), Optional.empty()).build();
         solrClient.connect();
 
         createCollection(solrClient, "collection1", 1, 1, "conf1");
