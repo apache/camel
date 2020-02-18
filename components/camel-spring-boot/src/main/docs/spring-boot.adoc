@@ -15,7 +15,7 @@ in order to use this component:
 [source,xml]
 ----
 <dependency>
-    <groupId>org.apache.camel</groupId>
+    <groupId>org.apache.camel.springboot</groupId>
     <artifactId>camel-spring-boot</artifactId>
     <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
 </dependency>
