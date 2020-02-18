@@ -232,7 +232,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
         this.maxAliasesForCollections = maxAliasesForCollections;
     }
 
-    public String isAllowRecursiveKeys() {
+    public String getAllowRecursiveKeys() {
         return allowRecursiveKeys;
     }
 
