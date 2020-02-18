@@ -65,7 +65,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         this.source = source;
         this.camelContext = (ExtendedCamelContext) camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.producers = createServicePool(camelContext, maxCacheSize);
+        if (cacheSize >= 0) {
+            this.producers = createServicePool(camelContext, maxCacheSize);
+        } else {
+            // no cache then empty
+            this.producers = null;
+        }
 
         // only if JMX is enabled
         if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {

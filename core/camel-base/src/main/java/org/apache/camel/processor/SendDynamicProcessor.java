@@ -27,6 +27,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.impl.engine.EmptyProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
@@ -257,8 +258,13 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("DynamicSendTo {} is not using ProducerCache", this);
+            } else {
+                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+                LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
 
         if (isAllowOptimisedComponents() && uri != null) {

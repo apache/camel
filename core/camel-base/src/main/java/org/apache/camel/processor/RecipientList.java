@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.impl.engine.EmptyProducerCache;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
@@ -197,8 +198,13 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("RecipientList {} is not using ProducerCache", this);
+            } else {
+                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+                LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
         ServiceHelper.startService(aggregationStrategy, producerCache);
     }
