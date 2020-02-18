@@ -101,7 +101,7 @@
                                     <pluginExecutionFilter>
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-bundle-plugin</artifactId>
-                                        <versionRange>${camel-bundle-plugin-version}</versionRange>
+                                        <versionRange>${project.version}</versionRange>
                                         <goals>
                                             <goal>manifest</goal>
                                         </goals>
