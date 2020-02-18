@@ -73,7 +73,7 @@ public class JmsTestSupport extends CamelTestSupport {
         String host;
         try (InputStream inStream = url.openStream()) {
             properties.load(inStream);
-            if (Boolean.valueOf(properties.getProperty("amq.external"))) {
+            if (Boolean.parseBoolean(properties.getProperty("amq.external"))) {
                 log.info("Using external AMQ");
                 port = Integer.parseInt(properties.getProperty("amq.port"));
                 host = properties.getProperty("amq.host");
@@ -183,6 +183,10 @@ public class JmsTestSupport extends CamelTestSupport {
     }
 
     public void reconnect() throws Exception {
+        reconnect(0);
+    }
+
+    public void reconnect(int waitingMillis) throws Exception {
         log.info("Closing JMS Session");
         getSession().close();
         log.info("Closing JMS Connection");
@@ -190,6 +194,7 @@ public class JmsTestSupport extends CamelTestSupport {
         log.info("Stopping the ActiveMQ Broker");
         broker.stop();
         broker.waitUntilStopped();
+        Thread.sleep(waitingMillis);
         broker.start(true);
         broker.waitUntilStarted();
 

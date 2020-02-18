@@ -30,9 +30,6 @@ public class ReconnectProducerTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test";
 
-    public ReconnectProducerTest() {
-    }
-    
     @Override
     protected boolean useJmx() {
         return false;
@@ -52,13 +49,13 @@ public class ReconnectProducerTest extends JmsTestSupport {
         Message message = mc.receive(5000);
         assertNotNull(message);
         assertTrue(message instanceof TextMessage);
-        
+
         TextMessage tm = (TextMessage) message;
         String text = tm.getText();
         assertNotNull(text);
         template.sendBody("direct:finish", text);
 
-        reconnect();
+        reconnect(10000);
 
         mc = createQueueConsumer(TEST_DESTINATION_NAME);
         template.sendBody("direct:start", expectedBody);
@@ -69,27 +66,26 @@ public class ReconnectProducerTest extends JmsTestSupport {
         tm = (TextMessage) message;
         text = tm.getText();
         assertNotNull(text);
-        
+
         template.sendBody("direct:finish", text);
-        
+
         mock.assertIsSatisfied();
         mc.close();
 
     }
 
     /**
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
-     *
      * @return
      * @throws Exception
+     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
      */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("sjms:queue:" + TEST_DESTINATION_NAME);
-                
+                    .to("sjms:queue:" + TEST_DESTINATION_NAME + "?consumerCount=10");
+
                 from("direct:finish")
                     .to("log:test.log.1?showBody=true", "mock:result");
             }

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
@@ -92,7 +93,7 @@ public class InOutProducer extends SjmsProducer {
                 }
 
                 Destination replyToDestination;
-                boolean isReplyToTopic = false;
+                boolean isReplyToTopic;
                 if (ObjectHelper.isEmpty(getNamedReplyTo())) {
                     isReplyToTopic = isTopic();
                     replyToDestination = getEndpoint().getDestinationCreationStrategy().createTemporaryDestination(session, isReplyToTopic);
@@ -117,7 +118,7 @@ public class InOutProducer extends SjmsProducer {
                                 // we cannot continue routing the unknown message
                                 // log a warn and then ignore the message
                                 LOG.warn("Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
-                                        new Object[]{correlationID, replyToDestination, EXCHANGERS.size(), message});
+                                    correlationID, replyToDestination, EXCHANGERS.size(), message);
                             }
                         } catch (Exception e) {
                             LOG.warn("Unable to exchange message: {}. This exception is ignored.", message, e);
@@ -132,6 +133,17 @@ public class InOutProducer extends SjmsProducer {
                 connectionResource.returnConnection(conn);
             }
             return answer;
+        }
+
+        @Override
+        public boolean validateObject(MessageConsumerResources obj) {
+            try {
+                obj.getSession().getAcknowledgeMode();
+                return true;
+            } catch (JMSException ex) {
+                LOG.error("Cannot validate session", ex);
+            }
+            return false;
         }
 
         @Override
@@ -173,6 +185,7 @@ public class InOutProducer extends SjmsProducer {
             consumers = new GenericObjectPool<>(new MessageConsumerResourcesFactory());
             consumers.setMaxActive(getConsumerCount());
             consumers.setMaxIdle(getConsumerCount());
+            consumers.setTestOnBorrow(getEndpoint().getComponent().isConnectionTestOnBorrow());
             while (consumers.getNumIdle() < consumers.getMaxIdle()) {
                 consumers.addObject();
             }
