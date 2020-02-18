@@ -2282,9 +2282,11 @@ public class ModelParser extends BaseParser {
         return doParse(new YAMLDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowAnyType": def.setAllowAnyType(val); break;
+                case "allowRecursiveKeys": def.setAllowRecursiveKeys(val); break;
                 case "constructor": def.setConstructor(val); break;
                 case "dumperOptions": def.setDumperOptions(val); break;
                 case "library": def.setLibrary(YAMLLibrary.valueOf(val)); break;
+                case "maxAliasesForCollections": def.setMaxAliasesForCollections(val); break;
                 case "prettyFlow": def.setPrettyFlow(val); break;
                 case "representer": def.setRepresenter(val); break;
                 case "resolver": def.setResolver(val); break;
