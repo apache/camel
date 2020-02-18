@@ -16,9 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.engine.EmptyProducerCache;
+import org.apache.camel.util.ReflectionHelper;
 import org.junit.Test;
 
 public class RecipientListNoCacheTest extends ContextTestSupport {
@@ -37,6 +42,18 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
         sendBody("bar");
 
         assertMockEndpointsSatisfied();
+
+        // make sure its using an empty producer cache as the cache is disabled
+        List<Processor> list = context.getRoute("route1").filter("foo");
+        // the id is set on the pipeline as recipient list is wrapped
+        Pipeline pipe = (Pipeline) list.get(0);
+        RecipientList rl = (RecipientList) pipe.next().get(1);
+        assertNotNull(rl);
+        assertEquals(-1, rl.getCacheSize());
+
+        Object pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("producerCache"), rl);
+        assertNotNull(pc);
+        assertIsInstanceOf(EmptyProducerCache.class, pc);
     }
 
     protected void sendBody(String body) {
@@ -47,7 +64,8 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").recipientList(header("recipientListHeader").tokenize(",")).cacheSize(-1);
+                from("direct:a")
+                        .recipientList(header("recipientListHeader").tokenize(",")).cacheSize(-1).id("foo");
             }
         };
 

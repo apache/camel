@@ -28,6 +28,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.impl.engine.EmptyProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
@@ -464,8 +465,13 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
     @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            LOG.debug("RoutingSlip {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("RoutingSlip {} is not using ProducerCache", this);
+            } else {
+                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+                LOG.debug("RoutingSlip {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
 
         ServiceHelper.startService(producerCache, errorHandler);
