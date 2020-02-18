@@ -1,11 +1,12 @@
-/**
- * Copyright (c) 2008, http://www.snakeyaml.org
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Copyright (c) 2008, http://www.snakeyaml.org
+ */
 package org.apache.camel.component.snakeyaml.custom;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
@@ -36,18 +52,6 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 import org.yaml.snakeyaml.serializer.Serializer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.regex.Pattern;
-
 /**
  * Public YAML interface. This class is not thread-safe. Which means that all the methods of the same
  * instance can be called only by one thread.
@@ -59,11 +63,11 @@ import java.util.regex.Pattern;
  */
 public class Yaml {
     protected final Resolver resolver;
-    private String name;
     protected BaseConstructor constructor;
     protected Representer representer;
     protected DumperOptions dumperOptions;
     protected LoaderOptions loadingConfig;
+    private String name;
     private int maxAliasesForCollections = 50;
 
 
@@ -119,15 +123,6 @@ public class Yaml {
      */
     public Yaml(BaseConstructor constructor, Representer representer) {
         this(constructor, representer, initDumperOptions(representer));
-    }
-
-    private static DumperOptions initDumperOptions(Representer representer) {
-        DumperOptions dumperOptions = new DumperOptions();
-        dumperOptions.setDefaultFlowStyle(representer.getDefaultFlowStyle());
-        dumperOptions.setDefaultScalarStyle(representer.getDefaultScalarStyle());
-        dumperOptions.setAllowReadOnlyProperties(representer.getPropertyUtils().isAllowReadOnlyProperties());
-        dumperOptions.setTimeZone(representer.getTimeZone());
-        return dumperOptions;
     }
 
     /**
@@ -220,6 +215,15 @@ public class Yaml {
         this.loadingConfig = loadingConfig;
         this.resolver = resolver;
         this.name = "Yaml:" + System.identityHashCode(this);
+    }
+
+    private static DumperOptions initDumperOptions(Representer representer) {
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setDefaultFlowStyle(representer.getDefaultFlowStyle());
+        dumperOptions.setDefaultScalarStyle(representer.getDefaultScalarStyle());
+        dumperOptions.setAllowReadOnlyProperties(representer.getPropertyUtils().isAllowReadOnlyProperties());
+        dumperOptions.setTimeZone(representer.getTimeZone());
+        return dumperOptions;
     }
 
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -91,7 +91,10 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
     // Taken from SnakeYaml test code
     private String createDump(int size) {
         Map<String, Object> root = new HashMap<>();
-        Map<String, Object> s1, s2, t1, t2;
+        Map<String, Object> s1;
+        Map<String, Object> s2;
+        Map<String, Object> t1;
+        Map<String, Object> t2;
         s1 = root;
         s2 = new HashMap<>();
         /*
