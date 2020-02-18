@@ -34,7 +34,6 @@
 
     <properties>
         <compiler.fork>true</compiler.fork>
-        <camel-bundle-plugin-version>${project.version}</camel-bundle-plugin-version>
         <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
         <cxf.codegen.jvmArgs/>
         <camel.surefire.fork.vmargs/>

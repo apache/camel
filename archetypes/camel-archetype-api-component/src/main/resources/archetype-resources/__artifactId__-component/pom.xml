@@ -242,7 +242,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bundle-plugin</artifactId>
-        <version>${camel-bundle-plugin-version}</version>
+        <version>${camelVersion}</version>
         <configuration>
           <instructions>
             <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
