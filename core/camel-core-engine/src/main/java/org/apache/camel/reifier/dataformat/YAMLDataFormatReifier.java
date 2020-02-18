@@ -67,7 +67,7 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
         setProperty(dataFormat, camelContext, "prettyFlow", definition.isPrettyFlow());
         setProperty(dataFormat, camelContext, "allowAnyType", definition.isAllowAnyType());
         setProperty(dataFormat, camelContext, "maxAliasesForCollections", definition.getMaxAliasesForCollections());
-        setProperty(dataFormat, camelContext, "allowRecursiveKeys", definition.isAllowRecursiveKeys());
+        setProperty(dataFormat, camelContext, "allowRecursiveKeys", definition.getAllowRecursiveKeys());
 
         if (definition.getTypeFilters() != null && !definition.getTypeFilters().isEmpty()) {
             List<String> typeFilterDefinitions = new ArrayList<>(definition.getTypeFilters().size());
