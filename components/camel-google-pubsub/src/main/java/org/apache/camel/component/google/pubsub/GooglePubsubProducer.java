@@ -98,12 +98,13 @@ public class GooglePubsubProducer extends DefaultProducer {
 
             for (Exchange exchange : exchanges) {
                 ByteString data = ByteString.copyFromUtf8(exchange.getIn().getBody(String.class));
-                PubsubMessage message = PubsubMessage.newBuilder().setData(data).build();
+                PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(data);
 
                 Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
                 if (attributes != null) {
-                    message = PubsubMessage.newBuilder(message).putAllAttributes(attributes).build();
+                    messageBuilder.putAllAttributes(attributes).build();
                 }
+                PubsubMessage message = messageBuilder.build();
 
                 ApiFuture<String> messageIdFuture = publisher.publish(message);
                 messageIdFutures.add(messageIdFuture);
