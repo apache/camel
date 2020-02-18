@@ -82,7 +82,7 @@ public class GooglePubsubProducer extends DefaultProducer {
             entryList = new ArrayList<>();
             entryList.add(exchange);
         } else {
-            entryList = (List<Exchange>)exchange.getProperty(Exchange.GROUPED_EXCHANGE);
+            entryList = (List<Exchange>) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
         }
 
         return entryList;
@@ -97,10 +97,13 @@ public class GooglePubsubProducer extends DefaultProducer {
             Publisher publisher = endpoint.getComponent().getPublisher(topicName);
 
             for (Exchange exchange : exchanges) {
-                Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
-
                 ByteString data = ByteString.copyFromUtf8(exchange.getIn().getBody(String.class));
-                PubsubMessage message = PubsubMessage.newBuilder().putAllAttributes(attributes).setData(data).build();
+                PubsubMessage message = PubsubMessage.newBuilder().setData(data).build();
+
+                Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
+                if (attributes != null) {
+                    message = PubsubMessage.newBuilder(message).putAllAttributes(attributes).build();
+                }
 
                 ApiFuture<String> messageIdFuture = publisher.publish(message);
                 messageIdFutures.add(messageIdFuture);
