@@ -15,6 +15,7 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GooglePubsubComponent target = (GooglePubsubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -23,10 +24,10 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "publisherCacheSize": target.setPublisherCacheSize(property(camelContext, int.class, value)); return true;
         case "publishercachetimeout":
         case "publisherCacheTimeout": target.setPublisherCacheTimeout(property(camelContext, int.class, value)); return true;
-        case "publisherterminationtimeout":
-        case "publisherTerminationTimeout": target.setPublisherTerminationTimeout(property(camelContext, int.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "publisherterminationtimeout":
+        case "publisherTerminationTimeout": target.setPublisherTerminationTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }

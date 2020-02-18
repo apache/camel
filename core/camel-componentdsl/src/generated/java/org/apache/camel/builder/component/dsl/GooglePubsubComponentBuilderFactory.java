@@ -49,6 +49,17 @@ public interface GooglePubsubComponentBuilderFactory {
             extends
                 ComponentBuilder<GooglePubsubComponent> {
         /**
+         * Endpoint to use with local Pub/Sub emulator.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GooglePubsubComponentBuilder endpoint(java.lang.String endpoint) {
+            doSetProperty("endpoint", endpoint);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -114,18 +125,6 @@ public interface GooglePubsubComponentBuilderFactory {
             return this;
         }
         /**
-         * How many milliseconds should a producer be allowed to terminate.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default GooglePubsubComponentBuilder publisherTerminationTimeout(
-                int publisherTerminationTimeout) {
-            doSetProperty("publisherTerminationTimeout", publisherTerminationTimeout);
-            return this;
-        }
-        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -137,6 +136,18 @@ public interface GooglePubsubComponentBuilderFactory {
         default GooglePubsubComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * How many milliseconds should a producer be allowed to terminate.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         */
+        default GooglePubsubComponentBuilder publisherTerminationTimeout(
+                int publisherTerminationTimeout) {
+            doSetProperty("publisherTerminationTimeout", publisherTerminationTimeout);
             return this;
         }
     }
@@ -156,12 +167,13 @@ public interface GooglePubsubComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "endpoint": ((GooglePubsubComponent) component).setEndpoint((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GooglePubsubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GooglePubsubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "publisherCacheSize": ((GooglePubsubComponent) component).setPublisherCacheSize((int) value); return true;
             case "publisherCacheTimeout": ((GooglePubsubComponent) component).setPublisherCacheTimeout((int) value); return true;
-            case "publisherTerminationTimeout": ((GooglePubsubComponent) component).setPublisherTerminationTimeout((int) value); return true;
             case "basicPropertyBinding": ((GooglePubsubComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "publisherTerminationTimeout": ((GooglePubsubComponent) component).setPublisherTerminationTimeout((int) value); return true;
             default: return false;
             }
         }

@@ -16,24 +16,41 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.rpc.TransportChannelProvider;
+import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
+import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
  */
 @Component("google-pubsub")
 public class GooglePubsubComponent extends DefaultComponent {
+
+    @Metadata(
+            label = "common",
+            description = "Endpoint to use with local Pub/Sub emulator."
+    )
+    private String endpoint = null;
 
     @Metadata(
             label = "producer",
@@ -48,7 +65,7 @@ public class GooglePubsubComponent extends DefaultComponent {
     private int publisherCacheTimeout = 180000;
 
     @Metadata(
-            label = "producer",
+            label = "advanced",
             description = "How many milliseconds should a producer be allowed to terminate."
     )
     private int publisherTerminationTimeout = 60000;
@@ -100,7 +117,39 @@ public class GooglePubsubComponent extends DefaultComponent {
     }
 
     public Publisher getPublisher(String topicName) throws ExecutionException {
-        return cachedPublishers.get(topicName, () -> Publisher.newBuilder(topicName).build());
+        return cachedPublishers.get(topicName, () -> buildPublisher(topicName));
+    }
+
+    private Publisher buildPublisher(String topicName) throws IOException {
+        Publisher.Builder builder = Publisher.newBuilder(topicName);
+        if (StringUtils.isNotBlank(endpoint)) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+            builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
+        }
+        return builder.build();
+    }
+
+    public Subscriber getSubscriber(String subscriptionName, MessageReceiver messageReceiver) {
+        Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, messageReceiver);
+        if (StringUtils.isNotBlank(endpoint)) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+            builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
+        }
+        return builder.build();
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 
     public int getPublisherCacheSize() {
