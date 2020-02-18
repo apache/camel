@@ -47,6 +47,7 @@
 * [Using CamelProxy] for how to use proxies for clients to easily invoke
 camel routes without them knowing
 * xref:camel-maven-plugin.adoc[Camel Maven Plugin] for running Camel from a Maven goal
+* xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin] to validate your source code and report the code coverage of your camel routes
 * xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
 * xref:creating-a-new-spring-based-camel-route.adoc[Creating a new Spring based Camel Route]
 * xref:components::jmx-component.adoc[Camel JMX]
