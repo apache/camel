@@ -70,6 +70,14 @@ public class SnakeYAMLDataFormatConfiguration
      */
     private Boolean allowAnyType = false;
     /**
+     * Set the maximum amount of aliases allowed for collections.
+     */
+    private Integer maxAliasesForCollections = 50;
+    /**
+     * Set whether recursive keys are allowed.
+     */
+    private Boolean allowRecursiveKeys = false;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML, or
@@ -140,6 +148,22 @@ public class SnakeYAMLDataFormatConfiguration
 
     public void setAllowAnyType(Boolean allowAnyType) {
         this.allowAnyType = allowAnyType;
+    }
+
+    public Integer getMaxAliasesForCollections() {
+        return maxAliasesForCollections;
+    }
+
+    public void setMaxAliasesForCollections(Integer maxAliasesForCollections) {
+        this.maxAliasesForCollections = maxAliasesForCollections;
+    }
+
+    public Boolean getAllowRecursiveKeys() {
+        return allowRecursiveKeys;
+    }
+
+    public void setAllowRecursiveKeys(Boolean allowRecursiveKeys) {
+        this.allowRecursiveKeys = allowRecursiveKeys;
     }
 
     public Boolean getContentTypeHeader() {
