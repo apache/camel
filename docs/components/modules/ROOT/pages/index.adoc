@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 328 in 262 JAR artifacts (1 deprecated)
+Number of Components: 327 in 261 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -69,8 +69,6 @@ Number of Components: 328 in 262 JAR artifacts (1 deprecated)
 | xref:aws2-ses-component.adoc[AWS 2 Simple Email Service] (camel-aws2-ses) | 3.1 | The aws2-ses component is used for sending emails with Amazon's SES service.
 
 | xref:aws2-sns-component.adoc[AWS 2 Simple Notification System] (camel-aws2-sns) | 3.1 | The aws2-sns component is used for sending messages to an Amazon Simple Notification Topic.
-
-| xref:aws2-sqs-component.adoc[AWS 2 Simple Queue Service] (camel-aws2-sqs) | 3.1 | The aws2-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
 
