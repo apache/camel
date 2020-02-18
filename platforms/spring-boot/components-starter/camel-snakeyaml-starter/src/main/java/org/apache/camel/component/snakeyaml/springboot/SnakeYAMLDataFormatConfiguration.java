@@ -84,11 +84,11 @@ public class SnakeYAMLDataFormatConfiguration
     /**
      * Set the maximum amount of aliases allowed for collections.
      */
-    private Integer maxAliasesForCollections = 50;
+    private String maxAliasesForCollections = "50";
     /**
      * Set whether recursive keys are allowed.
      */
-    private Boolean allowRecursiveKeys = false;
+    private String allowRecursiveKeys;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
@@ -178,19 +178,19 @@ public class SnakeYAMLDataFormatConfiguration
         this.typeFilter = typeFilter;
     }
 
-    public Integer getMaxAliasesForCollections() {
+    public String getMaxAliasesForCollections() {
         return maxAliasesForCollections;
     }
 
-    public void setMaxAliasesForCollections(Integer maxAliasesForCollections) {
+    public void setMaxAliasesForCollections(String maxAliasesForCollections) {
         this.maxAliasesForCollections = maxAliasesForCollections;
     }
 
-    public Boolean getAllowRecursiveKeys() {
+    public String getAllowRecursiveKeys() {
         return allowRecursiveKeys;
     }
 
-    public void setAllowRecursiveKeys(Boolean allowRecursiveKeys) {
+    public void setAllowRecursiveKeys(String allowRecursiveKeys) {
         this.allowRecursiveKeys = allowRecursiveKeys;
     }
 
