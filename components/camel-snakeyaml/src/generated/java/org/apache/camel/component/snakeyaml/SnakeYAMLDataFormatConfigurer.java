@@ -29,6 +29,10 @@ public class SnakeYAMLDataFormatConfigurer extends PropertyConfigurerSupport imp
         case "prettyFlow": dataformat.setPrettyFlow(property(camelContext, boolean.class, value)); return true;
         case "allowanytype":
         case "allowAnyType": dataformat.setAllowAnyType(property(camelContext, boolean.class, value)); return true;
+        case "maxaliasesforcollections":
+        case "maxAliasesForCollections": dataformat.setMaxAliasesForCollections(property(camelContext, int.class, value)); return true;
+        case "allowrecursivekeys":
+        case "allowRecursiveKeys": dataformat.setAllowRecursiveKeys(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
