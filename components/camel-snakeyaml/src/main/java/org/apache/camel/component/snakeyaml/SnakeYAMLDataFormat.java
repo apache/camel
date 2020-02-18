@@ -33,6 +33,10 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.snakeyaml.custom.CustomClassLoaderConstructor;
+import org.apache.camel.component.snakeyaml.custom.CustomConstructor;
+import org.apache.camel.component.snakeyaml.custom.CustomSafeConstructor;
+import org.apache.camel.component.snakeyaml.custom.Yaml;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -40,11 +44,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.BaseConstructor;
 import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
@@ -68,6 +69,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     private boolean prettyFlow;
     private boolean allowAnyType;
     private List<TypeFilter> typeFilters;
+    private int maxAliasesForCollections = 50;
+    private boolean allowRecursiveKeys;
+
 
     public SnakeYAMLDataFormat() {
         this(null);
@@ -133,7 +137,8 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 this.constructor.apply(context),
                 this.representer.apply(context),
                 this.dumperOptions.apply(context),
-                this.resolver.apply(context)
+                this.resolver.apply(context),
+                maxAliasesForCollections
             );
 
             yamlCache.set(new WeakReference<>(yaml));
@@ -335,29 +340,51 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.allowAnyType = allowAnyType;
     }
 
+    public int getMaxAliasesForCollections() {
+        return maxAliasesForCollections;
+    }
+
+    /**
+     * Set the maximum amount of aliases allowed for collections.
+     */
+    public void setMaxAliasesForCollections(int maxAliasesForCollections) {
+        this.maxAliasesForCollections = maxAliasesForCollections;
+    }
+
+    public boolean isAllowRecursiveKeys() {
+        return allowRecursiveKeys;
+    }
+
+    /**
+     * Set whether recursive keys are allowed.
+     */
+    public void setAllowRecursiveKeys(boolean allowRecursiveKeys) {
+        this.allowRecursiveKeys = allowRecursiveKeys;
+    }
+
     // ***************************
     // Defaults
     // ***************************
 
     private BaseConstructor defaultConstructor(CamelContext context) {
-        ClassLoader yamlClassLoader = this.classLoader;
         Collection<TypeFilter> yamlTypeFilters = this.typeFilters;
-
-        if (yamlClassLoader == null && useApplicationContextClassLoader) {
-            yamlClassLoader = context.getApplicationContextClassLoader();
-        }
-
         if (allowAnyType) {
             yamlTypeFilters = Collections.singletonList(TypeFilters.allowAll());
         }
 
         BaseConstructor yamlConstructor;
         if (yamlTypeFilters != null) {
+            ClassLoader yamlClassLoader = this.classLoader;
+            if (yamlClassLoader == null && useApplicationContextClassLoader) {
+                yamlClassLoader = context.getApplicationContextClassLoader();
+            }
+
             yamlConstructor = yamlClassLoader != null
-                ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters)
-                : typeFilterConstructor(yamlTypeFilters);
+                ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters, allowRecursiveKeys)
+                : typeFilterConstructor(yamlTypeFilters, allowRecursiveKeys);
         } else {
-            yamlConstructor = new SafeConstructor();
+            yamlConstructor = new CustomSafeConstructor();
+            ((CustomSafeConstructor)yamlConstructor).setAllowRecursiveKeys(allowRecursiveKeys);
         }
 
         if (typeDescriptions != null && yamlConstructor instanceof Constructor) {
@@ -396,8 +423,8 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     // Constructors
     // ***************************
 
-    private static Constructor typeFilterConstructor(final Collection<TypeFilter> typeFilters) {
-        return new Constructor() {
+    private static Constructor typeFilterConstructor(final Collection<TypeFilter> typeFilters, boolean allowRecursiveKeys) {
+        CustomConstructor constructor = new CustomConstructor() {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                 if (typeFilters.stream().noneMatch(f -> f.test(name))) {
@@ -407,10 +434,13 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 return super.getClassForName(name);
             }
         };
+        constructor.setAllowRecursiveKeys(allowRecursiveKeys);
+        return constructor;
     }
 
-    private static Constructor typeFilterConstructor(final ClassLoader classLoader, final Collection<TypeFilter> typeFilters) {
-        return new CustomClassLoaderConstructor(classLoader) {
+    private static Constructor typeFilterConstructor(final ClassLoader classLoader, final Collection<TypeFilter> typeFilters,
+                                                     boolean allowRecursiveKeys) {
+        CustomClassLoaderConstructor constructor = new CustomClassLoaderConstructor(classLoader) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                 if (typeFilters.stream().noneMatch(f -> f.test(name))) {
@@ -420,5 +450,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 return super.getClassForName(name);
             }
         };
+        constructor.setAllowRecursiveKeys(allowRecursiveKeys);
+        return constructor;
     }
 }
