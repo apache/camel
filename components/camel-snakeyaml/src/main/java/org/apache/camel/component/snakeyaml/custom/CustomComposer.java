@@ -1,20 +1,18 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.snakeyaml.custom;
 
@@ -60,7 +58,7 @@ public class CustomComposer extends Composer {
     private final Resolver resolver;
     private final Map<String, Node> anchors;
     private final Set<Node> recursiveNodes;
-    private int nonScalarAliasesCount = 0;
+    private int nonScalarAliasesCount;
     private final int maxAliasesForCollections;
 
     public CustomComposer(Parser parser, Resolver resolver) {
@@ -128,7 +126,7 @@ public class CustomComposer extends Composer {
         // Ensure that the stream contains no more documents.
         if (!parser.checkEvent(Event.ID.StreamEnd)) {
             Event event = parser.getEvent();
-            Mark contextMark = document != null ? document.getStartMark(): null;
+            Mark contextMark = document != null ? document.getStartMark() : null;
             throw new CustomComposerException("expected a single document in the stream",
                     contextMark, "but found another document", event.getStartMark());
         }
@@ -138,7 +136,9 @@ public class CustomComposer extends Composer {
     }
 
     private Node composeNode(Node parent) {
-        if (parent != null) recursiveNodes.add(parent);
+        if (parent != null) {
+            recursiveNodes.add(parent);
+        }
         final Node node;
         if (parser.checkEvent(Event.ID.Alias)) {
             AliasEvent event = (AliasEvent) parser.getEvent();
