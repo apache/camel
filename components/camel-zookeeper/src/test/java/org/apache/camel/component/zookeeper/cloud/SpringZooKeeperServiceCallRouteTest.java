@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.zookeeper.cloud;
 
-import java.util.Collections;
-
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.zookeeper.ZooKeeperContainer;
-import org.apache.camel.test.testcontainers.ContainerPropertiesFunction;
+import org.apache.camel.test.AvailablePortFinderPropertiesFunction;
 import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -30,10 +30,8 @@ import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.junit.Test;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 
 public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTestSupport {
@@ -42,10 +40,21 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
 
     private CuratorFramework curator;
     private ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> discovery;
+    private AvailablePortFinderPropertiesFunction function;
 
     // ***********************
     // Setup / tear down
     // ***********************
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        final CamelContext context = super.createCamelContext();
+        final PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
+
+        pc.addFunction(function);
+
+        return context;
+    }
 
     @Override
     public GenericContainer createContainer() {
@@ -55,6 +64,8 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
     @Override
     public void doPreSetup() throws Exception {
         super.doPreSetup();
+
+        function = new AvailablePortFinderPropertiesFunction();
 
         curator = CuratorFrameworkFactory.builder()
             .connectString(getContainerHost(ZooKeeperContainer.CONTAINER_NAME) + ":" + getContainerPort(ZooKeeperContainer.CONTAINER_NAME, ZooKeeperContainer.CLIENT_PORT))
@@ -73,7 +84,7 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
         discovery.registerService(
             ServiceInstance.<ZooKeeperServiceDiscovery.MetaData>builder()
                 .address("127.0.0.1")
-                .port(9011)
+                .port(Integer.parseInt(function.apply("service-1")))
                 .name(SERVICE_NAME)
                 .id("service-1")
                 .build());
@@ -81,7 +92,7 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
         discovery.registerService(
             ServiceInstance.<ZooKeeperServiceDiscovery.MetaData>builder()
                 .address("127.0.0.1")
-                .port(9012)
+                .port(Integer.parseInt(function.apply("service-2")))
                 .name(SERVICE_NAME)
                 .id("service-2")
                 .build());
@@ -89,7 +100,7 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
         discovery.registerService(
             ServiceInstance.<ZooKeeperServiceDiscovery.MetaData>builder()
                 .address("127.0.0.1")
-                .port(9013)
+                .port(Integer.parseInt(function.apply("service-3")))
                 .name(SERVICE_NAME)
                 .id("service-3")
                 .build());
@@ -110,7 +121,7 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
     @Test
     public void testServiceCall() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(3);
-        getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("ping 9011", "ping 9012", "ping 9013");
+        getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("ping svc1", "ping svc2", "ping svc3");
 
         template.sendBody("direct:start", "ping");
         template.sendBody("direct:start", "ping");
@@ -125,16 +136,6 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        GenericApplicationContext applicationContext = new GenericApplicationContext();
-        applicationContext.getBeanFactory().registerSingleton(
-            "zkProperties",
-            new ContainerPropertiesFunction(Collections.singletonList(getContainer(ZooKeeperContainer.CONTAINER_NAME))));
-
-        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
-        xmlReader.loadBeanDefinitions(new ClassPathResource("org/apache/camel/component/zookeeper/cloud/SpringZooKeeperServiceCallRouteTest.xml"));
-
-        applicationContext.refresh();
-
-        return applicationContext;
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/zookeeper/cloud/SpringZooKeeperServiceCallRouteTest.xml");
     }
 }

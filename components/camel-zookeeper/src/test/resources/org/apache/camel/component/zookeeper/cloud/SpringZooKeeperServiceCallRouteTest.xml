@@ -40,23 +40,23 @@
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9011"/>
+      <from uri="jetty:http://localhost:{{available-port:service-1}}"/>
       <transform>
-        <simple>${body} 9011</simple>
+        <simple>${body} svc1</simple>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9012"/>
+      <from uri="jetty:http://localhost:{{available-port:service-2}}"/>
       <transform>
-        <simple>${body} 9012</simple>
+        <simple>${body} svc2</simple>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9013"/>
+      <from uri="jetty:http://localhost:{{available-port:service-3}}"/>
       <transform>
-        <simple>${body} 9013</simple>
+        <simple>${body} svc3</simple>
       </transform>
     </route>
 
