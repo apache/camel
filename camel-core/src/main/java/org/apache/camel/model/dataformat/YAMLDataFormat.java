@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * YAML is a data format to marshal and unmarshal Java objects to and from YAML.
  *
- * @version 
+ * @version
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML")
 @XmlRootElement(name = "yaml")
@@ -66,6 +66,12 @@ public class YAMLDataFormat extends DataFormatDefinition {
     private Boolean allowAnyType = false;
     @XmlElement(name = "typeFilter")
     private List<YAMLTypeFilterDefinition> typeFilters;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer", defaultValue = "50")
+    private int maxAliasesForCollections = 50;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private boolean allowRecursiveKeys;
 
     public YAMLDataFormat() {
         this(YAMLLibrary.SnakeYAML);
@@ -209,6 +215,28 @@ public class YAMLDataFormat extends DataFormatDefinition {
 
     public List<YAMLTypeFilterDefinition> getTypeFilters() {
         return typeFilters;
+    }
+
+    public int getMaxAliasesForCollections() {
+        return maxAliasesForCollections;
+    }
+
+    /**
+     * Set the maximum amount of aliases allowed for collections.
+     */
+    public void setMaxAliasesForCollections(int maxAliasesForCollections) {
+        this.maxAliasesForCollections = maxAliasesForCollections;
+    }
+
+    public boolean isAllowRecursiveKeys() {
+        return allowRecursiveKeys;
+    }
+
+    /**
+     * Set whether recursive keys are allowed.
+     */
+    public void setAllowRecursiveKeys(boolean allowRecursiveKeys) {
+        this.allowRecursiveKeys = allowRecursiveKeys;
     }
 
     /**
