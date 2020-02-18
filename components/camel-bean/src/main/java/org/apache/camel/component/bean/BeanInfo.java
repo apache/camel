@@ -62,8 +62,8 @@ public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[]{
-            "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
-            "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
+        "clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
+        "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
     };
     private final CamelContext camelContext;
     private final BeanComponent component;
