@@ -285,7 +285,7 @@ public final class URISupport {
                     if (raw != null) {
                         // update the string in the list
                         list.set(i, raw);
-                    };
+                    }
                 }
             } else {
                 String str = entry.getValue().toString();
