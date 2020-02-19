@@ -28,8 +28,10 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.ProducerCache;
@@ -38,6 +40,7 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -241,6 +244,23 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         // and create the pair
         return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy, pattern);
+    }
+
+    @Override
+    protected Processor createErrorHandler(RouteContext routeContext, ErrorHandlerFactory builder, Exchange exchange, Processor processor) throws Exception {
+        // in case its a reference to another builder then we want the real builder
+        final ErrorHandlerFactory ehBuilder = builder.getOrLookupErrorHandlerFactory(routeContext);
+
+        Processor answer = super.createErrorHandler(routeContext, ehBuilder, exchange, processor);
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                // remove error handler builder from route context as we are done with the recipient list
+                // and we cannot reuse this and must remove it to avoid leaking the error handler on the route context
+                routeContext.removeErrorHandlers(ehBuilder);
+            }
+        });
+        return answer;
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient) {

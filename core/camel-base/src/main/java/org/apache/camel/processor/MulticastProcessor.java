@@ -736,7 +736,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             // create error handler (create error handler directly to keep it light weight,
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {
-                processor = builder.createErrorHandler(routeContext, processor);
+                processor = createErrorHandler(routeContext, builder, exchange, processor);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
@@ -761,6 +761,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         return answer;
+    }
+
+    /**
+     * Strategy to create the error handler from the builder
+     */
+    protected Processor createErrorHandler(RouteContext routeContext, ErrorHandlerFactory builder, Exchange exchange, Processor processor) throws Exception {
+        return builder.createErrorHandler(routeContext, processor);
     }
 
     /**

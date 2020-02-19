@@ -570,6 +570,10 @@ public class DefaultRouteContext implements RouteContext {
         return errorHandlers.computeIfAbsent(factory, f -> new LinkedHashSet<>());
     }
 
+    public void removeErrorHandlers(ErrorHandlerFactory factory) {
+        errorHandlers.remove(factory);
+    }
+
     @Override
     public void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target) {
         Set<NamedNode> list = getErrorHandlers(source);
