@@ -56,7 +56,6 @@ public class PulsarUtilsTest {
 
         PulsarUtils.stopConsumers(consumers);
 
-        verify(consumer).unsubscribe();
         verify(consumer).close();
     }
 
@@ -68,7 +67,6 @@ public class PulsarUtilsTest {
 
         consumer.close();
 
-        verify(consumer).unsubscribe();
         verify(consumer).close();
     }
 }
