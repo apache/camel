@@ -72,7 +72,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     private boolean shareUnitOfWork;
     private ExecutorService executorService;
     private boolean shutdownExecutorService;
-    private ExecutorService aggregateExecutorService;
+    private volatile ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
     public RecipientList(CamelContext camelContext) {
@@ -190,21 +190,13 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
                 isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
-                isStopOnAggregateException()) {
-            @Override
-            protected synchronized ExecutorService createAggregateExecutorService(String name) {
-                // use a shared executor service to avoid creating new thread pools
-                if (aggregateExecutorService == null) {
-                    aggregateExecutorService = super.createAggregateExecutorService("RecipientList-AggregateTask");
-                }
-                return aggregateExecutorService;
-            }
-        };
+                isStopOnAggregateException());
+        rlp.setAggregateExecutorService(aggregateExecutorService);
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
         rlp.setId(getId());
         rlp.setRouteId(getRouteId());
 
-        // start the service
+        // start ourselves
         try {
             ServiceHelper.startService(rlp);
         } catch (Exception e) {
@@ -232,6 +224,10 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
                 LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, cacheSize);
             }
         }
+        if (timeout > 0) {
+            // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
+            aggregateExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
+        }
         ServiceHelper.startService(aggregationStrategy, producerCache);
     }
 
@@ -244,6 +240,9 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(producerCache, aggregationStrategy);
 
+        if (aggregateExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(aggregateExecutorService);
+        }
         if (shutdownExecutorService && executorService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(executorService);
         }
