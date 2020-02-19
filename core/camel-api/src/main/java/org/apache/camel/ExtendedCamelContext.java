@@ -479,14 +479,4 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     boolean isAllowAddingNewRoutes();
 
-    /**
-     * Sets the {@link ReifierStrategy} to use.
-     */
-    void setReifierStrategy(ReifierStrategy refierStrategy);
-
-    /**
-     * Gets the {@link ReifierStrategy} to use.
-     */
-    ReifierStrategy getReifierStrategy();
-
 }

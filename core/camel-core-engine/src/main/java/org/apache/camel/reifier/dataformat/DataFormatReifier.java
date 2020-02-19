@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
@@ -131,6 +132,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         map.put(ZipDeflaterDataFormat.class, ZipDataFormatReifier::new);
         map.put(ZipFileDataFormat.class, ZipFileDataFormatReifier::new);
         DATAFORMATS = map;
+        AbstractCamelContext.addReifierStrategy(DataFormatReifier::clearReifiers);
     }
 
     protected final T definition;
@@ -143,6 +145,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     public static void registerReifier(Class<? extends DataFormatDefinition> dataFormatClass,
                                        BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
         DATAFORMATS.put(dataFormatClass, creator);
+    }
+
+    public static void clearReifiers() {
+        DATAFORMATS.clear();
     }
 
     /**

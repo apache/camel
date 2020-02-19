@@ -30,6 +30,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -116,7 +117,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier implements ReifierStrategy {
+public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier {
 
     private static final Map<Class<?>, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
     static {
@@ -189,6 +190,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         map.put(WhenSkipSendToEndpointDefinition.class, WhenSkipSendToEndpointReifier::new);
         map.put(WhenDefinition.class, WhenReifier::new);
         PROCESSORS = map;
+        AbstractCamelContext.addReifierStrategy(ProcessorReifier::clearReifiers);
     }
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -197,27 +199,18 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public ProcessorReifier(RouteContext routeContext, T definition) {
         super(routeContext);
         this.definition = definition;
-        // its okay to override the reifier strategy
-        if (routeContext != null && routeContext.getCamelContext() != null) {
-            routeContext.getCamelContext().adapt(ExtendedCamelContext.class).setReifierStrategy(this);
-        }
     }
 
     public ProcessorReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
-        if (camelContext != null) {
-            // its okay to override the reifier strategy
-            camelContext.adapt(ExtendedCamelContext.class).setReifierStrategy(this);
-        }
     }
 
     public static void registerReifier(Class<?> processorClass, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
         PROCESSORS.put(processorClass, creator);
     }
 
-    @Override
-    public void clearReifiers() {
+    public static void clearReifiers() {
         PROCESSORS.clear();
     }
 
