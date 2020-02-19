@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
 import org.apache.camel.model.validator.PredicateValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.reifier.AbstractReifier;
+import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.Validator;
 
 public abstract class ValidatorReifier<T> extends AbstractReifier  {
@@ -38,7 +38,7 @@ public abstract class ValidatorReifier<T> extends AbstractReifier  {
         map.put(EndpointValidatorDefinition.class, EndpointValidatorReifier::new);
         map.put(PredicateValidatorDefinition.class, PredicateValidatorReifier::new);
         VALIDATORS = map;
-        AbstractCamelContext.addReifierStrategy(ValidatorReifier::clearReifiers);
+        ReifierStrategy.addReifierClearer(ValidatorReifier::clearReifiers);
     }
 
     protected final T definition;

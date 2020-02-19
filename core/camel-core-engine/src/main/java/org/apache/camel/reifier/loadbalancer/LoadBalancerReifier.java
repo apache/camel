@@ -19,9 +19,7 @@ package org.apache.camel.reifier.loadbalancer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
-import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
@@ -32,6 +30,7 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.AbstractReifier;
+import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.StringHelper;
 
@@ -49,7 +48,7 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
         map.put(TopicLoadBalancerDefinition.class, TopicLoadBalancerReifier::new);
         map.put(WeightedLoadBalancerDefinition.class, WeightedLoadBalancerReifier::new);
         LOAD_BALANCERS = map;
-        AbstractCamelContext.addReifierStrategy(LoadBalancerReifier::clearReifiers);
+        ReifierStrategy.addReifierClearer(LoadBalancerReifier::clearReifiers);
     }
 
     protected final T definition;

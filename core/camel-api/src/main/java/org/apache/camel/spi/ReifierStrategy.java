@@ -16,15 +16,27 @@
  */
 package org.apache.camel.spi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Strategy for reifiers.
  */
-public interface ReifierStrategy {
+public abstract class ReifierStrategy {
+
+    private static final List<Runnable> CLEARERS = new ArrayList<>();
+
+    public static void addReifierClearer(Runnable strategy) {
+        CLEARERS.add(strategy);
+    }
 
     /**
      * DANGER: Clears the refifiers map.
      * After this the JVM with Camel cannot add new routes (using same classloader to load this class).
      * Clearing this map allows Camel to reduce memory footprint.
      */
-    void clearReifiers();
+    public static void clearReifiers() {
+        CLEARERS.forEach(Runnable::run);
+    }
+
 }
