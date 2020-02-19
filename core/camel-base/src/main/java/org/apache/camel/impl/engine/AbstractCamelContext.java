@@ -351,23 +351,25 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void doInit() throws Exception {
+    	
+        // Initialize LRUCacheFactory as eager as possible, 
+        // to let it warm up concurrently while Camel is startup up
         if (initialization != Initialization.Lazy) {
-            // initialize LRUCacheFactory as eager as possible, to let it warm up concurrently while Camel is startup up
             LRUCacheFactory.init();
         }
 
-        // setup type converter eager as its highly in use and should not be lazy initialized
-        if (eagerCreateTypeConverter()) {
-            getOrCreateTypeConverter();
-        }
-
-        // setup management first since end users may use it to add event
+        // Setup management first since end users may use it to add event
         // notifiers using the management strategy before the CamelContext has been started
         setupManagement(null);
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextCreated(this);
+        
+        // Setup type converter eager as its highly in use and should not be lazy initialized
+        if (eagerCreateTypeConverter()) {
+            getOrCreateTypeConverter();
+        }
     }
 
     @Override
