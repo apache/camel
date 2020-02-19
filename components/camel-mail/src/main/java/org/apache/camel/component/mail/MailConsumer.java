@@ -472,27 +472,19 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             MailConfiguration config = getEndpoint().getConfiguration();
             // header values override configuration values
             String copyTo = in.getHeader("copyTo", config.getCopyTo(), String.class);
+            String moveTo = in.getHeader("moveTo", config.getMoveTo(), String.class);
             boolean delete = in.getHeader("delete", config.isDelete(), boolean.class);
 
-            // Copy message into different imap folder if asked
-            if (config.getProtocol().equals(MailUtils.PROTOCOL_IMAP) || config.getProtocol().equals(MailUtils.PROTOCOL_IMAPS)) {
-                if (copyTo != null) {
-                    LOG.trace("IMAP message needs to be copied to {}", copyTo);
-                    Folder destFolder = store.getFolder(copyTo);
-                    if (!destFolder.exists()) {
-                        destFolder.create(Folder.HOLDS_MESSAGES);
-                    }
-                    folder.copyMessages(new Message[]{mail}, destFolder);
-                    LOG.trace("IMAP message {} copied to {}", mail, copyTo);
-                }
-            }
+            copyOrMoveMessageIfRequired(config, mail, copyTo, false);
 
             if (delete) {
                 LOG.trace("Exchange processed, so flagging message as DELETED");
+                copyOrMoveMessageIfRequired(config, mail, moveTo, true);
                 mail.setFlag(Flags.Flag.DELETED, true);
             } else {
                 LOG.trace("Exchange processed, so flagging message as SEEN");
                 mail.setFlag(Flags.Flag.SEEN, true);
+                copyOrMoveMessageIfRequired(config, mail, moveTo, true);
             }
 
             // need to confirm or remove on commit at last
@@ -506,6 +498,24 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
         } catch (MessagingException e) {
             getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
+        }
+    }
+
+
+    private void copyOrMoveMessageIfRequired(MailConfiguration config, Message mail, String destinationFolder, boolean moveMessage) throws MessagingException {
+        if (config.getProtocol().equals(MailUtils.PROTOCOL_IMAP) || config.getProtocol().equals(MailUtils.PROTOCOL_IMAPS)) {
+            if (destinationFolder != null) {
+                LOG.trace("IMAP message needs to be {} to {}", moveMessage ? "moved" : "copied", destinationFolder);
+                Folder destFolder = store.getFolder(destinationFolder);
+                if (!destFolder.exists()) {
+                    destFolder.create(Folder.HOLDS_MESSAGES);
+                }
+                folder.copyMessages(new Message[]{mail}, destFolder);
+                if (moveMessage) {
+                    mail.setFlag(Flags.Flag.DELETED, true);
+                }
+                LOG.trace("IMAP message {} {} to {}", mail, moveMessage ? "moved" : "copied", destinationFolder);
+            }
         }
     }
 

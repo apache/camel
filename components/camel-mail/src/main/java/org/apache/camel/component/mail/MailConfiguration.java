@@ -76,6 +76,8 @@ public class MailConfiguration implements Cloneable {
     private boolean delete;
     @UriParam @Metadata(label = "consumer")
     private String copyTo;
+    @UriParam @Metadata(label = "consumer")
+    private String moveTo;
     @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean unseen = true;
     @UriParam(label = "advanced")
@@ -673,6 +675,19 @@ public class MailConfiguration implements Cloneable {
 
     public String getCopyTo() {
         return copyTo;
+    }
+
+    public String getMoveTo() {
+        return moveTo;
+    }
+
+    /**
+     * After processing a mail message, it can be moved to a mail folder with the given name.
+     * You can override this configuration value, with a header with the key moveTo, allowing you to move messages
+     * to folder names configured at runtime.
+     */
+    public void setMoveTo(String moveTo) {
+        this.moveTo = moveTo;
     }
 
     /**
