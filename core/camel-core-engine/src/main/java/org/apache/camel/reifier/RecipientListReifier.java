@@ -106,9 +106,8 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         pipe.add(evalProcessor);
         pipe.add(answer);
 
-        // wrap in nested pipeline so this appears as one processor
-        // (threads definition does this as well)
-        return new Pipeline(camelContext, pipe);
+        // wrap recipient list in nested pipeline so this appears as one processor
+        return answer.newPipeline(camelContext, pipe);
     }
 
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {

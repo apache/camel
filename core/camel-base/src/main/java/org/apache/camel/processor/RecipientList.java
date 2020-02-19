@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
@@ -100,6 +101,39 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
         this.camelContext = camelContext;
         this.expression = expression;
         this.delimiter = delimiter;
+    }
+
+    /**
+     * Wrap {@link RecipientList} in {@link Pipeline}.
+     */
+    private final class RecipientListPipeline extends Pipeline {
+
+        private final RecipientList recipientList;
+
+        public RecipientListPipeline(RecipientList recipientList, CamelContext camelContext, Collection<Processor> processors) {
+            super(camelContext, processors);
+            this.recipientList = recipientList;
+        }
+
+        @Override
+        public void setId(String id) {
+            // we want to set the id on the recipient list and not this wrapping pipeline
+            recipientList.setId(id);
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return null;
+        }
+    }
+
+    public Processor newPipeline(CamelContext camelContext, Collection<Processor> processors) {
+        return new RecipientListPipeline(this, camelContext, processors);
     }
 
     @Override

@@ -45,9 +45,7 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
 
         // make sure its using an empty producer cache as the cache is disabled
         List<Processor> list = context.getRoute("route1").filter("foo");
-        // the id is set on the pipeline as recipient list is wrapped
-        Pipeline pipe = (Pipeline) list.get(0);
-        RecipientList rl = (RecipientList) pipe.next().get(1);
+        RecipientList rl = (RecipientList) list.get(0);
         assertNotNull(rl);
         assertEquals(-1, rl.getCacheSize());
 
