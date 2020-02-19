@@ -95,8 +95,4 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
         getProcessor().process(exchange);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
 }
