@@ -46,6 +46,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private final ThrowingFunction<Endpoint, S, Exception> creator;
     private final Function<S, Endpoint> getEndpoint;
     private final ConcurrentMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
+    // keep track of all singleton endpoints with a pooled producer that are evicted
+    // for multi pool then they have their own house-keeping for evictions (more complex)
+    private final ConcurrentMap<Endpoint, Pool<S>> singlePoolEvicted = new ConcurrentHashMap<>();
     private int capacity;
     private Map<S, S> cache;
 
@@ -167,6 +170,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             cache.values().forEach(ServicePool::stop);
             cache.clear();
         }
+        singlePoolEvicted.values().forEach(Pool::stop);
+        singlePoolEvicted.clear();
     }
 
     /**
@@ -187,7 +192,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private class SinglePool implements Pool<S> {
         private final Endpoint endpoint;
         private volatile S s;
-        private volatile S toBeEvicted;
 
         SinglePool(Endpoint endpoint) {
             this.endpoint = endpoint;
@@ -237,8 +241,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void evict(S s) {
-            // to be evicted
-            toBeEvicted = s;
+            singlePoolEvicted.putIfAbsent(endpoint, this);
         }
 
         @Override
@@ -247,18 +250,14 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
 
         private void cleanupEvicts() {
-            if (toBeEvicted != null) {
-                synchronized (this) {
-                    if (toBeEvicted != null) {
-                        doStop(toBeEvicted);
-                        pool.remove(endpoint);
-                        toBeEvicted = null;
-                    }
-                }
-            }
+            singlePoolEvicted.forEach((e, p) -> {
+                doStop(e);
+                p.stop();
+                singlePoolEvicted.remove(e);
+            });
         }
 
-        void doStop(S s) {
+        void doStop(Service s) {
             if (s != null) {
                 ServicePool.stop(s);
                 try {
@@ -345,7 +344,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             cleanupEvicts();
         }
 
-        void doStop(S s) {
+        void doStop(Service s) {
             if (s != null) {
                 ServicePool.stop(s);
                 try {
