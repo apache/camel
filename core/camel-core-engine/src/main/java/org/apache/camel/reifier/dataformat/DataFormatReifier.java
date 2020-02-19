@@ -207,7 +207,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                     ((DataFormatContentTypeHeader) dataFormat).setContentTypeHeader(contentTypeHeader);
                 }
                 // configure the rest of the options
-                configureDataFormat(dataFormat, camelContext);
+                configureDataFormat(dataFormat);
             } else {
                 throw new IllegalArgumentException("Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
                                                    + "' could not be created. "
@@ -236,12 +236,12 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     /**
      * Allows derived classes to customize the data format
      */
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+    protected void configureDataFormat(DataFormat dataFormat) {
         Map<String, Object> properties = new LinkedHashMap<>();
         prepareDataFormatConfig(properties);
         properties.entrySet().removeIf(e -> e.getValue() == null);
 
-        PropertyConfigurer configurer = findPropertyConfigurer(dataFormat, camelContext);
+        PropertyConfigurer configurer = findPropertyConfigurer(dataFormat);
 
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
@@ -253,7 +253,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                 .bind();
     }
 
-    private PropertyConfigurer findPropertyConfigurer(DataFormat dataFormat, CamelContext camelContext) {
+    private PropertyConfigurer findPropertyConfigurer(DataFormat dataFormat) {
         PropertyConfigurer configurer = null;
         String name = getDataFormatName();
         LOG.trace("Discovering optional dataformat property configurer class for dataformat: {}", name);

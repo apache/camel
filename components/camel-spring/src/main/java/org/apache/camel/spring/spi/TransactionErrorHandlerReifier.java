@@ -99,7 +99,7 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
                 getExecutorService(camelContext),
                 definition.getRollbackLoggingLevel(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
-        configure(routeContext, answer);
+        configure(answer);
         return answer;
     }
 

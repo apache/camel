@@ -723,7 +723,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
             // inject id
             if (processor instanceof IdAware) {
-                String id = getId(output, routeContext);
+                String id = getId(output);
                 ((IdAware)processor).setId(id);
             }
             if (processor instanceof RouteIdAware) {
@@ -788,7 +788,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         // inject id
         if (processor instanceof IdAware) {
-            String id = getId(definition, routeContext);
+            String id = getId(definition);
             ((IdAware)processor).setId(id);
         }
         if (processor instanceof RouteIdAware) {
@@ -819,7 +819,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // noop
     }
 
-    protected String getId(OptionalIdentifiedDefinition<?> def, RouteContext routeContext) {
+    protected String getId(OptionalIdentifiedDefinition<?> def) {
         return def.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
     }
 

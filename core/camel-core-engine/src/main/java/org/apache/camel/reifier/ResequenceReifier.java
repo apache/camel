@@ -50,13 +50,13 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         }
 
         if (stream != null) {
-            return createStreamResequencer(routeContext, stream);
+            return createStreamResequencer(stream);
         } else {
             // default as batch mode
             if (batch == null) {
                 batch = BatchResequencerConfig.getDefault();
             }
-            return createBatchResequencer(routeContext, batch);
+            return createBatchResequencer(batch);
         }
     }
 
@@ -64,13 +64,12 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
      * Creates a batch {@link Resequencer} instance applying the given
      * <code>config</code>.
      *
-     * @param routeContext route context.
      * @param config batch resequencer configuration.
      * @return the configured batch resequencer.
      * @throws Exception can be thrown
      */
     @SuppressWarnings("deprecation")
-    protected Resequencer createBatchResequencer(RouteContext routeContext, BatchResequencerConfig config) throws Exception {
+    protected Resequencer createBatchResequencer(BatchResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
@@ -99,12 +98,11 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
      * Creates a {@link StreamResequencer} instance applying the given
      * <code>config</code>.
      *
-     * @param routeContext route context.
      * @param config stream resequencer configuration.
      * @return the configured stream resequencer.
      * @throws Exception can be thrwon
      */
-    protected StreamResequencer createStreamResequencer(RouteContext routeContext, StreamResequencerConfig config) throws Exception {
+    protected StreamResequencer createStreamResequencer(StreamResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 

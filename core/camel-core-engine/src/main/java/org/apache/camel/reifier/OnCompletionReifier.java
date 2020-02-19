@@ -68,7 +68,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
 
-        routeContext.setOnCompletion(getId(definition, routeContext), internal);
+        routeContext.setOnCompletion(getId(definition), internal);
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {

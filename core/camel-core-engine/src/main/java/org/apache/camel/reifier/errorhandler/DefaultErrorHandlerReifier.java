@@ -40,7 +40,7 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> ex
                                                              definition.getRetryWhilePolicy(camelContext), getExecutorService(camelContext),
                                                              definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
-        configure(routeContext, answer);
+        configure(answer);
         return answer;
     }
 

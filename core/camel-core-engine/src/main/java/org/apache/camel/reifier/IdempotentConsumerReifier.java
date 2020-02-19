@@ -35,7 +35,7 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
     public Processor createProcessor() throws Exception {
         Processor childProcessor = this.createChildProcessor(true);
 
-        IdempotentRepository idempotentRepository = resolveMessageIdRepository(routeContext);
+        IdempotentRepository idempotentRepository = resolveMessageIdRepository();
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", definition);
 
         Expression expression = createExpression(definition.getExpression());
@@ -55,10 +55,9 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
      * Strategy method to resolve the
      * {@link org.apache.camel.spi.IdempotentRepository} to use
      *
-     * @param routeContext route context
      * @return the repository
      */
-    protected <T> IdempotentRepository resolveMessageIdRepository(RouteContext routeContext) {
+    protected <T> IdempotentRepository resolveMessageIdRepository() {
         if (definition.getMessageIdRepositoryRef() != null) {
             definition.setMessageIdRepository(mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
         }

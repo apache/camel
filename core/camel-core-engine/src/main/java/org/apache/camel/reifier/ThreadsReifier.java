@@ -44,7 +44,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         ExecutorService threadPool = getConfiguredExecutorService(name, definition, false);
 
         // resolve what rejected policy to use
-        ThreadPoolRejectedPolicy policy = resolveRejectedPolicy(routeContext);
+        ThreadPoolRejectedPolicy policy = resolveRejectedPolicy();
         if (policy == null) {
             if (parseBoolean(definition.getCallerRunsWhenRejected(), true)) {
                 // should use caller runs by default if not configured
@@ -100,7 +100,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         return new ThreadsProcessor(camelContext, threadPool, shutdownThreadPool, policy);
     }
 
-    protected ThreadPoolRejectedPolicy resolveRejectedPolicy(RouteContext routeContext) {
+    protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {
         if (definition.getExecutorServiceRef() != null && definition.getRejectedPolicy() == null) {
             ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager().getThreadPoolProfile(parseString(definition.getExecutorServiceRef()));
             if (threadPoolProfile != null) {

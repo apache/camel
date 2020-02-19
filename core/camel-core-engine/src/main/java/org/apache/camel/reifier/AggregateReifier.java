@@ -70,7 +70,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         AggregateProcessor answer = new AggregateProcessor(camelContext, internal, correlation, strategy, threadPool, shutdownThreadPool);
 
-        AggregationRepository repository = createAggregationRepository(routeContext);
+        AggregationRepository repository = createAggregationRepository();
         if (repository != null) {
             answer.setAggregationRepository(repository);
         }
@@ -243,7 +243,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return strategy;
     }
 
-    private AggregationRepository createAggregationRepository(RouteContext routeContext) {
+    private AggregationRepository createAggregationRepository() {
         AggregationRepository repository = definition.getAggregationRepository();
         if (repository == null && definition.getAggregationRepositoryRef() != null) {
             repository = mandatoryLookup(definition.getAggregationRepositoryRef(), AggregationRepository.class);

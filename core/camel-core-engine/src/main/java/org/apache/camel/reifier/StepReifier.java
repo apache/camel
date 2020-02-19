@@ -37,7 +37,7 @@ public class StepReifier extends ProcessorReifier<StepDefinition> {
 
     @Override
     protected Processor createCompositeProcessor(List<Processor> list) throws Exception {
-        String stepId = getId(definition, routeContext);
+        String stepId = getId(definition);
         return StepProcessor.newInstance(camelContext, list, stepId);
     }
 }
