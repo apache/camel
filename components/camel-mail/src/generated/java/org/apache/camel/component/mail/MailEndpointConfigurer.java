@@ -29,6 +29,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "mimedecodeheaders":
         case "mimeDecodeHeaders": target.getConfiguration().setMimeDecodeHeaders(property(camelContext, boolean.class, value)); return true;
+        case "moveto":
+        case "moveTo": target.getConfiguration().setMoveTo(property(camelContext, java.lang.String.class, value)); return true;
         case "peek": target.getConfiguration().setPeek(property(camelContext, boolean.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
