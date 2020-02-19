@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -35,7 +34,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -217,14 +215,6 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
 
         // now let the multicast process the exchange
         return rlp.process(exchange, callback);
-    }
-
-    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            recipient = ((String)recipient).trim();
-        }
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
