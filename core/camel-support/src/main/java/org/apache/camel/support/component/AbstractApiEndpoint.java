@@ -84,11 +84,6 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         this.configuration = endpointConfiguration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * Returns generated helper that extends {@link ApiMethodPropertiesHelper} to work with API properties.
      * @return properties helper.
