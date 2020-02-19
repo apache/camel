@@ -29,7 +29,6 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
@@ -66,7 +65,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         answer.setCopy(isCopy);
         Processor newExchangeProcessor = definition.getNewExchangeProcessor();
         if (definition.getNewExchangeProcessorRef() != null) {
-            newExchangeProcessor = routeContext.mandatoryLookup(parseString(definition.getNewExchangeProcessorRef()), Processor.class);
+            newExchangeProcessor = mandatoryLookup(parseString(definition.getNewExchangeProcessorRef()), Processor.class);
         }
         if (newExchangeProcessor != null) {
             answer.addNewExchangeProcessor(newExchangeProcessor);
@@ -82,7 +81,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         }
         Processor onPrepare = definition.getOnPrepare();
         if (definition.getOnPrepareRef() != null) {
-            onPrepare = CamelContextHelper.mandatoryLookup(camelContext, parseString(definition.getOnPrepareRef()), Processor.class);
+            onPrepare = mandatoryLookup(parseString(definition.getOnPrepareRef()), Processor.class);
         }
         if (onPrepare != null) {
             answer.setOnPrepare(onPrepare);

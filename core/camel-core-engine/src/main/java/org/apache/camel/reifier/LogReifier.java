@@ -29,7 +29,6 @@ import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -54,13 +53,13 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
 
         // get logger which may be set in XML definition
         if (logger == null && ObjectHelper.isNotEmpty(definition.getLoggerRef())) {
-            logger = CamelContextHelper.mandatoryLookup(camelContext, definition.getLoggerRef(), Logger.class);
+            logger = mandatoryLookup(definition.getLoggerRef(), Logger.class);
         }
 
         if (logger == null) {
             // first - try to lookup single instance in the registry, just like
             // LogComponent
-            Map<String, Logger> availableLoggers = routeContext.lookupByType(Logger.class);
+            Map<String, Logger> availableLoggers = findByTypeWithName(Logger.class);
             if (availableLoggers.size() == 1) {
                 logger = availableLoggers.values().iterator().next();
                 log.debug("Using custom Logger: {}", logger);
@@ -89,12 +88,12 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         LoggingLevel level = definition.getLoggingLevel() != null ? parse(LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
-        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
+        return new LogProcessor(exp, camelLogger, getMaskingFormatter(), camelContext.adapt(ExtendedCamelContext.class).getLogListeners());
     }
 
-    private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {
+    private MaskingFormatter getMaskingFormatter() {
         if (routeContext.isLogMask()) {
-            MaskingFormatter formatter = routeContext.lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            MaskingFormatter formatter = lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();
             }

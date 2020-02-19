@@ -23,6 +23,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 
 public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
 
@@ -32,16 +33,16 @@ public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Endpoint endpoint = resolveEndpoint(routeContext);
+        Endpoint endpoint = resolveEndpoint();
         return new SendProcessor(endpoint, parse(ExchangePattern.class, definition.getPattern()));
     }
 
-    public Endpoint resolveEndpoint(RouteContext context) {
+    public Endpoint resolveEndpoint() {
         if (definition.getEndpoint() == null) {
             if (definition.getEndpointProducerBuilder() == null) {
-                return context.resolveEndpoint(definition.getEndpointUri(), (String)null);
+                return CamelContextHelper.resolveEndpoint(camelContext, definition.getEndpointUri(), (String)null);
             } else {
-                return definition.getEndpointProducerBuilder().resolve(context.getCamelContext());
+                return definition.getEndpointProducerBuilder().resolve(camelContext);
             }
         } else {
             return definition.getEndpoint();

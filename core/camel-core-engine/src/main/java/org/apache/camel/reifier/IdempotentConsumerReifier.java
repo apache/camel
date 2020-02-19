@@ -60,7 +60,7 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
      */
     protected <T> IdempotentRepository resolveMessageIdRepository(RouteContext routeContext) {
         if (definition.getMessageIdRepositoryRef() != null) {
-            definition.setMessageIdRepository(routeContext.mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
+            definition.setMessageIdRepository(mandatoryLookup(parseString(definition.getMessageIdRepositoryRef()), IdempotentRepository.class));
         }
         return definition.getMessageIdRepository();
     }

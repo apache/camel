@@ -58,7 +58,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getAggregationStrategyRef(), Object.class);
+            Object aggStrategy = lookup(definition.getAggregationStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {

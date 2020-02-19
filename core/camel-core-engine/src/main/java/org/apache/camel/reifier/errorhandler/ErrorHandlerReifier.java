@@ -184,6 +184,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      */
     public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref, boolean mandatory) {
         ErrorHandlerFactory answer;
+        CamelContext camelContext = routeContext.getCamelContext();
 
         // if the ref is the default then we do not have any explicit error
         // handler configured
@@ -204,7 +205,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                     // the other has also no explicit error handler configured
                     // then fallback to the handler
                     // configured on the parent camel context
-                    answer = lookupErrorHandlerFactory(routeContext.getCamelContext());
+                    answer = lookupErrorHandlerFactory(camelContext);
                 }
                 if (answer == null) {
                     // the other has also no explicit error handler configured
@@ -222,9 +223,9 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         } else {
             // use specific configured error handler
             if (mandatory) {
-                answer = routeContext.mandatoryLookup(ref, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.mandatoryLookup(camelContext, ref, ErrorHandlerBuilder.class);
             } else {
-                answer = routeContext.lookup(ref, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.lookup(camelContext, ref, ErrorHandlerBuilder.class);
             }
         }
 
@@ -237,7 +238,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
             String otherRef = other.getRef();
             if (isErrorHandlerFactoryConfigured(otherRef)) {
-                answer = camelContext.getRegistry().lookupByNameAndType(otherRef, ErrorHandlerBuilder.class);
+                answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerBuilder.class);
                 if (answer == null) {
                     throw new IllegalArgumentException("ErrorHandlerBuilder with id " + otherRef + " not found in registry.");
                 }

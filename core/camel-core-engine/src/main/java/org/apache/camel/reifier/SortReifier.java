@@ -40,7 +40,7 @@ public class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifi
     public Processor createProcessor() throws Exception {
         // lookup in registry
         if (isNotEmpty(definition.getComparatorRef())) {
-            definition.setComparator(routeContext.lookup(parseString(definition.getComparatorRef()), Comparator.class));
+            definition.setComparator(lookup(parseString(definition.getComparatorRef()), Comparator.class));
         }
 
         // if no comparator then default on to string representation

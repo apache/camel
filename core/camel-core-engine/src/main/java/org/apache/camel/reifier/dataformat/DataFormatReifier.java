@@ -75,6 +75,7 @@ import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.spi.ReifierStrategy;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -163,7 +164,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (type == null) {
             ObjectHelper.notNull(ref, "ref or type");
 
-            DataFormat dataFormat = camelContext.getRegistry().lookupByNameAndType(ref, DataFormat.class);
+            DataFormat dataFormat = CamelContextHelper.lookup(camelContext, ref, DataFormat.class);
             if (dataFormat != null) {
                 return dataFormat;
             }
@@ -264,7 +265,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         if (configurer == null) {
             final String configurerName = name + "-dataformat-configurer";
-            configurer = camelContext.getRegistry().lookupByNameAndType(configurerName, PropertyConfigurer.class);
+            configurer = lookup(configurerName, PropertyConfigurer.class);
             if (LOG.isDebugEnabled() && configurer != null) {
                 LOG.debug("Discovered dataformat property configurer using the Camel registry: {} -> {}", configurerName, configurer);
             }
