@@ -16,11 +16,16 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.ReflectionHelper;
 import org.junit.Test;
 
 public class RecipientListParallelTimeoutTest extends ContextTestSupport {
@@ -34,6 +39,21 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello", "slip", "direct:a,direct:b,direct:c");
 
         assertMockEndpointsSatisfied();
+
+        // make sure that the thread pool will be shutdown
+        List<Processor> list = context.getRoute("route1").filter("foo");
+        RecipientList rl = (RecipientList) list.get(0);
+        assertNotNull(rl);
+
+        Object pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("aggregateExecutorService"), rl);
+        assertNotNull(pc);
+        ExecutorService es = assertIsInstanceOf(ExecutorService.class, pc);
+
+        assertFalse(es.isShutdown());
+
+        // now stop camel and ensure the thread pool is stopped
+        context.stop();
+        assertTrue(es.isShutdown());
     }
 
     @Override
@@ -51,7 +71,7 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
                         return oldExchange;
                     }
-                }).parallelProcessing().timeout(500).to("mock:result");
+                }).parallelProcessing().timeout(500).id("foo").to("mock:result");
 
                 from("direct:a").delay(1000).setBody(constant("A"));
 

@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
@@ -52,6 +53,10 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
         Object pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("producerCache"), rl);
         assertNotNull(pc);
         assertIsInstanceOf(EmptyProducerCache.class, pc);
+
+        // and no thread pool is in use as timeout is 0
+        pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("aggregateExecutorService"), rl);
+        assertNull(pc);
     }
 
     protected void sendBody(String body) {

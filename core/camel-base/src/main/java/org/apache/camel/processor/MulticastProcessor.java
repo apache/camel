@@ -161,6 +161,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
     private ExecutorService aggregateExecutorService;
+    private boolean shutdownAggregateExecutorService;
     private final long timeout;
     private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<>();
     private final boolean shareUnitOfWork;
@@ -802,12 +803,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (isParallelProcessing() && executorService == null) {
             throw new IllegalArgumentException("ParallelProcessing is enabled but ExecutorService has not been set");
         }
-        if (aggregateExecutorService == null) {
+        if (timeout > 0 && aggregateExecutorService == null) {
             // use unbounded thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
             // and run the tasks when the task is submitted. If not then the aggregate task may not be able to run
             // and signal completion during processing, which would lead to what would appear as a dead-lock or a slow processing
             String name = getClass().getSimpleName() + "-AggregateTask";
             aggregateExecutorService = createAggregateExecutorService(name);
+            shutdownAggregateExecutorService = true;
         }
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
@@ -842,7 +844,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (shutdownExecutorService && executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
         }
-        if (aggregateExecutorService != null) {
+        if (shutdownAggregateExecutorService && aggregateExecutorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(aggregateExecutorService);
         }
     }
@@ -966,6 +968,16 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     public boolean isShareUnitOfWork() {
         return shareUnitOfWork;
+    }
+
+    public ExecutorService getAggregateExecutorService() {
+        return aggregateExecutorService;
+    }
+
+    public void setAggregateExecutorService(ExecutorService aggregateExecutorService) {
+        this.aggregateExecutorService = aggregateExecutorService;
+        // we use a custom executor so do not shutdown
+        this.shutdownAggregateExecutorService = false;
     }
 
     @Override
