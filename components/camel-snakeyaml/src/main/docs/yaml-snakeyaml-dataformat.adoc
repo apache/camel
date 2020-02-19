@@ -57,7 +57,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 12 options, which are listed below.
+The component supports 14 options, which are listed below.
 
 
 

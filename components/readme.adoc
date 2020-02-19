@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 347 in 268 JAR artifacts (27 deprecated)
+Number of Components: 356 in 276 JAR artifacts (27 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -68,17 +68,44 @@ Number of Components: 347 in 268 JAR artifacts (27 deprecated)
 | link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
 `avro:transport:host:port/messageName` | 2.10 | Working with Apache Avro for data serialization.
 
+| link:camel-aws2-cw/src/main/docs/aws2-cw-component.adoc[AWS 2 CloudWatch] (camel-aws2-cw) +
+`aws2-cw:namespace` | 3.1 | The aws2-cw component is used for sending metrics to an Amazon CloudWatch.
+
+| link:camel-aws2-ddb/src/main/docs/aws2-ddb-component.adoc[AWS 2 DynamoDB] (camel-aws2-ddb) +
+`aws2-ddb:tableName` | 3.1 | The aws2-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+
+| link:camel-aws2-ddb/src/main/docs/aws2-ddbstream-component.adoc[AWS 2 DynamoDB Streams] (camel-aws2-ddb) +
+`aws2-ddbstream:tableName` | 3.1 | The aws2-ddbstream component is used for working with Amazon DynamoDB Streams.
+
+| link:camel-aws2-ec2/src/main/docs/aws2-ec2-component.adoc[AWS 2 EC2] (camel-aws2-ec2) +
+`aws2-ec2:label` | 3.1 | The aws2-ec2 is used for managing Amazon EC2 instances.
+
 | link:camel-aws2-ecs/src/main/docs/aws2-ecs-component.adoc[AWS 2 ECS] (camel-aws2-ecs) +
 `aws2-ecs:label` | 3.1 | The aws2-ecs is used for managing Amazon ECS
 
 | link:camel-aws2-eks/src/main/docs/aws2-eks-component.adoc[AWS 2 EKS] (camel-aws2-eks) +
-`aws2-eks:label` | 3.1 | The aws-eks is used for managing Amazon EKS
+`aws2-eks:label` | 3.1 | The aws2-eks is used for managing Amazon EKS
+
+| link:camel-aws2-iam/src/main/docs/aws2-iam-component.adoc[AWS 2 IAM] (camel-aws2-iam) +
+`aws2-iam:label` | 3.1 | The aws2-iam is used for managing Amazon IAM
+
+| link:camel-aws2-kms/src/main/docs/aws2-kms-component.adoc[AWS 2 KMS] (camel-aws2-kms) +
+`aws2-kms:label` | 3.1 | The aws2-kms is used for managing Amazon KMS
 
 | link:camel-aws2-mq/src/main/docs/aws2-mq-component.adoc[AWS 2 MQ] (camel-aws2-mq) +
-`aws2-mq:label` | 3.1 | The aws-mq is used for managing Amazon MQ instances.
+`aws2-mq:label` | 3.1 | The aws2-mq is used for managing Amazon MQ instances.
 
 | link:camel-aws2-msk/src/main/docs/aws2-msk-component.adoc[AWS 2 MSK] (camel-aws2-msk) +
 `aws2-msk:label` | 3.1 | The aws2-msk is used for managing Amazon MSK
+
+| link:camel-aws2-ses/src/main/docs/aws2-ses-component.adoc[AWS 2 Simple Email Service] (camel-aws2-ses) +
+`aws2-ses:from` | 3.1 | The aws2-ses component is used for sending emails with Amazon's SES service.
+
+| link:camel-aws2-sns/src/main/docs/aws2-sns-component.adoc[AWS 2 Simple Notification System] (camel-aws2-sns) +
+`aws2-sns:topicNameOrArn` | 3.1 | The aws2-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| link:camel-aws2-sqs/src/main/docs/aws2-sqs-component.adoc[AWS 2 Simple Queue Service] (camel-aws2-sqs) +
+`aws2-sqs:queueNameOrArn` | 3.1 | The aws2-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | link:camel-aws2-translate/src/main/docs/aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) +
 `aws2-translate:label` | 3.1 | The aws2-translate component is used for managing Amazon Translate
@@ -1002,13 +1029,13 @@ Number of Components: 347 in 268 JAR artifacts (27 deprecated)
 `webhook:endpointUri` | 3.0 | The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
 
 | link:camel-weka/src/main/docs/weka-component.adoc[Weka] (camel-weka) +
-`weka:cmd` | 3.1 | The camel-weka component provides Data Mining functionality through Weka.
+`weka:command` | 3.1 | The camel-weka component provides Data Mining functionality through Weka.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
 `wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
 
 | link:camel-workday/src/main/docs/workday-component.adoc[Workday] (camel-workday) +
-`workday:uri` | 3.1.0-SNAPSHOT | Represents a camel-workday endpoint.
+`workday:entity:path` | 3.1 | Represents a Workday endpoint.
 
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
