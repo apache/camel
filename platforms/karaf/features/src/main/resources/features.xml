@@ -1520,6 +1520,7 @@
   <feature name='camel-jooq' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.jooq/jooq/${jooq-version}</bundle>
+    <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jooq/${project.version}</bundle>
   </feature>
   <feature name='camel-johnzon' version='${project.version}' start-level='50'>
