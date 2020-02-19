@@ -259,7 +259,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri the dynamic endpoint to send to (resolved using simple
      *            language by default)
      * @param cacheSize sets the maximum size used by the
-     *            {@link org.apache.camel.spi.ConsumerCache} which is used to
+     *            {@link org.apache.camel.spi.ProducerCache} which is used to
      *            cache and reuse producers.
      * @return the builder
      */
@@ -277,7 +277,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpointProducerBuilder the dynamic endpoint to send to (resolved
      *            using simple language by default)
      * @param cacheSize sets the maximum size used by the
-     *            {@link org.apache.camel.spi.ConsumerCache} which is used to
+     *            {@link org.apache.camel.spi.ProducerCache} which is used to
      *            cache and reuse producers.
      * @return the builder
      */
