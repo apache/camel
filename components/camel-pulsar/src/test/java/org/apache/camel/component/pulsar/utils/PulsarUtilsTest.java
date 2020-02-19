@@ -26,13 +26,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class PulsarUtilsTest {
 
     @Test
     public void givenConsumerQueueIsEmptywhenIStopConsumersverifyEmptyQueueIsReturned() throws PulsarClientException {
-        Queue<Consumer<byte[]>> expected = PulsarUtils.stopConsumers(new ConcurrentLinkedQueue<Consumer<byte[]>>());
+        Queue<Consumer<byte[]>> expected = PulsarUtils.stopConsumers(new ConcurrentLinkedQueue<Consumer<byte[]>>(), true);
 
         assertTrue(expected.isEmpty());
     }
@@ -42,7 +43,7 @@ public class PulsarUtilsTest {
         Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
         consumers.add(mock(Consumer.class));
 
-        Queue<Consumer<byte[]>> expected = PulsarUtils.stopConsumers(consumers);
+        Queue<Consumer<byte[]>> expected = PulsarUtils.stopConsumers(consumers, true);
 
         assertTrue(expected.isEmpty());
     }
@@ -54,9 +55,22 @@ public class PulsarUtilsTest {
         Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
         consumers.add(consumer);
 
-        PulsarUtils.stopConsumers(consumers);
+        PulsarUtils.stopConsumers(consumers, true);
 
         verify(consumer).unsubscribe();
+        verify(consumer).close();
+    }
+
+    @Test
+    public void givenPulsarConfigurationIsUnsubscribeOnStopIsFalseVerifyConsumerDoesNotCallUnsubscribe() throws PulsarClientException {
+        Consumer<byte[]> consumer = mock(Consumer.class);
+
+        Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
+        consumers.add(consumer);
+
+        PulsarUtils.stopConsumers(consumers, false);
+
+        verify(consumer, never()).unsubscribe();
         verify(consumer).close();
     }
 

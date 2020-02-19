@@ -31,12 +31,14 @@ public final class PulsarUtils {
     private PulsarUtils() {
     }
 
-    public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
+    public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers, boolean unsubscribeOnStop) throws PulsarClientException {
         while (!consumers.isEmpty()) {
             Consumer<byte[]> consumer = consumers.poll();
             if (consumer != null) {
                 try {
-                    consumer.unsubscribe();
+                    if (unsubscribeOnStop) {
+                        consumer.unsubscribe();
+                    }
                     consumer.close();
                 } catch (Exception e) {
                     // ignore during stopping
