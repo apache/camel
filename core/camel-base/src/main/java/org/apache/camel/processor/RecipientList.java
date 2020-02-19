@@ -203,6 +203,8 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
             }
         };
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
+        rlp.setId(getId());
+        rlp.setRouteId(getRouteId());
 
         // start the service
         try {
