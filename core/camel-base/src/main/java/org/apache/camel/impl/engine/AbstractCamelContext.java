@@ -179,7 +179,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         Eager, Default, Lazy
     }
 
-    private static final List<ReifierStrategy> reifierStrategies = new ArrayList<>();
+    private static final List<ReifierStrategy> REIFIER_STRATEGIES = new ArrayList<>();
 
     private final AtomicBoolean vetoStarted = new AtomicBoolean();
     private String managementName;
@@ -344,11 +344,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     public static void addReifierStrategy(ReifierStrategy strategy) {
-        reifierStrategies.add(strategy);
+        REIFIER_STRATEGIES.add(strategy);
     }
 
     public static void clearReifiers() {
-        reifierStrategies.forEach(ReifierStrategy::clearReifiers);
+        REIFIER_STRATEGIES.forEach(ReifierStrategy::clearReifiers);
     }
 
     /**
