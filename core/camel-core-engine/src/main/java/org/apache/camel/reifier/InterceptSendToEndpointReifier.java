@@ -18,7 +18,6 @@ package org.apache.camel.reifier;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
@@ -66,7 +65,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                 if (endpoint instanceof DefaultInterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
-                } else if (matchURI == null || matchPattern(camelContext, uri, matchURI)) {
+                } else if (matchURI == null || matchPattern(uri, matchURI)) {
                     // only proxy if the uri is matched decorate endpoint with
                     // our proxy
                     // should be false by default
@@ -97,13 +96,12 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
     /**
      * Does the uri match the pattern.
      *
-     * @param camelContext the CamelContext
      * @param uri the uri
      * @param pattern the pattern, which can be an endpoint uri as well
      * @return <tt>true</tt> if matched and we should intercept, <tt>false</tt>
      *         if not matched, and not intercept.
      */
-    protected boolean matchPattern(CamelContext camelContext, String uri, String pattern) {
+    protected boolean matchPattern(String uri, String pattern) {
         // match using the pattern as-is
         boolean match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
         if (!match) {

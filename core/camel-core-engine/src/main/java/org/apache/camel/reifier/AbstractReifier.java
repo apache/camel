@@ -131,6 +131,10 @@ public abstract class AbstractReifier implements BeanRepository {
         return CamelContextHelper.mandatoryLookup(camelContext, name, beanType);
     }
 
+    public <T> T findSingleByType(Class<T> type) {
+        return CamelContextHelper.findByType(camelContext, type);
+    }
+
     @Override
     public Object lookupByName(String name) {
         return getRegistry().lookupByName(name);

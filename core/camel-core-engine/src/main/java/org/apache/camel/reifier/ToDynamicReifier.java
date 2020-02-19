@@ -48,7 +48,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
             exp = definition.getEndpointProducerBuilder().expr(camelContext);
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
-            exp = createExpression(routeContext, uri);
+            exp = createExpression(uri);
         }
 
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
@@ -66,7 +66,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
         return processor;
     }
 
-    protected Expression createExpression(RouteContext routeContext, String uri) {
+    protected Expression createExpression(String uri) {
         List<Expression> list = new ArrayList<>();
 
         String[] parts = safeSplitRaw(uri);

@@ -67,7 +67,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Utility classes should not have a public constructor.
      */
-    ErrorHandlerReifier(RouteContext routeContext, T definition) {
+    protected ErrorHandlerReifier(RouteContext routeContext, T definition) {
         super(routeContext);
         this.definition = definition;
     }
@@ -271,7 +271,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
      */
     public abstract Processor createErrorHandler(Processor processor) throws Exception;
 
-    public void configure(RouteContext routeContext, ErrorHandler handler) {
+    public void configure(ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport)handler;
 

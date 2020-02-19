@@ -54,7 +54,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
         }
 
         final HystrixConfigurationDefinition config = buildHystrixConfiguration();
-        final String id = getId(definition, routeContext);
+        final String id = getId(definition);
 
         // group and thread pool keys to use they can be configured on configRef and config, so look there first, and if none then use default
         String groupKey = config.getGroupKey();

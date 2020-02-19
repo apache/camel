@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -78,7 +77,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         }
 
         Processor childProcessor = this.createChildProcessor(true);
-        CamelSagaService camelSagaService = findSagaService(camelContext);
+        CamelSagaService camelSagaService = findSagaService();
 
         camelSagaService.registerStep(step);
 
@@ -87,7 +86,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
                 .propagation(propagation).completionMode(completionMode).build();
     }
 
-    protected CamelSagaService findSagaService(CamelContext context) {
+    protected CamelSagaService findSagaService() {
         CamelSagaService sagaService = definition.getSagaService();
         if (sagaService != null) {
             return sagaService;
@@ -97,12 +96,12 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
             return mandatoryLookup(parseString(definition.getSagaServiceRef()), CamelSagaService.class);
         }
 
-        sagaService = context.hasService(CamelSagaService.class);
+        sagaService = camelContext.hasService(CamelSagaService.class);
         if (sagaService != null) {
             return sagaService;
         }
 
-        sagaService = CamelContextHelper.findByType(context, CamelSagaService.class);
+        sagaService = findSingleByType(CamelSagaService.class);
         if (sagaService != null) {
             return sagaService;
         }

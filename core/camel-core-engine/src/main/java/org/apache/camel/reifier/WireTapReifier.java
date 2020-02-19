@@ -91,10 +91,10 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
     }
 
     @Override
-    protected Expression createExpression(RouteContext routeContext, String uri) {
+    protected Expression createExpression(String uri) {
         // whether to use dynamic or static uri
         if (parseBoolean(definition.getDynamicUri(), true)) {
-            return super.createExpression(routeContext, uri);
+            return super.createExpression(uri);
         } else {
             return ExpressionBuilder.constantExpression(uri);
         }
