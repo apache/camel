@@ -67,24 +67,31 @@ public class AvailablePortFinderTest {
         assertThat(function.apply("test")).isSameAs(function.apply("test"));
         assertThat(function.apply("")).isEqualTo("");
         assertThat(function.apply(null)).isNull();
+    }
 
+    @Test
+    public void testAvailablePortFinderPropertiesFunctionWithRange() throws Exception {
         // range
-        assertThat(Integer.parseInt(function.apply("test:1024-49151"))).isBetween(1024, 49150);
+        assertThat(Integer.parseInt(function("test:1024-49151"))).isBetween(1024, 49150);
 
         // validation
-        assertThatThrownBy(() -> function.apply("test:")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> function.apply("test:-")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> function("test:")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> function("test:-")).isInstanceOf(IllegalArgumentException.class);
 
-        assertThatThrownBy(() -> function.apply("test:1024"))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Unable to parse from range");
+        assertThatThrownBy(() -> function("test:1024"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Unable to parse from range");
 
-        assertThatThrownBy(() -> function.apply("test:1024-"))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Unable to parse to range");
+        assertThatThrownBy(() -> function("test:1024-"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Unable to parse to range");
 
-        assertThatThrownBy(() -> function.apply("test:-1234"))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Unable to parse from range");
+        assertThatThrownBy(() -> function("test:-1234"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Unable to parse from range");
+    }
+
+    private static String function(String remainder) {
+        return new AvailablePortFinderPropertiesFunction().apply(remainder);
     }
 }
