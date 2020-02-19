@@ -30,7 +30,6 @@ import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -190,7 +189,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         map.put(WhenSkipSendToEndpointDefinition.class, WhenSkipSendToEndpointReifier::new);
         map.put(WhenDefinition.class, WhenReifier::new);
         PROCESSORS = map;
-        AbstractCamelContext.addReifierStrategy(ProcessorReifier::clearReifiers);
+        ReifierStrategy.addReifierClearer(ProcessorReifier::clearReifiers);
     }
     protected final Logger log = LoggerFactory.getLogger(getClass());
 

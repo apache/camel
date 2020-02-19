@@ -179,8 +179,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         Eager, Default, Lazy
     }
 
-    private static final List<ReifierStrategy> REIFIER_STRATEGIES = new ArrayList<>();
-
     private final AtomicBoolean vetoStarted = new AtomicBoolean();
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -341,14 +339,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 throw new RuntimeException("Error initializing CamelContext", e);
             }
         }
-    }
-
-    public static void addReifierStrategy(ReifierStrategy strategy) {
-        REIFIER_STRATEGIES.add(strategy);
-    }
-
-    public static void clearReifiers() {
-        REIFIER_STRATEGIES.forEach(ReifierStrategy::clearReifiers);
     }
 
     /**
@@ -2494,7 +2484,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
      * This is used to do some internal optimizations.
      */
     protected void disallowAddingNewRoutes() {
-        clearReifiers();
+        ReifierStrategy.clearReifiers();
     }
 
     @Override
