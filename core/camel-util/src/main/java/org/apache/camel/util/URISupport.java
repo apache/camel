@@ -281,15 +281,18 @@ public final class URISupport {
                         continue;
                     }
                     String str = obj.toString();
-                    final int index = i;
-                    URIScanner.resolveRaw(str, (s, raw) -> {
+                    String raw = URIScanner.resolveRaw(str);
+                    if (raw != null) {
                         // update the string in the list
-                        list.set(index, raw);
-                    });
+                        list.set(i, raw);
+                    };
                 }
             } else {
                 String str = entry.getValue().toString();
-                URIScanner.resolveRaw(str, (s, raw) -> entry.setValue(raw));
+                String raw = URIScanner.resolveRaw(str);
+                if (raw != null) {
+                    entry.setValue(raw);
+                }
             }
         }
     }
@@ -428,13 +431,13 @@ public final class URISupport {
         }
         // only append if value is not null
         rc.append("=");
-        boolean isRaw = URIScanner.resolveRaw(value, (str, raw) -> {
+        String raw = URIScanner.resolveRaw(value);
+        if (raw != null) {
             // do not encode RAW parameters unless it has %
             // need to replace % with %25 to avoid losing "%" when decoding
-            String s = StringHelper.replaceAll(str, "%", "%25");
+            String s = StringHelper.replaceAll(value, "%", "%25");
             rc.append(s);
-        });
-        if (!isRaw) {
+        } else {
             rc.append(URLEncoder.encode(value, CHARSET));
         }
     }
