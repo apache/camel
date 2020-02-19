@@ -45,7 +45,7 @@ public class PulsarConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        pulsarConsumers = stopConsumers(pulsarConsumers, pulsarEndpoint.getPulsarConfiguration().isUnsubscribeOnStop());
+        pulsarConsumers = stopConsumers(pulsarConsumers);
 
         Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
 
@@ -54,17 +54,17 @@ public class PulsarConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws PulsarClientException {
-        pulsarConsumers = stopConsumers(pulsarConsumers, pulsarEndpoint.getPulsarConfiguration().isUnsubscribeOnStop());
+        pulsarConsumers = stopConsumers(pulsarConsumers);
     }
 
     @Override
     protected void doSuspend() throws PulsarClientException {
-        pulsarConsumers = stopConsumers(pulsarConsumers, pulsarEndpoint.getPulsarConfiguration().isUnsubscribeOnStop());
+        pulsarConsumers = stopConsumers(pulsarConsumers);
     }
 
     @Override
     protected void doResume() throws Exception {
-        pulsarConsumers = stopConsumers(pulsarConsumers, pulsarEndpoint.getPulsarConfiguration().isUnsubscribeOnStop());
+        pulsarConsumers = stopConsumers(pulsarConsumers);
 
         Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
 

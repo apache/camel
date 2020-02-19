@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (29 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +91,6 @@ with the following path and query parameters:
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. The value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
 | *subscriptionType* (consumer) | Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to EXCLUSIVE. The value can be one of: EXCLUSIVE, SHARED, FAILOVER | EXCLUSIVE | SubscriptionType
-| *unsubscribeOnStop* (consumer) | Call unsubscribe when consumer stops | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *batchingEnabled* (producer) | Control whether automatic batching of messages is enabled for the producer. | true | boolean

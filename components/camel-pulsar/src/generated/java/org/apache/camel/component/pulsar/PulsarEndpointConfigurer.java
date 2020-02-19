@@ -37,8 +37,6 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "subscriptionName": target.getPulsarConfiguration().setSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "subscriptiontype":
         case "subscriptionType": target.getPulsarConfiguration().setSubscriptionType(property(camelContext, org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.class, value)); return true;
-        case "unsubscribeonstop":
-        case "unsubscribeOnStop": target.getPulsarConfiguration().setUnsubscribeOnStop(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":

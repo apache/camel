@@ -55,8 +55,6 @@ public class PulsarConfiguration {
     private long ackGroupTimeMillis = 100;
     @UriParam(label = "consumer", defaultValue = "LATEST")
     private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
-    @UriParam(label = "consumer", description = "Call unsubscribe when consumer stops", defaultValue = "true")
-    private boolean unsubscribeOnStop;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer", description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError", defaultValue = "false")
@@ -356,14 +354,4 @@ public class PulsarConfiguration {
         this.messageRouter = messageRouter;
     }
 
-    /**
-     * Set whether pulsar consumers will unsubscribe the subscription on close
-     */
-    public void setUnsubscribeOnStop(boolean unsubscribeOnStop) {
-        this.unsubscribeOnStop = unsubscribeOnStop;
-    }
-
-    public boolean isUnsubscribeOnStop() {
-        return unsubscribeOnStop;
-    }
 }
