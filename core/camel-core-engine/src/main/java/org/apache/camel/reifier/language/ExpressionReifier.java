@@ -26,6 +26,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
+import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -79,6 +80,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         map.put(XPathExpression.class, XPathExpressionReifier::new);
         map.put(XQueryExpression.class, XQueryExpressionReifier::new);
         EXPRESSIONS = map;
+        AbstractCamelContext.addReifierStrategy(ExpressionReifier::clearReifiers);
     }
 
     protected final T definition;
@@ -98,6 +100,10 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             return reifier.apply(camelContext, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
+    }
+
+    public static void clearReifiers() {
+        EXPRESSIONS.clear();
     }
 
     public Expression createExpression() {

@@ -169,14 +169,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
-    protected void disallowAddingNewRoutes() {
-        // we no longer need reifiers so clear its map (danger)
-        if (getReifierStrategy() != null) {
-            getReifierStrategy().clearReifiers();
-        }
-    }
-
-    @Override
     protected TypeConverter createTypeConverter() {
         return new DefaultTypeConverter(this, getPackageScanClassResolver(), getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
     }

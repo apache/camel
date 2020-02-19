@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
@@ -48,6 +49,7 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
         map.put(TopicLoadBalancerDefinition.class, TopicLoadBalancerReifier::new);
         map.put(WeightedLoadBalancerDefinition.class, WeightedLoadBalancerReifier::new);
         LOAD_BALANCERS = map;
+        AbstractCamelContext.addReifierStrategy(LoadBalancerReifier::clearReifiers);
     }
 
     protected final T definition;
@@ -63,6 +65,10 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
             return reifier.apply(routeContext, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
+    }
+
+    public static void clearReifiers() {
+        LOAD_BALANCERS.clear();
     }
 
     /**

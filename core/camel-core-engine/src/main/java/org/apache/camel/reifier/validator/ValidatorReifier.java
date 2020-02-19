@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
 import org.apache.camel.model.validator.PredicateValidatorDefinition;
@@ -37,6 +38,7 @@ public abstract class ValidatorReifier<T> extends AbstractReifier  {
         map.put(EndpointValidatorDefinition.class, EndpointValidatorReifier::new);
         map.put(PredicateValidatorDefinition.class, PredicateValidatorReifier::new);
         VALIDATORS = map;
+        AbstractCamelContext.addReifierStrategy(ValidatorReifier::clearReifiers);
     }
 
     protected final T definition;
@@ -56,6 +58,10 @@ public abstract class ValidatorReifier<T> extends AbstractReifier  {
             return reifier.apply(camelContext, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
+    }
+
+    public static void clearReifiers() {
+        VALIDATORS.clear();
     }
 
     public Validator createValidator() {

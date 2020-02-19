@@ -179,6 +179,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         Eager, Default, Lazy
     }
 
+    private static final List<ReifierStrategy> reifierStrategies = new ArrayList<>();
+
     private final AtomicBoolean vetoStarted = new AtomicBoolean();
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -223,7 +225,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private boolean allowAddingNewRoutes = true;
-    private ReifierStrategy reifierStrategy;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -340,6 +341,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 throw new RuntimeException("Error initializing CamelContext", e);
             }
         }
+    }
+
+    public static void addReifierStrategy(ReifierStrategy strategy) {
+        reifierStrategies.add(strategy);
+    }
+
+    public static void clearReifiers() {
+        reifierStrategies.forEach(ReifierStrategy::clearReifiers);
     }
 
     /**
@@ -1887,16 +1896,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
-    public ReifierStrategy getReifierStrategy() {
-        return reifierStrategy;
-    }
-
-    @Override
-    public void setReifierStrategy(ReifierStrategy reifierStrategy) {
-        this.reifierStrategy = reifierStrategy;
-    }
-
-    @Override
     public Registry getRegistry() {
         if (registry == null) {
             synchronized (lock) {
@@ -2494,7 +2493,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
      * Strategy invoked when adding new routes after CamelContext has been started is not allowed.
      * This is used to do some internal optimizations.
      */
-    protected abstract void disallowAddingNewRoutes();
+    protected void disallowAddingNewRoutes() {
+        clearReifiers();
+    }
 
     @Override
     public void stop() {
