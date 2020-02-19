@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import static org.apache.camel.util.URISupport.RAW_TOKEN_END;
 import static org.apache.camel.util.URISupport.RAW_TOKEN_PREFIX;
@@ -253,18 +252,16 @@ class URIScanner {
         return false;
     }
 
-    public static boolean resolveRaw(String str, BiConsumer<String, String> consumer) {
+    public static String resolveRaw(String str) {
         for (int i = 0; i < RAW_TOKEN_START.length; i++) {
             String tokenStart = RAW_TOKEN_PREFIX + RAW_TOKEN_START[i];
             String tokenEnd = String.valueOf(RAW_TOKEN_END[i]);
             if (str.startsWith(tokenStart) && str.endsWith(tokenEnd)) {
-                String raw = str.substring(tokenStart.length(), str.length() - 1);
-                consumer.accept(str, raw);
-                return true;
+                return str.substring(tokenStart.length(), str.length() - 1);
             }
         }
         // not RAW value
-        return false;
+        return null;
     }
 
 }
