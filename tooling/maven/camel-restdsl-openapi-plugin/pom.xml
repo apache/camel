@@ -129,6 +129,7 @@
         <profile>
             <id>fastinstall</id>
             <activation>
+            <activeByDefault>true</activeByDefault>
                 <property>
                     <name>skipTests</name>
                 </property>
