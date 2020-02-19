@@ -33,4 +33,15 @@ public interface ErrorHandlerFactory {
      */
     Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
 
+    /**
+     * Gets or lookup the target error handler factory.
+     *
+     * Will either get this current as the error handler factory, or in case this is a reference lookup
+     * for a actual error handler, then this method will perform a lookup to return the actual error handler factory.
+     *
+     * @param routeContext the route context
+     * @return the error handler factory.
+     */
+    ErrorHandlerFactory getOrLookupErrorHandlerFactory(RouteContext routeContext);
+
 }

@@ -41,6 +41,11 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     }
 
     @Override
+    public ErrorHandlerFactory getOrLookupErrorHandlerFactory(RouteContext routeContext) {
+        return lookupErrorHandler(routeContext);
+    }
+
+    @Override
     public boolean supportTransacted() {
         return supportTransacted;
     }

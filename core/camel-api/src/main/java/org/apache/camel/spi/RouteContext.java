@@ -64,8 +64,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     /**
      * Resolves an endpoint from either a URI or a named reference
      *
-     * @param uri  the URI or
-     * @param ref  the named reference
+     * @param uri the URI or
+     * @param ref the named reference
      * @return the resolved endpoint
      */
     Endpoint resolveEndpoint(String uri, String ref);
@@ -73,8 +73,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     /**
      * lookup an object by name and type
      *
-     * @param name  the name to lookup
-     * @param type  the expected type
+     * @param name the name to lookup
+     * @param type the expected type
      * @return the found object
      */
     <T> T lookup(String name, Class<T> type);
@@ -82,8 +82,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     /**
      * lookup an object by name and type or throws {@link org.apache.camel.NoSuchBeanException} if not found.
      *
-     * @param name  the name to lookup
-     * @param type  the expected type
+     * @param name the name to lookup
+     * @param type the expected type
      * @return the found object
      */
     <T> T mandatoryLookup(String name, Class<T> type);
@@ -160,11 +160,11 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
 
     /**
      * Returns the isRouteAdded flag
-     * 
+     *
      * @return the flag
      */
     boolean isRouteAdded();
-    
+
     /**
      * Gets the route policy List
      *
@@ -253,23 +253,30 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     /**
      * Adds error handler for the given exception type
      *
-     * @param factory       the error handler factory
-     * @param exception     the exception to handle
+     * @param factory   the error handler factory
+     * @param exception the exception to handle
      */
     void addErrorHandler(ErrorHandlerFactory factory, NamedNode exception);
 
     /**
      * Gets the error handlers
      *
-     * @param factory       the error handler factory
+     * @param factory the error handler factory
      */
     Set<NamedNode> getErrorHandlers(ErrorHandlerFactory factory);
 
     /**
+     * Removes the error handlers
+     *
+     * @param factory the error handler factory
+     */
+    void removeErrorHandlers(ErrorHandlerFactory factory);
+
+    /**
      * Link the error handlers from a factory to another
      *
-     * @param source        the source factory
-     * @param target        the target factory
+     * @param source the source factory
+     * @param target the target factory
      */
     void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target);
 
