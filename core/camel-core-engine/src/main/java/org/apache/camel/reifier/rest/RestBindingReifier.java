@@ -79,7 +79,7 @@ public class RestBindingReifier extends AbstractReifier {
             String name = config.getJsonDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
-                Object instance = camelContext.getRegistry().lookupByName(name);
+                Object instance = lookupByName(name);
                 if (instance != null) {
                     throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
                 }
@@ -103,7 +103,7 @@ public class RestBindingReifier extends AbstractReifier {
             String name = config.getXmlDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
-                Object instance = camelContext.getRegistry().lookupByName(name);
+                Object instance = lookupByName(name);
                 if (instance != null) {
                     throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
                 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -54,10 +55,11 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         validateDeadLetterUri(routeContext);
 
-        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
+        CamelContext camelContext = routeContext.getCamelContext();
+        DeadLetterChannel answer = new DeadLetterChannel(camelContext, processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
                                                          getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isDeadLetterHandleNewException(),
-                                                         isUseOriginalMessage(), isUseOriginalBody(), getRetryWhilePolicy(routeContext.getCamelContext()),
-                                                         getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure(), getOnExceptionOccurred());
+                                                         isUseOriginalMessage(), isUseOriginalBody(), getRetryWhilePolicy(camelContext),
+                                                         getExecutorService(camelContext), getOnPrepareFailure(), getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;

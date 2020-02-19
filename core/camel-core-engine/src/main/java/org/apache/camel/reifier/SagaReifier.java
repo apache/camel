@@ -45,9 +45,13 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Optional<Endpoint> compensationEndpoint = Optional.ofNullable(definition.getCompensation()).map(SagaActionUriDefinition::getUri).map(routeContext::resolveEndpoint);
+        Optional<Endpoint> compensationEndpoint = Optional.ofNullable(definition.getCompensation())
+                .map(SagaActionUriDefinition::getUri)
+                .map(this::resolveEndpoint);
 
-        Optional<Endpoint> completionEndpoint = Optional.ofNullable(definition.getCompletion()).map(SagaActionUriDefinition::getUri).map(routeContext::resolveEndpoint);
+        Optional<Endpoint> completionEndpoint = Optional.ofNullable(definition.getCompletion())
+                .map(SagaActionUriDefinition::getUri)
+                .map(this::resolveEndpoint);
 
         Map<String, Expression> optionsMap = new TreeMap<>();
         if (definition.getOptions() != null) {
@@ -90,7 +94,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         }
 
         if (definition.getSagaServiceRef() != null) {
-            return CamelContextHelper.mandatoryLookup(context, parseString(definition.getSagaServiceRef()), CamelSagaService.class);
+            return mandatoryLookup(parseString(definition.getSagaServiceRef()), CamelSagaService.class);
         }
 
         sagaService = context.hasService(CamelSagaService.class);

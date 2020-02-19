@@ -16,11 +16,9 @@
  */
 package org.apache.camel.support;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -31,6 +29,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -115,6 +114,37 @@ public final class CamelContextHelper {
     public static <T extends Endpoint> T getMandatoryEndpoint(CamelContext camelContext, String uri, Class<T> type) {
         Endpoint endpoint = getMandatoryEndpoint(camelContext, uri);
         return ObjectHelper.cast(type, endpoint);
+    }
+
+    public static Endpoint resolveEndpoint(CamelContext camelContext, String uri, String ref) {
+        Endpoint endpoint = null;
+        if (uri != null) {
+            endpoint = camelContext.getEndpoint(uri);
+            if (endpoint == null) {
+                throw new NoSuchEndpointException(uri);
+            }
+        }
+        if (ref != null) {
+            endpoint = camelContext.getRegistry().lookupByNameAndType(ref, Endpoint.class);
+            if (endpoint == null) {
+                throw new NoSuchEndpointException("ref:" + ref, "check your camel registry with id " + ref);
+            }
+            // Check the endpoint has the right CamelContext
+            if (!camelContext.equals(endpoint.getCamelContext())) {
+                throw new NoSuchEndpointException("ref:" + ref, "make sure the endpoint has the same camel context as the route does.");
+            }
+            try {
+                // need add the endpoint into service
+                camelContext.addService(endpoint);
+            } catch (Exception ex) {
+                throw new RuntimeCamelException(ex);
+            }
+        }
+        if (endpoint == null) {
+            throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified");
+        } else {
+            return endpoint;
+        }
     }
 
     /**

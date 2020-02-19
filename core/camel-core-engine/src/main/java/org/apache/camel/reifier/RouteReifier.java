@@ -109,7 +109,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     public Route createRoute() {
         try {
-            return doCreateRoute(camelContext, routeContext);
+            return doCreateRoute();
         } catch (FailedToCreateRouteException e) {
             throw e;
         } catch (Exception e) {
@@ -117,11 +117,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             // was failing
             throw new FailedToCreateRouteException(definition.getId(), definition.toString(), e);
         }
-    }
-
-    public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
-        ObjectHelper.notNull(camelContext, "CamelContext");
-        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
     /**
@@ -243,13 +238,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected Route doCreateRoute(CamelContext camelContext, RouteContext routeContext) throws Exception {
+    protected Route doCreateRoute() throws Exception {
         // configure error handler
         routeContext.setErrorHandlerFactory(definition.getErrorHandlerFactory());
 
         // configure tracing
         if (definition.getTrace() != null) {
-            Boolean isTrace = CamelContextHelper.parseBoolean(camelContext, definition.getTrace());
+            Boolean isTrace = parseBoolean(definition.getTrace());
             if (isTrace != null) {
                 routeContext.setTracing(isTrace);
                 if (isTrace) {
@@ -262,7 +257,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // configure message history
         if (definition.getMessageHistory() != null) {
-            Boolean isMessageHistory = CamelContextHelper.parseBoolean(camelContext, definition.getMessageHistory());
+            Boolean isMessageHistory = parseBoolean(definition.getMessageHistory());
             if (isMessageHistory != null) {
                 routeContext.setMessageHistory(isMessageHistory);
                 if (isMessageHistory) {
@@ -273,7 +268,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // configure Log EIP mask
         if (definition.getLogMask() != null) {
-            Boolean isLogMask = CamelContextHelper.parseBoolean(camelContext, definition.getLogMask());
+            Boolean isLogMask = parseBoolean(definition.getLogMask());
             if (isLogMask != null) {
                 routeContext.setLogMask(isLogMask);
                 if (isLogMask) {
@@ -284,7 +279,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // configure stream caching
         if (definition.getStreamCache() != null) {
-            Boolean isStreamCache = CamelContextHelper.parseBoolean(camelContext, definition.getStreamCache());
+            Boolean isStreamCache = parseBoolean(definition.getStreamCache());
             if (isStreamCache != null) {
                 routeContext.setStreamCaching(isStreamCache);
                 if (isStreamCache) {
@@ -295,7 +290,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // configure delayer
         if (definition.getDelayer() != null) {
-            Long delayer = CamelContextHelper.parseLong(camelContext, definition.getDelayer());
+            Long delayer = parseLong(definition.getDelayer());
             if (delayer != null) {
                 routeContext.setDelayer(delayer);
                 if (delayer > 0) {
@@ -317,7 +312,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             StringTokenizer policyTokens = new StringTokenizer(definition.getRoutePolicyRef(), ",");
             while (policyTokens.hasMoreTokens()) {
                 String ref = policyTokens.nextToken().trim();
-                RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RoutePolicy.class);
+                RoutePolicy policy = mandatoryLookup(ref, RoutePolicy.class);
                 log.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
                 routeContext.getRoutePolicyList().add(policy);
             }
@@ -333,7 +328,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // configure auto startup
-        Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, definition.getAutoStartup());
+        Boolean isAutoStartup = parseBoolean(definition.getAutoStartup());
         if (isAutoStartup != null) {
             log.debug("Using AutoStartup {} on route: {}", isAutoStartup, definition.getId());
             routeContext.setAutoStartup(isAutoStartup);
@@ -364,7 +359,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             if (def != null) {
                 endpoint = def.resolve(camelContext);
             } else {
-                endpoint = routeContext.resolveEndpoint(definition.getInput().getEndpointUri());
+                endpoint = resolveEndpoint(definition.getInput().getEndpointUri());
             }
         }
         routeContext.setEndpoint(endpoint);

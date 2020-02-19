@@ -44,7 +44,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         claim.setKey(parseString(definition.getKey()));
         claim.setFilter(parseString(definition.getFilter()));
 
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
         if (strategy != null) {
             claim.setAggregationStrategy(strategy);
         }
@@ -102,10 +102,10 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         return claim;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
+            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {

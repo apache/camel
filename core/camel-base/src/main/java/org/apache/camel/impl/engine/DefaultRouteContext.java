@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -44,7 +43,6 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -119,68 +117,16 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     @Override
-    public Endpoint resolveEndpoint(String uri) {
-        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
-    }
-
-    @Override
-    public Endpoint resolveEndpoint(String uri, String ref) {
-        Endpoint endpoint = null;
-        if (uri != null) {
-            endpoint = camelContext.getEndpoint(uri);
-            if (endpoint == null) {
-                throw new NoSuchEndpointException(uri);
-            }
-        }
-        if (ref != null) {
-            endpoint = lookup(ref, Endpoint.class);
-            if (endpoint == null) {
-                throw new NoSuchEndpointException("ref:" + ref, "check your camel registry with id " + ref);
-            }
-            // Check the endpoint has the right CamelContext 
-            if (!this.getCamelContext().equals(endpoint.getCamelContext())) {
-                throw new NoSuchEndpointException("ref:" + ref, "make sure the endpoint has the same camel context as the route does.");
-            }
-            try {
-                // need add the endpoint into service
-                getCamelContext().addService(endpoint);
-            } catch (Exception ex) {
-                throw new RuntimeCamelException(ex);
-            }
-        }
-        if (endpoint == null) {
-            throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified on: " + this);
-        } else {
-            return endpoint;
-        }
-    }
-
-    @Override
-    public <T> T lookup(String name, Class<T> type) {
-        return getCamelContext().getRegistry().lookupByNameAndType(name, type);
-    }
-
-    @Override
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return getCamelContext().getRegistry().findByTypeWithName(type);
-    }
-
-    @Override
-    public <T> T mandatoryLookup(String name, Class<T> type) {
-        return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
-    }
-
-    @Override
     public Route commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
             // always use an pipeline even if there are only 1 processor as the pipeline
             // handles preparing the response from the exchange in regard to IN vs OUT messages etc
-            Processor target = new Pipeline(getCamelContext(), eventDrivenProcessors);
+            Processor target = new Pipeline(camelContext, eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            CamelInternalProcessor internal = new CamelInternalProcessor(getCamelContext(), target);
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this, getCamelContext()));
+            CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this, camelContext));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
@@ -291,20 +237,20 @@ public class DefaultRouteContext implements RouteContext {
             return trace;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isTracing();
+            return camelContext.isTracing();
         }
     }
 
     @Override
     public String getTracingPattern() {
         // can only set this on context level
-        return getCamelContext().getTracingPattern();
+        return camelContext.getTracingPattern();
     }
 
     @Override
     public void setTracingPattern(String tracePattern) {
         // can only set this on context level
-        getCamelContext().setTracingPattern(tracePattern);
+        camelContext.setTracingPattern(tracePattern);
     }
 
     @Override
@@ -318,7 +264,7 @@ public class DefaultRouteContext implements RouteContext {
             return backlogTrace;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isBacklogTracing();
+            return camelContext.isBacklogTracing();
         }
     }
 
@@ -333,7 +279,7 @@ public class DefaultRouteContext implements RouteContext {
             return debug;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isDebugging();
+            return camelContext.isDebugging();
         }
     }
 
@@ -348,7 +294,7 @@ public class DefaultRouteContext implements RouteContext {
             return messageHistory;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isMessageHistory();
+            return camelContext.isMessageHistory();
         }
     }
 
@@ -363,7 +309,7 @@ public class DefaultRouteContext implements RouteContext {
             return logMask;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isLogMask();
+            return camelContext.isLogMask();
         }
     }
 
@@ -378,7 +324,7 @@ public class DefaultRouteContext implements RouteContext {
             return logExhaustedMessageBody;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isLogExhaustedMessageBody();
+            return camelContext.isLogExhaustedMessageBody();
         }
     }
 
@@ -393,7 +339,7 @@ public class DefaultRouteContext implements RouteContext {
             return streamCache;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isStreamCaching();
+            return camelContext.isStreamCaching();
         }
     }
 
@@ -408,7 +354,7 @@ public class DefaultRouteContext implements RouteContext {
             return delay;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().getDelayer();
+            return camelContext.getDelayer();
         }
     }
 
@@ -454,25 +400,25 @@ public class DefaultRouteContext implements RouteContext {
     @Override
     public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
         // can only be configured on CamelContext
-        getCamelContext().setAllowUseOriginalMessage(allowUseOriginalMessage);
+        camelContext.setAllowUseOriginalMessage(allowUseOriginalMessage);
     }
 
     @Override
     public Boolean isAllowUseOriginalMessage() {
         // can only be configured on CamelContext
-        return getCamelContext().isAllowUseOriginalMessage();
+        return camelContext.isAllowUseOriginalMessage();
     }
 
     @Override
     public Boolean isCaseInsensitiveHeaders() {
         // can only be configured on CamelContext
-        return getCamelContext().isCaseInsensitiveHeaders();
+        return camelContext.isCaseInsensitiveHeaders();
     }
 
     @Override
     public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
         // can only be configured on CamelContext
-        getCamelContext().setCaseInsensitiveHeaders(caseInsensitiveHeaders);
+        camelContext.setCaseInsensitiveHeaders(caseInsensitiveHeaders);
     }
 
     @Override
@@ -481,7 +427,7 @@ public class DefaultRouteContext implements RouteContext {
             return shutdownRoute;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().getShutdownRoute();
+            return camelContext.getShutdownRoute();
         }
     }
 
@@ -496,7 +442,7 @@ public class DefaultRouteContext implements RouteContext {
             return shutdownRunningTask;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().getShutdownRunningTask();
+            return camelContext.getShutdownRunningTask();
         }
     }
 

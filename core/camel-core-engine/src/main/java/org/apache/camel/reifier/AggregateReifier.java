@@ -55,7 +55,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
 
         Expression correlation = createExpression(definition.getExpression());
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
 
         boolean parallel = parseBoolean(definition.getParallelProcessing(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
@@ -76,7 +76,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         }
 
         if (definition.getAggregateController() == null && definition.getAggregateControllerRef() != null) {
-            definition.setAggregateController(routeContext.mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
+            definition.setAggregateController(mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
         }
 
         // this EIP supports using a shared timeout checker thread pool or
@@ -85,7 +85,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorService();
         if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorServiceRef() != null) {
             // lookup existing thread pool
-            timeoutThreadPool = routeContext.lookup(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
+            timeoutThreadPool = lookup(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool
                 // profile id
@@ -214,10 +214,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return policy;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
+            Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
@@ -246,7 +246,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
     private AggregationRepository createAggregationRepository(RouteContext routeContext) {
         AggregationRepository repository = definition.getAggregationRepository();
         if (repository == null && definition.getAggregationRepositoryRef() != null) {
-            repository = routeContext.mandatoryLookup(definition.getAggregationRepositoryRef(), AggregationRepository.class);
+            repository = mandatoryLookup(definition.getAggregationRepositoryRef(), AggregationRepository.class);
         }
         return repository;
     }

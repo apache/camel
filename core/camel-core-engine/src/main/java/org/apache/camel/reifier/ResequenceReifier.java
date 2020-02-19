@@ -29,7 +29,6 @@ import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
@@ -117,7 +116,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
         ExpressionResultComparator comparator;
         if (config.getComparatorRef() != null) {
-            comparator = CamelContextHelper.mandatoryLookup(camelContext, config.getComparatorRef(), ExpressionResultComparator.class);
+            comparator = mandatoryLookup(config.getComparatorRef(), ExpressionResultComparator.class);
         } else {
             comparator = config.getComparator();
             if (comparator == null) {

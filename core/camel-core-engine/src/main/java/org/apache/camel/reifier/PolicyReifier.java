@@ -25,7 +25,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
-public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
+public class PolicyReifier extends AbstractPolicyReifier<PolicyDefinition> {
 
     public PolicyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
         super(routeContext, (PolicyDefinition) definition);
@@ -33,7 +33,7 @@ public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Policy policy = resolvePolicy(routeContext);
+        Policy policy = resolvePolicy();
         ObjectHelper.notNull(policy, "policy", definition);
 
         // before wrap
@@ -53,12 +53,8 @@ public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
         return target;
     }
 
-    protected Policy resolvePolicy(RouteContext routeContext) {
-        if (definition.getPolicy() != null) {
-            return definition.getPolicy();
-        }
-        // reuse code on transacted definition to do the resolution
-        return TransactedReifier.resolvePolicy(routeContext, definition.getRef(), definition.getType());
+    protected Policy resolvePolicy() {
+        return resolvePolicy(definition.getPolicy(), definition.getRef(), definition.getType());
     }
 
 }

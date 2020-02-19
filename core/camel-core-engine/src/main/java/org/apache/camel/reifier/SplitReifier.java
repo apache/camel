@@ -28,7 +28,6 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
@@ -55,7 +54,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
         if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, parseString(definition.getOnPrepareRef()), Processor.class));
+            definition.setOnPrepare(mandatoryLookup(parseString(definition.getOnPrepareRef()), Processor.class));
         }
 
         Expression exp = createExpression(definition.getExpression());
@@ -69,7 +68,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
+            Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {

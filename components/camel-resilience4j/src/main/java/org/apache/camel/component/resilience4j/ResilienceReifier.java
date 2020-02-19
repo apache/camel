@@ -26,7 +26,6 @@ import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -36,12 +35,8 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
-
-import static org.apache.camel.support.CamelContextHelper.lookup;
-import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
@@ -61,16 +56,16 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-resilience4j does not support onFallbackViaNetwork");
         }
-        final Resilience4jConfigurationCommon config = buildResilience4jConfiguration(routeContext.getCamelContext());
+        final Resilience4jConfigurationCommon config = buildResilience4jConfiguration();
         CircuitBreakerConfig cbConfig = configureCircuitBreaker(config);
         BulkheadConfig bhConfig = configureBulkHead(config);
         TimeLimiterConfig tlConfig = configureTimeLimiter(config);
 
         ResilienceProcessor answer = new ResilienceProcessor(cbConfig, bhConfig, tlConfig, processor, fallback);
-        configureTimeoutExecutorService(answer, routeContext, config);
+        configureTimeoutExecutorService(answer, config);
         // using any existing circuit breakers?
         if (config.getCircuitBreakerRef() != null) {
-            CircuitBreaker cb = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), parseString(config.getCircuitBreakerRef()), CircuitBreaker.class);
+            CircuitBreaker cb = mandatoryLookup(parseString(config.getCircuitBreakerRef()), CircuitBreaker.class);
             answer.setCircuitBreaker(cb);
         }
         return answer;
@@ -141,7 +136,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         return builder.build();
     }
 
-    private void configureTimeoutExecutorService(ResilienceProcessor processor, RouteContext routeContext, Resilience4jConfigurationCommon config) {
+    private void configureTimeoutExecutorService(ResilienceProcessor processor, Resilience4jConfigurationCommon config) {
         if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return;
         }
@@ -149,7 +144,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         if (config.getTimeoutExecutorServiceRef() != null) {
             String ref = config.getTimeoutExecutorServiceRef();
             boolean shutdownThreadPool = false;
-            ExecutorService executorService = routeContext.lookup(ref, ExecutorService.class);
+            ExecutorService executorService = lookup(ref, ExecutorService.class);
             if (executorService == null) {
                 executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
@@ -163,27 +158,27 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     // Helpers
     // *******************************
 
-    Resilience4jConfigurationDefinition buildResilience4jConfiguration(CamelContext camelContext) throws Exception {
+    Resilience4jConfigurationDefinition buildResilience4jConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(camelContext, properties, Suppliers.firstNotNull(
+        loadProperties(properties, Suppliers.firstNotNull(
             () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
-            () -> lookup(camelContext, ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID, Resilience4jConfigurationDefinition.class)));
+            () -> lookup(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID, Resilience4jConfigurationDefinition.class)));
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
             final String ref = definition.getConfigurationRef();
 
-            loadProperties(camelContext, properties, Suppliers.firstNotNull(
+            loadProperties(properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
-                () -> mandatoryLookup(camelContext, ref, Resilience4jConfigurationDefinition.class)));
+                () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)));
         }
 
         // Extract properties from local configuration
-        loadProperties(camelContext, properties, Optional.ofNullable(definition.getResilience4jConfiguration()));
+        loadProperties(properties, Optional.ofNullable(definition.getResilience4jConfiguration()));
 
         // Extract properties from definition
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
@@ -197,7 +192,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         return config;
     }
 
-    private void loadProperties(CamelContext camelContext, Map<String, Object> properties, Optional<?> optional) {
+    private void loadProperties(Map<String, Object> properties, Optional<?> optional) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         optional.ifPresent(bean -> beanIntrospection.getProperties(bean, properties, null, false));
     }

@@ -20,7 +20,6 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.StringHelper;
 
 public class CustomLoadBalancerReifier extends LoadBalancerReifier<CustomLoadBalancerDefinition> {
@@ -35,7 +34,7 @@ public class CustomLoadBalancerReifier extends LoadBalancerReifier<CustomLoadBal
             return definition.getCustomLoadBalancer();
         }
         StringHelper.notEmpty(definition.getRef(), "ref", this);
-        return CamelContextHelper.mandatoryLookup(camelContext, definition.getRef(), LoadBalancer.class);
+        return mandatoryLookup(definition.getRef(), LoadBalancer.class);
     }
 
 }

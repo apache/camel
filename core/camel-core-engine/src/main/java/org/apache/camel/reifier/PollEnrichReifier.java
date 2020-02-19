@@ -62,7 +62,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
+            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {

@@ -54,49 +54,6 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     CamelContext getCamelContext();
 
     /**
-     * Resolves an endpoint from the URI
-     *
-     * @param uri the URI
-     * @return the resolved endpoint
-     */
-    Endpoint resolveEndpoint(String uri);
-
-    /**
-     * Resolves an endpoint from either a URI or a named reference
-     *
-     * @param uri the URI or
-     * @param ref the named reference
-     * @return the resolved endpoint
-     */
-    Endpoint resolveEndpoint(String uri, String ref);
-
-    /**
-     * lookup an object by name and type
-     *
-     * @param name the name to lookup
-     * @param type the expected type
-     * @return the found object
-     */
-    <T> T lookup(String name, Class<T> type);
-
-    /**
-     * lookup an object by name and type or throws {@link org.apache.camel.NoSuchBeanException} if not found.
-     *
-     * @param name the name to lookup
-     * @param type the expected type
-     * @return the found object
-     */
-    <T> T mandatoryLookup(String name, Class<T> type);
-
-    /**
-     * lookup objects by type
-     *
-     * @param type the expected type
-     * @return the found objects with the name as the key in the map. Returns an empty map if none found.
-     */
-    <T> Map<String, T> lookupByType(Class<T> type);
-
-    /**
      * For completing the route creation, creating a single event driven route
      * for the current from endpoint with any processors required
      */

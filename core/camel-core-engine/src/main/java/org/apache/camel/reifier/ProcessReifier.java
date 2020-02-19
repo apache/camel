@@ -37,7 +37,7 @@ public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
         Processor answer = definition.getProcessor();
         if (answer == null) {
             ObjectHelper.notNull(definition.getRef(), "ref", definition);
-            answer = routeContext.mandatoryLookup(definition.getRef(), Processor.class);
+            answer = mandatoryLookup(definition.getRef(), Processor.class);
         }
 
         // ensure its wrapped in a Service so we can manage it from eg. JMX

@@ -34,7 +34,7 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
         }
         Validator validator;
         if (definition.getRef() != null) {
-            validator = camelContext.getRegistry().lookupByNameAndType(definition.getRef(), Validator.class);
+            validator = lookup(definition.getRef(), Validator.class);
             if (validator == null) {
                 throw new IllegalArgumentException("Cannot find validator with ref:" + definition.getRef());
             }

@@ -51,7 +51,7 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> ex
             // camel context will shutdown the executor when it shutdown so no
             // need to shut it down when stopping
             if (executorServiceRef != null) {
-                executorService = camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
+                executorService = lookup(executorServiceRef, ScheduledExecutorService.class);
                 if (executorService == null) {
                     ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
                     ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);

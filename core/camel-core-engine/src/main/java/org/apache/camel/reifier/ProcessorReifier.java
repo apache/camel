@@ -111,7 +111,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,7 +242,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // no there is a custom thread pool configured
             return false;
         } else if (definition.getExecutorServiceRef() != null) {
-            ExecutorService answer = routeContext.lookup(definition.getExecutorServiceRef(), ExecutorService.class);
+            ExecutorService answer = lookup(definition.getExecutorServiceRef(), ExecutorService.class);
             // if no existing thread pool, then we will have to create a new
             // thread pool
             return answer == null;
@@ -384,12 +383,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      */
     public ScheduledExecutorService lookupScheduledExecutorServiceRef(String name, Object source, String executorServiceRef) {
 
-        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-        ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
+        ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", camelContext);
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
 
         // lookup in registry first and use existing thread pool if exists
-        ScheduledExecutorService answer = routeContext.lookup(executorServiceRef, ScheduledExecutorService.class);
+        ScheduledExecutorService answer = lookup(executorServiceRef, ScheduledExecutorService.class);
         if (answer == null) {
             // then create a thread pool assuming the ref is a thread pool
             // profile id
@@ -425,7 +424,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ObjectHelper.notNull(executorServiceRef, "executorServiceRef");
 
         // lookup in registry first and use existing thread pool if exists
-        ExecutorService answer = routeContext.lookup(executorServiceRef, ExecutorService.class);
+        ExecutorService answer = lookup(executorServiceRef, ExecutorService.class);
         if (answer == null) {
             // then create a thread pool assuming the ref is a thread pool
             // profile id

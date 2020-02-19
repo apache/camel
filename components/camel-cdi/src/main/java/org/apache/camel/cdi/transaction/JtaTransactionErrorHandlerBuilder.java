@@ -77,12 +77,13 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
 
     @Override
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) throws Exception {
+        CamelContext camelContext = routeContext.getCamelContext();
         // resolve policy reference, if given
         if (transactionPolicy == null) {
             if (policyRef != null) {
                 final TransactedDefinition transactedDefinition = new TransactedDefinition();
                 transactedDefinition.setRef(policyRef);
-                final Policy policy = TransactedReifier.resolvePolicy(routeContext, transactedDefinition);
+                final Policy policy = new TransactedReifier(camelContext, transactedDefinition).resolvePolicy();
                 if (policy != null) {
                     if (!(policy instanceof JtaTransactionPolicy)) {
                         throw new RuntimeCamelException("The configured policy '" + policyRef + "' is of type '"
@@ -99,7 +100,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
             LOG.debug(
                     "No transaction policy configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
-            Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
+            Map<String, TransactedPolicy> mapPolicy = camelContext.getRegistry().findByTypeWithName(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 TransactedPolicy policy = mapPolicy.values().iterator().next();
                 if (policy instanceof JtaTransactionPolicy) {
@@ -108,7 +109,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
             }
 
             if (transactionPolicy == null) {
-                TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
+                TransactedPolicy policy = camelContext.getRegistry().lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
                 if (policy instanceof JtaTransactionPolicy) {
                     transactionPolicy = (JtaTransactionPolicy) policy;
                 }
@@ -121,7 +122,6 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
 
         ObjectHelper.notNull(transactionPolicy, "transactionPolicy", this);
 
-        final CamelContext camelContext = routeContext.getCamelContext();
         final Map<String, String> properties = camelContext.getGlobalOptions();
         if ((properties != null) && properties.containsKey(ROLLBACK_LOGGING_LEVEL_PROPERTY)) {
             rollbackLoggingLevel = LoggingLevel.valueOf(properties.get(ROLLBACK_LOGGING_LEVEL_PROPERTY));
