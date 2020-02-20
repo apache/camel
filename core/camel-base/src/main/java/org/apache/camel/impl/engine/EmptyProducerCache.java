@@ -64,11 +64,6 @@ public class EmptyProducerCache extends DefaultProducerCache {
     }
 
     @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
     public int getCapacity() {
         return 0;
     }
