@@ -19,6 +19,10 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionCount": target.setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "reconnectbackoff":
+        case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, long.class, value)); return true;
+        case "reconnectonerror":
+        case "reconnectOnError": target.setReconnectOnError(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":

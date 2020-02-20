@@ -183,11 +183,10 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @UriParam(defaultValue = "true", label = "consumer,logging",
             description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     private boolean errorHandlerLogStackTrace = true;
-    @UriParam(label = "consumer", description = "Try to apply reconnection logic on consumer pool")
+    @UriParam(label = "consumer", description = "Try to apply reconnection logic on consumer pool", defaultValue = "true")
     private boolean reconnectOnError = true;
-    @UriParam(label = "consumer", description = "Backoff policy on consumer pool reconnection",
-        defaultValueNote = "Default backoff is infinite retries with 5 seconds delay")
-    private BackOff reconnectBackOff = BackOff.builder().delay(Duration.ofSeconds(5)).build();
+    @UriParam(label = "consumer", description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
+    private long reconnectBackOff = 5000;
 
     private volatile boolean closeConnectionResource;
 
@@ -763,20 +762,25 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
         this.jmsObjectFactory = jmsObjectFactory;
     }
 
-
     public boolean isReconnectOnError() {
         return reconnectOnError;
     }
 
+    /**
+     * Try to apply reconnection logic on consumer pool
+     */
     public void setReconnectOnError(boolean reconnectOnError) {
         this.reconnectOnError = reconnectOnError;
     }
 
-    public BackOff getReconnectBackOff() {
+    public long getReconnectBackOff() {
         return reconnectBackOff;
     }
 
-    public void setReconnectBackOff(BackOff reconnectBackOff) {
+    /**
+     * Backoff in millis on consumer pool reconnection attempts
+     */
+    public void setReconnectBackOff(long reconnectBackOff) {
         this.reconnectBackOff = reconnectBackOff;
     }
 }

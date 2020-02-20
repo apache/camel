@@ -48,6 +48,7 @@ import org.apache.camel.component.sjms.tx.SessionBatchTransactionSynchronization
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.backoff.BackOff;
 import org.apache.camel.util.backoff.BackOffTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -380,18 +381,25 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     private boolean refillPool(BackOffTimer.Task task) {
+        LOG.debug("Refill consumers pool task running");
         try {
             fillConsumersPool();
+            LOG.info("Refill consumers pool completed (attempt: {})", task.getCurrentAttempts());
             return false;
         } catch (Exception ex) {
-            LOG.error("Cannot refill consumers pool, attempt " + task.getCurrentAttempts(), ex);
+            LOG.warn("Refill consumers pool failed (attempt: {}) due to: {}. Will try again in {} millis. (stacktrace in DEBUG level)",
+                    task.getCurrentAttempts(), ex.getMessage(), task.getCurrentDelay());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Refill consumers pool failed", ex);
+            }
         }
         return true;
     }
 
     private void scheduleRefill() {
         if (rescheduleTask == null || rescheduleTask.getStatus() != BackOffTimer.Task.Status.Active) {
-            rescheduleTask = new BackOffTimer(scheduler).schedule(getEndpoint().getReconnectBackOff(), this::refillPool);
+            BackOff backOff = BackOff.builder().delay(getEndpoint().getReconnectBackOff()).build();
+            rescheduleTask = new BackOffTimer(scheduler).schedule(backOff, this::refillPool);
         }
     }
 
