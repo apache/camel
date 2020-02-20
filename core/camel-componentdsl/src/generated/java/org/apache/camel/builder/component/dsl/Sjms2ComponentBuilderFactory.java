@@ -82,6 +82,30 @@ public interface Sjms2ComponentBuilderFactory {
             return this;
         }
         /**
+         * Backoff in millis on consumer pool reconnection attempts.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         */
+        default Sjms2ComponentBuilder reconnectBackOff(long reconnectBackOff) {
+            doSetProperty("reconnectBackOff", reconnectBackOff);
+            return this;
+        }
+        /**
+         * Try to apply reconnection logic on consumer pool.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default Sjms2ComponentBuilder reconnectOnError(boolean reconnectOnError) {
+            doSetProperty("reconnectOnError", reconnectOnError);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -326,6 +350,8 @@ public interface Sjms2ComponentBuilderFactory {
             switch (name) {
             case "connectionCount": ((Sjms2Component) component).setConnectionCount((java.lang.Integer) value); return true;
             case "bridgeErrorHandler": ((Sjms2Component) component).setBridgeErrorHandler((boolean) value); return true;
+            case "reconnectBackOff": ((Sjms2Component) component).setReconnectBackOff((long) value); return true;
+            case "reconnectOnError": ((Sjms2Component) component).setReconnectOnError((boolean) value); return true;
             case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((Sjms2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "connectionClientId": ((Sjms2Component) component).setConnectionClientId((java.lang.String) value); return true;
