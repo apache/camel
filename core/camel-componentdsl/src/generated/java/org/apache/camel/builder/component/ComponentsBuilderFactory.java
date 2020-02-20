@@ -553,7 +553,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Lambda (camel-aws2-lambda)
-     * The aws-lambda is used for managing and invoking functions from Amazon
+     * The aws2-lambda is used for managing and invoking functions from Amazon
      * Lambda.
      * 
      * Category: cloud,computing,serverless
