@@ -23,6 +23,10 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "consumerCount": target.setConsumerCount(property(camelContext, int.class, value)); return true;
         case "durablesubscriptionid":
         case "durableSubscriptionId": target.setDurableSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnectbackoff":
+        case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, org.apache.camel.util.backoff.BackOff.class, value)); return true;
+        case "reconnectonerror":
+        case "reconnectOnError": target.setReconnectOnError(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
