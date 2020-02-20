@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.lambda;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.model.AliasConfiguration;
@@ -76,7 +74,6 @@ public class AmazonLambdaClientMock implements LambdaClient {
     public AmazonLambdaClientMock() {
     }
 
-
     @Override
     public CreateAliasResponse createAlias(CreateAliasRequest createAliasRequest) {
         CreateAliasResponse.Builder result = CreateAliasResponse.builder();
@@ -88,7 +85,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public CreateEventSourceMappingResponse createEventSourceMapping(CreateEventSourceMappingRequest createEventSourceMappingRequest) {
-    	CreateEventSourceMappingResponse.Builder result = CreateEventSourceMappingResponse.builder();
+        CreateEventSourceMappingResponse.Builder result = CreateEventSourceMappingResponse.builder();
         result.batchSize(100);
         result.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + createEventSourceMappingRequest.functionName());
         result.state("Enabled");
@@ -99,7 +96,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
     @Override
     public CreateFunctionResponse createFunction(CreateFunctionRequest createFunctionRequest) {
 
-    	CreateFunctionResponse.Builder result = CreateFunctionResponse.builder();
+        CreateFunctionResponse.Builder result = CreateFunctionResponse.builder();
 
         result.functionName(createFunctionRequest.functionName());
         result.deadLetterConfig(createFunctionRequest.deadLetterConfig());
@@ -125,9 +122,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public DeleteEventSourceMappingResponse deleteEventSourceMapping(DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
-    	return DeleteEventSourceMappingResponse.builder()
-        .uuid("a1239494949382882383")
-        .state("Deleting").build();
+        return DeleteEventSourceMappingResponse.builder().uuid("a1239494949382882383").state("Deleting").build();
     }
 
     @Override
@@ -137,16 +132,13 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public GetAliasResponse getAlias(GetAliasRequest getAliasRequest) {
-    	return GetAliasResponse.builder()
-        .name("alias")
-        .description("an alias")
-        .functionVersion("1").build();
+        return GetAliasResponse.builder().name("alias").description("an alias").functionVersion("1").build();
     }
 
     @Override
     public GetFunctionResponse getFunction(GetFunctionRequest getFunctionRequest) {
 
-    	GetFunctionResponse.Builder result = GetFunctionResponse.builder();
+        GetFunctionResponse.Builder result = GetFunctionResponse.builder();
         FunctionConfiguration.Builder configuration = FunctionConfiguration.builder();
         configuration.functionName(getFunctionRequest.functionName());
         configuration.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + getFunctionRequest.functionName());
@@ -166,7 +158,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public InvokeResponse invoke(InvokeRequest invokeRequest) {
-    	InvokeResponse.Builder result = InvokeResponse.builder();
+        InvokeResponse.Builder result = InvokeResponse.builder();
 
         Map<String, String> payload = new HashMap<>();
         try {
@@ -183,7 +175,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public ListAliasesResponse listAliases(ListAliasesRequest listAliasesRequest) {
-    	ListAliasesResponse.Builder result = ListAliasesResponse.builder();
+        ListAliasesResponse.Builder result = ListAliasesResponse.builder();
         AliasConfiguration.Builder conf = AliasConfiguration.builder();
         List<AliasConfiguration> list = new ArrayList<AliasConfiguration>();
         conf.name("alias");
@@ -196,7 +188,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public ListEventSourceMappingsResponse listEventSourceMappings(ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
-    	ListEventSourceMappingsResponse.Builder result = ListEventSourceMappingsResponse.builder();
+        ListEventSourceMappingsResponse.Builder result = ListEventSourceMappingsResponse.builder();
         List<EventSourceMappingConfiguration> confList = new ArrayList<>();
         EventSourceMappingConfiguration.Builder conf = EventSourceMappingConfiguration.builder();
         conf.batchSize(100);
@@ -211,7 +203,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
     @Override
     public ListFunctionsResponse listFunctions() {
 
-    	ListFunctionsResponse.Builder result = ListFunctionsResponse.builder();
+        ListFunctionsResponse.Builder result = ListFunctionsResponse.builder();
         Collection<FunctionConfiguration> listFunctions = new ArrayList<>();
         FunctionConfiguration.Builder configuration = FunctionConfiguration.builder();
         configuration.functionName("GetHelloWithName");
@@ -233,16 +225,16 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public ListTagsResponse listTags(ListTagsRequest listTagsRequest) {
-    	ListTagsResponse.Builder result = ListTagsResponse.builder();
-    	HashMap<String, String> map = new HashMap<String, String>();
-    	map.put("test", "lambda-tag");
+        ListTagsResponse.Builder result = ListTagsResponse.builder();
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("test", "lambda-tag");
         result.tags(map);
         return result.build();
     }
 
     @Override
     public ListVersionsByFunctionResponse listVersionsByFunction(ListVersionsByFunctionRequest listVersionsByFunctionRequest) {
-    	ListVersionsByFunctionResponse.Builder res = ListVersionsByFunctionResponse.builder();
+        ListVersionsByFunctionResponse.Builder res = ListVersionsByFunctionResponse.builder();
         FunctionConfiguration.Builder conf = FunctionConfiguration.builder();
         conf.version("1");
         conf.functionName(listVersionsByFunctionRequest.functionName());
@@ -252,7 +244,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public PublishVersionResponse publishVersion(PublishVersionRequest publishVersionRequest) {
-    	PublishVersionResponse.Builder res = PublishVersionResponse.builder();
+        PublishVersionResponse.Builder res = PublishVersionResponse.builder();
         res.functionName(publishVersionRequest.functionName());
         res.description(publishVersionRequest.description());
         return res.build();
@@ -270,7 +262,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public UpdateFunctionCodeResponse updateFunctionCode(UpdateFunctionCodeRequest updateFunctionCodeRequest) {
-    	UpdateFunctionCodeResponse.Builder result = UpdateFunctionCodeResponse.builder();
+        UpdateFunctionCodeResponse.Builder result = UpdateFunctionCodeResponse.builder();
 
         result.functionName(updateFunctionCodeRequest.functionName());
         result.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + updateFunctionCodeRequest.functionName());
@@ -284,17 +276,15 @@ public class AmazonLambdaClientMock implements LambdaClient {
         return result.build();
     }
 
+    @Override
+    public String serviceName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public String serviceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
 
-
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 }

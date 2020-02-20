@@ -28,7 +28,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -38,10 +37,10 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.LambdaClientBuilder;
 
 /**
- * The aws-lambda is used for managing and invoking functions from Amazon Lambda.
+ * The aws-lambda is used for managing and invoking functions from Amazon
+ * Lambda.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS Lambda",
-    syntax = "aws2-lambda:function", producerOnly = true, label = "cloud,computing,serverless")
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS Lambda", syntax = "aws2-lambda:function", producerOnly = true, label = "cloud,computing,serverless")
 public class Lambda2Endpoint extends DefaultEndpoint {
 
     private LambdaClient awsLambdaClient;
@@ -83,7 +82,7 @@ public class Lambda2Endpoint extends DefaultEndpoint {
         super.doStart();
         awsLambdaClient = configuration.getAwsLambdaClient() != null ? configuration.getAwsLambdaClient() : createLambdaClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAwsLambdaClient())) {
@@ -103,8 +102,8 @@ public class Lambda2Endpoint extends DefaultEndpoint {
     }
 
     LambdaClient createLambdaClient() {
-    	LambdaClient client = null;
-    	LambdaClientBuilder clientBuilder = LambdaClient.builder();
+        LambdaClient client = null;
+        LambdaClientBuilder clientBuilder = LambdaClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;

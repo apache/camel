@@ -17,11 +17,8 @@
 package org.apache.camel.component.aws2.lambda;
 
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.component.aws2.lambda.Lambda2Component;
-import org.apache.camel.component.aws2.lambda.Lambda2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
 public class LambdaComponentClientRegistryTest extends CamelTestSupport {
@@ -32,17 +29,17 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint) component.createEndpoint(
-                "aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint)component
+            .createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
 
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
     }
-    
+
     @Test(expected = PropertyBindingException.class)
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint) component.createEndpoint(
-                "aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint)component
+            .createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
     }
 }

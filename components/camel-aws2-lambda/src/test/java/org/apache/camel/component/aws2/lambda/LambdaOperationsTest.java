@@ -20,8 +20,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.camel.component.aws2.lambda.Lambda2Operations;
-
 public class LambdaOperationsTest {
 
     @Test

@@ -23,7 +23,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import software.amazon.awssdk.core.SdkBytes;
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import software.amazon.awssdk.services.lambda.model.CreateAliasResponse;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
@@ -40,17 +48,6 @@ import software.amazon.awssdk.services.lambda.model.ListVersionsByFunctionRespon
 import software.amazon.awssdk.services.lambda.model.PublishVersionResponse;
 import software.amazon.awssdk.services.lambda.model.TagResourceResponse;
 import software.amazon.awssdk.services.lambda.model.UntagResourceResponse;
-
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.lambda.Lambda2Constants;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
 
 public class LambdaProducerTest extends CamelTestSupport {
 
@@ -78,7 +75,7 @@ public class LambdaProducerTest extends CamelTestSupport {
             }
         });
 
-        CreateFunctionResponse result = (CreateFunctionResponse) exchange.getMessage().getBody();
+        CreateFunctionResponse result = (CreateFunctionResponse)exchange.getMessage().getBody();
         assertEquals(result.functionName(), "GetHelloWithName");
         assertEquals(result.description(), "Hello with node.js on Lambda");
         assertNotNull(result.functionArn());
@@ -97,7 +94,6 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertNotNull(exchange.getMessage().getBody(DeleteFunctionResponse.class));
     }
 
-
     @Test
     public void lambdaGetFunctionTest() throws Exception {
 
@@ -107,10 +103,9 @@ public class LambdaProducerTest extends CamelTestSupport {
 
             }
         });
-        GetFunctionResponse result = (GetFunctionResponse) exchange.getMessage().getBody();
+        GetFunctionResponse result = (GetFunctionResponse)exchange.getMessage().getBody();
         assertEquals(result.configuration().functionName(), "GetHelloWithName");
     }
-
 
     @Test
     public void lambdaListFunctionsTest() throws Exception {
@@ -121,11 +116,10 @@ public class LambdaProducerTest extends CamelTestSupport {
             }
         });
 
-        ListFunctionsResponse result = (ListFunctionsResponse) exchange.getMessage().getBody();
+        ListFunctionsResponse result = (ListFunctionsResponse)exchange.getMessage().getBody();
         assertEquals(result.functions().size(), 1);
         assertEquals(result.functions().get(0).functionName(), "GetHelloWithName");
     }
-
 
     @Test
     public void lambdaInvokeFunctionTest() throws Exception {
@@ -139,7 +133,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertNotNull(exchange.getMessage().getBody(String.class));
         assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
     }
-    
+
     @Test
     public void lambdaCreateEventSourceMappingTest() throws Exception {
         Exchange exchange = template.send("direct:createEventSourceMapping", ExchangePattern.InOut, new Processor() {
@@ -154,7 +148,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         CreateEventSourceMappingResponse result = exchange.getMessage().getBody(CreateEventSourceMappingResponse.class);
         assertEquals(result.functionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
     }
-    
+
     @Test
     public void lambdaDeleteEventSourceMappingTest() throws Exception {
         Exchange exchange = template.send("direct:deleteEventSourceMapping", ExchangePattern.InOut, new Processor() {
@@ -168,7 +162,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         DeleteEventSourceMappingResponse result = exchange.getMessage().getBody(DeleteEventSourceMappingResponse.class);
         assertTrue(result.state().equalsIgnoreCase("Deleting"));
     }
-    
+
     @Test
     public void lambdaListEventSourceMappingTest() throws Exception {
         Exchange exchange = template.send("direct:listEventSourceMapping", ExchangePattern.InOut, new Processor() {
@@ -181,7 +175,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         ListEventSourceMappingsResponse result = exchange.getMessage().getBody(ListEventSourceMappingsResponse.class);
         assertEquals(result.eventSourceMappings().get(0).functionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
     }
-    
+
     @Test
     public void lambdaListTagsTest() throws Exception {
 
@@ -196,7 +190,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         ListTagsResponse result = (ListTagsResponse)exchange.getMessage().getBody();
         assertEquals("lambda-tag", result.tags().get("test"));
     }
-    
+
     @Test
     public void tagResourceTest() throws Exception {
 
@@ -214,7 +208,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         TagResourceResponse result = (TagResourceResponse)exchange.getMessage().getBody();
         assertNotNull(result);
     }
-    
+
     @Test
     public void untagResourceTest() throws Exception {
 
@@ -232,7 +226,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         UntagResourceResponse result = (UntagResourceResponse)exchange.getMessage().getBody();
         assertNotNull(result);
     }
-    
+
     @Test
     public void publishVersionTest() throws Exception {
 
@@ -249,7 +243,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertEquals("GetHelloWithName", result.functionName());
         assertEquals("This is my description", result.description());
     }
-    
+
     @Test
     public void listVersionsTest() throws Exception {
 
@@ -266,7 +260,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertEquals("GetHelloWithName", result.versions().get(0).functionName());
         assertEquals("1", result.versions().get(0).version());
     }
-    
+
     @Test
     public void createAliasTest() throws Exception {
 
@@ -286,7 +280,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertEquals("alias", result.name());
         assertEquals("1", result.functionVersion());
     }
-    
+
     @Test
     public void deleteAliasTest() throws Exception {
 
@@ -301,7 +295,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         DeleteAliasResponse result = (DeleteAliasResponse)exchange.getMessage().getBody();
         assertNotNull(result);
     }
-    
+
     @Test
     public void getAliasTest() throws Exception {
 
@@ -319,7 +313,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertEquals("alias", result.name());
         assertEquals("1", result.functionVersion());
     }
-    
+
     @Test
     public void listAliasesTest() throws Exception {
 
@@ -354,29 +348,29 @@ public class LambdaProducerTest extends CamelTestSupport {
                 from("direct:deleteFunction").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteFunction").to("mock:result");
 
                 from("direct:updateFunction").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunction").to("mock:result");
-                
+
                 from("direct:listTags").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listTags").to("mock:result");
-                
+
                 from("direct:tagResource").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=tagResource").to("mock:result");
-                
+
                 from("direct:untagResource").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=untagResource").to("mock:result");
-                
+
                 from("direct:publishVersion").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=publishVersion").to("mock:result");
-                
+
                 from("direct:listVersions").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listVersions").to("mock:result");
 
                 from("direct:createEventSourceMapping").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createEventSourceMapping").to("mock:result");
-                
+
                 from("direct:deleteEventSourceMapping").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteEventSourceMapping").to("mock:result");
-                
+
                 from("direct:listEventSourceMapping").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listEventSourceMapping").to("mock:result");
-                
+
                 from("direct:createAlias").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createAlias").to("mock:result");
-                
+
                 from("direct:deleteAlias").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteAlias").to("mock:result");
-                
+
                 from("direct:getAlias").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getAlias").to("mock:result");
-                
+
                 from("direct:listAliases").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listAliases").to("mock:result");
             }
         };

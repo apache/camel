@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
 @Component("aws2-lambda")
@@ -36,16 +35,16 @@ public class Lambda2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private Lambda2Configuration configuration;
-    
+
     public Lambda2Component() {
         this(null);
     }
 
     public Lambda2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new Lambda2ComponentVerifierExtension());
     }
 
@@ -65,7 +64,7 @@ public class Lambda2Component extends DefaultComponent {
 
         return endpoint;
     }
-    
+
     public Lambda2Configuration getConfiguration() {
         return configuration;
     }
@@ -109,7 +108,7 @@ public class Lambda2Component extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(Lambda2Configuration configuration) {
         Set<LambdaClient> clients = getCamelContext().getRegistry().findByType(LambdaClient.class);
         if (clients.size() == 1) {

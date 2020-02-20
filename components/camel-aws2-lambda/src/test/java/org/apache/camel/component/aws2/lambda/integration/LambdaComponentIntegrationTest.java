@@ -26,7 +26,6 @@ import org.apache.camel.component.aws2.lambda.Lambda2Constants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
@@ -35,7 +34,6 @@ import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class LambdaComponentIntegrationTest extends CamelTestSupport {
-
 
     @Test
     public void lambdaCreateFunctionTest() throws Exception {
@@ -71,7 +69,6 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         assertEquals(exchange.getMessage().getBody(ListFunctionsResponse.class).functions().size(), 3);
     }
 
-
     @Test
     public void lambdaGetFunctionTest() throws Exception {
         Exchange exchange = template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
@@ -88,7 +85,6 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
 
     }
 
-
     @Test
     public void lambdaInvokeFunctionTest() throws Exception {
         Exchange exchange = template.send("direct:invokeFunction", ExchangePattern.InOut, new Processor() {
@@ -103,7 +99,6 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
     }
 
-
     @Test
     public void lambdaDeleteFunctionTest() throws Exception {
 
@@ -116,13 +111,11 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getMessage().getBody(DeleteFunctionResponse.class));
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
 
                 from("direct:createFunction")
                     .to("aws2-lambda://GetHelloWithName?operation=createFunction&accessKey=xxxx&secretKey=xxxx&awsLambdaEndpoint=lambda.eu-central-1.amazonaws.com");
