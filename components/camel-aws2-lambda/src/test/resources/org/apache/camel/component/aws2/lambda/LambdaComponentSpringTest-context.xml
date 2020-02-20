@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <from uri="direct:createFunction"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=createFunction"/>
+        </route>
+
+        <route>
+            <from uri="direct:getFunction"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=getFunction"/>
+        </route>
+
+        <route>
+            <from uri="direct:listFunctions"/>
+            <to uri="aws2-lambda://myFunction?awsLambdaClient=#awsLambdaClient&amp;operation=listFunctions"/>
+        </route>
+
+        <route>
+            <from uri="direct:invokeFunction"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=invokeFunction"/>
+        </route>
+
+        <route>
+            <from uri="direct:deleteFunction"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=deleteFunction"/>
+        </route>
+
+        <route>
+            <from uri="direct:createEventSourceMapping"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=createEventSourceMapping"/>
+        </route>
+        
+        <route>
+            <from uri="direct:deleteEventSourceMapping"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=deleteEventSourceMapping"/>
+        </route>
+        
+        <route>
+            <from uri="direct:listEventSourceMapping"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=listEventSourceMapping"/>
+        </route>
+        
+        <route>
+            <from uri="direct:listTags"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=listTags"/>
+        </route>
+        
+        <route>
+            <from uri="direct:tagResource"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=tagResource"/>
+        </route>
+        
+        <route>
+            <from uri="direct:untagResource"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=untagResource"/>
+        </route>
+        
+        <route>
+            <from uri="direct:publishVersion"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=publishVersion"/>
+        </route>
+        
+        <route>
+            <from uri="direct:listVersions"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=listVersions"/>
+        </route>
+        
+        <route>
+            <from uri="direct:createAlias"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=createAlias"/>
+        </route>
+        
+        <route>
+            <from uri="direct:deleteAlias"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=deleteAlias"/>
+        </route>
+        
+        <route>
+            <from uri="direct:getAlias"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=getAlias"/>
+        </route>
+        
+        <route>
+            <from uri="direct:listAliases"/>
+            <to uri="aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=listAliases"/>
+        </route>
+    </camelContext>
+
+    <bean id="awsLambdaClient" class="org.apache.camel.component.aws2.lambda.AmazonLambdaClientMock"/>
+</beans>
