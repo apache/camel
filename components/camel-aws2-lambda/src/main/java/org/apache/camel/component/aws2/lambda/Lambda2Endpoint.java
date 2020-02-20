@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.LambdaClientBuilder;
 
 /**
- * The aws-lambda is used for managing and invoking functions from Amazon
+ * The aws2-lambda is used for managing and invoking functions from Amazon
  * Lambda.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS Lambda", syntax = "aws2-lambda:function", producerOnly = true, label = "cloud,computing,serverless")
