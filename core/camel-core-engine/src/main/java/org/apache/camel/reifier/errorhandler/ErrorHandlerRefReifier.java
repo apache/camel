@@ -20,6 +20,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerBuilderRef> {
 
@@ -29,7 +30,16 @@ public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerBuil
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        return definition.createErrorHandler(routeContext, processor);
+        ErrorHandlerFactory handler = lookupErrorHandler(routeContext);
+        return ErrorHandlerReifier.reifier(routeContext, handler).createErrorHandler(processor);
+    }
+
+    private ErrorHandlerFactory lookupErrorHandler(RouteContext routeContext) {
+        ErrorHandlerFactory handler =
+                ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, definition.getRef());
+        ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + "'");
+        routeContext.addErrorHandlerFactoryReference(definition, handler);
+        return handler;
     }
 
 }

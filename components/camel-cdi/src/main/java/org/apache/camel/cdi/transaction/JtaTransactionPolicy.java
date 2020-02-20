@@ -65,13 +65,11 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
     public Processor wrap(RouteContext routeContext, Processor processor) {
         JtaTransactionErrorHandler answer;
         // the goal is to configure the error handler builder on the route as a
-        // transacted error handler,
-        // either its already a transacted or if not we replace it with a
-        // transacted one that we configure here
+        // transacted error handler. If the configured builder is not transacted,
+        // we replace it with a transacted one that we configure here
         // and wrap the processor in the transacted error handler as we can have
-        // transacted routes that change
-        // propagation behavior, eg: from A required -> B -> requiresNew C
-        // (advanced use-case)
+        // transacted routes that change propagation behavior,
+        // eg: from A required -> B -> requiresNew C (advanced use-case)
         // if we should not support this we do not need to wrap the processor as
         // we only need one transacted error handler
 

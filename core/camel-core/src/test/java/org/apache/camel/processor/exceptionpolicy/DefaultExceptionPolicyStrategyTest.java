@@ -24,15 +24,20 @@ import java.net.SocketException;
 import java.util.HashMap;
 
 import org.apache.camel.AlreadyStoppedException;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.errorhandler.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
+import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
+import org.apache.camel.spi.RouteContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -48,7 +53,10 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
     private ExceptionPolicy type3;
 
     private ExceptionPolicy exceptionPolicy(Class<? extends Throwable> exceptionClass) {
-        return ErrorHandlerReifier.createExceptionPolicy(new OnExceptionDefinition(exceptionClass), null);
+        CamelContext cc = new DefaultCamelContext();
+        RouteContext context = new DefaultRouteContext(cc, null, null);
+        return new DefaultErrorHandlerReifier<>(context, null)
+                .createExceptionPolicy(new OnExceptionDefinition(exceptionClass));
     }
 
     private void setupPolicies() {

@@ -16,12 +16,7 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 /**
  * A builder to disable the use of an error handler so that any exceptions are
@@ -32,31 +27,6 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
  * exceptions bubble up to the parent {@link Processor}
  */
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
-
-    @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
-        return new DelegateAsyncProcessor(processor) {
-            @Override
-            public boolean process(final Exchange exchange, final AsyncCallback callback) {
-                return super.process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
-                        callback.done(doneSync);
-                    }
-                });
-            }
-
-            @Override
-            public String toString() {
-                if (processor == null) {
-                    // if no output then dont do any description
-                    return "";
-                }
-                return "NoErrorHandler[" + processor + "]";
-            }
-        };
-    }
 
     @Override
     public boolean supportTransacted() {
