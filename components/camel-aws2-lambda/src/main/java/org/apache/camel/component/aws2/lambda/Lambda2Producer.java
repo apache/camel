@@ -66,7 +66,6 @@ import software.amazon.awssdk.services.lambda.model.ListVersionsByFunctionReques
 import software.amazon.awssdk.services.lambda.model.ListVersionsByFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.PublishVersionRequest;
 import software.amazon.awssdk.services.lambda.model.PublishVersionResponse;
-import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.services.lambda.model.TagResourceRequest;
 import software.amazon.awssdk.services.lambda.model.TagResourceResponse;
 import software.amazon.awssdk.services.lambda.model.TracingConfig;
