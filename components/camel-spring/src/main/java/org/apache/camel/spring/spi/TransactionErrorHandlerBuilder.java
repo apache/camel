@@ -59,67 +59,6 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
         return true;
     }
 
-    @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        CamelContext camelContext = routeContext.getCamelContext();
-        if (transactionTemplate == null) {
-            // lookup in context if no transaction template has been configured
-            LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
-
-            Map<String, TransactedPolicy> mapPolicy = camelContext.getRegistry().findByTypeWithName(TransactedPolicy.class);
-            if (mapPolicy != null && mapPolicy.size() == 1) {
-                TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy instanceof SpringTransactionPolicy) {
-                    transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
-                }
-            }
-
-            if (transactionTemplate == null) {
-                TransactedPolicy policy = camelContext.getRegistry().lookupByNameAndType(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy instanceof SpringTransactionPolicy) {
-                    transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
-                }
-            }
-
-            if (transactionTemplate == null) {
-                Map<String, TransactionTemplate> mapTemplate = camelContext.getRegistry().findByTypeWithName(TransactionTemplate.class);
-                if (mapTemplate == null || mapTemplate.isEmpty()) {
-                    LOG.trace("No TransactionTemplate found in registry.");
-                } else if (mapTemplate.size() == 1) {
-                    transactionTemplate = mapTemplate.values().iterator().next();
-                } else {
-                    LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapTemplate.size());
-                }
-            }
-
-            if (transactionTemplate == null) {
-                Map<String, PlatformTransactionManager> mapManager = camelContext.getRegistry().findByTypeWithName(PlatformTransactionManager.class);
-                if (mapManager == null || mapManager.isEmpty()) {
-                    LOG.trace("No PlatformTransactionManager found in registry.");
-                } else if (mapManager.size() == 1) {
-                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
-                } else {
-                    LOG.debug("Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapManager.size());
-                }
-            }
-
-            if (transactionTemplate != null) {
-                LOG.debug("Found TransactionTemplate in registry to use: {}", transactionTemplate);
-            }
-        }
-
-        ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
-
-        TransactionErrorHandler answer = new TransactionErrorHandler(camelContext, processor,
-            getLogger(), getOnRedelivery(), getRedeliveryPolicy(), getExceptionPolicyStrategy(), transactionTemplate, 
-            getRetryWhilePolicy(camelContext), getExecutorService(camelContext), getRollbackLoggingLevel(), getOnExceptionOccurred());
-        // configure error handler before we can use it
-        configure(routeContext, answer);
-        return answer;
-    }
-
     public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
     }

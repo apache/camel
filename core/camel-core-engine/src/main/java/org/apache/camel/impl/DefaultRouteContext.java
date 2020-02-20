@@ -14,30 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.reifier;
+package org.apache.camel.impl;
 
-import org.apache.camel.impl.DefaultRouteContext;
-import org.apache.camel.model.ProcessDefinition;
+import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.engine.AbstractRouteContext;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.RouteContext;
-import org.junit.Test;
 
-import static junit.framework.TestCase.fail;
+/**
+ * The context used to activate new routing rules
+ */
+public class DefaultRouteContext extends AbstractRouteContext implements RouteContext {
 
-public class ProcessorReifierTest {
-    @Test
-    public void testHandleCustomProcessorDefinition() {
-        RouteContext ctx = new DefaultRouteContext(null, null, null);
-        try {
-            ProcessorReifier.reifier(ctx, new MyProcessor());
-
-            fail("Should throw IllegalStateException instead");
-        } catch (IllegalStateException e) {
-        }
-
-        ProcessorReifier.registerReifier(MyProcessor.class, ProcessReifier::new);
-        ProcessorReifier.reifier(ctx, new ProcessDefinition());
+    public DefaultRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
+        super(camelContext, route, routeId);
     }
 
-    public static class MyProcessor extends ProcessDefinition {
+    @Override
+    public Processor createErrorHandler(Processor processor) throws Exception {
+        return ErrorHandlerReifier.reifier(this, getErrorHandlerFactory())
+                .createErrorHandler(processor);
     }
+
 }

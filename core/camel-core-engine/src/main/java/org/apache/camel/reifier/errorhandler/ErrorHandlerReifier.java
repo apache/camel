@@ -16,7 +16,9 @@
  */
 package org.apache.camel.reifier.errorhandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -35,16 +37,17 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.AbstractReifier;
-import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -80,44 +83,34 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         BiFunction<RouteContext, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = ERROR_HANDLERS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(routeContext, definition);
-        } else if (definition instanceof ErrorHandlerBuilderSupport) {
-            return new ErrorHandlerReifier<ErrorHandlerBuilderSupport>(routeContext, (ErrorHandlerBuilderSupport)definition) {
-                @Override
-                public Processor createErrorHandler(Processor processor) throws Exception {
-                    return definition.createErrorHandler(routeContext, processor);
-                }
-            };
-        } else {
-            throw new IllegalStateException("Unsupported definition: " + definition);
         }
+        throw new IllegalStateException("Unsupported definition: " + definition);
     }
 
-    public static ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def, CamelContext camelContext) {
+    public ExceptionPolicy createExceptionPolicy(OnExceptionDefinition def) {
         Predicate handled = def.getHandledPolicy();
         if (handled == null && def.getHandled() != null) {
-            handled = ExpressionReifier.reifier(camelContext, def.getHandled()).createPredicate();
+            handled = createPredicate(def.getHandled());
         }
         Predicate continued = def.getContinuedPolicy();
         if (continued == null && def.getContinued() != null) {
-            continued = ExpressionReifier.reifier(camelContext, def.getContinued()).createPredicate();
+            continued = createPredicate(def.getContinued());
         }
         Predicate retryWhile = def.getRetryWhilePolicy();
         if (retryWhile == null && def.getRetryWhile() != null) {
-            retryWhile = ExpressionReifier.reifier(camelContext, def.getRetryWhile()).createPredicate();
+            retryWhile = createPredicate(def.getRetryWhile());
         }
         Processor onRedelivery = def.getOnRedelivery();
         if (onRedelivery == null && def.getOnRedeliveryRef() != null) {
-            onRedelivery = CamelContextHelper.mandatoryLookup(camelContext,
-                    CamelContextHelper.parseText(camelContext, def.getOnRedeliveryRef()), Processor.class);
+            onRedelivery = mandatoryLookup(parseString(def.getOnRedeliveryRef()), Processor.class);
         }
         Processor onExceptionOccurred = def.getOnExceptionOccurred();
         if (onExceptionOccurred == null && def.getOnExceptionOccurredRef() != null) {
-            onExceptionOccurred = CamelContextHelper.mandatoryLookup(camelContext,
-                    CamelContextHelper.parseText(camelContext, def.getOnExceptionOccurredRef()), Processor.class);
+            onExceptionOccurred = mandatoryLookup(parseString(def.getOnExceptionOccurredRef()), Processor.class);
         }
         return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def),
-                                   def.getUseOriginalMessage() != null && CamelContextHelper.parseBoolean(camelContext, def.getUseOriginalMessage()),
-                                   def.getUseOriginalBody() != null && CamelContextHelper.parseBoolean(camelContext, def.getUseOriginalBody()),
+                                   parseBoolean(def.getUseOriginalMessage(), false),
+                                   parseBoolean(def.getUseOriginalBody(), false),
                                    ObjectHelper.isNotEmpty(def.getOutputs()), handled,
                                    continued, retryWhile, onRedelivery,
                                    onExceptionOccurred, def.getRedeliveryPolicyRef(),
@@ -262,6 +255,47 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
+    public void addExceptionPolicy(ErrorHandlerSupport handlerSupport, OnExceptionDefinition exceptionType) {
+        // add error handler as child service so they get lifecycle handled
+        Processor errorHandler = routeContext.getOnException(exceptionType.getId());
+        handlerSupport.addErrorHandler(errorHandler);
+
+        // load exception classes
+        List<Class<? extends Throwable>> list;
+        if (ObjectHelper.isNotEmpty(exceptionType.getExceptions())) {
+            list = createExceptionClasses(exceptionType);
+            for (Class<? extends Throwable> clazz : list) {
+                String routeId = null;
+                // only get the route id, if the exception type is route
+                // scoped
+                if (exceptionType.isRouteScoped()) {
+                    RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
+                    if (route != null) {
+                        routeId = route.getId();
+                    }
+                }
+                Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
+                ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);
+                ExceptionPolicy policy = createExceptionPolicy(exceptionType);
+                handlerSupport.addExceptionPolicy(key, policy);
+            }
+        }
+    }
+
+    protected List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType) {
+        List<String> list = exceptionType.getExceptions();
+        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
+        for (String name : list) {
+            try {
+                Class<? extends Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+                answer.add(type);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+        return answer;
+    }
+
     /**
      * Creates the error handler
      *
@@ -276,7 +310,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport)handler;
 
             for (NamedNode exception : routeContext.getErrorHandlers(definition)) {
-                ErrorHandlerBuilderSupport.addExceptionPolicy(handlerSupport, routeContext, (OnExceptionDefinition)exception);
+                addExceptionPolicy(handlerSupport, (OnExceptionDefinition) exception);
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {

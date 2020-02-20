@@ -16,9 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +25,6 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedCamelContext;
@@ -46,7 +42,6 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -247,8 +242,6 @@ public class RecipientListProcessor extends MulticastProcessor {
      */
     protected ProcessorExchangePair createProcessorExchangePair(int index, Endpoint endpoint, Producer producer,
                                                                 Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
-        Processor prepared = producer;
-
         // copy exchange, and do not share the unit of work
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
@@ -258,11 +251,11 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         // set property which endpoint we send to
-        setToEndpoint(copy, prepared);
+        setToEndpoint(copy, producer);
 
         // rework error handling to support fine grained error handling
         RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
-        prepared = createErrorHandler(routeContext, copy, prepared);
+        Processor prepared = createErrorHandler(routeContext, copy, producer);
 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
@@ -278,17 +271,14 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
-    protected Processor createErrorHandler(RouteContext routeContext, ErrorHandlerFactory builder, Exchange exchange, Processor processor) throws Exception {
-        // in case its a reference to another builder then we want the real builder
-        final ErrorHandlerFactory ehBuilder = builder.getOrLookupErrorHandlerFactory(routeContext);
-
-        Processor answer = super.createErrorHandler(routeContext, ehBuilder, exchange, processor);
+    protected Processor createErrorHandler(RouteContext routeContext, Exchange exchange, Processor processor) {
+        Processor answer = super.createErrorHandler(routeContext, exchange, processor);
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
                 // remove error handler builder from route context as we are done with the recipient list
                 // and we cannot reuse this and must remove it to avoid leaking the error handler on the route context
-                routeContext.removeErrorHandlers(ehBuilder);
+                routeContext.removeErrorHandlers(routeContext.getErrorHandlerFactory());
             }
         });
         return answer;

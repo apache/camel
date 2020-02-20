@@ -17,7 +17,7 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.impl.engine.DefaultRouteContext;
+import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;

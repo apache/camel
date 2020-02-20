@@ -88,6 +88,20 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @throws Exception can be thrown from the route builder
      */
     public static RouteDefinition adviceWith(CamelContext camelContext, Object routeId, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder) throws Exception {
+        RouteDefinition rd = findRouteDefinition(camelContext, routeId);
+
+        return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                if (builder instanceof AdviceWithRouteBuilder) {
+                    setLogRouteAsXml(((AdviceWithRouteBuilder) builder).isLogRouteAsXml());
+                }
+                builder.accept(this);
+            }
+        });
+    }
+
+    protected static RouteDefinition findRouteDefinition(CamelContext camelContext, Object routeId) {
         ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
         if (mcc.getRouteDefinitions().isEmpty()) {
             throw new IllegalArgumentException("Cannot advice route as there are no routes");
@@ -115,16 +129,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
                 rd = mcc.getRouteDefinitions().get(0);
             }
         }
-
-        return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                if (builder instanceof AdviceWithRouteBuilder) {
-                    setLogRouteAsXml(((AdviceWithRouteBuilder) builder).isLogRouteAsXml());
-                }
-                builder.accept(this);
-            }
-        });
+        return rd;
     }
 
     /**

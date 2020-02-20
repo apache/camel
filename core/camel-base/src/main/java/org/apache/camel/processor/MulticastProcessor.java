@@ -41,7 +41,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
@@ -138,9 +137,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * <p/>
      * See the <tt>createProcessorExchangePair</tt> and <tt>createErrorHandler</tt> methods.
      */
-    static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
+    static final class ErrorHandlerKey extends KeyValueHolder<RouteContext, Processor> {
 
-        PreparedErrorHandler(RouteContext key, Processor value) {
+        ErrorHandlerKey(RouteContext key, Processor value) {
             super(key, value);
         }
 
@@ -163,7 +162,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     private ExecutorService aggregateExecutorService;
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
-    private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ErrorHandlerKey, Processor> errorHandlers = new ConcurrentHashMap<>();
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
@@ -722,7 +721,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             // for the entire multicast block again which will start from scratch again
 
             // create key for cache
-            final PreparedErrorHandler key = new PreparedErrorHandler(routeContext, processor);
+            final ErrorHandlerKey key = new ErrorHandlerKey(routeContext, processor);
 
             // lookup cached first to reuse and preserve memory
             answer = errorHandlers.get(key);
@@ -732,11 +731,10 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             LOG.trace("Creating error handler for: {}", processor);
-            ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
             // create error handler (create error handler directly to keep it light weight,
-            // instead of using ProcessorDefinition.wrapInErrorHandler)
+            // instead of using ProcessorReifier.wrapInErrorHandler)
             try {
-                processor = createErrorHandler(routeContext, builder, exchange, processor);
+                processor = routeContext.createErrorHandler(processor);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
@@ -761,13 +759,6 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         }
 
         return answer;
-    }
-
-    /**
-     * Strategy to create the error handler from the builder
-     */
-    protected Processor createErrorHandler(RouteContext routeContext, ErrorHandlerFactory builder, Exchange exchange, Processor processor) throws Exception {
-        return builder.createErrorHandler(routeContext, processor);
     }
 
     /**

@@ -661,7 +661,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (inheritErrorHandler == null || inheritErrorHandler) {
             log.trace("{} is configured to inheritErrorHandler", definition);
             Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(output);
+            Processor errorHandler = wrapInErrorHandler(output, true);
             // set error handler on channel
             channel.setErrorHandler(errorHandler);
         } else {
@@ -673,17 +673,21 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Wraps the given output in an error handler
      *
      * @param output the output
+     * @param longLived if the processor is longLived or not
      * @return the output wrapped with the error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    protected Processor wrapInErrorHandler(Processor output) throws Exception {
+    protected Processor wrapInErrorHandler(Processor output, boolean longLived) throws Exception {
         ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
+
         // create error handler
         Processor errorHandler = ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(output);
 
-        // invoke lifecycles so we can manage this error handler builder
-        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
+        if (longLived) {
+            // invoke lifecycles so we can manage this error handler builder
+            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
+            }
         }
 
         return errorHandler;

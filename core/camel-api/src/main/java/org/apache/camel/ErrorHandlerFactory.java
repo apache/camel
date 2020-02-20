@@ -16,32 +16,9 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.RouteContext;
-
 /**
  * Factory for creating {@link org.apache.camel.processor.ErrorHandler}s.
  */
 public interface ErrorHandlerFactory {
-
-    /**
-     * Creates the error handler 
-     *
-     * @param routeContext the route context
-     * @param processor the outer processor
-     * @return the error handler
-     * @throws Exception is thrown if the error handler could not be created
-     */
-    Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
-
-    /**
-     * Gets or lookup the target error handler factory.
-     *
-     * Will either get this current as the error handler factory, or in case this is a reference lookup
-     * for a actual error handler, then this method will perform a lookup to return the actual error handler factory.
-     *
-     * @param routeContext the route context
-     * @return the error handler factory.
-     */
-    ErrorHandlerFactory getOrLookupErrorHandlerFactory(RouteContext routeContext);
 
 }

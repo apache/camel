@@ -164,6 +164,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
 
     ErrorHandlerFactory getErrorHandlerFactory();
 
+    Processor createErrorHandler(Processor processor) throws Exception;
+
     void addAdvice(CamelInternalProcessorAdvice<?> advice);
 
     void addProperty(String key, Object value);

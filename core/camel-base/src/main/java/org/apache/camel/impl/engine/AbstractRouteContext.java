@@ -48,7 +48,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The context used to activate new routing rules
  */
-public class DefaultRouteContext implements RouteContext {
+public abstract class AbstractRouteContext implements RouteContext {
+
     private NamedNode route;
     private String routeId;
     private Route runtimeRoute;
@@ -81,7 +82,7 @@ public class DefaultRouteContext implements RouteContext {
     // must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
     private ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
 
-    public DefaultRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
+    public AbstractRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
         this.camelContext = camelContext;
         this.route = route;
         this.routeId = routeId;
@@ -508,12 +509,12 @@ public class DefaultRouteContext implements RouteContext {
 
     @Override
     public void addErrorHandler(ErrorHandlerFactory factory, NamedNode onException) {
-        getErrorHandlers(factory).add(onException);
+        doGetErrorHandlers(factory).add(onException);
     }
 
     @Override
     public Set<NamedNode> getErrorHandlers(ErrorHandlerFactory factory) {
-        return errorHandlers.computeIfAbsent(factory, f -> new LinkedHashSet<>());
+        return doGetErrorHandlers(factory);
     }
 
     public void removeErrorHandlers(ErrorHandlerFactory factory) {
@@ -522,10 +523,15 @@ public class DefaultRouteContext implements RouteContext {
 
     @Override
     public void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target) {
-        Set<NamedNode> list = getErrorHandlers(source);
+        Set<NamedNode> list = doGetErrorHandlers(source);
         Set<NamedNode> previous = errorHandlers.put(target, list);
         if (list != previous && ObjectHelper.isNotEmpty(previous) && ObjectHelper.isNotEmpty(list)) {
             throw new IllegalStateException("Multiple references with different handlers");
         }
     }
+
+    public Set<NamedNode> doGetErrorHandlers(ErrorHandlerFactory factory) {
+        return errorHandlers.computeIfAbsent(factory, f -> new LinkedHashSet<>());
+    }
+
 }
