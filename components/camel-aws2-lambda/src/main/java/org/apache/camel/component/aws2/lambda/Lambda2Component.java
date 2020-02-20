@@ -26,6 +26,9 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
+/**
+ * For working with Amazon Lambda SDK v2.
+ */
 @Component("aws2-lambda")
 public class Lambda2Component extends DefaultComponent {
 
