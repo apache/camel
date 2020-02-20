@@ -19,7 +19,6 @@ package org.apache.camel.component.aws2.lambda;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
@@ -81,8 +80,9 @@ public class Lambda2Configuration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * Amazon AWS Region. When using this parameter, the configuration will
+     * expect the capitalized name of the region (for example AP_EAST_1) You'll
+     * need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -93,12 +93,13 @@ public class Lambda2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction
+     * The operation to perform. It can be listFunctions, getFunction,
+     * createFunction, deleteFunction or invokeFunction
      */
     public void setOperation(Lambda2Operations operation) {
         this.operation = operation;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -131,7 +132,7 @@ public class Lambda2Configuration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
     // *************************************************
     //
     // *************************************************

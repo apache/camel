@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
@@ -79,8 +77,8 @@ import software.amazon.awssdk.services.lambda.model.UpdateFunctionCodeResponse;
 import software.amazon.awssdk.services.lambda.model.VpcConfig;
 
 /**
- * A Producer which sends messages to the Amazon Web Service Lambda <a
- * href="https://aws.amazon.com/lambda/">AWS Lambda</a>
+ * A Producer which sends messages to the Amazon Web Service Lambda
+ * <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>
  */
 public class Lambda2Producer extends DefaultProducer {
 
@@ -191,12 +189,11 @@ public class Lambda2Producer extends DefaultProducer {
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) {
         InvokeResponse result;
         try {
-            InvokeRequest request = InvokeRequest.builder()
-                    .functionName(getEndpoint().getFunction())
-                    .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
+            InvokeRequest request = InvokeRequest.builder().functionName(getEndpoint().getFunction())
+                .payload(SdkBytes.fromString(exchange.getIn().getBody(String.class), Charset.defaultCharset())).build();
             result = lambdaClient.invoke(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("invokeFunction command returned the error code {}",  ase.awsErrorDetails().errorCode());
+            LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -207,8 +204,7 @@ public class Lambda2Producer extends DefaultProducer {
         CreateFunctionResponse result;
 
         try {
-            CreateFunctionRequest.Builder request = CreateFunctionRequest.builder()
-                    .functionName(getEndpoint().getFunction());
+            CreateFunctionRequest.Builder request = CreateFunctionRequest.builder().functionName(getEndpoint().getFunction());
 
             FunctionCode.Builder functionCode = FunctionCode.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
@@ -237,8 +233,8 @@ public class Lambda2Producer extends DefaultProducer {
                 functionCode.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
             }
 
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())
-                    || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET)) && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody()) || (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
+                                                                        && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
                 request.code(functionCode.build());
             } else {
                 throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
@@ -306,8 +302,8 @@ public class Lambda2Producer extends DefaultProducer {
                 request.tags(tags);
             }
 
-            List<String> securityGroupIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SECURITY_GROUP_IDS, (Class<List<String>>) (Object) List.class));
-            List<String> subnetIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>) (Object) List.class));
+            List<String> securityGroupIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SECURITY_GROUP_IDS, (Class<List<String>>)(Object)List.class));
+            List<String> subnetIds = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>)(Object)List.class));
             if (securityGroupIds != null || subnetIds != null) {
                 VpcConfig.Builder vpcConfig = VpcConfig.builder();
                 if (securityGroupIds != null) {
@@ -333,12 +329,10 @@ public class Lambda2Producer extends DefaultProducer {
         UpdateFunctionCodeResponse result;
 
         try {
-            UpdateFunctionCodeRequest.Builder request = UpdateFunctionCodeRequest.builder()
-                    .functionName(getEndpoint().getFunction());
-
+            UpdateFunctionCodeRequest.Builder request = UpdateFunctionCodeRequest.builder().functionName(getEndpoint().getFunction());
 
             if (ObjectHelper.isEmpty(exchange.getIn().getBody())
-                    && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET)) && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
+                && (ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET)) && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY)))) {
                 throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
             }
 
@@ -606,7 +600,7 @@ public class Lambda2Producer extends DefaultProducer {
 
     @Override
     public Lambda2Endpoint getEndpoint() {
-        return (Lambda2Endpoint) super.getEndpoint();
+        return (Lambda2Endpoint)super.getEndpoint();
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

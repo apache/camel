@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.aws2.lambda;
 
-import org.apache.camel.component.aws2.lambda.Lambda2Component;
-import org.apache.camel.component.aws2.lambda.Lambda2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;
@@ -32,8 +29,8 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint) component.createEndpoint(
-            "aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+        Lambda2Endpoint endpoint = (Lambda2Endpoint)component
+            .createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
 
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -71,19 +68,19 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient");
     }
-    
+
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         Lambda2Endpoint endpoint = (Lambda2Endpoint)component.createEndpoint("aws2-lambda://myFunction");
-        
+
         assertEquals("myFunction", endpoint.getFunction());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
@@ -91,21 +88,22 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
         Lambda2Endpoint endpoint = (Lambda2Endpoint)component.createEndpoint("aws2-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+
         assertEquals("myFunction", endpoint.getFunction());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Region.US_WEST_1.toString());
-        Lambda2Endpoint endpoint = (Lambda2Endpoint)component.createEndpoint("aws2-lambda://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        Lambda2Endpoint endpoint = (Lambda2Endpoint)component
+            .createEndpoint("aws2-lambda://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
