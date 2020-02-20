@@ -136,7 +136,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (65 parameters):
+=== Query Parameters (66 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -150,6 +150,7 @@ with the following path and query parameters:
 | *handleFailedMessage* (consumer) | If the mail consumer cannot retrieve a given mail message, then this option allows to handle the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer, then the Camel routing error handler can handle the exception instead. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | boolean
 | *maxMessagesPerPoll* (consumer) | Specifies the maximum number of messages to gather per poll. By default, no maximum is set. Can be used to set a limit of e.g. 1000 to avoid downloading thousands of files when the server starts up. Set a value of 0 or negative to disable this option. |  | int
 | *mimeDecodeHeaders* (consumer) | This option enables transparent MIME decoding and unfolding for mail headers. | false | boolean
+| *moveTo* (consumer) | After processing a mail message, it can be moved to a mail folder with the given name. You can override this configuration value, with a header with the key moveTo, allowing you to move messages to folder names configured at runtime. |  | String
 | *peek* (consumer) | Will mark the javax.mail.Message as peeked before processing the mail message. This applies to IMAPMessage messages types only. By using peek the mail will not be eager marked as SEEN on the mail server, which allows us to rollback the mail message if there is an error processing in Camel. | true | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *skipFailedMessage* (consumer) | If the mail consumer cannot retrieve a given mail message, then this option allows to skip the message and move on to retrieve the next mail message. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | boolean
