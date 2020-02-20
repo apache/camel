@@ -113,6 +113,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         Processor preAwareProcessor = null;
         Processor postAwareProcessor = null;
         String staticUri = null;
+        boolean prototype = cacheSize < 0;
         try {
             recipient = expression.evaluate(exchange, Object.class);
             if (dynamicAware != null) {
@@ -134,10 +135,14 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                     }
                 }
             }
-            if (staticUri != null) {
-                endpoint = resolveEndpoint(exchange, staticUri);
+            Object targetRecipient = staticUri != null ? staticUri : recipient;
+            Endpoint existing = getExistingEndpoint(exchange, targetRecipient);
+            if (existing == null) {
+                endpoint = resolveEndpoint(exchange, targetRecipient, prototype);
             } else {
-                endpoint = resolveEndpoint(exchange, recipient);
+                endpoint = existing;
+                // we have an existing endpoint then its not a prototype scope
+                prototype = false;
             }
             if (endpoint == null) {
                 if (LOG.isDebugEnabled()) {
@@ -165,6 +170,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         final Processor postProcessor = postAwareProcessor;
         // destination exchange pattern overrides pattern
         final ExchangePattern pattern = destinationExchangePattern != null ? destinationExchangePattern : this.pattern;
+        final boolean stopEndpoint = prototype;
         return producerCache.doInAsyncProducer(endpoint, exchange, callback, (p, e, c) -> {
             final Exchange target = configureExchange(e, pattern, endpoint);
             try {
@@ -190,6 +196,10 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                         }
                     } catch (Throwable e) {
                         target.setException(e);
+                    }
+                    // stop endpoint if prototype as it was only used once
+                    if (stopEndpoint) {
+                        ServiceHelper.stopAndShutdownService(endpoint);
                     }
                     // signal we are done
                     c.done(doneSync);
@@ -228,7 +238,22 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         return ExchangeHelper.resolveScheme(uri);
     }
 
-    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        } else if (recipient instanceof String) {
+            recipient = ((String) recipient).trim();
+        }
+        if (recipient != null) {
+            // convert to a string type we can work with
+            String uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            return exchange.getContext().hasEndpoint(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) throws NoTypeConversionAvailableException {
         // trim strings as end users might have added spaces between separators
         if (recipient instanceof String) {
             recipient = ((String) recipient).trim();
@@ -240,7 +265,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         }
 
         if (recipient != null) {
-            return ExchangeHelper.resolveEndpoint(exchange, recipient);
+            return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
         } else {
             return null;
         }

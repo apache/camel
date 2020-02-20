@@ -63,6 +63,20 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Returns the mandatory endpoint (prototype scope) for the given URI or the
+     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     */
+    public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, String uri)
+        throws NoSuchEndpointException {
+        Endpoint endpoint = camelContext.getPrototypeEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
      * Returns the mandatory endpoint for the given URI and type or the
      * {@link org.apache.camel.NoSuchEndpointException} is thrown
      */

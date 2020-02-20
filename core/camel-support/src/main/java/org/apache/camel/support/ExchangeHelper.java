@@ -100,6 +100,27 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Attempts to resolve the endpoint (prototype scope) for the given value
+     *
+     * @param exchange the message exchange being processed
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
+     * @return the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolvePrototypeEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        Endpoint endpoint;
+        if (value instanceof Endpoint) {
+            endpoint = (Endpoint) value;
+        } else {
+            String uri = value.toString().trim();
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(exchange.getContext(), uri);
+        }
+        return endpoint;
+    }
+
+    /**
      * Gets the mandatory property of the exchange of the correct type
      *
      * @param exchange      the exchange

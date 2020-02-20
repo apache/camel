@@ -731,6 +731,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public Endpoint getEndpoint(String uri) {
+        return doGetEndpoint(uri, false);
+    }
+
+    @Override
+    public Endpoint getPrototypeEndpoint(String uri) {
+        return doGetEndpoint(uri, true);
+    }
+
+    protected Endpoint doGetEndpoint(String uri, boolean prototype) {
         // ensure CamelContext are initialized before we can get an endpoint
         init();
 
@@ -758,7 +767,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         String scheme = null;
         // use optimized method to get the endpoint uri
         EndpointKey key = getEndpointKeyPreNormalized(uri);
-        answer = endpoints.get(key);
+        // only lookup and reuse existing endpoints if not prototype scoped
+        answer = prototype ? null : endpoints.get(key);
         if (answer == null) {
             try {
                 // Use the URI prefix to find the component.
@@ -820,8 +830,18 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 }
 
                 if (answer != null) {
-                    addService(answer);
-                    answer = addEndpointToRegistry(uri, answer);
+                    if (!prototype) {
+                        addService(answer);
+                        // register in registry
+                        answer = addEndpointToRegistry(uri, answer);
+                    } else {
+                        addPrototypeService(answer);
+                        // if there is endpoint strategies, then use the endpoints they return
+                        // as this allows to intercept endpoints etc.
+                        for (EndpointStrategy strategy : endpointStrategies) {
+                            answer = strategy.registerEndpoint(uri, answer);
+                        }
+                    }
                 }
             } catch (Exception e) {
                 throw new ResolveEndpointFailedException(uri, e);
@@ -1387,7 +1407,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception {
-        internalAddService(object, stopOnShutdown, forceStart);
+        internalAddService(object, stopOnShutdown, forceStart, true);
+    }
+
+    @Override
+    public void addPrototypeService(Object object) throws Exception {
+        doAddService(object, false, true, false);
     }
 
     protected <T> T doAddService(T object) {
@@ -1395,19 +1420,20 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     protected <T> T doAddService(T object, boolean stopOnShutdown) {
-        return doAddService(object, stopOnShutdown, true);
+        return doAddService(object, stopOnShutdown, true, true);
     }
 
-    protected <T> T doAddService(T object, boolean stopOnShutdown, boolean forceStart) {
+    protected <T> T doAddService(T object, boolean stopOnShutdown, boolean forceStart, boolean useLifecycleStrategies) {
         try {
-            internalAddService(object, stopOnShutdown, forceStart);
+            internalAddService(object, stopOnShutdown, forceStart, useLifecycleStrategies);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return object;
     }
 
-    private void internalAddService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception {
+    private void internalAddService(Object object, boolean stopOnShutdown,
+                                    boolean forceStart, boolean useLifecycleStrategies) throws Exception {
 
         // inject CamelContext
         if (object instanceof CamelContextAware) {
@@ -1418,13 +1444,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         if (object instanceof Service) {
             Service service = (Service)object;
 
-            for (LifecycleStrategy strategy : lifecycleStrategies) {
-                if (service instanceof Endpoint) {
-                    // use specialized endpoint add
-                    strategy.onEndpointAdd((Endpoint)service);
-                } else {
-                    Route route = setupRoute.get();
-                    strategy.onServiceAdd(this, service, route);
+            if (useLifecycleStrategies) {
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    if (service instanceof Endpoint) {
+                        // use specialized endpoint add
+                        strategy.onEndpointAdd((Endpoint) service);
+                    } else {
+                        Route route = setupRoute.get();
+                        strategy.onServiceAdd(this, service, route);
+                    }
                 }
             }
 
@@ -4098,7 +4126,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
-        this.streamCachingStrategy = doAddService(streamCachingStrategy, true, false);
+        this.streamCachingStrategy = doAddService(streamCachingStrategy, true, false, true);
     }
 
     @Override
