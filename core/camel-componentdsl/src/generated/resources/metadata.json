@@ -527,7 +527,7 @@
     "extendsScheme": "",
     "syntax": "aws2-lambda:function",
     "title": "AWS Lambda",
-    "description": "The aws-lambda is used for managing and invoking functions from Amazon Lambda.",
+    "description": "The aws2-lambda is used for managing and invoking functions from Amazon Lambda.",
     "label": "cloud,computing,serverless",
     "deprecated": false,
     "deprecationNote": "cloud,computing,serverless",
