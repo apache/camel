@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
+import java.time.Duration;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
@@ -54,6 +56,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
+import org.apache.camel.util.backoff.BackOff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,6 +183,11 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @UriParam(defaultValue = "true", label = "consumer,logging",
             description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     private boolean errorHandlerLogStackTrace = true;
+    @UriParam(label = "consumer", description = "Try to apply reconnection logic on consumer pool")
+    private boolean reconnectOnError = true;
+    @UriParam(label = "consumer", description = "Backoff policy on consumer pool reconnection",
+        defaultValueNote = "Default backoff is infinite retries with 5 seconds delay")
+    private BackOff reconnectBackOff = BackOff.builder().delay(Duration.ofSeconds(5)).build();
 
     private volatile boolean closeConnectionResource;
 
@@ -753,5 +761,22 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
      */
     public void setJmsObjectFactory(JmsObjectFactory jmsObjectFactory) {
         this.jmsObjectFactory = jmsObjectFactory;
+    }
+
+
+    public boolean isReconnectOnError() {
+        return reconnectOnError;
+    }
+
+    public void setReconnectOnError(boolean reconnectOnError) {
+        this.reconnectOnError = reconnectOnError;
+    }
+
+    public BackOff getReconnectBackOff() {
+        return reconnectBackOff;
+    }
+
+    public void setReconnectBackOff(BackOff reconnectBackOff) {
+        this.reconnectBackOff = reconnectBackOff;
     }
 }
