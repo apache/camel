@@ -351,7 +351,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void doInit() throws Exception {
-    	
         // Initialize LRUCacheFactory as eager as possible, 
         // to let it warm up concurrently while Camel is startup up
         if (initialization != Initialization.Lazy) {
