@@ -34,7 +34,7 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;
-    private static final int SERVICE_PORT_BASE = 8080;
+    private static final int SERVICE_PORT_BASE = 8280;
 
     private EtcdClient client;
     private List<Map<String, Object>> servers;
