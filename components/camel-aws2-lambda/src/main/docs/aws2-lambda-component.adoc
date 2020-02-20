@@ -21,9 +21,10 @@ https://aws.amazon.com/lambda/[AWS Lambda].
 
 When creating a Lambda function, you need to specify a IAM role which has at least the AWSLambdaBasicExecuteRole policy attached.
 
-*Warning*
-
-Lambda is regional service. Unlike S3 bucket, Lambda function created in a given region is not available on other regions.
+[NOTE]
+====
+The AWS2 Lambda component is not supported in OSGI
+====
 
 == URI Format
 
