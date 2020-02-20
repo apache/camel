@@ -552,6 +552,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2KmsComponentBuilderFactory.aws2Kms();
     }
     /**
+     * AWS Lambda (camel-aws2-lambda)
+     * The aws-lambda is used for managing and invoking functions from Amazon
+     * Lambda.
+     * 
+     * Category: cloud,computing,serverless
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-aws2-lambda
+     */
+    static org.apache.camel.builder.component.dsl.Aws2LambdaComponentBuilderFactory.Aws2LambdaComponentBuilder aws2Lambda() {
+        return org.apache.camel.builder.component.dsl.Aws2LambdaComponentBuilderFactory.aws2Lambda();
+    }
+    /**
      * AWS 2 MQ (camel-aws2-mq)
      * The aws2-mq is used for managing Amazon MQ instances.
      * 
