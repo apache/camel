@@ -133,7 +133,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (36 parameters):
+=== Query Parameters (38 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -143,6 +143,8 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumerCount* (consumer) | Sets the number of consumer listeners used for this endpoint. | 1 | int
 | *durableSubscriptionId* (consumer) | Sets the durable subscription Id required for durable topics. |  | String
+| *reconnectBackOff* (consumer) | Backoff policy on consumer pool reconnection. Default value notice: Default backoff is infinite retries with 5 seconds delay |  | BackOff
+| *reconnectOnError* (consumer) | Try to apply reconnection logic on consumer pool | false | boolean
 | *synchronous* (consumer) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
