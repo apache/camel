@@ -268,6 +268,17 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception;
 
     /**
+     * Adds a service to this CamelContext (prototype scope).
+     * <p/>
+     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}.
+     * The service will be started, if its not already started.
+     *
+     * @param object the service
+     * @throws Exception can be thrown when starting the service
+     */
+    void addPrototypeService(Object object) throws Exception;
+
+    /**
      * Removes a service from this CamelContext.
      * <p/>
      * The service is assumed to have been previously added using {@link #addService(Object)} method.
@@ -423,8 +434,25 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @param uri the URI of the endpoint
      * @return the endpoint
+     *
+     * @see #getPrototypeEndpoint(String)
      */
     Endpoint getEndpoint(String uri);
+
+    /**
+     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype).
+     * If the name has a singleton endpoint registered, then the singleton is returned.
+     * Otherwise, a new {@link Endpoint} is created.
+     *
+     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped,
+     * and therefore expected to be short lived and discarded after use.
+     *
+     * @param uri the URI of the endpoint
+     * @return the endpoint
+     *
+     * @see #getEndpoint(String)
+     */
+    Endpoint getPrototypeEndpoint(String uri);
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
