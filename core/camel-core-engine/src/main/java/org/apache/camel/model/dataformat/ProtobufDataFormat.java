@@ -61,7 +61,7 @@ public class ProtobufDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Name of class to use when unarmshalling
+     * Name of class to use when unmarshalling
      */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;

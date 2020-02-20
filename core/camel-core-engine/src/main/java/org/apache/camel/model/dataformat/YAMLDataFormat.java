@@ -115,7 +115,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class name of the java type to use when unarmshalling
+     * Class name of the java type to use when unmarshalling
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;

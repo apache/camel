@@ -53,7 +53,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
                 type = definition.getUnmarshalType().getName();
             }
             properties.put("permissions", type);
-            // xstream has no unarmshalType option
+            // xstream has no unmarshalType option
             properties.remove("unmarshalType");
         }
     }
