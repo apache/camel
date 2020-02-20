@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.ConnectionFactory;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
+import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
