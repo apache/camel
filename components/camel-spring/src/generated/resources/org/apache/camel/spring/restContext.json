@@ -11,7 +11,7 @@
     "output": false
   },
   "properties": {
-    "rest": { "kind": "element", "displayName": "Rest", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestDefinition>", "deprecated": false, "secret": false },
+    "rest": { "kind": "element", "displayName": "Rest", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestDefinition>", "deprecated": false, "secret": false, "description": "Rest services" },
     "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
   }
 }

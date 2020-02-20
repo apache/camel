@@ -67,8 +67,6 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
         File camelMetaDir = new File(outDir, "META-INF/services/org/apache/camel/");
         camelMetaDir.mkdirs();
 
-        Set<File> jsonFiles = new TreeSet<>();
-
         // find all json files in camel-core
         List<String> models = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model")).map(p -> p.getFileName().toString())
             // strip out .json from the name

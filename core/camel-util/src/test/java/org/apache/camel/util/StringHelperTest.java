@@ -43,5 +43,6 @@ public class StringHelperTest extends TestCase {
         assertEquals("my-big-url-again", camelCaseToDash("MyBigURLAgain"));
 
         assertEquals("use-mdc-logging", camelCaseToDash("UseMDCLogging"));
+        assertEquals("mdc-logging-keys-pattern", camelCaseToDash("MDCLoggingKeysPattern"));
     }
 }

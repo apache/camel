@@ -1041,6 +1041,12 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+
+        // special for mdcLoggingKeysPattern
+        if ("setMdcLoggingKeysPattern".equals(setterName)) {
+            setterName = "setMDCLoggingKeysPattern";
+        }
+
         for (MethodSource<JavaClassSource> setter : source.getMethods()) {
             if (setter.getParameters().size() == 1
                     && setter.getName().equals(setterName)) {
