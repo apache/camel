@@ -24,7 +24,7 @@ The Thrift dataformat supports 3 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| instanceClass |  | String | Name of class to use when unarmshalling
+| instanceClass |  | String | Name of class to use when unmarshalling
 | contentTypeFormat | binary | String | Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The format can either be native or json for either native binary thrift, json or simple json fields representation. The default value is binary. The value can be one of: binary, json, sjson
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===

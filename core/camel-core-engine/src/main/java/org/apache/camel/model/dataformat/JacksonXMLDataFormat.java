@@ -104,7 +104,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class name of the java type to use when unarmshalling
+     * Class name of the java type to use when unmarshalling
      */
     public void setUnmarshalTypeName(String unmarshalTypeName) {
         this.unmarshalTypeName = unmarshalTypeName;
@@ -115,7 +115,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Class of the java type to use when unarmshalling
+     * Class of the java type to use when unmarshalling
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
@@ -186,7 +186,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * To unarmshal to a List of Map or a List of Pojo.
+     * To unmarshal to a List of Map or a List of Pojo.
      */
     public void setUseList(String useList) {
         this.useList = useList;
