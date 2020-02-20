@@ -96,7 +96,7 @@ Number of Components: 329 in 263 JAR artifacts (1 deprecated)
 
 | xref:aws-lambda-component.adoc[AWS Lambda] (camel-aws-lambda) | 2.20 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
 
-| xref:aws2-lambda-component.adoc[AWS Lambda] (camel-aws2-lambda) | 3.2 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
+| xref:aws2-lambda-component.adoc[AWS Lambda] (camel-aws2-lambda) | 3.2 | The aws2-lambda is used for managing and invoking functions from Amazon Lambda.
 
 | xref:aws-mq-component.adoc[AWS MQ] (camel-aws-mq) | 2.21 | The aws-mq is used for managing Amazon MQ instances.
 
