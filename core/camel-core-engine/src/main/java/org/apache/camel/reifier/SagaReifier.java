@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SagaActionUriDefinition;
@@ -33,13 +34,11 @@ import org.apache.camel.processor.saga.SagaProcessorBuilder;
 import org.apache.camel.processor.saga.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
-    public SagaReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SagaDefinition)definition);
+    public SagaReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SagaDefinition)definition);
     }
 
     @Override

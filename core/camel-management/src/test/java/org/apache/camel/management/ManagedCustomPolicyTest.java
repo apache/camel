@@ -26,7 +26,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.junit.Test;
 
 public class ManagedCustomPolicyTest extends ManagementTestSupport {
@@ -81,12 +81,12 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
     private final class MyPolicy implements Policy {
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // noop
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
+        public Processor wrap(Route route, final Processor processor) {
             return exchange -> {
                 counter.incrementAndGet();
                 processor.process(exchange);

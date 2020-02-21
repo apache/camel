@@ -38,10 +38,9 @@ import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.NotifyBuilderMatcher;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -211,10 +210,8 @@ public class NotifyBuilder {
 
             @Override
             public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
-                if (rc != null) {
-                    String id = rc.getRouteId();
+                String id = ExchangeHelper.getAtRouteId(exchange);
+                if (id != null) {
                     return PatternHelper.matchPattern(id, routeId);
                 } else {
                     return false;

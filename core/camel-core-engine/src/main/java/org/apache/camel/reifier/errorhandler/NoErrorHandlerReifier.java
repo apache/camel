@@ -21,14 +21,14 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerBuilder> {
 
-    public NoErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, (NoErrorHandlerBuilder)definition);
+    public NoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, (NoErrorHandlerBuilder)definition);
     }
 
     @Override

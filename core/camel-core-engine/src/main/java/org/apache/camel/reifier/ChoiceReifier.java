@@ -22,20 +22,19 @@ import java.util.List;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
-    public ChoiceReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, ChoiceDefinition.class.cast(definition));
+    public ChoiceReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, ChoiceDefinition.class.cast(definition));
     }
 
     @Override

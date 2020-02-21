@@ -20,16 +20,16 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.spi.RouteContext;
 
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
-    public PollEnrichReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (PollEnrichDefinition)definition);
+    public PollEnrichReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (PollEnrichDefinition)definition);
     }
 
     @Override

@@ -20,19 +20,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
-    public ThreadsReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (ThreadsDefinition) definition);
+    public ThreadsReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ThreadsDefinition) definition);
     }
 
     @Override

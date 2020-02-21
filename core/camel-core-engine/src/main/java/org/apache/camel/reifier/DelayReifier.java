@@ -20,15 +20,15 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.DelayDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
-import org.apache.camel.spi.RouteContext;
 
 public class DelayReifier extends ExpressionReifier<DelayDefinition> {
 
-    public DelayReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, DelayDefinition.class.cast(definition));
+    public DelayReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, DelayDefinition.class.cast(definition));
     }
 
     @Override

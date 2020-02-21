@@ -16,16 +16,16 @@
  */
 package org.apache.camel.reifier.loadbalancer;
 
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.spi.RouteContext;
 
 public class RoundRobinLoadBalancerReifier extends LoadBalancerReifier<RoundRobinLoadBalancerDefinition> {
 
-    public RoundRobinLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
-        super(routeContext, (RoundRobinLoadBalancerDefinition)definition);
+    public RoundRobinLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
+        super(route, (RoundRobinLoadBalancerDefinition)definition);
     }
 
     @Override

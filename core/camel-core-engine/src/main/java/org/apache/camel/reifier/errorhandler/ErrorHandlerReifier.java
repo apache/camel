@@ -29,6 +29,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
@@ -48,16 +49,15 @@ import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.reifier.AbstractReifier;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> extends AbstractReifier {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
-    private static final Map<Class<?>, BiFunction<RouteContext, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
+    private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
     static {
-        Map<Class<?>, BiFunction<RouteContext, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map = new HashMap<>();
         map.put(DeadLetterChannelBuilder.class, DeadLetterChannelReifier::new);
         map.put(DefaultErrorHandlerBuilder.class, DefaultErrorHandlerReifier::new);
         map.put(ErrorHandlerBuilderRef.class, ErrorHandlerRefReifier::new);
@@ -70,19 +70,19 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Utility classes should not have a public constructor.
      */
-    protected ErrorHandlerReifier(RouteContext routeContext, T definition) {
-        super(routeContext);
+    protected ErrorHandlerReifier(Route route, T definition) {
+        super(route);
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<?> errorHandlerClass, BiFunction<RouteContext, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
+    public static void registerReifier(Class<?> errorHandlerClass, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
         ERROR_HANDLERS.put(errorHandlerClass, creator);
     }
 
-    public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        BiFunction<RouteContext, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = ERROR_HANDLERS.get(definition.getClass());
+    public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(Route route, ErrorHandlerFactory definition) {
+        BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = ERROR_HANDLERS.get(definition.getClass());
         if (reifier != null) {
-            return reifier.apply(routeContext, definition);
+            return reifier.apply(route, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
     }
@@ -158,26 +158,26 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Lookup the error handler by the given ref
      *
-     * @param routeContext the route context
+     * @param route the route context
      * @param ref reference id for the error handler
      * @return the error handler
      */
-    public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref) {
-        return lookupErrorHandlerFactory(routeContext, ref, true);
+    public static ErrorHandlerFactory lookupErrorHandlerFactory(Route route, String ref) {
+        return lookupErrorHandlerFactory(route, ref, true);
     }
 
     /**
      * Lookup the error handler by the given ref
      *
-     * @param routeContext the route context
+     * @param route the route
      * @param ref reference id for the error handler
      * @param mandatory whether the error handler must exists, if not a
      *            {@link org.apache.camel.NoSuchBeanException} is thrown
      * @return the error handler
      */
-    public static ErrorHandlerFactory lookupErrorHandlerFactory(RouteContext routeContext, String ref, boolean mandatory) {
+    public static ErrorHandlerFactory lookupErrorHandlerFactory(Route route, String ref, boolean mandatory) {
         ErrorHandlerFactory answer;
-        CamelContext camelContext = routeContext.getCamelContext();
+        CamelContext camelContext = route.getCamelContext();
 
         // if the ref is the default then we do not have any explicit error
         // handler configured
@@ -188,8 +188,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         if (!isErrorHandlerFactoryConfigured(ref)) {
             // see if there has been configured a error handler builder on the route
             // TODO: Avoid using RouteDefinition - tests should pass: https://issues.apache.org/jira/browse/CAMEL-13984
-            RouteDefinition route = (RouteDefinition)routeContext.getRoute();
-            answer = route.getErrorHandlerFactory();
+            RouteDefinition def = (RouteDefinition) route.getRoute();
+            answer = def.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
             if (answer instanceof ErrorHandlerBuilderRef) {
                 ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
@@ -211,7 +211,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 // shared
                 // this is needed by camel-spring when none error handler has
                 // been explicit configured
-                routeContext.addErrorHandlerFactoryReference(other, answer);
+                route.addErrorHandlerFactoryReference(other, answer);
             }
         } else {
             // use specific configured error handler
@@ -257,7 +257,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
 
     public void addExceptionPolicy(ErrorHandlerSupport handlerSupport, OnExceptionDefinition exceptionType) {
         // add error handler as child service so they get lifecycle handled
-        Processor errorHandler = routeContext.getOnException(exceptionType.getId());
+        Processor errorHandler = route.getOnException(exceptionType.getId());
         handlerSupport.addErrorHandler(errorHandler);
 
         // load exception classes
@@ -309,7 +309,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport)handler;
 
-            for (NamedNode exception : routeContext.getErrorHandlers(definition)) {
+            for (NamedNode exception : route.getErrorHandlers(definition)) {
                 addExceptionPolicy(handlerSupport, (OnExceptionDefinition) exception);
             }
         }
@@ -317,7 +317,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             boolean original = ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy();
             if (original) {
                 // ensure allow original is turned on
-                routeContext.setAllowUseOriginalMessage(true);
+                route.setAllowUseOriginalMessage(true);
             }
         }
     }

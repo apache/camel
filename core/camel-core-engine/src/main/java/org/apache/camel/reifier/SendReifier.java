@@ -19,16 +19,16 @@ package org.apache.camel.reifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
 public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
 
-    public SendReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SendDefinition) definition);
+    public SendReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SendDefinition) definition);
     }
 
     @Override

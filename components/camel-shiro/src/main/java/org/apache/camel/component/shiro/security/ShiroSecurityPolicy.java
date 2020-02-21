@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.AuthorizationPolicy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.config.Ini;
@@ -99,14 +99,14 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     }
 
     @Override
-    public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+    public void beforeWrap(Route route, NamedNode definition) {
         // noop
     }
 
     @Override
-    public Processor wrap(RouteContext routeContext, final Processor processor) {
+    public Processor wrap(Route route, final Processor processor) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRouteId(), this);
+            LOG.debug("Securing route {} using Shiro policy {}", route.getRouteId(), this);
         }
         return new ShiroSecurityProcessor(processor, this);
     }

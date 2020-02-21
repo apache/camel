@@ -19,7 +19,7 @@ package org.apache.camel.component.hystrix.processor;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.CircuitBreakerDefinition;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 
 /**
  * To integrate camel-hystrix with the Camel routes using the Hystrix EIP.
@@ -31,8 +31,8 @@ public class HystrixProcessorFactory extends TypedProcessorFactory<CircuitBreake
     }
 
     @Override
-    public Processor doCreateProcessor(RouteContext routeContext, CircuitBreakerDefinition definition) throws Exception {
-        return new HystrixReifier(routeContext, definition).createProcessor();
+    public Processor doCreateProcessor(Route route, CircuitBreakerDefinition definition) throws Exception {
+        return new HystrixReifier(route, definition).createProcessor();
     }
 
 }

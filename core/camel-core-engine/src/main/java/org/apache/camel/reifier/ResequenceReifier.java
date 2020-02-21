@@ -18,6 +18,7 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -28,13 +29,12 @@ import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
-    public ResequenceReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (ResequenceDefinition)definition);
+    public ResequenceReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ResequenceDefinition)definition);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -107,7 +107,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Expression expression = createExpression(definition.getExpression());
 
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);

@@ -21,16 +21,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> extends ErrorHandlerReifier<T> {
 
-    public DefaultErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, (T)definition);
+    public DefaultErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, (T)definition);
     }
 
     @Override

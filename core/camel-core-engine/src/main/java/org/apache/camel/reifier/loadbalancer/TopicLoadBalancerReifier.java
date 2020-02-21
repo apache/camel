@@ -16,16 +16,16 @@
  */
 package org.apache.camel.reifier.loadbalancer;
 
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
-import org.apache.camel.spi.RouteContext;
 
 public class TopicLoadBalancerReifier extends LoadBalancerReifier<TopicLoadBalancerDefinition> {
 
-    public TopicLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
-        super(routeContext, (TopicLoadBalancerDefinition)definition);
+    public TopicLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
+        super(route, (TopicLoadBalancerDefinition)definition);
     }
 
     @Override

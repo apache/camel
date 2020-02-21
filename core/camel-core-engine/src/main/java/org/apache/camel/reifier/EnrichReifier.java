@@ -20,16 +20,16 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.spi.RouteContext;
 
 public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
-    public EnrichReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, EnrichDefinition.class.cast(definition));
+    public EnrichReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, EnrichDefinition.class.cast(definition));
     }
 
     @Override

@@ -23,20 +23,20 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.Pair;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
 
-    public ToDynamicReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (T) definition);
+    public ToDynamicReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (T) definition);
     }
 
     @Override

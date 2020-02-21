@@ -45,7 +45,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.spi.RouteContext;
 
 public class DefaultModel implements Model {
 
@@ -350,9 +349,7 @@ public class DefaultModel implements Model {
         AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
         mcc.setStartingRoutes(true);
         try {
-            String id = routeDefinition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-            RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition, id);
-            Route route = new RouteReifier(routeContext, routeDefinition).createRoute();
+            Route route = new RouteReifier(camelContext, routeDefinition).createRoute();
             RouteService routeService = new RouteService(route);
             mcc.startRouteService(routeService, true);
         } finally {

@@ -30,7 +30,7 @@ public class RoutePolicyAutoStartupCancelledOnInitTest extends ContextTestSuppor
     private RoutePolicy policy = new RoutePolicySupport() {
         @Override
         public void onInit(Route route) {
-            route.getRouteContext().setAutoStartup(false);
+            route.setAutoStartup(false);
         }
     };
 

@@ -39,8 +39,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
@@ -1242,16 +1240,7 @@ public class ExpressionBuilder {
     public static Expression routeIdExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String answer = null;
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
-                if (rc != null) {
-                    answer = rc.getRouteId();
-                }
-                if (answer == null) {
-                    // fallback and get from route id on the exchange
-                    answer = exchange.getFromRouteId();
-                }
+                String answer = ExchangeHelper.getRouteId(exchange);
                 return answer;
             }
 

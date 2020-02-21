@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
@@ -38,7 +39,6 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
@@ -67,7 +67,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private NamedNode definition;
     private ManagementInterceptStrategy.InstrumentationProcessor<?> instrumentationProcessor;
     private CamelContext camelContext;
-    private RouteContext routeContext;
+    private Route route;
     private boolean routeScoped = true;
 
     public DefaultChannel(CamelContext camelContext) {
@@ -131,8 +131,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     }
 
     @Override
-    public RouteContext getRouteContext() {
-        return routeContext;
+    public Route getRoute() {
+        return route;
     }
 
     @Override
@@ -170,22 +170,22 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
      * If the initialized output definition contained outputs (children) then
      * the childDefinition will be set so we can leverage fine grained tracing
      *
-     * @param routeContext      the route context
+     * @param route      the route context
      * @param definition        the route definition the {@link Channel} represents
      * @param childDefinition   the child definition
      * @throws Exception is thrown if some error occurred
      */
-    public void initChannel(RouteContext routeContext,
+    public void initChannel(Route route,
                             NamedNode definition,
                             NamedNode childDefinition,
                             List<InterceptStrategy> interceptors,
                             Processor nextProcessor,
-                            NamedRoute route,
+                            NamedRoute routeDefinition,
                             boolean first,
                             boolean routeScoped) throws Exception {
-        this.routeContext = routeContext;
+        this.route = route;
         this.definition = definition;
-        this.camelContext = routeContext.getCamelContext();
+        this.camelContext = route.getCamelContext();
         this.nextProcessor = nextProcessor;
         this.routeScoped = routeScoped;
 
@@ -201,12 +201,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         // setup instrumentation processor for management (jmx)
         // this is later used in postInitChannel as we need to setup the error handler later as well
-        ManagementInterceptStrategy managed = routeContext.getManagementInterceptStrategy();
+        ManagementInterceptStrategy managed = route.getManagementInterceptStrategy();
         if (managed != null) {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        if (routeContext.isMessageHistory()) {
+        if (route.isMessageHistory()) {
             // add message history advice
             MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
             addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
@@ -216,7 +216,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
-        if (routeContext.isDebugging()) {
+        if (route.isDebugging()) {
             if (camelContext.getDebugger() != null) {
                 // use custom debugger
                 Debugger debugger = camelContext.getDebugger();
@@ -229,15 +229,15 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
         }
 
-        if (routeContext.isBacklogTracing()) {
+        if (route.isBacklogTracing()) {
             // add jmx backlog tracer
             BacklogTracer backlogTracer = getOrCreateBacklogTracer();
-            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
+            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, routeDefinition, first));
         }
-        if (routeContext.isTracing()) {
+        if (route.isTracing()) {
             // add logger tracer
             Tracer tracer = camelContext.getTracer();
-            addAdvice(new TracingAdvice(tracer, targetOutputDef, route, first));
+            addAdvice(new TracingAdvice(tracer, targetOutputDef, routeDefinition, first));
         }
 
         // sort interceptors according to ordered
@@ -249,7 +249,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         for (InterceptStrategy strategy : interceptors) {
             Processor next = target == nextProcessor ? null : nextProcessor;
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
-            Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
+            Processor wrapped = strategy.wrapProcessorInInterceptors(route.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
                 LOG.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
                         + " This causes the asynchronous routing engine to not work as optimal as possible."
@@ -264,12 +264,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             target = wrapped;
         }
 
-        if (routeContext.isStreamCaching()) {
+        if (route.isStreamCaching()) {
             addAdvice(new StreamCachingAdvice(camelContext.getStreamCachingStrategy()));
         }
 
-        if (routeContext.getDelayer() != null && routeContext.getDelayer() > 0) {
-            addAdvice(new DelayerAdvice(routeContext.getDelayer()));
+        if (route.getDelayer() != null && route.getDelayer() > 0) {
+            addAdvice(new DelayerAdvice(route.getDelayer()));
         }
 
         // sets the delegate to our wrapped output

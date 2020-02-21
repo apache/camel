@@ -33,8 +33,8 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.Route;
 import org.apache.camel.spi.ProducerCache;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
@@ -254,8 +254,8 @@ public class RecipientListProcessor extends MulticastProcessor {
         setToEndpoint(copy, producer);
 
         // rework error handling to support fine grained error handling
-        RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
-        Processor prepared = createErrorHandler(routeContext, copy, producer);
+        Route route = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRoute() : null;
+        Processor prepared = createErrorHandler(route, copy, producer);
 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
@@ -268,20 +268,6 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         // and create the pair
         return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy, pattern, prototypeEndpoint);
-    }
-
-    @Override
-    protected Processor createErrorHandler(RouteContext routeContext, Exchange exchange, Processor processor) {
-        Processor answer = super.createErrorHandler(routeContext, exchange, processor);
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                // remove error handler builder from route context as we are done with the recipient list
-                // and we cannot reuse this and must remove it to avoid leaking the error handler on the route context
-                routeContext.removeErrorHandlers(routeContext.getErrorHandlerFactory());
-            }
-        });
-        return answer;
     }
 
     protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {

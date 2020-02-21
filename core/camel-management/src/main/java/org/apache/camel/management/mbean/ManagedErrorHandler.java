@@ -24,16 +24,16 @@ import org.apache.camel.api.management.mbean.ManagedErrorHandlerMBean;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 
 @ManagedResource(description = "Managed ErrorHandler")
 public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
-    private final RouteContext routeContext;
+    private final Route route;
     private final Processor errorHandler;
     private final ErrorHandlerFactory errorHandlerBuilder;
 
-    public ManagedErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) {
-        this.routeContext = routeContext;
+    public ManagedErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder) {
+        this.route = route;
         this.errorHandler = errorHandler;
         this.errorHandlerBuilder = builder;
     }
@@ -42,8 +42,8 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         // do nothing
     }
 
-    public RouteContext getRouteContext() {
-        return routeContext;
+    public Route getRoute() {
+        return route;
     }
 
     public Processor getErrorHandler() {
@@ -56,12 +56,12 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
 
     @Override
     public String getCamelId() {
-        return routeContext.getCamelContext().getName();
+        return route.getCamelContext().getName();
     }
 
     @Override
     public String getCamelManagementName() {
-        return routeContext.getCamelContext().getManagementName();
+        return route.getCamelContext().getManagementName();
     }
 
     @Override

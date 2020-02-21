@@ -23,12 +23,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
-    public LogReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (LogDefinition)definition);
+    public LogReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (LogDefinition)definition);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
                 }
             }
             if (name == null) {
-                name = routeContext.getRouteId();
+                name = route.getRouteId();
                 log.debug("LogName is not configured, using route id as logName: {}", name);
             }
             logger = LoggerFactory.getLogger(name);
@@ -92,7 +92,7 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
     }
 
     private MaskingFormatter getMaskingFormatter() {
-        if (routeContext.isLogMask()) {
+        if (route.isLogMask()) {
             MaskingFormatter formatter = lookup(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();

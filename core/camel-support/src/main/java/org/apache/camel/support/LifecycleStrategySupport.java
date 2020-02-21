@@ -24,11 +24,10 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 
 /**
  * A useful base class for {@link LifecycleStrategy} implementations.
@@ -66,37 +65,37 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     }
 
     @Override
-    public void onServiceAdd(CamelContext context, Service service, Route route) {
+    public void onServiceAdd(CamelContext context, Service service, org.apache.camel.Route route) {
         // noop
     }
 
     @Override
-    public void onServiceRemove(CamelContext context, Service service, Route route) {
+    public void onServiceRemove(CamelContext context, Service service, org.apache.camel.Route route) {
         // noop
     }
 
     @Override
-    public void onRoutesAdd(Collection<Route> routes) {
+    public void onRoutesAdd(Collection<org.apache.camel.Route> routes) {
         // noop
     }
 
     @Override
-    public void onRoutesRemove(Collection<Route> routes) {
+    public void onRoutesRemove(Collection<org.apache.camel.Route> routes) {
         // noop
     }
 
     @Override
-    public void onRouteContextCreate(RouteContext routeContext) {
+    public void onRouteContextCreate(Route route) {
         // noop
     }
 
     @Override
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    public void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         // noop
     }
 
     @Override
-    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    public void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         // noop
     }
 

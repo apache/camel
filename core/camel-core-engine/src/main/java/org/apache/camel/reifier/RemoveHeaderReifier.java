@@ -17,16 +17,16 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemoveHeaderDefinition;
 import org.apache.camel.processor.RemoveHeaderProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class RemoveHeaderReifier extends ProcessorReifier<RemoveHeaderDefinition> {
 
-    public RemoveHeaderReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (RemoveHeaderDefinition) definition);
+    public RemoveHeaderReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (RemoveHeaderDefinition) definition);
     }
 
     @Override

@@ -24,6 +24,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.processor.EvaluateExpressionProcessor;
@@ -31,12 +32,11 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.spi.RouteContext;
 
 public class RecipientListReifier extends ProcessorReifier<RecipientListDefinition<?>> {
 
-    public RecipientListReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (RecipientListDefinition<?>)definition);
+    public RecipientListReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (RecipientListDefinition<?>)definition);
     }
 
     @Override

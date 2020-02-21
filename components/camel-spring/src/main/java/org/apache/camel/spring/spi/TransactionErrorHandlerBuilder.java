@@ -16,17 +16,10 @@
  */
 package org.apache.camel.spring.spi;
 
-import java.util.Map;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;

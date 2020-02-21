@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
@@ -28,12 +29,11 @@ import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.WireTapProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
-    public WireTapReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, definition);
+    public WireTapReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, definition);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         // is true by default
         boolean isCopy = parseBoolean(definition.getCopy(), true);

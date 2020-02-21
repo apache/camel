@@ -21,7 +21,7 @@ import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.NotifyBuilder;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
@@ -78,7 +78,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor(Route route) {
         // the following is very specific (and brittle) and is not generally
         // useful outside these transaction tests (nor intended to be).
-        EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
         Processor processor = findProcessorByClass(consumerRoute.getProcessor(), ConditionalExceptionProcessor.class);
         return assertIsInstanceOf(ConditionalExceptionProcessor.class, processor);
     }

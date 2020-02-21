@@ -19,6 +19,7 @@ package org.apache.camel.reifier.loadbalancer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
@@ -26,12 +27,11 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
-import org.apache.camel.spi.RouteContext;
 
 public class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalancerDefinition> {
 
-    public WeightedLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
-        super(routeContext, (WeightedLoadBalancerDefinition)definition);
+    public WeightedLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
+        super(route, (WeightedLoadBalancerDefinition)definition);
     }
 
     @Override

@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.springframework.beans.factory.BeanNameAware;
 
@@ -58,8 +58,8 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
 
     public static class DummyErrorHandlerReifier extends ErrorHandlerReifier<DummyErrorHandlerBuilder> {
 
-        public DummyErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-            super(routeContext, (DummyErrorHandlerBuilder) definition);
+        public DummyErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+            super(route, (DummyErrorHandlerBuilder) definition);
         }
 
         @Override

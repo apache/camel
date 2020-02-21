@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Channel;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spring.SpringCamelContext;
@@ -42,7 +42,7 @@ public class ErrorHandlerTest extends SpringTestSupport {
         List<Route> list = context.getRoutes();
         assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());

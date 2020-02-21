@@ -17,17 +17,17 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.UnmarshalProcessor;
 
 public class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
 
-    public UnmarshalReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (UnmarshalDefinition) definition);
+    public UnmarshalReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (UnmarshalDefinition) definition);
     }
 
     @Override

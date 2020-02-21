@@ -18,17 +18,17 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
 
 public class TransactedReifier extends AbstractPolicyReifier<TransactedDefinition> {
 
-    public TransactedReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (TransactedDefinition) definition);
+    public TransactedReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (TransactedDefinition) definition);
     }
 
     public TransactedReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
@@ -41,13 +41,13 @@ public class TransactedReifier extends AbstractPolicyReifier<TransactedDefinitio
         org.apache.camel.util.ObjectHelper.notNull(policy, "policy", this);
 
         // before wrap
-        policy.beforeWrap(routeContext, definition);
+        policy.beforeWrap(route, definition);
 
         // create processor after the before wrap
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap
-        Processor target = policy.wrap(routeContext, childProcessor);
+        Processor target = policy.wrap(route, childProcessor);
 
         if (!(target instanceof Service)) {
             // wrap the target so it becomes a service and we can manage its

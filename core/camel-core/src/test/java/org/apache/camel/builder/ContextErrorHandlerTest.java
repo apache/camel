@@ -24,7 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
@@ -80,7 +80,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
 
             Channel channel = unwrapChannel(processor);
@@ -104,7 +104,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {
 
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
 
             Channel channel = unwrapChannel(processor);

@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.junit.After;
@@ -82,7 +82,7 @@ public class ResequencerTest extends ContextTestSupport {
         assertEquals("Number of routes created: " + list, 1, list.size());
 
         Route route = list.get(0);
-        EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
 
         DefaultChannel channel = assertIsInstanceOf(DefaultChannel.class, unwrapChannel(consumerRoute.getProcessor()));
 

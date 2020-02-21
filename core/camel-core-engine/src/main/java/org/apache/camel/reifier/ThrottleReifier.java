@@ -20,15 +20,15 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.processor.Throttler;
-import org.apache.camel.spi.RouteContext;
 
 public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
 
-    public ThrottleReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (ThrottleDefinition) definition);
+    public ThrottleReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ThrottleDefinition) definition);
     }
 
     @Override

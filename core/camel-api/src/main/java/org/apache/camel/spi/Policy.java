@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 
 /**
  * A strategy capable of applying interceptors to a processor.
@@ -41,17 +42,17 @@ public interface Policy {
      * This allows you to do any custom logic before the processor is wrapped. For example to
      * manipulate the {@link org.apache.camel.model.ProcessorDefinition definiton}.
      *
-     * @param routeContext   the route context
+     * @param route   the route context
      * @param definition     the processor definition
      */
-    void beforeWrap(RouteContext routeContext, NamedNode definition);
+    void beforeWrap(Route route, NamedNode definition);
 
     /**
      * Wraps any applicable interceptors around the given processor.
      *
-     * @param routeContext the route context
+     * @param route the route context
      * @param processor the processor to be intercepted
      * @return either the original processor or a processor wrapped in one or more processors
      */
-    Processor wrap(RouteContext routeContext, Processor processor);
+    Processor wrap(Route route, Processor processor);
 }

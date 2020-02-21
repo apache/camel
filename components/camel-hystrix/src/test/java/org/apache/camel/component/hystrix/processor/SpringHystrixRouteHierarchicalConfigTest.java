@@ -17,11 +17,11 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,13 +39,13 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
     @Test
     public void testHystrix() throws Exception {
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
-        final RouteContext routeContext = new DefaultRouteContext(context, routeDefinition,
-                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()));
+        final Route route = new DefaultRoute(context, routeDefinition,
+                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()), null);
         CircuitBreakerDefinition hystrixDefinition = findCircuitBreakerDefinition(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);
 
-        HystrixReifier reifier = new HystrixReifier(routeContext, hystrixDefinition);
+        HystrixReifier reifier = new HystrixReifier(route, hystrixDefinition);
         HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration();
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());

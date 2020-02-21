@@ -19,15 +19,15 @@ package org.apache.camel.reifier;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.processor.StepProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class StepReifier extends ProcessorReifier<StepDefinition> {
 
-    public StepReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, StepDefinition.class.cast(definition));
+    public StepReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, StepDefinition.class.cast(definition));
     }
 
     @Override

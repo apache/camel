@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
@@ -31,14 +32,13 @@ import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.ReifierStrategy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.StringHelper;
 
 public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<RouteContext, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS;
+    private static final Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS;
     static {
-        Map<Class<?>, BiFunction<RouteContext, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> map = new HashMap<>();
         map.put(LoadBalancerDefinition.class, LoadBalancerReifier::new);
         map.put(CustomLoadBalancerDefinition.class, CustomLoadBalancerReifier::new);
         map.put(FailoverLoadBalancerDefinition.class, FailoverLoadBalancerReifier::new);
@@ -53,15 +53,15 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
 
     protected final T definition;
 
-    public LoadBalancerReifier(RouteContext routeContext, T definition) {
-        super(routeContext);
+    public LoadBalancerReifier(Route route, T definition) {
+        super(route);
         this.definition = definition;
     }
 
-    public static LoadBalancerReifier<? extends LoadBalancerDefinition> reifier(RouteContext routeContext, LoadBalancerDefinition definition) {
-        BiFunction<RouteContext, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier = LOAD_BALANCERS.get(definition.getClass());
+    public static LoadBalancerReifier<? extends LoadBalancerDefinition> reifier(Route route, LoadBalancerDefinition definition) {
+        BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> reifier = LOAD_BALANCERS.get(definition.getClass());
         if (reifier != null) {
-            return reifier.apply(routeContext, definition);
+            return reifier.apply(route, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
     }

@@ -26,10 +26,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.support.LifecycleStrategySupport;
 
 public class DummyLifecycleStrategy extends LifecycleStrategySupport {
@@ -67,37 +66,37 @@ public class DummyLifecycleStrategy extends LifecycleStrategySupport {
     }
 
     @Override
-    public void onServiceAdd(CamelContext context, Service service, Route route) {
+    public void onServiceAdd(CamelContext context, Service service, org.apache.camel.Route route) {
         events.add("onServiceAdd");
     }
 
     @Override
-    public void onServiceRemove(CamelContext context, Service service, Route route) {
+    public void onServiceRemove(CamelContext context, Service service, org.apache.camel.Route route) {
         events.add("onServiceRemove");
     }
 
     @Override
-    public void onRoutesAdd(Collection<Route> routes) {
+    public void onRoutesAdd(Collection<org.apache.camel.Route> routes) {
         events.add("onRoutesAdd");
     }
 
     @Override
-    public void onRoutesRemove(Collection<Route> routes) {
+    public void onRoutesRemove(Collection<org.apache.camel.Route> routes) {
         events.add("onRoutesRemove");
     }
 
     @Override
-    public void onRouteContextCreate(RouteContext routeContext) {
+    public void onRouteContextCreate(Route route) {
         events.add("onRouteContextCreate");
     }
 
     @Override
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    public void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         events.add("onErrorHandlerAdd");
     }
 
     @Override
-    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    public void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         events.add("onErrorHandlerRemove");
     }
 

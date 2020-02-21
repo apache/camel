@@ -23,18 +23,18 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.spi.RouteContext;
 
 public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
-    public MulticastReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (MulticastDefinition) definition);
+    public MulticastReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (MulticastDefinition) definition);
     }
 
     @Override

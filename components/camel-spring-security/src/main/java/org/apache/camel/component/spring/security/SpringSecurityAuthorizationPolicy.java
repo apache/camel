@@ -27,7 +27,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.AuthorizationPolicy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +56,11 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
     private boolean useThreadSecurityContext = true;
 
     @Override
-    public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+    public void beforeWrap(Route route, NamedNode definition) {
     }
 
     @Override
-    public Processor wrap(RouteContext routeContext, Processor processor) {
+    public Processor wrap(Route route, Processor processor) {
         // wrap the processor with authorizeDelegateProcessor
         return new AuthorizeDelegateProcess(processor);
     }

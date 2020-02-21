@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -33,13 +34,12 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
-    public AggregateReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, AggregateDefinition.class.cast(definition));
+    public AggregateReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, AggregateDefinition.class.cast(definition));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         // wrap the aggregate route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         Expression correlation = createExpression(definition.getExpression());
         AggregationStrategy strategy = createAggregationStrategy();

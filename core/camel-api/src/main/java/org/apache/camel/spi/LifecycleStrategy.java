@@ -86,7 +86,7 @@ public interface LifecycleStrategy {
      * @param service the added service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceAdd(CamelContext context, Service service, Route route);
+    void onServiceAdd(CamelContext context, Service service, org.apache.camel.Route route);
 
     /**
      * Notification on removing a {@link Service}.
@@ -95,46 +95,46 @@ public interface LifecycleStrategy {
      * @param service the removed service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceRemove(CamelContext context, Service service, Route route);
+    void onServiceRemove(CamelContext context, Service service, org.apache.camel.Route route);
+
+    /**
+     * Notification on adding {@link org.apache.camel.Route}(s).
+     *
+     * @param routes the added routes
+     */
+    void onRoutesAdd(Collection<org.apache.camel.Route> routes);
+
+    /**
+     * Notification on removing {@link org.apache.camel.Route}(s).
+     *
+     * @param routes the removed routes
+     */
+    void onRoutesRemove(Collection<org.apache.camel.Route> routes);
 
     /**
      * Notification on adding {@link Route}(s).
      *
-     * @param routes the added routes
+     * @param route the added route context
      */
-    void onRoutesAdd(Collection<Route> routes);
-
-    /**
-     * Notification on removing {@link Route}(s).
-     *
-     * @param routes the removed routes
-     */
-    void onRoutesRemove(Collection<Route> routes);
-
-    /**
-     * Notification on adding {@link RouteContext}(s).
-     *
-     * @param routeContext the added route context
-     */
-    void onRouteContextCreate(RouteContext routeContext);
+    void onRouteContextCreate(Route route);
 
     /**
      * Notification on adding error handler.
      *
-     * @param routeContext        the added route context
+     * @param route        the added route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
-    void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+    void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Notification on removing error handler.
      *
-     * @param routeContext        the removed route context
+     * @param route        the removed route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
-    void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+    void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Notification on adding a thread pool.

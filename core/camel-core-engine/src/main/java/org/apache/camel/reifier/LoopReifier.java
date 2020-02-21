@@ -19,15 +19,15 @@ package org.apache.camel.reifier;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.LoopProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class LoopReifier extends ExpressionReifier<LoopDefinition> {
 
-    public LoopReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (LoopDefinition)definition);
+    public LoopReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (LoopDefinition)definition);
     }
 
     @Override

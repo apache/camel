@@ -49,12 +49,11 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -809,16 +808,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                String answer = null;
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
-                if (rc != null) {
-                    answer = rc.getRouteId();
-                }
-                if (answer == null) {
-                    // fallback and get from route id on the exchange
-                    answer = exchange.getFromRouteId();
-                }
+                String answer = ExchangeHelper.getRouteId(exchange);
                 return type.cast(answer);
             }
         };

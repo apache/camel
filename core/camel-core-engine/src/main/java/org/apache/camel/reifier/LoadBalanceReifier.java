@@ -18,17 +18,17 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Channel;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.loadbalancer.LoadBalancerReifier;
-import org.apache.camel.spi.RouteContext;
 
 public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
-    public LoadBalanceReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (LoadBalanceDefinition)definition);
+    public LoadBalanceReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (LoadBalanceDefinition)definition);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
         LoadBalancer loadBalancer = definition.getLoadBalancerType().getLoadBalancer();
         if (loadBalancer == null) {
             // then create it and reuse it
-            loadBalancer = LoadBalancerReifier.reifier(routeContext, definition.getLoadBalancerType()).createLoadBalancer();
+            loadBalancer = LoadBalancerReifier.reifier(route, definition.getLoadBalancerType()).createLoadBalancer();
             definition.getLoadBalancerType().setLoadBalancer(loadBalancer);
 
             // some load balancer can only support a fixed number of outputs

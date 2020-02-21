@@ -28,6 +28,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Route;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.impl.engine.EmptyProducerCache;
@@ -35,7 +36,6 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
@@ -45,7 +45,6 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -388,13 +387,13 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return copy;
     }
 
-    protected AsyncProcessor createErrorHandler(RouteContext routeContext, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
+    protected AsyncProcessor createErrorHandler(Route route, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
         AsyncProcessor answer = processor;
 
         boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
 
         // do not wrap in error handler if we are inside a try block
-        if (!tryBlock && routeContext != null && errorHandler != null) {
+        if (!tryBlock && route != null && errorHandler != null) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
@@ -425,8 +424,8 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return producerCache.doInAsyncProducer(endpoint, exchange, callback, (p, ex, cb) -> {
 
             // rework error handling to support fine grained error handling
-            RouteContext routeContext = ex.getUnitOfWork() != null ? ex.getUnitOfWork().getRouteContext() : null;
-            AsyncProcessor target = createErrorHandler(routeContext, ex, p, endpoint);
+            Route route = ex.getUnitOfWork() != null ? ex.getUnitOfWork().getRoute() : null;
+            AsyncProcessor target = createErrorHandler(route, ex, p, endpoint);
 
             // set property which endpoint we send to and the producer that can do it
             ex.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());

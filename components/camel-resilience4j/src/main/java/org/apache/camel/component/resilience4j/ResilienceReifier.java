@@ -34,14 +34,14 @@ import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public ResilienceReifier(RouteContext routeContext, CircuitBreakerDefinition definition) {
-        super(routeContext, definition);
+    public ResilienceReifier(Route route, CircuitBreakerDefinition definition) {
+        super(route, definition);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         Processor processor = createChildProcessor(true);
         Processor fallback = null;
         if (definition.getOnFallback() != null) {
-            fallback = ProcessorReifier.reifier(routeContext, definition.getOnFallback()).createProcessor();
+            fallback = ProcessorReifier.reifier(route, definition.getOnFallback()).createProcessor();
         }
         boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
