@@ -55,7 +55,7 @@ public class DefaultPulsarMessageReceipt implements PulsarMessageReceipt {
 
     @Override
     public void negativeAcknowledge() {
-        throw new UnsupportedOperationException("Negative acknowledge is not supported in this version of the Pulsar client.");
+        consumer.negativeAcknowledge(messageId);
     }
 
     public Consumer getConsumer() {
