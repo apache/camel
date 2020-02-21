@@ -23,6 +23,8 @@ import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.camel.component.pulsar.PulsarMessageListener;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.pulsar.client.api.ConsumerBuilder;
+import org.apache.pulsar.client.api.DeadLetterPolicy;
+import org.apache.pulsar.client.api.DeadLetterPolicy.DeadLetterPolicyBuilder;
 
 public final class CommonCreationStrategyImpl {
 
@@ -32,11 +34,22 @@ public final class CommonCreationStrategyImpl {
     public static ConsumerBuilder<byte[]> create(final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
-        return pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getUri()).subscriptionName(endpointConfiguration.getSubscriptionName())
+        ConsumerBuilder<byte[]> builder = pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getUri()).subscriptionName(endpointConfiguration.getSubscriptionName())
             .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name).ackTimeout(endpointConfiguration.getAckTimeoutMillis(), TimeUnit.MILLISECONDS)
             .subscriptionInitialPosition(endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
             .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
             .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
             .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer.getExceptionHandler(), pulsarConsumer.getProcessor()));
+
+        if (endpointConfiguration.getMaxRedeliverCount() != null) {
+            DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
+                    .maxRedeliverCount(endpointConfiguration.getMaxRedeliverCount());
+            if (endpointConfiguration.getDeadLetterTopic() != null) {
+                policy.deadLetterTopic(endpointConfiguration.getDeadLetterTopic());
+            }
+
+            builder.deadLetterPolicy(policy.build());
+        }
+        return builder;
     }
 }
