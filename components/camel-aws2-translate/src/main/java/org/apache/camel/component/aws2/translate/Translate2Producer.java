@@ -119,7 +119,7 @@ public class Translate2Producer extends DefaultProducer {
         try {
             result = translateClient.translateText(request.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Translate Text command returned the error code {}", ase.getMessage());
+            LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
