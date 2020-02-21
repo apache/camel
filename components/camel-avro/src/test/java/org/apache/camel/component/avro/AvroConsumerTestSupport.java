@@ -27,8 +27,12 @@ import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestPojo;
 import org.apache.camel.avro.test.TestReflection;
 import org.apache.camel.avro.test.TestReflectionImpl;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     public static final String REFLECTION_TEST_NAME = "Chucky";
@@ -55,7 +59,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     protected abstract void initializeTranceiver() throws IOException;
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -102,22 +106,26 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         assertEquals(REFLECTION_TEST_NAME, testReflection.getName());
     }
 
-    @Test(expected = AvroRuntimeException.class)
+    @Test
     public void testInOnlyWrongMessageName() throws Exception {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
         Object[] request = {key, value};
-        requestorMessageInRoute.request("throwException", request);
+        assertThrows(AvroRuntimeException.class, () -> {
+            requestorMessageInRoute.request("throwException", request);
+        });
     }
 
-    @Test(expected = AvroRuntimeException.class)
+    @Test
     public void testInOnlyToNotExistingRoute() throws Exception {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
         Object[] request = {key, value};
-        requestorForWrongMessages.request("get", request);
+        assertThrows(AvroRuntimeException.class, () -> {
+            requestorForWrongMessages.request("get", request);
+        });
     }
 
     @Test

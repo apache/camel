@@ -48,10 +48,10 @@ public class AvroHttpConsumerTest extends AvroConsumerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(deadLetterChannel("mock:exception-handler"));
 
                 //In Only
