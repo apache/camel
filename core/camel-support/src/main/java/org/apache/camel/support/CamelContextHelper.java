@@ -68,7 +68,8 @@ public final class CamelContextHelper {
      */
     public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, String uri)
         throws NoSuchEndpointException {
-        Endpoint endpoint = camelContext.getPrototypeEndpoint(uri);
+        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
+        Endpoint endpoint = ecc.getPrototypeEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
         } else {
