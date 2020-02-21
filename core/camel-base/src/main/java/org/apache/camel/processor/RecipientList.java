@@ -193,6 +193,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
                 isStopOnAggregateException());
         rlp.setAggregateExecutorService(aggregateExecutorService);
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
+        rlp.setCacheSize(getCacheSize());
         rlp.setId(getId());
         rlp.setRouteId(getRouteId());
 

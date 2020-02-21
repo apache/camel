@@ -59,6 +59,39 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
         assertNull(pc);
     }
 
+    @Test
+    public void testNoCacheTwo() throws Exception {
+        assertEquals(1, context.getEndpointRegistry().size());
+
+        sendBody("foo");
+        sendBody("bar");
+
+        // make sure its using an empty producer cache as the cache is disabled
+        List<Processor> list = context.getRoute("route1").filter("foo");
+        RecipientList rl = (RecipientList) list.get(0);
+        assertNotNull(rl);
+        assertEquals(-1, rl.getCacheSize());
+
+        // check no additional endpoints added as cache was disabled
+        assertEquals(1, context.getEndpointRegistry().size());
+
+        // now send again with mocks which then add endpoints
+        MockEndpoint x = getMockEndpoint("mock:x");
+        MockEndpoint y = getMockEndpoint("mock:y");
+        MockEndpoint z = getMockEndpoint("mock:z");
+
+        x.expectedBodiesReceived("foo", "bar");
+        y.expectedBodiesReceived("foo", "bar");
+        z.expectedBodiesReceived("foo", "bar");
+
+        sendBody("foo");
+        sendBody("bar");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(4, context.getEndpointRegistry().size());
+    }
+
     protected void sendBody(String body) {
         template.sendBodyAndHeader("direct:a", body, "recipientListHeader", "mock:x,mock:y,mock:z");
     }
