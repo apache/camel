@@ -17,14 +17,14 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
-import org.apache.camel.spi.RouteContext;
 
 public class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
-    public ServiceCallReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, ServiceCallDefinition.class.cast(definition));
+    public ServiceCallReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, ServiceCallDefinition.class.cast(definition));
     }
 
     @Override

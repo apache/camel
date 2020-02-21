@@ -19,15 +19,15 @@ package org.apache.camel.reifier;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DynamicRouter;
-import org.apache.camel.spi.RouteContext;
 
 public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinition<?>> {
 
-    public DynamicRouterReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, DynamicRouterDefinition.class.cast(definition));
+    public DynamicRouterReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, DynamicRouterDefinition.class.cast(definition));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
         // create error handler (create error handler directly to keep it light
         // weight,
         // instead of using ProcessorReifier.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor) routeContext.createErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());
+        AsyncProcessor errorHandler = (AsyncProcessor) route.createErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());
         dynamicRouter.setErrorHandler(errorHandler);
 
         return dynamicRouter;

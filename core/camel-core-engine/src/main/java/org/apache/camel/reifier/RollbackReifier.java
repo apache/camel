@@ -17,15 +17,15 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.processor.RollbackProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class RollbackReifier extends ProcessorReifier<RollbackDefinition> {
 
-    public RollbackReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (RollbackDefinition)definition);
+    public RollbackReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (RollbackDefinition)definition);
     }
 
     @Override

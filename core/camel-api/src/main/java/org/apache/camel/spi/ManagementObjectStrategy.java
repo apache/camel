@@ -45,7 +45,7 @@ public interface ManagementObjectStrategy {
 
     Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint);
 
-    Object getManagedObjectForErrorHandler(CamelContext context, RouteContext routeContext,
+    Object getManagedObjectForErrorHandler(CamelContext context, Route route,
                                            Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     Object getManagedObjectForRouteController(CamelContext context);

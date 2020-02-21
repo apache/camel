@@ -31,8 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -272,13 +271,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getAtRouteId() {
-            // compute route id
-            UnitOfWork uow = exchange.getUnitOfWork();
-            RouteContext rc = uow != null ? uow.getRouteContext() : null;
-            if (rc != null) {
-                return rc.getRouteId();
-            }
-            return null;
+            return ExchangeHelper.getAtRouteId(exchange);
         }
 
         @Override

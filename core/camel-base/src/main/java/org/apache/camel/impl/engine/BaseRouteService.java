@@ -40,7 +40,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ChildServiceSupport;
@@ -58,7 +57,6 @@ import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 public abstract class BaseRouteService extends ChildServiceSupport {
 
     private final AbstractCamelContext camelContext;
-    private final RouteContext routeContext;
     private final Route route;
     private boolean removingRoutes;
     private final Map<Route, Consumer> inputs = new HashMap<>();
@@ -67,8 +65,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
 
     public BaseRouteService(Route route) {
         this.route = route;
-        this.routeContext = this.route.getRouteContext();
-        this.camelContext = this.routeContext.getCamelContext().adapt(AbstractCamelContext.class);
+        this.camelContext = this.route.getCamelContext().adapt(AbstractCamelContext.class);
     }
 
     public String getId() {
@@ -77,10 +74,6 @@ public abstract class BaseRouteService extends ChildServiceSupport {
 
     public CamelContext getCamelContext() {
         return camelContext;
-    }
-
-    public RouteContext getRouteContext() {
-        return routeContext;
     }
 
     public Route getRoute() {
@@ -324,8 +317,8 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     }
 
     private void routePolicyCallback(java.util.function.BiConsumer<RoutePolicy, Route> callback) {
-        if (routeContext.getRoutePolicyList() != null) {
-            for (RoutePolicy routePolicy : routeContext.getRoutePolicyList()) {
+        if (route.getRoutePolicyList() != null) {
+            for (RoutePolicy routePolicy : route.getRoutePolicyList()) {
                 callback.accept(routePolicy, route);
             }
         }
@@ -346,8 +339,8 @@ public abstract class BaseRouteService extends ChildServiceSupport {
             if (service instanceof ErrorHandler) {
                 // special for error handlers
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                    ErrorHandlerFactory errorHandlerFactory = routeContext.getErrorHandlerFactory();
-                    strategy.onErrorHandlerRemove(routeContext, (Processor) service, errorHandlerFactory);
+                    ErrorHandlerFactory errorHandlerFactory = route.getErrorHandlerFactory();
+                    strategy.onErrorHandlerRemove(route, (Processor) service, errorHandlerFactory);
                 }
             } else {
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {

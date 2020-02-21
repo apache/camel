@@ -21,8 +21,8 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.spi.RouteContext;
 
 public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFactory {
     private final Class<T> type;
@@ -32,18 +32,18 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
     }
 
     @Override
-    public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
+    public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         if (type.isInstance(definition)) {
-            return doCreateChildProcessor(routeContext, type.cast(definition), mandatory);
+            return doCreateChildProcessor(route, type.cast(definition), mandatory);
         }
 
         return null;
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
+    public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         if (type.isInstance(definition)) {
-            return doCreateProcessor(routeContext, type.cast(definition));
+            return doCreateProcessor(route, type.cast(definition));
         }
 
         return null;
@@ -54,11 +54,11 @@ public class TypedProcessorFactory<T extends NamedNode> implements ProcessorFact
         return null;
     }
 
-    protected Processor doCreateChildProcessor(RouteContext routeContext, T definition, boolean mandatory) throws Exception {
+    protected Processor doCreateChildProcessor(Route route, T definition, boolean mandatory) throws Exception {
         return null;
     }
 
-    public Processor doCreateProcessor(RouteContext routeContext, T definition) throws Exception {
+    public Processor doCreateProcessor(Route route, T definition) throws Exception {
         return null;
     }
 }

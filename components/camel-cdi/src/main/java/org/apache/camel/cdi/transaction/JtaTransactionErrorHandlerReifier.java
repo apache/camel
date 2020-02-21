@@ -28,7 +28,7 @@ import org.apache.camel.reifier.TransactedReifier;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
@@ -44,8 +44,8 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
 
     private static final Logger LOG = LoggerFactory.getLogger(JtaTransactionErrorHandlerReifier.class);
 
-    public JtaTransactionErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, (JtaTransactionErrorHandlerBuilder) definition);
+    public JtaTransactionErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, (JtaTransactionErrorHandlerBuilder) definition);
     }
 
     @Override

@@ -17,15 +17,15 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.processor.StopProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class StopReifier extends ProcessorReifier<StopDefinition> {
 
-    public StopReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (StopDefinition) definition);
+    public StopReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (StopDefinition) definition);
     }
 
     @Override

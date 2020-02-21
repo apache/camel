@@ -18,16 +18,16 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionAdapter;
 
 public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
 
-    public InterceptFromReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, definition);
+    public InterceptFromReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, definition);
     }
 
     @Override

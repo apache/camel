@@ -41,7 +41,7 @@ public class RouteService extends BaseRouteService {
 
     public RouteService(Route route) {
         super(route);
-        this.routeDefinition = (RouteDefinition)route.getRouteContext().getRoute();
+        this.routeDefinition = (RouteDefinition) route.getRoute();
     }
 
     public RouteDefinition getRouteDefinition() {
@@ -63,7 +63,7 @@ public class RouteService extends BaseRouteService {
         if (!getCamelContext().isAutoStartup()) {
             return false;
         }
-        if (!getRouteContext().isAutoStartup()) {
+        if (!getRoute().isAutoStartup()) {
             return false;
         }
         if (routeDefinition.getAutoStartup() == null) {
@@ -84,7 +84,7 @@ public class RouteService extends BaseRouteService {
         // the XML DSL will configure error handlers using refs, so we need this
         // additional test
         if (routeDefinition.getErrorHandlerRef() != null) {
-            ErrorHandlerFactory routeScoped = getRouteContext().getErrorHandlerFactory();
+            ErrorHandlerFactory routeScoped = getRoute().getErrorHandlerFactory();
             ErrorHandlerFactory contextScoped = getCamelContext().adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
             return routeScoped != null && contextScoped != null && routeScoped == contextScoped;
         }
@@ -103,7 +103,7 @@ public class RouteService extends BaseRouteService {
             if (output instanceof OnExceptionDefinition) {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition)output;
                 if (onExceptionDefinition.isRouteScoped()) {
-                    Processor errorHandler = getRouteContext().getOnException(onExceptionDefinition.getId());
+                    Processor errorHandler = getRoute().getOnException(onExceptionDefinition.getId());
                     if (errorHandler instanceof Service) {
                         services.add((Service)errorHandler);
                     }
@@ -111,7 +111,7 @@ public class RouteService extends BaseRouteService {
             } else if (output instanceof OnCompletionDefinition) {
                 OnCompletionDefinition onCompletionDefinition = (OnCompletionDefinition)output;
                 if (onCompletionDefinition.isRouteScoped()) {
-                    Processor onCompletionProcessor = getRouteContext().getOnCompletion(onCompletionDefinition.getId());
+                    Processor onCompletionProcessor = getRoute().getOnCompletion(onCompletionDefinition.getId());
                     if (onCompletionProcessor instanceof Service) {
                         services.add((Service)onCompletionProcessor);
                     }

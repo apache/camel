@@ -16,16 +16,16 @@
  */
 package org.apache.camel.reifier.loadbalancer;
 
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
-import org.apache.camel.spi.RouteContext;
 
 public class StickyLoadBalancerReifier extends LoadBalancerReifier<StickyLoadBalancerDefinition> {
 
-    public StickyLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
-        super(routeContext, (StickyLoadBalancerDefinition)definition);
+    public StickyLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
+        super(route, (StickyLoadBalancerDefinition)definition);
     }
 
     @Override

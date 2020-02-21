@@ -21,10 +21,10 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +35,8 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactedReifier.class);
 
-    public AbstractPolicyReifier(RouteContext routeContext, T definition) {
-        super(routeContext, definition);
+    public AbstractPolicyReifier(Route route, T definition) {
+        super(route, definition);
     }
 
     public AbstractPolicyReifier(CamelContext camelContext, T definition) {

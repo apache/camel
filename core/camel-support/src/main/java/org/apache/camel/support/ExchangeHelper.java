@@ -645,7 +645,7 @@ public final class ExchangeHelper {
     public static boolean isStreamCachingEnabled(final Exchange exchange) {
         Route route = exchange.getContext().getRoute(exchange.getFromRouteId());
         if (route != null) {
-            return route.getRouteContext().isStreamCaching();
+            return route.isStreamCaching();
         } else {
             return exchange.getContext().getStreamCachingStrategy().isEnabled();
         }
@@ -1002,5 +1002,28 @@ public final class ExchangeHelper {
             }
         }
         return scanner;
+    }
+
+    public static String getRouteId(Exchange exchange) {
+        String answer = getAtRouteId(exchange);
+        if (answer == null) {
+            // fallback and get from route id on the exchange
+            answer = exchange.getFromRouteId();
+        }
+        return answer;
+    }
+
+    public static String getAtRouteId(Exchange exchange) {
+        String answer = null;
+        Route rc = getRoute(exchange);
+        if (rc != null) {
+            answer = rc.getRouteId();
+        }
+        return answer;
+    }
+
+    public static Route getRoute(Exchange exchange) {
+        UnitOfWork uow = exchange.getUnitOfWork();
+        return uow != null ? uow.getRoute() : null;
     }
 }

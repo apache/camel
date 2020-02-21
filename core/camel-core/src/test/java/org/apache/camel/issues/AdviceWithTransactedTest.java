@@ -23,7 +23,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.junit.Test;
 
 public class AdviceWithTransactedTest extends ContextTestSupport {
@@ -60,12 +60,12 @@ public class AdviceWithTransactedTest extends ContextTestSupport {
     private static final class MyDummyPolicy implements Policy {
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // noop
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, Processor processor) {
+        public Processor wrap(Route route, Processor processor) {
             return processor;
         }
     }

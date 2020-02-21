@@ -17,17 +17,17 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.MarshalProcessor;
 
 public class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
 
-    public MarshalReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (MarshalDefinition) definition);
+    public MarshalReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (MarshalDefinition) definition);
     }
 
     @Override

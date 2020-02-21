@@ -29,7 +29,7 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.junit.Test;
 
 public class CustomProcessorFactoryTest extends ContextTestSupport {
@@ -82,12 +82,12 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     public static class MyFactory implements ProcessorFactory {
 
         @Override
-        public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
+        public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
             return null;
         }
 
         @Override
-        public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
+        public Processor createProcessor(Route route, NamedNode definition) throws Exception {
             if (definition instanceof SplitDefinition) {
                 // add additional output to the splitter
                 SplitDefinition split = (SplitDefinition)definition;

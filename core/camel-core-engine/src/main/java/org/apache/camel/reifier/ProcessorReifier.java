@@ -30,6 +30,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -109,7 +110,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ReifierStrategy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -117,11 +117,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
+    private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
     static {
         // NOTE: if adding a new class then update the initial capacity of the
         // HashMap
-        Map<Class<?>, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map = new HashMap<>(65);
+        Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map = new HashMap<>(65);
         map.put(AggregateDefinition.class, AggregateReifier::new);
         map.put(BeanDefinition.class, BeanReifier::new);
         map.put(CatchDefinition.class, CatchReifier::new);
@@ -160,7 +160,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         map.put(RemovePropertyDefinition.class, RemovePropertyReifier::new);
         map.put(ResequenceDefinition.class, ResequenceReifier::new);
         map.put(RollbackDefinition.class, RollbackReifier::new);
-        map.put(RouteDefinition.class, RouteReifier::new);
         map.put(RoutingSlipDefinition.class, RoutingSlipReifier::new);
         map.put(SagaDefinition.class, SagaReifier::new);
         map.put(SamplingDefinition.class, SamplingReifier::new);
@@ -194,8 +193,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected final T definition;
 
-    public ProcessorReifier(RouteContext routeContext, T definition) {
-        super(routeContext);
+    public ProcessorReifier(Route route, T definition) {
+        super(route);
         this.definition = definition;
     }
 
@@ -204,7 +203,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<?> processorClass, BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
+    public static void registerReifier(Class<?> processorClass, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
         PROCESSORS.put(processorClass, creator);
     }
 
@@ -212,10 +211,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         PROCESSORS.clear();
     }
 
-    public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        BiFunction<RouteContext, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier = PROCESSORS.get(definition.getClass());
+    public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(Route route, ProcessorDefinition<?> definition) {
+        BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier = PROCESSORS.get(definition.getClass());
         if (reifier != null) {
-            return reifier.apply(routeContext, definition);
+            return reifier.apply(route, definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
     }
@@ -494,7 +493,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         Processor children = null;
         // at first use custom factory
         if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            children = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createChildProcessor(routeContext, definition, mandatory);
+            children = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createChildProcessor(route, definition, mandatory);
         }
         // fallback to default implementation if factory did not create the
         // child
@@ -515,19 +514,17 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return;
         }
 
-        if (!routeContext.isRouteAdded()) {
-            // are we routing to an endpoint interceptor, if so we should not
-            // add it as an event driven
-            // processor as we use the producer to trigger the interceptor
-            boolean endpointInterceptor = processor.getNextProcessor() instanceof InterceptEndpointProcessor;
+        // are we routing to an endpoint interceptor, if so we should not
+        // add it as an event driven
+        // processor as we use the producer to trigger the interceptor
+        boolean endpointInterceptor = processor.getNextProcessor() instanceof InterceptEndpointProcessor;
 
-            // only add regular processors as event driven
-            if (endpointInterceptor) {
-                log.debug("Endpoint interceptor should not be added as an event driven consumer route: {}", processor);
-            } else {
-                log.trace("Adding event driven processor: {}", processor);
-                routeContext.addEventDrivenProcessor(processor);
-            }
+        // only add regular processors as event driven
+        if (endpointInterceptor) {
+            log.debug("Endpoint interceptor should not be added as an event driven consumer route: {}", processor);
+        } else {
+            log.trace("Adding event driven processor: {}", processor);
+            route.getEventDrivenProcessors().add(processor);
         }
     }
 
@@ -555,9 +552,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         // add interceptor strategies to the channel must be in this order:
         // camel context, route context, local
         List<InterceptStrategy> interceptors = new ArrayList<>();
-        addInterceptStrategies(interceptors, camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies());
-        addInterceptStrategies(interceptors, routeContext.getInterceptStrategies());
-        addInterceptStrategies(interceptors, definition.getInterceptStrategies());
+        interceptors.addAll(camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies());
+        interceptors.addAll(route.getInterceptStrategies());
+        interceptors.addAll(definition.getInterceptStrategies());
 
         // force the creation of an id
         RouteDefinitionHelper.forceAssignIds(camelContext, definition);
@@ -592,7 +589,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             routeScoped = ((OnCompletionDefinition)definition).isRouteScoped();
         }
         // initialize the channel
-        channel.initChannel(routeContext, definition, child, interceptors, processor, route, first, routeScoped);
+        channel.initChannel(this.route, definition, child, interceptors, processor, route, first, routeScoped);
 
         boolean wrap = false;
         // set the error handler, must be done after init as we can set the
@@ -678,29 +675,19 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * @throws Exception can be thrown if failed to create error handler builder
      */
     protected Processor wrapInErrorHandler(Processor output, boolean longLived) throws Exception {
-        ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
+        ErrorHandlerFactory builder = route.getErrorHandlerFactory();
 
         // create error handler
-        Processor errorHandler = ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(output);
+        Processor errorHandler = ErrorHandlerReifier.reifier(route, builder).createErrorHandler(output);
 
         if (longLived) {
             // invoke lifecycles so we can manage this error handler builder
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
+                strategy.onErrorHandlerAdd(route, errorHandler, builder);
             }
         }
 
         return errorHandler;
-    }
-
-    /**
-     * Adds the given list of interceptors to the channel.
-     *
-     * @param interceptors the list to add strategies
-     * @param strategies list of strategies to add.
-     */
-    protected void addInterceptStrategies(List<InterceptStrategy> interceptors, List<InterceptStrategy> strategies) {
-        interceptors.addAll(strategies);
     }
 
     /**
@@ -713,15 +700,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected Processor createOutputsProcessor(Collection<ProcessorDefinition<?>> outputs) throws Exception {
-        return createOutputsProcessorImpl(outputs);
-    }
-
-    protected Processor createOutputsProcessorImpl(Collection<ProcessorDefinition<?>> outputs) throws Exception {
         List<Processor> list = new ArrayList<>();
         for (ProcessorDefinition<?> output : outputs) {
 
             // allow any custom logic before we create the processor
-            reifier(routeContext, output).preCreateProcessor();
+            reifier(route, output).preCreateProcessor();
 
             Processor processor = createProcessor(output);
 
@@ -731,7 +714,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 ((IdAware)processor).setId(id);
             }
             if (processor instanceof RouteIdAware) {
-                ((RouteIdAware)processor).setRouteId(routeContext.getRouteId());
+                ((RouteIdAware)processor).setRouteId(route.getRouteId());
             }
 
             if (output instanceof Channel && processor == null) {
@@ -760,12 +743,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         Processor processor = null;
         // at first use custom factory
         if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, output);
+            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, output);
         }
         // fallback to default implementation if factory did not create the
         // processor
         if (processor == null) {
-            processor = reifier(routeContext, output).createProcessor();
+            processor = reifier(route, output).createProcessor();
         }
         return processor;
     }
@@ -782,7 +765,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         // at first use custom factory
         if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, definition);
+            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, definition);
         }
         // fallback to default implementation if factory did not create the
         // processor
@@ -796,7 +779,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             ((IdAware)processor).setId(id);
         }
         if (processor instanceof RouteIdAware) {
-            ((RouteIdAware)processor).setRouteId(routeContext.getRouteId());
+            ((RouteIdAware)processor).setRouteId(route.getRouteId());
         }
 
         if (processor == null) {

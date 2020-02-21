@@ -39,7 +39,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
@@ -61,10 +61,10 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     // *****************************
 
     @Override
-    public Processor doCreateProcessor(RouteContext routeContext, ServiceCallDefinition definition) throws Exception {
+    public Processor doCreateProcessor(Route route, ServiceCallDefinition definition) throws Exception {
         this.definition = definition;
 
-        final CamelContext camelContext = routeContext.getCamelContext();
+        final CamelContext camelContext = route.getCamelContext();
         final ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext);
         final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext);
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);

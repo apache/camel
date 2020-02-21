@@ -43,7 +43,6 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupListener;
@@ -96,7 +95,7 @@ import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RestRegistry;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
@@ -430,7 +429,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onServiceAdd(CamelContext context, Service service, Route route) {
+    public void onServiceAdd(CamelContext context, Service service, org.apache.camel.Route route) {
         if (!initialized) {
             // pre register so we can register later when we have been initialized
             PreRegisterService pre = new PreRegisterService();
@@ -467,7 +466,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onServiceRemove(CamelContext context, Service service, Route route) {
+    public void onServiceRemove(CamelContext context, Service service, org.apache.camel.Route route) {
         // the agent hasn't been started
         if (!initialized) {
             return;
@@ -484,7 +483,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @SuppressWarnings("unchecked")
-    private Object getManagedObjectForService(CamelContext context, Service service, Route route) {
+    private Object getManagedObjectForService(CamelContext context, Service service, org.apache.camel.Route route) {
         // skip channel, UoW and dont double wrap instrumentation
         if (service instanceof Channel || service instanceof UnitOfWork || service instanceof InstrumentationProcessor) {
             return null;
@@ -576,7 +575,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         return answer;
     }
 
-    private Object getManagedObjectForProcessor(CamelContext context, Processor processor, Route route) {
+    private Object getManagedObjectForProcessor(CamelContext context, Processor processor, org.apache.camel.Route route) {
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
@@ -604,8 +603,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onRoutesAdd(Collection<Route> routes) {
-        for (Route route : routes) {
+    public void onRoutesAdd(Collection<org.apache.camel.Route> routes) {
+        for (org.apache.camel.Route route : routes) {
 
             // if we are starting CamelContext or either of the two options has been
             // enabled, then enlist the route as a known route
@@ -659,13 +658,13 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onRoutesRemove(Collection<Route> routes) {
+    public void onRoutesRemove(Collection<org.apache.camel.Route> routes) {
         // the agent hasn't been started
         if (!initialized) {
             return;
         }
 
-        for (Route route : routes) {
+        for (org.apache.camel.Route route : routes) {
             Object mr = getManagementObjectStrategy().getManagedObjectForRoute(camelContext, route);
 
             // skip unmanaged routes
@@ -690,13 +689,13 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    public void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         if (!shouldRegister(errorHandler, null)) {
             // avoid registering if not needed
             return;
         }
 
-        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, routeContext, errorHandler, errorHandlerBuilder);
+        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler, errorHandlerBuilder);
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(me)) {
@@ -712,12 +711,12 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+    public void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         if (!initialized) {
             return;
         }
 
-        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, routeContext, errorHandler, errorHandlerBuilder);
+        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, route, errorHandler, errorHandlerBuilder);
         if (me != null) {
             try {
                 unmanageObject(me);
@@ -778,7 +777,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onRouteContextCreate(RouteContext routeContext) {
+    public void onRouteContextCreate(Route route) {
         if (!initialized) {
             return;
         }
@@ -790,16 +789,16 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         // Each processor in a route will have its own performance counter.
         // These performance counter will be embedded to InstrumentationProcessor
         // and wrap the appropriate processor by InstrumentationInterceptStrategy.
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        RouteDefinition routeDefinition = (RouteDefinition) route.getRoute();
 
         // register performance counters for all processors and its children
-        for (ProcessorDefinition<?> processor : route.getOutputs()) {
-            registerPerformanceCounters(routeContext, processor, registeredCounters);
+        for (ProcessorDefinition<?> processor : routeDefinition.getOutputs()) {
+            registerPerformanceCounters(route, processor, registeredCounters);
         }
 
         // set this managed intercept strategy that executes the JMX instrumentation for performance metrics
         // so our registered counters can be used for fine grained performance instrumentation
-        routeContext.setManagementInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
+        route.setManagementInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
     /**
@@ -809,9 +808,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      *
      * @param routes the routes
      */
-    private void removeWrappedProcessorsForRoutes(Collection<Route> routes) {
+    private void removeWrappedProcessorsForRoutes(Collection<org.apache.camel.Route> routes) {
         // loop the routes, and remove the route associated wrapped processors, as they are no longer in use
-        for (Route route : routes) {
+        for (org.apache.camel.Route route : routes) {
             String id = route.getId();
 
             Iterator<KeyValueHolder<NamedNode, InstrumentationProcessor>> it = wrappedProcessors.values().iterator();
@@ -826,13 +825,13 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         
     }
 
-    private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition<?> processor,
+    private void registerPerformanceCounters(Route route, ProcessorDefinition<?> processor,
                                              Map<NamedNode, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition<?>> children = processor.getOutputs();
         for (ProcessorDefinition<?> child : children) {
-            registerPerformanceCounters(routeContext, child, registeredCounters);
+            registerPerformanceCounters(route, child, registeredCounters);
         }
 
         // skip processors that should not be registered
@@ -936,7 +935,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      * @param route   an optional route the mbean is associated with, can be <tt>null</tt>
      * @return <tt>true</tt> to register, <tt>false</tt> to skip registering
      */
-    protected boolean shouldRegister(Object service, Route route) {
+    protected boolean shouldRegister(Object service, org.apache.camel.Route route) {
         // the agent hasn't been started
         if (!initialized) {
             return false;
@@ -1030,7 +1029,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         private Endpoint endpoint;
         private CamelContext camelContext;
         private Service service;
-        private Route route;
+        private org.apache.camel.Route route;
 
         public void onComponentAdd(String name, Component component) {
             this.name = name;
@@ -1041,7 +1040,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             this.endpoint = endpoint;
         }
 
-        public void onServiceAdd(CamelContext camelContext, Service service, Route route) {
+        public void onServiceAdd(CamelContext camelContext, Service service, org.apache.camel.Route route) {
             this.camelContext = camelContext;
             this.service = service;
             this.route = route;
@@ -1067,7 +1066,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return service;
         }
 
-        public Route getRoute() {
+        public org.apache.camel.Route getRoute() {
             return route;
         }
     }

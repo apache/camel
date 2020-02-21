@@ -17,16 +17,16 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.FinallyProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class FinallyReifier extends ProcessorReifier<FinallyDefinition> {
 
-    public FinallyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, FinallyDefinition.class.cast(definition));
+    public FinallyReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, FinallyDefinition.class.cast(definition));
     }
 
     @Override

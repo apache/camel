@@ -20,16 +20,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ConvertBodyProcessor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 public class ConvertBodyReifier extends ProcessorReifier<ConvertBodyDefinition> {
 
-    public ConvertBodyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, ConvertBodyDefinition.class.cast(definition));
+    public ConvertBodyReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, ConvertBodyDefinition.class.cast(definition));
     }
 
     @Override

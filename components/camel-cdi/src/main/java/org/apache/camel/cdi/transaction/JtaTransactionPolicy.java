@@ -27,7 +27,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
     protected TransactionManager transactionManager;
 
     @Override
-    public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+    public void beforeWrap(Route route, NamedNode definition) {
         // do not inherit since we create our own
         // (otherwise the default error handler would be used two times
         // because we inherit it on our own but only in case of a
@@ -62,7 +62,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
     public abstract void run(Runnable runnable) throws Throwable;
 
     @Override
-    public Processor wrap(RouteContext routeContext, Processor processor) {
+    public Processor wrap(Route route, Processor processor) {
         JtaTransactionErrorHandler answer;
         // the goal is to configure the error handler builder on the route as a
         // transacted error handler. If the configured builder is not transacted,
@@ -74,8 +74,8 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         // we only need one transacted error handler
 
         // find the existing error handler builder
-        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) route.getErrorHandlerFactory();
+        RouteDefinition routeDefinition = (RouteDefinition) route.getRoute();
+        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) routeDefinition.getErrorHandlerFactory();
 
         // check if its a ref if so then do a lookup
         if (builder instanceof ErrorHandlerBuilderRef) {
@@ -87,7 +87,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             // and if so then we can safely replace that with our transacted error handler
             if (ErrorHandlerReifier.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, ref);
+                builder = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(route, ref);
             }
         }
 
@@ -110,23 +110,23 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
         // use error handlers from the configured builder
         if (builder != null) {
-            routeContext.addErrorHandlerFactoryReference(builder, txBuilder);
+            route.addErrorHandlerFactoryReference(builder, txBuilder);
         }
 
-        answer = createTransactionErrorHandler(routeContext, processor, txBuilder);
+        answer = createTransactionErrorHandler(route, processor, txBuilder);
 
         // set the route to use our transacted error handler builder
-        route.setErrorHandlerFactory(txBuilder);
+        routeDefinition.setErrorHandlerFactory(txBuilder);
 
         // return with wrapped transacted error handler
         return answer;
     }
 
-    protected JtaTransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor,
-            ErrorHandlerBuilder builder) {
+    protected JtaTransactionErrorHandler createTransactionErrorHandler(Route route, Processor processor,
+                                                                       ErrorHandlerBuilder builder) {
         JtaTransactionErrorHandler answer;
         try {
-            answer = (JtaTransactionErrorHandler) ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(processor);
+            answer = (JtaTransactionErrorHandler) ErrorHandlerReifier.reifier(route, builder).createErrorHandler(processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

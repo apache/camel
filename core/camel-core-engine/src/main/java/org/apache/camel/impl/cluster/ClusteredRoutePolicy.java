@@ -38,7 +38,6 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
-import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
@@ -171,7 +170,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         super.onInit(route);
 
         LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        route.getRouteContext().setAutoStartup(false);
+        route.setAutoStartup(false);
 
         this.refCount.retain();
         this.stoppedRoutes.add(route);

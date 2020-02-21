@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -35,8 +35,8 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerReifier.class);
 
-    public TransactionErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, definition);
+    public TransactionErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, definition);
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +133,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             // so we will not pick an ExceptionPolicy from another route
             String typeRoute = type.getRouteId();
             if (exchange != null && exchange.getUnitOfWork() != null && ObjectHelper.isNotEmpty(typeRoute)) {
-                RouteContext rc = exchange.getUnitOfWork().getRouteContext();
+                Route rc = exchange.getUnitOfWork().getRoute();
                 String route = rc != null ? rc.getRouteId() : null;
                 if (route != null && !route.equals(typeRoute)) {
                     if (LOG.isTraceEnabled()) {

@@ -31,7 +31,6 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
@@ -59,7 +58,7 @@ import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Route;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -149,7 +148,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             objectName = getObjectNameForRoute(mr.getRoute());
         } else if (managedObject instanceof ManagedErrorHandler) {
             ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
-            objectName = getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
+            objectName = getObjectNameForErrorHandler(meh.getRoute(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
         } else if (managedObject instanceof ManagedStep) {
             ManagedStep mp = (ManagedStep) managedObject;
             objectName = getObjectNameForStep(mp.getContext(), mp.getProcessor(), mp.getDefinition());
@@ -302,10 +301,10 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(route.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER + ",");
 
         // we want to only register one instance of the various error handler types and thus do some lookup
@@ -316,7 +315,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
 
             // it has not then its an indirection and we should do some work to lookup the real builder
             ref = builderRef.getRef();
-            ErrorHandlerFactory refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, builderRef.getRef(), false);
+            ErrorHandlerFactory refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
             if (refBuilder != null) {
                 builder = refBuilder;
             }
@@ -328,7 +327,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
                 builderRef = (ErrorHandlerBuilderRef) builder;
                 // does it refer to a non default error handler then do a 2nd lookup
                 if (!builderRef.getRef().equals(ErrorHandlerReifier.DEFAULT_ERROR_HANDLER_BUILDER)) {
-                    refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, builderRef.getRef(), false);
+                    refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
                     if (refBuilder != null) {
                         ref = builderRef.getRef();
                         builder = refBuilder;
@@ -417,7 +416,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     @Override
-    public ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForRoute(org.apache.camel.Route route) throws MalformedObjectNameException {
         Endpoint ep = route.getEndpoint();
         String id = route.getId();
 

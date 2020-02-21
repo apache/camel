@@ -16,16 +16,16 @@
  */
 package org.apache.camel.reifier.loadbalancer;
 
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.StringHelper;
 
 public class CustomLoadBalancerReifier extends LoadBalancerReifier<CustomLoadBalancerDefinition> {
 
-    public CustomLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
-        super(routeContext, (CustomLoadBalancerDefinition)definition);
+    public CustomLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
+        super(route, (CustomLoadBalancerDefinition)definition);
     }
 
     @Override

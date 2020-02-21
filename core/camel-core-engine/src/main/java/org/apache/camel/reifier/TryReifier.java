@@ -20,17 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.TryProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class TryReifier extends ProcessorReifier<TryDefinition> {
 
-    public TryReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (TryDefinition) definition);
+    public TryReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (TryDefinition) definition);
     }
 
     @Override

@@ -19,15 +19,15 @@ package org.apache.camel.reifier;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.processor.SamplingThrottler;
-import org.apache.camel.spi.RouteContext;
 
 public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
 
-    public SamplingReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SamplingDefinition)definition);
+    public SamplingReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SamplingDefinition)definition);
     }
 
     @Override

@@ -17,7 +17,9 @@
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.camel.CamelContext;
@@ -33,30 +35,25 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
+import org.apache.camel.processor.Pipeline;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class RouteReifier extends ProcessorReifier<RouteDefinition> {
-
-    public RouteReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (RouteDefinition) definition);
-    }
-
-    public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
-        super(camelContext, (RouteDefinition) definition);
-    }
 
     /**
      * Advices this route with the route builder.
@@ -90,7 +87,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * @throws Exception can be thrown from the route builder
      * @see AdviceWithRouteBuilder
      */
-    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
+    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, AdviceWithRouteBuilder builder) throws Exception {
         ObjectHelper.notNull(definition, "RouteDefinition");
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
@@ -99,6 +96,15 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             throw new IllegalArgumentException("RouteDefinition has no input");
         }
         return new RouteReifier(camelContext, definition).adviceWith(builder);
+    }
+
+    private static final String[] reservedProperties = new String[] {
+            Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
+            Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
+            Route.REST_PROPERTY};
+
+    public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
+        super(camelContext, (RouteDefinition) definition);
     }
 
     @Override
@@ -150,19 +156,17 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * @see AdviceWithRouteBuilder
      */
     @SuppressWarnings("deprecation")
-    public RouteDefinition adviceWith(RouteBuilder builder) throws Exception {
+    public RouteDefinition adviceWith(AdviceWithRouteBuilder builder) throws Exception {
         ObjectHelper.notNull(builder, "RouteBuilder");
+        Model model = camelContext.getExtension(Model.class);
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
         log.debug("AdviceWith route before: {}", this);
 
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
-        boolean logRoutesAsXml = true;
-        if (builder instanceof AdviceWithRouteBuilder) {
-            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
-            arb.setOriginalRoute(definition);
-            logRoutesAsXml = arb.isLogRouteAsXml();
-        }
+        boolean logRoutesAsXml = builder.isLogRouteAsXml();
+        builder.setOriginalRoute(definition);
 
         // configure and prepare the routes from the builder
         RoutesDefinition routes = builder.configureRoutes(camelContext);
@@ -180,14 +184,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // context scoped error handler, in case no error handlers was
         // configured
         if (builder.getRouteCollection().getErrorHandlerFactory() != null
-            && camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() != builder.getRouteCollection().getErrorHandlerFactory()) {
+            && ecc.getErrorHandlerFactory() != builder.getRouteCollection().getErrorHandlerFactory()) {
             throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 
         String beforeAsXml = null;
         if (logRoutesAsXml && log.isInfoEnabled()) {
             try {
-                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
                 beforeAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, definition);
             } catch (Throwable e) {
                 // ignore, it may be due jaxb is not on classpath etc
@@ -195,14 +198,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // stop and remove this existing route
-        camelContext.getExtension(Model.class).removeRouteDefinition(definition);
+        model.removeRouteDefinition(definition);
 
         // any advice with tasks we should execute first?
-        if (builder instanceof AdviceWithRouteBuilder) {
-            List<AdviceWithTask> tasks = ((AdviceWithRouteBuilder)builder).getAdviceWithTasks();
-            for (AdviceWithTask task : tasks) {
-                task.task();
-            }
+        List<AdviceWithTask> tasks = builder.getAdviceWithTasks();
+        for (AdviceWithTask task : tasks) {
+            task.task();
         }
 
         // now merge which also ensures that interceptors and the likes get
@@ -210,7 +211,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         RouteDefinition merged = routes.route(definition);
 
         // add the new merged route
-        camelContext.getExtension(Model.class).getRouteDefinitions().add(0, merged);
+        model.getRouteDefinitions().add(0, merged);
 
         // log the merged route at info level to make it easier to end users to
         // spot any mistakes they may have made
@@ -220,7 +221,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         if (beforeAsXml != null && logRoutesAsXml && log.isInfoEnabled()) {
             try {
-                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
                 String afterAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, merged);
                 log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
             } catch (Throwable e) {
@@ -230,7 +230,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // If the camel context is started then we start the route
         if (camelContext.isStarted()) {
-            camelContext.getExtension(Model.class).addRouteDefinition(merged);
+            model.addRouteDefinition(merged);
         }
         return merged;
     }
@@ -238,14 +238,35 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected Route doCreateRoute() throws Exception {
+        // resolve endpoint
+        Endpoint endpoint = definition.getInput().getEndpoint();
+        if (endpoint == null) {
+            EndpointConsumerBuilder def = definition.getInput().getEndpointConsumerBuilder();
+            if (def != null) {
+                endpoint = def.resolve(camelContext);
+            } else {
+                endpoint = resolveEndpoint(definition.getInput().getEndpointUri());
+            }
+        }
+
+        // create route
+        String id = definition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        DefaultRoute route = new DefaultRoute(camelContext, definition, id, endpoint) {
+            @Override
+            public Processor createErrorHandler(Processor processor) throws Exception {
+                return ErrorHandlerReifier.reifier(this, getErrorHandlerFactory())
+                        .createErrorHandler(processor);
+            }
+        };
+
         // configure error handler
-        routeContext.setErrorHandlerFactory(definition.getErrorHandlerFactory());
+        route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
 
         // configure tracing
         if (definition.getTrace() != null) {
             Boolean isTrace = parseBoolean(definition.getTrace());
             if (isTrace != null) {
-                routeContext.setTracing(isTrace);
+                route.setTracing(isTrace);
                 if (isTrace) {
                     log.debug("Tracing is enabled on route: {}", definition.getId());
                     // tracing is added in the DefaultChannel so we can enable
@@ -258,7 +279,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getMessageHistory() != null) {
             Boolean isMessageHistory = parseBoolean(definition.getMessageHistory());
             if (isMessageHistory != null) {
-                routeContext.setMessageHistory(isMessageHistory);
+                route.setMessageHistory(isMessageHistory);
                 if (isMessageHistory) {
                     log.debug("Message history is enabled on route: {}", definition.getId());
                 }
@@ -269,7 +290,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getLogMask() != null) {
             Boolean isLogMask = parseBoolean(definition.getLogMask());
             if (isLogMask != null) {
-                routeContext.setLogMask(isLogMask);
+                route.setLogMask(isLogMask);
                 if (isLogMask) {
                     log.debug("Security mask for Logging is enabled on route: {}", definition.getId());
                 }
@@ -280,7 +301,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getStreamCache() != null) {
             Boolean isStreamCache = parseBoolean(definition.getStreamCache());
             if (isStreamCache != null) {
-                routeContext.setStreamCaching(isStreamCache);
+                route.setStreamCaching(isStreamCache);
                 if (isStreamCache) {
                     log.debug("StreamCaching is enabled on route: {}", definition.getId());
                 }
@@ -291,7 +312,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getDelayer() != null) {
             Long delayer = parseLong(definition.getDelayer());
             if (delayer != null) {
-                routeContext.setDelayer(delayer);
+                route.setDelayer(delayer);
                 if (delayer > 0) {
                     log.debug("Delayer is enabled with: {} ms. on route: {}", delayer, definition.getId());
                 } else {
@@ -304,7 +325,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
             for (RoutePolicy policy : definition.getRoutePolicies()) {
                 log.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                routeContext.getRoutePolicyList().add(policy);
+                route.getRoutePolicyList().add(policy);
             }
         }
         if (definition.getRoutePolicyRef() != null) {
@@ -313,7 +334,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 String ref = policyTokens.nextToken().trim();
                 RoutePolicy policy = mandatoryLookup(ref, RoutePolicy.class);
                 log.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                routeContext.getRoutePolicyList().add(policy);
+                route.getRoutePolicyList().add(policy);
             }
         }
         if (camelContext.getRoutePolicyFactories() != null) {
@@ -321,51 +342,33 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 RoutePolicy policy = factory.createRoutePolicy(camelContext, definition.getId(), definition);
                 if (policy != null) {
                     log.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
-                    routeContext.getRoutePolicyList().add(policy);
+                    route.getRoutePolicyList().add(policy);
                 }
             }
         }
 
         // configure auto startup
         Boolean isAutoStartup = parseBoolean(definition.getAutoStartup());
-        if (isAutoStartup != null) {
-            log.debug("Using AutoStartup {} on route: {}", isAutoStartup, definition.getId());
-            routeContext.setAutoStartup(isAutoStartup);
-        }
 
         // configure startup order
-        if (definition.getStartupOrder() != null) {
-            routeContext.setStartupOrder(definition.getStartupOrder());
-        }
+        Integer startupOrder = definition.getStartupOrder();
 
         // configure shutdown
         if (definition.getShutdownRoute() != null) {
             log.debug("Using ShutdownRoute {} on route: {}", definition.getShutdownRoute(), definition.getId());
-            routeContext.setShutdownRoute(parse(ShutdownRoute.class, definition.getShutdownRoute()));
+            route.setShutdownRoute(parse(ShutdownRoute.class, definition.getShutdownRoute()));
         }
         if (definition.getShutdownRunningTask() != null) {
             log.debug("Using ShutdownRunningTask {} on route: {}", definition.getShutdownRunningTask(), definition.getId());
-            routeContext.setShutdownRunningTask(parse(ShutdownRunningTask.class, definition.getShutdownRunningTask()));
+            route.setShutdownRunningTask(parse(ShutdownRunningTask.class, definition.getShutdownRunningTask()));
         }
 
         // should inherit the intercept strategies we have defined
-        routeContext.setInterceptStrategies(definition.getInterceptStrategies());
-
-        // resolve endpoint
-        Endpoint endpoint = definition.getInput().getEndpoint();
-        if (endpoint == null) {
-            EndpointConsumerBuilder def = definition.getInput().getEndpointConsumerBuilder();
-            if (def != null) {
-                endpoint = def.resolve(camelContext);
-            } else {
-                endpoint = resolveEndpoint(definition.getInput().getEndpointUri());
-            }
-        }
-        routeContext.setEndpoint(endpoint);
+        route.getInterceptStrategies().addAll(definition.getInterceptStrategies());
 
         // notify route context created
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            strategy.onRouteContextCreate(routeContext);
+            strategy.onRouteContextCreate(route);
         }
 
         // validate route has output processors
@@ -379,15 +382,63 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
         for (ProcessorDefinition<?> output : list) {
             try {
-                ProcessorReifier.reifier(routeContext, output).addRoutes();
+                ProcessorReifier.reifier(route, output).addRoutes();
             } catch (Exception e) {
                 throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
             }
         }
 
+        // now lets turn all of the event driven consumer processors into a single route
+        List<Processor> eventDrivenProcessors = route.getEventDrivenProcessors();
+        if (eventDrivenProcessors.isEmpty()) {
+            return null;
+        }
+
+        // Set route properties
+        Map<String, Object> routeProperties = computeRouteProperties();
+
+        // always use an pipeline even if there are only 1 processor as the pipeline
+        // handles preparing the response from the exchange in regard to IN vs OUT messages etc
+        Processor target = new Pipeline(camelContext, eventDrivenProcessors);
+
+        // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
+        CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
+
+        // and then optionally add route policy processor if a custom policy is set
+        List<RoutePolicy> routePolicyList = route.getRoutePolicyList();
+        if (routePolicyList != null && !routePolicyList.isEmpty()) {
+            for (RoutePolicy policy : routePolicyList) {
+                // add policy as service if we have not already done that (eg possible if two routes have the same service)
+                // this ensures Camel can control the lifecycle of the policy
+                if (!camelContext.hasService(policy)) {
+                    try {
+                        camelContext.addService(policy);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    }
+                }
+            }
+
+            internal.addAdvice(new CamelInternalProcessor.RoutePolicyAdvice(routePolicyList));
+        }
+
+        // wrap in route inflight processor to track number of inflight exchanges for the route
+        internal.addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(camelContext.getInflightRepository(), route.getRouteId()));
+
+        // wrap in JMX instrumentation processor that is used for performance stats
+        ManagementInterceptStrategy managementInterceptStrategy = route.getManagementInterceptStrategy();
+        if (managementInterceptStrategy != null) {
+            internal.addAdvice(CamelInternalProcessor.wrap(managementInterceptStrategy.createProcessor("route")));
+        }
+
+        // wrap in route lifecycle
+        internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+
+        // add advices
         if (definition.getRestBindingDefinition() != null) {
             try {
-                routeContext.addAdvice(new RestBindingReifier(routeContext, definition.getRestBindingDefinition()).createRestBindingAdvice());
+                internal.addAdvice(new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -404,47 +455,74 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 contract.setOutputType(parseString(definition.getOutputType().getUrn()));
                 contract.setValidateOutput(parseBoolean(definition.getOutputType().getValidate(), false));
             }
-            routeContext.addAdvice(new ContractAdvice(contract));
+            internal.addAdvice(new ContractAdvice(contract));
             // make sure to enable data type as its in use when using
             // input/output types on routes
             camelContext.setUseDataType(true);
         }
 
-        // Set route properties
-        routeContext.addProperty(Route.ID_PROPERTY, definition.getId());
-        routeContext.addProperty(Route.CUSTOM_ID_PROPERTY, Boolean.toString(definition.hasCustomIdAssigned()));
-        routeContext.addProperty(Route.PARENT_PROPERTY, Integer.toHexString(definition.hashCode()));
-        routeContext.addProperty(Route.DESCRIPTION_PROPERTY, definition.getDescriptionText());
+        // and create the route that wraps all of this
+        route.setProcessor(internal);
+        route.getProperties().putAll(routeProperties);
+        route.setStartupOrder(startupOrder);
+        if (isAutoStartup != null) {
+            log.debug("Using AutoStartup {} on route: {}", isAutoStartup, definition.getId());
+            route.setAutoStartup(isAutoStartup);
+        }
+
+        // after the route is created then set the route on the policy processor so we get hold of it
+        CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
+        if (task != null) {
+            task.setRoute(route);
+        }
+        CamelInternalProcessor.RouteLifecycleAdvice task2 = internal.getAdvice(CamelInternalProcessor.RouteLifecycleAdvice.class);
+        if (task2 != null) {
+            task2.setRoute(route);
+        }
+
+        // invoke init on route policy
+        if (routePolicyList != null && !routePolicyList.isEmpty()) {
+            for (RoutePolicy policy : routePolicyList) {
+                policy.onInit(route);
+            }
+        }
+
+        route.initialized();
+
+        return route;
+    }
+
+    protected Map<String, Object> computeRouteProperties() {
+        Map<String, Object> routeProperties = new HashMap<>();
+        routeProperties.put(Route.ID_PROPERTY, definition.getId());
+        routeProperties.put(Route.CUSTOM_ID_PROPERTY, Boolean.toString(definition.hasCustomIdAssigned()));
+        routeProperties.put(Route.PARENT_PROPERTY, Integer.toHexString(definition.hashCode()));
+        routeProperties.put(Route.DESCRIPTION_PROPERTY, definition.getDescriptionText());
         if (definition.getGroup() != null) {
-            routeContext.addProperty(Route.GROUP_PROPERTY, definition.getGroup());
+            routeProperties.put(Route.GROUP_PROPERTY, definition.getGroup());
         }
         String rest = Boolean.toString(definition.isRest() != null && definition.isRest());
-        routeContext.addProperty(Route.REST_PROPERTY, rest);
+        routeProperties.put(Route.REST_PROPERTY, rest);
 
         List<PropertyDefinition> properties = definition.getRouteProperties();
         if (properties != null) {
-            final String[] reservedProperties = new String[] {Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY, Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
-                                                              Route.REST_PROPERTY};
 
             for (PropertyDefinition prop : properties) {
                 try {
-                    final String key = CamelContextHelper.parseText(camelContext, prop.getKey());
-                    final String val = CamelContextHelper.parseText(camelContext, prop.getValue());
-
+                    final String key = parseString(prop.getKey());
+                    final String val = parseString(prop.getValue());
                     for (String property : reservedProperties) {
                         if (property.equalsIgnoreCase(key)) {
                             throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
                         }
                     }
-
-                    routeContext.addProperty(key, val);
+                    routeProperties.put(key, val);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
         }
-
-        return routeContext.commit();
+        return routeProperties;
     }
 
 }

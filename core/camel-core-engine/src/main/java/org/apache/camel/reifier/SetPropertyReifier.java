@@ -18,17 +18,17 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.processor.SetPropertyProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition> {
 
-    public SetPropertyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SetPropertyDefinition)definition);
+    public SetPropertyReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SetPropertyDefinition)definition);
     }
 
     @Override

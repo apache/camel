@@ -20,17 +20,17 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnCompletionMode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
 
-    public OnCompletionReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (OnCompletionDefinition)definition);
+    public OnCompletionReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (OnCompletionDefinition)definition);
     }
 
     @Override
@@ -59,16 +59,16 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         }
         if (original) {
             // ensure allow original is turned on
-            routeContext.setAllowUseOriginalMessage(true);
+            route.setAllowUseOriginalMessage(true);
         }
 
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the on completion route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
-        routeContext.setOnCompletion(getId(definition), internal);
+        route.setOnCompletion(getId(definition), internal);
 
         Predicate when = null;
         if (definition.getOnWhen() != null) {

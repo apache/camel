@@ -21,16 +21,16 @@ import java.util.List;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.CatchProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
-    public CatchReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, CatchDefinition.class.cast(definition));
+    public CatchReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, CatchDefinition.class.cast(definition));
     }
 
     @Override

@@ -151,32 +151,32 @@ public interface UnitOfWork extends Service {
     void endTransactedBy(Object key);
 
     /**
-     * Gets the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
+     * Gets the {@link Route} that this {@link UnitOfWork} currently is being routed through.
      * <p/>
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the
-     * {@link org.apache.camel.spi.RouteContext} can change over time.
+     * {@link org.apache.camel.Route} can change over time.
      *
-     * @return the route context, maybe be <tt>null</tt> if not routed through a route currently.
+     * @return the route, maybe be <tt>null</tt> if not routed through a route currently.
      */
-    RouteContext getRouteContext();
+    Route getRoute();
 
     /**
-     * Pushes the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
+     * Pushes the {@link Route} that this {@link UnitOfWork} currently is being routed through.
      * <p/>
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the
-     * {@link org.apache.camel.spi.RouteContext} can change over time.
+     * {@link org.apache.camel.Route} can change over time.
      *
-     * @param routeContext the route context
+     * @param route the route
      */
-    void pushRouteContext(RouteContext routeContext);
+    void pushRoute(Route route);
 
     /**
-     * When finished being routed under the current {@link org.apache.camel.spi.RouteContext}
+     * When finished being routed under the current {@link org.apache.camel.Route}
      * it should be removed.
      *
-     * @return the route context or <tt>null</tt> if none existed
+     * @return the route or <tt>null</tt> if none existed
      */
-    RouteContext popRouteContext();
+    Route popRoute();
 
     /**
      * Whether the unit of work should call the before/after process methods or not.

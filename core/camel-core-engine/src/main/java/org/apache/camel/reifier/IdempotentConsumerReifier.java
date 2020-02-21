@@ -18,17 +18,17 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsumerDefinition> {
 
-    public IdempotentConsumerReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, IdempotentConsumerDefinition.class.cast(definition));
+    public IdempotentConsumerReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, IdempotentConsumerDefinition.class.cast(definition));
     }
 
     @Override
