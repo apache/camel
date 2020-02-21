@@ -48,9 +48,9 @@ public class WireTapNoCacheTest extends ContextTestSupport {
 
         // now send again with mocks which then add endpoints
 
-        MockEndpoint x = getMockEndpoint("mock:x");
-        MockEndpoint y = getMockEndpoint("mock:y");
-        MockEndpoint z = getMockEndpoint("mock:z");
+        MockEndpoint x = getMockEndpoint("mock:x2");
+        MockEndpoint y = getMockEndpoint("mock:y2");
+        MockEndpoint z = getMockEndpoint("mock:z2");
 
         x.expectedBodiesReceivedInAnyOrder("foo", "bar");
         y.expectedBodiesReceivedInAnyOrder("foo", "bar");
@@ -58,12 +58,12 @@ public class WireTapNoCacheTest extends ContextTestSupport {
 
         assertEquals(4, context.getEndpointRegistry().size());
 
-        sendBody("foo", "mock:x");
-        sendBody("foo", "mock:y");
-        sendBody("foo", "mock:z");
-        sendBody("bar", "mock:x");
-        sendBody("bar", "mock:y");
-        sendBody("bar", "mock:z");
+        sendBody("foo", "mock:x2");
+        sendBody("foo", "mock:y2");
+        sendBody("foo", "mock:z2");
+        sendBody("bar", "mock:x2");
+        sendBody("bar", "mock:y2");
+        sendBody("bar", "mock:z2");
 
         // should not register as new endpoint so we keep at 4
         sendBody("dummy", "mock:dummy");
