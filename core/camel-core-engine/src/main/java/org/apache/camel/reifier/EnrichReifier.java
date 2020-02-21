@@ -41,6 +41,9 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         Enricher enricher = new Enricher(exp);
         enricher.setShareUnitOfWork(isShareUnitOfWork);
         enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
+        if (definition.getCacheSize() != null) {
+            enricher.setCacheSize(parseInt(definition.getCacheSize()));
+        }
         AggregationStrategy strategy = createAggregationStrategy();
         if (strategy != null) {
             enricher.setAggregationStrategy(strategy);

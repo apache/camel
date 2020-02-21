@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedExchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.engine.DefaultConsumerCache;
 import org.apache.camel.spi.ConsumerCache;
@@ -209,9 +210,17 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
         // use dynamic endpoint so calculate the endpoint to use
         Object recipient = null;
+        boolean prototype = cacheSize < 0;
         try {
             recipient = expression.evaluate(exchange, Object.class);
-            endpoint = resolveEndpoint(exchange, recipient);
+            Endpoint existing = getExistingEndpoint(exchange, recipient);
+            if (existing == null) {
+                endpoint = resolveEndpoint(exchange, recipient, prototype);
+            } else {
+                endpoint = existing;
+                // we have an existing endpoint then its not a prototype scope
+                prototype = false;
+            }
             // acquire the consumer from the cache
             consumer = consumerCache.acquirePollingConsumer(endpoint);
         } catch (Throwable e) {
@@ -266,6 +275,10 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         } finally {
             // return the consumer back to the cache
             consumerCache.releasePollingConsumer(endpoint, consumer);
+            // and stop prototype endpoints
+            if (prototype) {
+                ServiceHelper.stopAndShutdownService(endpoint);
+            }
         }
 
         // remember current redelivery stats
@@ -332,12 +345,37 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
         return true;
     }
 
-    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        } else if (recipient instanceof String) {
+            recipient = ((String) recipient).trim();
+        }
+        if (recipient != null) {
+            // convert to a string type we can work with
+            String uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            return exchange.getContext().hasEndpoint(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) throws NoTypeConversionAvailableException {
         // trim strings as end users might have added spaces between separators
         if (recipient instanceof String) {
-            recipient = ((String)recipient).trim();
+            recipient = ((String) recipient).trim();
+        } else if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        } else if (recipient != null) {
+            // convert to a string type we can work with
+            recipient = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
         }
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
+
+        if (recipient != null) {
+            return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
+        } else {
+            return null;
+        }
     }
 
     /**
