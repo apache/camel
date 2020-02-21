@@ -106,7 +106,7 @@ public class ECS2Producer extends DefaultProducer {
             ListClustersRequest request = builder.build();
             result = ecsClient.listClusters(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("List Clusters command returned the error code {}", ase.getMessage());
+            LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -124,7 +124,7 @@ public class ECS2Producer extends DefaultProducer {
             CreateClusterRequest request = builder.build();
             result = ecsClient.createCluster(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Create Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -142,7 +142,7 @@ public class ECS2Producer extends DefaultProducer {
             DescribeClustersRequest request = builder.build();
             result = ecsClient.describeClusters(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Describe Clusters command returned the error code {}", ase.getMessage());
+            LOG.trace("Describe Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -162,7 +162,7 @@ public class ECS2Producer extends DefaultProducer {
             DeleteClusterRequest request = builder.build();
             result = ecsClient.deleteCluster(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
