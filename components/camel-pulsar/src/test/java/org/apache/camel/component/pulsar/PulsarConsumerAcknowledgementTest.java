@@ -211,7 +211,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
             }
         });
 
-        producer.newMessage().value("Hello World!").property("proccessedOnce", "false").send();
+        producer.newMessage().value("Hello World!").property("processedOnce", "false").send();
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }
