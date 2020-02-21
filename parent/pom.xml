@@ -3309,6 +3309,12 @@
                 <artifactId>scala-library</artifactId>
                 <version>${scala-version}</version>
             </dependency>
+            
+	        <dependency>
+	            <groupId>org.yaml</groupId>
+	            <artifactId>snakeyaml</artifactId>
+	            <version>${snakeyaml-version}</version>
+	        </dependency>
 
             <dependency>
                 <groupId>javax.annotation</groupId>
