@@ -221,7 +221,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.startInstances(builder.build());
         } catch (AwsServiceException ase) {
-        	LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
