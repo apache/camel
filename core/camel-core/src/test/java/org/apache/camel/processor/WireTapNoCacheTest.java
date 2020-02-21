@@ -17,83 +17,64 @@
 package org.apache.camel.processor;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.engine.EmptyProducerCache;
-import org.apache.camel.util.ReflectionHelper;
 import org.junit.Test;
 
-public class RecipientListNoCacheTest extends ContextTestSupport {
+public class WireTapNoCacheTest extends ContextTestSupport {
 
     @Test
     public void testNoCache() throws Exception {
         assertEquals(1, context.getEndpointRegistry().size());
 
-        sendBody("foo");
-        sendBody("bar");
+        sendBody("foo", "mock:x");
+        sendBody("foo", "mock:y");
+        sendBody("foo", "mock:z");
+        sendBody("bar", "mock:x");
+        sendBody("bar", "mock:y");
+        sendBody("bar", "mock:z");
 
         // make sure its using an empty producer cache as the cache is disabled
         List<Processor> list = context.getRoute("route1").filter("foo");
-        RecipientList rl = (RecipientList) list.get(0);
-        assertNotNull(rl);
-        assertEquals(-1, rl.getCacheSize());
+        WireTapProcessor wtp = (WireTapProcessor) list.get(0);
+        assertNotNull(wtp);
+        assertEquals(-1, wtp.getCacheSize());
 
         // check no additional endpoints added as cache was disabled
         assertEquals(1, context.getEndpointRegistry().size());
 
         // now send again with mocks which then add endpoints
+
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
 
-        x.expectedBodiesReceived("foo", "bar");
-        y.expectedBodiesReceived("foo", "bar");
-        z.expectedBodiesReceived("foo", "bar");
+        x.expectedBodiesReceivedInAnyOrder("foo", "bar");
+        y.expectedBodiesReceivedInAnyOrder("foo", "bar");
+        z.expectedBodiesReceivedInAnyOrder("foo", "bar");
 
-        sendBody("foo");
-        sendBody("bar");
+        assertEquals(4, context.getEndpointRegistry().size());
+
+        sendBody("foo", "mock:x");
+        sendBody("foo", "mock:y");
+        sendBody("foo", "mock:z");
+        sendBody("bar", "mock:x");
+        sendBody("bar", "mock:y");
+        sendBody("bar", "mock:z");
+
+        // should not register as new endpoint so we keep at 4
+        sendBody("dummy", "mock:dummy");
 
         assertMockEndpointsSatisfied();
 
         assertEquals(4, context.getEndpointRegistry().size());
     }
 
-    @Test
-    public void testNoThreadPool() throws Exception {
-        MockEndpoint x = getMockEndpoint("mock:x");
-        MockEndpoint y = getMockEndpoint("mock:y");
-        MockEndpoint z = getMockEndpoint("mock:z");
-
-        x.expectedBodiesReceived("foo", "bar");
-        y.expectedBodiesReceived("foo", "bar");
-        z.expectedBodiesReceived("foo", "bar");
-
-        sendBody("foo");
-        sendBody("bar");
-
-        assertMockEndpointsSatisfied();
-
-        // make sure its using an empty producer cache as the cache is disabled
-        List<Processor> list = context.getRoute("route1").filter("foo");
-        RecipientList rl = (RecipientList) list.get(0);
-        assertNotNull(rl);
-        assertEquals(-1, rl.getCacheSize());
-
-        Object pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("producerCache"), rl);
-        assertNotNull(pc);
-        assertIsInstanceOf(EmptyProducerCache.class, pc);
-
-        // and no thread pool is in use as timeout is 0
-        pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("aggregateExecutorService"), rl);
-        assertNull(pc);
-    }
-
-    protected void sendBody(String body) {
-        template.sendBodyAndHeader("direct:a", body, "recipientListHeader", "mock:x,mock:y,mock:z");
+    protected void sendBody(String body, String uri) {
+        template.sendBodyAndHeader("direct:a", body, "myHeader", uri);
     }
 
     @Override
@@ -101,7 +82,7 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a")
-                        .recipientList(header("recipientListHeader").tokenize(",")).cacheSize(-1).id("foo");
+                        .wireTap("${header.myHeader}").cacheSize(-1).id("foo").end();
             }
         };
 

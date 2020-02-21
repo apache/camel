@@ -17,17 +17,18 @@
 package org.apache.camel.processor;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Headers;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.engine.EmptyProducerCache;
-import org.apache.camel.util.ReflectionHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 
-public class RecipientListNoCacheTest extends ContextTestSupport {
+public class DynamicRouterNoCacheTest extends ContextTestSupport {
 
     @Test
     public void testNoCache() throws Exception {
@@ -38,7 +39,7 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
 
         // make sure its using an empty producer cache as the cache is disabled
         List<Processor> list = context.getRoute("route1").filter("foo");
-        RecipientList rl = (RecipientList) list.get(0);
+        DynamicRouter rl = (DynamicRouter) list.get(0);
         assertNotNull(rl);
         assertEquals(-1, rl.getCacheSize());
 
@@ -62,46 +63,32 @@ public class RecipientListNoCacheTest extends ContextTestSupport {
         assertEquals(4, context.getEndpointRegistry().size());
     }
 
-    @Test
-    public void testNoThreadPool() throws Exception {
-        MockEndpoint x = getMockEndpoint("mock:x");
-        MockEndpoint y = getMockEndpoint("mock:y");
-        MockEndpoint z = getMockEndpoint("mock:z");
-
-        x.expectedBodiesReceived("foo", "bar");
-        y.expectedBodiesReceived("foo", "bar");
-        z.expectedBodiesReceived("foo", "bar");
-
-        sendBody("foo");
-        sendBody("bar");
-
-        assertMockEndpointsSatisfied();
-
-        // make sure its using an empty producer cache as the cache is disabled
-        List<Processor> list = context.getRoute("route1").filter("foo");
-        RecipientList rl = (RecipientList) list.get(0);
-        assertNotNull(rl);
-        assertEquals(-1, rl.getCacheSize());
-
-        Object pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("producerCache"), rl);
-        assertNotNull(pc);
-        assertIsInstanceOf(EmptyProducerCache.class, pc);
-
-        // and no thread pool is in use as timeout is 0
-        pc = ReflectionHelper.getField(rl.getClass().getDeclaredField("aggregateExecutorService"), rl);
-        assertNull(pc);
-    }
-
     protected void sendBody(String body) {
         template.sendBodyAndHeader("direct:a", body, "recipientListHeader", "mock:x,mock:y,mock:z");
+    }
+
+    public String slip(@Headers Map headers) {
+        String header = (String) headers.get("recipientListHeader");
+        if (ObjectHelper.isEmpty(header)) {
+            return null;
+        }
+        if (header.contains(",")) {
+            String next = StringHelper.before(header, ",");
+            String rest = StringHelper.after(header, ",");
+            headers.put("recipientListHeader", rest);
+            return next;
+        } else {
+            // last slip
+            headers.put("recipientListHeader", "");
+            return header;
+        }
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                        .recipientList(header("recipientListHeader").tokenize(",")).cacheSize(-1).id("foo");
+                from("direct:a").dynamicRouter(method(DynamicRouterNoCacheTest.class, "slip")).cacheSize(-1).id("foo");
             }
         };
 
