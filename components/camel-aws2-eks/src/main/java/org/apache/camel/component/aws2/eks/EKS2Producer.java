@@ -104,7 +104,7 @@ public class EKS2Producer extends DefaultProducer {
         try {
             result = eksClient.listClusters(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("List Clusters command returned the error code {}", ase.getMessage());
+            LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -129,7 +129,7 @@ public class EKS2Producer extends DefaultProducer {
         try {
             result = eksClient.createCluster(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Create Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -148,7 +148,7 @@ public class EKS2Producer extends DefaultProducer {
         try {
             result = eksClient.describeCluster(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Describe Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Describe Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -167,7 +167,7 @@ public class EKS2Producer extends DefaultProducer {
         try {
             result = eksClient.deleteCluster(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
