@@ -96,6 +96,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean useHostIPAddress = false;
     private String managementNamePattern = "#name#";
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.Default;
+    private Map<String, ?> environment;
 
     public DefaultManagementAgent() {
     }
@@ -564,7 +565,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             LOG.warn("Could not create and start JMX connector.", ioe);
         }
     }
-    
+
     protected MBeanServer findOrCreateMBeanServer() {
 
         // return platform mbean server if the option is specified.
@@ -609,7 +610,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort + path);
         }
 
-        cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
+        cs = JMXConnectorServerFactory.newJMXConnectorServer(url, environment, server);
 
         // use async thread for starting the JMX Connector
         // (no need to use a thread pool or enlist in JMX as this thread is terminated when the JMX connector has been started)
@@ -624,6 +625,17 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             }
         });
         thread.start();
+    }
+
+    public Map<String, ?> getEnvironment() {
+        return environment;
+    }
+
+    /**
+     * Set the environment attributes to control the new Connector Server
+     */
+    public void setEnvironment(Map<String, ?> environment) {
+        this.environment = environment;
     }
 
 }
