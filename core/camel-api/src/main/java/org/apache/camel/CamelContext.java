@@ -440,21 +440,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     Endpoint getEndpoint(String uri);
 
     /**
-     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype).
-     * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created.
-     *
-     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped,
-     * and therefore expected to be short lived and discarded after use.
-     *
-     * @param uri the URI of the endpoint
-     * @return the endpoint
-     *
-     * @see #getEndpoint(String)
-     */
-    Endpoint getPrototypeEndpoint(String uri);
-
-    /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
      * If the name has a singleton endpoint registered, then the singleton is returned.
      * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.

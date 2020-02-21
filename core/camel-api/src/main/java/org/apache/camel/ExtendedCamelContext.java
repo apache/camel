@@ -116,6 +116,22 @@ public interface ExtendedCamelContext extends CamelContext {
     void registerEndpointCallback(EndpointStrategy strategy);
 
     /**
+     * Resolves the given name to an {@link Endpoint} of the specified type (scope is prototype).
+     * If the name has a singleton endpoint registered, then the singleton is returned.
+     * Otherwise, a new {@link Endpoint} is created.
+     *
+     * The endpoint is NOT registered in the {@link org.apache.camel.spi.EndpointRegistry} as its prototype scoped,
+     * and therefore expected to be short lived and discarded after use (you must stop and shutdown the
+     * endpoint when no longer in use).
+     *
+     * @param uri the URI of the endpoint
+     * @return the endpoint
+     *
+     * @see #getEndpoint(String)
+     */
+    Endpoint getPrototypeEndpoint(String uri);
+
+    /**
      * Returns the order in which the route inputs was started.
      * <p/>
      * The order may not be according to the startupOrder defined on the route.
