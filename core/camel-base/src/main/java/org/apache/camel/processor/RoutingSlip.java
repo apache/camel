@@ -468,7 +468,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
                             // prepare and process the routing slip
                             final boolean prototypeEndpoint = prototype;
-                            AsyncCallback cbNext = (doneNext) -> {
+                            AsyncCallback cbNext = doneNext -> {
                                 // and stop prototype endpoints
                                 if (prototypeEndpoint) {
                                     ServiceHelper.stopAndShutdownService(nextEndpoint);
