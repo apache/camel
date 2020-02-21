@@ -200,7 +200,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.runInstances(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Run Instances command returned the error code {}", ase.getMessage());
+            LOG.trace("Run Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType);
@@ -221,6 +221,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.startInstances(builder.build());
         } catch (AwsServiceException ase) {
+        	LOG.trace("Start Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
@@ -241,7 +242,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.stopInstances(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Stop Instances command returned the error code {}", ase.getMessage());
+            LOG.trace("Stop Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
@@ -262,7 +263,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.terminateInstances(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Terminate Instances command returned the error code {}", ase.getMessage());
+            LOG.trace("Terminate Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
@@ -281,7 +282,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.describeInstances(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Describe Instances command returned the error code {}", ase.getMessage());
+            LOG.trace("Describe Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -299,7 +300,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.describeInstanceStatus(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Describe Instances Status command returned the error code {}", ase.getMessage());
+            LOG.trace("Describe Instances Status command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -319,7 +320,7 @@ public class AWS2EC2Producer extends DefaultProducer {
             LOG.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
             ec2Client.rebootInstances(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Reboot Instances command returned the error code {}", ase.getMessage());
+            LOG.trace("Reboot Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
     }
@@ -337,7 +338,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.monitorInstances(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Monitor Instances command returned the error code {}", ase.getMessage());
+            LOG.trace("Monitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
@@ -358,7 +359,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.unmonitorInstances(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Unmonitor Instances command returned the error code {}", ase.getMessage());
+            LOG.trace("Unmonitor Instances command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
@@ -386,7 +387,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.createTags(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Create tags command returned the error code {}", ase.getMessage());
+            LOG.trace("Create tags command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
@@ -414,7 +415,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.deleteTags(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete tags command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete tags command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
