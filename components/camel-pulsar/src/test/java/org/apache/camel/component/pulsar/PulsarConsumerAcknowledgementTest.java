@@ -201,8 +201,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                         PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
                                 .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                         receipt.negativeAcknowledge();
-                    }
-                    else {
+                    } else {
                         PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
                                 .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                         receipt.acknowledge();
