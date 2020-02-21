@@ -89,6 +89,9 @@ public final class ExchangeHelper {
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolveEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint) value;
@@ -110,6 +113,9 @@ public final class ExchangeHelper {
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolvePrototypeEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint) value;
