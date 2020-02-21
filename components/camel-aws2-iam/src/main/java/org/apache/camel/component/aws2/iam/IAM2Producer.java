@@ -160,7 +160,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.createUser(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Create user command returned the error code {}", ase.getMessage());
+            LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -179,7 +179,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.deleteUser(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete user command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -198,7 +198,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.getUser(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("get user command returned the error code {}", ase.getMessage());
+            LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -210,7 +210,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.listUsers();
         } catch (AwsServiceException ase) {
-            LOG.trace("List users command returned the error code {}", ase.getMessage());
+            LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -227,7 +227,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.createAccessKey(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Create Access Key command returned the error code {}", ase.getMessage());
+            LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -250,7 +250,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.deleteAccessKey(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Access Key command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -279,7 +279,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.updateAccessKey(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Update Access Key command returned the error code {}", ase.getMessage());
+            LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -302,7 +302,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.createGroup(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Create Group command returned the error code {}", ase.getMessage());
+            LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -321,7 +321,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.deleteGroup(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Group command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -333,7 +333,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.listGroups();
         } catch (AwsServiceException ase) {
-            LOG.trace("List Groups command returned the error code {}", ase.getMessage());
+            LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -358,7 +358,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.addUserToGroup(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Add User To Group command returned the error code {}", ase.getMessage());
+            LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -383,7 +383,7 @@ public class IAM2Producer extends DefaultProducer {
         try {
             result = iamClient.removeUserFromGroup(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Remove User From Group command returned the error code {}", ase.getMessage());
+            LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
