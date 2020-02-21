@@ -105,7 +105,7 @@ public class MSK2Producer extends DefaultProducer {
         try {
             result = mskClient.listClusters(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("List Clusters command returned the error code {}", ase.getMessage());
+            LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -142,7 +142,7 @@ public class MSK2Producer extends DefaultProducer {
         try {
             response = mskClient.createCluster(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Create Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -161,7 +161,7 @@ public class MSK2Producer extends DefaultProducer {
         try {
             result = mskClient.deleteCluster(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -180,7 +180,7 @@ public class MSK2Producer extends DefaultProducer {
         try {
             result = mskClient.describeCluster(builder.build());
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Cluster command returned the error code {}", ase.getMessage());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
