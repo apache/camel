@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.impl.engine.EmptyProducerCache;
@@ -35,7 +36,6 @@ import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -241,9 +241,19 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         }
 
         while (iter.hasNext(current)) {
+
+            boolean prototype = cacheSize < 0;
             Endpoint endpoint;
             try {
-                endpoint = resolveEndpoint(iter, exchange);
+                Object recipient = iter.next(exchange);
+                Endpoint existing = getExistingEndpoint(exchange, recipient);
+                if (existing == null) {
+                    endpoint = resolveEndpoint(exchange, recipient, prototype);
+                } else {
+                    endpoint = existing;
+                    // we have an existing endpoint then its not a prototype scope
+                    prototype = false;
+                }
                 // if no endpoint was resolved then try the next
                 if (endpoint == null) {
                     continue;
@@ -255,7 +265,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             }
 
             //process and prepare the routing slip
-            boolean sync = processExchange(endpoint, current, exchange, originalCallback, iter);
+            boolean sync = processExchange(endpoint, current, exchange, originalCallback, iter, prototype);
             current = prepareExchangeForRoutingSlip(current, endpoint);
             
             if (!sync) {
@@ -305,14 +315,28 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return true;
     }
 
-    protected Endpoint resolveEndpoint(RoutingSlipIterator iter, Exchange exchange) throws Exception {
-        Object nextRecipient = iter.next(exchange);
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        } else if (recipient instanceof String) {
+            recipient = ((String) recipient).trim();
+        }
+        if (recipient != null) {
+            // convert to a string type we can work with
+            String uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            return exchange.getContext().hasEndpoint(uri);
+        }
+        return null;
+    }
+
+    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) throws Exception {
         Endpoint endpoint = null;
         try {
-            endpoint = ExchangeHelper.resolveEndpoint(exchange, nextRecipient);
+            endpoint = prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
         } catch (Exception e) {
             if (isIgnoreInvalidEndpoints()) {
-                LOG.info("Endpoint uri is invalid: " + nextRecipient + ". This exception will be ignored.", e);
+                LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
             } else {
                 throw e;
             }
@@ -355,7 +379,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
     }
 
     protected boolean processExchange(final Endpoint endpoint, final Exchange exchange, final Exchange original,
-                                      final AsyncCallback originalCallback, final RoutingSlipIterator iter) {
+                                      final AsyncCallback originalCallback, final RoutingSlipIterator iter, final boolean prototype) {
 
         // this does the actual processing so log at trace level
         if (LOG.isTraceEnabled()) {
@@ -389,6 +413,10 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
                     // we only have to handle async completion of the routing slip
                     if (doneSync) {
+                        // and stop prototype endpoints
+                        if (prototype) {
+                            ServiceHelper.stopAndShutdownService(endpoint);
+                        }
                         cb.done(true);
                         return;
                     }
@@ -416,11 +444,20 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                                 break;
                             }
 
-                            Endpoint endpoint1;
+                            Endpoint nextEndpoint;
+                            boolean prototype = cacheSize < 0;
                             try {
-                                endpoint1 = resolveEndpoint(iter, ex);
+                                Object recipient = iter.next(ex);
+                                Endpoint existing = getExistingEndpoint(exchange, recipient);
+                                if (existing == null) {
+                                    nextEndpoint = resolveEndpoint(exchange, recipient, prototype);
+                                } else {
+                                    nextEndpoint = existing;
+                                    // we have an existing endpoint then its not a prototype scope
+                                    prototype = false;
+                                }
                                 // if no endpoint was resolved then try the next
-                                if (endpoint1 == null) {
+                                if (nextEndpoint == null) {
                                     continue;
                                 }
                             } catch (Exception e) {
@@ -430,8 +467,16 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                             }
 
                             // prepare and process the routing slip
-                            boolean sync = processExchange(endpoint1, current, original, cb, iter);
-                            current = prepareExchangeForRoutingSlip(current, endpoint1);
+                            final boolean prototypeEndpoint = prototype;
+                            AsyncCallback cbNext = (doneNext) -> {
+                                // and stop prototype endpoints
+                                if (prototypeEndpoint) {
+                                    ServiceHelper.stopAndShutdownService(nextEndpoint);
+                                }
+                                cb.done(doneNext);
+                            };
+                            boolean sync = processExchange(nextEndpoint, current, original, cbNext, iter, prototype);
+                            current = prepareExchangeForRoutingSlip(current, nextEndpoint);
 
                             if (!sync) {
                                 if (LOG.isTraceEnabled()) {
@@ -496,17 +541,6 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
      */
     private Message getResultMessage(Exchange exchange) {
         return exchange.getMessage();
-    }
-
-    /**
-     * Copy the outbound data in 'source' to the inbound data in 'result'.
-     */
-    private void copyOutToIn(Exchange result, Exchange source) {
-        result.setException(source.getException());
-        result.setIn(getResultMessage(source));
-
-        result.getProperties().clear();
-        result.getProperties().putAll(source.getProperties());
     }
 
     /**
