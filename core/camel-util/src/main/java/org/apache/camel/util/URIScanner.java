@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,11 +210,11 @@ class URIScanner {
     }
 
     public static List<Pair<Integer>> scanRaw(String str) {
-        List<Pair<Integer>> answer = new ArrayList<>();
         if (str == null || ObjectHelper.isEmpty(str)) {
-            return answer;
+            return Collections.EMPTY_LIST;
         }
 
+        List<Pair<Integer>> answer = new ArrayList<>();
         int offset = 0;
         int start = str.indexOf(RAW_TOKEN_PREFIX);
         while (start >= 0 && offset < str.length()) {
@@ -260,13 +261,18 @@ class URIScanner {
     }
 
     public static String resolveRaw(String str) {
-        for (int i = 0; i < RAW_TOKEN_START.length; i++) {
-            String tokenStart = RAW_TOKEN_PREFIX + RAW_TOKEN_START[i];
-            String tokenEnd = String.valueOf(RAW_TOKEN_END[i]);
-            if (str.startsWith(tokenStart) && str.endsWith(tokenEnd)) {
-                return str.substring(tokenStart.length(), str.length() - 1);
-            }
+        int len = str.length();
+        if (len <= 4) {
+            return null;
         }
+        int last = len - 1;
+
+        // check for end is quicker than for start
+        if (str.charAt(last) == ')' && str.startsWith(RAW_START_ONE)
+                || str.charAt(last) == '}' && str.startsWith(RAW_START_TWO)) {
+            return str.substring(4, last);
+        }
+
         // not RAW value
         return null;
     }
