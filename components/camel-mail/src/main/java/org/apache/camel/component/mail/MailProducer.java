@@ -16,20 +16,20 @@
  */
 package org.apache.camel.component.mail;
 
-import java.io.IOException;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A Producer to send messages using JavaMail.
  */
-public class MailProducer extends DefaultProducer {
+public class MailProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailProducer.class);
 
@@ -41,7 +41,7 @@ public class MailProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(final Exchange exchange) {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader applicationClassLoader = getEndpoint().getCamelContext().getApplicationContextClassLoader();
@@ -71,6 +71,9 @@ public class MailProducer extends DefaultProducer {
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }
+
+        callback.done(true);
+        return true;
     }
 
     @Override
