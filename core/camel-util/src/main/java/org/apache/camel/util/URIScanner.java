@@ -33,6 +33,9 @@ import static org.apache.camel.util.URISupport.RAW_TOKEN_START;
  */
 class URIScanner {
 
+    private static final String RAW_START_ONE = RAW_TOKEN_PREFIX + RAW_TOKEN_START[0];
+    private static final String RAW_START_TWO = RAW_TOKEN_PREFIX + RAW_TOKEN_START[1];
+
     private enum Mode {
         KEY, VALUE
     }
@@ -157,13 +160,17 @@ class URIScanner {
     private boolean checkRaw() {
         rawTokenEnd = 0;
 
-        for (int i = 0; i < RAW_TOKEN_START.length; i++) {
-            String rawTokenStart = RAW_TOKEN_PREFIX + RAW_TOKEN_START[i];
-            boolean isRaw = value.toString().startsWith(rawTokenStart);
-            if (isRaw) {
-                rawTokenEnd = RAW_TOKEN_END[i];
-                return true;
-            }
+        if (value.length() < 4) {
+            return false;
+        }
+
+        String start = value.substring(0, 4);
+        if (start.startsWith(RAW_START_ONE)) {
+            rawTokenEnd = RAW_TOKEN_END[0];
+            return true;
+        } else if (start.startsWith(RAW_START_TWO)) {
+            rawTokenEnd = RAW_TOKEN_END[1];
+            return true;
         }
 
         return false;
