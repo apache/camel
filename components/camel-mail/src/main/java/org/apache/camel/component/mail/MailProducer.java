@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.IOException;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
