@@ -219,7 +219,9 @@ public final class ObjectHelper {
      */
     public static <T> T newInstance(Class<T> type) {
         try {
-            return type.getDeclaredConstructor().newInstance();
+            Constructor<T> ctr = type.getDeclaredConstructor();
+            ctr.setAccessible(true);
+            return ctr.newInstance();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
