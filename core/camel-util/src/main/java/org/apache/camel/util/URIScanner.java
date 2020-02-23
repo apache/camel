@@ -37,41 +37,31 @@ class URIScanner {
     private static final String RAW_START_ONE = RAW_TOKEN_PREFIX + RAW_TOKEN_START[0];
     private static final String RAW_START_TWO = RAW_TOKEN_PREFIX + RAW_TOKEN_START[1];
 
+    // TODO: when upgrading to JDK11 as minimum then use java.nio.Charset
+    private static final String CHARSET = "UTF-8";
+
     private enum Mode {
         KEY, VALUE
     }
 
     private static final char END = '\u0000';
 
-    private final String charset;
     private final StringBuilder key;
     private final StringBuilder value;
     private Mode mode;
     private boolean isRaw;
     private char rawTokenEnd;
 
-    public URIScanner(String charset) {
-        this.charset = charset;
-        key = new StringBuilder();
-        value = new StringBuilder();
+    public URIScanner() {
+        this.key = new StringBuilder();
+        this.value = new StringBuilder();
     }
 
     private void initState() {
-        mode = Mode.KEY;
-        key.setLength(0);
-        value.setLength(0);
-        isRaw = false;
-    }
-
-    private String getDecodedKey() throws UnsupportedEncodingException {
-        return URLDecoder.decode(key.toString(), charset);
-    }
-
-    private String getDecodedValue() throws UnsupportedEncodingException {
-        // need to replace % with %25
-        String s = StringHelper.replaceAll(value.toString(), "%", "%25");
-        String answer = URLDecoder.decode(s, charset);
-        return answer;
+        this.mode = Mode.KEY;
+        this.key.setLength(0);
+        this.value.setLength(0);
+        this.isRaw = false;
     }
 
     public Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
@@ -85,12 +75,13 @@ class URIScanner {
             initState();
 
             // parse the uri parameters char by char
-            for (int i = 0; i < uri.length(); i++) {
+            int len = uri.length();
+            for (int i = 0; i < len; i++) {
                 // current char
                 char ch = uri.charAt(i);
                 // look ahead of the next char
                 char next;
-                if (i <= uri.length() - 2) {
+                if (i <= len - 2) {
                     next = uri.charAt(i + 1);
                 } else {
                     next = END;
@@ -165,13 +156,19 @@ class URIScanner {
             return false;
         }
 
-        String start = value.substring(0, 4);
-        if (start.startsWith(RAW_START_ONE)) {
-            rawTokenEnd = RAW_TOKEN_END[0];
-            return true;
-        } else if (start.startsWith(RAW_START_TWO)) {
-            rawTokenEnd = RAW_TOKEN_END[1];
-            return true;
+        // optimize to not create new objects
+        char char1 = value.charAt(0);
+        char char2 = value.charAt(1);
+        char char3 = value.charAt(2);
+        char char4 = value.charAt(3);
+        if (char1 == 'R' && char2 == 'A' && char3 == 'W') {
+            if (char4 == '(') {
+                rawTokenEnd = RAW_TOKEN_END[0];
+                return true;
+            } else if (char4 == '{') {
+                rawTokenEnd = RAW_TOKEN_END[1];
+                return true;
+            }
         }
 
         return false;
@@ -183,8 +180,14 @@ class URIScanner {
     }
 
     private void addParameter(Map<String, Object> answer, boolean isRaw) throws UnsupportedEncodingException {
-        String name = getDecodedKey();
-        String value = isRaw ? this.value.toString() : getDecodedValue();
+        String name = URLDecoder.decode(key.toString(), CHARSET);
+        String text;
+        if (isRaw) {
+            text = value.toString();
+        } else {
+            String s = StringHelper.replaceAll(value.toString(), "%", "%25");
+            text = URLDecoder.decode(s, CHARSET);
+        }
 
         // does the key already exist?
         if (answer.containsKey(name)) {
@@ -202,13 +205,14 @@ class URIScanner {
                     list.add(s);
                 }
             }
-            list.add(value);
+            list.add(text);
             answer.put(name, list);
         } else {
-            answer.put(name, value);
+            answer.put(name, text);
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static List<Pair<Integer>> scanRaw(String str) {
         if (str == null || ObjectHelper.isEmpty(str)) {
             return Collections.EMPTY_LIST;
@@ -224,7 +228,6 @@ class URIScanner {
                 char tokenEnd = RAW_TOKEN_END[i];
                 if (str.startsWith(tokenStart, start)) {
                     offset = scanRawToEnd(str, start, tokenStart, tokenEnd, answer);
-                    continue;
                 }
             }
             start = str.indexOf(RAW_TOKEN_PREFIX, offset);
@@ -248,29 +251,32 @@ class URIScanner {
         return end + 1;
     }
 
-    public static boolean isRaw(int index, List<Pair<Integer>> pairs) {
-        for (Pair<Integer> pair : pairs) {
-            if (index < pair.getLeft()) {
-                return false;
-            }
-            if (index <= pair.getRight()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static String resolveRaw(String str) {
         int len = str.length();
         if (len <= 4) {
             return null;
         }
-        int last = len - 1;
 
-        // check for end is quicker than for start
-        if (str.charAt(last) == ')' && str.startsWith(RAW_START_ONE)
-                || str.charAt(last) == '}' && str.startsWith(RAW_START_TWO)) {
-            return str.substring(4, last);
+        int endPos = len - 1;
+        char last = str.charAt(endPos);
+
+        // optimize to not create new objects
+        if (last == ')') {
+            char char1 = str.charAt(0);
+            char char2 = str.charAt(1);
+            char char3 = str.charAt(2);
+            char char4 = str.charAt(3);
+            if (char1 == 'R' && char2 == 'A' && char3 == 'W' && char4 == '(') {
+                return str.substring(4, endPos);
+            }
+        } else if (last == '}') {
+            char char1 = str.charAt(0);
+            char char2 = str.charAt(1);
+            char char3 = str.charAt(2);
+            char char4 = str.charAt(3);
+            if (char1 == 'R' && char2 == 'A' && char3 == 'W' && char4 == '{') {
+                return str.substring(4, endPos);
+            }
         }
 
         // not RAW value

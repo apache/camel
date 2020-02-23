@@ -73,12 +73,13 @@ public final class StringHelper {
      * @return number of times char is located in the string
      */
     public static int countChar(String s, char ch) {
-        if (ObjectHelper.isEmpty(s)) {
+        if (s == null || s.isEmpty()) {
             return 0;
         }
 
         int matches = 0;
-        for (int i = 0; i < s.length(); i++) {
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
             char c = s.charAt(i);
             if (ch == c) {
                 matches++;
