@@ -1,11 +1,6 @@
 [[aws2-ses-component]]
 = AWS 2 Simple Email Service Component
 
-*Since Camel 3.1*
-
-*Since Camel 3.1*
-
-
 // HEADER START
 *Only producer is supported*
 // HEADER END
