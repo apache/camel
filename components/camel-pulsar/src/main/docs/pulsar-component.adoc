@@ -87,7 +87,7 @@ with the following path and query parameters:
 | *consumerName* (consumer) | Name of the consumer when subscription is EXCLUSIVE | sole-consumer | String
 | *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
-| *negativeAckRedeliveryDelay Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
+| *negativeAckRedeliveryDelay Millis* (consumer) | Set the negative acknowledgement delay | 60000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. The value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String

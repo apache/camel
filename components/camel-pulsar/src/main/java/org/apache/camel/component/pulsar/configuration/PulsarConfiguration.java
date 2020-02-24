@@ -51,8 +51,8 @@ public class PulsarConfiguration {
     private boolean allowManualAcknowledgement;
     @UriParam(label = "consumer", defaultValue = "10000")
     private long ackTimeoutMillis = 10000;
-    @UriParam(label = "consumer", defaultValue = "60000000")
-    private long negativeAckRedeliveryDelayMicros = 60000000;
+    @UriParam(label = "consumer", defaultValue = "60000")
+    private long negativeAckRedeliveryDelayMillis = 60000;
     @UriParam(label = "consumer", defaultValue = "100")
     private long ackGroupTimeMillis = 100;
     @UriParam(label = "consumer", defaultValue = "LATEST")
@@ -356,14 +356,14 @@ public class PulsarConfiguration {
         this.messageRouter = messageRouter;
     }
 
-    public long getNegativeAckRedeliveryDelayMicros() {
-        return negativeAckRedeliveryDelayMicros;
+    public long getNegativeAckRedeliveryDelayMillis() {
+        return negativeAckRedeliveryDelayMillis;
     }
 
     /**
      * Set the negative acknowledgement delay
      */
-    public void setNegativeAckRedeliveryDelayMicros(long negativeAckRedeliveryDelayMicros) {
-        this.negativeAckRedeliveryDelayMicros = negativeAckRedeliveryDelayMicros;
+    public void setNegativeAckRedeliveryDelayMillis(long negativeAckRedeliveryDelayMillis) {
+        this.negativeAckRedeliveryDelayMillis = negativeAckRedeliveryDelayMillis;
     }
 }

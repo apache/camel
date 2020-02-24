@@ -45,7 +45,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000" + "&negativeAckRedeliveryDelayMicros=100000")
+                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000" + "&negativeAckRedeliveryDelayMillis=100")
     private Endpoint from;
 
     @EndpointInject("mock:result")
