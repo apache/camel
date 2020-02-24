@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,6 +83,8 @@ with the following path and query parameters:
 | *ackMode* (common) | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly. The value can be one of: AUTO, NONE | AUTO | AckMode
 | *concurrentConsumers* (common) | The number of parallel streams consuming from the subscription | 1 | Integer
 | *loggerId* (common) | Logger ID to use when a match to the parent route required |  | String
+| *maxMessagesPerPoll* (common) | The max number of messages to receive from the server in a single API call | 1 | Integer
+| *synchronousPull* (common) | Synchronously pull batches of messages | false | Boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern

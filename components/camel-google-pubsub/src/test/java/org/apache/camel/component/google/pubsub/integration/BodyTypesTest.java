@@ -59,8 +59,8 @@ public class BodyTypesTest extends PubsubTestSupport {
     @Produce("direct:from")
     private ProducerTemplate producer;
 
-    @BeforeClass
-    public static void createTopicSubscription() throws Exception {
+    @Override
+    public void createTopicSubscription() throws Exception {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 

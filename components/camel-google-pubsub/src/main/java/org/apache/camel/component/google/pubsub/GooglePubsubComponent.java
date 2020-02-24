@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -29,6 +24,8 @@ import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.stub.SubscriberStub;
+import com.google.cloud.pubsub.v1.stub.SubscriberStubSettings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
@@ -39,6 +36,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
@@ -88,6 +90,8 @@ public class GooglePubsubComponent extends DefaultComponent {
             .maximumSize(publisherCacheSize)
             .removalListener(removalListener)
             .build();
+
+    SubscriberStub subscriberStub;
 
     public GooglePubsubComponent() {
     }
@@ -142,6 +146,26 @@ public class GooglePubsubComponent extends DefaultComponent {
             builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
         }
         return builder.build();
+    }
+
+    public SubscriberStub getSubscriberStub() throws IOException {
+        if (subscriberStub != null) {
+            return subscriberStub;
+        }
+        SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder().setTransportChannelProvider(
+                SubscriberStubSettings.defaultGrpcTransportProviderBuilder()
+                        .setMaxInboundMessageSize(20 << 20)
+                        .build());
+
+        if (StringUtils.isNotBlank(endpoint)) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+            builder.setTransportChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
+        }
+        subscriberStub = builder.build().createStub();
+        return subscriberStub;
     }
 
     public String getEndpoint() {

@@ -50,8 +50,8 @@ public class AcknowledgementTest extends PubsubTestSupport {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @BeforeClass
-    public static void createTopicSubscription() throws Exception {
+    @Override
+    public void createTopicSubscription() throws Exception {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 

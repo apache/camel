@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.util.concurrent.ExecutorService;
-
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.stub.SubscriberStub;
 import com.google.common.base.Strings;
-import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.*;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.google.pubsub.consumer.AcknowledgeSync;
 import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 class GooglePubsubConsumer extends DefaultConsumer {
 
@@ -85,8 +90,15 @@ class GooglePubsubConsumer extends DefaultConsumer {
                 localLog.debug("Subscribing to {}", subscriptionName);
             }
 
-            while (isRunAllowed() && !isSuspendingOrSuspended()) {
+            if (endpoint.getSynchronousPull()) {
+                synchronousPull(subscriptionName);
+            } else {
+                asynchronousPull(subscriptionName);
+            }
+        }
 
+        private void asynchronousPull(String subscriptionName) {
+            if (isRunAllowed() && !isSuspendingOrSuspended()) {
                 MessageReceiver messageReceiver = new CamelMessageReceiver(endpoint, processor);
 
                 Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver);
@@ -97,6 +109,46 @@ class GooglePubsubConsumer extends DefaultConsumer {
                     localLog.error("Failure getting messages from PubSub", e);
                 } finally {
                     subscriber.stopAsync();
+                }
+            }
+        }
+
+        private void synchronousPull(String subscriptionName) {
+            while (isRunAllowed() && !isSuspendingOrSuspended()) {
+                try (SubscriberStub subscriber = endpoint.getComponent().getSubscriberStub()) {
+
+                    PullRequest pullRequest = PullRequest.newBuilder()
+                            .setMaxMessages(endpoint.getMaxMessagesPerPoll())
+                            .setReturnImmediately(false)
+                            .setSubscription(subscriptionName)
+                            .build();
+
+                    PullResponse pullResponse = subscriber.pullCallable().call(pullRequest);
+                    for (ReceivedMessage message : pullResponse.getReceivedMessagesList()) {
+                        PubsubMessage pubsubMessage = message.getMessage();
+                        Exchange exchange = endpoint.createExchange();
+                        exchange.getIn().setBody(pubsubMessage.getData().toByteArray());
+
+                        exchange.getIn().setHeader(GooglePubsubConstants.ACK_ID, message.getAckId());
+                        exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, pubsubMessage.getMessageId());
+                        exchange.getIn().setHeader(GooglePubsubConstants.PUBLISH_TIME, pubsubMessage.getPublishTime());
+
+                        if (null != pubsubMessage.getAttributesMap()) {
+                            exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubsubMessage.getAttributesMap());
+                        }
+
+                        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new AcknowledgeSync(subscriber));
+                        }
+
+                        try {
+                            processor.process(exchange);
+                        } catch (Throwable e) {
+                            exchange.setException(e);
+                        }
+                    }
+                } catch (IOException e) {
+                    localLog.error("Failure getting messages from PubSub", e);
                 }
             }
         }

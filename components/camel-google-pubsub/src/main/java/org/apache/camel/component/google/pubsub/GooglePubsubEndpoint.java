@@ -62,6 +62,12 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(name = "concurrentConsumers", description = "The number of parallel streams consuming from the subscription", defaultValue = "1")
     private Integer concurrentConsumers = 1;
 
+    @UriParam(name = "maxMessagesPerPoll", description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
+    private Integer maxMessagesPerPoll = 1;
+
+    @UriParam(name = "synchronousPull", description = "Synchronously pull batches of messages", defaultValue = "false")
+    private Boolean synchronousPull = false;
+
     @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE", description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
 
@@ -147,6 +153,22 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void setConcurrentConsumers(Integer concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public Integer getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(Integer maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public Boolean getSynchronousPull() {
+        return synchronousPull;
+    }
+
+    public void setSynchronousPull(Boolean synchronousPull) {
+        this.synchronousPull = synchronousPull;
     }
 
     public GooglePubsubConstants.AckMode getAckMode() {
