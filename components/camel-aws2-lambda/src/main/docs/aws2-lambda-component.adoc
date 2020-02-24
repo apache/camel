@@ -1,11 +1,6 @@
 [[aws2-lambda-component]]
 = AWS Lambda Component
 
-*Since Camel 3.2*
-
-*Since Camel 3.2*
-
-
 // HEADER START
 *Only producer is supported*
 // HEADER END
