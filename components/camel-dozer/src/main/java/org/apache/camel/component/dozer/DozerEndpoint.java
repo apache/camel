@@ -18,6 +18,7 @@ package org.apache.camel.component.dozer;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -137,15 +138,22 @@ public class DozerEndpoint extends DefaultEndpoint {
                     config.getCustomConvertersWithId().putAll(getCustomConvertersWithId());
                 }
 
-                if (config.getMappingFiles() == null || config.getMappingFiles().size() <= 0) {
-                    URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
-                    config.setMappingFiles(Arrays.asList(url.toString()));
+                // if bean mapping builders have been defined skip loading the "default" mapping file.
+                if (isNullOrEmpty(configuration.getMappingConfiguration().getBeanMappingBuilders())) {
+                    if (config.getMappingFiles() == null || config.getMappingFiles().size() <= 0) {
+                        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
+                        config.setMappingFiles(Arrays.asList(url.toString()));
+                    }
                 }
             }
 
             MapperFactory factory = new MapperFactory(getCamelContext(), configuration.getMappingConfiguration());
             mapper = factory.create();
         }
+    }
+
+    private static boolean isNullOrEmpty(final Collection<?> collection) {
+        return null == collection || collection.isEmpty();
     }
 
     private Map<String, CustomConverter> getCustomConvertersWithId() {
