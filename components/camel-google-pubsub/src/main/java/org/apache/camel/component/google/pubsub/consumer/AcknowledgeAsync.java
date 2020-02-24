@@ -20,11 +20,11 @@ import com.google.cloud.pubsub.v1.AckReplyConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
 
-public class ExchangeAckTransaction implements Synchronization {
+public class AcknowledgeAsync implements Synchronization {
 
     private final AckReplyConsumer ackReplyConsumer;
 
-    public ExchangeAckTransaction(AckReplyConsumer ackReplyConsumer) {
+    public AcknowledgeAsync(AckReplyConsumer ackReplyConsumer) {
         this.ackReplyConsumer = ackReplyConsumer;
     }
 

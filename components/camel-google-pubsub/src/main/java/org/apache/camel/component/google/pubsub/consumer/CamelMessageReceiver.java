@@ -63,7 +63,7 @@ public class CamelMessageReceiver implements MessageReceiver {
         }
 
         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new ExchangeAckTransaction(ackReplyConsumer));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new AcknowledgeAsync(ackReplyConsumer));
         }
 
         try {
