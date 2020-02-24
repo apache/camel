@@ -24,7 +24,6 @@ import org.apache.camel.component.lucene.LuceneSearcher;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.util.Version;
 
 public class LuceneQueryProcessor implements Processor {
     private File indexDirectory;
