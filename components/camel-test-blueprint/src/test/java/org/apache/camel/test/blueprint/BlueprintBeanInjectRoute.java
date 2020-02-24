@@ -29,6 +29,7 @@ public class BlueprintBeanInjectRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:start")
+                .setProperty("MyProperty").simple("${bean:java.lang.System?method=currentTimeMillis}")
                 .process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
