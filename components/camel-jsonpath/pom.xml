@@ -58,7 +58,7 @@
         </dependency>
         <dependency>
             <groupId>net.minidev</groupId>
-            <artifactId>json-smart-action</artifactId>
+            <artifactId>json-smart</artifactId>
             <version>${json-smart-version}</version>
         </dependency>
         <dependency>
