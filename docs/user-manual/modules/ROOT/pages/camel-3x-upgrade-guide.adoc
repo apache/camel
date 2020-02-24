@@ -514,7 +514,7 @@ should be rewritten as:
 === EIPs with cacheSize option
 
 The `cacheSize` option on EIPs has been improved to reduce memory usage when the cache is disabled by
-setting the value to -1. One of the optimizations is that new endpoints will not added to the endpoint registry,
-but discarded after use. This avoids storing endpoints in the cache (memory) as the cache was disabled.
+setting the value to -1. One of the optimizations is that new endpoints will not be added to the endpoint registry,
+but discarded after use. This avoids storing additional endpoints in the cache (memory) as the cache should be disabled (cacheSize=-1).
 
 See more details in the documentation for the `cacheSize` option on the EIPs.
