@@ -531,36 +531,33 @@ public final class URISupport {
             return uri;
         }
 
-        // lets trim off any query arguments
-        if (path.startsWith("//")) {
-            path = path.substring(2);
-        }
-        int idx = path.indexOf('?');
-        // when the path has ?
-        if (idx != -1) {
-            path = path.substring(0, idx);
-        }
-
-        if (scheme.startsWith("http")) {
-            path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
+        // find start and end position in path as we only check the context-path and not the query parameters
+        int start = path.startsWith("//") ? 2 : 0;
+        int end = path.indexOf('?');
+        if (start == 0 && end == 0 || start == 2 && end == 2) {
+            // special when there is no context path
+            path = "";
         } else {
-            path = UnsafeUriCharactersEncoder.encode(path);
+            if (start != 0 && end == -1) {
+                path = path.substring(start);
+            } else if (end != -1) {
+                path = path.substring(start, end);
+            }
+            if (scheme.startsWith("http")) {
+                path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
+            } else {
+                path = UnsafeUriCharactersEncoder.encode(path);
+            }
         }
 
-        // okay if we have user info in the path and they use @ in username or
-        // password,
-        // then we need to encode them (but leave the last @ sign before the
-        // hostname)
-        // this is needed as Camel end users may not encode their user info
-        // properly, but expect
-        // this to work out of the box with Camel, and hence we need to fix it
-        // for them
-        String userInfoPath = path;
-        idx = userInfoPath.indexOf('/');
-        if (idx != -1) {
-            userInfoPath = userInfoPath.substring(0, idx);
-        }
-        if (StringHelper.countChar(userInfoPath, '@') > 1) {
+        // okay if we have user info in the path and they use @ in username or password,
+        // then we need to encode them (but leave the last @ sign before the hostname)
+        // this is needed as Camel end users may not encode their user info properly,
+        // but expect this to work out of the box with Camel, and hence we need to
+        // fix it for them
+        int idxPath = path.indexOf('/');
+        if (StringHelper.countChar(path, '@', idxPath) > 1) {
+            String userInfoPath = idxPath > 0 ? path.substring(0, idxPath) : path;
             int max = userInfoPath.lastIndexOf('@');
             String before = userInfoPath.substring(0, max);
             // after must be from original path
@@ -596,7 +593,18 @@ public final class URISupport {
 
     private static String buildUri(String scheme, String path, String query) {
         // must include :// to do a correct URI all components can work with
-        return scheme + "://" + path + (query != null ? "?" + query : "");
+        int len;
+        if (query != null) {
+            len = scheme.length() + 3 + path.length() + 1 + query.length();
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(scheme).append("://").append(path).append('?').append(query);
+            return sb.toString();
+        } else {
+            len = scheme.length() + 3 + path.length();
+            StringBuilder sb = new StringBuilder(len);
+            sb.append(scheme).append("://").append(path);
+            return sb.toString();
+        }
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {

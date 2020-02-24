@@ -92,15 +92,18 @@ public final class UnsafeUriCharactersEncoder {
 
     // Just skip the encode for isRAW part
     public static String encode(String s, BitSet unsafeCharacters, boolean checkRaw) {
-        if (s == null || s.length() == 0) {
+        if (s == null) {
+            return null;
+        }
+        int len = s.length();
+        if (len == 0) {
             return s;
         }
 
         // first check whether we actually need to encode
-        char[] chars = s.toCharArray();
-        int len = chars.length;
         boolean safe = true;
-        for (char ch : chars) {
+        for (int i = 0; i < len; i++) {
+            char ch = s.charAt(i);
             // just deal with the ascii character
             if (ch > 0 && ch < 128 && unsafeCharacters.get(ch)) {
                 safe = false;
@@ -116,7 +119,6 @@ public final class UnsafeUriCharactersEncoder {
             rawPairs = URISupport.scanRaw(s);
         }
 
-
         // add a bit of extra space as initial capacity
         int initial = len + 8;
 
@@ -124,12 +126,12 @@ public final class UnsafeUriCharactersEncoder {
         // see details at: http://en.wikipedia.org/wiki/Url_encode
         StringBuilder sb = new StringBuilder(initial);
         for (int i = 0; i < len; i++) {
-            char ch = chars[i];
+            char ch = s.charAt(i);
             if (ch > 0 && ch < 128 && unsafeCharacters.get(ch)) {
                 // special for % sign as it may be a decimal encoded value
                 if (ch == '%') {
-                    char next = i + 1 < len ? chars[i + 1] : ' ';
-                    char next2 = i + 2 < len ? chars[i + 2] : ' ';
+                    char next = i + 1 < len ? s.charAt(i + 1) : ' ';
+                    char next2 = i + 2 < len ? s.charAt(i + 2) : ' ';
 
                     if (isHexDigit(next) && isHexDigit(next2) && !URISupport.isRaw(i, rawPairs)) {
                         // its already encoded (decimal encoded) so just append as is

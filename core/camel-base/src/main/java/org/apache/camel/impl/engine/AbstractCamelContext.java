@@ -763,12 +763,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         LOG.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 
-        Endpoint answer;
         String scheme = null;
-        // use optimized method to get the endpoint uri
-        EndpointKey key = getEndpointKeyPreNormalized(uri);
-        // only lookup and reuse existing endpoints if not prototype scoped
-        answer = prototype ? null : endpoints.get(key);
+        Endpoint answer = null;
+        if (!prototype) {
+            // use optimized method to get the endpoint uri
+            EndpointKey key = getEndpointKeyPreNormalized(uri);
+            // only lookup and reuse existing endpoints if not prototype scoped
+            answer = endpoints.get(key);
+        }
         if (answer == null) {
             try {
                 // Use the URI prefix to find the component.
