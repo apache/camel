@@ -593,14 +593,13 @@ public final class URISupport {
 
     private static String buildUri(String scheme, String path, String query) {
         // must include :// to do a correct URI all components can work with
-        int len;
+        int len = scheme.length() + 3 + path.length();
         if (query != null) {
-            len = scheme.length() + 3 + path.length() + 1 + query.length();
+            len += 1 + query.length();
             StringBuilder sb = new StringBuilder(len);
             sb.append(scheme).append("://").append(path).append('?').append(query);
             return sb.toString();
         } else {
-            len = scheme.length() + 3 + path.length();
             StringBuilder sb = new StringBuilder(len);
             sb.append(scheme).append("://").append(path);
             return sb.toString();
