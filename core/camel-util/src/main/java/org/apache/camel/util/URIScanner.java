@@ -34,9 +34,6 @@ import static org.apache.camel.util.URISupport.RAW_TOKEN_START;
  */
 class URIScanner {
 
-    private static final String RAW_START_ONE = RAW_TOKEN_PREFIX + RAW_TOKEN_START[0];
-    private static final String RAW_START_TWO = RAW_TOKEN_PREFIX + RAW_TOKEN_START[1];
-
     // TODO: when upgrading to JDK11 as minimum then use java.nio.Charset
     private static final String CHARSET = "UTF-8";
 
