@@ -472,6 +472,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public Component hasComponent(String componentName) {
+        if (components.isEmpty()) {
+            return null;
+        }
         return components.get(componentName);
     }
 
@@ -672,6 +675,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public Endpoint hasEndpoint(String uri) {
+        if (endpoints.isEmpty()) {
+            return null;
+        }
         return endpoints.get(getEndpointKey(uri));
     }
 
@@ -1504,6 +1510,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public boolean hasService(Object object) {
+        if (servicesToStop.isEmpty()) {
+            return false;
+        }
         if (object instanceof Service) {
             Service service = (Service)object;
             return servicesToStop.contains(service);
@@ -1513,6 +1522,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public <T> T hasService(Class<T> type) {
+        if (servicesToStop.isEmpty()) {
+            return null;
+        }
         for (Service service : servicesToStop) {
             if (type.isInstance(service)) {
                 return type.cast(service);
@@ -1522,7 +1534,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Set<T> hasServices(Class<T> type) {
+        if (servicesToStop.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
         Set<T> set = new HashSet<>();
         for (Service service : servicesToStop) {
             if (type.isInstance(service)) {
