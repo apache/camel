@@ -672,7 +672,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
-    <bundle dependency='true'>mvn:net.minidev/json-smart-action/${json-smart-version}</bundle>
+    <bundle dependency='true'>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
     <bundle dependency='true'>mvn:net.minidev/accessors-smart/${json-accessors-smart-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.chunk-templates/${chunk-templates-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-chunk/${project.version}</bundle>
@@ -1582,7 +1582,7 @@
   <feature name='camel-jsonpath' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:com.jayway.jsonpath/json-path/${json-path-version}</bundle>
-    <bundle>mvn:net.minidev/json-smart-action/${json-smart-version}</bundle>
+    <bundle>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
     <bundle>mvn:net.minidev/accessors-smart/${json-accessors-smart-version}</bundle>
     <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
