@@ -28,14 +28,18 @@ import org.apache.camel.spi.Synchronization;
 public class AcknowledgeSync implements Synchronization {
 
     private final SubscriberStub subscriber;
+    private final String subscriptionName;
 
-    public AcknowledgeSync(SubscriberStub subscriber) {
+    public AcknowledgeSync(SubscriberStub subscriber, String subscriptionName) {
         this.subscriber = subscriber;
+        this.subscriptionName = subscriptionName;
     }
 
     @Override
     public void onComplete(Exchange exchange) {
-        AcknowledgeRequest ackRequest = AcknowledgeRequest.newBuilder().addAllAckIds(getAckIdList(exchange)).build();
+        AcknowledgeRequest ackRequest = AcknowledgeRequest.newBuilder()
+                .addAllAckIds(getAckIdList(exchange))
+                .setSubscription(subscriptionName).build();
         try {
             subscriber.acknowledgeCallable().call(ackRequest);
         } catch (Exception e) {
