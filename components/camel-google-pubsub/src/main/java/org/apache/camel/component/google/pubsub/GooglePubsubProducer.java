@@ -16,16 +16,8 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.google.api.client.util.Strings;
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutures;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
@@ -33,6 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Generic PubSub Producer
@@ -60,79 +58,54 @@ public class GooglePubsubProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        List<Exchange> entryList = prepareExchangeList(exchange);
-
-        if (entryList == null || entryList.size() == 0) {
-            logger.warn("The incoming message is either null or empty. Triggered by an aggregation timeout?");
-            return;
-        }
-
         if (logger.isDebugEnabled()) {
             logger.debug("uploader thread/id: " + Thread.currentThread().getId() + " / " + exchange.getExchangeId() + " . api call completed.");
         }
 
-        sendMessages(entryList);
-    }
-
-    /**
-     * The method converts a single incoming message into a List
-     */
-    private static List<Exchange> prepareExchangeList(Exchange exchange) {
-
-        List<Exchange> entryList = null;
-
-        if (null == exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
-            entryList = new ArrayList<>();
-            entryList.add(exchange);
+        if (exchange.getIn().getBody() instanceof List) {
+            boolean groupedExchanges = false;
+            for (Object body : exchange.getIn().getBody(List.class)) {
+                if (body instanceof Exchange) {
+                    send((Exchange) body);
+                    groupedExchanges = true;
+                }
+            }
+            if (!groupedExchanges) {
+                send(exchange);
+            }
         } else {
-            entryList = (List<Exchange>) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
+            send(exchange);
         }
-
-        return entryList;
     }
 
-    private void sendMessages(List<Exchange> exchanges) throws Exception {
+    private void send(Exchange exchange) throws Exception {
 
         GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint) getEndpoint();
         String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
-        List<ApiFuture<String>> messageIdFutures = new ArrayList<>();
-        try {
-            Publisher publisher = endpoint.getComponent().getPublisher(topicName);
 
-            for (Exchange exchange : exchanges) {
-                Object body = exchange.getIn().getBody();
-                ByteString byteString;
+        Publisher publisher = endpoint.getComponent().getPublisher(topicName);
 
-                if (body instanceof String) {
-                    byteString = ByteString.copyFromUtf8((String) body);
-                } else if (body instanceof byte[]) {
-                    byteString = ByteString.copyFrom((byte[]) body);
-                } else {
-                    byteString = ByteString.copyFrom(serialize(body));
-                }
+        Object body = exchange.getIn().getBody();
+        ByteString byteString;
 
-                PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
-
-                Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
-                if (attributes != null) {
-                    messageBuilder.putAllAttributes(attributes).build();
-                }
-                PubsubMessage message = messageBuilder.build();
-
-                ApiFuture<String> messageIdFuture = publisher.publish(message);
-                messageIdFutures.add(messageIdFuture);
-            }
-        } finally {
-            List<String> messageIds = ApiFutures.allAsList(messageIdFutures).get();
-
-            if (!messageIds.isEmpty()) {
-                int i = 0;
-                for (Exchange entry : exchanges) {
-                    entry.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIds.get(i));
-                    i++;
-                }
-            }
+        if (body instanceof String) {
+            byteString = ByteString.copyFromUtf8((String) body);
+        } else if (body instanceof byte[]) {
+            byteString = ByteString.copyFrom((byte[]) body);
+        } else {
+            byteString = ByteString.copyFrom(serialize(body));
         }
+
+        PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
+
+        Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
+        if (attributes != null) {
+            messageBuilder.putAllAttributes(attributes).build();
+        }
+        PubsubMessage message = messageBuilder.build();
+
+        ApiFuture<String> messageIdFuture = publisher.publish(message);
+        exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIdFuture.get());
     }
 
     public static byte[] serialize(Object obj) throws IOException {

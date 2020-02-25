@@ -102,8 +102,5 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
         // Send result section
         List<Exchange> results = sendResult.getExchanges();
         assertEquals("Received exchanges", 1, results.size());
-
-        List exchangeGrouped = (List)results.get(0).getProperty(Exchange.GROUPED_EXCHANGE);
-        assertEquals("Received messages within the exchange", 2, exchangeGrouped.size());
     }
 }

@@ -50,15 +50,20 @@ public class AcknowledgeSync implements Synchronization {
     private List<String> getAckIdList(Exchange exchange) {
         List<String> ackList = new ArrayList<>();
 
-        if (null != exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
-            for (Exchange ex : (List<Exchange>) exchange.getProperty(Exchange.GROUPED_EXCHANGE)) {
-                String ackId = (String) ex.getIn().getHeader(GooglePubsubConstants.ACK_ID);
-                if (null != ackId) {
-                    ackList.add(ackId);
+        if (exchange.getIn().getBody() instanceof List) {
+            for (Object body : exchange.getIn().getBody(List.class)) {
+                if (body instanceof Exchange) {
+                    String ackId = exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID, String.class);
+                    if (null != ackId) {
+                        ackList.add(ackId);
+                    }
                 }
             }
-        } else {
-            ackList.add((String) exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
+        }
+
+        String ackId = exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID, String.class);
+        if (null != ackId) {
+            ackList.add(ackId);
         }
 
         return ackList;
