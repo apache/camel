@@ -29,12 +29,12 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "consumerNamePrefix": target.getPulsarConfiguration().setConsumerNamePrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "consumerqueuesize":
         case "consumerQueueSize": target.getPulsarConfiguration().setConsumerQueueSize(property(camelContext, int.class, value)); return true;
-        case "negativeackredeliverydelaymicros":
-        case "negativeAckRedeliveryDelayMicros": target.getPulsarConfiguration().setNegativeAckRedeliveryDelayMicros(property(camelContext, long.class, value)); return true;
         case "deadlettertopic":
         case "deadLetterTopic": target.getPulsarConfiguration().setDeadLetterTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "maxredelivercount":
         case "maxRedeliverCount": target.getPulsarConfiguration().setMaxRedeliverCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "negativeackredeliverydelaymicros":
+        case "negativeAckRedeliveryDelayMicros": target.getPulsarConfiguration().setNegativeAckRedeliveryDelayMicros(property(camelContext, long.class, value)); return true;
         case "numberofconsumers":
         case "numberOfConsumers": target.getPulsarConfiguration().setNumberOfConsumers(property(camelContext, int.class, value)); return true;
         case "subscriptioninitialposition":

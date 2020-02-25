@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (29 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,6 +88,8 @@ with the following path and query parameters:
 | *consumerName* (consumer) | Name of the consumer when subscription is EXCLUSIVE | sole-consumer | String
 | *consumerNamePrefix* (consumer) | Prefix to add to consumer names when a SHARED or FAILOVER subscription is used | cons | String
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
+| *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
+| *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
 | *negativeAckRedeliveryDelay Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. The value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
