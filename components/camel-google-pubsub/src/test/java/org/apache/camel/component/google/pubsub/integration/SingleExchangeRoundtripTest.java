@@ -47,7 +47,7 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
     @EndpointInject("mock:sendResult")
     private MockEndpoint sendResult;
 
-    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=true")
     private Endpoint pubsubSubscription;
 
     @EndpointInject("mock:receiveResult")
@@ -56,13 +56,13 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
     @Produce("direct:from")
     private ProducerTemplate producer;
 
-    @BeforeClass
-    public static void createTopicSubscription() throws Exception {
+    @Override
+    public void createTopicSubscription() {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(directIn).routeId("Single_Send").to(pubsubTopic).to(sendResult);

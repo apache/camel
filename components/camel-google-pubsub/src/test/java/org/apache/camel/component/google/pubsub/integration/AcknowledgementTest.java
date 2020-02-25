@@ -51,7 +51,7 @@ public class AcknowledgementTest extends PubsubTestSupport {
     private ProducerTemplate producer;
 
     @Override
-    public void createTopicSubscription() throws Exception {
+    public void createTopicSubscription() {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
