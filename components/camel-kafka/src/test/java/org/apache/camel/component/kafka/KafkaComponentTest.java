@@ -51,13 +51,13 @@ public class KafkaComponentTest extends CamelTestSupport {
     @Test
     public void testBrokersOnComponent() throws Exception {
         KafkaComponent kafka = context.getComponent("kafka", KafkaComponent.class);
-        kafka.setBrokers("broker1:12345,broker2:12566");
+        kafka.getConfiguration().setBrokers("broker1:12345,broker2:12566");
 
         String uri = "kafka:mytopic?partitioner=com.class.Party";
 
         KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
         assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
-        assertEquals("broker1:12345,broker2:12566", endpoint.getComponent().getBrokers());
+        assertEquals("broker1:12345,broker2:12566", endpoint.getComponent().getConfiguration().getBrokers());
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
     }
