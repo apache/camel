@@ -53,7 +53,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             // fallback to default implementation if factory did not create the
             // processor
             if (afterProcessor == null) {
-                afterProcessor = reifier(route, to).createProcessor();
+                afterProcessor = createProcessor(to);
             }
         }
         final Processor after = afterProcessor;
