@@ -50,7 +50,7 @@ public interface LifecycleStrategy {
     void onContextStop(CamelContext context);
 
     /**
-     * Notification on adding an {@link org.apache.camel.Component}.
+     * Notification on adding an {@link Component}.
      *
      * @param name      the unique name of this component
      * @param component the added component
@@ -58,7 +58,7 @@ public interface LifecycleStrategy {
     void onComponentAdd(String name, Component component);
 
     /**
-     * Notification on removing an {@link org.apache.camel.Component}.
+     * Notification on removing an {@link Component}.
      *
      * @param name      the unique name of this component
      * @param component the removed component
@@ -86,7 +86,7 @@ public interface LifecycleStrategy {
      * @param service the added service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceAdd(CamelContext context, Service service, org.apache.camel.Route route);
+    void onServiceAdd(CamelContext context, Service service, Route route);
 
     /**
      * Notification on removing a {@link Service}.
@@ -95,21 +95,21 @@ public interface LifecycleStrategy {
      * @param service the removed service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceRemove(CamelContext context, Service service, org.apache.camel.Route route);
+    void onServiceRemove(CamelContext context, Service service, Route route);
 
     /**
-     * Notification on adding {@link org.apache.camel.Route}(s).
+     * Notification on adding {@link Route}(s).
      *
      * @param routes the added routes
      */
-    void onRoutesAdd(Collection<org.apache.camel.Route> routes);
+    void onRoutesAdd(Collection<Route> routes);
 
     /**
-     * Notification on removing {@link org.apache.camel.Route}(s).
+     * Notification on removing {@link Route}(s).
      *
      * @param routes the removed routes
      */
-    void onRoutesRemove(Collection<org.apache.camel.Route> routes);
+    void onRoutesRemove(Collection<Route> routes);
 
     /**
      * Notification on adding {@link Route}(s).
