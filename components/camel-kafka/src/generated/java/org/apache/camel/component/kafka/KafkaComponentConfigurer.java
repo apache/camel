@@ -15,7 +15,6 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KafkaComponent target = (KafkaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "brokers": target.setBrokers(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.kafka.KafkaConfiguration.class, value)); return true;
         case "allowmanualcommit":
         case "allowManualCommit": target.setAllowManualCommit(property(camelContext, boolean.class, value)); return true;

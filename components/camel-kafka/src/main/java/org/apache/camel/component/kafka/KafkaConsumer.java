@@ -72,11 +72,7 @@ public class KafkaConsumer extends DefaultConsumer {
         this.processor = processor;
         this.pollTimeoutMs = endpoint.getConfiguration().getPollTimeoutMs();
 
-        // brokers can be configured on endpoint or component level
         String brokers = endpoint.getConfiguration().getBrokers();
-        if (brokers == null) {
-            brokers = endpoint.getComponent().getBrokers();
-        }
         if (ObjectHelper.isEmpty(brokers)) {
             throw new IllegalArgumentException("Brokers must be configured");
         }
@@ -86,13 +82,9 @@ public class KafkaConsumer extends DefaultConsumer {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
         endpoint.updateClassProperties(props);
 
-        // brokers can be configured on endpoint or component level
         String brokers = endpoint.getConfiguration().getBrokers();
         if (brokers == null) {
-            brokers = endpoint.getComponent().getBrokers();
-        }
-        if (brokers == null) {
-            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option on either the component or endpoint.");
+            throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option.");
         }
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);

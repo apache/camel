@@ -49,20 +49,6 @@ public interface KafkaComponentBuilderFactory {
      */
     interface KafkaComponentBuilder extends ComponentBuilder<KafkaComponent> {
         /**
-         * URL of the Kafka brokers to use. The format is
-         * host1:port1,host2:port2, and the list can be a subset of brokers or a
-         * VIP pointing to a subset of brokers. This option is known as
-         * bootstrap.servers in the Kafka documentation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KafkaComponentBuilder brokers(java.lang.String brokers) {
-            doSetProperty("brokers", brokers);
-            return this;
-        }
-        /**
          * Allows to pre-configure the Kafka component with common options that
          * the endpoints will reuse.
          * 
@@ -232,7 +218,6 @@ public interface KafkaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "brokers": ((KafkaComponent) component).setBrokers((java.lang.String) value); return true;
             case "configuration": ((KafkaComponent) component).setConfiguration((org.apache.camel.component.kafka.KafkaConfiguration) value); return true;
             case "allowManualCommit": ((KafkaComponent) component).setAllowManualCommit((boolean) value); return true;
             case "breakOnFirstError": ((KafkaComponent) component).setBreakOnFirstError((boolean) value); return true;
