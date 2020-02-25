@@ -55,7 +55,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
     }
 
     private void sendOutMessage(Exchange exchange) throws QFJException {
-        Message camelMessage = exchange.getOut();
+        Message camelMessage = exchange.getMessage();
         quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
 
         LOG.debug("Sending FIX message reply: {}", quickfixjMessage);
