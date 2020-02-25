@@ -23,9 +23,9 @@ public class MyProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        exchange.getMessage().setHeader("Status", "Done");
+        exchange.getOut().setHeader("Status", "Done");
         String result = exchange.getIn().getBody() + " is processed";
-        exchange.getMessage().setBody(result);
+        exchange.getOut().setBody(result);
     }
 
 }
