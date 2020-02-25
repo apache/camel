@@ -72,8 +72,6 @@ public class GooglePubsubComponent extends DefaultComponent {
     )
     private int publisherTerminationTimeout = 60000;
 
-    private SubscriberStub subscriberStub;
-
     private RemovalListener<String, Publisher> removalListener = removal -> {
         Publisher publisher = removal.getValue();
         if (publisher == null) {
@@ -149,9 +147,6 @@ public class GooglePubsubComponent extends DefaultComponent {
     }
 
     public SubscriberStub getSubscriberStub() throws IOException {
-        if (subscriberStub != null) {
-            return subscriberStub;
-        }
         SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder().setTransportChannelProvider(
                 SubscriberStubSettings.defaultGrpcTransportProviderBuilder().build());
 
@@ -162,8 +157,7 @@ public class GooglePubsubComponent extends DefaultComponent {
             CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
             builder.setTransportChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
         }
-        subscriberStub = builder.build().createStub();
-        return subscriberStub;
+        return builder.build().createStub();
     }
 
     public String getEndpoint() {
