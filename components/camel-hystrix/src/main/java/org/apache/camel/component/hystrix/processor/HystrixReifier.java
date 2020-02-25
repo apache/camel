@@ -50,7 +50,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
         Processor processor = createChildProcessor(true);
         Processor fallback = null;
         if (definition.getOnFallback() != null) {
-            fallback = ProcessorReifier.reifier(route, definition.getOnFallback()).createProcessor();
+            fallback = createProcessor(definition.getOnFallback());
         }
 
         final HystrixConfigurationDefinition config = buildHystrixConfiguration();
