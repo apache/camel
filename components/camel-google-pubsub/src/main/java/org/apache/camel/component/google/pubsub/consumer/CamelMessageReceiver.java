@@ -46,14 +46,12 @@ public class CamelMessageReceiver implements MessageReceiver {
 
     @Override
     public void receiveMessage(PubsubMessage pubsubMessage, AckReplyConsumer ackReplyConsumer) {
-        byte[] body = pubsubMessage.getData().toByteArray();
-
         if (localLog.isTraceEnabled()) {
             localLog.trace("Received message ID : {}", pubsubMessage.getMessageId());
         }
 
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(body);
+        exchange.getIn().setBody(pubsubMessage.getData().toByteArray());
 
         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, pubsubMessage.getMessageId());
         exchange.getIn().setHeader(GooglePubsubConstants.PUBLISH_TIME, pubsubMessage.getPublishTime());

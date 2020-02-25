@@ -64,5 +64,3 @@ public class AcknowledgeSync implements Synchronization {
         return ackList;
     }
 }
-
-

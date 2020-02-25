@@ -38,5 +38,3 @@ public class AcknowledgeAsync implements Synchronization {
         ackReplyConsumer.nack();
     }
 }
-
-
