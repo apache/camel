@@ -1,12 +1,12 @@
 = Walk through an Example Code
 
 This mini-guide takes you through the source code of a
-https://github.com/apache/camel/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[simple
+https://github.com/apache/camel-examples/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[simple
 example].
 
 Camel can be configured either by using xref:spring.adoc[Spring] or
 directly in Java - which
-https://github.com/apache/camel/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[this
+https://github.com/apache/camel-examples/blob/master/examples/camel-example-jms-file/src/main/java/org/apache/camel/example/jmstofile/CamelJmsToFileExample.java[this
 example does].
 
 We start with creating a xref:camelcontext.adoc[CamelContext] - which is
