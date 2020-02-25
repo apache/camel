@@ -57,6 +57,10 @@ public class PulsarConfiguration {
     private long ackGroupTimeMillis = 100;
     @UriParam(label = "consumer", defaultValue = "LATEST")
     private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
+    @UriParam(label = "consumer", description = "Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created")
+    private Integer maxRedeliverCount;
+    @UriParam(label = "consumer", description = "Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ")
+    private String deadLetterTopic;
     @UriParam(label = "producer", description = "Send timeout in milliseconds", defaultValue = "30000")
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer", description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError", defaultValue = "false")
@@ -365,5 +369,20 @@ public class PulsarConfiguration {
      */
     public void setNegativeAckRedeliveryDelayMicros(long negativeAckRedeliveryDelayMicros) {
         this.negativeAckRedeliveryDelayMicros = negativeAckRedeliveryDelayMicros;
+    }
+    public Integer getMaxRedeliverCount() {
+        return maxRedeliverCount;
+    }
+
+    public void setMaxRedeliverCount(Integer maxRedeliverCount) {
+        this.maxRedeliverCount = maxRedeliverCount;
+    }
+
+    public String getDeadLetterTopic() {
+        return deadLetterTopic;
+    }
+
+    public void setDeadLetterTopic(String deadLetterTopic) {
+        this.deadLetterTopic = deadLetterTopic;
     }
 }
