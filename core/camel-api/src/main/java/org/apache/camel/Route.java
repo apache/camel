@@ -233,7 +233,6 @@ public interface Route extends RuntimeConfiguration {
 
     /**
      * This method retrieves the event driven Processors on this route context.
-     * @return
      */
     List<Processor> getEventDrivenProcessors();
 
