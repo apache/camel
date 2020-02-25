@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.google.pubsub.consumer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
 import com.google.pubsub.v1.AcknowledgeRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.spi.Synchronization;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AcknowledgeSync implements Synchronization {
 

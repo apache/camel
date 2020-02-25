@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
+import java.io.IOException;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,8 +30,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
-import java.io.IOException;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AckModeNoneTest extends PubsubTestSupport {

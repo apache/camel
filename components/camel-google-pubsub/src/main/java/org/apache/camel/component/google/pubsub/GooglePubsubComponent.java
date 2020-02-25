@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -37,11 +42,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
  */
@@ -52,7 +52,7 @@ public class GooglePubsubComponent extends DefaultComponent {
             label = "common",
             description = "Endpoint to use with local Pub/Sub emulator."
     )
-    private String endpoint = null;
+    private String endpoint;
 
     @Metadata(
             label = "producer",
@@ -72,6 +72,8 @@ public class GooglePubsubComponent extends DefaultComponent {
     )
     private int publisherTerminationTimeout = 60000;
 
+    private SubscriberStub subscriberStub;
+
     private RemovalListener<String, Publisher> removalListener = removal -> {
         Publisher publisher = removal.getValue();
         if (publisher == null) {
@@ -90,8 +92,6 @@ public class GooglePubsubComponent extends DefaultComponent {
             .maximumSize(publisherCacheSize)
             .removalListener(removalListener)
             .build();
-
-    SubscriberStub subscriberStub;
 
     public GooglePubsubComponent() {
     }
@@ -153,9 +153,7 @@ public class GooglePubsubComponent extends DefaultComponent {
             return subscriberStub;
         }
         SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder().setTransportChannelProvider(
-                SubscriberStubSettings.defaultGrpcTransportProviderBuilder()
-                        .setMaxInboundMessageSize(20 << 20)
-                        .build());
+                SubscriberStubSettings.defaultGrpcTransportProviderBuilder().build());
 
         if (StringUtils.isNotBlank(endpoint)) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
