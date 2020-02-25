@@ -424,7 +424,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return producerCache.doInAsyncProducer(endpoint, exchange, callback, (p, ex, cb) -> {
 
             // rework error handling to support fine grained error handling
-            Route route = ex.getUnitOfWork() != null ? ex.getUnitOfWork().getRoute() : null;
+            Route route = ExchangeHelper.getRoute(ex);
             AsyncProcessor target = createErrorHandler(route, ex, p, endpoint);
 
             // set property which endpoint we send to and the producer that can do it

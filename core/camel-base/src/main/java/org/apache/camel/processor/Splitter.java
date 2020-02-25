@@ -145,7 +145,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             this.value = value;
             this.iterator = ObjectHelper.createIterator(value);
             this.copy = copyAndPrepareSubExchange(exchange, true);
-            this.route = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRoute() : null;
+            this.route = ExchangeHelper.getRoute(exchange);
         }
 
         @Override

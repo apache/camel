@@ -254,7 +254,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         setToEndpoint(copy, producer);
 
         // rework error handling to support fine grained error handling
-        Route route = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRoute() : null;
+        Route route = ExchangeHelper.getRoute(exchange);
         Processor prepared = createErrorHandler(route, copy, producer);
 
         // invoke on prepare on the exchange if specified

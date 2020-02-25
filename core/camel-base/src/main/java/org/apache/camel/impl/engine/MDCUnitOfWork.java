@@ -106,7 +106,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     @Override
     public Route popRoute() {
         Route answer = super.popRoute();
-
         // restore old route id back again after we have popped
         Route previous = getRoute();
         if (previous != null) {

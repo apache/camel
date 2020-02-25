@@ -661,7 +661,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             // and add the pair
-            Route route = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRoute() : null;
+            Route route = ExchangeHelper.getRoute(exchange);
             result.add(createProcessorExchangePair(index++, processor, copy, route));
         }
 
