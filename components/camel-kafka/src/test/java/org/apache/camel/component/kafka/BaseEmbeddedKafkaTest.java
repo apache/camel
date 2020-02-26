@@ -62,7 +62,7 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
         KafkaComponent kafka = new KafkaComponent(context);
         kafka.init();
-        kafka.setBrokers(kafkaBroker.getBootstrapServers());
+        kafka.getConfiguration().setBrokers(kafkaBroker.getBootstrapServers());
         context.addComponent("kafka", kafka);
 
         return context;

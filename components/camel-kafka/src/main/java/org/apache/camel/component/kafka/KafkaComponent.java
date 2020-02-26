@@ -31,7 +31,7 @@ import org.apache.camel.util.PropertiesHelper;
 @Component("kafka")
 public class KafkaComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    private KafkaConfiguration configuration;
+    private KafkaConfiguration configuration = new KafkaConfiguration();
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
@@ -100,25 +100,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
      */
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getBrokers() {
-        return configuration != null ? configuration.getBrokers() : null;
-    }
-
-    /**
-     * URL of the Kafka brokers to use. The format is host1:port1,host2:port2,
-     * and the list can be a subset of brokers or a VIP pointing to a subset of
-     * brokers.
-     * <p/>
-     * This option is known as <tt>bootstrap.servers</tt> in the Kafka
-     * documentation.
-     */
-    public void setBrokers(String brokers) {
-        if (configuration == null) {
-            configuration = new KafkaConfiguration();
-        }
-        configuration.setBrokers(brokers);
     }
 
     public ExecutorService getWorkerPool() {
