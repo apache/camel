@@ -24,7 +24,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, java.lang.Integer.class, value)); return true;
         case "synchronouspull":
-        case "synchronousPull": target.setSynchronousPull(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "synchronousPull": target.setSynchronousPull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
