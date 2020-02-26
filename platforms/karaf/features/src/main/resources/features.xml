@@ -1139,7 +1139,7 @@
     <bundle dependency='true'>wrap:mvn:com.google.api.grpc/proto-google-common-protos/${google-proto-common-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api.grpc/proto-google-cloud-pubsub-v1/${google-proto-pubsub-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api.grpc/proto-google-iam-v1/${google-proto-iam-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${grpc-guava-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api/gax/${google-gax-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-oauth2-http/${grpc-google-auth-library-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-http-jackson2-version}</bundle>
