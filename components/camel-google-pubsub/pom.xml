@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${grpc-guava-version}</version>
+            <version>${google-pubsub-guava-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
