@@ -16,35 +16,34 @@
  */
 package org.apache.camel.tooling.model;
 
-public class LanguageModel extends BaseArtifactModel<LanguageModel.LanguageOptionModel> {
+public abstract class BaseArtifactModel<O extends BaseOptionModel> extends BaseModel<O> {
 
-    protected String modelName;
-    protected String modelJavaType;
-    public static class LanguageOptionModel extends BaseOptionModel {
+    protected String groupId;
+    protected String artifactId;
+    protected String version;
 
+    public String getGroupId() {
+        return groupId;
     }
 
-    public LanguageModel() {
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
-    @Override
-    public String getKind() {
-        return "language";
+    public String getArtifactId() {
+        return artifactId;
     }
 
-    public String getModelName() {
-        return modelName;
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
+    public String getVersion() {
+        return version;
     }
 
-    public String getModelJavaType() {
-        return modelJavaType;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public void setModelJavaType(String modelJavaType) {
-        this.modelJavaType = modelJavaType;
-    }
 }
