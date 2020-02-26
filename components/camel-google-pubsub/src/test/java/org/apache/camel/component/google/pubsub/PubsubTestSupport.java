@@ -42,12 +42,10 @@ import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 public class PubsubTestSupport extends CamelTestSupport {
 
     public static final String PROJECT_ID;
-    public static final String SERVICE_URL;
 
     static {
         Properties testProperties = loadProperties();
         PROJECT_ID = testProperties.getProperty("project.id");
-        SERVICE_URL = testProperties.getProperty("test.serviceURL");
     }
 
     @ClassRule
