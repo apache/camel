@@ -100,46 +100,49 @@ public class PubsubTestSupport extends CamelTestSupport {
     }
 
     public void createTopicSubscriptionPair(String topicName, String subscriptionName, int ackDeadlineSeconds) {
-
-        Integer port = container.getFirstMappedPort();
-        ManagedChannel channel = ManagedChannelBuilder
-                .forTarget(String.format("%s:%s", "localhost", port))
-                .usePlaintext()
-                .build();
-
-        FixedTransportChannelProvider channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
-
-        CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
-
-        ProjectTopicName projectTopicName = ProjectTopicName.of(PROJECT_ID, topicName);
-        ProjectSubscriptionName projectSubscriptionName = ProjectSubscriptionName.of(PROJECT_ID, subscriptionName);
+        ManagedChannel channel = null;
+        TopicAdminClient topicAdminClient = null;
+        SubscriptionAdminClient subscriptionAdminClient = null;
 
         try {
-            SubscriptionAdminSettings subscriptionAdminSettings = null;
+            Integer port = container.getFirstMappedPort();
+            channel = ManagedChannelBuilder
+                    .forTarget(String.format("%s:%s", "localhost", port))
+                    .usePlaintext()
+                    .build();
 
-            TopicAdminClient topicAdminClient = null;
+            FixedTransportChannelProvider channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+
+            ProjectTopicName projectTopicName = ProjectTopicName.of(PROJECT_ID, topicName);
+            ProjectSubscriptionName projectSubscriptionName = ProjectSubscriptionName.of(PROJECT_ID, subscriptionName);
 
             topicAdminClient = TopicAdminClient.create(
                     TopicAdminSettings.newBuilder()
                             .setTransportChannelProvider(channelProvider)
                             .setCredentialsProvider(credentialsProvider)
                             .build());
-
             topicAdminClient.createTopic(projectTopicName);
 
-            subscriptionAdminSettings = SubscriptionAdminSettings
-                    .newBuilder()
-                    .setTransportChannelProvider(channelProvider)
-                    .setCredentialsProvider(credentialsProvider)
-                    .build();
+            subscriptionAdminClient = SubscriptionAdminClient.create(
+                    SubscriptionAdminSettings.newBuilder()
+                            .setTransportChannelProvider(channelProvider)
+                            .setCredentialsProvider(credentialsProvider)
+                            .build());
+            subscriptionAdminClient.createSubscription(projectSubscriptionName, projectTopicName,
+                    PushConfig.getDefaultInstance(), ackDeadlineSeconds);
 
-            SubscriptionAdminClient subscriptionAdminClient = null;
-            subscriptionAdminClient = SubscriptionAdminClient.create(subscriptionAdminSettings);
-
-            subscriptionAdminClient.createSubscription(
-                    projectSubscriptionName, projectTopicName, PushConfig.getDefaultInstance(), ackDeadlineSeconds);
-            channel.shutdown();
         } catch (Exception ignored) {
+        } finally {
+            if (channel != null) {
+                channel.shutdown();
+            }
+            if (topicAdminClient != null) {
+                topicAdminClient.shutdown();
+            }
+            if (subscriptionAdminClient != null) {
+                subscriptionAdminClient.shutdown();
+            }
         }
     }
 }
