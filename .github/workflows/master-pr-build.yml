@@ -15,12 +15,12 @@
 # limitations under the License.
 #
 
-name: master pr build
+name: 3.1.x pr build
 
 on:
   pull_request:
     branches:
-      - master
+      - camel-3.1.x
 jobs:
   build:
     runs-on: ubuntu-latest
