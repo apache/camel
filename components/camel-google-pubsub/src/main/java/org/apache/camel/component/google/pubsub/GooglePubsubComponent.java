@@ -40,7 +40,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
@@ -124,7 +124,7 @@ public class GooglePubsubComponent extends DefaultComponent {
 
     private Publisher buildPublisher(String topicName) throws IOException {
         Publisher.Builder builder = Publisher.newBuilder(topicName);
-        if (StringUtils.isNotBlank(endpoint)) {
+        if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
             TransportChannelProvider channelProvider =
                     FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
@@ -136,7 +136,7 @@ public class GooglePubsubComponent extends DefaultComponent {
 
     public Subscriber getSubscriber(String subscriptionName, MessageReceiver messageReceiver) {
         Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, messageReceiver);
-        if (StringUtils.isNotBlank(endpoint)) {
+        if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
             TransportChannelProvider channelProvider =
                     FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
@@ -150,7 +150,7 @@ public class GooglePubsubComponent extends DefaultComponent {
         SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder().setTransportChannelProvider(
                 SubscriberStubSettings.defaultGrpcTransportProviderBuilder().build());
 
-        if (StringUtils.isNotBlank(endpoint)) {
+        if (StringHelper.trimToNull(endpoint) != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
             TransportChannelProvider channelProvider =
                     FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));

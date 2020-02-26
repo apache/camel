@@ -66,7 +66,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     private Integer maxMessagesPerPoll = 1;
 
     @UriParam(name = "synchronousPull", description = "Synchronously pull batches of messages", defaultValue = "false")
-    private Boolean synchronousPull = false;
+    private boolean synchronousPull = false;
 
     @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE", description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
