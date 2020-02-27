@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 329 in 263 JAR artifacts (1 deprecated)
+Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -59,6 +59,10 @@ Number of Components: 329 in 263 JAR artifacts (1 deprecated)
 | xref:aws2-eks-component.adoc[AWS 2 EKS] (camel-aws2-eks) | 3.1 | The aws2-eks is used for managing Amazon EKS
 
 | xref:aws2-iam-component.adoc[AWS 2 IAM] (camel-aws2-iam) | 3.1 | The aws2-iam is used for managing Amazon IAM
+
+| xref:aws2-kinesis-component.adoc[AWS 2 Kinesis] (camel-aws2-kinesis) | 3.2 | The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+
+| xref:aws2-kinesis-firehose-component.adoc[AWS 2 Kinesis Firehose] (camel-aws2-kinesis) | 3.2 | The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
 
 | xref:aws2-kms-component.adoc[AWS 2 KMS] (camel-aws2-kms) | 3.1 | The aws2-kms is used for managing Amazon KMS
 
