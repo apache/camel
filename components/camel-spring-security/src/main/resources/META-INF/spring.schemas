@@ -140,4 +140,5 @@ http\://camel.apache.org/schema/spring-security/camel-spring-security-3.0.0-RC2.
 http\://camel.apache.org/schema/spring-security/camel-spring-security-3.0.0-RC3.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-3.0.0.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-3.0.1.xsd=schema/camel-spring-security.xsd
+http\://camel.apache.org/schema/spring-security/camel-spring-security-3.1.0.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-${project.version}.xsd=schema/camel-spring-security.xsd
