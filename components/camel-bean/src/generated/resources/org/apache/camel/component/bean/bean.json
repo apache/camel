@@ -16,7 +16,7 @@
     "firstVersion": "1.0.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "cache": { "kind": "property", "displayName": "Cache", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": true, "secret": false, "defaultValue": "true", "description": "Use singleton option instead." },

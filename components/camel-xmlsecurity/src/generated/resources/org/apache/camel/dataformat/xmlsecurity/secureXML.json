@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.XMLSecurityDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xmlsecurity",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "xmlCipherAlgorithm": { "kind": "attribute", "displayName": "Xml Cipher Algorithm", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "AES-256-GCM", "description": "The cipher algorithm to be used for encryption\/decryption of the XML message content. The available choices are: XMLCipher.TRIPLEDES XMLCipher.AES_128 XMLCipher.AES_128_GCM XMLCipher.AES_192 XMLCipher.AES_192_GCM XMLCipher.AES_256 XMLCipher.AES_256_GCM XMLCipher.SEED_128 XMLCipher.CAMELLIA_128 XMLCipher.CAMELLIA_192 XMLCipher.CAMELLIA_256 The default value is XMLCipher.AES_256_GCM" },

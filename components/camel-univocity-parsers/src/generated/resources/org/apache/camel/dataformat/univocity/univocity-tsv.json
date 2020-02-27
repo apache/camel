@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.UniVocityTsvDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-univocity-parsers",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "escapeChar": { "kind": "attribute", "displayName": "Escape Char", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "\\", "description": "The escape character." },

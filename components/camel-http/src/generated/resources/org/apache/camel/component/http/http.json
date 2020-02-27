@@ -18,7 +18,7 @@
     "verifiers": "parameters,connectivity",
     "groupId": "org.apache.camel",
     "artifactId": "camel-http",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "cookieStore": { "kind": "property", "displayName": "Cookie Store", "group": "producer", "label": "producer", "required": false, "type": "object", "javaType": "org.apache.http.client.CookieStore", "deprecated": false, "secret": false, "description": "To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)." },

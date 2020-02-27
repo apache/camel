@@ -17,7 +17,7 @@
     "verifiers": "parameters,connectivity",
     "groupId": "org.apache.camel",
     "artifactId": "camel-servicenow",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "apiUrl": { "kind": "property", "displayName": "Api Url", "group": "producer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The ServiceNow REST API url" },

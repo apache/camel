@@ -17,7 +17,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-disruptor",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "bufferSize": { "kind": "property", "displayName": "Buffer Size", "group": "common", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": "1024", "description": "To configure the ring buffer size" },

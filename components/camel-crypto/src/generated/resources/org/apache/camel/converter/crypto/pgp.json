@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.PGPDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "keyUserid": { "kind": "attribute", "displayName": "Key Userid", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID. For example, if the user ID is Test User then you can use the part Test User or to address the user ID." },

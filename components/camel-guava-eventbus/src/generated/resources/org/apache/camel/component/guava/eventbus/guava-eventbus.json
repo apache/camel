@@ -16,7 +16,7 @@
     "firstVersion": "2.10.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-guava-eventbus",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "eventBus": { "kind": "property", "displayName": "Event Bus", "group": "common", "required": false, "type": "object", "javaType": "com.google.common.eventbus.EventBus", "deprecated": false, "secret": false, "description": "To use the given Guava EventBus instance" },

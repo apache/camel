@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.Base64DataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-base64",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "lineLength": { "kind": "attribute", "displayName": "Line Length", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "76", "description": "To specific a maximum line length for the encoded data. By default 76 is used." },

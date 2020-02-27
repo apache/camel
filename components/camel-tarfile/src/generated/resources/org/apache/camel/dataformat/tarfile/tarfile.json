@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.TarFileDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-tarfile",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "usingIterator": { "kind": "attribute", "displayName": "Using Iterator", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the tar file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode." },

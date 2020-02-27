@@ -16,7 +16,7 @@
     "firstVersion": "2.19.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-pubsub",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "connectionFactory": { "kind": "property", "displayName": "Connection Factory", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory", "deprecated": false, "secret": false, "description": "Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key \/ Email pair" },

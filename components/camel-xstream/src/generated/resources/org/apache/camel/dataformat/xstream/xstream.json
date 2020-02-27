@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.XStreamDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-xstream",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "permissions": { "kind": "attribute", "displayName": "Permissions", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml\/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow, and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specify com.foo.. Multiple permissions can be configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The following default permission is always included: -,java.lang.,java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions." },

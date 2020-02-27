@@ -16,7 +16,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-as2",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "configuration": { "kind": "property", "displayName": "Configuration", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.component.as2.AS2Configuration", "deprecated": false, "secret": false, "description": "To use the shared configuration" },

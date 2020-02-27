@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.BindyDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bindy",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "type": { "kind": "attribute", "displayName": "Type", "required": true, "type": "enum", "javaType": "org.apache.camel.model.dataformat.BindyType", "enum": [ "Csv", "Fixed", "KeyValue" ], "deprecated": false, "secret": false, "defaultValue": "KeyValue", "description": "Whether to use Csv, Fixed, or KeyValue." },

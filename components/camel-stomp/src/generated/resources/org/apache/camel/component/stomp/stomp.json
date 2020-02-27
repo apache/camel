@@ -16,7 +16,7 @@
     "firstVersion": "2.12.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stomp",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "brokerURL": { "kind": "property", "displayName": "Broker URL", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The URI of the Stomp broker to connect to" },

@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.CsvDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-csv",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "formatRef": { "kind": "attribute", "displayName": "Format Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT" },

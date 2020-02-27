@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.language.MethodCallExpression",
     "groupId": "org.apache.camel",
     "artifactId": "camel-bean",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "ref": { "kind": "attribute", "displayName": "Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to bean to lookup in the registry" },

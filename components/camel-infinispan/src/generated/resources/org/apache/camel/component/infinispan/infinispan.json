@@ -16,7 +16,7 @@
     "firstVersion": "2.13.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-infinispan",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "cacheContainer": { "kind": "property", "displayName": "Cache Container", "group": "common", "label": "", "required": false, "type": "object", "javaType": "org.infinispan.commons.api.BasicCacheContainer", "deprecated": false, "secret": false, "description": "Default Cache container" },

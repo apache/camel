@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.BarcodeDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-barcode",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "width": { "kind": "attribute", "displayName": "Width", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Width of the barcode" },
