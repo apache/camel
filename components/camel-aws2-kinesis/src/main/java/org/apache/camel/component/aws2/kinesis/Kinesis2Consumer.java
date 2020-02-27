@@ -28,7 +28,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
@@ -67,16 +66,16 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
         currentShardIterator = result.nextShardIterator();
         if (isShardClosed) {
             switch (getEndpoint().getConfiguration().getShardClosed()) {
-            case ignore:
-                LOG.warn("The shard {} is in closed state", currentShardIterator);
-                break;
-            case silent:
-                break;
-            case fail:
-                LOG.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
-                throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
-            default:
-                throw new IllegalArgumentException("Unsupported shard closed strategy");
+                case ignore:
+                    LOG.warn("The shard {} is in closed state", currentShardIterator);
+                    break;
+                case silent:
+                    break;
+                case fail:
+                    LOG.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                    throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                default:
+                    throw new IllegalArgumentException("Unsupported shard closed strategy");
             }
         }
 

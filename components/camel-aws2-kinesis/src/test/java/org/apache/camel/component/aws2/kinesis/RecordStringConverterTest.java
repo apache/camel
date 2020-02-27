@@ -19,9 +19,7 @@ package org.apache.camel.component.aws2.kinesis;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import org.apache.camel.component.aws2.kinesis.RecordStringConverter;
 import org.junit.Test;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.model.Record;
 

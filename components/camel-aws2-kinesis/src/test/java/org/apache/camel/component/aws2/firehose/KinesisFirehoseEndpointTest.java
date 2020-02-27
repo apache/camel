@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.firehose;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.aws2.firehose.KinesisFirehose2Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.Before;
@@ -25,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 

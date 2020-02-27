@@ -21,10 +21,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
+
 
 @UriParams
 public class KinesisFirehose2Configuration implements Cloneable {

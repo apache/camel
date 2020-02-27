@@ -18,18 +18,11 @@ package org.apache.camel.component.aws2.kinesis;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Component;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Consumer;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
-import org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +30,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;

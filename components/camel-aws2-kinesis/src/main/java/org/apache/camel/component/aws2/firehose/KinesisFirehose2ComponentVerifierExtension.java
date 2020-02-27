@@ -18,19 +18,16 @@ package org.apache.camel.component.aws2.firehose;
 
 import java.util.Map;
 
+import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
+import org.apache.camel.component.extension.verifier.ResultBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
+import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
-
-import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
-import org.apache.camel.component.extension.verifier.ResultBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 
 public class KinesisFirehose2ComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
