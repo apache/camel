@@ -146,4 +146,5 @@ http\://camel.apache.org/schema/spring/integration/camel-spring-integration-3.0.
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-3.0.0-RC3.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-3.0.0.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-3.0.1.xsd=schema/camel-spring-integration.xsd
+http\://camel.apache.org/schema/spring/integration/camel-spring-integration-3.1.0.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-${project.version}.xsd=schema/camel-spring-integration.xsd
