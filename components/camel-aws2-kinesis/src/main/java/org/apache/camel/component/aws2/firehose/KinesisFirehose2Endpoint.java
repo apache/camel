@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
 
 /**
- * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
+ * The aws2-kinesis-firehose component is used for producing Amazon's Kinesis
  * Firehose streams.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose", syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, label = "cloud,messaging")
