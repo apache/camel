@@ -36,7 +36,7 @@ public class Kinesis2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private Kinesis2Configuration configuration;
 
     public Kinesis2Component() {
@@ -45,7 +45,7 @@ public class Kinesis2Component extends DefaultComponent {
 
     public Kinesis2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new Kinesis2ComponentVerifierExtension());
     }
 
@@ -61,10 +61,10 @@ public class Kinesis2Component extends DefaultComponent {
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
-        }        
+        }
         return endpoint;
     }
-    
+
     public Kinesis2Configuration getConfiguration() {
         return configuration;
     }
@@ -75,7 +75,7 @@ public class Kinesis2Component extends DefaultComponent {
     public void setConfiguration(Kinesis2Configuration configuration) {
         this.configuration = configuration;
     }
-    
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -97,7 +97,7 @@ public class Kinesis2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
         return region;
     }
@@ -108,7 +108,7 @@ public class Kinesis2Component extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(Kinesis2Configuration configuration) {
         Set<KinesisClient> clients = getCamelContext().getRegistry().findByType(KinesisClient.class);
         if (clients.size() == 1) {

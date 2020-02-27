@@ -49,13 +49,8 @@ public class KinesisEndpointTest {
 
     @Test
     public void allTheEndpointParams() throws Exception {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext.getEndpoint("aws2-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-                + "&maxResultsPerRequest=101"
-                + "&iteratorType=latest"
-                + "&shardId=abc"
-                + "&sequenceNumber=123"
-        );
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)camelContext.getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
+                                                                               + "&maxResultsPerRequest=101" + "&iteratorType=latest" + "&shardId=abc" + "&sequenceNumber=123");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
@@ -67,9 +62,7 @@ public class KinesisEndpointTest {
 
     @Test
     public void onlyRequiredEndpointParams() throws Exception {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext.getEndpoint("aws2-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-        );
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)camelContext.getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
@@ -79,12 +72,8 @@ public class KinesisEndpointTest {
 
     @Test
     public void afterSequenceNumberRequiresSequenceNumber() throws Exception {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext.getEndpoint("aws2-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-                + "&iteratorType=AFTER_SEQUENCE_NUMBER"
-                + "&shardId=abc"
-                + "&sequenceNumber=123"
-        );
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)camelContext.getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
+                                                                               + "&iteratorType=AFTER_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
@@ -95,12 +84,8 @@ public class KinesisEndpointTest {
 
     @Test
     public void atSequenceNumberRequiresSequenceNumber() throws Exception {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext.getEndpoint("aws2-kinesis://some_stream_name"
-                + "?amazonKinesisClient=#kinesisClient"
-                + "&iteratorType=AT_SEQUENCE_NUMBER"
-                + "&shardId=abc"
-                + "&sequenceNumber=123"
-        );
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)camelContext
+            .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient" + "&iteratorType=AT_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
