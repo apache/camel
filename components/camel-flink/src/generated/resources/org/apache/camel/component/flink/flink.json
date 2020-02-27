@@ -16,7 +16,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-flink",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "dataSet": { "kind": "property", "displayName": "Data Set", "group": "producer", "required": false, "type": "object", "javaType": "org.apache.flink.api.java.DataSet", "deprecated": false, "secret": false, "description": "DataSet to compute against." },

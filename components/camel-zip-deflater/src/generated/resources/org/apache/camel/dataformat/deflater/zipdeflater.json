@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.ZipDeflaterDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-zip-deflater",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "compressionLevel": { "kind": "attribute", "displayName": "Compression Level", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "-1", "description": "To specify a specific compression between 0-9. -1 is default compression, 0 is no compression, and 9 is best compression." },

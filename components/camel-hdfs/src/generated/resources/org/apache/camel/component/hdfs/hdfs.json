@@ -16,7 +16,7 @@
     "firstVersion": "2.14.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hdfs",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "jAASConfiguration": { "kind": "property", "displayName": "JAASConfiguration", "group": "common", "required": false, "type": "object", "javaType": "javax.security.auth.login.Configuration", "deprecated": false, "secret": false, "description": "To use the given configuration for security with JAAS." },

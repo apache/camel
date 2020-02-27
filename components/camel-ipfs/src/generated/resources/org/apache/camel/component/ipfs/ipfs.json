@@ -16,7 +16,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ipfs",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "ipfsHost": { "kind": "property", "displayName": "Ipfs Host", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "127.0.0.1", "description": "The ipfs host" },

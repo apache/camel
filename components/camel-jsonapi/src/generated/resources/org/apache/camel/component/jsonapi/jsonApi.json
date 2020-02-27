@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.JsonApiDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsonapi",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "dataFormatTypes": { "kind": "attribute", "displayName": "Data Format Types", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>[]", "deprecated": false, "secret": false, "description": "The classes to take into account for the marshalling" },

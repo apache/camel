@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.GrokDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-grok",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "pattern": { "kind": "attribute", "displayName": "Pattern", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The grok pattern to match lines of input" },

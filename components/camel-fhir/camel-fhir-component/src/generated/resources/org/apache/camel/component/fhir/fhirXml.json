@@ -13,7 +13,7 @@
     "modelJavaType": "org.apache.camel.model.dataformat.FhirXmlDataFormat",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fhir",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "properties": {
     "fhirVersion": { "kind": "attribute", "displayName": "Fhir Version", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "DSTU2", "DSTU2_1", "DSTU2_HL7ORG", "DSTU3", "R4" ], "deprecated": false, "secret": false, "defaultValue": "DSTU3", "description": "The version of FHIR to use. Possible values are: DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4" },

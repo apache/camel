@@ -16,7 +16,7 @@
     "firstVersion": "2.17.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "dataSource": { "kind": "property", "displayName": "Data Source", "group": "producer", "required": false, "type": "object", "javaType": "javax.sql.DataSource", "deprecated": false, "secret": false, "description": "Sets the DataSource to use to communicate with the database." },

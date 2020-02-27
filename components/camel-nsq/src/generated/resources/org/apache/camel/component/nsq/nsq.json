@@ -16,7 +16,7 @@
     "firstVersion": "2.23.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-nsq",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "servers": { "kind": "property", "displayName": "Servers", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer)." },

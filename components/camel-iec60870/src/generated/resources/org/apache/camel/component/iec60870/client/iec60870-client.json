@@ -16,7 +16,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iec60870",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "defaultConnectionOptions": { "kind": "property", "displayName": "Default Connection Options", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.component.iec60870.client.ClientOptions", "deprecated": false, "secret": false, "description": "Default connection options" },

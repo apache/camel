@@ -16,7 +16,7 @@
     "firstVersion": "2.20.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-google-bigquery",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "connectionFactory": { "kind": "property", "displayName": "Connection Factory", "group": "producer", "required": false, "type": "object", "javaType": "org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory", "deprecated": false, "secret": false, "description": "ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used" },

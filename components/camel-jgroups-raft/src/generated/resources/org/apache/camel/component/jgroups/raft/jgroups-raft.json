@@ -16,7 +16,7 @@
     "firstVersion": "2.24.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups-raft",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "channelProperties": { "kind": "property", "displayName": "Channel Properties", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "raft.xml", "description": "Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is provided)." },

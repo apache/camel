@@ -16,7 +16,7 @@
     "firstVersion": "2.22.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mybatis",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "configurationUri": { "kind": "property", "displayName": "Configuration Uri", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "SqlMapConfig.xml", "description": "Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath" },

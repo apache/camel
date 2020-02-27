@@ -16,7 +16,7 @@
     "firstVersion": "2.11.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cmis",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.2.0-SNAPSHOT"
   },
   "componentProperties": {
     "sessionFacadeFactory": { "kind": "property", "displayName": "Session Facade Factory", "group": "common", "required": false, "type": "object", "javaType": "org.apache.camel.component.cmis.CMISSessionFacadeFactory", "deprecated": false, "secret": false, "description": "To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances" },
