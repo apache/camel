@@ -50,6 +50,8 @@
 * xref:aws2-ecs-component.adoc[AWS 2 ECS Component]
 * xref:aws2-eks-component.adoc[AWS 2 EKS Component]
 * xref:aws2-iam-component.adoc[AWS 2 IAM Component]
+* xref:aws2-kinesis-component.adoc[AWS 2 Kinesis Component]
+* xref:aws2-kinesis-firehose-component.adoc[AWS 2 Kinesis Firehose Component]
 * xref:aws2-kms-component.adoc[AWS 2 KMS Component]
 * xref:aws2-lambda-component.adoc[AWS Lambda Component]
 * xref:aws2-mq-component.adoc[AWS 2 MQ Component]
