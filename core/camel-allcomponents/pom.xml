@@ -188,6 +188,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-aws2-kinesis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-kms</artifactId>
 		</dependency>
 		<dependency>
