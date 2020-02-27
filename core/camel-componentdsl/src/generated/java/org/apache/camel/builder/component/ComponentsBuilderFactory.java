@@ -542,7 +542,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Kinesis (camel-aws2-kinesis)
-     * The aws-kinesis component is for consuming and producing records from
+     * The aws2-kinesis component is for consuming and producing records from
      * Amazon Kinesis Streams.
      * 
      * Category: cloud,messaging
@@ -554,8 +554,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
-     * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
-     * Firehose streams.
+     * The aws2-kinesis-firehose component is used for producing Amazon's
+     * Kinesis Firehose streams.
      * 
      * Category: cloud,messaging
      * Since: 3.2
