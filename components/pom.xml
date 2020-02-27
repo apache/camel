@@ -299,6 +299,7 @@
         <module>camel-pulsar</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
+        <module>camel-qute</module>
         <module>camel-rabbitmq</module>
         <module>camel-reactive-executor-vertx</module>
         <module>camel-reactive-streams</module>

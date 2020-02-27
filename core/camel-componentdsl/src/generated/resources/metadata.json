@@ -5263,6 +5263,26 @@
     "artifactId": "camel-quickfix",
     "version": "3.2.0-SNAPSHOT"
   },
+  "QuteComponentBuilderFactory": {
+    "kind": "component",
+    "scheme": "qute",
+    "extendsScheme": "",
+    "syntax": "qute:resourceUri",
+    "title": "Qute",
+    "description": "Transforms the message using a Quarkus Qute template.",
+    "label": "transformation",
+    "deprecated": false,
+    "deprecationNote": "transformation",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.qute.QuteComponent",
+    "firstVersion": "3.1.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-qute",
+    "version": "3.2.0-SNAPSHOT"
+  },
   "RabbitmqComponentBuilderFactory": {
     "kind": "component",
     "scheme": "rabbitmq",

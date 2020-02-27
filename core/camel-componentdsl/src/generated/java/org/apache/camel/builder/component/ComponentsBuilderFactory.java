@@ -3091,6 +3091,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.QuickfixComponentBuilderFactory.quickfix();
     }
     /**
+     * Qute (camel-qute)
+     * Transforms the message using a Quarkus Qute template.
+     * 
+     * Category: transformation
+     * Since: 3.1
+     * Maven coordinates: org.apache.camel:camel-qute
+     */
+    static org.apache.camel.builder.component.dsl.QuteComponentBuilderFactory.QuteComponentBuilder qute() {
+        return org.apache.camel.builder.component.dsl.QuteComponentBuilderFactory.qute();
+    }
+    /**
      * RabbitMQ (camel-rabbitmq)
      * The rabbitmq component allows you produce and consume messages from
      * RabbitMQ instances.
