@@ -148,4 +148,5 @@ http\://camel.apache.org/schema/spring/camel-spring-3.0.0-RC2.xsd=camel-spring.x
 http\://camel.apache.org/schema/spring/camel-spring-3.0.0-RC3.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-3.0.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-3.0.1.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-3.1.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-${project.version}.xsd=camel-spring.xsd
