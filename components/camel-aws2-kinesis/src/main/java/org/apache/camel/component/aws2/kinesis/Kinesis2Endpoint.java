@@ -46,9 +46,9 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private Kinesis2Configuration configuration;
-    
+
     private KinesisClient kinesisClient;
-    
+
     public Kinesis2Endpoint(String uri, Kinesis2Configuration configuration, Kinesis2Component component) {
         super(uri, component);
         this.configuration = configuration;
@@ -57,16 +57,14 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        kinesisClient = configuration.getAmazonKinesisClient() != null ? configuration.getAmazonKinesisClient()
-            : createKinesisClient();
-       
-        
+        kinesisClient = configuration.getAmazonKinesisClient() != null ? configuration.getAmazonKinesisClient() : createKinesisClient();
+
         if ((configuration.getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER) || configuration.getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER))
             && configuration.getSequenceNumber().isEmpty()) {
             throw new IllegalArgumentException("Sequence Number must be specified with iterator Types AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER");
         }
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonKinesisClient())) {
@@ -106,7 +104,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     public Kinesis2Configuration getConfiguration() {
         return configuration;
     }
-    
+
     KinesisClient createKinesisClient() {
         KinesisClient client = null;
         KinesisClientBuilder clientBuilder = KinesisClient.builder();

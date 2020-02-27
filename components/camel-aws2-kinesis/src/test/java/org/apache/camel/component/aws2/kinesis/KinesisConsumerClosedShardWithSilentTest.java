@@ -81,27 +81,16 @@ public class KinesisConsumerClosedShardWithSilentTest {
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(null, configuration, component);
         endpoint.start();
         undertest = new Kinesis2Consumer(endpoint, processor);
-        
+
         SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
         Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
-       
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(GetRecordsResponse.builder()
-                .nextShardIterator("nextShardIterator").build()
-            );
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").build());
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
-            .thenReturn(DescribeStreamResponse.builder()
-                .streamDescription(StreamDescription.builder()
-                    .shards(shardList).build()
-                ).build()
-            );
-        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
-            .thenReturn(GetShardIteratorResponse.builder()
-                .shardIterator("shardIterator").build()
-            );
+            .thenReturn(DescribeStreamResponse.builder().streamDescription(StreamDescription.builder().shards(shardList).build()).build());
+        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class))).thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
     }
 
     @Test
@@ -181,11 +170,8 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     @Test
     public void recordsAreSentToTheProcessor() throws Exception {
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(GetRecordsResponse.builder()
-                .nextShardIterator("nextShardIterator")
-                .records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build()
-            );
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator")
+            .records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build());
 
         int messageCount = undertest.poll();
 
@@ -201,15 +187,8 @@ public class KinesisConsumerClosedShardWithSilentTest {
     public void exchangePropertiesAreSet() throws Exception {
         String partitionKey = "partitionKey";
         String sequenceNumber = "1";
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
-            .thenReturn(GetRecordsResponse.builder()
-                .nextShardIterator("nextShardIterator")
-                .records(Record.builder()
-                    .sequenceNumber(sequenceNumber)
-                    .approximateArrivalTimestamp(Instant.now())
-                    .partitionKey(partitionKey).build()
-                ).build()
-            );
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator")
+            .records(Record.builder().sequenceNumber(sequenceNumber).approximateArrivalTimestamp(Instant.now()).partitionKey(partitionKey).build()).build());
 
         undertest.poll();
 

@@ -37,15 +37,15 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
 
 /**
- * The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+ * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
+ * Firehose streams.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose", syntax = "aws2-kinesis-firehose:streamName",
-    producerOnly = true, label = "cloud,messaging")
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose", syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, label = "cloud,messaging")
 public class KinesisFirehose2Endpoint extends DefaultEndpoint {
 
     @UriParam
     private KinesisFirehose2Configuration configuration;
-    
+
     private FirehoseClient kinesisFirehoseClient;
 
     public KinesisFirehose2Endpoint(String uri, KinesisFirehose2Configuration configuration, KinesisFirehose2Component component) {
@@ -62,15 +62,14 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot consume messages from this endpoint");
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null ? configuration.getAmazonKinesisFirehoseClient()
-            : createKinesisFirehoseClient();
-               
+        kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null ? configuration.getAmazonKinesisFirehoseClient() : createKinesisFirehoseClient();
+
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonKinesisFirehoseClient())) {
@@ -80,7 +79,7 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
         }
         super.doStop();
     }
-    
+
     FirehoseClient createKinesisFirehoseClient() {
         FirehoseClient client = null;
         FirehoseClientBuilder clientBuilder = FirehoseClient.builder();

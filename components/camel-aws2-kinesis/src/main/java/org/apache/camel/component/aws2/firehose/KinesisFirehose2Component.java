@@ -38,16 +38,16 @@ public class KinesisFirehose2Component extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private KinesisFirehose2Configuration configuration;
-    
+
     public KinesisFirehose2Component() {
         this(null);
     }
 
     public KinesisFirehose2Component(CamelContext context) {
         super(context);
-        
+
         registerExtension(new KinesisFirehose2ComponentVerifierExtension());
     }
 
@@ -66,7 +66,7 @@ public class KinesisFirehose2Component extends DefaultComponent {
         }
         return endpoint;
     }
-    
+
     public KinesisFirehose2Configuration getConfiguration() {
         return configuration;
     }
@@ -77,7 +77,7 @@ public class KinesisFirehose2Component extends DefaultComponent {
     public void setConfiguration(KinesisFirehose2Configuration configuration) {
         this.configuration = configuration;
     }
-    
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -99,7 +99,7 @@ public class KinesisFirehose2Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
         return region;
     }
@@ -110,7 +110,7 @@ public class KinesisFirehose2Component extends DefaultComponent {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(KinesisFirehose2Configuration configuration) {
         Set<FirehoseClient> clients = getCamelContext().getRegistry().findByType(FirehoseClient.class);
         if (clients.size() == 1) {

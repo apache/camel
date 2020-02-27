@@ -33,7 +33,7 @@ public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("FirehoseClient")
     FirehoseClient client = FirehoseClient.builder().build();
-    
+
     @Test
     public void testFirehoseRouting() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -49,10 +49,8 @@ public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("aws2-kinesis-firehose://mystream?amazonKinesisFirehoseClient=#FirehoseClient");
+                from("direct:start").to("aws2-kinesis-firehose://mystream?amazonKinesisFirehoseClient=#FirehoseClient");
             }
         };
     }
 }
-

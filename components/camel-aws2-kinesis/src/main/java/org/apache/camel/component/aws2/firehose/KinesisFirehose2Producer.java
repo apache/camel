@@ -18,7 +18,6 @@ package org.apache.camel.component.aws2.firehose;
 
 import java.nio.ByteBuffer;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -40,7 +39,7 @@ public class KinesisFirehose2Producer extends DefaultProducer {
 
     @Override
     public KinesisFirehose2Endpoint getEndpoint() {
-        return (KinesisFirehose2Endpoint) super.getEndpoint();
+        return (KinesisFirehose2Endpoint)super.getEndpoint();
     }
 
     @Override
@@ -63,7 +62,7 @@ public class KinesisFirehose2Producer extends DefaultProducer {
         putRecordRequest.record(record.build());
         return putRecordRequest.build();
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }

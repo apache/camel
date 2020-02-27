@@ -75,7 +75,6 @@ public class KinesisConsumerClosedShardWithFailTest {
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(null, configuration, component);
         endpoint.start();
         undertest = new Kinesis2Consumer(endpoint, processor);
-        
 
         SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
         Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
