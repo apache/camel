@@ -541,6 +541,30 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2IamComponentBuilderFactory.aws2Iam();
     }
     /**
+     * AWS 2 Kinesis (camel-aws2-kinesis)
+     * The aws-kinesis component is for consuming and producing records from
+     * Amazon Kinesis Streams.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-aws2-kinesis
+     */
+    static org.apache.camel.builder.component.dsl.Aws2KinesisComponentBuilderFactory.Aws2KinesisComponentBuilder aws2Kinesis() {
+        return org.apache.camel.builder.component.dsl.Aws2KinesisComponentBuilderFactory.aws2Kinesis();
+    }
+    /**
+     * AWS 2 Kinesis Firehose (camel-aws2-kinesis)
+     * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
+     * Firehose streams.
+     * 
+     * Category: cloud,messaging
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-aws2-kinesis
+     */
+    static org.apache.camel.builder.component.dsl.Aws2KinesisFirehoseComponentBuilderFactory.Aws2KinesisFirehoseComponentBuilder aws2KinesisFirehose() {
+        return org.apache.camel.builder.component.dsl.Aws2KinesisFirehoseComponentBuilderFactory.aws2KinesisFirehose();
+    }
+    /**
      * AWS 2 KMS (camel-aws2-kms)
      * The aws2-kms is used for managing Amazon KMS
      * 
