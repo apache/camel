@@ -1,7 +1,5 @@
-[[aws-kinesis-component]]
-= AWS Kinesis Component
-
-*Since Camel 2.17*
+[[aws2-kinesis-component]]
+= AWS2 Kinesis Component
 
 // HEADER START
 *Both producer and consumer is supported*
@@ -20,7 +18,7 @@ at https://aws.amazon.com/kinesis/[AWS Kinesis]
 
 [source,java]
 -----------------------------------
-aws-kinesis://stream-name[?options]
+aws2-kinesis://stream-name[?options]
 -----------------------------------
 
 The stream needs to be created prior to it being used. +
@@ -124,7 +122,7 @@ with the following path and query parameters:
 
 Required Kinesis component options
 
-You have to provide the amazonKinesisClient in the
+You have to provide the KinesisClient in the
 Registry with proxies and relevant credentials
 configured.
 
@@ -154,27 +152,11 @@ size is not defined by the API. If it is to be used as a numerical type then use
 
 === AmazonKinesis configuration
 
-You will need to create an instance of AmazonKinesisClient and
-bind it to the registry
+You then have to reference the KinesisClient in the `amazonKinesisClient` URI option.
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------------
-ClientConfiguration clientConfiguration = new ClientConfiguration();
-clientConfiguration.setProxyHost("http://myProxyHost");
-clientConfiguration.setProxyPort(8080);
-
-Region region = Region.getRegion(Regions.fromName(region));
-region.createClient(AmazonKinesisClient.class, null, clientConfiguration);
-// the 'null' here is the AWSCredentialsProvider which defaults to an instance of DefaultAWSCredentialsProviderChain
-
-registry.bind("kinesisClient", client);
---------------------------------------------------------------------------------------------------------------------
-
-You then have to reference the AmazonKinesisClient in the `amazonKinesisClient` URI option.
-
-[source,java]
---------------------------------------------------------------------------------------------------------------------
-from("aws-kinesis://mykinesisstream?amazonKinesisClient=#kinesisClient")
+from("aws2-kinesis://mykinesisstream?amazonKinesisClient=#kinesisClient")
   .to("log:out?showAll=true");
 --------------------------------------------------------------------------------------------------------------------
 
@@ -213,9 +195,9 @@ http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_Pu
 
 |=======================================================================
 
-== Automatic detection of AmazonKinesis client in registry
+== Automatic detection of KinesisClient client in registry
 
-The component is capable of detecting the presence of an AmazonKinesis bean into the registry.
+The component is capable of detecting the presence of an KinesisClient bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -229,7 +211,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws-kinesis</artifactId>
+    <artifactId>camel-aws2-kinesis</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
