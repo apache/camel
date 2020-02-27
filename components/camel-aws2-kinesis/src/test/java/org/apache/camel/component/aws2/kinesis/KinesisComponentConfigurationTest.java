@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import org.apache.camel.component.aws2.kinesis.Kinesis2Component;
-import org.apache.camel.component.aws2.kinesis.Kinesis2Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 

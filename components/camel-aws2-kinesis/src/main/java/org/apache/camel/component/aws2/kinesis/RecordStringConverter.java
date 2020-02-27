@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import org.apache.camel.Converter;
-
 import software.amazon.awssdk.services.kinesis.model.Record;
 
 // Allow to ignore this type converter if the kinesis JARs are not present on the classpath

@@ -25,7 +25,6 @@ import org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 
 @Ignore("Must be manually tested.")
