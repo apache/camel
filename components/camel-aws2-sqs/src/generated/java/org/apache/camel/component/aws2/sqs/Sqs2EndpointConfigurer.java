@@ -70,9 +70,9 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagededuplicationidstrategy":
-        case "messageDeduplicationIdStrategy": target.getConfiguration().setMessageDeduplicationIdStrategy(property(camelContext, org.apache.camel.component.aws2.sqs.MessageDeduplicationIdStrategy.class, value)); return true;
+        case "messageDeduplicationIdStrategy": target.getConfiguration().setMessageDeduplicationIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "messagegroupidstrategy":
-        case "messageGroupIdStrategy": target.getConfiguration().setMessageGroupIdStrategy(property(camelContext, org.apache.camel.component.aws2.sqs.MessageGroupIdStrategy.class, value)); return true;
+        case "messageGroupIdStrategy": target.getConfiguration().setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Operations.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
