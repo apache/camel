@@ -22,23 +22,19 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqsComponent target = (SqsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "accesskey":
-        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonawshost":
         case "amazonAWSHost": getOrCreateConfiguration(target).setAmazonAWSHost(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsqsclient":
         case "amazonSQSClient": getOrCreateConfiguration(target).setAmazonSQSClient(property(camelContext, com.amazonaws.services.sqs.AmazonSQS.class, value)); return true;
         case "autocreatequeue":
         case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.sqs.SqsConfiguration.class, value)); return true;
         case "protocol": getOrCreateConfiguration(target).setProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
         case "queueownerawsaccountid":
         case "queueOwnerAWSAccountId": getOrCreateConfiguration(target).setQueueOwnerAWSAccountId(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "attributenames":
         case "attributeNames": getOrCreateConfiguration(target).setAttributeNames(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -76,7 +72,6 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws.sqs.SqsOperations.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.sqs.SqsConfiguration.class, value)); return true;
         case "delayqueue":
         case "delayQueue": getOrCreateConfiguration(target).setDelayQueue(property(camelContext, boolean.class, value)); return true;
         case "queueurl":
@@ -94,6 +89,10 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         case "receiveMessageWaitTimeSeconds": getOrCreateConfiguration(target).setReceiveMessageWaitTimeSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "redrivepolicy":
         case "redrivePolicy": getOrCreateConfiguration(target).setRedrivePolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
