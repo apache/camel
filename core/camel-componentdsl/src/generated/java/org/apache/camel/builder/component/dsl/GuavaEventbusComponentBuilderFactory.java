@@ -151,7 +151,7 @@ public interface GuavaEventbusComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "eventBus": ((GuavaEventBusComponent) component).setEventBus((com.google.common.eventbus.EventBus) value); return true;
-            case "listenerInterface": ((GuavaEventBusComponent) component).setListenerInterface((java.lang.Class<java.lang.Object>) value); return true;
+            case "listenerInterface": ((GuavaEventBusComponent) component).setListenerInterface((java.lang.Class) value); return true;
             case "bridgeErrorHandler": ((GuavaEventBusComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GuavaEventBusComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GuavaEventBusComponent) component).setBasicPropertyBinding((boolean) value); return true;

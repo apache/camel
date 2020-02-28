@@ -53,6 +53,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             extends
                 ComponentBuilder<DebeziumSqlserverComponent> {
         /**
+         * Additional properties for debezium components in case they can't be
+         * set directly on the camel configurations (e.g: setting Kafka Connect
+         * properties needed by Debezium engine, for example setting
+         * KafkaOffsetBackingStore), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: common
+         */
+        default DebeziumSqlserverComponentBuilder additionalProperties(
+                java.util.Map<java.lang.String, java.lang.Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -85,6 +103,147 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * The Converter class that should be used to serialize and deserialize
+         * key data for offsets. The default is JSON converter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: org.apache.kafka.connect.json.JsonConverter
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder internalKeyConverter(
+                java.lang.String internalKeyConverter) {
+            doSetProperty("internalKeyConverter", internalKeyConverter);
+            return this;
+        }
+        /**
+         * The Converter class that should be used to serialize and deserialize
+         * value data for offsets. The default is JSON converter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: org.apache.kafka.connect.json.JsonConverter
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder internalValueConverter(
+                java.lang.String internalValueConverter) {
+            doSetProperty("internalValueConverter", internalValueConverter);
+            return this;
+        }
+        /**
+         * The name of the Java class of the commit policy. It defines when
+         * offsets commit has to be triggered based on the number of events
+         * processed and the time elapsed since the last commit. This class must
+         * implement the interface 'OffsetCommitPolicy'. The default is a
+         * periodic commit policy based upon time intervals.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetCommitPolicy(
+                java.lang.String offsetCommitPolicy) {
+            doSetProperty("offsetCommitPolicy", offsetCommitPolicy);
+            return this;
+        }
+        /**
+         * Maximum number of milliseconds to wait for records to flush and
+         * partition offset data to be committed to offset storage before
+         * cancelling the process and restoring the offset data to be committed
+         * in a future attempt. The default is 5 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetCommitTimeoutMs(
+                long offsetCommitTimeoutMs) {
+            doSetProperty("offsetCommitTimeoutMs", offsetCommitTimeoutMs);
+            return this;
+        }
+        /**
+         * Interval at which to try committing offsets. The default is 1 minute.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetFlushIntervalMs(
+                long offsetFlushIntervalMs) {
+            doSetProperty("offsetFlushIntervalMs", offsetFlushIntervalMs);
+            return this;
+        }
+        /**
+         * The name of the Java class that is responsible for persistence of
+         * connector offsets.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetStorage(
+                java.lang.String offsetStorage) {
+            doSetProperty("offsetStorage", offsetStorage);
+            return this;
+        }
+        /**
+         * Path to file where offsets are to be stored. Required when
+         * offset.storage is set to the FileOffsetBackingStore.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetStorageFileName(
+                java.lang.String offsetStorageFileName) {
+            doSetProperty("offsetStorageFileName", offsetStorageFileName);
+            return this;
+        }
+        /**
+         * The number of partitions used when creating the offset storage topic.
+         * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetStoragePartitions(
+                int offsetStoragePartitions) {
+            doSetProperty("offsetStoragePartitions", offsetStoragePartitions);
+            return this;
+        }
+        /**
+         * Replication factor used when creating the offset storage topic.
+         * Required when offset.storage is set to the KafkaOffsetBackingStore.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetStorageReplicationFactor(
+                int offsetStorageReplicationFactor) {
+            doSetProperty("offsetStorageReplicationFactor", offsetStorageReplicationFactor);
+            return this;
+        }
+        /**
+         * The name of the Kafka topic where offsets are to be stored. Required
+         * when offset.storage is set to the KafkaOffsetBackingStore.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default DebeziumSqlserverComponentBuilder offsetStorageTopic(
+                java.lang.String offsetStorageTopic) {
+            doSetProperty("offsetStorageTopic", offsetStorageTopic);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -98,6 +257,477 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'column.blacklist' description.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder columnBlacklist(
+                java.lang.String columnBlacklist) {
+            doSetProperty("columnBlacklist", columnBlacklist);
+            return this;
+        }
+        /**
+         * The name of the database the connector should be monitoring. When
+         * working with a multi-tenant set-up, must be set to the CDB name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseDbname(
+                java.lang.String databaseDbname) {
+            doSetProperty("databaseDbname", databaseDbname);
+            return this;
+        }
+        /**
+         * The name of the DatabaseHistory class that should be used to store
+         * and recover database schema changes. The configuration properties for
+         * the history are prefixed with the 'database.history.' string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.debezium.relational.history.FileDatabaseHistory
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseHistory(
+                java.lang.String databaseHistory) {
+            doSetProperty("databaseHistory", databaseHistory);
+            return this;
+        }
+        /**
+         * The path to the file that will be used to record the database
+         * history.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseHistoryFileFilename(
+                java.lang.String databaseHistoryFileFilename) {
+            doSetProperty("databaseHistoryFileFilename", databaseHistoryFileFilename);
+            return this;
+        }
+        /**
+         * A list of host/port pairs that the connector will use for
+         * establishing the initial connection to the Kafka cluster for
+         * retrieving database schema history previously stored by the
+         * connector. This should point to the same Kafka cluster used by the
+         * Kafka Connect process.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaBootstrapServers(
+                java.lang.String databaseHistoryKafkaBootstrapServers) {
+            doSetProperty("databaseHistoryKafkaBootstrapServers", databaseHistoryKafkaBootstrapServers);
+            return this;
+        }
+        /**
+         * The number of attempts in a row that no data are returned from Kafka
+         * before recover completes. The maximum amount of time to wait after
+         * receiving no data is (recovery.attempts) x
+         * (recovery.poll.interval.ms).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaRecoveryAttempts(
+                int databaseHistoryKafkaRecoveryAttempts) {
+            doSetProperty("databaseHistoryKafkaRecoveryAttempts", databaseHistoryKafkaRecoveryAttempts);
+            return this;
+        }
+        /**
+         * The number of milliseconds to wait while polling for persisted data
+         * during recovery.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
+                int databaseHistoryKafkaRecoveryPollIntervalMs) {
+            doSetProperty("databaseHistoryKafkaRecoveryPollIntervalMs", databaseHistoryKafkaRecoveryPollIntervalMs);
+            return this;
+        }
+        /**
+         * The name of the topic for the database schema history.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaTopic(
+                java.lang.String databaseHistoryKafkaTopic) {
+            doSetProperty("databaseHistoryKafkaTopic", databaseHistoryKafkaTopic);
+            return this;
+        }
+        /**
+         * Resolvable hostname or IP address of the SQL Server database server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseHostname(
+                java.lang.String databaseHostname) {
+            doSetProperty("databaseHostname", databaseHostname);
+            return this;
+        }
+        /**
+         * Password of the SQL Server database user to be used when connecting
+         * to the database.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databasePassword(
+                java.lang.String databasePassword) {
+            doSetProperty("databasePassword", databasePassword);
+            return this;
+        }
+        /**
+         * Port of the SQL Server database server.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1433
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databasePort(int databasePort) {
+            doSetProperty("databasePort", databasePort);
+            return this;
+        }
+        /**
+         * Unique name that identifies the database server and all recorded
+         * offsets, and that is used as a prefix for all schemas and topics.
+         * Each distinct installation should have a separate namespace and be
+         * monitored by at most one Debezium connector.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseServerName(
+                java.lang.String databaseServerName) {
+            doSetProperty("databaseServerName", databaseServerName);
+            return this;
+        }
+        /**
+         * The timezone of the server used to correctly shift the commit
+         * transaction timestamp on the client sideOptions include: Any valid
+         * Java ZoneId.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseServerTimezone(
+                java.lang.String databaseServerTimezone) {
+            doSetProperty("databaseServerTimezone", databaseServerTimezone);
+            return this;
+        }
+        /**
+         * Name of the SQL Server database user to be used when connecting to
+         * the database.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseUser(
+                java.lang.String databaseUser) {
+            doSetProperty("databaseUser", databaseUser);
+            return this;
+        }
+        /**
+         * Specify how DECIMAL and NUMERIC columns should be represented in
+         * change events, including:'precise' (the default) uses
+         * java.math.BigDecimal to represent values, which are encoded in the
+         * change events using a binary representation and Kafka Connect's
+         * 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to
+         * represent values; 'double' represents values using Java's 'double',
+         * which may not offer the precision but will be far easier to use in
+         * consumers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: precise
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder decimalHandlingMode(
+                java.lang.String decimalHandlingMode) {
+            doSetProperty("decimalHandlingMode", decimalHandlingMode);
+            return this;
+        }
+        /**
+         * Length of an interval in milli-seconds in in which the connector
+         * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+         * disable heartbeat messages. Disabled by default.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder heartbeatIntervalMs(
+                int heartbeatIntervalMs) {
+            doSetProperty("heartbeatIntervalMs", heartbeatIntervalMs);
+            return this;
+        }
+        /**
+         * The prefix that is used to name heartbeat topics.Defaults to
+         * __debezium-heartbeat.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: __debezium-heartbeat
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder heartbeatTopicsPrefix(
+                java.lang.String heartbeatTopicsPrefix) {
+            doSetProperty("heartbeatTopicsPrefix", heartbeatTopicsPrefix);
+            return this;
+        }
+        /**
+         * Maximum size of each batch of source records. Defaults to 2048.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2048
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder maxBatchSize(int maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+        /**
+         * Maximum size of the queue for change events read from the database
+         * log but not yet recorded or forwarded. Defaults to 8192, and should
+         * always be larger than the maximum batch size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 8192
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder maxQueueSize(int maxQueueSize) {
+            doSetProperty("maxQueueSize", maxQueueSize);
+            return this;
+        }
+        /**
+         * A semicolon-separated list of expressions that match fully-qualified
+         * tables and column(s) to be used as message key. Each expression must
+         * match the pattern ':',where the table names could be defined as
+         * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
+         * specific connector,and the key columns are a comma-separated list of
+         * columns representing the custom key. For any table without an
+         * explicit key configuration the table's primary key column(s) will be
+         * used as message key.Example:
+         * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder messageKeyColumns(
+                java.lang.String messageKeyColumns) {
+            doSetProperty("messageKeyColumns", messageKeyColumns);
+            return this;
+        }
+        /**
+         * Frequency in milliseconds to wait for new change events to appear
+         * after receiving no events. Defaults to 500ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder pollIntervalMs(
+                long pollIntervalMs) {
+            doSetProperty("pollIntervalMs", pollIntervalMs);
+            return this;
+        }
+        /**
+         * The number of milliseconds to delay before a snapshot will begin.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder snapshotDelayMs(
+                long snapshotDelayMs) {
+            doSetProperty("snapshotDelayMs", snapshotDelayMs);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * performing a snapshot.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder snapshotFetchSize(
+                int snapshotFetchSize) {
+            doSetProperty("snapshotFetchSize", snapshotFetchSize);
+            return this;
+        }
+        /**
+         * The maximum number of millis to wait for table locks at the beginning
+         * of a snapshot. If locks cannot be acquired in this time frame, the
+         * snapshot will be aborted. Defaults to 10 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder snapshotLockTimeoutMs(
+                long snapshotLockTimeoutMs) {
+            doSetProperty("snapshotLockTimeoutMs", snapshotLockTimeoutMs);
+            return this;
+        }
+        /**
+         * The criteria for running a snapshot upon startup of the connector.
+         * Options include: 'initial' (the default) to specify the connector
+         * should run a snapshot only when no offsets are available for the
+         * logical server name; 'schema_only' to specify the connector should
+         * run a snapshot of the schema when no offsets are available for the
+         * logical server name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: initial
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder snapshotMode(
+                java.lang.String snapshotMode) {
+            doSetProperty("snapshotMode", snapshotMode);
+            return this;
+        }
+        /**
+         * This property contains a comma-separated list of fully-qualified
+         * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
+         * thespecific connectors . Select statements for the individual tables
+         * are specified in further configuration properties, one for each
+         * table, identified by the id
+         * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
+         * 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME',
+         * respectively. The value of those properties is the select statement
+         * to use when retrieving data from the specific table during
+         * snapshotting. A possible use case for large append-only tables is
+         * setting a specific point where to start (resume) snapshotting, in
+         * case a previous snapshotting was interrupted.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder snapshotSelectStatementOverrides(
+                java.lang.String snapshotSelectStatementOverrides) {
+            doSetProperty("snapshotSelectStatementOverrides", snapshotSelectStatementOverrides);
+            return this;
+        }
+        /**
+         * A version of the format of the publicly visible source part in the
+         * message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: v2
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder sourceStructVersion(
+                java.lang.String sourceStructVersion) {
+            doSetProperty("sourceStructVersion", sourceStructVersion);
+            return this;
+        }
+        /**
+         * Description is not available here, please check Debezium website for
+         * corresponding key 'table.blacklist' description.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder tableBlacklist(
+                java.lang.String tableBlacklist) {
+            doSetProperty("tableBlacklist", tableBlacklist);
+            return this;
+        }
+        /**
+         * Flag specifying whether built-in tables should be ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder tableIgnoreBuiltin(
+                boolean tableIgnoreBuiltin) {
+            doSetProperty("tableIgnoreBuiltin", tableIgnoreBuiltin);
+            return this;
+        }
+        /**
+         * The tables for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder tableWhitelist(
+                java.lang.String tableWhitelist) {
+            doSetProperty("tableWhitelist", tableWhitelist);
+            return this;
+        }
+        /**
+         * Time, date, and timestamps can be represented with different kinds of
+         * precisions, including:'adaptive' (the default) bases the precision of
+         * time, date, and timestamp values on the database column's precision;
+         * 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields
+         * always use microseconds precision;'connect' always represents time,
+         * date, and timestamp values using Kafka Connect's built-in
+         * representations for Time, Date, and Timestamp, which uses millisecond
+         * precision regardless of the database columns' precision .
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: adaptive
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder timePrecisionMode(
+                java.lang.String timePrecisionMode) {
+            doSetProperty("timePrecisionMode", timePrecisionMode);
+            return this;
+        }
+        /**
+         * Whether delete operations should be represented by a delete event and
+         * a subsquenttombstone event (true) or only by a delete event (false).
+         * Emitting the tombstone event (the default behavior) allows Kafka to
+         * completely delete all events pertaining to the given key once the
+         * source record got deleted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder tombstonesOnDelete(
+                boolean tombstonesOnDelete) {
+            doSetProperty("tombstonesOnDelete", tombstonesOnDelete);
+            return this;
+        }
     }
 
     class DebeziumSqlserverComponentBuilderImpl
@@ -109,15 +739,65 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         protected DebeziumSqlserverComponent buildConcreteComponent() {
             return new DebeziumSqlserverComponent();
         }
+        private org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.debezium.DebeziumSqlserverComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "additionalProperties": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((DebeziumSqlserverComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((DebeziumSqlserverComponent) component).setConfiguration((org.apache.camel.component.debezium.configuration.SqlServerConnectorEmbeddedDebeziumConfiguration) value); return true;
+            case "internalKeyConverter": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setInternalKeyConverter((java.lang.String) value); return true;
+            case "internalValueConverter": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setInternalValueConverter((java.lang.String) value); return true;
+            case "offsetCommitPolicy": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetCommitPolicy((java.lang.String) value); return true;
+            case "offsetCommitTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetCommitTimeoutMs((long) value); return true;
+            case "offsetFlushIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetFlushIntervalMs((long) value); return true;
+            case "offsetStorage": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorage((java.lang.String) value); return true;
+            case "offsetStorageFileName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageFileName((java.lang.String) value); return true;
+            case "offsetStoragePartitions": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStoragePartitions((int) value); return true;
+            case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageReplicationFactor((int) value); return true;
+            case "offsetStorageTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "basicPropertyBinding": ((DebeziumSqlserverComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "columnBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnBlacklist((java.lang.String) value); return true;
+            case "databaseDbname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseDbname((java.lang.String) value); return true;
+            case "databaseHistory": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistory((java.lang.String) value); return true;
+            case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
+            case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaBootstrapServers((java.lang.String) value); return true;
+            case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaRecoveryAttempts((int) value); return true;
+            case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaRecoveryPollIntervalMs((int) value); return true;
+            case "databaseHistoryKafkaTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaTopic((java.lang.String) value); return true;
+            case "databaseHostname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHostname((java.lang.String) value); return true;
+            case "databasePassword": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePassword((java.lang.String) value); return true;
+            case "databasePort": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePort((int) value); return true;
+            case "databaseServerName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseServerName((java.lang.String) value); return true;
+            case "databaseServerTimezone": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseServerTimezone((java.lang.String) value); return true;
+            case "databaseUser": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseUser((java.lang.String) value); return true;
+            case "decimalHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
+            case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatIntervalMs((int) value); return true;
+            case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
+            case "maxBatchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxBatchSize((int) value); return true;
+            case "maxQueueSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxQueueSize((int) value); return true;
+            case "messageKeyColumns": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
+            case "pollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPollIntervalMs((long) value); return true;
+            case "snapshotDelayMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotDelayMs((long) value); return true;
+            case "snapshotFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotFetchSize((int) value); return true;
+            case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
+            case "snapshotMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMode((java.lang.String) value); return true;
+            case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
+            case "sourceStructVersion": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceStructVersion((java.lang.String) value); return true;
+            case "tableBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableBlacklist((java.lang.String) value); return true;
+            case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
+            case "tableWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableWhitelist((java.lang.String) value); return true;
+            case "timePrecisionMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
+            case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTombstonesOnDelete((boolean) value); return true;
             default: return false;
             }
         }

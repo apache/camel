@@ -35,16 +35,50 @@ web3j://<local/remote host:port or local IPC path>[?options]
 
 
 // component options: START
-The Web3j Ethereum Blockchain component supports 4 options, which are listed below.
+The Web3j Ethereum Blockchain component supports 38 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *addresses* (common) | Contract address or a list of addresses. |  | List
 | *configuration* (common) | Default configuration |  | Web3jConfiguration
+| *fromAddress* (common) | The address the transaction is send from |  | String
+| *fromBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | String
+| *fullTransactionObjects* (common) | If true it returns the full transaction objects, if false only the hashes of the transactions. | false | boolean
+| *gasLimit* (common) | The maximum gas allowed in this block. |  | BigInteger
+| *privateFor* (common) | A transaction privateFor nodes with public keys in a Quorum network |  | List
+| *quorumAPI* (common) | If true, this will support Quorum API. | false | boolean
+| *toAddress* (common) | The address the transaction is directed to. |  | String
+| *toBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | String
+| *topics* (common) | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | String
+| *web3j* (common) | The preconfigured Web3j object. |  | Web3j
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *address* (producer) | Contract address. |  | String
+| *atBlock* (producer) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | String
+| *blockHash* (producer) | Hash of the block where this transaction was in. |  | String
+| *clientId* (producer) | A random hexadecimal(32 bytes) ID identifying the client. |  | String
+| *data* (producer) | The compiled code of a contract OR the hash of the invoked method signature and encoded parameters. |  | String
+| *databaseName* (producer) | The local database name. |  | String
+| *filterId* (producer) | The filter id to use. |  | BigInteger
+| *gasPrice* (producer) | Gas price used for each paid gas. |  | BigInteger
+| *hashrate* (producer) | A hexadecimal string representation (32 bytes) of the hash rate. |  | String
+| *headerPowHash* (producer) | The header's pow-hash (256 bits) used for submitting a proof-of-work solution. |  | String
+| *index* (producer) | The transactions/uncle index position in the block. |  | BigInteger
+| *keyName* (producer) | The key name in the database. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *mixDigest* (producer) | The mix digest (256 bits) used for submitting a proof-of-work solution. |  | String
+| *nonce* (producer) | The nonce found (64 bits) used for submitting a proof-of-work solution. |  | String
+| *operation* (producer) | Operation to use. | transaction | String
+| *position* (producer) | The transaction index position withing a block. |  | BigInteger
+| *priority* (producer) | The priority of a whisper message. |  | BigInteger
+| *sha3HashOfDataToSign* (producer) | Message to sign by calculating an Ethereum specific signature. |  | String
+| *signedTransactionData* (producer) | The signed transaction data for a new message call transaction or a contract creation for signed transactions. |  | String
+| *sourceCode* (producer) | The source code to compile. |  | String
+| *transactionHash* (producer) | The information about a transaction requested by transaction hash. |  | String
+| *ttl* (producer) | The time to live in seconds of a whisper message. |  | BigInteger
+| *value* (producer) | The value sent within a transaction. |  | BigInteger
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

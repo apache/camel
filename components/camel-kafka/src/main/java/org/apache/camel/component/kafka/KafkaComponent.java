@@ -31,16 +31,12 @@ import org.apache.camel.util.PropertiesHelper;
 @Component("kafka")
 public class KafkaComponent extends DefaultComponent implements SSLContextParametersAware {
 
+    @Metadata
     private KafkaConfiguration configuration = new KafkaConfiguration();
-
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(label = "consumer", defaultValue = "false")
-    private boolean breakOnFirstError;
-    @Metadata(label = "consumer", defaultValue = "false")
-    private boolean allowManualCommit;
     @Metadata(label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory = new DefaultKafkaManualCommitFactory();
 
@@ -52,39 +48,32 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     }
 
     @Override
-    protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
+    protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (ObjectHelper.isEmpty(remaining)) {
             throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
 
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
 
-        if (configuration != null) {
-            KafkaConfiguration copy = configuration.copy();
-            endpoint.setConfiguration(copy);
-        }
+        KafkaConfiguration copy = getConfiguration().copy();
+        endpoint.setConfiguration(copy);
 
         endpoint.getConfiguration().setTopic(remaining);
         endpoint.getConfiguration().setWorkerPool(getWorkerPool());
-        endpoint.getConfiguration().setBreakOnFirstError(isBreakOnFirstError());
-        endpoint.getConfiguration().setAllowManualCommit(isAllowManualCommit());
 
-        // brokers can be configured on either component or endpoint level
-        // and the consumer and produce is aware of this and act accordingly
-
-        setProperties(endpoint, params);
+        setProperties(endpoint, parameters);
 
         if (endpoint.getConfiguration().getSslContextParameters() == null) {
             endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         // extract the additional properties map
-        if (PropertiesHelper.hasProperties(params, "additionalProperties.")) {
+        if (PropertiesHelper.hasProperties(parameters, "additionalProperties.")) {
             final Map<String, Object> additionalProperties = endpoint.getConfiguration().getAdditionalProperties();
 
             // add and overwrite additional properties from endpoint to
             // pre-configured properties
-            additionalProperties.putAll(PropertiesHelper.extractProperties(params, "additionalProperties."));
+            additionalProperties.putAll(PropertiesHelper.extractProperties(parameters, "additionalProperties."));
         }
 
         return endpoint;
@@ -128,40 +117,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
-    }
-
-    public boolean isBreakOnFirstError() {
-        return breakOnFirstError;
-    }
-
-    /**
-     * This options controls what happens when a consumer is processing an
-     * exchange and it fails. If the option is <tt>false</tt> then the consumer
-     * continues to the next message and processes it. If the option is
-     * <tt>true</tt> then the consumer breaks out, and will seek back to offset
-     * of the message that caused a failure, and then re-attempt to process this
-     * message. However this can lead to endless processing of the same message
-     * if its bound to fail every time, eg a poison message. Therefore its
-     * recommended to deal with that for example by using Camel's error handler.
-     */
-    public void setBreakOnFirstError(boolean breakOnFirstError) {
-        this.breakOnFirstError = breakOnFirstError;
-    }
-
-    public boolean isAllowManualCommit() {
-        return allowManualCommit;
-    }
-
-    /**
-     * Whether to allow doing manual commits via {@link KafkaManualCommit}.
-     * <p/>
-     * If this option is enabled then an instance of {@link KafkaManualCommit}
-     * is stored on the {@link Exchange} message header, which allows end users
-     * to access this API and perform manual offset commits via the Kafka
-     * consumer.
-     */
-    public void setAllowManualCommit(boolean allowManualCommit) {
-        this.allowManualCommit = allowManualCommit;
     }
 
     public KafkaManualCommitFactory getKafkaManualCommitFactory() {

@@ -36,7 +36,7 @@ spark-rest://verb:path?[options]
 
 
 // component options: START
-The Spark Rest component supports 13 options, which are listed below.
+The Spark Rest component supports 18 options, which are listed below.
 
 
 
@@ -44,9 +44,14 @@ The Spark Rest component supports 13 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *disableStreamCache* (consumer) | Determines whether or not the raw input stream from Spark HttpRequest#getContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would need manually to reset the reader index on the Spark raw stream. | false | boolean
 | *ipAddress* (consumer) | Set the IP address that Spark should listen on. If not called the default address is '0.0.0.0'. | 0.0.0.0 | String
+| *mapHeaders* (consumer) | If this option is enabled, then during binding from Spark to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.sparkrest.SparkMessage message with the method getRequest() that returns the Spark HTTP request instance. | true | boolean
 | *port* (consumer) | Port number. Will by default use 4567 | 4567 | int
+| *transferException* (consumer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *urlDecodeHeaders* (consumer) | If this option is enabled, then during binding from Spark to Camel Message then the header values will be URL decoded (eg %20 will be a space character.) | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *matchOnUriPrefix* (advanced) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
 | *maxThreads* (advanced) | Maximum number of threads in Spark thread-pool (shared globally) |  | int
 | *minThreads* (advanced) | Minimum number of threads in Spark thread-pool (shared globally) |  | int
 | *sparkBinding* (advanced) | To use a custom SparkBinding to map to/from Camel message. |  | SparkBinding

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar.configuration;
+package org.apache.camel.component.pulsar;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.component.pulsar.PulsarMessageReceipt;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.UriParam;
@@ -31,7 +31,7 @@ import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionInit
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
 
 @UriParams
-public class PulsarConfiguration {
+public class PulsarConfiguration implements Cloneable {
 
     @UriParam(label = "consumer", defaultValue = "subs")
     private String subscriptionName = "subs";
@@ -84,6 +84,18 @@ public class PulsarConfiguration {
     private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
     @UriParam(label = "producer", description = "Custom Message Router to use")
     private MessageRouter messageRouter;
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public PulsarConfiguration copy() {
+        try {
+            PulsarConfiguration copy = (PulsarConfiguration)clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 
     public String getSubscriptionName() {
         return subscriptionName;

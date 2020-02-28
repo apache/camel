@@ -77,6 +77,25 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default JmsComponentBuilder disableReplyTo(boolean disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
          * The durable subscriber name for specifying durable topic
          * subscriptions. The clientId option must be configured as well.
          * 
@@ -87,6 +106,23 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder durableSubscriptionName(
                 java.lang.String durableSubscriptionName) {
             doSetProperty("durableSubscriptionName", durableSubscriptionName);
+            return this;
+        }
+        /**
+         * Allows you to force the use of a specific javax.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
+         * 
+         * Group: common
+         */
+        default JmsComponentBuilder jmsMessageType(
+                org.apache.camel.component.jms.JmsMessageType jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -104,20 +140,6 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
-            return this;
-        }
-        /**
-         * The JMS acknowledgement mode defined as an Integer. Allows you to set
-         * vendor-specific extensions to the acknowledgment mode. For the
-         * regular modes, it is preferable to use the acknowledgementModeName
-         * instead.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default JmsComponentBuilder acknowledgementMode(int acknowledgementMode) {
-            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -250,6 +272,42 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Provides an explicit ReplyTo destination, which overrides any
+         * incoming value of Message.getJMSReplyTo().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default JmsComponentBuilder replyTo(java.lang.String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
+         * Specifies whether to use persistent delivery by default for replies.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default JmsComponentBuilder replyToDeliveryPersistent(
+                boolean replyToDeliveryPersistent) {
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            return this;
+        }
+        /**
+         * Sets the JMS selector to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default JmsComponentBuilder selector(java.lang.String selector) {
+            doSetProperty("selector", selector);
+            return this;
+        }
+        /**
          * Set whether to make the subscription durable. The durable
          * subscription name to be used can be specified through the
          * subscriptionName property. Default is false. Set this to true to
@@ -350,6 +408,29 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * The consumer type to use, which can be one of: Simple, Default, or
+         * Custom. The consumer type determines which Spring JMS listener to
+         * use. Default will use
+         * org.springframework.jms.listener.DefaultMessageListenerContainer,
+         * Simple will use
+         * org.springframework.jms.listener.SimpleMessageListenerContainer. When
+         * Custom is specified, the MessageListenerContainerFactory defined by
+         * the messageListenerContainerFactory option will determine what
+         * org.springframework.jms.listener.AbstractMessageListenerContainer to
+         * use.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.ConsumerType</code> type.
+         * 
+         * Default: Default
+         * Group: consumer (advanced)
+         */
+        default JmsComponentBuilder consumerType(
+                org.apache.camel.component.jms.ConsumerType consumerType) {
+            doSetProperty("consumerType", consumerType);
+            return this;
+        }
+        /**
          * Specifies what default TaskExecutor type to use in the
          * DefaultMessageListenerContainer, for both consumer endpoints and the
          * ReplyTo consumer of producer endpoints. Possible values: SimpleAsync
@@ -373,11 +454,11 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Enables eager loading of JMS properties as soon as a message is
-         * loaded which generally is inefficient as the JMS properties may not
-         * be required but sometimes can catch early any issues with the
-         * underlying JMS provider and the use of JMS properties. See also the
-         * option eagerLoadingOfBody.
+         * Enables eager loading of JMS properties and payload as soon as a
+         * message is loaded which generally is inefficient as the JMS
+         * properties may not be required but sometimes can catch early any
+         * issues with the underlying JMS provider and the use of JMS
+         * properties. See also the option eagerPoisonBody.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -422,6 +503,22 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether a JMS consumer is allowed to send a reply message to the same
+         * destination that the consumer is using to consume from. This prevents
+         * an endless loop by consuming and sending back the same message to
+         * itself.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         */
+        default JmsComponentBuilder replyToSameDestinationAllowed(
+                boolean replyToSameDestinationAllowed) {
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
+            return this;
+        }
+        /**
          * Allows you to specify a custom task executor for consuming messages.
          * 
          * The option is a:
@@ -432,6 +529,19 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder taskExecutor(
                 org.springframework.core.task.TaskExecutor taskExecutor) {
             doSetProperty("taskExecutor", taskExecutor);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS. This option
+         * requires JMS 2.0 compliant broker.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: producer
+         */
+        default JmsComponentBuilder deliveryDelay(long deliveryDelay) {
+            doSetProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
@@ -468,19 +578,19 @@ public interface JmsComponentBuilderFactory {
          * preserveMessageQos option, which operates at message granularity,
          * reading QoS properties exclusively from the Camel In message headers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: producer
          */
         default JmsComponentBuilder explicitQosEnabled(
-                boolean explicitQosEnabled) {
+                java.lang.Boolean explicitQosEnabled) {
             doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
         }
         /**
-         * Sets whether date headers should be formatted according to the ISO
-         * 8601 standard.
+         * Sets whether JMS date properties should be formatted according to the
+         * ISO 8601 standard.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -549,20 +659,6 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of concurrent consumers for continue
-         * routing when timeout occurred when using request/reply over JMS.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: producer
-         */
-        default JmsComponentBuilder replyOnTimeoutToMaxConcurrentConsumers(
-                int replyOnTimeoutToMaxConcurrentConsumers) {
-            doSetProperty("replyOnTimeoutToMaxConcurrentConsumers", replyOnTimeoutToMaxConcurrentConsumers);
-            return this;
-        }
-        /**
          * Specifies the default number of concurrent consumers when doing
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
@@ -589,6 +685,35 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
             doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of concurrent consumers for continue
+         * routing when timeout occurred when using request/reply over JMS.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: producer
+         */
+        default JmsComponentBuilder replyToOnTimeoutMaxConcurrentConsumers(
+                int replyToOnTimeoutMaxConcurrentConsumers) {
+            doSetProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination in the JMS message, which
+         * overrides the setting of replyTo. It is useful if you want to forward
+         * the message to a remote Queue and receive the reply message from the
+         * ReplyTo destination.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default JmsComponentBuilder replyToOverride(
+                java.lang.String replyToOverride) {
+            doSetProperty("replyToOverride", replyToOverride);
             return this;
         }
         /**
@@ -689,13 +814,10 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Use this JMS property to correlate messages in InOut exchange pattern
-         * (request-reply) instead of JMSCorrelationID property. This allows you
-         * to exchange messages with systems that do not correlate messages
-         * using JMSCorrelationID JMS property. If used JMSCorrelationID will
-         * not be used or set by Camel. The value of here named property will be
-         * generated if not supplied in the header of the message under the same
-         * name.
+         * When using InOut exchange pattern use this JMS property instead of
+         * JMSCorrelationID JMS property to correlate messages. If set messages
+         * will be correlated solely on the value of this property
+         * JMSCorrelationID property will be ignored and not set by Camel.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -704,6 +826,26 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder correlationProperty(
                 java.lang.String correlationProperty) {
             doSetProperty("correlationProperty", correlationProperty);
+            return this;
+        }
+        /**
+         * Use this option to force disabling time to live. For example when you
+         * do request/reply over JMS, then Camel will by default use the
+         * requestTimeout value as time to live on the message being sent. The
+         * problem is that the sender and receiver systems have to have their
+         * clocks synchronized, so they are in sync. This is not always so easy
+         * to archive. So you can use disableTimeToLive=true to not set a time
+         * to live value on the sent message. Then the message will not expire
+         * on the receiver system. See below in section About time to live for
+         * more details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default JmsComponentBuilder disableTimeToLive(boolean disableTimeToLive) {
+            doSetProperty("disableTimeToLive", disableTimeToLive);
             return this;
         }
         /**
@@ -759,6 +901,20 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the JMS Selector using the fixed name to be used so you can
+         * filter out your own replies from the others when using a shared queue
+         * (that is, if you are not using a temporary reply queue).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default JmsComponentBuilder replyToDestinationSelectorName(
+                java.lang.String replyToDestinationSelectorName) {
+            doSetProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
+            return this;
+        }
+        /**
          * Sets whether StreamMessage type is enabled or not. Message payloads
          * of streaming kind such as files, InputStream, etc will either by sent
          * as BytesMessage or StreamMessage. This option controls which kind
@@ -807,6 +963,22 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder allowAutoWiredDestinationResolver(
                 boolean allowAutoWiredDestinationResolver) {
             doSetProperty("allowAutoWiredDestinationResolver", allowAutoWiredDestinationResolver);
+            return this;
+        }
+        /**
+         * Controls whether or not to include serialized headers. Applies only
+         * when transferExchange is true. This requires that the objects are
+         * serializable. Camel will exclude any non-serializable objects and log
+         * it at WARN level.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default JmsComponentBuilder allowSerializedHeaders(
+                boolean allowSerializedHeaders) {
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -988,22 +1160,6 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows you to use your own implementation of the
-         * org.springframework.jms.core.JmsOperations interface. Camel uses
-         * JmsTemplate as default. Can be used for testing purpose, but not used
-         * much as stated in the spring API docs.
-         * 
-         * The option is a:
-         * <code>org.springframework.jms.core.JmsOperations</code> type.
-         * 
-         * Group: advanced
-         */
-        default JmsComponentBuilder jmsOperations(
-                org.springframework.jms.core.JmsOperations jmsOperations) {
-            doSetProperty("jmsOperations", jmsOperations);
-            return this;
-        }
-        /**
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as javax.jms.TextMessage to a String etc.
          * 
@@ -1076,6 +1232,23 @@ public interface JmsComponentBuilderFactory {
          */
         default JmsComponentBuilder messageIdEnabled(boolean messageIdEnabled) {
             doSetProperty("messageIdEnabled", messageIdEnabled);
+            return this;
+        }
+        /**
+         * Registry ID of the MessageListenerContainerFactory used to determine
+         * what
+         * org.springframework.jms.listener.AbstractMessageListenerContainer to
+         * use to consume messages. Setting this will automatically set
+         * consumerType to Custom.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default JmsComponentBuilder messageListenerContainerFactory(
+                org.apache.camel.component.jms.MessageListenerContainerFactory messageListenerContainerFactory) {
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -1396,96 +1569,114 @@ public interface JmsComponentBuilderFactory {
         protected JmsComponent buildConcreteComponent() {
             return new JmsComponent();
         }
+        private org.apache.camel.component.jms.JmsConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.jms.JmsComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.jms.JmsConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "clientId": ((JmsComponent) component).setClientId((java.lang.String) value); return true;
-            case "connectionFactory": ((JmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
-            case "durableSubscriptionName": ((JmsComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
-            case "testConnectionOnStartup": ((JmsComponent) component).setTestConnectionOnStartup((boolean) value); return true;
-            case "acknowledgementMode": ((JmsComponent) component).setAcknowledgementMode((int) value); return true;
-            case "acknowledgementModeName": ((JmsComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
-            case "asyncConsumer": ((JmsComponent) component).setAsyncConsumer((boolean) value); return true;
-            case "autoStartup": ((JmsComponent) component).setAutoStartup((boolean) value); return true;
+            case "clientId": getOrCreateConfiguration((JmsComponent) component).setClientId((java.lang.String) value); return true;
+            case "connectionFactory": getOrCreateConfiguration((JmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "disableReplyTo": getOrCreateConfiguration((JmsComponent) component).setDisableReplyTo((boolean) value); return true;
+            case "durableSubscriptionName": getOrCreateConfiguration((JmsComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "jmsMessageType": getOrCreateConfiguration((JmsComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
+            case "testConnectionOnStartup": getOrCreateConfiguration((JmsComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "acknowledgementModeName": getOrCreateConfiguration((JmsComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
+            case "asyncConsumer": getOrCreateConfiguration((JmsComponent) component).setAsyncConsumer((boolean) value); return true;
+            case "autoStartup": getOrCreateConfiguration((JmsComponent) component).setAutoStartup((boolean) value); return true;
             case "bridgeErrorHandler": ((JmsComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "cacheLevel": ((JmsComponent) component).setCacheLevel((int) value); return true;
-            case "cacheLevelName": ((JmsComponent) component).setCacheLevelName((java.lang.String) value); return true;
-            case "concurrentConsumers": ((JmsComponent) component).setConcurrentConsumers((int) value); return true;
-            case "maxConcurrentConsumers": ((JmsComponent) component).setMaxConcurrentConsumers((int) value); return true;
-            case "subscriptionDurable": ((JmsComponent) component).setSubscriptionDurable((boolean) value); return true;
-            case "subscriptionName": ((JmsComponent) component).setSubscriptionName((java.lang.String) value); return true;
-            case "subscriptionShared": ((JmsComponent) component).setSubscriptionShared((boolean) value); return true;
-            case "acceptMessagesWhileStopping": ((JmsComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
-            case "allowReplyManagerQuickStop": ((JmsComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
-            case "defaultTaskExecutorType": ((JmsComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
-            case "eagerLoadingOfProperties": ((JmsComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
-            case "eagerPoisonBody": ((JmsComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
-            case "exposeListenerSession": ((JmsComponent) component).setExposeListenerSession((boolean) value); return true;
-            case "taskExecutor": ((JmsComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
-            case "deliveryMode": ((JmsComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
-            case "deliveryPersistent": ((JmsComponent) component).setDeliveryPersistent((boolean) value); return true;
-            case "explicitQosEnabled": ((JmsComponent) component).setExplicitQosEnabled((boolean) value); return true;
-            case "formatDateHeadersToIso8601": ((JmsComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
+            case "cacheLevel": getOrCreateConfiguration((JmsComponent) component).setCacheLevel((int) value); return true;
+            case "cacheLevelName": getOrCreateConfiguration((JmsComponent) component).setCacheLevelName((java.lang.String) value); return true;
+            case "concurrentConsumers": getOrCreateConfiguration((JmsComponent) component).setConcurrentConsumers((int) value); return true;
+            case "maxConcurrentConsumers": getOrCreateConfiguration((JmsComponent) component).setMaxConcurrentConsumers((int) value); return true;
+            case "replyTo": getOrCreateConfiguration((JmsComponent) component).setReplyTo((java.lang.String) value); return true;
+            case "replyToDeliveryPersistent": getOrCreateConfiguration((JmsComponent) component).setReplyToDeliveryPersistent((boolean) value); return true;
+            case "selector": getOrCreateConfiguration((JmsComponent) component).setSelector((java.lang.String) value); return true;
+            case "subscriptionDurable": getOrCreateConfiguration((JmsComponent) component).setSubscriptionDurable((boolean) value); return true;
+            case "subscriptionName": getOrCreateConfiguration((JmsComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "subscriptionShared": getOrCreateConfiguration((JmsComponent) component).setSubscriptionShared((boolean) value); return true;
+            case "acceptMessagesWhileStopping": getOrCreateConfiguration((JmsComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
+            case "allowReplyManagerQuickStop": getOrCreateConfiguration((JmsComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
+            case "consumerType": getOrCreateConfiguration((JmsComponent) component).setConsumerType((org.apache.camel.component.jms.ConsumerType) value); return true;
+            case "defaultTaskExecutorType": getOrCreateConfiguration((JmsComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
+            case "eagerLoadingOfProperties": getOrCreateConfiguration((JmsComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
+            case "eagerPoisonBody": getOrCreateConfiguration((JmsComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
+            case "exposeListenerSession": getOrCreateConfiguration((JmsComponent) component).setExposeListenerSession((boolean) value); return true;
+            case "replyToSameDestinationAllowed": getOrCreateConfiguration((JmsComponent) component).setReplyToSameDestinationAllowed((boolean) value); return true;
+            case "taskExecutor": getOrCreateConfiguration((JmsComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
+            case "deliveryDelay": getOrCreateConfiguration((JmsComponent) component).setDeliveryDelay((long) value); return true;
+            case "deliveryMode": getOrCreateConfiguration((JmsComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
+            case "deliveryPersistent": getOrCreateConfiguration((JmsComponent) component).setDeliveryPersistent((boolean) value); return true;
+            case "explicitQosEnabled": getOrCreateConfiguration((JmsComponent) component).setExplicitQosEnabled((java.lang.Boolean) value); return true;
+            case "formatDateHeadersToIso8601": getOrCreateConfiguration((JmsComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
             case "lazyStartProducer": ((JmsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "preserveMessageQos": ((JmsComponent) component).setPreserveMessageQos((boolean) value); return true;
-            case "priority": ((JmsComponent) component).setPriority((int) value); return true;
-            case "replyOnTimeoutToMaxConcurrentConsumers": ((JmsComponent) component).setReplyOnTimeoutToMaxConcurrentConsumers((int) value); return true;
-            case "replyToConcurrentConsumers": ((JmsComponent) component).setReplyToConcurrentConsumers((int) value); return true;
-            case "replyToMaxConcurrentConsumers": ((JmsComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
-            case "replyToType": ((JmsComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
-            case "requestTimeout": ((JmsComponent) component).setRequestTimeout((long) value); return true;
-            case "timeToLive": ((JmsComponent) component).setTimeToLive((long) value); return true;
-            case "allowAdditionalHeaders": ((JmsComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
-            case "allowNullBody": ((JmsComponent) component).setAllowNullBody((boolean) value); return true;
-            case "alwaysCopyMessage": ((JmsComponent) component).setAlwaysCopyMessage((boolean) value); return true;
-            case "correlationProperty": ((JmsComponent) component).setCorrelationProperty((java.lang.String) value); return true;
-            case "forceSendOriginalMessage": ((JmsComponent) component).setForceSendOriginalMessage((boolean) value); return true;
-            case "includeSentJMSMessageID": ((JmsComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
-            case "replyToCacheLevelName": ((JmsComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
-            case "streamMessageTypeEnabled": ((JmsComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
+            case "preserveMessageQos": getOrCreateConfiguration((JmsComponent) component).setPreserveMessageQos((boolean) value); return true;
+            case "priority": getOrCreateConfiguration((JmsComponent) component).setPriority((int) value); return true;
+            case "replyToConcurrentConsumers": getOrCreateConfiguration((JmsComponent) component).setReplyToConcurrentConsumers((int) value); return true;
+            case "replyToMaxConcurrentConsumers": getOrCreateConfiguration((JmsComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
+            case "replyToOnTimeoutMaxConcurrentConsumers": getOrCreateConfiguration((JmsComponent) component).setReplyToOnTimeoutMaxConcurrentConsumers((int) value); return true;
+            case "replyToOverride": getOrCreateConfiguration((JmsComponent) component).setReplyToOverride((java.lang.String) value); return true;
+            case "replyToType": getOrCreateConfiguration((JmsComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
+            case "requestTimeout": getOrCreateConfiguration((JmsComponent) component).setRequestTimeout((long) value); return true;
+            case "timeToLive": getOrCreateConfiguration((JmsComponent) component).setTimeToLive((long) value); return true;
+            case "allowAdditionalHeaders": getOrCreateConfiguration((JmsComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
+            case "allowNullBody": getOrCreateConfiguration((JmsComponent) component).setAllowNullBody((boolean) value); return true;
+            case "alwaysCopyMessage": getOrCreateConfiguration((JmsComponent) component).setAlwaysCopyMessage((boolean) value); return true;
+            case "correlationProperty": getOrCreateConfiguration((JmsComponent) component).setCorrelationProperty((java.lang.String) value); return true;
+            case "disableTimeToLive": getOrCreateConfiguration((JmsComponent) component).setDisableTimeToLive((boolean) value); return true;
+            case "forceSendOriginalMessage": getOrCreateConfiguration((JmsComponent) component).setForceSendOriginalMessage((boolean) value); return true;
+            case "includeSentJMSMessageID": getOrCreateConfiguration((JmsComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
+            case "replyToCacheLevelName": getOrCreateConfiguration((JmsComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
+            case "replyToDestinationSelectorName": getOrCreateConfiguration((JmsComponent) component).setReplyToDestinationSelectorName((java.lang.String) value); return true;
+            case "streamMessageTypeEnabled": getOrCreateConfiguration((JmsComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
             case "allowAutoWiredConnectionFactory": ((JmsComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
             case "allowAutoWiredDestinationResolver": ((JmsComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
-            case "asyncStartListener": ((JmsComponent) component).setAsyncStartListener((boolean) value); return true;
-            case "asyncStopListener": ((JmsComponent) component).setAsyncStopListener((boolean) value); return true;
+            case "allowSerializedHeaders": getOrCreateConfiguration((JmsComponent) component).setAllowSerializedHeaders((boolean) value); return true;
+            case "asyncStartListener": getOrCreateConfiguration((JmsComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "asyncStopListener": getOrCreateConfiguration((JmsComponent) component).setAsyncStopListener((boolean) value); return true;
             case "basicPropertyBinding": ((JmsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((JmsComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
-            case "destinationResolver": ((JmsComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
-            case "errorHandler": ((JmsComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
-            case "exceptionListener": ((JmsComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
-            case "idleConsumerLimit": ((JmsComponent) component).setIdleConsumerLimit((int) value); return true;
-            case "idleTaskExecutionLimit": ((JmsComponent) component).setIdleTaskExecutionLimit((int) value); return true;
-            case "includeAllJMSXProperties": ((JmsComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
-            case "jmsKeyFormatStrategy": ((JmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
-            case "jmsOperations": ((JmsComponent) component).setJmsOperations((org.springframework.jms.core.JmsOperations) value); return true;
-            case "mapJmsMessage": ((JmsComponent) component).setMapJmsMessage((boolean) value); return true;
-            case "maxMessagesPerTask": ((JmsComponent) component).setMaxMessagesPerTask((int) value); return true;
-            case "messageConverter": ((JmsComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
-            case "messageCreatedStrategy": ((JmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
-            case "messageIdEnabled": ((JmsComponent) component).setMessageIdEnabled((boolean) value); return true;
-            case "messageTimestampEnabled": ((JmsComponent) component).setMessageTimestampEnabled((boolean) value); return true;
-            case "pubSubNoLocal": ((JmsComponent) component).setPubSubNoLocal((boolean) value); return true;
+            case "destinationResolver": getOrCreateConfiguration((JmsComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
+            case "errorHandler": getOrCreateConfiguration((JmsComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "exceptionListener": getOrCreateConfiguration((JmsComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "idleConsumerLimit": getOrCreateConfiguration((JmsComponent) component).setIdleConsumerLimit((int) value); return true;
+            case "idleTaskExecutionLimit": getOrCreateConfiguration((JmsComponent) component).setIdleTaskExecutionLimit((int) value); return true;
+            case "includeAllJMSXProperties": getOrCreateConfiguration((JmsComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "jmsKeyFormatStrategy": getOrCreateConfiguration((JmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
+            case "mapJmsMessage": getOrCreateConfiguration((JmsComponent) component).setMapJmsMessage((boolean) value); return true;
+            case "maxMessagesPerTask": getOrCreateConfiguration((JmsComponent) component).setMaxMessagesPerTask((int) value); return true;
+            case "messageConverter": getOrCreateConfiguration((JmsComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
+            case "messageCreatedStrategy": getOrCreateConfiguration((JmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
+            case "messageIdEnabled": getOrCreateConfiguration((JmsComponent) component).setMessageIdEnabled((boolean) value); return true;
+            case "messageListenerContainerFactory": getOrCreateConfiguration((JmsComponent) component).setMessageListenerContainerFactory((org.apache.camel.component.jms.MessageListenerContainerFactory) value); return true;
+            case "messageTimestampEnabled": getOrCreateConfiguration((JmsComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "pubSubNoLocal": getOrCreateConfiguration((JmsComponent) component).setPubSubNoLocal((boolean) value); return true;
             case "queueBrowseStrategy": ((JmsComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
-            case "receiveTimeout": ((JmsComponent) component).setReceiveTimeout((long) value); return true;
-            case "recoveryInterval": ((JmsComponent) component).setRecoveryInterval((long) value); return true;
-            case "requestTimeoutCheckerInterval": ((JmsComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
-            case "transferException": ((JmsComponent) component).setTransferException((boolean) value); return true;
-            case "transferExchange": ((JmsComponent) component).setTransferExchange((boolean) value); return true;
-            case "useMessageIDAsCorrelationID": ((JmsComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
-            case "waitForProvisionCorrelationToBeUpdatedCounter": ((JmsComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
-            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((JmsComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
-            case "errorHandlerLoggingLevel": ((JmsComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
-            case "errorHandlerLogStackTrace": ((JmsComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "receiveTimeout": getOrCreateConfiguration((JmsComponent) component).setReceiveTimeout((long) value); return true;
+            case "recoveryInterval": getOrCreateConfiguration((JmsComponent) component).setRecoveryInterval((long) value); return true;
+            case "requestTimeoutCheckerInterval": getOrCreateConfiguration((JmsComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "transferException": getOrCreateConfiguration((JmsComponent) component).setTransferException((boolean) value); return true;
+            case "transferExchange": getOrCreateConfiguration((JmsComponent) component).setTransferExchange((boolean) value); return true;
+            case "useMessageIDAsCorrelationID": getOrCreateConfiguration((JmsComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration((JmsComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((JmsComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "errorHandlerLoggingLevel": getOrCreateConfiguration((JmsComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
+            case "errorHandlerLogStackTrace": getOrCreateConfiguration((JmsComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
             case "headerFilterStrategy": ((JmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "password": ((JmsComponent) component).setPassword((java.lang.String) value); return true;
-            case "username": ((JmsComponent) component).setUsername((java.lang.String) value); return true;
-            case "transacted": ((JmsComponent) component).setTransacted((boolean) value); return true;
-            case "lazyCreateTransactionManager": ((JmsComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
-            case "transactionManager": ((JmsComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
-            case "transactionName": ((JmsComponent) component).setTransactionName((java.lang.String) value); return true;
-            case "transactionTimeout": ((JmsComponent) component).setTransactionTimeout((int) value); return true;
+            case "password": getOrCreateConfiguration((JmsComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((JmsComponent) component).setUsername((java.lang.String) value); return true;
+            case "transacted": getOrCreateConfiguration((JmsComponent) component).setTransacted((boolean) value); return true;
+            case "lazyCreateTransactionManager": getOrCreateConfiguration((JmsComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
+            case "transactionManager": getOrCreateConfiguration((JmsComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
+            case "transactionName": getOrCreateConfiguration((JmsComponent) component).setTransactionName((java.lang.String) value); return true;
+            case "transactionTimeout": getOrCreateConfiguration((JmsComponent) component).setTransactionTimeout((int) value); return true;
             default: return false;
             }
         }

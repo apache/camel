@@ -29,6 +29,9 @@ import org.apache.camel.support.component.AbstractApiComponent;
 @Component("box")
 public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfiguration, BoxApiCollection> {
 
+    @Metadata
+    BoxConfiguration configuration;
+
     @Metadata(label = "advanced")
     BoxAPIConnection boxConnection;
 

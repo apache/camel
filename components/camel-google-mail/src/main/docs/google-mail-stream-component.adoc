@@ -46,14 +46,23 @@ The GoogleMail Component uses the following URI format:
 
 
 // component options: START
-The Google Mail Stream component supports 4 options, which are listed below.
+The Google Mail Stream component supports 13 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *accessToken* (consumer) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *applicationName* (consumer) | Google mail application name. Example would be camel-google-mail/1.0 |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clientId* (consumer) | Client ID of the mail application |  | String
+| *clientSecret* (consumer) | Client secret of the mail application |  | String
+| *labels* (consumer) | Comma separated list of labels to take into account |  | String
+| *markAsRead* (consumer) | Mark the message as read once it has been consumed | false | boolean
+| *maxResults* (consumer) | Max results to be returned | 10 | long
+| *query* (consumer) | The query to execute on gmail box | is:unread | String
+| *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientFactory* (advanced) | The client Factory |  | GoogleMailClientFactory
 | *configuration* (advanced) | The configuration |  | GoogleMailStreamConfiguration

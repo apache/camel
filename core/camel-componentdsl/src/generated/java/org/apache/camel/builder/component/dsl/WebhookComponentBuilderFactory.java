@@ -72,6 +72,71 @@ public interface WebhookComponentBuilderFactory {
             return this;
         }
         /**
+         * Automatically register the webhook at startup and unregister it on
+         * shutdown.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default WebhookComponentBuilder webhookAutoRegister(
+                boolean webhookAutoRegister) {
+            doSetProperty("webhookAutoRegister", webhookAutoRegister);
+            return this;
+        }
+        /**
+         * The first (base) path element where the webhook will be exposed. It's
+         * a good practice to set it to a random string, so that it cannot be
+         * guessed by unauthorized parties.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookComponentBuilder webhookBasePath(
+                java.lang.String webhookBasePath) {
+            doSetProperty("webhookBasePath", webhookBasePath);
+            return this;
+        }
+        /**
+         * The Camel Rest component to use for the REST transport, such as
+         * netty-http.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookComponentBuilder webhookComponentName(
+                java.lang.String webhookComponentName) {
+            doSetProperty("webhookComponentName", webhookComponentName);
+            return this;
+        }
+        /**
+         * The URL of the current service as seen by the webhook provider.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookComponentBuilder webhookExternalUrl(
+                java.lang.String webhookExternalUrl) {
+            doSetProperty("webhookExternalUrl", webhookExternalUrl);
+            return this;
+        }
+        /**
+         * The path where the webhook endpoint will be exposed (relative to
+         * basePath, if any).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookComponentBuilder webhookPath(java.lang.String webhookPath) {
+            doSetProperty("webhookPath", webhookPath);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -110,6 +175,13 @@ public interface WebhookComponentBuilderFactory {
         protected WebhookComponent buildConcreteComponent() {
             return new WebhookComponent();
         }
+        private org.apache.camel.component.webhook.WebhookConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.webhook.WebhookComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.webhook.WebhookConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -117,6 +189,11 @@ public interface WebhookComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((WebhookComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "webhookAutoRegister": getOrCreateConfiguration((WebhookComponent) component).setWebhookAutoRegister((boolean) value); return true;
+            case "webhookBasePath": getOrCreateConfiguration((WebhookComponent) component).setWebhookBasePath((java.lang.String) value); return true;
+            case "webhookComponentName": getOrCreateConfiguration((WebhookComponent) component).setWebhookComponentName((java.lang.String) value); return true;
+            case "webhookExternalUrl": getOrCreateConfiguration((WebhookComponent) component).setWebhookExternalUrl((java.lang.String) value); return true;
+            case "webhookPath": getOrCreateConfiguration((WebhookComponent) component).setWebhookPath((java.lang.String) value); return true;
             case "basicPropertyBinding": ((WebhookComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((WebhookComponent) component).setConfiguration((org.apache.camel.component.webhook.WebhookConfiguration) value); return true;
             default: return false;

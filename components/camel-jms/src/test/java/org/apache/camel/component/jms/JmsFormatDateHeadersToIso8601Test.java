@@ -49,7 +49,7 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setFormatDateHeadersToIso8601(true);
+        jms.getConfiguration().setFormatDateHeadersToIso8601(true);
         camelContext.addComponent("activemq", jms);
         return camelContext;
     }

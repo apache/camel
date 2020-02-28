@@ -42,6 +42,9 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 @Component("olingo2")
 public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection> implements SSLContextParametersAware {
 
+    @Metadata
+    Olingo2Configuration configuration;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 

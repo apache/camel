@@ -55,14 +55,26 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Ganglia component supports 3 options, which are listed below.
+The Ganglia component supports 15 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *dmax* (producer) | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | int
+| *groupName* (producer) | The group that the metric belongs to. | java | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *metricName* (producer) | The name to use for the metric. | metric | String
+| *mode* (producer) | Send the UDP metric packets using MULTICAST or UNICAST. The value can be one of: MULTICAST, UNICAST | MULTICAST | UDPAddressingMode
+| *prefix* (producer) | Prefix the metric name with this string and an underscore. |  | String
+| *slope* (producer) | The slope. The value can be one of: ZERO, POSITIVE, NEGATIVE, BOTH | BOTH | GMetricSlope
+| *spoofHostname* (producer) | Spoofing information IP:hostname |  | String
+| *tmax* (producer) | Maximum time in seconds that the value can be considered current. After this, Ganglia considers the value to have expired. | 60 | int
+| *ttl* (producer) | If using multicast, set the TTL of the packets | 5 | int
+| *type* (producer) | The type of value. The value can be one of: STRING, INT8, UINT8, INT16, UINT16, INT32, UINT32, FLOAT, DOUBLE | STRING | GMetricType
+| *units* (producer) | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
+| *wireFormat31x* (producer) | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | To use the shared configuration |  | GangliaConfiguration
 |===

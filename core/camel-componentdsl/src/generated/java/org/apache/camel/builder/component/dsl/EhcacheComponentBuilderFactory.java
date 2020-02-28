@@ -51,31 +51,6 @@ public interface EhcacheComponentBuilderFactory {
             extends
                 ComponentBuilder<EhcacheComponent> {
         /**
-         * The default cache configuration to be used to create caches.
-         * 
-         * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default EhcacheComponentBuilder cacheConfiguration(
-                org.ehcache.config.CacheConfiguration cacheConfiguration) {
-            doSetProperty("cacheConfiguration", cacheConfiguration);
-            return this;
-        }
-        /**
-         * URI pointing to the Ehcache XML configuration file's location.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EhcacheComponentBuilder cacheConfigurationUri(
-                java.lang.String cacheConfigurationUri) {
-            doSetProperty("cacheConfigurationUri", cacheConfigurationUri);
-            return this;
-        }
-        /**
          * The cache manager.
          * 
          * The option is a: <code>org.ehcache.CacheManager</code> type.
@@ -100,16 +75,29 @@ public interface EhcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * A map of caches configurations to be used to create caches.
+         * URI pointing to the Ehcache XML configuration file's location.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * org.ehcache.config.CacheConfiguration></code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default EhcacheComponentBuilder cachesConfigurations(
-                java.util.Map<java.lang.String, org.ehcache.config.CacheConfiguration> cachesConfigurations) {
-            doSetProperty("cachesConfigurations", cachesConfigurations);
+        default EhcacheComponentBuilder configurationUri(
+                java.lang.String configurationUri) {
+            doSetProperty("configurationUri", configurationUri);
+            return this;
+        }
+        /**
+         * Configure if a cache need to be created if it does exist or can't be
+         * pre-configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default EhcacheComponentBuilder createCacheIfNotExist(
+                boolean createCacheIfNotExist) {
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -129,6 +117,69 @@ public interface EhcacheComponentBuilderFactory {
         default EhcacheComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Set the delivery mode (synchronous, asynchronous).
+         * 
+         * The option is a: <code>org.ehcache.event.EventFiring</code> type.
+         * 
+         * Default: ASYNCHRONOUS
+         * Group: consumer
+         */
+        default EhcacheComponentBuilder eventFiring(
+                org.ehcache.event.EventFiring eventFiring) {
+            doSetProperty("eventFiring", eventFiring);
+            return this;
+        }
+        /**
+         * Set the delivery mode (ordered, unordered).
+         * 
+         * The option is a: <code>org.ehcache.event.EventOrdering</code> type.
+         * 
+         * Default: ORDERED
+         * Group: consumer
+         */
+        default EhcacheComponentBuilder eventOrdering(
+                org.ehcache.event.EventOrdering eventOrdering) {
+            doSetProperty("eventOrdering", eventOrdering);
+            return this;
+        }
+        /**
+         * Set the type of events to listen for
+         * (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple
+         * entries separated by comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default EhcacheComponentBuilder eventTypes(java.lang.String eventTypes) {
+            doSetProperty("eventTypes", eventTypes);
+            return this;
+        }
+        /**
+         * To configure the default cache action. If an action is set in the
+         * message header, then the operation from the header takes precedence.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EhcacheComponentBuilder action(java.lang.String action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * To configure the default action key. If a key is set in the message
+         * header, then the key from the header takes precedence.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default EhcacheComponentBuilder key(java.lang.Object key) {
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -167,17 +218,51 @@ public interface EhcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the global component configuration.
+         * The default cache configuration to be used to create caches.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
+         * The option is a: <code>org.ehcache.config.CacheConfiguration</code>
          * type.
          * 
          * Group: advanced
          */
         default EhcacheComponentBuilder configuration(
-                org.apache.camel.component.ehcache.EhcacheConfiguration configuration) {
+                org.ehcache.config.CacheConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * A map of cache configuration to be used to create caches.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * org.ehcache.config.CacheConfiguration></code> type.
+         * 
+         * Group: advanced
+         */
+        default EhcacheComponentBuilder configurations(
+                java.util.Map<java.lang.String, org.ehcache.config.CacheConfiguration> configurations) {
+            doSetProperty("configurations", configurations);
+            return this;
+        }
+        /**
+         * The cache key type, default java.lang.Object.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default EhcacheComponentBuilder keyType(java.lang.String keyType) {
+            doSetProperty("keyType", keyType);
+            return this;
+        }
+        /**
+         * The cache value type, default java.lang.Object.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default EhcacheComponentBuilder valueType(java.lang.String valueType) {
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -191,21 +276,35 @@ public interface EhcacheComponentBuilderFactory {
         protected EhcacheComponent buildConcreteComponent() {
             return new EhcacheComponent();
         }
+        private org.apache.camel.component.ehcache.EhcacheConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.ehcache.EhcacheComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.ehcache.EhcacheConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "cacheConfiguration": ((EhcacheComponent) component).setCacheConfiguration((org.ehcache.config.CacheConfiguration) value); return true;
-            case "cacheConfigurationUri": ((EhcacheComponent) component).setCacheConfigurationUri((java.lang.String) value); return true;
-            case "cacheManager": ((EhcacheComponent) component).setCacheManager((org.ehcache.CacheManager) value); return true;
-            case "cacheManagerConfiguration": ((EhcacheComponent) component).setCacheManagerConfiguration((org.ehcache.config.Configuration) value); return true;
-            case "cachesConfigurations": ((EhcacheComponent) component).setCachesConfigurations((java.util.Map<java.lang.String, org.ehcache.config.CacheConfiguration>) value); return true;
+            case "cacheManager": getOrCreateConfiguration((EhcacheComponent) component).setCacheManager((org.ehcache.CacheManager) value); return true;
+            case "cacheManagerConfiguration": getOrCreateConfiguration((EhcacheComponent) component).setCacheManagerConfiguration((org.ehcache.config.Configuration) value); return true;
+            case "configurationUri": getOrCreateConfiguration((EhcacheComponent) component).setConfigurationUri((java.lang.String) value); return true;
+            case "createCacheIfNotExist": getOrCreateConfiguration((EhcacheComponent) component).setCreateCacheIfNotExist((boolean) value); return true;
             case "bridgeErrorHandler": ((EhcacheComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "eventFiring": getOrCreateConfiguration((EhcacheComponent) component).setEventFiring((org.ehcache.event.EventFiring) value); return true;
+            case "eventOrdering": getOrCreateConfiguration((EhcacheComponent) component).setEventOrdering((org.ehcache.event.EventOrdering) value); return true;
+            case "eventTypes": getOrCreateConfiguration((EhcacheComponent) component).setEventTypes((java.lang.String) value); return true;
+            case "action": getOrCreateConfiguration((EhcacheComponent) component).setAction((java.lang.String) value); return true;
+            case "key": getOrCreateConfiguration((EhcacheComponent) component).setKey((java.lang.Object) value); return true;
             case "lazyStartProducer": ((EhcacheComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((EhcacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((EhcacheComponent) component).setConfiguration((org.apache.camel.component.ehcache.EhcacheConfiguration) value); return true;
+            case "configuration": getOrCreateConfiguration((EhcacheComponent) component).setConfiguration((org.ehcache.config.CacheConfiguration) value); return true;
+            case "configurations": getOrCreateConfiguration((EhcacheComponent) component).setConfigurations((java.util.Map) value); return true;
+            case "keyType": getOrCreateConfiguration((EhcacheComponent) component).setKeyType((java.lang.String) value); return true;
+            case "valueType": getOrCreateConfiguration((EhcacheComponent) component).setValueType((java.lang.String) value); return true;
             default: return false;
             }
         }

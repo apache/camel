@@ -813,11 +813,11 @@ public interface RabbitmqComponentBuilderFactory {
             case "mandatory": ((RabbitMQComponent) component).setMandatory((boolean) value); return true;
             case "publisherAcknowledgements": ((RabbitMQComponent) component).setPublisherAcknowledgements((boolean) value); return true;
             case "publisherAcknowledgementsTimeout": ((RabbitMQComponent) component).setPublisherAcknowledgementsTimeout((long) value); return true;
-            case "args": ((RabbitMQComponent) component).setArgs((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
+            case "args": ((RabbitMQComponent) component).setArgs((java.util.Map) value); return true;
             case "autoDetectConnectionFactory": ((RabbitMQComponent) component).setAutoDetectConnectionFactory((boolean) value); return true;
             case "automaticRecoveryEnabled": ((RabbitMQComponent) component).setAutomaticRecoveryEnabled((java.lang.Boolean) value); return true;
             case "basicPropertyBinding": ((RabbitMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "clientProperties": ((RabbitMQComponent) component).setClientProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
+            case "clientProperties": ((RabbitMQComponent) component).setClientProperties((java.util.Map) value); return true;
             case "connectionTimeout": ((RabbitMQComponent) component).setConnectionTimeout((int) value); return true;
             case "networkRecoveryInterval": ((RabbitMQComponent) component).setNetworkRecoveryInterval((java.lang.Integer) value); return true;
             case "requestedChannelMax": ((RabbitMQComponent) component).setRequestedChannelMax((int) value); return true;

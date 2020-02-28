@@ -51,6 +51,30 @@ public interface GoogleDriveComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleDriveComponent> {
         /**
+         * Google drive application name. Example would be
+         * camel-google-drive/1.0.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleDriveComponentBuilder applicationName(
+                java.lang.String applicationName) {
+            doSetProperty("applicationName", applicationName);
+            return this;
+        }
+        /**
+         * Client ID of the drive application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleDriveComponentBuilder clientId(java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -61,6 +85,20 @@ public interface GoogleDriveComponentBuilderFactory {
         default GoogleDriveComponentBuilder configuration(
                 org.apache.camel.component.google.drive.GoogleDriveConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Specifies the level of permissions you want a drive application to
+         * have to a user account. See
+         * https://developers.google.com/drive/web/scopes for more info.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: common
+         */
+        default GoogleDriveComponentBuilder scopes(
+                java.util.List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -131,6 +169,45 @@ public interface GoogleDriveComponentBuilderFactory {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the drive application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     class GoogleDriveComponentBuilderImpl
@@ -142,17 +219,30 @@ public interface GoogleDriveComponentBuilderFactory {
         protected GoogleDriveComponent buildConcreteComponent() {
             return new GoogleDriveComponent();
         }
+        private org.apache.camel.component.google.drive.GoogleDriveConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.google.drive.GoogleDriveComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.google.drive.GoogleDriveConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "applicationName": getOrCreateConfiguration((GoogleDriveComponent) component).setApplicationName((java.lang.String) value); return true;
+            case "clientId": getOrCreateConfiguration((GoogleDriveComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleDriveComponent) component).setConfiguration((org.apache.camel.component.google.drive.GoogleDriveConfiguration) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleDriveComponent) component).setScopes((java.util.List) value); return true;
             case "bridgeErrorHandler": ((GoogleDriveComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleDriveComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GoogleDriveComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleDriveComponent) component).setClientFactory((org.apache.camel.component.google.drive.GoogleDriveClientFactory) value); return true;
+            case "accessToken": getOrCreateConfiguration((GoogleDriveComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleDriveComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleDriveComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
         }

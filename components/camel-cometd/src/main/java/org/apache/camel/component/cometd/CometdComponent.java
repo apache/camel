@@ -68,6 +68,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
     private String sslKeystore;
     @Metadata(label = "security")
     private SecurityPolicy securityPolicy;
+    @Metadata(label = "advanced")
     private List<BayeuxServer.Extension> extensions;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;

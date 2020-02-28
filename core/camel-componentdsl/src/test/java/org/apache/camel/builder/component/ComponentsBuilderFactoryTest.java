@@ -46,16 +46,12 @@ public class ComponentsBuilderFactoryTest extends ContextTestSupport {
     public void testIfResolvePlaceholdersCorrectly() {
         context.getPropertiesComponent().setLocation("classpath:application.properties");
 
-        //TODO: this test needs to be reverted after resolving issues.apache.org/jira/browse/CAMEL-14568
-        final KafkaConfiguration kafkaConfiguration = new KafkaConfiguration();
-        kafkaConfiguration.setBrokers("{{kafka.host}}:{{kafka.port}}");
-
         final KafkaComponent kafkaComponent = ComponentsBuilderFactory.kafka()
-                .configuration(kafkaConfiguration)
+                .brokers("{{kafka.host}}:{{kafka.port}}")
                 .build(context);
 
         assertNotNull(kafkaComponent.getConfiguration());
-        assertEquals("localhost:9092", kafkaConfiguration.getBrokers());
+        assertEquals("localhost:9092", kafkaComponent.getConfiguration().getBrokers());
     }
 
     @Test
@@ -66,14 +62,14 @@ public class ComponentsBuilderFactoryTest extends ContextTestSupport {
         kafkaConfiguration.setBrokers("localhost:9092");
 
         final KafkaComponent kafkaComponent = ComponentsBuilderFactory.kafka()
-                .allowManualCommit(true)
                 .configuration(kafkaConfiguration)
+                .allowManualCommit(true)
                 .build();
 
         assertNotNull(kafkaComponent);
 
         assertEquals("localhost:9092", kafkaComponent.getConfiguration().getBrokers());
-        assertTrue(kafkaComponent.isAllowManualCommit());
+        assertTrue(kafkaComponent.getConfiguration().isAllowManualCommit());
 
         assertEquals("testGroup", kafkaComponent.getConfiguration().getGroupId());
         assertEquals(5000, kafkaComponent.getConfiguration().getConsumerRequestTimeoutMs().intValue());

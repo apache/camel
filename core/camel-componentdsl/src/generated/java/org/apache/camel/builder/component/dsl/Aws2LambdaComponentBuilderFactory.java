@@ -83,6 +83,22 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
+         * The operation to perform. It can be listFunctions, getFunction,
+         * createFunction, deleteFunction or invokeFunction.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.lambda.Lambda2Operations</code>
+         * type.
+         * 
+         * Default: invokeFunction
+         * Group: producer
+         */
+        default Aws2LambdaComponentBuilder operation(
+                org.apache.camel.component.aws2.lambda.Lambda2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Amazon AWS Region.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -102,6 +118,20 @@ public interface Aws2LambdaComponentBuilderFactory {
          */
         default Aws2LambdaComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * To use a existing configured AwsLambdaClient as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.lambda.LambdaClient</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default Aws2LambdaComponentBuilder awsLambdaClient(
+                software.amazon.awssdk.services.lambda.LambdaClient awsLambdaClient) {
+            doSetProperty("awsLambdaClient", awsLambdaClient);
             return this;
         }
         /**
@@ -131,6 +161,42 @@ public interface Aws2LambdaComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+        /**
+         * To define a proxy host when instantiating the Lambda client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default Aws2LambdaComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Lambda client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default Aws2LambdaComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Lambda client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: proxy
+         */
+        default Aws2LambdaComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
     }
 
     class Aws2LambdaComponentBuilderImpl
@@ -142,6 +208,13 @@ public interface Aws2LambdaComponentBuilderFactory {
         protected Lambda2Component buildConcreteComponent() {
             return new Lambda2Component();
         }
+        private org.apache.camel.component.aws2.lambda.Lambda2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.lambda.Lambda2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.lambda.Lambda2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -150,10 +223,15 @@ public interface Aws2LambdaComponentBuilderFactory {
             switch (name) {
             case "accessKey": ((Lambda2Component) component).setAccessKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((Lambda2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
             case "region": ((Lambda2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Lambda2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
             case "basicPropertyBinding": ((Lambda2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((Lambda2Component) component).setConfiguration((org.apache.camel.component.aws2.lambda.Lambda2Configuration) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Lambda2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Lambda2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Lambda2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             default: return false;
             }
         }

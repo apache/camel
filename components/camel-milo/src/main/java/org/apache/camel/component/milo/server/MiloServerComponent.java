@@ -127,7 +127,6 @@ public class MiloServerComponent extends DefaultComponent {
 
     public MiloServerComponent(final OpcUaServerConfig serverConfig) {
         this.opcServerConfig = OpcUaServerConfig.copy(serverConfig);
-
     }
 
     @Override

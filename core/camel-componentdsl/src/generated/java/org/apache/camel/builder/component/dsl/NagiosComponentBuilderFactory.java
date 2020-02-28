@@ -49,6 +49,18 @@ public interface NagiosComponentBuilderFactory {
             extends
                 ComponentBuilder<NagiosComponent> {
         /**
+         * Connection timeout in millis.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: producer
+         */
+        default NagiosComponentBuilder connectionTimeout(int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -67,6 +79,18 @@ public interface NagiosComponentBuilderFactory {
         default NagiosComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Sending timeout in millis.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: producer
+         */
+        default NagiosComponentBuilder timeout(int timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -97,6 +121,30 @@ public interface NagiosComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+        /**
+         * To specify an encryption method.
+         * 
+         * The option is a:
+         * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
+         * 
+         * Group: security
+         */
+        default NagiosComponentBuilder encryption(
+                com.googlecode.jsendnsca.encryption.Encryption encryption) {
+            doSetProperty("encryption", encryption);
+            return this;
+        }
+        /**
+         * Password to be authenticated when sending checks to Nagios.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default NagiosComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
     }
 
     class NagiosComponentBuilderImpl
@@ -108,15 +156,26 @@ public interface NagiosComponentBuilderFactory {
         protected NagiosComponent buildConcreteComponent() {
             return new NagiosComponent();
         }
+        private org.apache.camel.component.nagios.NagiosConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.nagios.NagiosComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.nagios.NagiosConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "connectionTimeout": getOrCreateConfiguration((NagiosComponent) component).setConnectionTimeout((int) value); return true;
             case "lazyStartProducer": ((NagiosComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "timeout": getOrCreateConfiguration((NagiosComponent) component).setTimeout((int) value); return true;
             case "basicPropertyBinding": ((NagiosComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((NagiosComponent) component).setConfiguration((org.apache.camel.component.nagios.NagiosConfiguration) value); return true;
+            case "encryption": getOrCreateConfiguration((NagiosComponent) component).setEncryption((com.googlecode.jsendnsca.encryption.Encryption) value); return true;
+            case "password": getOrCreateConfiguration((NagiosComponent) component).setPassword((java.lang.String) value); return true;
             default: return false;
             }
         }

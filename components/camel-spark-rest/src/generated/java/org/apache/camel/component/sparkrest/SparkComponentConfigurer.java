@@ -11,17 +11,34 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SparkComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.sparkrest.SparkConfiguration getOrCreateConfiguration(SparkComponent target) {
+        if (target.getSparkConfiguration() == null) {
+            target.setSparkConfiguration(new org.apache.camel.component.sparkrest.SparkConfiguration());
+        }
+        return target.getSparkConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SparkComponent target = (SparkComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "disablestreamcache":
+        case "disableStreamCache": getOrCreateConfiguration(target).setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
         case "ipaddress":
         case "ipAddress": target.setIpAddress(property(camelContext, java.lang.String.class, value)); return true;
+        case "mapheaders":
+        case "mapHeaders": getOrCreateConfiguration(target).setMapHeaders(property(camelContext, boolean.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "transferexception":
+        case "transferException": getOrCreateConfiguration(target).setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "urldecodeheaders":
+        case "urlDecodeHeaders": getOrCreateConfiguration(target).setUrlDecodeHeaders(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": getOrCreateConfiguration(target).setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "maxthreads":
         case "maxThreads": target.setMaxThreads(property(camelContext, int.class, value)); return true;
         case "minthreads":

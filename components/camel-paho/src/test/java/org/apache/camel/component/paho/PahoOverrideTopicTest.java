@@ -56,7 +56,7 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 PahoComponent paho = context.getComponent("paho", PahoComponent.class);
-                paho.setBrokerUrl("tcp://localhost:" + mqttPort);
+                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
 
                 from("direct:test").to("paho:queue").log("Message sent");
 

@@ -114,7 +114,7 @@ public interface JsltComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((JsltComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((JsltComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "functions": ((JsltComponent) component).setFunctions((java.util.Collection<com.schibsted.spt.data.jslt.Function>) value); return true;
+            case "functions": ((JsltComponent) component).setFunctions((java.util.Collection) value); return true;
             default: return false;
             }
         }

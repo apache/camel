@@ -11,19 +11,45 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BraintreeComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.braintree.BraintreeConfiguration getOrCreateConfiguration(BraintreeComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.braintree.BraintreeConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BraintreeComponent target = (BraintreeComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.braintree.BraintreeConfiguration.class, value)); return true;
+        case "environment": getOrCreateConfiguration(target).setEnvironment(property(camelContext, java.lang.String.class, value)); return true;
+        case "merchantid":
+        case "merchantId": getOrCreateConfiguration(target).setMerchantId(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "httpreadtimeout":
+        case "httpReadTimeout": getOrCreateConfiguration(target).setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httploglevel":
+        case "httpLogLevel": getOrCreateConfiguration(target).setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "httplogname":
+        case "httpLogName": getOrCreateConfiguration(target).setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
         case "loghandlerenabled":
-        case "logHandlerEnabled": target.setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "logHandlerEnabled": getOrCreateConfiguration(target).setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekey":
+        case "privateKey": getOrCreateConfiguration(target).setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "publickey":
+        case "publicKey": getOrCreateConfiguration(target).setPublicKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

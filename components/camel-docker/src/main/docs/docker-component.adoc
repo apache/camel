@@ -27,7 +27,7 @@ Where *operation* is the specific action to perform on Docker.
 == General Options
 
 // component options: START
-The Docker component supports 4 options, which are listed below.
+The Docker component supports 21 options, which are listed below.
 
 
 
@@ -35,9 +35,26 @@ The Docker component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared docker configuration |  | DockerConfiguration
+| *email* (common) | Email address associated with the user |  | String
+| *host* (common) | *Required* Docker host | localhost | String
+| *port* (common) | Docker port | 2375 | Integer
+| *requestTimeout* (common) | Request timeout for response (in seconds) |  | Integer
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *cmdExecFactory* (advanced) | The fully qualified class name of the DockerCmdExecFactory implementation to use | com.github.dockerjava.netty.NettyDockerCmdExecFactory | String
+| *followRedirectFilter* (advanced) | Whether to follow redirect filter | false | boolean
+| *loggingFilter* (advanced) | Whether to use logging filter | false | boolean
+| *maxPerRouteConnections* (advanced) | Maximum route connections | 100 | Integer
+| *maxTotalConnections* (advanced) | Maximum total connections | 100 | Integer
+| *parameters* (advanced) | Additional configuration parameters as key/value pairs |  | Map
+| *serverAddress* (advanced) | Server address for docker registry. | https://index.docker.io/v1/ | String
+| *socket* (advanced) | Socket connection mode | true | boolean
+| *certPath* (security) | Location containing the SSL certificate chain |  | String
+| *password* (security) | Password to authenticate with |  | String
+| *secure* (security) | Use HTTPS communication | false | boolean
+| *tlsVerify* (security) | Check TLS | false | boolean
+| *username* (security) | User name to authenticate with |  | String
 |===
 // component options: END
 

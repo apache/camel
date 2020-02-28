@@ -57,14 +57,18 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Lucene component supports 3 options, which are listed below.
+The Lucene component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *analyzer* (producer) | An Analyzer builds TokenStreams, which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box |  | Analyzer
+| *indexDir* (producer) | A file system directory in which index files are created upon analysis of the document by the specified analyzer |  | File
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *maxHits* (producer) | An integer value that limits the result set of the search operation |  | int
+| *srcDir* (producer) | An optional directory containing files to be used to be analyzed and added to the index at producer startup. |  | File
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *config* (advanced) | To use a shared lucene configuration |  | LuceneConfiguration
 |===

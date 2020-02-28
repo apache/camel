@@ -60,6 +60,19 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AmazonEC2Client as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.ec2.Ec2Client</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder amazonEc2Client(
+                software.amazon.awssdk.services.ec2.Ec2Client amazonEc2Client) {
+            doSetProperty("amazonEc2Client", amazonEc2Client);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -78,6 +91,59 @@ public interface Aws2Ec2ComponentBuilderFactory {
         default Aws2Ec2ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to perform. It can be createAndRunInstances,
+         * startInstances, stopInstances, terminateInstances, describeInstances,
+         * describeInstancesStatus, rebootInstances, monitorInstances,
+         * unmonitorInstances, createTags or deleteTags.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Operations</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder operation(
+                org.apache.camel.component.aws2.ec2.AWS2EC2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the EC2 client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the EC2 client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the EC2 client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -141,6 +207,13 @@ public interface Aws2Ec2ComponentBuilderFactory {
         protected AWS2EC2Component buildConcreteComponent() {
             return new AWS2EC2Component();
         }
+        private org.apache.camel.component.aws2.ec2.AWS2EC2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.ec2.AWS2EC2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.ec2.AWS2EC2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -148,7 +221,12 @@ public interface Aws2Ec2ComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((AWS2EC2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonEc2Client": getOrCreateConfiguration((AWS2EC2Component) component).setAmazonEc2Client((software.amazon.awssdk.services.ec2.Ec2Client) value); return true;
             case "lazyStartProducer": ((AWS2EC2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((AWS2EC2Component) component).setOperation((org.apache.camel.component.aws2.ec2.AWS2EC2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((AWS2EC2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((AWS2EC2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((AWS2EC2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": ((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((AWS2EC2Component) component).setBasicPropertyBinding((boolean) value); return true;

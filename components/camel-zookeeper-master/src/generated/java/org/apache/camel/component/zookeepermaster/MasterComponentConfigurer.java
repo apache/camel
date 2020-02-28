@@ -17,8 +17,6 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "containeridfactory":
-        case "containerIdFactory": target.setContainerIdFactory(property(camelContext, org.apache.camel.component.zookeepermaster.ContainerIdFactory.class, value)); return true;
         case "maximumconnectiontimeout":
         case "maximumConnectionTimeout": target.setMaximumConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "zkroot":
@@ -27,6 +25,8 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
         case "zooKeeperUrl": target.setZooKeeperUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "containeridfactory":
+        case "containerIdFactory": target.setContainerIdFactory(property(camelContext, org.apache.camel.component.zookeepermaster.ContainerIdFactory.class, value)); return true;
         case "curator": target.setCurator(property(camelContext, org.apache.curator.framework.CuratorFramework.class, value)); return true;
         case "zookeeperpassword":
         case "zooKeeperPassword": target.setZooKeeperPassword(property(camelContext, java.lang.String.class, value)); return true;

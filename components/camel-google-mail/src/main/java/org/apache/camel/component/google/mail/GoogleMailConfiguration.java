@@ -37,13 +37,13 @@ public class GoogleMailConfiguration {
     @UriParam
     private String clientId;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
 
     @UriParam

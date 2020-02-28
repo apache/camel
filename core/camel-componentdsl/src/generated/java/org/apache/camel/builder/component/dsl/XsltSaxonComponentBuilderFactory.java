@@ -216,7 +216,7 @@ public interface XsltSaxonComponentBuilderFactory {
             case "lazyStartProducer": ((XsltSaxonComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((XsltSaxonComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "saxonConfiguration": ((XsltSaxonComponent) component).setSaxonConfiguration((net.sf.saxon.Configuration) value); return true;
-            case "saxonConfigurationProperties": ((XsltSaxonComponent) component).setSaxonConfigurationProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
+            case "saxonConfigurationProperties": ((XsltSaxonComponent) component).setSaxonConfigurationProperties((java.util.Map) value); return true;
             case "saxonExtensionFunctions": ((XsltSaxonComponent) component).setSaxonExtensionFunctions((java.lang.String) value); return true;
             case "transformerFactoryClass": ((XsltSaxonComponent) component).setTransformerFactoryClass((java.lang.String) value); return true;
             case "transformerFactoryConfigurationStrategy": ((XsltSaxonComponent) component).setTransformerFactoryConfigurationStrategy((org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy) value); return true;

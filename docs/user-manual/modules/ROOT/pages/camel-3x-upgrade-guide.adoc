@@ -518,3 +518,59 @@ setting the value to -1. One of the optimizations is that new endpoints will not
 but discarded after use. This avoids storing additional endpoints in the cache (memory) as the cache should be disabled (cacheSize=-1).
 
 See more details in the documentation for the `cacheSize` option on the EIPs.
+
+=== Configuring components via Java setters
+
+Configuring Camel components from plain Java code has changed in some components where they were using
+delegate setters for a nested configuration class. These delegates has been removed, to ensure configuration
+is more consistent and aligned with how endpoints is configured as well, and by using source code generated configurer classes.
+
+The following Camel components has been changed:
+
+- consul
+- etcd
+- infinispan
+- kafka
+- servicenow
+- ssh
+- stomp
+- xmlsecurity
+- yammer
+
+This only affects if you are configuring these components using Java code or XML `<bean>` style.
+
+For example
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.setBrokers("mybroker1:1234,mybroker2:1234");
+----
+
+Should now be:
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.getConfiguration().setBrokers("mybroker1:1234,mybroker2:1234");
+----
+
+And in XML:
+
+[source,xml]
+----
+<bean id="kafka" class="org.apache.camel.component.kafka.KafkaComponent">
+  <property name="brokers" value="mybroker1:1234,mybroker2:1234"/>
+</bean>
+----
+
+Should now be:
+
+[source,xml]
+----
+<bean id="kafka" class="org.apache.camel.component.kafka.KafkaComponent">
+  <property name="configuration">
+    <property name="brokers" value="mybroker1:1234,mybroker2:1234"/>
+  </property>
+</bean>
+----

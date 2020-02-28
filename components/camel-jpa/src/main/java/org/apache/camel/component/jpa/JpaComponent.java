@@ -41,10 +41,13 @@ public class JpaComponent extends DefaultComponent {
 
     private ExecutorService pollingConsumerExecutorService;
 
+    @Metadata
     private EntityManagerFactory entityManagerFactory;
+    @Metadata
     private PlatformTransactionManager transactionManager;
     @Metadata(defaultValue = "true")
     private boolean joinTransaction = true;
+    @Metadata
     private boolean sharedEntityManager;
 
     public JpaComponent() {

@@ -212,7 +212,7 @@ public interface VmComponentBuilderFactory {
             case "defaultOfferTimeout": ((VmComponent) component).setDefaultOfferTimeout((long) value); return true;
             case "lazyStartProducer": ((VmComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((VmComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "defaultQueueFactory": ((VmComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "defaultQueueFactory": ((VmComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory) value); return true;
             case "queueSize": ((VmComponent) component).setQueueSize((int) value); return true;
             default: return false;
             }

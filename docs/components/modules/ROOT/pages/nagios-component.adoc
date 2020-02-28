@@ -44,16 +44,20 @@ you to send notifications to Nagios.
 
 
 // component options: START
-The Nagios component supports 3 options, which are listed below.
+The Nagios component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *connectionTimeout* (producer) | Connection timeout in millis. | 5000 | int
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *timeout* (producer) | Sending timeout in millis. | 5000 | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
+| *encryption* (security) | To specify an encryption method. The value can be one of: NONE, TRIPLE_DES, XOR, RIJNDAEL128, RIJNDAEL192, RIJNDAEL256, BLOWFISH |  | Encryption
+| *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // component options: END
 

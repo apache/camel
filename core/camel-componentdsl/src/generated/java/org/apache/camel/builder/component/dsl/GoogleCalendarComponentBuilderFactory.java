@@ -49,6 +49,31 @@ public interface GoogleCalendarComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleCalendarComponent> {
         /**
+         * Google calendar application name. Example would be
+         * camel-google-calendar/1.0.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleCalendarComponentBuilder applicationName(
+                java.lang.String applicationName) {
+            doSetProperty("applicationName", applicationName);
+            return this;
+        }
+        /**
+         * Client ID of the calendar application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleCalendarComponentBuilder clientId(
+                java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -59,6 +84,58 @@ public interface GoogleCalendarComponentBuilderFactory {
         default GoogleCalendarComponentBuilder configuration(
                 org.apache.camel.component.google.calendar.GoogleCalendarConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The emailAddress of the Google Service Account.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleCalendarComponentBuilder emailAddress(
+                java.lang.String emailAddress) {
+            doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * The name of the p12 file which has the private key to use with the
+         * Google Service Account.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleCalendarComponentBuilder p12FileName(
+                java.lang.String p12FileName) {
+            doSetProperty("p12FileName", p12FileName);
+            return this;
+        }
+        /**
+         * Specifies the level of permissions you want a calendar application to
+         * have to a user account. You can separate multiple scopes by comma.
+         * See https://developers.google.com/google-apps/calendar/auth for more
+         * info.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https://www.googleapis.com/auth/calendar
+         * Group: common
+         */
+        default GoogleCalendarComponentBuilder scopes(java.lang.String scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * The email address of the user the application is trying to
+         * impersonate in the service account flow.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleCalendarComponentBuilder user(java.lang.String user) {
+            doSetProperty("user", user);
             return this;
         }
         /**
@@ -129,6 +206,45 @@ public interface GoogleCalendarComponentBuilderFactory {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the calendar application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     class GoogleCalendarComponentBuilderImpl
@@ -140,17 +256,33 @@ public interface GoogleCalendarComponentBuilderFactory {
         protected GoogleCalendarComponent buildConcreteComponent() {
             return new GoogleCalendarComponent();
         }
+        private org.apache.camel.component.google.calendar.GoogleCalendarConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.google.calendar.GoogleCalendarComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.google.calendar.GoogleCalendarConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "applicationName": getOrCreateConfiguration((GoogleCalendarComponent) component).setApplicationName((java.lang.String) value); return true;
+            case "clientId": getOrCreateConfiguration((GoogleCalendarComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleCalendarComponent) component).setConfiguration((org.apache.camel.component.google.calendar.GoogleCalendarConfiguration) value); return true;
+            case "emailAddress": getOrCreateConfiguration((GoogleCalendarComponent) component).setEmailAddress((java.lang.String) value); return true;
+            case "p12FileName": getOrCreateConfiguration((GoogleCalendarComponent) component).setP12FileName((java.lang.String) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleCalendarComponent) component).setScopes((java.lang.String) value); return true;
+            case "user": getOrCreateConfiguration((GoogleCalendarComponent) component).setUser((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleCalendarComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleCalendarComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GoogleCalendarComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
+            case "accessToken": getOrCreateConfiguration((GoogleCalendarComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleCalendarComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleCalendarComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
         }

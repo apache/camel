@@ -50,15 +50,40 @@ public interface AtomixMessagingComponentBuilderFactory {
             extends
                 ComponentBuilder<AtomixMessagingComponent> {
         /**
-         * The shared AtomixClient instance.
+         * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: <code>io.atomix.Atomix</code> type.
          * 
          * Group: common
          */
-        default AtomixMessagingComponentBuilder atomix(
-                io.atomix.AtomixClient atomix) {
+        default AtomixMessagingComponentBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
+            return this;
+        }
+        /**
+         * The broadcast type.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType</code> type.
+         * 
+         * Default: ALL
+         * Group: common
+         */
+        default AtomixMessagingComponentBuilder broadcastType(
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType broadcastType) {
+            doSetProperty("broadcastType", broadcastType);
+            return this;
+        }
+        /**
+         * The messaging channel name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixMessagingComponentBuilder channelName(
+                java.lang.String channelName) {
+            doSetProperty("channelName", channelName);
             return this;
         }
         /**
@@ -87,6 +112,32 @@ public interface AtomixMessagingComponentBuilderFactory {
             return this;
         }
         /**
+         * The default action.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action</code> type.
+         * 
+         * Default: DIRECT
+         * Group: common
+         */
+        default AtomixMessagingComponentBuilder defaultAction(
+                org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action defaultAction) {
+            doSetProperty("defaultAction", defaultAction);
+            return this;
+        }
+        /**
+         * The Atomix Group member name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixMessagingComponentBuilder memberName(
+                java.lang.String memberName) {
+            doSetProperty("memberName", memberName);
+            return this;
+        }
+        /**
          * The nodes the AtomixClient should connect to.
          * 
          * The option is a:
@@ -98,6 +149,31 @@ public interface AtomixMessagingComponentBuilderFactory {
         default AtomixMessagingComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
             doSetProperty("nodes", nodes);
+            return this;
+        }
+        /**
+         * The header that wil carry the result.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixMessagingComponentBuilder resultHeader(
+                java.lang.String resultHeader) {
+            doSetProperty("resultHeader", resultHeader);
+            return this;
+        }
+        /**
+         * The class name (fqn) of the Atomix transport.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
+         * Group: common
+         */
+        default AtomixMessagingComponentBuilder transportClassName(
+                java.lang.String transportClassName) {
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -154,6 +230,83 @@ public interface AtomixMessagingComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * The cluster wide default resource configuration.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMessagingComponentBuilder defaultResourceConfig(
+                java.util.Properties defaultResourceConfig) {
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
+            return this;
+        }
+        /**
+         * The local default resource options.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMessagingComponentBuilder defaultResourceOptions(
+                java.util.Properties defaultResourceOptions) {
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
+            return this;
+        }
+        /**
+         * Sets if the local member should join groups as PersistentMember or
+         * not. If set to ephemeral the local member will receive an auto
+         * generated ID thus the local one is ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AtomixMessagingComponentBuilder ephemeral(boolean ephemeral) {
+            doSetProperty("ephemeral", ephemeral);
+            return this;
+        }
+        /**
+         * The read consistency level.
+         * 
+         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMessagingComponentBuilder readConsistency(
+                io.atomix.resource.ReadConsistency readConsistency) {
+            doSetProperty("readConsistency", readConsistency);
+            return this;
+        }
+        /**
+         * Cluster wide resources configuration.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.util.Properties></code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMessagingComponentBuilder resourceConfigs(
+                java.util.Map<java.lang.String, java.util.Properties> resourceConfigs) {
+            doSetProperty("resourceConfigs", resourceConfigs);
+            return this;
+        }
+        /**
+         * Local resources configurations.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.util.Properties></code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMessagingComponentBuilder resourceOptions(
+                java.util.Map<java.lang.String, java.util.Properties> resourceOptions) {
+            doSetProperty("resourceOptions", resourceOptions);
+            return this;
+        }
     }
 
     class AtomixMessagingComponentBuilderImpl
@@ -165,19 +318,38 @@ public interface AtomixMessagingComponentBuilderFactory {
         protected AtomixMessagingComponent buildConcreteComponent() {
             return new AtomixMessagingComponent();
         }
+        private org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.atomix.client.messaging.AtomixMessagingComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "atomix": ((AtomixMessagingComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
+            case "atomix": getOrCreateConfiguration((AtomixMessagingComponent) component).setAtomix((io.atomix.Atomix) value); return true;
+            case "broadcastType": getOrCreateConfiguration((AtomixMessagingComponent) component).setBroadcastType((org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType) value); return true;
+            case "channelName": getOrCreateConfiguration((AtomixMessagingComponent) component).setChannelName((java.lang.String) value); return true;
             case "configuration": ((AtomixMessagingComponent) component).setConfiguration((org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration) value); return true;
             case "configurationUri": ((AtomixMessagingComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "nodes": ((AtomixMessagingComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "defaultAction": getOrCreateConfiguration((AtomixMessagingComponent) component).setDefaultAction((org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action) value); return true;
+            case "memberName": getOrCreateConfiguration((AtomixMessagingComponent) component).setMemberName((java.lang.String) value); return true;
+            case "nodes": ((AtomixMessagingComponent) component).setNodes((java.util.List) value); return true;
+            case "resultHeader": getOrCreateConfiguration((AtomixMessagingComponent) component).setResultHeader((java.lang.String) value); return true;
+            case "transportClassName": getOrCreateConfiguration((AtomixMessagingComponent) component).setTransportClassName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((AtomixMessagingComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((AtomixMessagingComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((AtomixMessagingComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "defaultResourceConfig": getOrCreateConfiguration((AtomixMessagingComponent) component).setDefaultResourceConfig((java.util.Properties) value); return true;
+            case "defaultResourceOptions": getOrCreateConfiguration((AtomixMessagingComponent) component).setDefaultResourceOptions((java.util.Properties) value); return true;
+            case "ephemeral": getOrCreateConfiguration((AtomixMessagingComponent) component).setEphemeral((boolean) value); return true;
+            case "readConsistency": getOrCreateConfiguration((AtomixMessagingComponent) component).setReadConsistency((io.atomix.resource.ReadConsistency) value); return true;
+            case "resourceConfigs": getOrCreateConfiguration((AtomixMessagingComponent) component).setResourceConfigs((java.util.Map) value); return true;
+            case "resourceOptions": getOrCreateConfiguration((AtomixMessagingComponent) component).setResourceOptions((java.util.Map) value); return true;
             default: return false;
             }
         }

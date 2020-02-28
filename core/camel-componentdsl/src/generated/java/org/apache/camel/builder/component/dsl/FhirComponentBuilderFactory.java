@@ -48,16 +48,61 @@ public interface FhirComponentBuilderFactory {
      */
     interface FhirComponentBuilder extends ComponentBuilder<FhirComponent> {
         /**
-         * To use the shared configuration.
+         * Encoding to use for all request.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.fhir.FhirConfiguration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default FhirComponentBuilder configuration(
-                org.apache.camel.component.fhir.FhirConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default FhirComponentBuilder encoding(java.lang.String encoding) {
+            doSetProperty("encoding", encoding);
+            return this;
+        }
+        /**
+         * The FHIR Version to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: R4
+         * Group: common
+         */
+        default FhirComponentBuilder fhirVersion(java.lang.String fhirVersion) {
+            doSetProperty("fhirVersion", fhirVersion);
+            return this;
+        }
+        /**
+         * Will log every requests and responses.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FhirComponentBuilder log(boolean log) {
+            doSetProperty("log", log);
+            return this;
+        }
+        /**
+         * Pretty print all request.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default FhirComponentBuilder prettyPrint(boolean prettyPrint) {
+            doSetProperty("prettyPrint", prettyPrint);
+            return this;
+        }
+        /**
+         * The FHIR server base URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default FhirComponentBuilder serverUrl(java.lang.String serverUrl) {
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -113,6 +158,238 @@ public interface FhirComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * To use the custom client.
+         * 
+         * The option is a:
+         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * 
+         * Group: advanced
+         */
+        default FhirComponentBuilder client(
+                ca.uhn.fhir.rest.client.api.IGenericClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * To use the custom client factory.
+         * 
+         * The option is a:
+         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default FhirComponentBuilder clientFactory(
+                ca.uhn.fhir.rest.client.api.IRestfulClientFactory clientFactory) {
+            doSetProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
+         * Compresses outgoing (POST/PUT) contents to the GZIP format.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default FhirComponentBuilder compress(boolean compress) {
+            doSetProperty("compress", compress);
+            return this;
+        }
+        /**
+         * To use the shared configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.fhir.FhirConfiguration</code> type.
+         * 
+         * Group: advanced
+         */
+        default FhirComponentBuilder configuration(
+                org.apache.camel.component.fhir.FhirConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * How long to try and establish the initial TCP connection (in ms).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         */
+        default FhirComponentBuilder connectionTimeout(
+                java.lang.Integer connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * When this option is set, model classes will not be scanned for
+         * children until the child list for the given type is actually
+         * accessed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default FhirComponentBuilder deferModelScanning(
+                boolean deferModelScanning) {
+            doSetProperty("deferModelScanning", deferModelScanning);
+            return this;
+        }
+        /**
+         * FhirContext is an expensive object to create. To avoid creating
+         * multiple instances, it can be set directly.
+         * 
+         * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * 
+         * Group: advanced
+         */
+        default FhirComponentBuilder fhirContext(
+                ca.uhn.fhir.context.FhirContext fhirContext) {
+            doSetProperty("fhirContext", fhirContext);
+            return this;
+        }
+        /**
+         * Force conformance check.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default FhirComponentBuilder forceConformanceCheck(
+                boolean forceConformanceCheck) {
+            doSetProperty("forceConformanceCheck", forceConformanceCheck);
+            return this;
+        }
+        /**
+         * HTTP session cookie to add to every request.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default FhirComponentBuilder sessionCookie(
+                java.lang.String sessionCookie) {
+            doSetProperty("sessionCookie", sessionCookie);
+            return this;
+        }
+        /**
+         * How long to block for individual read/write operations (in ms).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         */
+        default FhirComponentBuilder socketTimeout(
+                java.lang.Integer socketTimeout) {
+            doSetProperty("socketTimeout", socketTimeout);
+            return this;
+        }
+        /**
+         * Request that the server modify the response using the _summary param.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default FhirComponentBuilder summary(java.lang.String summary) {
+            doSetProperty("summary", summary);
+            return this;
+        }
+        /**
+         * When should Camel validate the FHIR Server's conformance statement.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ONCE
+         * Group: advanced
+         */
+        default FhirComponentBuilder validationMode(
+                java.lang.String validationMode) {
+            doSetProperty("validationMode", validationMode);
+            return this;
+        }
+        /**
+         * The proxy host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The proxy password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirComponentBuilder proxyPassword(
+                java.lang.String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirComponentBuilder proxyUser(java.lang.String proxyUser) {
+            doSetProperty("proxyUser", proxyUser);
+            return this;
+        }
+        /**
+         * OAuth access token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FhirComponentBuilder accessToken(java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Username to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FhirComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FhirComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class FhirComponentBuilderImpl
@@ -124,16 +401,46 @@ public interface FhirComponentBuilderFactory {
         protected FhirComponent buildConcreteComponent() {
             return new FhirComponent();
         }
+        private org.apache.camel.component.fhir.FhirConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.fhir.FhirComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.fhir.FhirConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((FhirComponent) component).setConfiguration((org.apache.camel.component.fhir.FhirConfiguration) value); return true;
+            case "encoding": getOrCreateConfiguration((FhirComponent) component).setEncoding((java.lang.String) value); return true;
+            case "fhirVersion": getOrCreateConfiguration((FhirComponent) component).setFhirVersion((java.lang.String) value); return true;
+            case "log": getOrCreateConfiguration((FhirComponent) component).setLog((boolean) value); return true;
+            case "prettyPrint": getOrCreateConfiguration((FhirComponent) component).setPrettyPrint((boolean) value); return true;
+            case "serverUrl": getOrCreateConfiguration((FhirComponent) component).setServerUrl((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((FhirComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((FhirComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((FhirComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "client": getOrCreateConfiguration((FhirComponent) component).setClient((ca.uhn.fhir.rest.client.api.IGenericClient) value); return true;
+            case "clientFactory": getOrCreateConfiguration((FhirComponent) component).setClientFactory((ca.uhn.fhir.rest.client.api.IRestfulClientFactory) value); return true;
+            case "compress": getOrCreateConfiguration((FhirComponent) component).setCompress((boolean) value); return true;
+            case "configuration": ((FhirComponent) component).setConfiguration((org.apache.camel.component.fhir.FhirConfiguration) value); return true;
+            case "connectionTimeout": getOrCreateConfiguration((FhirComponent) component).setConnectionTimeout((java.lang.Integer) value); return true;
+            case "deferModelScanning": getOrCreateConfiguration((FhirComponent) component).setDeferModelScanning((boolean) value); return true;
+            case "fhirContext": getOrCreateConfiguration((FhirComponent) component).setFhirContext((ca.uhn.fhir.context.FhirContext) value); return true;
+            case "forceConformanceCheck": getOrCreateConfiguration((FhirComponent) component).setForceConformanceCheck((boolean) value); return true;
+            case "sessionCookie": getOrCreateConfiguration((FhirComponent) component).setSessionCookie((java.lang.String) value); return true;
+            case "socketTimeout": getOrCreateConfiguration((FhirComponent) component).setSocketTimeout((java.lang.Integer) value); return true;
+            case "summary": getOrCreateConfiguration((FhirComponent) component).setSummary((java.lang.String) value); return true;
+            case "validationMode": getOrCreateConfiguration((FhirComponent) component).setValidationMode((java.lang.String) value); return true;
+            case "proxyHost": getOrCreateConfiguration((FhirComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPassword": getOrCreateConfiguration((FhirComponent) component).setProxyPassword((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((FhirComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyUser": getOrCreateConfiguration((FhirComponent) component).setProxyUser((java.lang.String) value); return true;
+            case "accessToken": getOrCreateConfiguration((FhirComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "password": getOrCreateConfiguration((FhirComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((FhirComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

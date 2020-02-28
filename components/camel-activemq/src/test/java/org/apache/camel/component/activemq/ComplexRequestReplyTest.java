@@ -124,7 +124,7 @@ public class ComplexRequestReplyTest {
 
         CamelContext camelContext = new DefaultCamelContext();
         ActiveMQComponent amqComponent = new ActiveMQComponent();
-        amqComponent.setConnectionFactory(pooled);
+        amqComponent.getConfiguration().setConnectionFactory(pooled);
         camelContext.addComponent("activemq", amqComponent);
         camelContext.addRoutes(new RouteBuilder() {
             @Override

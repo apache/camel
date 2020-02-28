@@ -59,6 +59,19 @@ public interface AwsSesComponentBuilderFactory {
             return this;
         }
         /**
+         * To use the AmazonSimpleEmailService as the client.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder amazonSESClient(
+                com.amazonaws.services.simpleemail.AmazonSimpleEmailService amazonSESClient) {
+            doSetProperty("amazonSESClient", amazonSESClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -80,6 +93,41 @@ public interface AwsSesComponentBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the SES client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SES client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SES client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsSesComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The region in which SES client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -91,6 +139,31 @@ public interface AwsSesComponentBuilderFactory {
             return this;
         }
         /**
+         * List of reply-to email address(es) for the message, override it using
+         * 'CamelAwsSesReplyToAddresses' header.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder replyToAddresses(
+                java.util.List<java.lang.String> replyToAddresses) {
+            doSetProperty("replyToAddresses", replyToAddresses);
+            return this;
+        }
+        /**
+         * The email address to which bounce notifications are to be forwarded,
+         * override it using 'CamelAwsSesReturnPath' header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder returnPath(java.lang.String returnPath) {
+            doSetProperty("returnPath", returnPath);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -99,6 +172,30 @@ public interface AwsSesComponentBuilderFactory {
          */
         default AwsSesComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * The subject which is used if the message header 'CamelAwsSesSubject'
+         * is not present.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder subject(java.lang.String subject) {
+            doSetProperty("subject", subject);
+            return this;
+        }
+        /**
+         * List of destination email address. Can be overriden with
+         * 'CamelAwsSesTo' header.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: producer
+         */
+        default AwsSesComponentBuilder to(java.util.List<java.lang.String> to) {
+            doSetProperty("to", to);
             return this;
         }
         /**
@@ -140,6 +237,13 @@ public interface AwsSesComponentBuilderFactory {
         protected SesComponent buildConcreteComponent() {
             return new SesComponent();
         }
+        private org.apache.camel.component.aws.ses.SesConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.ses.SesComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.ses.SesConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -147,9 +251,17 @@ public interface AwsSesComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((SesComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonSESClient": getOrCreateConfiguration((SesComponent) component).setAmazonSESClient((com.amazonaws.services.simpleemail.AmazonSimpleEmailService) value); return true;
             case "lazyStartProducer": ((SesComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((SesComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((SesComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((SesComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": ((SesComponent) component).setRegion((java.lang.String) value); return true;
+            case "replyToAddresses": getOrCreateConfiguration((SesComponent) component).setReplyToAddresses((java.util.List) value); return true;
+            case "returnPath": getOrCreateConfiguration((SesComponent) component).setReturnPath((java.lang.String) value); return true;
             case "secretKey": ((SesComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "subject": getOrCreateConfiguration((SesComponent) component).setSubject((java.lang.String) value); return true;
+            case "to": getOrCreateConfiguration((SesComponent) component).setTo((java.util.List) value); return true;
             case "basicPropertyBinding": ((SesComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((SesComponent) component).setConfiguration((org.apache.camel.component.aws.ses.SesConfiguration) value); return true;
             default: return false;

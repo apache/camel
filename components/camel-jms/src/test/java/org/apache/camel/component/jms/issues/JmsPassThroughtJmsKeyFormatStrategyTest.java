@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
 
         // configure to use passthrough
         JmsComponent activemq = jmsComponentAutoAcknowledge(connectionFactory);
-        activemq.setJmsKeyFormatStrategy("passthrough");
+        activemq.getConfiguration().setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
 
         camelContext.addComponent("activemq", activemq);
 

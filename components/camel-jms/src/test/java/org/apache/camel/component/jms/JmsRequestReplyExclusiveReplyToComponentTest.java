@@ -52,7 +52,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSuppo
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         // mark the reply to type as exclusive on the component
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setReplyToType(ReplyToType.Exclusive);
+        jms.getConfiguration().setReplyToType(ReplyToType.Exclusive);
         camelContext.addComponent("activemq", jms);
         return camelContext;
     }

@@ -49,39 +49,28 @@ public interface SshComponentBuilderFactory {
      */
     interface SshComponentBuilder extends ComponentBuilder<SshComponent> {
         /**
-         * Sets the hostname of the remote SSH server.
+         * Specifies whether a connection to an unknown host should fail or not.
+         * This value is only checked when the property knownHosts is set.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SshComponentBuilder failOnUnknownHost(boolean failOnUnknownHost) {
+            doSetProperty("failOnUnknownHost", failOnUnknownHost);
+            return this;
+        }
+        /**
+         * Sets the resource path for a known_hosts file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default SshComponentBuilder host(java.lang.String host) {
-            doSetProperty("host", host);
-            return this;
-        }
-        /**
-         * Sets the command string to send to the remote SSH server during every
-         * poll cycle. Only works with camel-ssh component being used as a
-         * consumer, i.e. from(ssh://...). You may need to end your command with
-         * a newline, and that must be URL encoded %0A.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SshComponentBuilder pollCommand(java.lang.String pollCommand) {
-            doSetProperty("pollCommand", pollCommand);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshComponentBuilder port(int port) {
-            doSetProperty("port", port);
+        default SshComponentBuilder knownHostsResource(
+                java.lang.String knownHostsResource) {
+            doSetProperty("knownHostsResource", knownHostsResource);
             return this;
         }
         /**
@@ -90,6 +79,7 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SshComponentBuilder timeout(long timeout) {
@@ -113,6 +103,20 @@ public interface SshComponentBuilderFactory {
         default SshComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Sets the command string to send to the remote SSH server during every
+         * poll cycle. Only works with camel-ssh component being used as a
+         * consumer, i.e. from(ssh://...) You may need to end your command with
+         * a newline, and that must be URL encoded %0A.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default SshComponentBuilder pollCommand(java.lang.String pollCommand) {
+            doSetProperty("pollCommand", pollCommand);
             return this;
         }
         /**
@@ -155,6 +159,7 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: exec
          * Group: advanced
          */
         default SshComponentBuilder channelType(java.lang.String channelType) {
@@ -162,7 +167,7 @@ public interface SshComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the shared SSH configuration.
+         * Component configuration.
          * 
          * The option is a:
          * <code>org.apache.camel.component.ssh.SshConfiguration</code> type.
@@ -192,6 +197,7 @@ public interface SshComponentBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default SshComponentBuilder sleepForShellPrompt(long sleepForShellPrompt) {
@@ -241,7 +247,9 @@ public interface SshComponentBuilderFactory {
         /**
          * Sets the key type to pass to the KeyPairProvider as part of
          * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. Defaults to ssh-rsa.
+         * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
+         * first available KeyPair that is loaded. Prior to this, a KeyType of
+         * 'ssh-rsa' was enforced by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -285,29 +293,36 @@ public interface SshComponentBuilderFactory {
         protected SshComponent buildConcreteComponent() {
             return new SshComponent();
         }
+        private org.apache.camel.component.ssh.SshConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.ssh.SshComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.ssh.SshConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "host": ((SshComponent) component).setHost((java.lang.String) value); return true;
-            case "pollCommand": ((SshComponent) component).setPollCommand((java.lang.String) value); return true;
-            case "port": ((SshComponent) component).setPort((int) value); return true;
-            case "timeout": ((SshComponent) component).setTimeout((long) value); return true;
+            case "failOnUnknownHost": getOrCreateConfiguration((SshComponent) component).setFailOnUnknownHost((boolean) value); return true;
+            case "knownHostsResource": getOrCreateConfiguration((SshComponent) component).setKnownHostsResource((java.lang.String) value); return true;
+            case "timeout": getOrCreateConfiguration((SshComponent) component).setTimeout((long) value); return true;
             case "bridgeErrorHandler": ((SshComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "pollCommand": getOrCreateConfiguration((SshComponent) component).setPollCommand((java.lang.String) value); return true;
             case "lazyStartProducer": ((SshComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((SshComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "channelType": ((SshComponent) component).setChannelType((java.lang.String) value); return true;
+            case "channelType": getOrCreateConfiguration((SshComponent) component).setChannelType((java.lang.String) value); return true;
             case "configuration": ((SshComponent) component).setConfiguration((org.apache.camel.component.ssh.SshConfiguration) value); return true;
-            case "shellPrompt": ((SshComponent) component).setShellPrompt((java.lang.String) value); return true;
-            case "sleepForShellPrompt": ((SshComponent) component).setSleepForShellPrompt((long) value); return true;
-            case "certResource": ((SshComponent) component).setCertResource((java.lang.String) value); return true;
-            case "certResourcePassword": ((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
-            case "keyPairProvider": ((SshComponent) component).setKeyPairProvider((org.apache.sshd.common.keyprovider.KeyPairProvider) value); return true;
-            case "keyType": ((SshComponent) component).setKeyType((java.lang.String) value); return true;
-            case "password": ((SshComponent) component).setPassword((java.lang.String) value); return true;
-            case "username": ((SshComponent) component).setUsername((java.lang.String) value); return true;
+            case "shellPrompt": getOrCreateConfiguration((SshComponent) component).setShellPrompt((java.lang.String) value); return true;
+            case "sleepForShellPrompt": getOrCreateConfiguration((SshComponent) component).setSleepForShellPrompt((long) value); return true;
+            case "certResource": getOrCreateConfiguration((SshComponent) component).setCertResource((java.lang.String) value); return true;
+            case "certResourcePassword": getOrCreateConfiguration((SshComponent) component).setCertResourcePassword((java.lang.String) value); return true;
+            case "keyPairProvider": getOrCreateConfiguration((SshComponent) component).setKeyPairProvider((org.apache.sshd.common.keyprovider.KeyPairProvider) value); return true;
+            case "keyType": getOrCreateConfiguration((SshComponent) component).setKeyType((java.lang.String) value); return true;
+            case "password": getOrCreateConfiguration((SshComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((SshComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

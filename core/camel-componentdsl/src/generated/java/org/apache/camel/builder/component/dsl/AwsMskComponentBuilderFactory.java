@@ -79,6 +79,67 @@ public interface AwsMskComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AWS MSK as client.
+         * 
+         * The option is a: <code>com.amazonaws.services.kafka.AWSKafka</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsMskComponentBuilder mskClient(
+                com.amazonaws.services.kafka.AWSKafka mskClient) {
+            doSetProperty("mskClient", mskClient);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.msk.MSKOperations</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMskComponentBuilder operation(
+                org.apache.camel.component.aws.msk.MSKOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the MSK client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMskComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the MSK client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMskComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the MSK client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsMskComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * The region in which MSK client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -139,6 +200,13 @@ public interface AwsMskComponentBuilderFactory {
         protected MSKComponent buildConcreteComponent() {
             return new MSKComponent();
         }
+        private org.apache.camel.component.aws.msk.MSKConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.msk.MSKComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.msk.MSKConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -147,6 +215,11 @@ public interface AwsMskComponentBuilderFactory {
             switch (name) {
             case "accessKey": ((MSKComponent) component).setAccessKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((MSKComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "mskClient": getOrCreateConfiguration((MSKComponent) component).setMskClient((com.amazonaws.services.kafka.AWSKafka) value); return true;
+            case "operation": getOrCreateConfiguration((MSKComponent) component).setOperation((org.apache.camel.component.aws.msk.MSKOperations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((MSKComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((MSKComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((MSKComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": ((MSKComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((MSKComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MSKComponent) component).setBasicPropertyBinding((boolean) value); return true;

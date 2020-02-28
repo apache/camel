@@ -15,18 +15,12 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleSheetsEndpoint target = (GoogleSheetsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "accesstoken":
-        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "clientid":
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientsecret":
-        case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "inbody":
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "refreshtoken":
-        case "refreshToken": target.getConfiguration().setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "sendemptymessagewhenidle":
@@ -67,6 +61,12 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientsecret":
+        case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "refreshtoken":
+        case "refreshToken": target.getConfiguration().setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

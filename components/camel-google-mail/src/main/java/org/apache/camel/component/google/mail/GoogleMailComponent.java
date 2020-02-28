@@ -31,6 +31,9 @@ import org.apache.camel.support.component.AbstractApiComponent;
 @Component("google-mail")
 public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
+    @Metadata
+    GoogleMailConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Gmail client;
     @Metadata(label = "advanced")

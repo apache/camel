@@ -62,6 +62,20 @@ public interface AwsDdbstreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon DynamoDB client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder amazonDynamoDbStreamsClient(
+                com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams amazonDynamoDbStreamsClient) {
+            doSetProperty("amazonDynamoDbStreamsClient", amazonDynamoDbStreamsClient);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -78,6 +92,72 @@ public interface AwsDdbstreamComponentBuilderFactory {
         default AwsDdbstreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Defines where in the DynaboDB stream to start getting records. Note
+         * that using TRIM_HORIZON can cause a significant delay before the
+         * stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are
+         * used, then a sequenceNumberProvider MUST be supplied.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.dynamodbv2.model.ShardIteratorType</code> type.
+         * 
+         * Default: LATEST
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder iteratorType(
+                com.amazonaws.services.dynamodbv2.model.ShardIteratorType iteratorType) {
+            doSetProperty("iteratorType", iteratorType);
+            return this;
+        }
+        /**
+         * Maximum number of records that will be fetched in each poll.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder maxResultsPerRequest(
+                int maxResultsPerRequest) {
+            doSetProperty("maxResultsPerRequest", maxResultsPerRequest);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the DDBStreams client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder proxyHost(
+                java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the DDBStreams client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDBStreams client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -101,6 +181,21 @@ public interface AwsDdbstreamComponentBuilderFactory {
         default AwsDdbstreamComponentBuilder secretKey(
                 java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * Provider for the sequence number when using one of the two
+         * ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a
+         * registry reference or a literal sequence number.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ddbstream.SequenceNumberProvider</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder sequenceNumberProvider(
+                org.apache.camel.component.aws.ddbstream.SequenceNumberProvider sequenceNumberProvider) {
+            doSetProperty("sequenceNumberProvider", sequenceNumberProvider);
             return this;
         }
         /**
@@ -141,6 +236,13 @@ public interface AwsDdbstreamComponentBuilderFactory {
         protected DdbStreamComponent buildConcreteComponent() {
             return new DdbStreamComponent();
         }
+        private org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.ddbstream.DdbStreamComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -148,9 +250,16 @@ public interface AwsDdbstreamComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((DdbStreamComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonDynamoDbStreamsClient": getOrCreateConfiguration((DdbStreamComponent) component).setAmazonDynamoDbStreamsClient((com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams) value); return true;
             case "bridgeErrorHandler": ((DdbStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "iteratorType": getOrCreateConfiguration((DdbStreamComponent) component).setIteratorType((com.amazonaws.services.dynamodbv2.model.ShardIteratorType) value); return true;
+            case "maxResultsPerRequest": getOrCreateConfiguration((DdbStreamComponent) component).setMaxResultsPerRequest((int) value); return true;
+            case "proxyHost": getOrCreateConfiguration((DdbStreamComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((DdbStreamComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((DdbStreamComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": ((DdbStreamComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((DdbStreamComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "sequenceNumberProvider": getOrCreateConfiguration((DdbStreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws.ddbstream.SequenceNumberProvider) value); return true;
             case "basicPropertyBinding": ((DdbStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((DdbStreamComponent) component).setConfiguration((org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration) value); return true;
             default: return false;

@@ -75,21 +75,6 @@ public interface WebsocketComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure a map which contains custom WebSocketFactory for sub
-         * protocols. The key in the map is the sub protocol. The default key is
-         * reserved for the default implementation.
-         * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * org.apache.camel.component.websocket.WebSocketFactory></code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketComponentBuilder socketFactory(
-                java.util.Map<java.lang.String, org.apache.camel.component.websocket.WebSocketFactory> socketFactory) {
-            doSetProperty("socketFactory", socketFactory);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -296,7 +281,6 @@ public interface WebsocketComponentBuilderFactory {
             switch (name) {
             case "host": ((WebsocketComponent) component).setHost((java.lang.String) value); return true;
             case "port": ((WebsocketComponent) component).setPort((java.lang.Integer) value); return true;
-            case "socketFactory": ((WebsocketComponent) component).setSocketFactory((java.util.Map<java.lang.String, org.apache.camel.component.websocket.WebSocketFactory>) value); return true;
             case "bridgeErrorHandler": ((WebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "staticResources": ((WebsocketComponent) component).setStaticResources((java.lang.String) value); return true;
             case "lazyStartProducer": ((WebsocketComponent) component).setLazyStartProducer((boolean) value); return true;

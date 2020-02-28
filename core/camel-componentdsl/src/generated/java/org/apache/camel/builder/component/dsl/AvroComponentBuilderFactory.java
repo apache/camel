@@ -47,6 +47,80 @@ public interface AvroComponentBuilderFactory {
      */
     interface AvroComponentBuilder extends ComponentBuilder<AvroComponent> {
         /**
+         * Avro protocol to use.
+         * 
+         * The option is a: <code>org.apache.avro.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default AvroComponentBuilder protocol(org.apache.avro.Protocol protocol) {
+            doSetProperty("protocol", protocol);
+            return this;
+        }
+        /**
+         * Avro protocol to use defined by the FQN class name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AvroComponentBuilder protocolClassName(
+                java.lang.String protocolClassName) {
+            doSetProperty("protocolClassName", protocolClassName);
+            return this;
+        }
+        /**
+         * Avro protocol location.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AvroComponentBuilder protocolLocation(
+                java.lang.String protocolLocation) {
+            doSetProperty("protocolLocation", protocolLocation);
+            return this;
+        }
+        /**
+         * If protocol object provided is reflection protocol. Should be used
+         * only with protocol parameter because for protocolClassName protocol
+         * type will be auto detected.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AvroComponentBuilder reflectionProtocol(
+                boolean reflectionProtocol) {
+            doSetProperty("reflectionProtocol", reflectionProtocol);
+            return this;
+        }
+        /**
+         * If true, consumer parameter won't be wrapped into array. Will fail if
+         * protocol specifies more then 1 parameter for the message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AvroComponentBuilder singleParameter(boolean singleParameter) {
+            doSetProperty("singleParameter", singleParameter);
+            return this;
+        }
+        /**
+         * Authority to use (username and password).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AvroComponentBuilder uriAuthority(java.lang.String uriAuthority) {
+            doSetProperty("uriAuthority", uriAuthority);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -123,12 +197,25 @@ public interface AvroComponentBuilderFactory {
         protected AvroComponent buildConcreteComponent() {
             return new AvroComponent();
         }
+        private org.apache.camel.component.avro.AvroConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.avro.AvroComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.avro.AvroConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "protocol": getOrCreateConfiguration((AvroComponent) component).setProtocol((org.apache.avro.Protocol) value); return true;
+            case "protocolClassName": getOrCreateConfiguration((AvroComponent) component).setProtocolClassName((java.lang.String) value); return true;
+            case "protocolLocation": getOrCreateConfiguration((AvroComponent) component).setProtocolLocation((java.lang.String) value); return true;
+            case "reflectionProtocol": getOrCreateConfiguration((AvroComponent) component).setReflectionProtocol((boolean) value); return true;
+            case "singleParameter": getOrCreateConfiguration((AvroComponent) component).setSingleParameter((boolean) value); return true;
+            case "uriAuthority": getOrCreateConfiguration((AvroComponent) component).setUriAuthority((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((AvroComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((AvroComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((AvroComponent) component).setBasicPropertyBinding((boolean) value); return true;

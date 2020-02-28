@@ -44,21 +44,28 @@ The Yammer component can be configured with the Yammer account settings which ar
 
 
 // component options: START
-The Yammer component supports 8 options, which are listed below.
+The Yammer component supports 15 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *useJson* (common) | Set to true if you want to use raw JSON rather than converting to POJOs. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *delay* (consumer) | Delay between polling in millis | 5000 | long
+| *limit* (consumer) | Return only the specified number of messages. Works for threaded=true and threaded=extended. | -1 | int
+| *newerThan* (consumer) | Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter newerThan=3516 to ensure that you do not get duplicate copies of messages already on your page. | -1 | long
+| *olderThan* (consumer) | Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912, you could append olderThan=2912 to your request to get the 20 messages prior to those you're seeing. | -1 | long
+| *threaded* (consumer) | threaded=true will only return the first message in each thread. This parameter is intended for apps which display message threads collapsed. threaded=extended will return the thread starter messages in order of most recently active as well as the two most recent messages, as they are viewed in the default view on the Yammer web interface. The value can be one of: true, extended |  | String
+| *userId* (consumer) | The user id |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *config* (advanced) | To use a shared yammer configuration |  | YammerConfiguration
+| *configuration* (advanced) | Component configuration |  | YammerConfiguration
 | *requestor* (advanced) | To use a specific requester to communicate with Yammer. |  | ApiRequestor
-| *accessToken* (security) | The access token |  | String
-| *consumerKey* (security) | The consumer key |  | String
-| *consumerSecret* (security) | The consumer secret |  | String
+| *accessToken* (security) | *Required* The access token |  | String
+| *consumerKey* (security) | *Required* The consumer key |  | String
+| *consumerSecret* (security) | *Required* The consumer secret |  | String
 |===
 // component options: END
 

@@ -42,22 +42,29 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Ehcache component supports 9 options, which are listed below.
+The Ehcache component supports 16 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cacheConfiguration* (common) | The default cache configuration to be used to create caches. |  | CacheConfiguration
-| *cacheConfigurationUri* (common) | URI pointing to the Ehcache XML configuration file's location |  | String
 | *cacheManager* (common) | The cache manager |  | CacheManager
 | *cacheManagerConfiguration* (common) | The cache manager configuration |  | Configuration
-| *cachesConfigurations* (common) | A map of caches configurations to be used to create caches. |  | Map
+| *configurationUri* (common) | URI pointing to the Ehcache XML configuration file's location |  | String
+| *createCacheIfNotExist* (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *eventFiring* (consumer) | Set the delivery mode (synchronous, asynchronous). The value can be one of: ASYNCHRONOUS, SYNCHRONOUS | ASYNCHRONOUS | EventFiring
+| *eventOrdering* (consumer) | Set the delivery mode (ordered, unordered). The value can be one of: UNORDERED, ORDERED | ORDERED | EventOrdering
+| *eventTypes* (consumer) | Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple entries separated by comma. The value can be one of: EVICTED, EXPIRED, REMOVED, CREATED, UPDATED |  | String
+| *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
+| *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | Sets the global component configuration |  | EhcacheConfiguration
+| *configuration* (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration
+| *configurations* (advanced) | A map of cache configuration to be used to create caches. |  | Map
+| *keyType* (advanced) | The cache key type, default java.lang.Object |  | String
+| *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // component options: END
 

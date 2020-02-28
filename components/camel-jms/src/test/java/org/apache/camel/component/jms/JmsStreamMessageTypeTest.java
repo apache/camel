@@ -44,7 +44,7 @@ public class JmsStreamMessageTypeTest extends CamelTestSupport {
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setStreamMessageTypeEnabled(true); // turn on streaming
+        jms.getConfiguration().setStreamMessageTypeEnabled(true); // turn on streaming
         camelContext.addComponent("jms", jms);
         return camelContext;
     }

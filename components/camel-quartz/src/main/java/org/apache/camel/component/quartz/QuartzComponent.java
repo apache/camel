@@ -19,7 +19,6 @@ package org.apache.camel.component.quartz;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,8 +57,11 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private Scheduler scheduler;
     @Metadata(label = "advanced")
     private SchedulerFactory schedulerFactory;
+    @Metadata
     private String propertiesRef;
+    @Metadata
     private Map properties;
+    @Metadata
     private String propertiesFile;
     @Metadata(label = "scheduler")
     private int startDelayedSeconds;
@@ -69,6 +71,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private boolean interruptJobsOnShutdown;
     @Metadata(defaultValue = "true")
     private boolean enableJmx = true;
+    @Metadata
     private boolean prefixJobNameWithEndpointId;
     @Metadata(defaultValue = "true")
     private boolean prefixInstanceName = true;

@@ -70,19 +70,6 @@ public interface ZookeeperMasterComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom ContainerIdFactory for creating container ids.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.zookeepermaster.ContainerIdFactory</code> type.
-         * 
-         * Group: consumer
-         */
-        default ZookeeperMasterComponentBuilder containerIdFactory(
-                org.apache.camel.component.zookeepermaster.ContainerIdFactory containerIdFactory) {
-            doSetProperty("containerIdFactory", containerIdFactory);
-            return this;
-        }
-        /**
          * Timeout in millis to use when connecting to the zookeeper ensemble.
          * 
          * The option is a: <code>int</code> type.
@@ -137,6 +124,19 @@ public interface ZookeeperMasterComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom ContainerIdFactory for creating container ids.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.zookeepermaster.ContainerIdFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default ZookeeperMasterComponentBuilder containerIdFactory(
+                org.apache.camel.component.zookeepermaster.ContainerIdFactory containerIdFactory) {
+            doSetProperty("containerIdFactory", containerIdFactory);
+            return this;
+        }
+        /**
          * To use a custom configured CuratorFramework as connection to
          * zookeeper ensemble.
          * 
@@ -180,11 +180,11 @@ public interface ZookeeperMasterComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((MasterComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "containerIdFactory": ((MasterComponent) component).setContainerIdFactory((org.apache.camel.component.zookeepermaster.ContainerIdFactory) value); return true;
             case "maximumConnectionTimeout": ((MasterComponent) component).setMaximumConnectionTimeout((int) value); return true;
             case "zkRoot": ((MasterComponent) component).setZkRoot((java.lang.String) value); return true;
             case "zooKeeperUrl": ((MasterComponent) component).setZooKeeperUrl((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MasterComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "containerIdFactory": ((MasterComponent) component).setContainerIdFactory((org.apache.camel.component.zookeepermaster.ContainerIdFactory) value); return true;
             case "curator": ((MasterComponent) component).setCurator((org.apache.curator.framework.CuratorFramework) value); return true;
             case "zooKeeperPassword": ((MasterComponent) component).setZooKeeperPassword((java.lang.String) value); return true;
             default: return false;

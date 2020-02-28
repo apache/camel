@@ -214,7 +214,7 @@ public interface StubComponentBuilderFactory {
             case "defaultOfferTimeout": ((StubComponent) component).setDefaultOfferTimeout((long) value); return true;
             case "lazyStartProducer": ((StubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((StubComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "defaultQueueFactory": ((StubComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "defaultQueueFactory": ((StubComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory) value); return true;
             case "queueSize": ((StubComponent) component).setQueueSize((int) value); return true;
             default: return false;
             }

@@ -72,7 +72,7 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
         JmsConnectionFactory connectionFactory = new JmsConnectionFactory("amqp://localhost:" + amqpPort + "?amqp.traceFrames=true");
 
         AMQPComponent amqp = amqpComponent("amqp://localhost:" + amqpPort);
-        amqp.setConnectionFactory(connectionFactory);
+        amqp.getConfiguration().setConnectionFactory(connectionFactory);
 
         camelContext.addComponent("amqp-customized", amqp);
         return camelContext;

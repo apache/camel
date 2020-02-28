@@ -43,22 +43,25 @@ Where *destination* is the name of the queue.
 
 
 // component options: START
-The Stomp component supports 10 options, which are listed below.
+The Stomp component supports 13 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *brokerURL* (common) | The URI of the Stomp broker to connect to |  | String
-| *host* (common) | The virtual host |  | String
+| *brokerURL* (common) | *Required* The URI of the Stomp broker to connect to | tcp://localhost:61613 | String
+| *customHeaders* (common) | To set custom headers |  | Properties
+| *host* (common) | The virtual host name |  | String
+| *version* (common) | The stomp version (1.1, or 1.2) |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | To use the shared stomp configuration |  | StompConfiguration
+| *configuration* (advanced) | Component configuration. |  | StompConfiguration
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *login* (security) | The username |  | String
 | *passcode* (security) | The password |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END

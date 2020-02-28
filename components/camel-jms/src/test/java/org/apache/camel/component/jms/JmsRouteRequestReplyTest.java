@@ -131,8 +131,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ConnectionFactory connectionFactory =
                 CamelJmsTestHelper.createConnectionFactory();
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-            jmsComponent.setUseMessageIDAsCorrelationID(true);
-            jmsComponent.setConcurrentConsumers(maxServerTasks);
+            jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(true);
+            jmsComponent.getConfiguration().setConcurrentConsumers(maxServerTasks);
             context.addComponent(componentName, jmsComponent);
             return context;
         }
@@ -146,8 +146,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderCorrelationID = context -> {
                 ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                jms.setUseMessageIDAsCorrelationID(false);
-                jms.setConcurrentConsumers(maxServerTasks);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
                 context.addComponent(componentName, jms);
                 return context;
             };
@@ -156,8 +156,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
-                jms.setUseMessageIDAsCorrelationID(true);
-                jms.setConcurrentConsumers(maxServerTasks);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
                 context.addComponent(componentName, jms);
                 return context;
             };
@@ -166,8 +166,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
                 jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
-                jms.setUseMessageIDAsCorrelationID(false);
-                jms.setConcurrentConsumers(maxServerTasks);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
                 context.addComponent(componentName, jms);
                 return context;
             };
@@ -176,12 +176,12 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderCorrelationIDDiffComp = context -> {
                 ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                jms.setConcurrentConsumers(maxServerTasks);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
                 context.addComponent(componentName, jms);
 
                 JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
-                jms1.setUseMessageIDAsCorrelationID(false);
-                jms1.setConcurrentConsumers(maxServerTasks);
+                jms1.getConfiguration().setUseMessageIDAsCorrelationID(false);
+                jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
                 context.addComponent(componentName1, jms1);
                 return context;
             };
@@ -189,13 +189,13 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ContextBuilder contextBuilderMessageIDDiffComp = context -> {
                 ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
                 JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                jms.setUseMessageIDAsCorrelationID(true);
-                jms.setConcurrentConsumers(maxServerTasks);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
                 context.addComponent(componentName, jms);
 
                 JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
-                jms1.setUseMessageIDAsCorrelationID(true);
-                jms1.setConcurrentConsumers(maxServerTasks);
+                jms1.getConfiguration().setUseMessageIDAsCorrelationID(true);
+                jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
                 context.addComponent(componentName1, jms1);
                 return context;
             };

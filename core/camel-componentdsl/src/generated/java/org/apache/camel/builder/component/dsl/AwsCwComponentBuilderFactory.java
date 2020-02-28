@@ -58,6 +58,19 @@ public interface AwsCwComponentBuilderFactory {
             return this;
         }
         /**
+         * To use the AmazonCloudWatch as the client.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder amazonCwClient(
+                com.amazonaws.services.cloudwatch.AmazonCloudWatch amazonCwClient) {
+            doSetProperty("amazonCwClient", amazonCwClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -76,6 +89,52 @@ public interface AwsCwComponentBuilderFactory {
         default AwsCwComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The metric name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder name(java.lang.String name) {
+            doSetProperty("name", name);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the CW client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the CW client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the CW client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsCwComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -98,6 +157,39 @@ public interface AwsCwComponentBuilderFactory {
          */
         default AwsCwComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
+         * The metric timestamp.
+         * 
+         * The option is a: <code>java.util.Date</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder timestamp(java.util.Date timestamp) {
+            doSetProperty("timestamp", timestamp);
+            return this;
+        }
+        /**
+         * The metric unit.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder unit(java.lang.String unit) {
+            doSetProperty("unit", unit);
+            return this;
+        }
+        /**
+         * The metric value.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsCwComponentBuilder value(java.lang.Double value) {
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -138,6 +230,13 @@ public interface AwsCwComponentBuilderFactory {
         protected CwComponent buildConcreteComponent() {
             return new CwComponent();
         }
+        private org.apache.camel.component.aws.cw.CwConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.cw.CwComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.cw.CwConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -145,9 +244,17 @@ public interface AwsCwComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((CwComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonCwClient": getOrCreateConfiguration((CwComponent) component).setAmazonCwClient((com.amazonaws.services.cloudwatch.AmazonCloudWatch) value); return true;
             case "lazyStartProducer": ((CwComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "name": getOrCreateConfiguration((CwComponent) component).setName((java.lang.String) value); return true;
+            case "proxyHost": getOrCreateConfiguration((CwComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((CwComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((CwComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": ((CwComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((CwComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "timestamp": getOrCreateConfiguration((CwComponent) component).setTimestamp((java.util.Date) value); return true;
+            case "unit": getOrCreateConfiguration((CwComponent) component).setUnit((java.lang.String) value); return true;
+            case "value": getOrCreateConfiguration((CwComponent) component).setValue((java.lang.Double) value); return true;
             case "basicPropertyBinding": ((CwComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((CwComponent) component).setConfiguration((org.apache.camel.component.aws.cw.CwConfiguration) value); return true;
             default: return false;

@@ -40,7 +40,7 @@ webhook:endpoint[?options]
 
 
 // component options: START
-The Webhook component supports 3 options, which are listed below.
+The Webhook component supports 8 options, which are listed below.
 
 
 
@@ -48,6 +48,11 @@ The Webhook component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *webhookAutoRegister* (consumer) | Automatically register the webhook at startup and unregister it on shutdown. | true | boolean
+| *webhookBasePath* (consumer) | The first (base) path element where the webhook will be exposed. It's a good practice to set it to a random string, so that it cannot be guessed by unauthorized parties. |  | String
+| *webhookComponentName* (consumer) | The Camel Rest component to use for the REST transport, such as netty-http. |  | String
+| *webhookExternalUrl* (consumer) | The URL of the current service as seen by the webhook provider |  | String
+| *webhookPath* (consumer) | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | Set the default configuration for the webhook meta-component. |  | WebhookConfiguration
 |===
