@@ -58,6 +58,20 @@ public interface AwsMskComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.msk.MSKConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsMskComponentBuilder configuration(
+                org.apache.camel.component.aws.msk.MSKConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -178,20 +192,6 @@ public interface AwsMskComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS MSK default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.msk.MSKConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsMskComponentBuilder configuration(
-                org.apache.camel.component.aws.msk.MSKConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsMskComponentBuilderImpl
@@ -216,7 +216,8 @@ public interface AwsMskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((MSKComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((MSKComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "configuration": ((MSKComponent) component).setConfiguration((org.apache.camel.component.aws.msk.MSKConfiguration) value); return true;
             case "lazyStartProducer": ((MSKComponent) component).setLazyStartProducer((boolean) value); return true;
             case "mskClient": getOrCreateConfiguration((MSKComponent) component).setMskClient((com.amazonaws.services.kafka.AWSKafka) value); return true;
             case "operation": getOrCreateConfiguration((MSKComponent) component).setOperation((org.apache.camel.component.aws.msk.MSKOperations) value); return true;
@@ -224,9 +225,8 @@ public interface AwsMskComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((MSKComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((MSKComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((MSKComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((MSKComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((MSKComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MSKComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((MSKComponent) component).setConfiguration((org.apache.camel.component.aws.msk.MSKConfiguration) value); return true;
             default: return false;
             }
         }
