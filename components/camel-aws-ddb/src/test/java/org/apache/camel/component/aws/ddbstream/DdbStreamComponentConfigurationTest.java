@@ -37,8 +37,8 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         DdbStreamComponent component = context.getComponent("aws-ddbstream", DdbStreamComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddbstreams://myTable");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
@@ -49,9 +49,9 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         DdbStreamComponent component = context.getComponent("aws-ddbstream", DdbStreamComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
         DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddbstreams://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
@@ -63,9 +63,9 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         DdbStreamComponent component = context.getComponent("aws-ddbstream", DdbStreamComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
         DdbStreamEndpoint endpoint = (DdbStreamEndpoint)component.createEndpoint("aws-ddbstreams://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
