@@ -14,20 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.pubsub;
+package org.apache.camel.component.google.pubsub.consumer;
 
-public final class GooglePubsubConstants {
+import com.google.cloud.pubsub.v1.AckReplyConsumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.Synchronization;
 
-    public static final String MESSAGE_ID = "CamelGooglePubsub.MessageId";
-    public static final String ACK_ID = "CamelGooglePubsub.MsgAckId";
-    public static final String PUBLISH_TIME = "CamelGooglePubsub.PublishTime";
-    public static final String ATTRIBUTES = "CamelGooglePubsub.Attributes";
+public class AcknowledgeAsync implements Synchronization {
 
-    public enum AckMode {
-        AUTO, NONE
+    private final AckReplyConsumer ackReplyConsumer;
+
+    public AcknowledgeAsync(AckReplyConsumer ackReplyConsumer) {
+        this.ackReplyConsumer = ackReplyConsumer;
     }
 
-    private GooglePubsubConstants() {
-        // not called
+    @Override
+    public void onComplete(Exchange exchange) {
+        ackReplyConsumer.ack();
+    }
+
+    @Override
+    public void onFailure(Exchange exchange) {
+        ackReplyConsumer.nack();
     }
 }

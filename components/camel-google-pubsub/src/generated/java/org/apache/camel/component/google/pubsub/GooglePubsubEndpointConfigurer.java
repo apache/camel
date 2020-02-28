@@ -19,12 +19,12 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "ackMode": target.setAckMode(property(camelContext, org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "connectionfactory":
-        case "connectionFactory": target.setConnectionFactory(property(camelContext, org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory.class, value)); return true;
         case "loggerid":
         case "loggerId": target.setLoggerId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "synchronouspull":
+        case "synchronousPull": target.setSynchronousPull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":

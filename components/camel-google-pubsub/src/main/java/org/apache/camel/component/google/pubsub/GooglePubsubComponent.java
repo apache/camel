@@ -16,11 +16,31 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.rpc.TransportChannelProvider;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.stub.SubscriberStub;
+import com.google.cloud.pubsub.v1.stub.SubscriberStubSettings;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
@@ -28,7 +48,48 @@ import org.apache.camel.support.DefaultComponent;
 @Component("google-pubsub")
 public class GooglePubsubComponent extends DefaultComponent {
 
-    private GooglePubsubConnectionFactory connectionFactory;
+    @Metadata(
+            label = "common",
+            description = "Endpoint to use with local Pub/Sub emulator."
+    )
+    private String endpoint;
+
+    @Metadata(
+            label = "producer",
+            description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics."
+    )
+    private int publisherCacheSize = 100;
+
+    @Metadata(
+            label = "producer",
+            description = "How many milliseconds should each producer stay alive in the cache."
+    )
+    private int publisherCacheTimeout = 180000;
+
+    @Metadata(
+            label = "advanced",
+            description = "How many milliseconds should a producer be allowed to terminate."
+    )
+    private int publisherTerminationTimeout = 60000;
+
+    private RemovalListener<String, Publisher> removalListener = removal -> {
+        Publisher publisher = removal.getValue();
+        if (publisher == null) {
+            return;
+        }
+        publisher.shutdown();
+        try {
+            publisher.awaitTermination(publisherTerminationTimeout, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    };
+
+    private Cache<String, Publisher> cachedPublishers = CacheBuilder.newBuilder()
+            .expireAfterWrite(publisherCacheTimeout, TimeUnit.MILLISECONDS)
+            .maximumSize(publisherCacheSize)
+            .removalListener(removalListener)
+            .build();
 
     public GooglePubsubComponent() {
     }
@@ -51,19 +112,84 @@ public class GooglePubsubComponent extends DefaultComponent {
         return pubsubEndpoint;
     }
 
-    /**
-     * Sets the connection factory to use: provides the ability to explicitly
-     * manage connection credentials: - the path to the key file - the Service
-     * Account Key / Email pair
-     */
-    public GooglePubsubConnectionFactory getConnectionFactory() {
-        if (connectionFactory == null) {
-            connectionFactory = new GooglePubsubConnectionFactory();
-        }
-        return connectionFactory;
+    @Override
+    protected void doShutdown() throws Exception {
+        cachedPublishers.cleanUp();
+        super.doShutdown();
     }
 
-    public void setConnectionFactory(GooglePubsubConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
+    public Publisher getPublisher(String topicName) throws ExecutionException {
+        return cachedPublishers.get(topicName, () -> buildPublisher(topicName));
+    }
+
+    private Publisher buildPublisher(String topicName) throws IOException {
+        Publisher.Builder builder = Publisher.newBuilder(topicName);
+        if (StringHelper.trimToNull(endpoint) != null) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+            builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
+        }
+        return builder.build();
+    }
+
+    public Subscriber getSubscriber(String subscriptionName, MessageReceiver messageReceiver) {
+        Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, messageReceiver);
+        if (StringHelper.trimToNull(endpoint) != null) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+            builder.setChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
+        }
+        return builder.build();
+    }
+
+    public SubscriberStub getSubscriberStub() throws IOException {
+        SubscriberStubSettings.Builder builder = SubscriberStubSettings.newBuilder().setTransportChannelProvider(
+                SubscriberStubSettings.defaultGrpcTransportProviderBuilder().build());
+
+        if (StringHelper.trimToNull(endpoint) != null) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider =
+                    FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+            builder.setTransportChannelProvider(channelProvider).setCredentialsProvider(credentialsProvider);
+        }
+        return builder.build().createStub();
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public int getPublisherCacheSize() {
+        return publisherCacheSize;
+    }
+
+    public void setPublisherCacheSize(int publisherCacheSize) {
+        this.publisherCacheSize = publisherCacheSize;
+    }
+
+    public int getPublisherCacheTimeout() {
+        return publisherCacheTimeout;
+    }
+
+    public void setPublisherCacheTimeout(int publisherCacheTimeout) {
+        this.publisherCacheTimeout = publisherCacheTimeout;
+    }
+
+    public int getPublisherTerminationTimeout() {
+        return publisherTerminationTimeout;
+    }
+
+    public void setPublisherTerminationTimeout(int publisherTerminationTimeout) {
+        this.publisherTerminationTimeout = publisherTerminationTimeout;
     }
 }
+

@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import com.google.api.services.pubsub.Pubsub;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -36,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Messaging client for Google Cloud Platform PubSub Service
  * <p/>
- * Built on top of the Service API libraries (v1).
+ * Built on top of the Google Cloud Pub/Sub libraries.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub", syntax = "google-pubsub:projectId:destinationName", label = "messaging")
 public class GooglePubsubEndpoint extends DefaultEndpoint {
@@ -60,13 +65,11 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(name = "maxMessagesPerPoll", description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
     private Integer maxMessagesPerPoll = 1;
 
-    @UriParam(name = "connectionFactory", description = "ConnectionFactory to obtain connection to PubSub Service. If non provided the default one will be used")
-    private GooglePubsubConnectionFactory connectionFactory;
+    @UriParam(name = "synchronousPull", description = "Synchronously pull batches of messages", defaultValue = "false")
+    private boolean synchronousPull;
 
     @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE", description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
-
-    private Pubsub pubsub;
 
     public GooglePubsubEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
@@ -78,7 +81,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     @Override
     public GooglePubsubComponent getComponent() {
-        return (GooglePubsubComponent)super.getComponent();
+        return (GooglePubsubComponent) super.getComponent();
     }
 
     public void afterPropertiesSet() throws Exception {
@@ -91,9 +94,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         // Default pubsub connection.
         // With the publisher endpoints - the main publisher
         // with the consumer endpoints - the ack client
-        pubsub = getConnectionFactory().getDefaultClient();
 
-        log.trace("Credential file location : {}", getConnectionFactory().getCredentialsFileLocation());
         log.trace("Project ID: {}", this.projectId);
         log.trace("Destination Name: {}", this.destinationName);
     }
@@ -162,27 +163,19 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
+    public Boolean getSynchronousPull() {
+        return synchronousPull;
+    }
+
+    public void setSynchronousPull(Boolean synchronousPull) {
+        this.synchronousPull = synchronousPull;
+    }
+
     public GooglePubsubConstants.AckMode getAckMode() {
         return ackMode;
     }
 
     public void setAckMode(GooglePubsubConstants.AckMode ackMode) {
         this.ackMode = ackMode;
-    }
-
-    public Pubsub getPubsub() {
-        return pubsub;
-    }
-
-    /**
-     * ConnectionFactory to obtain connection to PubSub Service. If non provided
-     * the default will be used.
-     */
-    public GooglePubsubConnectionFactory getConnectionFactory() {
-        return (null == connectionFactory) ? getComponent().getConnectionFactory() : connectionFactory;
-    }
-
-    public void setConnectionFactory(GooglePubsubConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
     }
 }

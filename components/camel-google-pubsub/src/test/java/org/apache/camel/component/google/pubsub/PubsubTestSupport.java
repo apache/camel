@@ -19,28 +19,42 @@ package org.apache.camel.component.google.pubsub;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.services.pubsub.Pubsub;
-import com.google.api.services.pubsub.model.Subscription;
-import com.google.api.services.pubsub.model.Topic;
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminSettings;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.ProjectTopicName;
+import com.google.pubsub.v1.PushConfig;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.ClassRule;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 
 public class PubsubTestSupport extends CamelTestSupport {
 
-    public static final String SERVICE_KEY;
-    public static final String SERVICE_ACCOUNT;
     public static final String PROJECT_ID;
-    public static final String SERVICE_URL;
 
     static {
         Properties testProperties = loadProperties();
-        SERVICE_KEY = testProperties.getProperty("service.key");
-        SERVICE_ACCOUNT = testProperties.getProperty("service.account");
         PROJECT_ID = testProperties.getProperty("project.id");
-        SERVICE_URL = testProperties.getProperty("test.serviceURL");
     }
+
+    @ClassRule
+    public static GenericContainer container = new GenericContainer("google/cloud-sdk:latest")
+            .withExposedPorts(8383)
+            .withCommand("/bin/sh", "-c",
+                    String.format("gcloud beta emulators pubsub start --project %s --host-port=0.0.0.0:%d",
+                            PROJECT_ID, 8383))
+            .waitingFor(new LogMessageWaitStrategy().withRegEx("(?s).*started.*$"));
 
     private static Properties loadProperties() {
         Properties testProperties = new Properties();
@@ -57,10 +71,8 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     protected void addPubsubComponent(CamelContext context) {
 
-        GooglePubsubConnectionFactory cf = new GooglePubsubConnectionFactory().setServiceAccount(SERVICE_ACCOUNT).setServiceAccountKey(SERVICE_KEY).setServiceURL(SERVICE_URL);
-
         GooglePubsubComponent component = new GooglePubsubComponent();
-        component.setConnectionFactory(cf);
+        component.setEndpoint(container.getContainerIpAddress() + ":" + container.getFirstMappedPort());
 
         context.addComponent("google-pubsub", component);
         context.getPropertiesComponent().setLocation("ref:prop");
@@ -73,46 +85,64 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        container.start();
+        createTopicSubscription();
         CamelContext context = super.createCamelContext();
         addPubsubComponent(context);
         return context;
     }
 
-    public static void createTopicSubscriptionPair(String topicName, String subscriptionName) throws Exception {
+    public void createTopicSubscription() throws Exception {
+    }
+
+    public void createTopicSubscriptionPair(String topicName, String subscriptionName) {
         createTopicSubscriptionPair(topicName, subscriptionName, 10);
     }
 
-    public static void createTopicSubscriptionPair(String topicName, String subscriptionName, int ackDealineSeconds) throws Exception {
-
-        Pubsub pubsub = new GooglePubsubConnectionFactory().setServiceAccount(SERVICE_ACCOUNT).setServiceAccountKey(SERVICE_KEY).setServiceURL(SERVICE_URL).getDefaultClient();
-
-        String topicFullName = String.format("projects/%s/topics/%s", PubsubTestSupport.PROJECT_ID, topicName);
-
-        String subscriptionFullName = String.format("projects/%s/subscriptions/%s", PubsubTestSupport.PROJECT_ID, subscriptionName);
+    public void createTopicSubscriptionPair(String topicName, String subscriptionName, int ackDeadlineSeconds) {
+        ManagedChannel channel = null;
+        TopicAdminClient topicAdminClient = null;
+        SubscriptionAdminClient subscriptionAdminClient = null;
 
         try {
-            pubsub.projects().topics().create(topicFullName, new Topic()).execute();
-        } catch (Exception e) {
-            handleAlreadyExistsException(e);
-        }
+            Integer port = container.getFirstMappedPort();
+            channel = ManagedChannelBuilder
+                    .forTarget(String.format("%s:%s", "localhost", port))
+                    .usePlaintext()
+                    .build();
 
-        try {
-            Subscription subscription = new Subscription().setTopic(topicFullName).setAckDeadlineSeconds(ackDealineSeconds);
+            FixedTransportChannelProvider channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
-            pubsub.projects().subscriptions().create(subscriptionFullName, subscription).execute();
-        } catch (Exception e) {
-            handleAlreadyExistsException(e);
-        }
-    }
+            ProjectTopicName projectTopicName = ProjectTopicName.of(PROJECT_ID, topicName);
+            ProjectSubscriptionName projectSubscriptionName = ProjectSubscriptionName.of(PROJECT_ID, subscriptionName);
 
-    private static void handleAlreadyExistsException(Exception e) throws Exception {
-        if (e instanceof GoogleJsonResponseException) {
-            GoogleJsonResponseException exc = (GoogleJsonResponseException)e;
-            // 409 indicates that the resource is available already
-            if (409 == exc.getStatusCode()) {
-                return;
+            topicAdminClient = TopicAdminClient.create(
+                    TopicAdminSettings.newBuilder()
+                            .setTransportChannelProvider(channelProvider)
+                            .setCredentialsProvider(credentialsProvider)
+                            .build());
+            topicAdminClient.createTopic(projectTopicName);
+
+            subscriptionAdminClient = SubscriptionAdminClient.create(
+                    SubscriptionAdminSettings.newBuilder()
+                            .setTransportChannelProvider(channelProvider)
+                            .setCredentialsProvider(credentialsProvider)
+                            .build());
+            subscriptionAdminClient.createSubscription(projectSubscriptionName, projectTopicName,
+                    PushConfig.getDefaultInstance(), ackDeadlineSeconds);
+
+        } catch (Exception ignored) {
+        } finally {
+            if (channel != null) {
+                channel.shutdown();
+            }
+            if (topicAdminClient != null) {
+                topicAdminClient.shutdown();
+            }
+            if (subscriptionAdminClient != null) {
+                subscriptionAdminClient.shutdown();
             }
         }
-        throw e;
     }
 }

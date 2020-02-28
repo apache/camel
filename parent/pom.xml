@@ -46,6 +46,8 @@
         <activemq-artemis-version>2.11.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.10.5</ahc-version>
+        <animal-sniffer-version>1.17</animal-sniffer-version>
+        <android-annotations-version>4.1.1.4</android-annotations-version>
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
         <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
@@ -145,6 +147,7 @@
         <commons-pool2-version>2.8.0</commons-pool2-version>
         <commons-text-version>1.8</commons-text-version>
         <compress-lzf-version>1.0.4</compress-lzf-version>
+        <conscrypt-uber-version>2.2.1</conscrypt-uber-version>
         <consul-client-version>1.3.3</consul-client-version>
         <consul-client-bundle-version>1.3.3_1</consul-client-bundle-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
@@ -230,15 +233,27 @@
         <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
         <gmetric4j-version>1.0.10</gmetric4j-version>
         <google-guava-version>19.0</google-guava-version>
+        <google-pubsub-guava-version>28.1-jre</google-pubsub-guava-version>
         <google-api-client-version>1.22.0</google-api-client-version>
+        <google-api-common-version>1.8.1</google-api-common-version>
         <google-api-services-drive-version>v2-rev297-1.22.0</google-api-services-drive-version>
+        <google-auto-value-version>1.7</google-auto-value-version>
         <google-api-services-calendar-version>v3-rev291-1.22.0</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev551-1.22.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev81-1.22.0</google-api-services-mail-version>
         <google-api-services-bigquery-version>v2-rev352-1.22.0</google-api-services-bigquery-version>
         <google-api-services-pubsub-version>v1-rev12-1.22.0</google-api-services-pubsub-version>
+        <google-cloud-pubsub-version>1.102.0</google-cloud-pubsub-version>
+        <google-errorprone-version>2.3.3</google-errorprone-version>
+        <google-gax-version>1.50.1</google-gax-version>
+        <google-http-client-version>1.33.0</google-http-client-version>
+        <google-http-jackson2-version>1.32.1</google-http-jackson2-version>
+        <google-j2objc-version>1.3</google-j2objc-version>
         <google-mail-guava-version>17.0</google-mail-guava-version>
         <google-truth-version>0.30</google-truth-version>
+        <google-proto-common-version>1.17.0</google-proto-common-version>
+        <google-proto-pubsub-version>1.84.0</google-proto-pubsub-version>
+        <google-proto-iam-version>0.13.0</google-proto-iam-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
         <grpc-version>1.27.0</grpc-version>
@@ -499,7 +514,7 @@
         <olingo4-version>4.7.1</olingo4-version>
         <ognl-version>3.1.12</ognl-version>
         <ognl-bundle-version>3.1.12_1</ognl-bundle-version>
-        <opencensus-api-version>0.21.0</opencensus-api-version>
+        <opencensus-api-version>0.24.0</opencensus-api-version>
         <oncrpc-version>1.1.3</oncrpc-version>
         <openjpa-version>3.1.1</openjpa-version>
         <openstack4j-version>3.0.2</openstack4j-version>
@@ -626,6 +641,7 @@
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.12.5</testcontainers-version>
+        <threetenbp-version>1.4.0</threetenbp-version>
         <tinybundles-version>2.1.1</tinybundles-version>
         <tika-version>1.23</tika-version>
         <twilio-version>7.9.1</twilio-version>
@@ -3313,7 +3329,7 @@
                 <artifactId>scala-library</artifactId>
                 <version>${scala-version}</version>
             </dependency>
-            
+
 	        <dependency>
 	            <groupId>org.yaml</groupId>
 	            <artifactId>snakeyaml</artifactId>
