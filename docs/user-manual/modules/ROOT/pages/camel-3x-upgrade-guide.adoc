@@ -525,8 +525,10 @@ Configuring Camel components from plain Java code has changed in some components
 delegate setters for a nested configuration class. These delegates has been removed, to ensure configuration
 is more consistent and aligned with how endpoints is configured as well, and by using source code generated configurer classes.
 
-The following Camel components has been changed:
+The following Camel components has been affected and changed on the component level:
 
+- aws
+- aws2
 - consul
 - etcd
 - infinispan
