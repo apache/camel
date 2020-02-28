@@ -74,6 +74,19 @@ public interface AwsTranslateComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.translate.TranslateConfiguration</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder configuration(
+                org.apache.camel.component.aws.translate.TranslateConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -222,19 +235,6 @@ public interface AwsTranslateComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS Translate default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.translate.TranslateConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsTranslateComponentBuilder configuration(
-                org.apache.camel.component.aws.translate.TranslateConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsTranslateComponentBuilderImpl
@@ -259,20 +259,20 @@ public interface AwsTranslateComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((TranslateComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((TranslateComponent) component).setAccessKey((java.lang.String) value); return true;
             case "autodetectSourceLanguage": getOrCreateConfiguration((TranslateComponent) component).setAutodetectSourceLanguage((boolean) value); return true;
+            case "configuration": ((TranslateComponent) component).setConfiguration((org.apache.camel.component.aws.translate.TranslateConfiguration) value); return true;
             case "lazyStartProducer": ((TranslateComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((TranslateComponent) component).setOperation((org.apache.camel.component.aws.translate.TranslateOperations) value); return true;
             case "proxyHost": getOrCreateConfiguration((TranslateComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((TranslateComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((TranslateComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((TranslateComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((TranslateComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((TranslateComponent) component).setSecretKey((java.lang.String) value); return true;
             case "sourceLanguage": getOrCreateConfiguration((TranslateComponent) component).setSourceLanguage((java.lang.String) value); return true;
             case "targetLanguage": getOrCreateConfiguration((TranslateComponent) component).setTargetLanguage((java.lang.String) value); return true;
             case "translateClient": getOrCreateConfiguration((TranslateComponent) component).setTranslateClient((com.amazonaws.services.translate.AmazonTranslate) value); return true;
             case "basicPropertyBinding": ((TranslateComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((TranslateComponent) component).setConfiguration((org.apache.camel.component.aws.translate.TranslateConfiguration) value); return true;
             default: return false;
             }
         }
