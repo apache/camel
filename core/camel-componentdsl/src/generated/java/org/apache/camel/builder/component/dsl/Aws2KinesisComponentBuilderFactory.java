@@ -62,6 +62,57 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default Aws2KinesisComponentBuilder amazonKinesisClient(
+                software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default Aws2KinesisComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default Aws2KinesisComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: common
+         */
+        default Aws2KinesisComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
          * Amazon AWS Region.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -100,6 +151,76 @@ public interface Aws2KinesisComponentBuilderFactory {
         default Aws2KinesisComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Defines where in the Kinesis stream to start getting records.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.kinesis.model.ShardIteratorType</code> type.
+         * 
+         * Default: TRIM_HORIZON
+         * Group: consumer
+         */
+        default Aws2KinesisComponentBuilder iteratorType(
+                software.amazon.awssdk.services.kinesis.model.ShardIteratorType iteratorType) {
+            doSetProperty("iteratorType", iteratorType);
+            return this;
+        }
+        /**
+         * Maximum number of records that will be fetched in each poll.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer
+         */
+        default Aws2KinesisComponentBuilder maxResultsPerRequest(
+                int maxResultsPerRequest) {
+            doSetProperty("maxResultsPerRequest", maxResultsPerRequest);
+            return this;
+        }
+        /**
+         * The sequence number to start polling from. Required if iteratorType
+         * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default Aws2KinesisComponentBuilder sequenceNumber(
+                java.lang.String sequenceNumber) {
+            doSetProperty("sequenceNumber", sequenceNumber);
+            return this;
+        }
+        /**
+         * Define what will be the behavior in case of shard closed. Possible
+         * value are ignore, silent and fail. In case of ignore a message will
+         * be logged and the consumer will restart from the beginning,in case of
+         * silent there will be no logging and the consumer will start from the
+         * beginning,in case of fail a ReachedClosedStateException will be
+         * raised.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.
+         * 
+         * Default: ignore
+         * Group: consumer
+         */
+        default Aws2KinesisComponentBuilder shardClosed(
+                org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum shardClosed) {
+            doSetProperty("shardClosed", shardClosed);
+            return this;
+        }
+        /**
+         * Defines which shardId in the Kinesis stream to get records from.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default Aws2KinesisComponentBuilder shardId(java.lang.String shardId) {
+            doSetProperty("shardId", shardId);
             return this;
         }
         /**
@@ -161,6 +282,13 @@ public interface Aws2KinesisComponentBuilderFactory {
         protected Kinesis2Component buildConcreteComponent() {
             return new Kinesis2Component();
         }
+        private org.apache.camel.component.aws2.kinesis.Kinesis2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.kinesis.Kinesis2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.kinesis.Kinesis2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -168,9 +296,18 @@ public interface Aws2KinesisComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((Kinesis2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonKinesisClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisClient((software.amazon.awssdk.services.kinesis.KinesisClient) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Kinesis2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Kinesis2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Kinesis2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": ((Kinesis2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Kinesis2Component) component).setSecretKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Kinesis2Component) component).setBridgeErrorHandler((boolean) value); return true;
+            case "iteratorType": getOrCreateConfiguration((Kinesis2Component) component).setIteratorType((software.amazon.awssdk.services.kinesis.model.ShardIteratorType) value); return true;
+            case "maxResultsPerRequest": getOrCreateConfiguration((Kinesis2Component) component).setMaxResultsPerRequest((int) value); return true;
+            case "sequenceNumber": getOrCreateConfiguration((Kinesis2Component) component).setSequenceNumber((java.lang.String) value); return true;
+            case "shardClosed": getOrCreateConfiguration((Kinesis2Component) component).setShardClosed((org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum) value); return true;
+            case "shardId": getOrCreateConfiguration((Kinesis2Component) component).setShardId((java.lang.String) value); return true;
             case "lazyStartProducer": ((Kinesis2Component) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((Kinesis2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((Kinesis2Component) component).setConfiguration((org.apache.camel.component.aws2.kinesis.Kinesis2Configuration) value); return true;

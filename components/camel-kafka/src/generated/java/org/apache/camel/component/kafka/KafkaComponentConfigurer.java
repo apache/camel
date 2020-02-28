@@ -199,12 +199,12 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslProvider": getOrCreateConfiguration(target).setSslProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltrustmanageralgorithm":
         case "sslTrustmanagerAlgorithm": getOrCreateConfiguration(target).setSslTrustmanagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltruststorelocation":
+        case "sslTruststoreLocation": getOrCreateConfiguration(target).setSslTruststoreLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststoretype":
         case "sslTruststoreType": getOrCreateConfiguration(target).setSslTruststoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaregistryurl":
         case "schemaRegistryURL": getOrCreateConfiguration(target).setSchemaRegistryURL(property(camelContext, java.lang.String.class, value)); return true;
-        case "ssltruststorelocation":
-        case "sslTruststoreLocation": getOrCreateConfiguration(target).setSslTruststoreLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststorepassword":
         case "sslTruststorePassword": getOrCreateConfiguration(target).setSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":

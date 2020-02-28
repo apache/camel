@@ -1087,7 +1087,9 @@ public interface KafkaComponentBuilderFactory {
         /**
          * To use a custom worker pool for continue routing Exchange after kafka
          * server has acknowledge the message that was sent to it from
-         * KafkaProducer using asynchronous non-blocking processing.
+         * KafkaProducer using asynchronous non-blocking processing. If using
+         * this option then you must handle the lifecycle of the thread pool to
+         * shut the pool down when no longer needed.
          * 
          * The option is a: <code>java.util.concurrent.ExecutorService</code>
          * type.
@@ -1460,6 +1462,18 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The location of the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default KafkaComponentBuilder sslTruststoreLocation(
+                java.lang.String sslTruststoreLocation) {
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
          * The file format of the trust store file. Default value is JKS.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1486,18 +1500,6 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder schemaRegistryURL(
                 java.lang.String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
-         * The location of the trust store file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default KafkaComponentBuilder sslTruststoreLocation(
-                java.lang.String sslTruststoreLocation) {
-            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
             return this;
         }
         /**
@@ -1640,9 +1642,9 @@ public interface KafkaComponentBuilderFactory {
             case "sslProtocol": getOrCreateConfiguration((KafkaComponent) component).setSslProtocol((java.lang.String) value); return true;
             case "sslProvider": getOrCreateConfiguration((KafkaComponent) component).setSslProvider((java.lang.String) value); return true;
             case "sslTrustmanagerAlgorithm": getOrCreateConfiguration((KafkaComponent) component).setSslTrustmanagerAlgorithm((java.lang.String) value); return true;
+            case "sslTruststoreLocation": getOrCreateConfiguration((KafkaComponent) component).setSslTruststoreLocation((java.lang.String) value); return true;
             case "sslTruststoreType": getOrCreateConfiguration((KafkaComponent) component).setSslTruststoreType((java.lang.String) value); return true;
             case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
-            case "sslTruststoreLocation": getOrCreateConfiguration((KafkaComponent) component).setSslTruststoreLocation((java.lang.String) value); return true;
             case "sslTruststorePassword": getOrCreateConfiguration((KafkaComponent) component).setSslTruststorePassword((java.lang.String) value); return true;
             case "useGlobalSslContextParameters": ((KafkaComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

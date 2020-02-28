@@ -63,6 +63,21 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon Kinesis Firehose client to use for all requests for this
+         * endpoint.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.firehose.FirehoseClient</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder amazonKinesisFirehoseClient(
+                software.amazon.awssdk.services.firehose.FirehoseClient amazonKinesisFirehoseClient) {
+            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -81,6 +96,47 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         default Aws2KinesisFirehoseComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder proxyHost(
+                java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -145,6 +201,13 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         protected KinesisFirehose2Component buildConcreteComponent() {
             return new KinesisFirehose2Component();
         }
+        private org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.firehose.KinesisFirehose2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -152,7 +215,11 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((KinesisFirehose2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonKinesisFirehoseClient": getOrCreateConfiguration((KinesisFirehose2Component) component).setAmazonKinesisFirehoseClient((software.amazon.awssdk.services.firehose.FirehoseClient) value); return true;
             case "lazyStartProducer": ((KinesisFirehose2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": ((KinesisFirehose2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((KinesisFirehose2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((KinesisFirehose2Component) component).setBasicPropertyBinding((boolean) value); return true;
