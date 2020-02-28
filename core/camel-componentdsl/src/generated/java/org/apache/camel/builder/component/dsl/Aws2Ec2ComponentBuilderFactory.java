@@ -73,6 +73,20 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Configuration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Aws2Ec2ComponentBuilder configuration(
+                org.apache.camel.component.aws2.ec2.AWS2EC2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -185,20 +199,6 @@ public interface Aws2Ec2ComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS EC2 default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.ec2.AWS2EC2Configuration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default Aws2Ec2ComponentBuilder configuration(
-                org.apache.camel.component.aws2.ec2.AWS2EC2Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class Aws2Ec2ComponentBuilderImpl
@@ -223,17 +223,17 @@ public interface Aws2Ec2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((AWS2EC2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((AWS2EC2Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonEc2Client": getOrCreateConfiguration((AWS2EC2Component) component).setAmazonEc2Client((software.amazon.awssdk.services.ec2.Ec2Client) value); return true;
+            case "configuration": ((AWS2EC2Component) component).setConfiguration((org.apache.camel.component.aws2.ec2.AWS2EC2Configuration) value); return true;
             case "lazyStartProducer": ((AWS2EC2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((AWS2EC2Component) component).setOperation((org.apache.camel.component.aws2.ec2.AWS2EC2Operations) value); return true;
             case "proxyHost": getOrCreateConfiguration((AWS2EC2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((AWS2EC2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((AWS2EC2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((AWS2EC2Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((AWS2EC2Component) component).setConfiguration((org.apache.camel.component.aws2.ec2.AWS2EC2Configuration) value); return true;
             default: return false;
             }
         }
