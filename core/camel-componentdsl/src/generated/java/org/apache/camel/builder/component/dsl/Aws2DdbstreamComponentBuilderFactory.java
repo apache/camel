@@ -51,18 +51,6 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             extends
                 ComponentBuilder<Ddb2StreamComponent> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default Aws2DdbstreamComponentBuilder accessKey(
-                java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * Amazon DynamoDB client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -92,6 +80,19 @@ public interface Aws2DdbstreamComponentBuilderFactory {
         default Aws2DdbstreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration</code> type.
+         * 
+         * Group: consumer
+         */
+        default Aws2DdbstreamComponentBuilder configuration(
+                org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -173,18 +174,6 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default Aws2DdbstreamComponentBuilder secretKey(
-                java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * Provider for the sequence number when using one of the two
          * ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a
          * registry reference or a literal sequence number.
@@ -214,16 +203,27 @@ public interface Aws2DdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS DDB stream default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2DdbstreamComponentBuilder configuration(
-                org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2DdbstreamComponentBuilder accessKey(
+                java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2DdbstreamComponentBuilder secretKey(
+                java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -250,19 +250,19 @@ public interface Aws2DdbstreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((Ddb2StreamComponent) component).setAccessKey((java.lang.String) value); return true;
             case "amazonDynamoDbStreamsClient": getOrCreateConfiguration((Ddb2StreamComponent) component).setAmazonDynamoDbStreamsClient((software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient) value); return true;
             case "bridgeErrorHandler": ((Ddb2StreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "configuration": ((Ddb2StreamComponent) component).setConfiguration((org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration) value); return true;
             case "iteratorType": getOrCreateConfiguration((Ddb2StreamComponent) component).setIteratorType((software.amazon.awssdk.services.dynamodb.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((Ddb2StreamComponent) component).setMaxResultsPerRequest((int) value); return true;
             case "proxyHost": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Ddb2StreamComponent) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Ddb2StreamComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((Ddb2StreamComponent) component).setSecretKey((java.lang.String) value); return true;
             case "sequenceNumberProvider": getOrCreateConfiguration((Ddb2StreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider) value); return true;
             case "basicPropertyBinding": ((Ddb2StreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((Ddb2StreamComponent) component).setConfiguration((org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration) value); return true;
+            case "accessKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Ddb2StreamComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }
