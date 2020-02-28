@@ -38,7 +38,7 @@ public class InfinispanComponent extends DefaultComponent {
     private transient CacheContainer defaultCacheManager;
 
     @Metadata(description = "Component configuration")
-    private InfinispanConfiguration configuration;
+    private InfinispanConfiguration configuration = new InfinispanConfiguration();
 
     public InfinispanComponent() {
     }
@@ -49,12 +49,7 @@ public class InfinispanComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        InfinispanConfiguration conf;
-        if (configuration != null) {
-            conf = configuration.copy();
-        } else {
-            conf = new InfinispanConfiguration();
-        }
+        InfinispanConfiguration conf = configuration.copy();
         // init default embedded cache if config parameters aren't specified or cacheContainer is set using setMethod
         if (!isConfigProvided(parameters, conf)) {
             if (defaultCacheManager == null) {
