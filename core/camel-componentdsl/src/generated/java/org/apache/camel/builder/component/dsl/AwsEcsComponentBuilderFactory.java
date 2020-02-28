@@ -58,6 +58,20 @@ public interface AwsEcsComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ecs.ECSConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsEcsComponentBuilder configuration(
+                org.apache.camel.component.aws.ecs.ECSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * To use a existing configured AWS ECS as client.
          * 
          * The option is a: <code>com.amazonaws.services.ecs.AmazonECS</code>
@@ -178,20 +192,6 @@ public interface AwsEcsComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS ECS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.ecs.ECSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsEcsComponentBuilder configuration(
-                org.apache.camel.component.aws.ecs.ECSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsEcsComponentBuilderImpl
@@ -216,7 +216,8 @@ public interface AwsEcsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((ECSComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((ECSComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "configuration": ((ECSComponent) component).setConfiguration((org.apache.camel.component.aws.ecs.ECSConfiguration) value); return true;
             case "ecsClient": getOrCreateConfiguration((ECSComponent) component).setEcsClient((com.amazonaws.services.ecs.AmazonECS) value); return true;
             case "lazyStartProducer": ((ECSComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((ECSComponent) component).setOperation((org.apache.camel.component.aws.ecs.ECSOperations) value); return true;
@@ -224,9 +225,8 @@ public interface AwsEcsComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((ECSComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((ECSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((ECSComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((ECSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((ECSComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((ECSComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((ECSComponent) component).setConfiguration((org.apache.camel.component.aws.ecs.ECSConfiguration) value); return true;
             default: return false;
             }
         }
