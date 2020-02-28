@@ -22,12 +22,11 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         S3Component target = (S3Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "accesskey":
-        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazons3client":
         case "amazonS3Client": getOrCreateConfiguration(target).setAmazonS3Client(property(camelContext, com.amazonaws.services.s3.AmazonS3.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": getOrCreateConfiguration(target).setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.s3.S3Configuration.class, value)); return true;
         case "pathstyleaccess":
         case "pathStyleAccess": getOrCreateConfiguration(target).setPathStyleAccess(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
@@ -37,10 +36,7 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "useiamcredentials":
         case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         case "encryptionmaterials":
@@ -80,7 +76,6 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "useAwsKMS": getOrCreateConfiguration(target).setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.s3.S3Configuration.class, value)); return true;
         case "acceleratemodeenabled":
         case "accelerateModeEnabled": getOrCreateConfiguration(target).setAccelerateModeEnabled(property(camelContext, boolean.class, value)); return true;
         case "chunkedencodingdisabled":
@@ -91,6 +86,10 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "forceGlobalBucketAccessEnabled": getOrCreateConfiguration(target).setForceGlobalBucketAccessEnabled(property(camelContext, boolean.class, value)); return true;
         case "payloadsigningenabled":
         case "payloadSigningEnabled": getOrCreateConfiguration(target).setPayloadSigningEnabled(property(camelContext, boolean.class, value)); return true;
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

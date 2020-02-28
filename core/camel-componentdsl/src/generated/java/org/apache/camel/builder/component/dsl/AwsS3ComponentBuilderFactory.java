@@ -49,17 +49,6 @@ public interface AwsS3ComponentBuilderFactory {
      */
     interface AwsS3ComponentBuilder extends ComponentBuilder<S3Component> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AwsS3ComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
@@ -82,6 +71,19 @@ public interface AwsS3ComponentBuilderFactory {
          */
         default AwsS3ComponentBuilder autoCreateBucket(boolean autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.s3.S3Configuration</code> type.
+         * 
+         * Group: common
+         */
+        default AwsS3ComponentBuilder configuration(
+                org.apache.camel.component.aws.s3.S3Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -155,17 +157,6 @@ public interface AwsS3ComponentBuilderFactory {
          */
         default AwsS3ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AwsS3ComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -465,19 +456,6 @@ public interface AwsS3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS S3 default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.s3.S3Configuration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsS3ComponentBuilder configuration(
-                org.apache.camel.component.aws.s3.S3Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Define if Accelerate Mode enabled is true or false.
          * 
          * The option is a: <code>boolean</code> type.
@@ -541,6 +519,28 @@ public interface AwsS3ComponentBuilderFactory {
             doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsS3ComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsS3ComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
     }
 
     class AwsS3ComponentBuilderImpl
@@ -565,16 +565,15 @@ public interface AwsS3ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((S3Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonS3Client": getOrCreateConfiguration((S3Component) component).setAmazonS3Client((com.amazonaws.services.s3.AmazonS3) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((S3Component) component).setAutoCreateBucket((boolean) value); return true;
+            case "configuration": ((S3Component) component).setConfiguration((org.apache.camel.component.aws.s3.S3Configuration) value); return true;
             case "pathStyleAccess": getOrCreateConfiguration((S3Component) component).setPathStyleAccess((boolean) value); return true;
             case "policy": getOrCreateConfiguration((S3Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((S3Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((S3Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((S3Component) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((S3Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((S3Component) component).setSecretKey((java.lang.String) value); return true;
             case "useIAMCredentials": getOrCreateConfiguration((S3Component) component).setUseIAMCredentials((boolean) value); return true;
             case "encryptionMaterials": getOrCreateConfiguration((S3Component) component).setEncryptionMaterials((com.amazonaws.services.s3.model.EncryptionMaterials) value); return true;
             case "useEncryption": getOrCreateConfiguration((S3Component) component).setUseEncryption((boolean) value); return true;
@@ -596,12 +595,13 @@ public interface AwsS3ComponentBuilderFactory {
             case "awsKMSKeyId": getOrCreateConfiguration((S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((S3Component) component).setUseAwsKMS((boolean) value); return true;
             case "basicPropertyBinding": ((S3Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((S3Component) component).setConfiguration((org.apache.camel.component.aws.s3.S3Configuration) value); return true;
             case "accelerateModeEnabled": getOrCreateConfiguration((S3Component) component).setAccelerateModeEnabled((boolean) value); return true;
             case "chunkedEncodingDisabled": getOrCreateConfiguration((S3Component) component).setChunkedEncodingDisabled((boolean) value); return true;
             case "dualstackEnabled": getOrCreateConfiguration((S3Component) component).setDualstackEnabled((boolean) value); return true;
             case "forceGlobalBucketAccessEnabled": getOrCreateConfiguration((S3Component) component).setForceGlobalBucketAccessEnabled((boolean) value); return true;
             case "payloadSigningEnabled": getOrCreateConfiguration((S3Component) component).setPayloadSigningEnabled((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((S3Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((S3Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }
