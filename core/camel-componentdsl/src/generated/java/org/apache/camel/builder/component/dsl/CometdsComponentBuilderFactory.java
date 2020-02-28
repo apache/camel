@@ -51,20 +51,6 @@ public interface CometdsComponentBuilderFactory {
             extends
                 ComponentBuilder<CometdComponent> {
         /**
-         * To use a list of custom BayeuxServer.Extension that allows modifying
-         * incoming and outgoing requests.
-         * 
-         * The option is a:
-         * <code>java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension></code> type.
-         * 
-         * Group: common
-         */
-        default CometdsComponentBuilder extensions(
-                java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension> extensions) {
-            doSetProperty("extensions", extensions);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -116,6 +102,20 @@ public interface CometdsComponentBuilderFactory {
         default CometdsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a list of custom BayeuxServer.Extension that allows modifying
+         * incoming and outgoing requests.
+         * 
+         * The option is a:
+         * <code>java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension></code> type.
+         * 
+         * Group: advanced
+         */
+        default CometdsComponentBuilder extensions(
+                java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension> extensions) {
+            doSetProperty("extensions", extensions);
             return this;
         }
         /**
@@ -208,10 +208,10 @@ public interface CometdsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "extensions": ((CometdComponent) component).setExtensions((java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension>) value); return true;
             case "bridgeErrorHandler": ((CometdComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CometdComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((CometdComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "extensions": ((CometdComponent) component).setExtensions((java.util.List) value); return true;
             case "securityPolicy": ((CometdComponent) component).setSecurityPolicy((org.cometd.bayeux.server.SecurityPolicy) value); return true;
             case "sslContextParameters": ((CometdComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "sslKeyPassword": ((CometdComponent) component).setSslKeyPassword((java.lang.String) value); return true;

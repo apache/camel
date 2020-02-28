@@ -51,6 +51,19 @@ public interface YammerComponentBuilderFactory {
             extends
                 ComponentBuilder<YammerComponent> {
         /**
+         * Set to true if you want to use raw JSON rather than converting to
+         * POJOs.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default YammerComponentBuilder useJson(boolean useJson) {
+            doSetProperty("useJson", useJson);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -67,6 +80,91 @@ public interface YammerComponentBuilderFactory {
         default YammerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Delay between polling in millis.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         */
+        default YammerComponentBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Return only the specified number of messages. Works for threaded=true
+         * and threaded=extended.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: -1
+         * Group: consumer
+         */
+        default YammerComponentBuilder limit(int limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
+        /**
+         * Returns messages newer than the message ID specified as a numeric
+         * string. This should be used when polling for new messages. If you're
+         * looking at messages, and the most recent message returned is 3516,
+         * you can make a request with the parameter newerThan=3516 to ensure
+         * that you do not get duplicate copies of messages already on your
+         * page.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: consumer
+         */
+        default YammerComponentBuilder newerThan(long newerThan) {
+            doSetProperty("newerThan", newerThan);
+            return this;
+        }
+        /**
+         * Returns messages older than the message ID specified as a numeric
+         * string. This is useful for paginating messages. For example, if
+         * you're currently viewing 20 messages and the oldest is number 2912,
+         * you could append olderThan=2912 to your request to get the 20
+         * messages prior to those you're seeing.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: consumer
+         */
+        default YammerComponentBuilder olderThan(long olderThan) {
+            doSetProperty("olderThan", olderThan);
+            return this;
+        }
+        /**
+         * threaded=true will only return the first message in each thread. This
+         * parameter is intended for apps which display message threads
+         * collapsed. threaded=extended will return the thread starter messages
+         * in order of most recently active as well as the two most recent
+         * messages, as they are viewed in the default view on the Yammer web
+         * interface.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default YammerComponentBuilder threaded(java.lang.String threaded) {
+            doSetProperty("threaded", threaded);
+            return this;
+        }
+        /**
+         * The user id.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default YammerComponentBuilder userId(java.lang.String userId) {
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -105,7 +203,7 @@ public interface YammerComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a shared yammer configuration.
+         * Component configuration.
          * 
          * The option is a:
          * <code>org.apache.camel.component.yammer.YammerConfiguration</code>
@@ -113,9 +211,9 @@ public interface YammerComponentBuilderFactory {
          * 
          * Group: advanced
          */
-        default YammerComponentBuilder config(
-                org.apache.camel.component.yammer.YammerConfiguration config) {
-            doSetProperty("config", config);
+        default YammerComponentBuilder configuration(
+                org.apache.camel.component.yammer.YammerConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -176,20 +274,34 @@ public interface YammerComponentBuilderFactory {
         protected YammerComponent buildConcreteComponent() {
             return new YammerComponent();
         }
+        private org.apache.camel.component.yammer.YammerConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.yammer.YammerComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.yammer.YammerConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "useJson": getOrCreateConfiguration((YammerComponent) component).setUseJson((boolean) value); return true;
             case "bridgeErrorHandler": ((YammerComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "delay": getOrCreateConfiguration((YammerComponent) component).setDelay((long) value); return true;
+            case "limit": getOrCreateConfiguration((YammerComponent) component).setLimit((int) value); return true;
+            case "newerThan": getOrCreateConfiguration((YammerComponent) component).setNewerThan((long) value); return true;
+            case "olderThan": getOrCreateConfiguration((YammerComponent) component).setOlderThan((long) value); return true;
+            case "threaded": getOrCreateConfiguration((YammerComponent) component).setThreaded((java.lang.String) value); return true;
+            case "userId": getOrCreateConfiguration((YammerComponent) component).setUserId((java.lang.String) value); return true;
             case "lazyStartProducer": ((YammerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((YammerComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "config": ((YammerComponent) component).setConfig((org.apache.camel.component.yammer.YammerConfiguration) value); return true;
-            case "requestor": ((YammerComponent) component).setRequestor((org.apache.camel.component.yammer.ApiRequestor) value); return true;
-            case "accessToken": ((YammerComponent) component).setAccessToken((java.lang.String) value); return true;
-            case "consumerKey": ((YammerComponent) component).setConsumerKey((java.lang.String) value); return true;
-            case "consumerSecret": ((YammerComponent) component).setConsumerSecret((java.lang.String) value); return true;
+            case "configuration": ((YammerComponent) component).setConfiguration((org.apache.camel.component.yammer.YammerConfiguration) value); return true;
+            case "requestor": getOrCreateConfiguration((YammerComponent) component).setRequestor((org.apache.camel.component.yammer.ApiRequestor) value); return true;
+            case "accessToken": getOrCreateConfiguration((YammerComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "consumerKey": getOrCreateConfiguration((YammerComponent) component).setConsumerKey((java.lang.String) value); return true;
+            case "consumerSecret": getOrCreateConfiguration((YammerComponent) component).setConsumerSecret((java.lang.String) value); return true;
             default: return false;
             }
         }

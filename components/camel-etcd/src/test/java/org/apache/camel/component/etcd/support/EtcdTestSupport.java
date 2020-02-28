@@ -60,13 +60,13 @@ public abstract class EtcdTestSupport extends ContainerAwareTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         EtcdKeysComponent keys = new EtcdKeysComponent();
-        keys.setUris(getClientUri());
+        keys.getConfiguration().setUris(getClientUri());
 
         EtcdStatsComponent stats = new EtcdStatsComponent();
-        stats.setUris(getClientUri());
+        stats.getConfiguration().setUris(getClientUri());
 
         EtcdWatchComponent watch = new EtcdWatchComponent();
-        watch.setUris(getClientUri());
+        watch.getConfiguration().setUris(getClientUri());
 
         CamelContext context = super.createCamelContext();
         context.addComponent("etcd-keys", keys);

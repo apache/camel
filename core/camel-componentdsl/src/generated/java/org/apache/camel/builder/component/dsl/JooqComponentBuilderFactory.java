@@ -63,6 +63,18 @@ public interface JooqComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a specific database configuration.
+         * 
+         * The option is a: <code>org.jooq.Configuration</code> type.
+         * 
+         * Group: common
+         */
+        default JooqComponentBuilder databaseConfiguration(
+                org.jooq.Configuration databaseConfiguration) {
+            doSetProperty("databaseConfiguration", databaseConfiguration);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -79,6 +91,18 @@ public interface JooqComponentBuilderFactory {
         default JooqComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Delete entity after it is consumed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default JooqComponentBuilder consumeDelete(boolean consumeDelete) {
+            doSetProperty("consumeDelete", consumeDelete);
             return this;
         }
         /**
@@ -99,6 +123,31 @@ public interface JooqComponentBuilderFactory {
          */
         default JooqComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Type of operation to execute on query.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
+         * 
+         * Default: NONE
+         * Group: producer
+         */
+        default JooqComponentBuilder operation(
+                org.apache.camel.component.jooq.JooqOperation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To execute plain SQL query.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default JooqComponentBuilder query(java.lang.String query) {
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -126,6 +175,13 @@ public interface JooqComponentBuilderFactory {
         protected JooqComponent buildConcreteComponent() {
             return new JooqComponent();
         }
+        private org.apache.camel.component.jooq.JooqConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.jooq.JooqComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.jooq.JooqConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -133,8 +189,12 @@ public interface JooqComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((JooqComponent) component).setConfiguration((org.apache.camel.component.jooq.JooqConfiguration) value); return true;
+            case "databaseConfiguration": getOrCreateConfiguration((JooqComponent) component).setDatabaseConfiguration((org.jooq.Configuration) value); return true;
             case "bridgeErrorHandler": ((JooqComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "consumeDelete": getOrCreateConfiguration((JooqComponent) component).setConsumeDelete((boolean) value); return true;
             case "lazyStartProducer": ((JooqComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((JooqComponent) component).setOperation((org.apache.camel.component.jooq.JooqOperation) value); return true;
+            case "query": getOrCreateConfiguration((JooqComponent) component).setQuery((java.lang.String) value); return true;
             case "basicPropertyBinding": ((JooqComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }

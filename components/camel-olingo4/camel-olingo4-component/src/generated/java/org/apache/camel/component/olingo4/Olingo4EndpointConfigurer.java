@@ -21,10 +21,6 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "filteralreadyseen":
         case "filterAlreadySeen": target.getConfiguration().setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
-        case "httpasyncclientbuilder":
-        case "httpAsyncClientBuilder": target.getConfiguration().setHttpAsyncClientBuilder(property(camelContext, org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class, value)); return true;
-        case "httpclientbuilder":
-        case "httpClientBuilder": target.getConfiguration().setHttpClientBuilder(property(camelContext, org.apache.http.impl.client.HttpClientBuilder.class, value)); return true;
         case "httpheaders":
         case "httpHeaders": target.getConfiguration().setHttpHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "inbody":
@@ -34,8 +30,6 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "serviceUri": target.getConfiguration().setServiceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
-        case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "sendemptymessagewhenidle":
@@ -52,6 +46,10 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "httpasyncclientbuilder":
+        case "httpAsyncClientBuilder": target.getConfiguration().setHttpAsyncClientBuilder(property(camelContext, org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class, value)); return true;
+        case "httpclientbuilder":
+        case "httpClientBuilder": target.getConfiguration().setHttpClientBuilder(property(camelContext, org.apache.http.impl.client.HttpClientBuilder.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
@@ -78,6 +76,8 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         default: return false;
         }
     }

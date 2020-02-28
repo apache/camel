@@ -51,6 +51,118 @@ public interface AzureBlobComponentBuilderFactory {
             extends
                 ComponentBuilder<BlobServiceComponent> {
         /**
+         * The blob service client.
+         * 
+         * The option is a:
+         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * 
+         * Group: common
+         */
+        default AzureBlobComponentBuilder azureBlobClient(
+                com.microsoft.azure.storage.blob.CloudBlob azureBlobClient) {
+            doSetProperty("azureBlobClient", azureBlobClient);
+            return this;
+        }
+        /**
+         * Set the blob offset for the upload or download operations, default is
+         * 0.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         */
+        default AzureBlobComponentBuilder blobOffset(java.lang.Long blobOffset) {
+            doSetProperty("blobOffset", blobOffset);
+            return this;
+        }
+        /**
+         * Set a blob type, 'blockblob' is default.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * 
+         * Default: blockblob
+         * Group: common
+         */
+        default AzureBlobComponentBuilder blobType(
+                org.apache.camel.component.azure.blob.BlobType blobType) {
+            doSetProperty("blobType", blobType);
+            return this;
+        }
+        /**
+         * Close the stream after read or keep it open, default is true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default AzureBlobComponentBuilder closeStreamAfterRead(
+                boolean closeStreamAfterRead) {
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
+            return this;
+        }
+        /**
+         * Set the storage credentials, required in most cases.
+         * 
+         * The option is a:
+         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * 
+         * Group: common
+         */
+        default AzureBlobComponentBuilder credentials(
+                com.microsoft.azure.storage.StorageCredentials credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * Set the data length for the download or page blob upload operations.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default AzureBlobComponentBuilder dataLength(java.lang.Long dataLength) {
+            doSetProperty("dataLength", dataLength);
+            return this;
+        }
+        /**
+         * Set the file directory where the downloaded blobs will be saved to.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AzureBlobComponentBuilder fileDir(java.lang.String fileDir) {
+            doSetProperty("fileDir", fileDir);
+            return this;
+        }
+        /**
+         * Storage resources can be public for reading their content, if this
+         * property is enabled then the credentials do not have to be set.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AzureBlobComponentBuilder publicForRead(boolean publicForRead) {
+            doSetProperty("publicForRead", publicForRead);
+            return this;
+        }
+        /**
+         * Set the minimum read size in bytes when reading the blob content.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         */
+        default AzureBlobComponentBuilder streamReadSize(int streamReadSize) {
+            doSetProperty("streamReadSize", streamReadSize);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -67,6 +179,43 @@ public interface AzureBlobComponentBuilderFactory {
         default AzureBlobComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Set the blob meta-data.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.String></code> type.
+         * 
+         * Group: producer
+         */
+        default AzureBlobComponentBuilder blobMetadata(
+                java.util.Map<java.lang.String, java.lang.String> blobMetadata) {
+            doSetProperty("blobMetadata", blobMetadata);
+            return this;
+        }
+        /**
+         * Set a prefix which can be used for listing the blobs.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureBlobComponentBuilder blobPrefix(java.lang.String blobPrefix) {
+            doSetProperty("blobPrefix", blobPrefix);
+            return this;
+        }
+        /**
+         * Close the stream after write or keep it open, default is true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default AzureBlobComponentBuilder closeStreamAfterWrite(
+                boolean closeStreamAfterWrite) {
+            doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
             return this;
         }
         /**
@@ -88,6 +237,43 @@ public interface AzureBlobComponentBuilderFactory {
         default AzureBlobComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Blob service operation hint to the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
+         * 
+         * Default: listBlobs
+         * Group: producer
+         */
+        default AzureBlobComponentBuilder operation(
+                org.apache.camel.component.azure.blob.BlobServiceOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set the size of the buffer for writing block and page blocks.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureBlobComponentBuilder streamWriteSize(int streamWriteSize) {
+            doSetProperty("streamWriteSize", streamWriteSize);
+            return this;
+        }
+        /**
+         * Specify if the flat or hierarchical blob listing should be used.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default AzureBlobComponentBuilder useFlatListing(boolean useFlatListing) {
+            doSetProperty("useFlatListing", useFlatListing);
             return this;
         }
         /**
@@ -128,14 +314,36 @@ public interface AzureBlobComponentBuilderFactory {
         protected BlobServiceComponent buildConcreteComponent() {
             return new BlobServiceComponent();
         }
+        private org.apache.camel.component.azure.blob.BlobServiceConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.azure.blob.BlobServiceComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.azure.blob.BlobServiceConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "azureBlobClient": getOrCreateConfiguration((BlobServiceComponent) component).setAzureBlobClient((com.microsoft.azure.storage.blob.CloudBlob) value); return true;
+            case "blobOffset": getOrCreateConfiguration((BlobServiceComponent) component).setBlobOffset((java.lang.Long) value); return true;
+            case "blobType": getOrCreateConfiguration((BlobServiceComponent) component).setBlobType((org.apache.camel.component.azure.blob.BlobType) value); return true;
+            case "closeStreamAfterRead": getOrCreateConfiguration((BlobServiceComponent) component).setCloseStreamAfterRead((boolean) value); return true;
+            case "credentials": getOrCreateConfiguration((BlobServiceComponent) component).setCredentials((com.microsoft.azure.storage.StorageCredentials) value); return true;
+            case "dataLength": getOrCreateConfiguration((BlobServiceComponent) component).setDataLength((java.lang.Long) value); return true;
+            case "fileDir": getOrCreateConfiguration((BlobServiceComponent) component).setFileDir((java.lang.String) value); return true;
+            case "publicForRead": getOrCreateConfiguration((BlobServiceComponent) component).setPublicForRead((boolean) value); return true;
+            case "streamReadSize": getOrCreateConfiguration((BlobServiceComponent) component).setStreamReadSize((int) value); return true;
             case "bridgeErrorHandler": ((BlobServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "blobMetadata": getOrCreateConfiguration((BlobServiceComponent) component).setBlobMetadata((java.util.Map) value); return true;
+            case "blobPrefix": getOrCreateConfiguration((BlobServiceComponent) component).setBlobPrefix((java.lang.String) value); return true;
+            case "closeStreamAfterWrite": getOrCreateConfiguration((BlobServiceComponent) component).setCloseStreamAfterWrite((boolean) value); return true;
             case "lazyStartProducer": ((BlobServiceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((BlobServiceComponent) component).setOperation((org.apache.camel.component.azure.blob.BlobServiceOperations) value); return true;
+            case "streamWriteSize": getOrCreateConfiguration((BlobServiceComponent) component).setStreamWriteSize((int) value); return true;
+            case "useFlatListing": getOrCreateConfiguration((BlobServiceComponent) component).setUseFlatListing((boolean) value); return true;
             case "basicPropertyBinding": ((BlobServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((BlobServiceComponent) component).setConfiguration((org.apache.camel.component.azure.blob.BlobServiceConfiguration) value); return true;
             default: return false;

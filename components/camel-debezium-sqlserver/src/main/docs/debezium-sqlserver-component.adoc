@@ -39,16 +39,59 @@ debezium-sqlserver:name[?options]
 
 
 // component options: START
-The Debezium SQL Server Connector component supports 3 options, which are listed below.
+The Debezium SQL Server Connector component supports 46 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *additionalProperties* (common) | Additional properties for debezium components in case they can't be set directly on the camel configurations (e.g: setting Kafka Connect properties needed by Debezium engine, for example setting KafkaOffsetBackingStore), the properties have to be prefixed with additionalProperties.. E.g: additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=\http://localhost:8811/avro |  | Map
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | SqlServerConnectorEmbeddedDebeziumConfiguration
+| *internalKeyConverter* (consumer) | The Converter class that should be used to serialize and deserialize key data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *internalValueConverter* (consumer) | The Converter class that should be used to serialize and deserialize value data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *offsetCommitPolicy* (consumer) | The name of the Java class of the commit policy. It defines when offsets commit has to be triggered based on the number of events processed and the time elapsed since the last commit. This class must implement the interface 'OffsetCommitPolicy'. The default is a periodic commit policy based upon time intervals. | io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy | String
+| *offsetCommitTimeoutMs* (consumer) | Maximum number of milliseconds to wait for records to flush and partition offset data to be committed to offset storage before cancelling the process and restoring the offset data to be committed in a future attempt. The default is 5 seconds. | 5000 | long
+| *offsetFlushIntervalMs* (consumer) | Interval at which to try committing offsets. The default is 1 minute. | 60000 | long
+| *offsetStorage* (consumer) | The name of the Java class that is responsible for persistence of connector offsets. | org.apache.kafka.connect.storage.FileOffsetBackingStore | String
+| *offsetStorageFileName* (consumer) | Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore. |  | String
+| *offsetStoragePartitions* (consumer) | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | int
+| *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
+| *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *columnBlacklist* (sqlserver) | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
+| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring. When working with a multi-tenant set-up, must be set to the CDB name. |  | String
+| *databaseHistory* (sqlserver) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
+| *databaseHistoryFileFilename* (sqlserver) | The path to the file that will be used to record the database history |  | String
+| *databaseHistoryKafkaBootstrap Servers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
+| *databaseHistoryKafkaRecovery Attempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
+| *databaseHistoryKafkaRecovery PollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100 | int
+| *databaseHistoryKafkaTopic* (sqlserver) | The name of the topic for the database schema history |  | String
+| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the SQL Server database server. |  | String
+| *databasePassword* (sqlserver) | *Required* Password of the SQL Server database user to be used when connecting to the database. |  | String
+| *databasePort* (sqlserver) | Port of the SQL Server database server. | 1433 | int
+| *databaseServerName* (sqlserver) | *Required* Unique name that identifies the database server and all recorded offsets, and that is used as a prefix for all schemas and topics. Each distinct installation should have a separate namespace and be monitored by at most one Debezium connector. |  | String
+| *databaseServerTimezone* (sqlserver) | The timezone of the server used to correctly shift the commit transaction timestamp on the client sideOptions include: Any valid Java ZoneId |  | String
+| *databaseUser* (sqlserver) | Name of the SQL Server database user to be used when connecting to the database. |  | String
+| *decimalHandlingMode* (sqlserver) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
+| *heartbeatIntervalMs* (sqlserver) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0 | int
+| *heartbeatTopicsPrefix* (sqlserver) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
+| *maxBatchSize* (sqlserver) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
+| *maxQueueSize* (sqlserver) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
+| *messageKeyColumns* (sqlserver) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
+| *pollIntervalMs* (sqlserver) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500 | long
+| *snapshotDelayMs* (sqlserver) | The number of milliseconds to delay before a snapshot will begin. | 0 | long
+| *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
+| *snapshotLockTimeoutMs* (sqlserver) | The maximum number of millis to wait for table locks at the beginning of a snapshot. If locks cannot be acquired in this time frame, the snapshot will be aborted. Defaults to 10 seconds | 10000 | long
+| *snapshotMode* (sqlserver) | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should run a snapshot only when no offsets are available for the logical server name; 'schema_only' to specify the connector should run a snapshot of the schema when no offsets are available for the logical server name. | initial | String
+| *snapshotSelectStatement Overrides* (sqlserver) | This property contains a comma-separated list of fully-qualified tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on thespecific connectors . Select statements for the individual tables are specified in further configuration properties, one for each table, identified by the id 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME', respectively. The value of those properties is the select statement to use when retrieving data from the specific table during snapshotting. A possible use case for large append-only tables is setting a specific point where to start (resume) snapshotting, in case a previous snapshotting was interrupted. |  | String
+| *sourceStructVersion* (sqlserver) | A version of the format of the publicly visible source part in the message | v2 | String
+| *tableBlacklist* (sqlserver) | Description is not available here, please check Debezium website for corresponding key 'table.blacklist' description. |  | String
+| *tableIgnoreBuiltin* (sqlserver) | Flag specifying whether built-in tables should be ignored. | true | boolean
+| *tableWhitelist* (sqlserver) | The tables for which changes are to be captured |  | String
+| *timePrecisionMode* (sqlserver) | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
+| *tombstonesOnDelete* (sqlserver) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
 |===
 // component options: END
 

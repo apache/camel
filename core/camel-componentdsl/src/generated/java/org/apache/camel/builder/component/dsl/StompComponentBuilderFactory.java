@@ -53,6 +53,7 @@ public interface StompComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp://localhost:61613
          * Group: common
          */
         default StompComponentBuilder brokerURL(java.lang.String brokerURL) {
@@ -60,7 +61,19 @@ public interface StompComponentBuilderFactory {
             return this;
         }
         /**
-         * The virtual host.
+         * To set custom headers.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: common
+         */
+        default StompComponentBuilder customHeaders(
+                java.util.Properties customHeaders) {
+            doSetProperty("customHeaders", customHeaders);
+            return this;
+        }
+        /**
+         * The virtual host name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -68,6 +81,17 @@ public interface StompComponentBuilderFactory {
          */
         default StompComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * The stomp version (1.1, or 1.2).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default StompComponentBuilder version(java.lang.String version) {
+            doSetProperty("version", version);
             return this;
         }
         /**
@@ -125,7 +149,7 @@ public interface StompComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the shared stomp configuration.
+         * Component configuration.
          * 
          * The option is a:
          * <code>org.apache.camel.component.stomp.StompConfiguration</code>
@@ -175,6 +199,19 @@ public interface StompComponentBuilderFactory {
             return this;
         }
         /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default StompComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -198,21 +235,31 @@ public interface StompComponentBuilderFactory {
         protected StompComponent buildConcreteComponent() {
             return new StompComponent();
         }
+        private org.apache.camel.component.stomp.StompConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.stomp.StompComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.stomp.StompConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "brokerURL": ((StompComponent) component).setBrokerURL((java.lang.String) value); return true;
-            case "host": ((StompComponent) component).setHost((java.lang.String) value); return true;
+            case "brokerURL": getOrCreateConfiguration((StompComponent) component).setBrokerURL((java.lang.String) value); return true;
+            case "customHeaders": getOrCreateConfiguration((StompComponent) component).setCustomHeaders((java.util.Properties) value); return true;
+            case "host": getOrCreateConfiguration((StompComponent) component).setHost((java.lang.String) value); return true;
+            case "version": getOrCreateConfiguration((StompComponent) component).setVersion((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((StompComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((StompComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((StompComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((StompComponent) component).setConfiguration((org.apache.camel.component.stomp.StompConfiguration) value); return true;
             case "headerFilterStrategy": ((StompComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "login": ((StompComponent) component).setLogin((java.lang.String) value); return true;
-            case "passcode": ((StompComponent) component).setPasscode((java.lang.String) value); return true;
+            case "login": getOrCreateConfiguration((StompComponent) component).setLogin((java.lang.String) value); return true;
+            case "passcode": getOrCreateConfiguration((StompComponent) component).setPasscode((java.lang.String) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((StompComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((StompComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }

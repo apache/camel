@@ -52,7 +52,7 @@ public class JmsAsyncStartListenerTest extends CamelTestSupport {
         // so we need a persistent store in case no active consumers when we send the messages
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setAsyncStartListener(true);
+        jms.getConfiguration().setAsyncStartListener(true);
         camelContext.addComponent(componentName, jms);
 
         return camelContext;

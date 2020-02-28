@@ -109,7 +109,7 @@ public class JmsBinding {
             this.messageCreatedStrategy = endpoint.getMessageCreatedStrategy();
         } else if (endpoint.getComponent() != null) {
             // fallback and use from component
-            this.messageCreatedStrategy = endpoint.getComponent().getMessageCreatedStrategy();
+            this.messageCreatedStrategy = endpoint.getComponent().getConfiguration().getMessageCreatedStrategy();
         } else {
             this.messageCreatedStrategy = null;
         }

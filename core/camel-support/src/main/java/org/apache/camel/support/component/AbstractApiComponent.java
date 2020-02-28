@@ -34,7 +34,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S extends ApiCollection<E, T>>
         extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Component configuration")
     protected T configuration;
 
     // API collection

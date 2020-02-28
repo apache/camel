@@ -49,7 +49,7 @@ public interface EtcdKeysComponentBuilderFactory {
             extends
                 ComponentBuilder<EtcdKeysComponent> {
         /**
-         * Sets the common configuration shared among endpoints.
+         * Component configuration.
          * 
          * The option is a:
          * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
@@ -83,27 +83,39 @@ public interface EtcdKeysComponentBuilderFactory {
             return this;
         }
         /**
-         * The password to use for basic authentication.
+         * To apply an action recursively.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
-        default EtcdKeysComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
+        default EtcdKeysComponentBuilder recursive(boolean recursive) {
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
-         * To configure security using SSLContextParameters.
+         * The path to look for for service discovery.
          * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: /services/
+         * Group: producer
+         */
+        default EtcdKeysComponentBuilder servicePath(
+                java.lang.String servicePath) {
+            doSetProperty("servicePath", servicePath);
+            return this;
+        }
+        /**
+         * To set the maximum time an action could take to complete.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          */
-        default EtcdKeysComponentBuilder sslContextParameters(
-                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
+        default EtcdKeysComponentBuilder timeout(java.lang.Long timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -111,21 +123,22 @@ public interface EtcdKeysComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Default: http://localhost:2379,http://localhost:4001
+         * Group: common
          */
         default EtcdKeysComponentBuilder uris(java.lang.String uris) {
             doSetProperty("uris", uris);
             return this;
         }
         /**
-         * The user name to use for basic authentication.
+         * To set the lifespan of a key in milliseconds.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: producer
          */
-        default EtcdKeysComponentBuilder userName(java.lang.String userName) {
-            doSetProperty("userName", userName);
+        default EtcdKeysComponentBuilder timeToLive(java.lang.Integer timeToLive) {
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -143,6 +156,30 @@ public interface EtcdKeysComponentBuilderFactory {
             return this;
         }
         /**
+         * The password to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EtcdKeysComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default EtcdKeysComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -153,6 +190,17 @@ public interface EtcdKeysComponentBuilderFactory {
         default EtcdKeysComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
+        /**
+         * The user name to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EtcdKeysComponentBuilder userName(java.lang.String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -166,6 +214,13 @@ public interface EtcdKeysComponentBuilderFactory {
         protected EtcdKeysComponent buildConcreteComponent() {
             return new EtcdKeysComponent();
         }
+        private org.apache.camel.component.etcd.EtcdConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.etcd.EtcdKeysComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.etcd.EtcdConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -174,12 +229,16 @@ public interface EtcdKeysComponentBuilderFactory {
             switch (name) {
             case "configuration": ((EtcdKeysComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
             case "lazyStartProducer": ((EtcdKeysComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "password": ((EtcdKeysComponent) component).setPassword((java.lang.String) value); return true;
-            case "sslContextParameters": ((EtcdKeysComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "uris": ((EtcdKeysComponent) component).setUris((java.lang.String) value); return true;
-            case "userName": ((EtcdKeysComponent) component).setUserName((java.lang.String) value); return true;
+            case "recursive": getOrCreateConfiguration((EtcdKeysComponent) component).setRecursive((boolean) value); return true;
+            case "servicePath": getOrCreateConfiguration((EtcdKeysComponent) component).setServicePath((java.lang.String) value); return true;
+            case "timeout": getOrCreateConfiguration((EtcdKeysComponent) component).setTimeout((java.lang.Long) value); return true;
+            case "uris": getOrCreateConfiguration((EtcdKeysComponent) component).setUris((java.lang.String) value); return true;
+            case "timeToLive": getOrCreateConfiguration((EtcdKeysComponent) component).setTimeToLive((java.lang.Integer) value); return true;
             case "basicPropertyBinding": ((EtcdKeysComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "password": getOrCreateConfiguration((EtcdKeysComponent) component).setPassword((java.lang.String) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((EtcdKeysComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((EtcdKeysComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "userName": getOrCreateConfiguration((EtcdKeysComponent) component).setUserName((java.lang.String) value); return true;
             default: return false;
             }
         }

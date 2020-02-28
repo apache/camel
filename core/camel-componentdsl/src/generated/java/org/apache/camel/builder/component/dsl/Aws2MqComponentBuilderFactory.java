@@ -58,6 +58,19 @@ public interface Aws2MqComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AmazonMQClient as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.mq.MqClient</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2MqComponentBuilder amazonMqClient(
+                software.amazon.awssdk.services.mq.MqClient amazonMqClient) {
+            doSetProperty("amazonMqClient", amazonMqClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -76,6 +89,56 @@ public interface Aws2MqComponentBuilderFactory {
         default Aws2MqComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to perform. It can be
+         * listBrokers,createBroker,deleteBroker.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.mq.MQ2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2MqComponentBuilder operation(
+                org.apache.camel.component.aws2.mq.MQ2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the MQ client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2MqComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the MQ client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2MqComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the MQ client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2MqComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -139,6 +202,13 @@ public interface Aws2MqComponentBuilderFactory {
         protected MQ2Component buildConcreteComponent() {
             return new MQ2Component();
         }
+        private org.apache.camel.component.aws2.mq.MQ2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.mq.MQ2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.mq.MQ2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -146,7 +216,12 @@ public interface Aws2MqComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((MQ2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonMqClient": getOrCreateConfiguration((MQ2Component) component).setAmazonMqClient((software.amazon.awssdk.services.mq.MqClient) value); return true;
             case "lazyStartProducer": ((MQ2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((MQ2Component) component).setOperation((org.apache.camel.component.aws2.mq.MQ2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((MQ2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((MQ2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((MQ2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": ((MQ2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((MQ2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MQ2Component) component).setBasicPropertyBinding((boolean) value); return true;

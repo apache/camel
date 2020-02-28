@@ -99,7 +99,7 @@ All the following options are valid for both the **disruptor:** and
 
 
 // component options: START
-The Disruptor component supports 10 options, which are listed below.
+The Disruptor component supports 9 options, which are listed below.
 
 
 
@@ -107,7 +107,6 @@ The Disruptor component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *bufferSize* (common) | To configure the ring buffer size | 1024 | int
-| *queueSize* (common) | *Deprecated* To configure the ring buffer size |  | int
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *defaultConcurrentConsumers* (consumer) | To configure the default number of concurrent consumers | 1 | int
 | *defaultMultipleConsumers* (consumer) | To configure the default value for multiple consumers | false | boolean

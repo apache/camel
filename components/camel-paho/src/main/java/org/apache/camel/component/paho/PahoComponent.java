@@ -31,6 +31,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 @Component("paho")
 public class PahoComponent extends DefaultComponent {
 
+    @Metadata
     private PahoConfiguration configuration = new PahoConfiguration();
 
     @Metadata(label = "advanced")
@@ -81,14 +82,4 @@ public class PahoComponent extends DefaultComponent {
         this.client = client;
     }
 
-    public String getBrokerUrl() {
-        return configuration.getBrokerUrl();
-    }
-
-    /**
-     * The URL of the MQTT broker.
-     */
-    public void setBrokerUrl(String brokerUrl) {
-        configuration.setBrokerUrl(brokerUrl);
-    }
 }

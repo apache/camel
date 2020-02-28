@@ -45,14 +45,16 @@ class ComponentDslInnerImplBuilderGeneratorTest {
         // test for naming
         assertEquals("KafkaComponentBuilderImpl", componentDslInnerImplBuilderGenerator.getGeneratedClassName());
 
-        assertTrue(javaClass.printClass().contains("protected KafkaComponent buildConcreteComponent()"));
-        assertTrue(javaClass.printClass().contains("protected boolean setPropertyOnComponent"));
-        assertTrue(javaClass.printClass().contains("return new KafkaComponent();"));
+        String code = javaClass.printClass();
+
+        assertTrue(code.contains("protected KafkaComponent buildConcreteComponent()"));
+        assertTrue(code.contains("protected boolean setPropertyOnComponent"));
+        assertTrue(code.contains("return new KafkaComponent();"));
 
         componentModel.getComponentOptions().forEach(componentOptionModel -> {
             final String setterAsString = String.format("case \"%s\": ((%s) component).set%s((%s) value); return true;\n", componentOptionModel.getName(), componentModel.getShortJavaType(),
                     StringUtils.capitalize(componentOptionModel.getName()), componentOptionModel.getJavaType());
-            assertTrue(javaClass.printClass().contains(setterAsString));
+            assertTrue(code.contains(setterAsString));
         });
     }
 }

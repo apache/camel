@@ -58,18 +58,32 @@ If no cache configuration is provided, embedded cacheContainer is created direct
 
 
 // component options: START
-The Infinispan component supports 5 options, which are listed below.
+The Infinispan component supports 19 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cacheContainer* (common) | Default Cache container |  | BasicCacheContainer
-| *configuration* (common) | Default configuration |  | InfinispanConfiguration
+| *configuration* (common) | Component configuration |  | InfinispanConfiguration
+| *hosts* (common) | Specifies the host of the cache on Infinispan instance |  | String
+| *queryBuilder* (common) | Specifies the query builder. |  | InfinispanQueryBuilder
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clusteredListener* (consumer) | If true, the listener will be installed for the entire cluster | false | boolean
+| *command* (consumer) | *Deprecated* The operation to perform. | PUT | String
+| *customListener* (consumer) | Returns the custom listener in use, if provided |  | InfinispanCustomListener
+| *eventTypes* (consumer) | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED |  | String
+| *sync* (consumer) | If true, the consumer will receive notifications synchronously | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | The operation to perform. The value can be one of: PUT, PUTASYNC, PUTALL, PUTALLASYNC, PUTIFABSENT, PUTIFABSENTASYNC, GET, GETORDEFAULT, CONTAINSKEY, CONTAINSVALUE, REMOVE, REMOVEASYNC, REPLACE, REPLACEASYNC, SIZE, CLEAR, CLEARASYNC, QUERY, STATS, COMPUTE, COMPUTEASYNC | PUT | InfinispanOperation
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer
+| *cacheContainerConfiguration* (advanced) | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
+| *configurationProperties* (advanced) | Implementation specific properties for the CacheManager |  | Map
+| *configurationUri* (advanced) | An implementation specific URI for the CacheManager |  | String
+| *flags* (advanced) | A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote caches. |  | String
+| *remappingFunction* (advanced) | Set a specific remappingFunction to use in a compute operation |  | BiFunction
+| *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | Object
 |===
 // component options: END
 

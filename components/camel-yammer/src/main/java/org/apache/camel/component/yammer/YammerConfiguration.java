@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.yammer;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class YammerConfiguration {
+public class YammerConfiguration implements Cloneable {
 
     @UriPath @Metadata(required = true)
     private YammerFunctionType function;
@@ -48,6 +49,18 @@ public class YammerConfiguration {
     private String userId;
     @UriParam(label = "advanced")
     private ApiRequestor requestor;
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public YammerConfiguration copy() {
+        try {
+            YammerConfiguration copy = (YammerConfiguration)clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 
     public String getConsumerKey() {
         return consumerKey;

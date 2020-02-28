@@ -29,20 +29,30 @@ for this component:
 ----
 
 // component options: START
-The Atomix Value component supports 7 options, which are listed below.
+The Atomix Value component supports 17 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *atomix* (common) | The shared AtomixClient instance |  | AtomixClient
+| *atomix* (common) | The Atomix instance to use |  | Atomix
 | *configuration* (common) | The shared component configuration |  | AtomixValueConfiguration
 | *configurationUri* (common) | The path to the AtomixClient configuration |  | String
+| *defaultAction* (common) | The default action. The value can be one of: SET, GET, GET_AND_SET, COMPARE_AND_SET | SET | Action
 | *nodes* (common) | The nodes the AtomixClient should connect to |  | List
+| *resultHeader* (common) | The header that wil carry the result. |  | String
+| *transportClassName* (common) | The class name (fqn) of the Atomix transport | io.atomix.catalyst.transport.netty.NettyTransport | String
+| *ttl* (common) | The resource ttl. |  | long
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *defaultResourceConfig* (advanced) | The cluster wide default resource configuration. |  | Properties
+| *defaultResourceOptions* (advanced) | The local default resource options. |  | Properties
+| *ephemeral* (advanced) | Sets if the local member should join groups as PersistentMember or not. If set to ephemeral the local member will receive an auto generated ID thus the local one is ignored. | false | boolean
+| *readConsistency* (advanced) | The read consistency level. The value can be one of: ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL |  | ReadConsistency
+| *resourceConfigs* (advanced) | Cluster wide resources configuration. |  | Map
+| *resourceOptions* (advanced) | Local resources configurations |  | Map
 |===
 // component options: END
 

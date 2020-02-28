@@ -58,6 +58,19 @@ public interface Aws2IamComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AWS IAM as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.iam.IamClient</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2IamComponentBuilder iamClient(
+                software.amazon.awssdk.services.iam.IamClient iamClient) {
+            doSetProperty("iamClient", iamClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -76,6 +89,55 @@ public interface Aws2IamComponentBuilderFactory {
         default Aws2IamComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.iam.IAM2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2IamComponentBuilder operation(
+                org.apache.camel.component.aws2.iam.IAM2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the IAM client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2IamComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the IAM client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2IamComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the IAM client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2IamComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -139,6 +201,13 @@ public interface Aws2IamComponentBuilderFactory {
         protected IAM2Component buildConcreteComponent() {
             return new IAM2Component();
         }
+        private org.apache.camel.component.aws2.iam.IAM2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.iam.IAM2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.iam.IAM2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -146,7 +215,12 @@ public interface Aws2IamComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((IAM2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "iamClient": getOrCreateConfiguration((IAM2Component) component).setIamClient((software.amazon.awssdk.services.iam.IamClient) value); return true;
             case "lazyStartProducer": ((IAM2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((IAM2Component) component).setOperation((org.apache.camel.component.aws2.iam.IAM2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((IAM2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((IAM2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((IAM2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": ((IAM2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((IAM2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((IAM2Component) component).setBasicPropertyBinding((boolean) value); return true;

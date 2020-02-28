@@ -256,10 +256,6 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    protected void writeSourceIfChanged(JavaClass source, String filePath, String fileName, File outputDir, boolean innerClassesLast) throws MojoFailureException {
-        writeSourceIfChanged(source.printClass(innerClassesLast), filePath, fileName, outputDir);
-    }
-
     protected void writeSourceIfChanged(String source, String filePath, String fileName, File outputDir) throws MojoFailureException {
         Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
 

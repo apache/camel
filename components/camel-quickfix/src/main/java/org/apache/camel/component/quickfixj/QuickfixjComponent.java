@@ -53,6 +53,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private LogFactory logFactory;
     @Metadata(label = "advanced")
     private MessageFactory messageFactory;
+    @Metadata
     private boolean lazyCreateEngines;
 
     public QuickfixjComponent() {

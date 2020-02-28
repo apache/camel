@@ -49,6 +49,48 @@ public interface PulsarComponentBuilderFactory {
             extends
                 ComponentBuilder<PulsarComponent> {
         /**
+         * Allows to pre-configure the Pulsar component with common options that
+         * the endpoints will reuse.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pulsar.PulsarConfiguration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default PulsarComponentBuilder configuration(
+                org.apache.camel.component.pulsar.PulsarConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Group the consumer acknowledgments for the specified time in
+         * milliseconds - defaults to 100.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 100
+         * Group: consumer
+         */
+        default PulsarComponentBuilder ackGroupTimeMillis(
+                long ackGroupTimeMillis) {
+            doSetProperty("ackGroupTimeMillis", ackGroupTimeMillis);
+            return this;
+        }
+        /**
+         * Timeout for unacknowledged messages in milliseconds - defaults to
+         * 10000.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: consumer
+         */
+        default PulsarComponentBuilder ackTimeoutMillis(long ackTimeoutMillis) {
+            doSetProperty("ackTimeoutMillis", ackTimeoutMillis);
+            return this;
+        }
+        /**
          * Whether to allow manual message acknowledgements. If this option is
          * enabled, then messages are not immediately acknowledged after being
          * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
@@ -86,6 +128,141 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Name of the consumer when subscription is EXCLUSIVE.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: sole-consumer
+         * Group: consumer
+         */
+        default PulsarComponentBuilder consumerName(
+                java.lang.String consumerName) {
+            doSetProperty("consumerName", consumerName);
+            return this;
+        }
+        /**
+         * Prefix to add to consumer names when a SHARED or FAILOVER
+         * subscription is used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: cons
+         * Group: consumer
+         */
+        default PulsarComponentBuilder consumerNamePrefix(
+                java.lang.String consumerNamePrefix) {
+            doSetProperty("consumerNamePrefix", consumerNamePrefix);
+            return this;
+        }
+        /**
+         * Size of the consumer queue - defaults to 10.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         */
+        default PulsarComponentBuilder consumerQueueSize(int consumerQueueSize) {
+            doSetProperty("consumerQueueSize", consumerQueueSize);
+            return this;
+        }
+        /**
+         * Name of the topic where the messages which fail maxRedeliverCount
+         * times will be sent. Note: if not set, default topic name will be
+         * topicName-subscriptionName-DLQ.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarComponentBuilder deadLetterTopic(
+                java.lang.String deadLetterTopic) {
+            doSetProperty("deadLetterTopic", deadLetterTopic);
+            return this;
+        }
+        /**
+         * Maximum number of times that a message will be redelivered before
+         * being sent to the dead letter queue. If this value is not set, no
+         * Dead Letter Policy will be created.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarComponentBuilder maxRedeliverCount(
+                java.lang.Integer maxRedeliverCount) {
+            doSetProperty("maxRedeliverCount", maxRedeliverCount);
+            return this;
+        }
+        /**
+         * Set the negative acknowledgement delay.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60000000
+         * Group: consumer
+         */
+        default PulsarComponentBuilder negativeAckRedeliveryDelayMicros(
+                long negativeAckRedeliveryDelayMicros) {
+            doSetProperty("negativeAckRedeliveryDelayMicros", negativeAckRedeliveryDelayMicros);
+            return this;
+        }
+        /**
+         * Number of consumers - defaults to 1.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer
+         */
+        default PulsarComponentBuilder numberOfConsumers(int numberOfConsumers) {
+            doSetProperty("numberOfConsumers", numberOfConsumers);
+            return this;
+        }
+        /**
+         * Control the initial position in the topic of a newly created
+         * subscription. Default is latest message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
+         * 
+         * Default: LATEST
+         * Group: consumer
+         */
+        default PulsarComponentBuilder subscriptionInitialPosition(
+                org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition subscriptionInitialPosition) {
+            doSetProperty("subscriptionInitialPosition", subscriptionInitialPosition);
+            return this;
+        }
+        /**
+         * Name of the subscription to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: subs
+         * Group: consumer
+         */
+        default PulsarComponentBuilder subscriptionName(
+                java.lang.String subscriptionName) {
+            doSetProperty("subscriptionName", subscriptionName);
+            return this;
+        }
+        /**
+         * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
+         * EXCLUSIVE.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
+         * 
+         * Default: EXCLUSIVE
+         * Group: consumer
+         */
+        default PulsarComponentBuilder subscriptionType(
+                org.apache.camel.component.pulsar.utils.consumers.SubscriptionType subscriptionType) {
+            doSetProperty("subscriptionType", subscriptionType);
+            return this;
+        }
+        /**
          * Provide a factory to create an alternate implementation of
          * PulsarMessageReceipt.
          * 
@@ -97,6 +274,86 @@ public interface PulsarComponentBuilderFactory {
         default PulsarComponentBuilder pulsarMessageReceiptFactory(
                 org.apache.camel.component.pulsar.PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
             doSetProperty("pulsarMessageReceiptFactory", pulsarMessageReceiptFactory);
+            return this;
+        }
+        /**
+         * Control whether automatic batching of messages is enabled for the
+         * producer.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default PulsarComponentBuilder batchingEnabled(boolean batchingEnabled) {
+            doSetProperty("batchingEnabled", batchingEnabled);
+            return this;
+        }
+        /**
+         * The maximum size to batch messages.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1000
+         * Group: producer
+         */
+        default PulsarComponentBuilder batchingMaxMessages(
+                int batchingMaxMessages) {
+            doSetProperty("batchingMaxMessages", batchingMaxMessages);
+            return this;
+        }
+        /**
+         * The maximum time period within which the messages sent will be
+         * batched if batchingEnabled is true.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: producer
+         */
+        default PulsarComponentBuilder batchingMaxPublishDelayMicros(
+                long batchingMaxPublishDelayMicros) {
+            doSetProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
+            return this;
+        }
+        /**
+         * Whether to block the producing thread if pending messages queue is
+         * full or to throw a ProducerQueueIsFullError.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default PulsarComponentBuilder blockIfQueueFull(boolean blockIfQueueFull) {
+            doSetProperty("blockIfQueueFull", blockIfQueueFull);
+            return this;
+        }
+        /**
+         * Compression type to use.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * 
+         * Default: NONE
+         * Group: producer
+         */
+        default PulsarComponentBuilder compressionType(
+                org.apache.pulsar.client.api.CompressionType compressionType) {
+            doSetProperty("compressionType", compressionType);
+            return this;
+        }
+        /**
+         * The first message published will have a sequence Id of
+         * initialSequenceId 1.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: producer
+         */
+        default PulsarComponentBuilder initialSequenceId(long initialSequenceId) {
+            doSetProperty("initialSequenceId", initialSequenceId);
             return this;
         }
         /**
@@ -118,6 +375,87 @@ public interface PulsarComponentBuilderFactory {
         default PulsarComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Size of the pending massages queue. When the queue is full, by
+         * default, any further sends will fail unless blockIfQueueFull=true.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1000
+         * Group: producer
+         */
+        default PulsarComponentBuilder maxPendingMessages(int maxPendingMessages) {
+            doSetProperty("maxPendingMessages", maxPendingMessages);
+            return this;
+        }
+        /**
+         * The maximum number of pending messages for partitioned topics. The
+         * maxPendingMessages value will be reduced if (number of partitions
+         * maxPendingMessages) exceeds this value. Partitioned topics have a
+         * pending message queue for each partition.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50000
+         * Group: producer
+         */
+        default PulsarComponentBuilder maxPendingMessagesAcrossPartitions(
+                int maxPendingMessagesAcrossPartitions) {
+            doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
+            return this;
+        }
+        /**
+         * Custom Message Router to use.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarComponentBuilder messageRouter(
+                org.apache.pulsar.client.api.MessageRouter messageRouter) {
+            doSetProperty("messageRouter", messageRouter);
+            return this;
+        }
+        /**
+         * Message Routing Mode to use.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * 
+         * Default: RoundRobinPartition
+         * Group: producer
+         */
+        default PulsarComponentBuilder messageRoutingMode(
+                org.apache.pulsar.client.api.MessageRoutingMode messageRoutingMode) {
+            doSetProperty("messageRoutingMode", messageRoutingMode);
+            return this;
+        }
+        /**
+         * Name of the producer. If unset, lets Pulsar select a unique
+         * identifier.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarComponentBuilder producerName(
+                java.lang.String producerName) {
+            doSetProperty("producerName", producerName);
+            return this;
+        }
+        /**
+         * Send timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: producer
+         */
+        default PulsarComponentBuilder sendTimeoutMs(int sendTimeoutMs) {
+            doSetProperty("sendTimeoutMs", sendTimeoutMs);
             return this;
         }
         /**
@@ -171,16 +509,48 @@ public interface PulsarComponentBuilderFactory {
         protected PulsarComponent buildConcreteComponent() {
             return new PulsarComponent();
         }
+        private org.apache.camel.component.pulsar.PulsarConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.pulsar.PulsarComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.pulsar.PulsarConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "allowManualAcknowledgement": ((PulsarComponent) component).setAllowManualAcknowledgement((boolean) value); return true;
+            case "configuration": ((PulsarComponent) component).setConfiguration((org.apache.camel.component.pulsar.PulsarConfiguration) value); return true;
+            case "ackGroupTimeMillis": getOrCreateConfiguration((PulsarComponent) component).setAckGroupTimeMillis((long) value); return true;
+            case "ackTimeoutMillis": getOrCreateConfiguration((PulsarComponent) component).setAckTimeoutMillis((long) value); return true;
+            case "allowManualAcknowledgement": getOrCreateConfiguration((PulsarComponent) component).setAllowManualAcknowledgement((boolean) value); return true;
             case "bridgeErrorHandler": ((PulsarComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "consumerName": getOrCreateConfiguration((PulsarComponent) component).setConsumerName((java.lang.String) value); return true;
+            case "consumerNamePrefix": getOrCreateConfiguration((PulsarComponent) component).setConsumerNamePrefix((java.lang.String) value); return true;
+            case "consumerQueueSize": getOrCreateConfiguration((PulsarComponent) component).setConsumerQueueSize((int) value); return true;
+            case "deadLetterTopic": getOrCreateConfiguration((PulsarComponent) component).setDeadLetterTopic((java.lang.String) value); return true;
+            case "maxRedeliverCount": getOrCreateConfiguration((PulsarComponent) component).setMaxRedeliverCount((java.lang.Integer) value); return true;
+            case "negativeAckRedeliveryDelayMicros": getOrCreateConfiguration((PulsarComponent) component).setNegativeAckRedeliveryDelayMicros((long) value); return true;
+            case "numberOfConsumers": getOrCreateConfiguration((PulsarComponent) component).setNumberOfConsumers((int) value); return true;
+            case "subscriptionInitialPosition": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionInitialPosition((org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition) value); return true;
+            case "subscriptionName": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "subscriptionType": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionType((org.apache.camel.component.pulsar.utils.consumers.SubscriptionType) value); return true;
             case "pulsarMessageReceiptFactory": ((PulsarComponent) component).setPulsarMessageReceiptFactory((org.apache.camel.component.pulsar.PulsarMessageReceiptFactory) value); return true;
+            case "batchingEnabled": getOrCreateConfiguration((PulsarComponent) component).setBatchingEnabled((boolean) value); return true;
+            case "batchingMaxMessages": getOrCreateConfiguration((PulsarComponent) component).setBatchingMaxMessages((int) value); return true;
+            case "batchingMaxPublishDelayMicros": getOrCreateConfiguration((PulsarComponent) component).setBatchingMaxPublishDelayMicros((long) value); return true;
+            case "blockIfQueueFull": getOrCreateConfiguration((PulsarComponent) component).setBlockIfQueueFull((boolean) value); return true;
+            case "compressionType": getOrCreateConfiguration((PulsarComponent) component).setCompressionType((org.apache.pulsar.client.api.CompressionType) value); return true;
+            case "initialSequenceId": getOrCreateConfiguration((PulsarComponent) component).setInitialSequenceId((long) value); return true;
             case "lazyStartProducer": ((PulsarComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxPendingMessages": getOrCreateConfiguration((PulsarComponent) component).setMaxPendingMessages((int) value); return true;
+            case "maxPendingMessagesAcrossPartitions": getOrCreateConfiguration((PulsarComponent) component).setMaxPendingMessagesAcrossPartitions((int) value); return true;
+            case "messageRouter": getOrCreateConfiguration((PulsarComponent) component).setMessageRouter((org.apache.pulsar.client.api.MessageRouter) value); return true;
+            case "messageRoutingMode": getOrCreateConfiguration((PulsarComponent) component).setMessageRoutingMode((org.apache.pulsar.client.api.MessageRoutingMode) value); return true;
+            case "producerName": getOrCreateConfiguration((PulsarComponent) component).setProducerName((java.lang.String) value); return true;
+            case "sendTimeoutMs": getOrCreateConfiguration((PulsarComponent) component).setSendTimeoutMs((int) value); return true;
             case "autoConfiguration": ((PulsarComponent) component).setAutoConfiguration((org.apache.camel.component.pulsar.utils.AutoConfiguration) value); return true;
             case "basicPropertyBinding": ((PulsarComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "pulsarClient": ((PulsarComponent) component).setPulsarClient((org.apache.pulsar.client.api.PulsarClient) value); return true;

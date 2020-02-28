@@ -47,11 +47,11 @@ The ZooKeeper Master component supports 8 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *containerIdFactory* (consumer) | To use a custom ContainerIdFactory for creating container ids. |  | ContainerIdFactory
 | *maximumConnectionTimeout* (consumer) | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | int
 | *zkRoot* (consumer) | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master | /camel/zookeepermaster/clusters/master | String
 | *zooKeeperUrl* (consumer) | The url for the zookeeper ensemble | localhost:2181 | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *containerIdFactory* (advanced) | To use a custom ContainerIdFactory for creating container ids. |  | ContainerIdFactory
 | *curator* (advanced) | To use a custom configured CuratorFramework as connection to zookeeper ensemble. |  | CuratorFramework
 | *zooKeeperPassword* (security) | The password to use when connecting to the zookeeper ensemble |  | String
 |===

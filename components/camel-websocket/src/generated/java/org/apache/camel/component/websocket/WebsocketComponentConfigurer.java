@@ -17,8 +17,6 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "socketfactory":
-        case "socketFactory": target.setSocketFactory(property(camelContext, java.util.Map.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "staticresources":

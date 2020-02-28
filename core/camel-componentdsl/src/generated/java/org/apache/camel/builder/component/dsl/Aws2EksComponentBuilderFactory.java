@@ -58,6 +58,19 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AWS EKS as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.eks.EksClient</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EksComponentBuilder eksClient(
+                software.amazon.awssdk.services.eks.EksClient eksClient) {
+            doSetProperty("eksClient", eksClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -76,6 +89,55 @@ public interface Aws2EksComponentBuilderFactory {
         default Aws2EksComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.eks.EKS2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EksComponentBuilder operation(
+                org.apache.camel.component.aws2.eks.EKS2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the EKS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EksComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the EKS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EksComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the EKS client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2EksComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -139,6 +201,13 @@ public interface Aws2EksComponentBuilderFactory {
         protected EKS2Component buildConcreteComponent() {
             return new EKS2Component();
         }
+        private org.apache.camel.component.aws2.eks.EKS2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.eks.EKS2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.eks.EKS2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -146,7 +215,12 @@ public interface Aws2EksComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "accessKey": ((EKS2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "eksClient": getOrCreateConfiguration((EKS2Component) component).setEksClient((software.amazon.awssdk.services.eks.EksClient) value); return true;
             case "lazyStartProducer": ((EKS2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((EKS2Component) component).setOperation((org.apache.camel.component.aws2.eks.EKS2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((EKS2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((EKS2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((EKS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": ((EKS2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((EKS2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((EKS2Component) component).setBasicPropertyBinding((boolean) value); return true;

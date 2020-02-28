@@ -50,7 +50,7 @@ public class JmsAsyncStopListenerTest extends CamelTestSupport {
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setAsyncStopListener(true);
+        jms.getConfiguration().setAsyncStopListener(true);
         camelContext.addComponent(componentName, jms);
 
         return camelContext;

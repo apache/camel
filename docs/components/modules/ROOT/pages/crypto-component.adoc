@@ -86,16 +86,34 @@ both signing and verifying should be configured identically.
 == Options
 
 // component options: START
-The Crypto (JCE) component supports 3 options, which are listed below.
+The Crypto (JCE) component supports 21 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *algorithm* (producer) | Sets the JCE name of the Algorithm that should be used for the signer. | SHA256withRSA | String
+| *alias* (producer) | Sets the alias used to query the KeyStore for keys and {link java.security.cert.Certificate Certificates} to be used in signing and verifying exchanges. This value can be provided at runtime via the message header org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS |  | String
+| *certificateName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
+| *keystore* (producer) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
+| *keystoreName* (producer) | Sets the reference name for a Keystore that can be found in the registry. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *privateKey* (producer) | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
+| *privateKeyName* (producer) | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
+| *provider* (producer) | Set the id of the security provider that provides the configured Signature algorithm. |  | String
+| *publicKeyName* (producer) | references that should be resolved when the context changes |  | String
+| *secureRandomName* (producer) | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
+| *signatureHeaderName* (producer) | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *bufferSize* (advanced) | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
+| *certificate* (advanced) | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
+| *clearHeaders* (advanced) | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | boolean
 | *configuration* (advanced) | To use the shared DigitalSignatureConfiguration as configuration |  | DigitalSignatureConfiguration
+| *keyStoreParameters* (advanced) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStoreParameters
+| *publicKey* (advanced) | Set the PublicKey that should be used to verify the signature in the exchange. |  | PublicKey
+| *secureRandom* (advanced) | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
+| *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
 |===
 // component options: END
 

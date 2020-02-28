@@ -63,18 +63,6 @@ public interface DisruptorVmComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure the ring buffer size.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default DisruptorVmComponentBuilder queueSize(int queueSize) {
-            doSetProperty("queueSize", queueSize);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -216,7 +204,6 @@ public interface DisruptorVmComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bufferSize": ((DisruptorVmComponent) component).setBufferSize((int) value); return true;
-            case "queueSize": ((DisruptorVmComponent) component).setQueueSize((int) value); return true;
             case "bridgeErrorHandler": ((DisruptorVmComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "defaultConcurrentConsumers": ((DisruptorVmComponent) component).setDefaultConcurrentConsumers((int) value); return true;
             case "defaultMultipleConsumers": ((DisruptorVmComponent) component).setDefaultMultipleConsumers((boolean) value); return true;

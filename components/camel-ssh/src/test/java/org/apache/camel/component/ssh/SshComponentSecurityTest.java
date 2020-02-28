@@ -114,11 +114,11 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
                         .to("mock:error");
 
                 SshComponent sshComponent = new SshComponent();
-                sshComponent.setHost("localhost");
-                sshComponent.setPort(port);
-                sshComponent.setUsername("smx");
-                sshComponent.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
-                sshComponent.setKeyType(KeyPairProvider.SSH_RSA);
+                sshComponent.getConfiguration().setHost("localhost");
+                sshComponent.getConfiguration().setPort(port);
+                sshComponent.getConfiguration().setUsername("smx");
+                sshComponent.getConfiguration().setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
+                sshComponent.getConfiguration().setKeyType(KeyPairProvider.SSH_RSA);
 
                 getContext().addComponent("ssh-rsa", sshComponent);
 

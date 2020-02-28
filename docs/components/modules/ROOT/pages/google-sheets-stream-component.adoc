@@ -49,15 +49,28 @@ The Google Sheets Component uses the following URI format:
 
 
 // component options: START
-The Google Sheets Stream component supports 4 options, which are listed below.
+The Google Sheets Stream component supports 17 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *accessToken* (consumer) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *applicationName* (consumer) | Google sheets application name. Example would be camel-google-sheets/1.0 |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clientId* (consumer) | Client ID of the sheets application |  | String
+| *clientSecret* (consumer) | Client secret of the sheets application |  | String
 | *configuration* (consumer) | To use the shared configuration |  | GoogleSheetsStreamConfiguration
+| *includeGridData* (consumer) | True if grid data should be returned. | false | boolean
+| *majorDimension* (consumer) | Specifies the major dimension that results should use.. The value can be one of: ROWS, COLUMNS, DIMENSION_UNSPECIFIED | ROWS | String
+| *maxResults* (consumer) | Specify the maximum number of returned results. This will limit the number of rows in a returned value range data set or the number of returned value ranges in a batch request. | 0 | int
+| *range* (consumer) | Specifies the range of rows and columns in a sheet to get data from. |  | String
+| *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *scopes* (consumer) | Specifies the level of permissions you want a sheets application to have to a user account. See \https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
+| *splitResults* (consumer) | True if value range result should be split into rows or columns to process each of them individually. When true each row or column is represented with a separate exchange in batch processing. Otherwise value range object is used as exchange junk size. | false | boolean
+| *spreadsheetId* (consumer) | Specifies the spreadsheet identifier that is used to identify the target to obtain. |  | String
+| *valueRenderOption* (consumer) | Determines how values should be rendered in the output. The value can be one of: FORMATTED_VALUE, UNFORMATTED_VALUE, FORMULA | FORMATTED_VALUE | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientFactory* (advanced) | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory |  | GoogleSheetsClientFactory
 |===

@@ -236,11 +236,11 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-        jmsComponent.setUseMessageIDAsCorrelationID(false);
+        jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(false);
         camelContext.addComponent("jms", jmsComponent);
 
         JmsComponent jmsComponent2 = jmsComponentAutoAcknowledge(connectionFactory);
-        jmsComponent2.setUseMessageIDAsCorrelationID(true);
+        jmsComponent2.getConfiguration().setUseMessageIDAsCorrelationID(true);
         camelContext.addComponent("jms2", jmsComponent2);
 
         return camelContext;

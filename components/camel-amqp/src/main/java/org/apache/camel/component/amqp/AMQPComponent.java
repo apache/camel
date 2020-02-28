@@ -51,7 +51,8 @@ public class AMQPComponent extends JmsComponent {
     }
 
     public AMQPComponent(ConnectionFactory connectionFactory) {
-        setConnectionFactory(connectionFactory);
+        this();
+        getConfiguration().setConnectionFactory(connectionFactory);
     }
 
     // Factory methods
@@ -79,7 +80,7 @@ public class AMQPComponent extends JmsComponent {
             if (details.setTopicPrefix()) {
                 connectionFactory.setTopicPrefix("topic://");
             }
-            setConnectionFactory(connectionFactory);
+            getConfiguration().setConnectionFactory(connectionFactory);
         }
         super.doStart();
     }

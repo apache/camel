@@ -139,8 +139,8 @@ public class BaseJms2TestSupport extends CamelTestSupport {
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         JmsComponent component = new JmsComponent();
-        component.setConnectionFactory(connectionFactory);
-        component.setClientId(getClientId());
+        component.getConfiguration().setConnectionFactory(connectionFactory);
+        component.getConfiguration().setClientId(getClientId());
         camelContext.addComponent("jms", component);
         return camelContext;
     }

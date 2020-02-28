@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,8 +58,6 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
-import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.PackageHelper;
@@ -77,10 +74,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Javadoc;
-import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.jboss.forge.roaster.model.JavaDoc;
 import org.jboss.forge.roaster.model.JavaDocCapable;
-import org.jboss.forge.roaster.model.impl.TypeImpl;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -196,11 +191,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // component options
         Class<?> componentClassElement = loadClass(componentModel.getJavaType());
         if (componentClassElement != null) {
-            findComponentClassProperties(componentModel, componentClassElement, "", parentData, null, null);
+            findComponentClassProperties(componentModel, componentClassElement, "", null, null);
         }
 
         // endpoint options
-        findClassProperties(componentModel, classElement, new HashSet<>(), "", parentData, null, null);
+        findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
 
         // enhance and generate
         enhanceComponentModel(componentModel, parentData, uriEndpoint.excludeProperties());
@@ -349,7 +344,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         generatePropertyConfigurer(packageName, className, fqClassName, componentClassName,
                 pfqn, psn,
-                componentModel.getScheme() + "-component", hasSuper,
+                componentModel.getScheme() + "-component", hasSuper, true,
                 options);
     }
 
@@ -396,7 +391,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         generatePropertyConfigurer(packageName, className, fqClassName, endpointClassName,
                 pfqn, psn,
-                componentModel.getScheme() + "-endpoint", hasSuper,
+                componentModel.getScheme() + "-endpoint", hasSuper, false,
                 options);
     }
 
@@ -488,8 +483,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     protected void findComponentClassProperties(ComponentModel componentModel, Class<?> classElement,
-                                                String prefix, ComponentModel parentData,
-                                                String nestedTypeName, String nestedFieldName) {
+                                                String prefix, String nestedTypeName, String nestedFieldName) {
         final Class<?> orgClassElement = classElement;
         while (true) {
             Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
@@ -526,6 +520,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 return true;
             }).collect(Collectors.toList());
 
+            // if the component has options with annotations then we only want to generate options that are annotated
+            // as ideally components should favour doing this, so we can control what is an option and what is not
+            List<Field> fields = Stream.of(classElement.getDeclaredFields()).collect(Collectors.toList());
+            boolean annotationBasedOptions =
+                    fields.stream().anyMatch(f -> f.getAnnotation(Metadata.class) != null)
+                    || methods.stream().anyMatch(m -> m.getAnnotation(Metadata.class) != null);
+
             for (Method method : methods) {
                 String methodName = method.getName();
                 Metadata metadata = method.getAnnotation(Metadata.class);
@@ -539,17 +540,43 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 // field instead of the setter, so try to use it if its there
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
-                Field field;
+                Field fieldElement;
                 try {
-                    field = classElement.getDeclaredField(fieldName);
+                    fieldElement = classElement.getDeclaredField(fieldName);
                 } catch (NoSuchFieldException e) {
-                    field = null;
+                    fieldElement = null;
                 }
-                if (field != null && metadata == null) {
-                    metadata = field.getAnnotation(Metadata.class);
+                if (fieldElement != null && metadata == null) {
+                    metadata = fieldElement.getAnnotation(Metadata.class);
                 }
                 if (metadata != null && metadata.skip()) {
                     continue;
+                }
+
+                // skip methods/fields which has no annotation if we only look for annotation based
+                if (annotationBasedOptions && metadata == null) {
+                    continue;
+                }
+
+                // if the field type is a nested parameter then iterate
+                // through its fields
+                if (fieldElement != null) {
+                    Class<?> fieldTypeElement = fieldElement.getType();
+                    String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
+                    UriParams fieldParams = fieldTypeElement.getAnnotation(UriParams.class);
+                    if (fieldParams != null) {
+                        String nestedPrefix = prefix;
+                        String extraPrefix = fieldParams.prefix();
+                        if (!Strings.isNullOrEmpty(extraPrefix)) {
+                            nestedPrefix += extraPrefix;
+                        }
+                        nestedTypeName = fieldTypeName;
+                        nestedFieldName = fieldElement.getName();
+                        findClassProperties(componentModel, fieldTypeElement, Collections.EMPTY_SET, nestedPrefix, nestedTypeName, nestedFieldName, true);
+                        nestedTypeName = null;
+                        nestedFieldName = null;
+                        // we also want to include the configuration itself so continue and add ourselves
+                    }
                 }
 
                 boolean required = metadata != null && metadata.required();
@@ -588,19 +615,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                 // gather enums
                 List<String> enums = null;
-
-                boolean isEnum;
                 if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
-                    isEnum = true;
                     String[] values = metadata.enums().split(",");
                     enums = Stream.of(values).map(String::trim).collect(Collectors.toList());
-                } else {
-                    isEnum = fieldType.isEnum();
-                    if (isEnum) {
-                        enums = new ArrayList<>();
-                        for (Object val : fieldType.getEnumConstants()) {
-                            enums.add(val.toString());
-                        }
+                } else if (fieldType.isEnum()) {
+                    enums = new ArrayList<>();
+                    for (Object val : fieldType.getEnumConstants()) {
+                        enums.add(val.toString());
                     }
                 }
 
@@ -671,27 +692,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private String getSimpleName(org.jboss.forge.roaster.model.Type<?> type) {
-        boolean isArray = type.isArray();
-        if (!isArray && type instanceof TypeImpl) {
-            try {
-                Field field = TypeImpl.class.getDeclaredField("type");
-                field.setAccessible(true);
-                org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type domType =
-                        (org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Type) field.get(type);
-                if (domType.getParent() instanceof SingleVariableDeclaration) {
-                    isArray = ((SingleVariableDeclaration) domType.getParent()).isVarargs();
-                }
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
-            }
-        }
-        return isArray ? type.getSimpleName() + "[]" : type.getSimpleName();
-    }
-
     protected void findClassProperties(ComponentModel componentModel, Class<?> classElement,
                                        Set<String> excludes, String prefix,
-                                       ComponentModel parentData, String nestedTypeName, String nestedFieldName) {
+                                       String nestedTypeName, String nestedFieldName, boolean componentOption) {
         final Class<?> orgClassElement = classElement;
         excludes = new HashSet<>(excludes);
         while (true) {
@@ -714,7 +717,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                 UriPath path = fieldElement.getAnnotation(UriPath.class);
                 String fieldName = fieldElement.getName();
-                if (path != null) {
+                // component options should not include @UriPath as they are for endpoints only
+                if (!componentOption && path != null) {
                     String name = prefix + (Strings.isNullOrEmpty(path.name()) ? fieldName : path.name());
 
                     // should we exclude the name?
@@ -775,9 +779,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                     boolean isSecret = secret != null && secret || path.secret();
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                    EndpointOptionModel option = new EndpointOptionModel();
-                    option.setKind("path");
+                    BaseOptionModel option;
+                    if (componentOption) {
+                        option = new ComponentOptionModel();
+                    } else {
+                        option = new EndpointOptionModel();
+                    }
                     option.setName(name);
+                    option.setKind("path");
                     option.setDisplayName(displayName);
                     option.setType(getType(fieldTypeName, false));
                     option.setJavaType(fieldTypeName);
@@ -794,7 +803,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setConfigurationClass(nestedTypeName);
                     option.setConfigurationField(nestedFieldName);
                     if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
-                        componentModel.addEndpointOption(option);
+                        componentModel.addEndpointOption((EndpointOptionModel) option);
                     }
                 }
 
@@ -843,7 +852,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         }
                         nestedTypeName = fieldTypeName;
                         nestedFieldName = fieldElement.getName();
-                        findClassProperties(componentModel, fieldTypeElement, excludes, nestedPrefix, null, nestedTypeName, nestedFieldName);
+                        findClassProperties(componentModel, fieldTypeElement, excludes, nestedPrefix, nestedTypeName, nestedFieldName, componentOption);
                         nestedTypeName = null;
                         nestedFieldName = null;
                     } else {
@@ -882,8 +891,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                         boolean isSecret = secret != null && secret || param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                        EndpointOptionModel option = new EndpointOptionModel();
-                        option.setKind("parameter");
+                        BaseOptionModel option;
+                        if (componentOption) {
+                            option = new ComponentOptionModel();
+                        } else {
+                            option = new EndpointOptionModel();
+                        }
                         option.setName(name);
                         option.setDisplayName(displayName);
                         option.setType(getType(fieldTypeName, false));
@@ -903,8 +916,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         option.setPrefix(paramPrefix);
                         option.setOptionalPrefix(paramOptionalPrefix);
                         option.setMultiValue(multiValue);
-                        if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
-                            componentModel.addEndpointOption(option);
+                        if (componentOption) {
+                            option.setKind("property");
+                            componentModel.addComponentOption((ComponentOptionModel) option);
+                        } else {
+                            option.setKind("parameter");
+                            if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
+                                componentModel.addEndpointOption((EndpointOptionModel) option);
+                            }
                         }
                     }
                 }
@@ -922,16 +941,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private static boolean isNullOrEmpty(Object value) {
         return value == null || "".equals(value) || "null".equals(value);
-    }
-
-    private static boolean excludeProperty(String excludeProperties, String name) {
-        String[] excludes = excludeProperties.split(",");
-        for (String exclude : excludes) {
-            if (name.equals(exclude)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static boolean secureAlias(String scheme, String alias) {
@@ -960,11 +969,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     protected void generatePropertyConfigurer(String pn, String cn, String fqn, String en,
-                                              String pfqn, String psn, String scheme, boolean hasSuper,
+                                              String pfqn, String psn, String scheme, boolean hasSuper, boolean component,
                                               Collection<? extends BaseOptionModel> options) {
 
         try (Writer w = new StringWriter()) {
-            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, options, w);
+            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, options, w);
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
         } catch (Exception e) {
             throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);
@@ -1011,36 +1020,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
         return indexView;
-    }
-
-    private String findDefaultValue(Field fieldElement, String fieldTypeName) {
-        String defaultValue = null;
-        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
-        if (metadata != null) {
-            if (!Strings.isNullOrEmpty(metadata.defaultValue())) {
-                defaultValue = metadata.defaultValue();
-            }
-        }
-        if (defaultValue == null) {
-            // if its a boolean type, then we use false as the default
-            if ("boolean".equals(fieldTypeName) || "java.lang.Boolean".equals(fieldTypeName)) {
-                defaultValue = "false";
-            }
-        }
-
-        return defaultValue;
-    }
-
-    private boolean findRequired(Field fieldElement, boolean defaultValue) {
-        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
-        if (metadata != null) {
-            return metadata.required();
-        }
-        return defaultValue;
-    }
-
-    private boolean hasSuperClass(Class<?> classElement, String superClassName) {
-        return loadClass(superClassName).isAssignableFrom(classElement);
     }
 
     private String findJavaDoc(AnnotatedElement member, String fieldName, String name, Class<?> classElement, boolean builderPattern) {
@@ -1304,49 +1283,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return null;
-    }
-
-    private static final class EipOptionComparator implements Comparator<EipOptionModel> {
-
-        private final EipModel model;
-
-        private EipOptionComparator(EipModel model) {
-            this.model = model;
-        }
-
-        @Override
-        public int compare(EipOptionModel o1, EipOptionModel o2) {
-            int weight = weight(o1);
-            int weight2 = weight(o2);
-
-            if (weight == weight2) {
-                // keep the current order
-                return 1;
-            } else {
-                // sort according to weight
-                return weight2 - weight;
-            }
-        }
-
-        private int weight(EipOptionModel o) {
-            String name = o.getName();
-
-            // these should be first
-            if ("expression".equals(name)) {
-                return 10;
-            }
-
-            // these should be last
-            if ("description".equals(name)) {
-                return -10;
-            } else if ("id".equals(name)) {
-                return -9;
-            } else if ("pattern".equals(name) && "to".equals(model.getName())) {
-                // and pattern only for the to model
-                return -8;
-            }
-            return 0;
-        }
     }
 
 }

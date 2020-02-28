@@ -49,6 +49,42 @@ public interface ZookeeperComponentBuilderFactory {
             extends
                 ComponentBuilder<ZooKeeperComponent> {
         /**
+         * Whether the children of the node should be listed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default ZookeeperComponentBuilder listChildren(boolean listChildren) {
+            doSetProperty("listChildren", listChildren);
+            return this;
+        }
+        /**
+         * The time interval to wait on connection before timing out.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5000
+         * Group: common
+         */
+        default ZookeeperComponentBuilder timeout(int timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * The time interval to backoff for after an error before retrying.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         */
+        default ZookeeperComponentBuilder backoff(long backoff) {
+            doSetProperty("backoff", backoff);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -65,6 +101,56 @@ public interface ZookeeperComponentBuilderFactory {
         default ZookeeperComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Should changes to the znode be 'watched' and repeatedly processed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default ZookeeperComponentBuilder repeat(boolean repeat) {
+            doSetProperty("repeat", repeat);
+            return this;
+        }
+        /**
+         * Upon the delete of a znode, should an empty message be send to the
+         * consumer.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default ZookeeperComponentBuilder sendEmptyMessageOnDelete(
+                boolean sendEmptyMessageOnDelete) {
+            doSetProperty("sendEmptyMessageOnDelete", sendEmptyMessageOnDelete);
+            return this;
+        }
+        /**
+         * Should the endpoint create the node if it does not currently exist.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ZookeeperComponentBuilder create(boolean create) {
+            doSetProperty("create", create);
+            return this;
+        }
+        /**
+         * The create mode that should be used for the newly created node.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: EPHEMERAL
+         * Group: producer
+         */
+        default ZookeeperComponentBuilder createMode(java.lang.String createMode) {
+            doSetProperty("createMode", createMode);
             return this;
         }
         /**
@@ -126,13 +212,27 @@ public interface ZookeeperComponentBuilderFactory {
         protected ZooKeeperComponent buildConcreteComponent() {
             return new ZooKeeperComponent();
         }
+        private org.apache.camel.component.zookeeper.ZooKeeperConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.zookeeper.ZooKeeperComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.zookeeper.ZooKeeperConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "listChildren": getOrCreateConfiguration((ZooKeeperComponent) component).setListChildren((boolean) value); return true;
+            case "timeout": getOrCreateConfiguration((ZooKeeperComponent) component).setTimeout((int) value); return true;
+            case "backoff": getOrCreateConfiguration((ZooKeeperComponent) component).setBackoff((long) value); return true;
             case "bridgeErrorHandler": ((ZooKeeperComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "repeat": getOrCreateConfiguration((ZooKeeperComponent) component).setRepeat((boolean) value); return true;
+            case "sendEmptyMessageOnDelete": getOrCreateConfiguration((ZooKeeperComponent) component).setSendEmptyMessageOnDelete((boolean) value); return true;
+            case "create": getOrCreateConfiguration((ZooKeeperComponent) component).setCreate((boolean) value); return true;
+            case "createMode": getOrCreateConfiguration((ZooKeeperComponent) component).setCreateMode((java.lang.String) value); return true;
             case "lazyStartProducer": ((ZooKeeperComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((ZooKeeperComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((ZooKeeperComponent) component).setConfiguration((org.apache.camel.component.zookeeper.ZooKeeperConfiguration) value); return true;

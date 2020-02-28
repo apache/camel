@@ -72,17 +72,40 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mina component supports 5 options, which are listed below.
+The Mina component supports 28 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *disconnect* (common) | Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer. | false | boolean
+| *minaLogger* (common) | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output. | false | boolean
+| *sync* (common) | Setting to set endpoint as one-way or request-response. | true | boolean
+| *timeout* (common) | You can configure the timeout that specifies how long to wait for a response from a remote server. The timeout unit is in milliseconds, so 60000 is 60 seconds. | 30000 | long
+| *writeTimeout* (common) | Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds. | 10000 | long
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clientMode* (consumer) | If the clientMode is true, mina consumer will connect the address as a TCP client. | false | boolean
+| *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back. | true | boolean
+| *noReplyLogLevel* (consumer) | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *cachedAddress* (producer) | Whether to create the InetAddress once and reuse. Setting this to false allows to pickup DNS changes in the network. | true | boolean
+| *lazySessionCreation* (producer) | Sessions can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | To use the shared mina configuration. |  | MinaConfiguration
+| *maximumPoolSize* (advanced) | Number of worker threads in the worker pool for TCP and UDP | 16 | int
+| *orderedThreadPoolExecutor* (advanced) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
+| *transferExchange* (advanced) | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
+| *allowDefaultCodec* (codec) | The mina component installs a default codec if both, codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain, like the SSL filter. | true | boolean
+| *codec* (codec) | To use a custom minda codec implementation. |  | ProtocolCodecFactory
+| *decoderMaxLineLength* (codec) | To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024. | 1024 | int
+| *encoderMaxLineLength* (codec) | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE. | -1 | int
+| *encoding* (codec) | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided, Camel will use the JVM default Charset |  | String
+| *filters* (codec) | You can set a list of Mina IoFilters to use. |  | List
+| *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP. | false | boolean
+| *textlineDelimiter* (codec) | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided, Camel will use DEFAULT. This delimiter is used to mark the end of text. The value can be one of: DEFAULT, AUTO, UNIX, WINDOWS, MAC |  | MinaTextLineDelimiter
+| *autoStartTls* (security) | Whether to auto start SSL handshake. | true | boolean
+| *sslContextParameters* (security) | To configure SSL security. |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 |===
 // component options: END

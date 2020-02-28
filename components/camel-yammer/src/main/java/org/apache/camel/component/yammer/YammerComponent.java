@@ -29,89 +29,31 @@ import org.apache.camel.support.DefaultComponent;
 @Component("yammer")
 public class YammerComponent extends DefaultComponent {
 
-    @Metadata(label = "security", secret = true)
-    private String consumerKey;
-    @Metadata(label = "security", secret = true)
-    private String consumerSecret;
-    @Metadata(label = "security", secret = true)
-    private String accessToken;
     @Metadata(label = "advanced")
-    private YammerConfiguration config;
-    @Metadata(label = "advanced")
-    private ApiRequestor requestor;
-    
+    private YammerConfiguration configuration = new YammerConfiguration();
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // by default use config for each endpoint; use from component level if one has been explicitly set
-        YammerConfiguration endpointConfig = getConfig();
-        if (endpointConfig == null) {
-            endpointConfig = new YammerConfiguration();            
-        }
-        
+        // copy config for endpoint
+        YammerConfiguration endpointConfig = configuration.copy();
+
         // set options from component
-        endpointConfig.setConsumerKey(consumerKey);
-        endpointConfig.setConsumerSecret(consumerSecret);
-        endpointConfig.setAccessToken(accessToken);
         endpointConfig.setFunction(YammerFunctionType.fromUri(remaining));
-        endpointConfig.setRequestor(requestor);
-        
+
         Endpoint endpoint = new YammerEndpoint(uri, this, endpointConfig);
         setProperties(endpoint, parameters);
         return endpoint;
     }
     
-    public String getConsumerKey() {
-        return consumerKey;
+    public YammerConfiguration getConfiguration() {
+        return configuration;
     }
 
     /**
-     * The consumer key
+     * Component configuration
      */
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
+    public void setConfiguration(YammerConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    /**
-     * The consumer secret
-     */
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    /**
-     * The access token
-     */
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public YammerConfiguration getConfig() {
-        return config;
-    }
-
-    /**
-     * To use a shared yammer configuration
-     */
-    public void setConfig(YammerConfiguration config) {
-        this.config = config;
-    }
-
-    public ApiRequestor getRequestor() {
-        return requestor;
-    }
-
-    /**
-     * To use a specific requester to communicate with Yammer.
-     */
-    public void setRequestor(ApiRequestor requestor) {
-        this.requestor = requestor;
-    }
 }

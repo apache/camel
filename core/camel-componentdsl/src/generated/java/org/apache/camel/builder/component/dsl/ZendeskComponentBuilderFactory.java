@@ -50,20 +50,6 @@ public interface ZendeskComponentBuilderFactory {
             extends
                 ComponentBuilder<ZendeskComponent> {
         /**
-         * To use the shared configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.zendesk.ZendeskConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default ZendeskComponentBuilder configuration(
-                org.apache.camel.component.zendesk.ZendeskConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -118,6 +104,20 @@ public interface ZendeskComponentBuilderFactory {
             return this;
         }
         /**
+         * Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.zendesk.ZendeskConfiguration</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default ZendeskComponentBuilder configuration(
+                org.apache.camel.component.zendesk.ZendeskConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * To use a shared Zendesk instance.
          * 
          * The option is a: <code>org.zendesk.client.v2.Zendesk</code> type.
@@ -146,10 +146,10 @@ public interface ZendeskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((ZendeskComponent) component).setConfiguration((org.apache.camel.component.zendesk.ZendeskConfiguration) value); return true;
             case "bridgeErrorHandler": ((ZendeskComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((ZendeskComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((ZendeskComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "configuration": ((ZendeskComponent) component).setConfiguration((org.apache.camel.component.zendesk.ZendeskConfiguration) value); return true;
             case "zendesk": ((ZendeskComponent) component).setZendesk((org.zendesk.client.v2.Zendesk) value); return true;
             default: return false;
             }

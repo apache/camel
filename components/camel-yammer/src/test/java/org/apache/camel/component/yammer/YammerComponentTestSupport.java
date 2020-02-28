@@ -37,7 +37,7 @@ public abstract class YammerComponentTestSupport extends CamelTestSupport {
         setMessages(context.getTypeConverter().convertTo(String.class, is));
 
         yammerComponent = context.getComponent("yammer", YammerComponent.class);
-        yammerComponent.setRequestor(new TestApiRequestor(getMessages()));
+        yammerComponent.getConfiguration().setRequestor(new TestApiRequestor(getMessages()));
 
         return context;
     }

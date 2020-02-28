@@ -37,7 +37,7 @@ import org.apache.camel.util.PropertiesHelper;
 public class ServiceNowComponent extends DefaultComponent implements SSLContextParametersAware {
     @Metadata(label = "advanced")
     private String instanceName;
-    @Metadata(label = "advanced")
+    @Metadata
     private ServiceNowConfiguration configuration;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
@@ -75,129 +75,10 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
     }
 
     /**
-     * The ServiceNow default configuration
+     * Component configuration
      */
     public void setConfiguration(ServiceNowConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getApiUrl() {
-        return configuration.getApiUrl();
-    }
-
-    /**
-     * The ServiceNow REST API url
-     */
-    public void setApiUrl(String apiUrl) {
-        configuration.setApiUrl(apiUrl);
-    }
-
-    public String getUserName() {
-        return configuration.getUserName();
-    }
-
-    /**
-     * ServiceNow user account name
-     */
-    @Metadata(label = "security", secret = true)
-    public void setUserName(String userName) {
-        configuration.setUserName(userName);
-    }
-
-    public String getPassword() {
-        return configuration.getPassword();
-    }
-
-    /**
-     * ServiceNow account password
-     */
-    @Metadata(label = "security", secret = true)
-    public void setPassword(String password) {
-        configuration.setPassword(password);
-    }
-
-    public String getOauthClientId() {
-        return configuration.getOauthClientId();
-    }
-
-    /**
-     * OAuth2 ClientID
-     */
-    @Metadata(label = "security", secret = true)
-    public void setOauthClientId(String oauthClientId) {
-        configuration.setOauthClientId(oauthClientId);
-    }
-
-    public String getOauthClientSecret() {
-        return configuration.getOauthClientSecret();
-    }
-
-    /**
-     * OAuth2 ClientSecret
-     */
-    @Metadata(label = "security", secret = true)
-    public void setOauthClientSecret(String oauthClientSecret) {
-        configuration.setOauthClientSecret(oauthClientSecret);
-    }
-
-    public String getOauthTokenUrl() {
-        return configuration.getOauthTokenUrl();
-    }
-
-    /**
-     * OAuth token Url
-     */
-    @Metadata(label = "security", secret = true)
-    public void setOauthTokenUrl(String oauthTokenUrl) {
-        configuration.setOauthTokenUrl(oauthTokenUrl);
-    }
-
-    public String getProxyHost() {
-        return configuration.getProxyHost();
-    }
-
-    /**
-     * The proxy host name
-     */
-    @Metadata(label = "advanced")
-    public void setProxyHost(String proxyHost) {
-        configuration.setProxyHost(proxyHost);
-    }
-
-    public Integer getProxyPort() {
-        return configuration.getProxyPort();
-    }
-
-    /**
-     * The proxy port number
-     */
-    @Metadata(label = "advanced")
-    public void setProxyPort(Integer proxyPort) {
-        configuration.setProxyPort(proxyPort);
-    }
-
-    public String getProxyUserName() {
-        return configuration.getProxyUserName();
-    }
-
-    /**
-     * Username for proxy authentication
-     */
-    @Metadata(label = "advanced,security", secret = true)
-    public void setProxyUserName(String proxyUserName) {
-        configuration.setProxyUserName(proxyUserName);
-    }
-
-    public String getProxyPassword() {
-        return configuration.getProxyPassword();
-    }
-
-    /**
-     * Password for proxy authentication
-     */
-    @Metadata(label = "advanced,security", secret = true)
-    public void setProxyPassword(String proxyPassword) {
-        configuration.setProxyPassword(proxyPassword);
     }
 
     @Override

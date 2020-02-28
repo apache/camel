@@ -49,19 +49,6 @@ public interface MllpComponentBuilderFactory {
      */
     interface MllpComponentBuilder extends ComponentBuilder<MllpComponent> {
         /**
-         * Sets the default configuration to use when creating MLLP endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.mllp.MllpConfiguration</code> type.
-         * 
-         * Group: common
-         */
-        default MllpComponentBuilder configuration(
-                org.apache.camel.component.mllp.MllpConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -171,7 +158,6 @@ public interface MllpComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((MllpComponent) component).setConfiguration((org.apache.camel.component.mllp.MllpConfiguration) value); return true;
             case "bridgeErrorHandler": ((MllpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MllpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((MllpComponent) component).setBasicPropertyBinding((boolean) value); return true;

@@ -34,6 +34,9 @@ import org.apache.camel.support.component.AbstractApiComponent;
 @Component("google-calendar")
 public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
 
+    @Metadata
+    GoogleCalendarConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Calendar client;
     @Metadata(label = "advanced")

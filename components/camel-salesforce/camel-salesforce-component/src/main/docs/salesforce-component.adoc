@@ -651,17 +651,55 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 34 options, which are listed below.
+The Salesforce component supports 72 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *apexMethod* (common) | APEX method name |  | String
+| *apexQueryParams* (common) | Query params for APEX method |  | Map
+| *apexUrl* (common) | APEX method URL |  | String
+| *apiVersion* (common) | Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
+| *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| *batchId* (common) | Bulk API Batch ID |  | String
+| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. The value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
+| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
+| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. The value can be one of: JSON, XML |  | PayloadFormat
+| *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
 | *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
 | *httpMaxContentLength* (common) | Max content length of an HTTP response. |  | Integer
+| *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
+| *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
+| *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String
+| *jobId* (common) | Bulk API Job ID |  | String
+| *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
+| *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. The value can be one of: EXCEPTION, NULL |  | NotFoundBehaviour
+| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. The value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). The value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
+| *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
+| *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
 | *packages* (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
+| *rawPayload* (common) | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | boolean
+| *reportId* (common) | Salesforce1 Analytics report Id |  | String
+| *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
+| *resultId* (common) | Bulk API Result ID |  | String
+| *sObjectBlobFieldName* (common) | SObject blob field name |  | String
+| *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
+| *sObjectFields* (common) | SObject fields to retrieve |  | String
+| *sObjectId* (common) | SObject ID if required by API |  | String
+| *sObjectIdName* (common) | SObject external ID field name |  | String
+| *sObjectIdValue* (common) | SObject external ID field value |  | String
+| *sObjectName* (common) | SObject name if required or supported by API |  | String
+| *sObjectQuery* (common) | Salesforce SOQL query string |  | String
+| *sObjectSearch* (common) | Salesforce SOSL search string |  | String
+| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
 | *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpointConfig
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map

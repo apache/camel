@@ -57,11 +57,11 @@ public class Olingo4Configuration {
     private int socketTimeout = DEFAULT_TIMEOUT;
     @UriParam
     private HttpHost proxy;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam
+    @UriParam(label = "advanced")
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
-    @UriParam
+    @UriParam(label = "advanced")
     private HttpClientBuilder httpClientBuilder;
     @UriParam
     private boolean filterAlreadySeen;

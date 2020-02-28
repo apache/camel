@@ -36,14 +36,13 @@ import org.apache.camel.component.consul.endpoint.ConsulStatusProducer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.jsse.SSLContextParameters;
 
 @Component("consul")
 public class ConsulComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private ConsulConfiguration configuration = new ConsulConfiguration();
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
 
     public ConsulComponent() {
@@ -56,42 +55,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     // ************************************
     // Options
     // ************************************
-
-    public String getUrl() {
-        return this.configuration.getUrl();
-    }
-
-    /**
-     * The Consul agent URL
-     */
-    public void setUrl(String url) {
-        this.configuration.setUrl(url);
-    }
-
-    public String getDatacenter() {
-        return configuration.getDatacenter();
-    }
-
-    /**
-     * The data center
-     *
-     * @param datacenter
-     */
-    public void setDatacenter(String datacenter) {
-        configuration.setDatacenter(datacenter);
-    }
-
-    public SSLContextParameters getSslContextParameters() {
-        return configuration.getSslContextParameters();
-    }
-
-    /**
-     * SSL configuration using an
-     * org.apache.camel.support.jsse.SSLContextParameters instance.
-     */
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        configuration.setSslContextParameters(sslContextParameters);
-    }
 
     @Override
     public boolean isUseGlobalSslContextParameters() {
@@ -106,45 +69,12 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    public String getAclToken() {
-        return configuration.getAclToken();
-    }
-
-    /**
-     * Sets the ACL token to be used with Consul
-     */
-    public void setAclToken(String aclToken) {
-        configuration.setAclToken(aclToken);
-    }
-
-    public String getUserName() {
-        return configuration.getUserName();
-    }
-
-    /**
-     * Sets the username to be used for basic authentication
-     */
-    public void setUserName(String userName) {
-        configuration.setUserName(userName);
-    }
-
-    public String getPassword() {
-        return configuration.getPassword();
-    }
-
-    /**
-     * Sets the password to be used for basic authentication
-     */
-    public void setPassword(String password) {
-        configuration.setPassword(password);
-    }
-
     public ConsulConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * Sets the common configuration shared among endpoints
+     * Consul configuration
      */
     public void setConfiguration(ConsulConfiguration configuration) {
         this.configuration = configuration;
@@ -154,7 +84,7 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ConsulConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(ConsulConfiguration::new).copy();
 
-        ConsulEndpoint endpoint = null;
+        ConsulEndpoint endpoint;
         switch (remaining) {
             case "kv":
                 endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new));

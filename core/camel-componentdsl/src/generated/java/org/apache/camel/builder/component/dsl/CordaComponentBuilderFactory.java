@@ -80,6 +80,120 @@ public interface CordaComponentBuilderFactory {
             return this;
         }
         /**
+         * PageSpecification allows specification of a page number (starting
+         * from 1) and page size (defaulting to 200 with a maximum page size of
+         * (Integer.MAX_INT) Note: we default the page number to 200 to enable
+         * queries without requiring a page specification but enabling detection
+         * of large results sets that fall out of the 200 requirement. Max page
+         * size should be used with extreme caution as results may exceed your
+         * JVM memory footprint.
+         * 
+         * The option is a:
+         * <code>net.corda.core.node.services.vault.PageSpecification</code>
+         * type.
+         * 
+         * Default: 200
+         * Group: consumer
+         */
+        default CordaComponentBuilder pageSpecification(
+                net.corda.core.node.services.vault.PageSpecification pageSpecification) {
+            doSetProperty("pageSpecification", pageSpecification);
+            return this;
+        }
+        /**
+         * Whether to process snapshots or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default CordaComponentBuilder processSnapshot(boolean processSnapshot) {
+            doSetProperty("processSnapshot", processSnapshot);
+            return this;
+        }
+        /**
+         * Sort allows specification of a set of entity attribute names and
+         * their associated directionality and null handling, to be applied upon
+         * processing a query specification.
+         * 
+         * The option is a: <code>net.corda.core.node.services.vault.Sort</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default CordaComponentBuilder sort(
+                net.corda.core.node.services.vault.Sort sort) {
+            doSetProperty("sort", sort);
+            return this;
+        }
+        /**
+         * A contract state (or just state) contains opaque data used by a
+         * contract program. It can be thought of as a disk file that the
+         * program can use to persist data across transactions. States are
+         * immutable: once created they are never updated, instead, any changes
+         * must generate a new successor state. States can be updated (consumed)
+         * only once: the notary is responsible for ensuring there is no double
+         * spending by only signing a transaction if the input states are all
+         * free.
+         * 
+         * The option is a:
+         * <code>java.lang.Class<net.corda.core.contracts.ContractState></code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default CordaComponentBuilder contractStateClass(
+                java.lang.Class<net.corda.core.contracts.ContractState> contractStateClass) {
+            doSetProperty("contractStateClass", contractStateClass);
+            return this;
+        }
+        /**
+         * Start the given flow with the given arguments, returning an
+         * Observable with a single observation of the result of running the
+         * flow. The flowLogicClass must be annotated with
+         * net.corda.core.flows.StartableByRPC.
+         * 
+         * The option is a: <code>java.lang.Object[]</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default CordaComponentBuilder flowLogicArguments(
+                java.lang.Object[] flowLogicArguments) {
+            doSetProperty("flowLogicArguments", flowLogicArguments);
+            return this;
+        }
+        /**
+         * Start the given flow with the given arguments, returning an
+         * Observable with a single observation of the result of running the
+         * flow. The flowLogicClass must be annotated with
+         * net.corda.core.flows.StartableByRPC.
+         * 
+         * The option is a:
+         * <code>java.lang.Class<net.corda.core.flows.FlowLogic<java.lang.Object>></code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default CordaComponentBuilder flowLogicClass(
+                java.lang.Class<net.corda.core.flows.FlowLogic<java.lang.Object>> flowLogicClass) {
+            doSetProperty("flowLogicClass", flowLogicClass);
+            return this;
+        }
+        /**
+         * QueryCriteria assumes underlying schema tables are correctly indexed
+         * for performance.
+         * 
+         * The option is a:
+         * <code>net.corda.core.node.services.vault.QueryCriteria</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default CordaComponentBuilder queryCriteria(
+                net.corda.core.node.services.vault.QueryCriteria queryCriteria) {
+            doSetProperty("queryCriteria", queryCriteria);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -101,6 +215,17 @@ public interface CordaComponentBuilderFactory {
             return this;
         }
         /**
+         * Operation to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default CordaComponentBuilder operation(java.lang.String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -114,6 +239,28 @@ public interface CordaComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * Password for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default CordaComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default CordaComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class CordaComponentBuilderImpl
@@ -125,6 +272,13 @@ public interface CordaComponentBuilderFactory {
         protected CordaComponent buildConcreteComponent() {
             return new CordaComponent();
         }
+        private org.apache.camel.component.corda.CordaConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.corda.CordaComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.corda.CordaConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -133,8 +287,18 @@ public interface CordaComponentBuilderFactory {
             switch (name) {
             case "configuration": ((CordaComponent) component).setConfiguration((org.apache.camel.component.corda.CordaConfiguration) value); return true;
             case "bridgeErrorHandler": ((CordaComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "pageSpecification": getOrCreateConfiguration((CordaComponent) component).setPageSpecification((net.corda.core.node.services.vault.PageSpecification) value); return true;
+            case "processSnapshot": getOrCreateConfiguration((CordaComponent) component).setProcessSnapshot((boolean) value); return true;
+            case "sort": getOrCreateConfiguration((CordaComponent) component).setSort((net.corda.core.node.services.vault.Sort) value); return true;
+            case "contractStateClass": getOrCreateConfiguration((CordaComponent) component).setContractStateClass((java.lang.Class) value); return true;
+            case "flowLogicArguments": getOrCreateConfiguration((CordaComponent) component).setFlowLogicArguments((java.lang.Object[]) value); return true;
+            case "flowLogicClass": getOrCreateConfiguration((CordaComponent) component).setFlowLogicClass((java.lang.Class) value); return true;
+            case "queryCriteria": getOrCreateConfiguration((CordaComponent) component).setQueryCriteria((net.corda.core.node.services.vault.QueryCriteria) value); return true;
             case "lazyStartProducer": ((CordaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((CordaComponent) component).setOperation((java.lang.String) value); return true;
             case "basicPropertyBinding": ((CordaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "password": getOrCreateConfiguration((CordaComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((CordaComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

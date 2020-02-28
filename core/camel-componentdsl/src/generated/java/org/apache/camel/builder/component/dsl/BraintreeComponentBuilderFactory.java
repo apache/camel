@@ -64,6 +64,29 @@ public interface BraintreeComponentBuilderFactory {
             return this;
         }
         /**
+         * The environment Either SANDBOX or PRODUCTION.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BraintreeComponentBuilder environment(
+                java.lang.String environment) {
+            doSetProperty("environment", environment);
+            return this;
+        }
+        /**
+         * The merchant id provided by Braintree.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BraintreeComponentBuilder merchantId(java.lang.String merchantId) {
+            doSetProperty("merchantId", merchantId);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -118,9 +141,47 @@ public interface BraintreeComponentBuilderFactory {
             return this;
         }
         /**
+         * Set read timeout for http calls.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
+         */
+        default BraintreeComponentBuilder httpReadTimeout(
+                java.lang.Integer httpReadTimeout) {
+            doSetProperty("httpReadTimeout", httpReadTimeout);
+            return this;
+        }
+        /**
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeComponentBuilder httpLogLevel(
+                java.lang.String httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set log category to use to log http calls.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Braintree
+         * Group: logging
+         */
+        default BraintreeComponentBuilder httpLogName(
+                java.lang.String httpLogName) {
+            doSetProperty("httpLogName", httpLogName);
+            return this;
+        }
+        /**
          * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to false where an existing JUL - SLF4J logger bridge is
-         * on the classpath.
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -130,6 +191,64 @@ public interface BraintreeComponentBuilderFactory {
         default BraintreeComponentBuilder logHandlerEnabled(
                 boolean logHandlerEnabled) {
             doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * The proxy host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The access token granted by a merchant to another in order to process
+         * transactions on their behalf. Used in place of environment, merchant
+         * id, public key and private key fields.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * The private key provided by Braintree.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeComponentBuilder privateKey(java.lang.String privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * The public key provided by Braintree.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeComponentBuilder publicKey(java.lang.String publicKey) {
+            doSetProperty("publicKey", publicKey);
             return this;
         }
     }
@@ -143,6 +262,13 @@ public interface BraintreeComponentBuilderFactory {
         protected BraintreeComponent buildConcreteComponent() {
             return new BraintreeComponent();
         }
+        private org.apache.camel.component.braintree.BraintreeConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.braintree.BraintreeComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.braintree.BraintreeConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -150,10 +276,20 @@ public interface BraintreeComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((BraintreeComponent) component).setConfiguration((org.apache.camel.component.braintree.BraintreeConfiguration) value); return true;
+            case "environment": getOrCreateConfiguration((BraintreeComponent) component).setEnvironment((java.lang.String) value); return true;
+            case "merchantId": getOrCreateConfiguration((BraintreeComponent) component).setMerchantId((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((BraintreeComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BraintreeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((BraintreeComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "logHandlerEnabled": ((BraintreeComponent) component).setLogHandlerEnabled((boolean) value); return true;
+            case "httpReadTimeout": getOrCreateConfiguration((BraintreeComponent) component).setHttpReadTimeout((java.lang.Integer) value); return true;
+            case "httpLogLevel": getOrCreateConfiguration((BraintreeComponent) component).setHttpLogLevel((java.lang.String) value); return true;
+            case "httpLogName": getOrCreateConfiguration((BraintreeComponent) component).setHttpLogName((java.lang.String) value); return true;
+            case "logHandlerEnabled": getOrCreateConfiguration((BraintreeComponent) component).setLogHandlerEnabled((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((BraintreeComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((BraintreeComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "accessToken": getOrCreateConfiguration((BraintreeComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "privateKey": getOrCreateConfiguration((BraintreeComponent) component).setPrivateKey((java.lang.String) value); return true;
+            case "publicKey": getOrCreateConfiguration((BraintreeComponent) component).setPublicKey((java.lang.String) value); return true;
             default: return false;
             }
         }

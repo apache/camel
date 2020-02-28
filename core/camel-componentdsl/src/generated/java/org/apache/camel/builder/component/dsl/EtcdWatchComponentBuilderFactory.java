@@ -70,7 +70,7 @@ public interface EtcdWatchComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the common configuration shared among endpoints.
+         * Component configuration.
          * 
          * The option is a:
          * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
@@ -83,27 +83,39 @@ public interface EtcdWatchComponentBuilderFactory {
             return this;
         }
         /**
-         * The password to use for basic authentication.
+         * To apply an action recursively.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
-        default EtcdWatchComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
+        default EtcdWatchComponentBuilder recursive(boolean recursive) {
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
-         * To configure security using SSLContextParameters.
+         * The path to look for for service discovery.
          * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: /services/
+         * Group: consumer
+         */
+        default EtcdWatchComponentBuilder servicePath(
+                java.lang.String servicePath) {
+            doSetProperty("servicePath", servicePath);
+            return this;
+        }
+        /**
+         * To set the maximum time an action could take to complete.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: consumer
          */
-        default EtcdWatchComponentBuilder sslContextParameters(
-                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
+        default EtcdWatchComponentBuilder timeout(java.lang.Long timeout) {
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -111,21 +123,36 @@ public interface EtcdWatchComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: consumer
+         * Default: http://localhost:2379,http://localhost:4001
+         * Group: common
          */
         default EtcdWatchComponentBuilder uris(java.lang.String uris) {
             doSetProperty("uris", uris);
             return this;
         }
         /**
-         * The user name to use for basic authentication.
+         * To send an empty message in case of timeout watching for a key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
-        default EtcdWatchComponentBuilder userName(java.lang.String userName) {
-            doSetProperty("userName", userName);
+        default EtcdWatchComponentBuilder sendEmptyExchangeOnTimeout(
+                boolean sendEmptyExchangeOnTimeout) {
+            doSetProperty("sendEmptyExchangeOnTimeout", sendEmptyExchangeOnTimeout);
+            return this;
+        }
+        /**
+         * The index to watch from.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         */
+        default EtcdWatchComponentBuilder fromIndex(long fromIndex) {
+            doSetProperty("fromIndex", fromIndex);
             return this;
         }
         /**
@@ -143,6 +170,30 @@ public interface EtcdWatchComponentBuilderFactory {
             return this;
         }
         /**
+         * The password to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EtcdWatchComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default EtcdWatchComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -153,6 +204,17 @@ public interface EtcdWatchComponentBuilderFactory {
         default EtcdWatchComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
+        /**
+         * The user name to use for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default EtcdWatchComponentBuilder userName(java.lang.String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -166,6 +228,13 @@ public interface EtcdWatchComponentBuilderFactory {
         protected EtcdWatchComponent buildConcreteComponent() {
             return new EtcdWatchComponent();
         }
+        private org.apache.camel.component.etcd.EtcdConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.etcd.EtcdWatchComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.etcd.EtcdConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -174,12 +243,17 @@ public interface EtcdWatchComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((EtcdWatchComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((EtcdWatchComponent) component).setConfiguration((org.apache.camel.component.etcd.EtcdConfiguration) value); return true;
-            case "password": ((EtcdWatchComponent) component).setPassword((java.lang.String) value); return true;
-            case "sslContextParameters": ((EtcdWatchComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "uris": ((EtcdWatchComponent) component).setUris((java.lang.String) value); return true;
-            case "userName": ((EtcdWatchComponent) component).setUserName((java.lang.String) value); return true;
+            case "recursive": getOrCreateConfiguration((EtcdWatchComponent) component).setRecursive((boolean) value); return true;
+            case "servicePath": getOrCreateConfiguration((EtcdWatchComponent) component).setServicePath((java.lang.String) value); return true;
+            case "timeout": getOrCreateConfiguration((EtcdWatchComponent) component).setTimeout((java.lang.Long) value); return true;
+            case "uris": getOrCreateConfiguration((EtcdWatchComponent) component).setUris((java.lang.String) value); return true;
+            case "sendEmptyExchangeOnTimeout": getOrCreateConfiguration((EtcdWatchComponent) component).setSendEmptyExchangeOnTimeout((boolean) value); return true;
+            case "fromIndex": getOrCreateConfiguration((EtcdWatchComponent) component).setFromIndex((long) value); return true;
             case "basicPropertyBinding": ((EtcdWatchComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "password": getOrCreateConfiguration((EtcdWatchComponent) component).setPassword((java.lang.String) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((EtcdWatchComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((EtcdWatchComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "userName": getOrCreateConfiguration((EtcdWatchComponent) component).setUserName((java.lang.String) value); return true;
             default: return false;
             }
         }

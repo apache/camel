@@ -49,6 +49,32 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleSheetsStreamComponent> {
         /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Google sheets application name. Example would be
+         * camel-google-sheets/1.0.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder applicationName(
+                java.lang.String applicationName) {
+            doSetProperty("applicationName", applicationName);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -68,6 +94,30 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * Client ID of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder clientId(
+                java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
+         * Client secret of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -78,6 +128,128 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         default GoogleSheetsStreamComponentBuilder configuration(
                 org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * True if grid data should be returned.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder includeGridData(
+                boolean includeGridData) {
+            doSetProperty("includeGridData", includeGridData);
+            return this;
+        }
+        /**
+         * Specifies the major dimension that results should use..
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: ROWS
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder majorDimension(
+                java.lang.String majorDimension) {
+            doSetProperty("majorDimension", majorDimension);
+            return this;
+        }
+        /**
+         * Specify the maximum number of returned results. This will limit the
+         * number of rows in a returned value range data set or the number of
+         * returned value ranges in a batch request.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder maxResults(int maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Specifies the range of rows and columns in a sheet to get data from.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder range(java.lang.String range) {
+            doSetProperty("range", range);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Specifies the level of permissions you want a sheets application to
+         * have to a user account. See
+         * https://developers.google.com/identity/protocols/googlescopes for
+         * more info.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder scopes(
+                java.util.List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * True if value range result should be split into rows or columns to
+         * process each of them individually. When true each row or column is
+         * represented with a separate exchange in batch processing. Otherwise
+         * value range object is used as exchange junk size.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder splitResults(
+                boolean splitResults) {
+            doSetProperty("splitResults", splitResults);
+            return this;
+        }
+        /**
+         * Specifies the spreadsheet identifier that is used to identify the
+         * target to obtain.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder spreadsheetId(
+                java.lang.String spreadsheetId) {
+            doSetProperty("spreadsheetId", spreadsheetId);
+            return this;
+        }
+        /**
+         * Determines how values should be rendered in the output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: FORMATTED_VALUE
+         * Group: consumer
+         */
+        default GoogleSheetsStreamComponentBuilder valueRenderOption(
+                java.lang.String valueRenderOption) {
+            doSetProperty("valueRenderOption", valueRenderOption);
             return this;
         }
         /**
@@ -119,14 +291,34 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         protected GoogleSheetsStreamComponent buildConcreteComponent() {
             return new GoogleSheetsStreamComponent();
         }
+        private org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "accessToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "applicationName": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setApplicationName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleSheetsStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "clientId": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientId((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientSecret((java.lang.String) value); return true;
             case "configuration": ((GoogleSheetsStreamComponent) component).setConfiguration((org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration) value); return true;
+            case "includeGridData": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setIncludeGridData((boolean) value); return true;
+            case "majorDimension": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMajorDimension((java.lang.String) value); return true;
+            case "maxResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMaxResults((int) value); return true;
+            case "range": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRange((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setScopes((java.util.List) value); return true;
+            case "splitResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setSplitResults((boolean) value); return true;
+            case "spreadsheetId": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setSpreadsheetId((java.lang.String) value); return true;
+            case "valueRenderOption": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setValueRenderOption((java.lang.String) value); return true;
             case "basicPropertyBinding": ((GoogleSheetsStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
             default: return false;
