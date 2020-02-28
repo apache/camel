@@ -32,7 +32,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.support.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +40,8 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyComponent.class);
 
-    @Metadata(label = "advanced")
-    private NettyConfiguration configuration;
+    @Metadata
+    private NettyConfiguration configuration = new NettyConfiguration();
     @Metadata(label = "consumer,advanced")
     private int maximumPoolSize;
     @Metadata(label = "consumer,advanced")
@@ -80,12 +79,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        NettyConfiguration config;
-        if (configuration != null) {
-            config = configuration.copy();
-        } else {
-            config = new NettyConfiguration();
-        }
+        NettyConfiguration config = configuration.copy();
         config = parseConfiguration(config, remaining, parameters);
 
         // merge any custom bootstrap configuration on the config
@@ -151,25 +145,12 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    @Metadata(description = "To configure security using SSLContextParameters", label = "security")
-    public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
-        if (configuration == null) {
-            configuration = new NettyConfiguration();
-        }
-
-        configuration.setSslContextParameters(sslContextParameters);
-    }
-
     public EventExecutorGroup getExecutorService() {
         return executorService;
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (configuration == null) {
-            configuration = new NettyConfiguration();
-        }
-
         //Only setup the executorService if it is needed
         if (configuration.isUsingExecutorService() && executorService == null) {
             int netty = SystemPropertyUtil.getInt("io.netty.eventLoopThreads", NettyRuntime.availableProcessors() * 2);
