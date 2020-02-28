@@ -49,17 +49,6 @@ public interface AwsDdbComponentBuilderFactory {
      */
     interface AwsDdbComponentBuilder extends ComponentBuilder<DdbComponent> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsDdbComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * To use the AmazonDynamoDB as the client.
          * 
          * The option is a:
@@ -70,6 +59,20 @@ public interface AwsDdbComponentBuilderFactory {
         default AwsDdbComponentBuilder amazonDDBClient(
                 com.amazonaws.services.dynamodbv2.AmazonDynamoDB amazonDDBClient) {
             doSetProperty("amazonDDBClient", amazonDDBClient);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ddb.DdbConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsDdbComponentBuilder configuration(
+                org.apache.camel.component.aws.ddb.DdbConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -206,17 +209,6 @@ public interface AwsDdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsDdbComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * The provisioned throughput to reserved for writing resources to your
          * table.
          * 
@@ -244,17 +236,25 @@ public interface AwsDdbComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS DDB default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.ddb.DdbConfiguration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default AwsDdbComponentBuilder configuration(
-                org.apache.camel.component.aws.ddb.DdbConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default AwsDdbComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsDdbComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -281,8 +281,8 @@ public interface AwsDdbComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((DdbComponent) component).setAccessKey((java.lang.String) value); return true;
             case "amazonDDBClient": getOrCreateConfiguration((DdbComponent) component).setAmazonDDBClient((com.amazonaws.services.dynamodbv2.AmazonDynamoDB) value); return true;
+            case "configuration": ((DdbComponent) component).setConfiguration((org.apache.camel.component.aws.ddb.DdbConfiguration) value); return true;
             case "consistentRead": getOrCreateConfiguration((DdbComponent) component).setConsistentRead((boolean) value); return true;
             case "keyAttributeName": getOrCreateConfiguration((DdbComponent) component).setKeyAttributeName((java.lang.String) value); return true;
             case "keyAttributeType": getOrCreateConfiguration((DdbComponent) component).setKeyAttributeType((java.lang.String) value); return true;
@@ -293,10 +293,10 @@ public interface AwsDdbComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((DdbComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "readCapacity": getOrCreateConfiguration((DdbComponent) component).setReadCapacity((java.lang.Long) value); return true;
             case "region": getOrCreateConfiguration((DdbComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((DdbComponent) component).setSecretKey((java.lang.String) value); return true;
             case "writeCapacity": getOrCreateConfiguration((DdbComponent) component).setWriteCapacity((java.lang.Long) value); return true;
             case "basicPropertyBinding": ((DdbComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((DdbComponent) component).setConfiguration((org.apache.camel.component.aws.ddb.DdbConfiguration) value); return true;
+            case "accessKey": getOrCreateConfiguration((DdbComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((DdbComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

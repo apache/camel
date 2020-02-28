@@ -50,18 +50,6 @@ public interface AwsDdbstreamComponentBuilderFactory {
             extends
                 ComponentBuilder<DdbStreamComponent> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default AwsDdbstreamComponentBuilder accessKey(
-                java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * Amazon DynamoDB client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -92,6 +80,19 @@ public interface AwsDdbstreamComponentBuilderFactory {
         default AwsDdbstreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsDdbstreamComponentBuilder configuration(
+                org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -172,18 +173,6 @@ public interface AwsDdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default AwsDdbstreamComponentBuilder secretKey(
-                java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * Provider for the sequence number when using one of the two
          * ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a
          * registry reference or a literal sequence number.
@@ -213,16 +202,27 @@ public interface AwsDdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS DDB stream default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default AwsDdbstreamComponentBuilder configuration(
-                org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default AwsDdbstreamComponentBuilder accessKey(
+                java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsDdbstreamComponentBuilder secretKey(
+                java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -249,19 +249,19 @@ public interface AwsDdbstreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((DdbStreamComponent) component).setAccessKey((java.lang.String) value); return true;
             case "amazonDynamoDbStreamsClient": getOrCreateConfiguration((DdbStreamComponent) component).setAmazonDynamoDbStreamsClient((com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams) value); return true;
             case "bridgeErrorHandler": ((DdbStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "configuration": ((DdbStreamComponent) component).setConfiguration((org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration) value); return true;
             case "iteratorType": getOrCreateConfiguration((DdbStreamComponent) component).setIteratorType((com.amazonaws.services.dynamodbv2.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((DdbStreamComponent) component).setMaxResultsPerRequest((int) value); return true;
             case "proxyHost": getOrCreateConfiguration((DdbStreamComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((DdbStreamComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((DdbStreamComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((DdbStreamComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((DdbStreamComponent) component).setSecretKey((java.lang.String) value); return true;
             case "sequenceNumberProvider": getOrCreateConfiguration((DdbStreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws.ddbstream.SequenceNumberProvider) value); return true;
             case "basicPropertyBinding": ((DdbStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((DdbStreamComponent) component).setConfiguration((org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration) value); return true;
+            case "accessKey": getOrCreateConfiguration((DdbStreamComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((DdbStreamComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }
