@@ -23,9 +23,10 @@ public class TranslateComponentConfigurer extends PropertyConfigurerSupport impl
         TranslateComponent target = (TranslateComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": getOrCreateConfiguration(target).setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.translate.TranslateConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws.translate.TranslateOperations.class, value)); return true;
@@ -35,10 +36,9 @@ public class TranslateComponentConfigurer extends PropertyConfigurerSupport impl
         case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
-        case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcelanguage":
         case "sourceLanguage": getOrCreateConfiguration(target).setSourceLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "targetlanguage":
@@ -47,7 +47,6 @@ public class TranslateComponentConfigurer extends PropertyConfigurerSupport impl
         case "translateClient": getOrCreateConfiguration(target).setTranslateClient(property(camelContext, com.amazonaws.services.translate.AmazonTranslate.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.translate.TranslateConfiguration.class, value)); return true;
         default: return false;
         }
     }
