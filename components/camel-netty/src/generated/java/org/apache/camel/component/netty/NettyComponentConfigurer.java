@@ -22,6 +22,7 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NettyComponent target = (NettyComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.netty.NettyConfiguration.class, value)); return true;
         case "disconnect": getOrCreateConfiguration(target).setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "keepalive":
         case "keepAlive": getOrCreateConfiguration(target).setKeepAlive(property(camelContext, boolean.class, value)); return true;
@@ -97,7 +98,6 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "channelgroup":
         case "channelGroup": getOrCreateConfiguration(target).setChannelGroup(property(camelContext, io.netty.channel.group.ChannelGroup.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.netty.NettyConfiguration.class, value)); return true;
         case "nativetransport":
         case "nativeTransport": getOrCreateConfiguration(target).setNativeTransport(property(camelContext, boolean.class, value)); return true;
         case "options": getOrCreateConfiguration(target).setOptions(property(camelContext, java.util.Map.class, value)); return true;
@@ -142,8 +142,6 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "ssl": getOrCreateConfiguration(target).setSsl(property(camelContext, boolean.class, value)); return true;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": getOrCreateConfiguration(target).setSslClientCertHeaders(property(camelContext, boolean.class, value)); return true;
-        case "sslcontextparameters":
-        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sslhandler":

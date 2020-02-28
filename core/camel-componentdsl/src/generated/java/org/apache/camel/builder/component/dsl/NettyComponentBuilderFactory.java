@@ -47,6 +47,21 @@ public interface NettyComponentBuilderFactory {
      */
     interface NettyComponentBuilder extends ComponentBuilder<NettyComponent> {
         /**
+         * To use the NettyConfiguration as configuration when creating
+         * endpoints.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.netty.NettyConfiguration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default NettyComponentBuilder configuration(
+                org.apache.camel.component.netty.NettyConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
@@ -634,21 +649,6 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the NettyConfiguration as configuration when creating
-         * endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.netty.NettyConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default NettyComponentBuilder configuration(
-                org.apache.camel.component.netty.NettyConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Whether to use native transport instead of NIO. Native transport
          * takes advantage of the host operating system and is only supported on
          * some platforms. You need to add the netty JAR for the host operating
@@ -1100,6 +1100,7 @@ public interface NettyComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((NettyComponent) component).setConfiguration((org.apache.camel.component.netty.NettyConfiguration) value); return true;
             case "disconnect": getOrCreateConfiguration((NettyComponent) component).setDisconnect((boolean) value); return true;
             case "keepAlive": getOrCreateConfiguration((NettyComponent) component).setKeepAlive((boolean) value); return true;
             case "reuseAddress": getOrCreateConfiguration((NettyComponent) component).setReuseAddress((boolean) value); return true;
@@ -1140,7 +1141,6 @@ public interface NettyComponentBuilderFactory {
             case "allowSerializedHeaders": getOrCreateConfiguration((NettyComponent) component).setAllowSerializedHeaders((boolean) value); return true;
             case "basicPropertyBinding": ((NettyComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "channelGroup": getOrCreateConfiguration((NettyComponent) component).setChannelGroup((io.netty.channel.group.ChannelGroup) value); return true;
-            case "configuration": ((NettyComponent) component).setConfiguration((org.apache.camel.component.netty.NettyConfiguration) value); return true;
             case "nativeTransport": getOrCreateConfiguration((NettyComponent) component).setNativeTransport((boolean) value); return true;
             case "options": getOrCreateConfiguration((NettyComponent) component).setOptions((java.util.Map) value); return true;
             case "receiveBufferSize": getOrCreateConfiguration((NettyComponent) component).setReceiveBufferSize((int) value); return true;
