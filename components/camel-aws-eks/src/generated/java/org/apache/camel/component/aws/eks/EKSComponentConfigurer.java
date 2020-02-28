@@ -23,7 +23,8 @@ public class EKSComponentConfigurer extends PropertyConfigurerSupport implements
         EKSComponent target = (EKSComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.eks.EKSConfiguration.class, value)); return true;
         case "eksclient":
         case "eksClient": getOrCreateConfiguration(target).setEksClient(property(camelContext, com.amazonaws.services.eks.AmazonEKS.class, value)); return true;
         case "lazystartproducer":
@@ -35,13 +36,11 @@ public class EKSComponentConfigurer extends PropertyConfigurerSupport implements
         case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
-        case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
-        case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.eks.EKSConfiguration.class, value)); return true;
         default: return false;
         }
     }

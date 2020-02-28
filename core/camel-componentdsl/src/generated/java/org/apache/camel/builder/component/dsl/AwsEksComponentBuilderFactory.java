@@ -58,6 +58,20 @@ public interface AwsEksComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.eks.EKSConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder configuration(
+                org.apache.camel.component.aws.eks.EKSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * To use a existing configured AWS EKS as client.
          * 
          * The option is a: <code>com.amazonaws.services.eks.AmazonEKS</code>
@@ -178,20 +192,6 @@ public interface AwsEksComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS EKS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.eks.EKSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsEksComponentBuilder configuration(
-                org.apache.camel.component.aws.eks.EKSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsEksComponentBuilderImpl
@@ -216,7 +216,8 @@ public interface AwsEksComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((EKSComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((EKSComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "configuration": ((EKSComponent) component).setConfiguration((org.apache.camel.component.aws.eks.EKSConfiguration) value); return true;
             case "eksClient": getOrCreateConfiguration((EKSComponent) component).setEksClient((com.amazonaws.services.eks.AmazonEKS) value); return true;
             case "lazyStartProducer": ((EKSComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((EKSComponent) component).setOperation((org.apache.camel.component.aws.eks.EKSOperations) value); return true;
@@ -224,9 +225,8 @@ public interface AwsEksComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((EKSComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((EKSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((EKSComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((EKSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((EKSComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((EKSComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((EKSComponent) component).setConfiguration((org.apache.camel.component.aws.eks.EKSConfiguration) value); return true;
             default: return false;
             }
         }
