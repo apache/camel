@@ -33,13 +33,7 @@ import org.apache.camel.support.DefaultComponent;
 public class KMSComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private KMSConfiguration configuration;
+    private KMSConfiguration configuration = new KMSConfiguration();
     
     public KMSComponent() {
         this(null);
@@ -56,9 +50,6 @@ public class KMSComponent extends DefaultComponent {
         KMSConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KMSConfiguration();
         
         KMSEndpoint endpoint = new KMSEndpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getKmsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -73,43 +64,10 @@ public class KMSComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS KMS default configuration
+     * The Component configuration
      */
     public void setConfiguration(KMSConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-    
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which KMS client needs to work
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(KMSConfiguration configuration) {

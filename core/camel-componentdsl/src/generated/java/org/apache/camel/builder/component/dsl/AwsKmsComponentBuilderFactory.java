@@ -58,6 +58,20 @@ public interface AwsKmsComponentBuilderFactory {
             return this;
         }
         /**
+         * The Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder configuration(
+                org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * To use a existing configured AWS KMS as client.
          * 
          * The option is a: <code>com.amazonaws.services.kms.AWSKMS</code> type.
@@ -177,20 +191,6 @@ public interface AwsKmsComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS KMS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsKmsComponentBuilder configuration(
-                org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsKmsComponentBuilderImpl
@@ -215,7 +215,8 @@ public interface AwsKmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((KMSComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((KMSComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "configuration": ((KMSComponent) component).setConfiguration((org.apache.camel.component.aws.kms.KMSConfiguration) value); return true;
             case "kmsClient": getOrCreateConfiguration((KMSComponent) component).setKmsClient((com.amazonaws.services.kms.AWSKMS) value); return true;
             case "lazyStartProducer": ((KMSComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((KMSComponent) component).setOperation((org.apache.camel.component.aws.kms.KMSOperations) value); return true;
@@ -223,9 +224,8 @@ public interface AwsKmsComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((KMSComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((KMSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((KMSComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((KMSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((KMSComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((KMSComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((KMSComponent) component).setConfiguration((org.apache.camel.component.aws.kms.KMSConfiguration) value); return true;
             default: return false;
             }
         }
