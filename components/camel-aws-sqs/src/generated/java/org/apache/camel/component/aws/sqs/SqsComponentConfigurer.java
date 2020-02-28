@@ -36,6 +36,7 @@ public class SqsComponentConfigurer extends PropertyConfigurerSupport implements
         case "queueownerawsaccountid":
         case "queueOwnerAWSAccountId": getOrCreateConfiguration(target).setQueueOwnerAWSAccountId(property(camelContext, java.lang.String.class, value)); return true;
         case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "attributenames":

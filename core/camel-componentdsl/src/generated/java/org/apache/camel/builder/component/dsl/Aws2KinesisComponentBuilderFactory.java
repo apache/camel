@@ -113,7 +113,10 @@ public interface Aws2KinesisComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * The region in which Kinesis Firehose client needs to work. When using
+         * this parameter, the configuration will expect the lowercase name of
+         * the region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -300,7 +303,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((Kinesis2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Kinesis2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Kinesis2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": ((Kinesis2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Kinesis2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Kinesis2Component) component).setSecretKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Kinesis2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((Kinesis2Component) component).setIteratorType((software.amazon.awssdk.services.kinesis.model.ShardIteratorType) value); return true;

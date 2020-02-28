@@ -146,7 +146,10 @@ public interface AwsTranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which Translate client needs to work.
+         * The region in which Translate client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -263,7 +266,7 @@ public interface AwsTranslateComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((TranslateComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((TranslateComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((TranslateComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((TranslateComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((TranslateComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((TranslateComponent) component).setSecretKey((java.lang.String) value); return true;
             case "sourceLanguage": getOrCreateConfiguration((TranslateComponent) component).setSourceLanguage((java.lang.String) value); return true;
             case "targetLanguage": getOrCreateConfiguration((TranslateComponent) component).setTargetLanguage((java.lang.String) value); return true;

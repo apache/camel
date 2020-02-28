@@ -137,7 +137,10 @@ public interface AwsSqsComponentBuilderFactory {
         }
         /**
          * Specify the queue region which could be used with
-         * queueOwnerAWSAccountId to build the service URL.
+         * queueOwnerAWSAccountId to build the service URL. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -593,7 +596,7 @@ public interface AwsSqsComponentBuilderFactory {
             case "protocol": getOrCreateConfiguration((SqsComponent) component).setProtocol((java.lang.String) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((SqsComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "queueOwnerAWSAccountId": getOrCreateConfiguration((SqsComponent) component).setQueueOwnerAWSAccountId((java.lang.String) value); return true;
-            case "region": ((SqsComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((SqsComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((SqsComponent) component).setSecretKey((java.lang.String) value); return true;
             case "attributeNames": getOrCreateConfiguration((SqsComponent) component).setAttributeNames((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((SqsComponent) component).setBridgeErrorHandler((boolean) value); return true;

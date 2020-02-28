@@ -140,7 +140,10 @@ public interface AwsEcsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which ECS client needs to work.
+         * The region in which ECS client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -220,7 +223,7 @@ public interface AwsEcsComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((ECSComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((ECSComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((ECSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((ECSComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((ECSComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((ECSComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((ECSComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((ECSComponent) component).setConfiguration((org.apache.camel.component.aws.ecs.ECSConfiguration) value); return true;

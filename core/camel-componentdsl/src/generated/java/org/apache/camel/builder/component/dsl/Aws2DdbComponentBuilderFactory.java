@@ -294,7 +294,7 @@ public interface Aws2DdbComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((Ddb2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Ddb2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "readCapacity": getOrCreateConfiguration((Ddb2Component) component).setReadCapacity((java.lang.Long) value); return true;
-            case "region": ((Ddb2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Ddb2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Ddb2Component) component).setSecretKey((java.lang.String) value); return true;
             case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
             case "basicPropertyBinding": ((Ddb2Component) component).setBasicPropertyBinding((boolean) value); return true;

@@ -44,6 +44,7 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "queueurl":
         case "queueUrl": getOrCreateConfiguration(target).setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "serversideencryptionenabled":

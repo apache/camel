@@ -140,7 +140,10 @@ public interface AwsMskComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which MSK client needs to work.
+         * The region in which MSK client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -220,7 +223,7 @@ public interface AwsMskComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((MSKComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((MSKComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((MSKComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((MSKComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((MSKComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((MSKComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MSKComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((MSKComponent) component).setConfiguration((org.apache.camel.component.aws.msk.MSKConfiguration) value); return true;

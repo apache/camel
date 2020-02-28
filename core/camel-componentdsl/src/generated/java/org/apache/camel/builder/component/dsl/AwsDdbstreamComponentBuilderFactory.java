@@ -161,7 +161,7 @@ public interface AwsDdbstreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * The region in which DDBStreams client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -257,7 +257,7 @@ public interface AwsDdbstreamComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((DdbStreamComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((DdbStreamComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((DdbStreamComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((DdbStreamComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((DdbStreamComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((DdbStreamComponent) component).setSecretKey((java.lang.String) value); return true;
             case "sequenceNumberProvider": getOrCreateConfiguration((DdbStreamComponent) component).setSequenceNumberProvider((org.apache.camel.component.aws.ddbstream.SequenceNumberProvider) value); return true;
             case "basicPropertyBinding": ((DdbStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;

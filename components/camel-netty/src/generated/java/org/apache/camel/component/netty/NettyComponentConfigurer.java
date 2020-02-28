@@ -143,6 +143,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "sslclientcertheaders":
         case "sslClientCertHeaders": getOrCreateConfiguration(target).setSslClientCertHeaders(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "sslcontextparameters":
         case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sslhandler":
         case "sslHandler": getOrCreateConfiguration(target).setSslHandler(property(camelContext, io.netty.handler.ssl.SslHandler.class, value)); return true;

@@ -35,6 +35,7 @@ public class KinesisFirehoseComponentConfigurer extends PropertyConfigurerSuppor
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
         case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":

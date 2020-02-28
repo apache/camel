@@ -140,7 +140,10 @@ public interface AwsIamComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which IAM client needs to work.
+         * The region in which IAM client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -220,7 +223,7 @@ public interface AwsIamComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((IAMComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((IAMComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((IAMComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((IAMComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((IAMComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((IAMComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;

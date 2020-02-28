@@ -189,7 +189,10 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which SNS client needs to work.
+         * The region in which SNS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -312,7 +315,7 @@ public interface Aws2SnsComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((Sns2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Sns2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "queueUrl": getOrCreateConfiguration((Sns2Component) component).setQueueUrl((java.lang.String) value); return true;
-            case "region": ((Sns2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Sns2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
             case "serverSideEncryptionEnabled": getOrCreateConfiguration((Sns2Component) component).setServerSideEncryptionEnabled((boolean) value); return true;
             case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;

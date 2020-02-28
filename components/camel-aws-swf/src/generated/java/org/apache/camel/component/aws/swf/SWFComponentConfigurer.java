@@ -33,6 +33,7 @@ public class SWFComponentConfigurer extends PropertyConfigurerSupport implements
         case "eventname":
         case "eventName": getOrCreateConfiguration(target).setEventName(property(camelContext, java.lang.String.class, value)); return true;
         case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "version": getOrCreateConfiguration(target).setVersion(property(camelContext, java.lang.String.class, value)); return true;

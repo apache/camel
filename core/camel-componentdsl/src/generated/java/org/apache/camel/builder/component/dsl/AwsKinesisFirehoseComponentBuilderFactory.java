@@ -138,7 +138,10 @@ public interface AwsKinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * The region in which Kinesis client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1)You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -218,7 +221,7 @@ public interface AwsKinesisFirehoseComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((KinesisFirehoseComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((KinesisFirehoseComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((KinesisFirehoseComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((KinesisFirehoseComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((KinesisFirehoseComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((KinesisFirehoseComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((KinesisFirehoseComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((KinesisFirehoseComponent) component).setConfiguration((org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration) value); return true;

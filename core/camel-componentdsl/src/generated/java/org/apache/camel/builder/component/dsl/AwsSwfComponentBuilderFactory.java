@@ -111,7 +111,9 @@ public interface AwsSwfComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * Amazon AWS Region. When using this parameter, the configuration will
+         * expect the capitalized name of the region (for example AP_EAST_1)
+         * You'll need to use the name Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -467,7 +469,7 @@ public interface AwsSwfComponentBuilderFactory {
             case "dataConverter": getOrCreateConfiguration((SWFComponent) component).setDataConverter((com.amazonaws.services.simpleworkflow.flow.DataConverter) value); return true;
             case "domainName": getOrCreateConfiguration((SWFComponent) component).setDomainName((java.lang.String) value); return true;
             case "eventName": getOrCreateConfiguration((SWFComponent) component).setEventName((java.lang.String) value); return true;
-            case "region": ((SWFComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((SWFComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((SWFComponent) component).setSecretKey((java.lang.String) value); return true;
             case "version": getOrCreateConfiguration((SWFComponent) component).setVersion((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((SWFComponent) component).setBridgeErrorHandler((boolean) value); return true;

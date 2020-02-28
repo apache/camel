@@ -35,6 +35,7 @@ public class SesComponentConfigurer extends PropertyConfigurerSupport implements
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
         case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "replytoaddresses":
         case "replyToAddresses": getOrCreateConfiguration(target).setReplyToAddresses(property(camelContext, java.util.List.class, value)); return true;
         case "returnpath":

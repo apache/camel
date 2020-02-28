@@ -141,7 +141,10 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which EKS client needs to work.
+         * The region in which EKS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -221,7 +224,7 @@ public interface Aws2EksComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((EKS2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((EKS2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((EKS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": ((EKS2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((EKS2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((EKS2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((EKS2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((EKS2Component) component).setConfiguration((org.apache.camel.component.aws2.eks.EKS2Configuration) value); return true;

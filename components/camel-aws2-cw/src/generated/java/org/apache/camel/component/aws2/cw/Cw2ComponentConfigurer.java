@@ -36,6 +36,7 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
         case "region": target.setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "timestamp": getOrCreateConfiguration(target).setTimestamp(property(camelContext, java.time.Instant.class, value)); return true;
