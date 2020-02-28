@@ -9,9 +9,7 @@
 
 The Google Pubsub component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
-the https://cloud.google.com/apis/docs/client-libraries-explained[Google Client Services API].
-
-The current implementation does not use gRPC.
+the https://github.com/googleapis/java-pubsub[Google Cloud Java Client for Google Cloud Pub/Sub].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -39,17 +37,20 @@ Destination Name can be either a topic or a subscription name.
 == Options
 
 // component options: START
-The Google Pubsub component supports 4 options, which are listed below.
+The Google Pubsub component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionFactory* (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GooglePubsubConnectionFactory
+| *endpoint* (common) | Endpoint to use with local Pub/Sub emulator. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *publisherCacheSize* (producer) | Maximum number of producers to cache. This could be increased if you have producers for lots of different topics. |  | int
+| *publisherCacheTimeout* (producer) | How many milliseconds should each producer stay alive in the cache. |  | int
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *publisherTerminationTimeout* (advanced) | How many milliseconds should a producer be allowed to terminate. |  | int
 |===
 // component options: END
 
@@ -81,9 +82,9 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *ackMode* (common) | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly. The value can be one of: AUTO, NONE | AUTO | AckMode
 | *concurrentConsumers* (common) | The number of parallel streams consuming from the subscription | 1 | Integer
-| *connectionFactory* (common) | ConnectionFactory to obtain connection to PubSub Service. If non provided the default one will be used |  | GooglePubsubConnectionFactory
 | *loggerId* (common) | Logger ID to use when a match to the parent route required |  | String
 | *maxMessagesPerPoll* (common) | The max number of messages to receive from the server in a single API call | 1 | Integer
+| *synchronousPull* (common) | Synchronously pull batches of messages | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
@@ -92,6 +93,34 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-google-pubsub-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-pubsub.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.google-pubsub.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.google-pubsub.enabled* | Whether to enable auto configuration of the google-pubsub component. This is enabled by default. |  | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 
 == Producer Endpoints
@@ -128,7 +157,6 @@ Headers set by the consumer endpoints:
 * GooglePubsubConstants.MESSAGE_ID
 * GooglePubsubConstants.ATTRIBUTES
 * GooglePubsubConstants.PUBLISH_TIME
-* GooglePubsubConstants.ACK_ID
 
 == Message Body
 
@@ -137,22 +165,7 @@ It is up for the route to convert/unmarshall the contents.
 
 == Authentication Configuration
 
-Google Pubsub component authentication is targeted for use with the GCP Service Accounts.
-For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
-
-Google security credentials can be set explicitly via one of the two options:
-
-* Service Account Email and Service Account Key (PEM format)
-* GCP credentials file location
-
-If both are set, the Service Account Email/Key will take precedence.
-
-Or implicitly, where the connection factory falls back on
-https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
-
-*OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
-
-Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
+The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
 
 == Rollback and Redelivery
 

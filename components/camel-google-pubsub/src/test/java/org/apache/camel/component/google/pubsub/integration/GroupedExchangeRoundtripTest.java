@@ -45,7 +45,7 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
     @EndpointInject("mock:sendResult")
     private MockEndpoint sendResult;
 
-    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=true")
     private Endpoint pubsubSubscription;
 
     @EndpointInject("mock:receiveResult")
@@ -54,8 +54,8 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
     @Produce("direct:aggregator")
     private ProducerTemplate producer;
 
-    @BeforeClass
-    public static void createTopicSubscription() throws Exception {
+    @Override
+    public void createTopicSubscription() {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
@@ -74,7 +74,7 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
     }
 
     /**
-     * Tests that a grouped exhcange is successfully received
+     * Tests that a grouped exchange is successfully received
      *
      * @throws Exception
      */
@@ -102,8 +102,5 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
         // Send result section
         List<Exchange> results = sendResult.getExchanges();
         assertEquals("Received exchanges", 1, results.size());
-
-        List exchangeGrouped = (List)results.get(0).getProperty(Exchange.GROUPED_EXCHANGE);
-        assertEquals("Received messages within the exchange", 2, exchangeGrouped.size());
     }
 }

@@ -31,7 +31,7 @@ public class PubsubEndpointTest extends PubsubTestSupport {
 
     // For testing purposes the URI params need to be aligned in alphabetical
     // order
-    private static final String SUBSCRIPTION_URI = TEST_SUBSCRIPTION_NAME + "?ackMode=NONE" + "&concurrentConsumers=5" + "&maxMessagesPerPoll=2";
+    private static final String SUBSCRIPTION_URI = TEST_SUBSCRIPTION_NAME + "?ackMode=NONE" + "&concurrentConsumers=5";
 
     @EndpointInject("google-pubsub://{{project.id}}:" + SUBSCRIPTION_URI)
     private Endpoint from;
@@ -54,8 +54,7 @@ public class PubsubEndpointTest extends PubsubTestSupport {
 
         assertEquals(PROJECT_ID, pubsubEndpoint.getProjectId());
         assertEquals(TEST_SUBSCRIPTION_NAME, pubsubEndpoint.getDestinationName());
-        assertEquals(new Integer(5), pubsubEndpoint.getConcurrentConsumers());
-        assertEquals(new Integer(2), pubsubEndpoint.getMaxMessagesPerPoll());
+        assertEquals(Integer.valueOf(5), pubsubEndpoint.getConcurrentConsumers());
         assertEquals(GooglePubsubConstants.AckMode.NONE, pubsubEndpoint.getAckMode());
 
     }
