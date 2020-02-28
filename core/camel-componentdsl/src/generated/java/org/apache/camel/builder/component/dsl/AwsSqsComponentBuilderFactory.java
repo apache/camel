@@ -382,14 +382,13 @@ public interface AwsSqsComponentBuilderFactory {
          * useContentBasedDeduplication. For the useContentBasedDeduplication
          * option, no messageDeduplicationId will be set on the message.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: useExchangeId
          * Group: producer
          */
         default AwsSqsComponentBuilder messageDeduplicationIdStrategy(
-                org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy messageDeduplicationIdStrategy) {
+                java.lang.String messageDeduplicationIdStrategy) {
             doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
             return this;
         }
@@ -399,13 +398,12 @@ public interface AwsSqsComponentBuilderFactory {
          * useExchangeId, usePropertyValue. For the usePropertyValue option, the
          * value of property CamelAwsMessageGroupId will be used.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.sqs.MessageGroupIdStrategy</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
         default AwsSqsComponentBuilder messageGroupIdStrategy(
-                org.apache.camel.component.aws.sqs.MessageGroupIdStrategy messageGroupIdStrategy) {
+                java.lang.String messageGroupIdStrategy) {
             doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
             return this;
         }
@@ -612,8 +610,8 @@ public interface AwsSqsComponentBuilderFactory {
             case "waitTimeSeconds": getOrCreateConfiguration((SqsComponent) component).setWaitTimeSeconds((java.lang.Integer) value); return true;
             case "delaySeconds": getOrCreateConfiguration((SqsComponent) component).setDelaySeconds((java.lang.Integer) value); return true;
             case "lazyStartProducer": ((SqsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "messageDeduplicationIdStrategy": getOrCreateConfiguration((SqsComponent) component).setMessageDeduplicationIdStrategy((org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy) value); return true;
-            case "messageGroupIdStrategy": getOrCreateConfiguration((SqsComponent) component).setMessageGroupIdStrategy((org.apache.camel.component.aws.sqs.MessageGroupIdStrategy) value); return true;
+            case "messageDeduplicationIdStrategy": getOrCreateConfiguration((SqsComponent) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
+            case "messageGroupIdStrategy": getOrCreateConfiguration((SqsComponent) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((SqsComponent) component).setOperation((org.apache.camel.component.aws.sqs.SqsOperations) value); return true;
             case "basicPropertyBinding": ((SqsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((SqsComponent) component).setConfiguration((org.apache.camel.component.aws.sqs.SqsConfiguration) value); return true;
