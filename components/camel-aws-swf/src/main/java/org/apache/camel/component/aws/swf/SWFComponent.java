@@ -32,13 +32,7 @@ import org.apache.camel.util.PropertiesHelper;
 public class SWFComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private SWFConfiguration configuration;
+    private SWFConfiguration configuration = new SWFConfiguration();
     
     public SWFComponent() {
         this(null);
@@ -63,9 +57,6 @@ public class SWFComponent extends DefaultComponent {
         configuration.setStartWorkflowOptionsParameters(startWorkflowOptionsParameters);
         
         SWFEndpoint endpoint = new SWFEndpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSWClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -79,43 +70,10 @@ public class SWFComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS SWF default configuration
+     * The component configuration
      */    
     public void setConfiguration(SWFConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key.
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key.
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Amazon AWS Region.
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
     
     private void checkAndSetRegistryClient(SWFConfiguration configuration) {
