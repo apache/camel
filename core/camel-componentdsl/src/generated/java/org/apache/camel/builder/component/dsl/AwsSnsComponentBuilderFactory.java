@@ -49,17 +49,6 @@ public interface AwsSnsComponentBuilderFactory {
      */
     interface AwsSnsComponentBuilder extends ComponentBuilder<SnsComponent> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsSnsComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * To use the AmazonSNS as the client.
          * 
          * The option is a: <code>com.amazonaws.services.sns.AmazonSNS</code>
@@ -95,6 +84,20 @@ public interface AwsSnsComponentBuilderFactory {
          */
         default AwsSnsComponentBuilder autoCreateTopic(boolean autoCreateTopic) {
             doSetProperty("autoCreateTopic", autoCreateTopic);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.sns.SnsConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsSnsComponentBuilder configuration(
+                org.apache.camel.component.aws.sns.SnsConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -215,17 +218,6 @@ public interface AwsSnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AwsSnsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * Define if Server Side Encryption is enabled or not on the topic.
          * 
          * The option is a: <code>boolean</code> type.
@@ -279,17 +271,25 @@ public interface AwsSnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS SNS default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.sns.SnsConfiguration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default AwsSnsComponentBuilder configuration(
-                org.apache.camel.component.aws.sns.SnsConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default AwsSnsComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsSnsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -316,10 +316,10 @@ public interface AwsSnsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((SnsComponent) component).setAccessKey((java.lang.String) value); return true;
             case "amazonSNSClient": getOrCreateConfiguration((SnsComponent) component).setAmazonSNSClient((com.amazonaws.services.sns.AmazonSNS) value); return true;
             case "amazonSQSClient": getOrCreateConfiguration((SnsComponent) component).setAmazonSQSClient((com.amazonaws.services.sqs.AmazonSQS) value); return true;
             case "autoCreateTopic": getOrCreateConfiguration((SnsComponent) component).setAutoCreateTopic((boolean) value); return true;
+            case "configuration": ((SnsComponent) component).setConfiguration((org.apache.camel.component.aws.sns.SnsConfiguration) value); return true;
             case "kmsMasterKeyId": getOrCreateConfiguration((SnsComponent) component).setKmsMasterKeyId((java.lang.String) value); return true;
             case "lazyStartProducer": ((SnsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "messageStructure": getOrCreateConfiguration((SnsComponent) component).setMessageStructure((java.lang.String) value); return true;
@@ -329,12 +329,12 @@ public interface AwsSnsComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((SnsComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "queueUrl": getOrCreateConfiguration((SnsComponent) component).setQueueUrl((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((SnsComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((SnsComponent) component).setSecretKey((java.lang.String) value); return true;
             case "serverSideEncryptionEnabled": getOrCreateConfiguration((SnsComponent) component).setServerSideEncryptionEnabled((boolean) value); return true;
             case "subject": getOrCreateConfiguration((SnsComponent) component).setSubject((java.lang.String) value); return true;
             case "subscribeSNStoSQS": getOrCreateConfiguration((SnsComponent) component).setSubscribeSNStoSQS((boolean) value); return true;
             case "basicPropertyBinding": ((SnsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((SnsComponent) component).setConfiguration((org.apache.camel.component.aws.sns.SnsConfiguration) value); return true;
+            case "accessKey": getOrCreateConfiguration((SnsComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((SnsComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }
