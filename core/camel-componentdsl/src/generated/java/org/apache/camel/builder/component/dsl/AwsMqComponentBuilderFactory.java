@@ -71,6 +71,19 @@ public interface AwsMqComponentBuilderFactory {
             return this;
         }
         /**
+         * The Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.mq.MQConfiguration</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder configuration(
+                org.apache.camel.component.aws.mq.MQConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -179,19 +192,6 @@ public interface AwsMqComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS MQ default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.mq.MQConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsMqComponentBuilder configuration(
-                org.apache.camel.component.aws.mq.MQConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsMqComponentBuilderImpl
@@ -216,17 +216,17 @@ public interface AwsMqComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((MQComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((MQComponent) component).setAccessKey((java.lang.String) value); return true;
             case "amazonMqClient": getOrCreateConfiguration((MQComponent) component).setAmazonMqClient((com.amazonaws.services.mq.AmazonMQ) value); return true;
+            case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
             case "lazyStartProducer": ((MQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((MQComponent) component).setOperation((org.apache.camel.component.aws.mq.MQOperations) value); return true;
             case "proxyHost": getOrCreateConfiguration((MQComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((MQComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((MQComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((MQComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((MQComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((MQComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MQComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
             default: return false;
             }
         }
