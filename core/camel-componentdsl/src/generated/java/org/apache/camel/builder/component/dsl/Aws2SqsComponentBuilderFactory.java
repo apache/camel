@@ -49,17 +49,6 @@ public interface Aws2SqsComponentBuilderFactory {
      */
     interface Aws2SqsComponentBuilder extends ComponentBuilder<Sqs2Component> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Aws2SqsComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * The hostname of the Amazon AWS cloud.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -95,6 +84,20 @@ public interface Aws2SqsComponentBuilderFactory {
          */
         default Aws2SqsComponentBuilder autoCreateQueue(boolean autoCreateQueue) {
             doSetProperty("autoCreateQueue", autoCreateQueue);
+            return this;
+        }
+        /**
+         * The AWS SQS default configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.sqs.Sqs2Configuration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default Aws2SqsComponentBuilder configuration(
+                org.apache.camel.component.aws2.sqs.Sqs2Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -137,8 +140,10 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Specify the queue region which could be used with
-         * queueOwnerAWSAccountId to build the service URL.
+         * The region in which ECS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -146,17 +151,6 @@ public interface Aws2SqsComponentBuilderFactory {
          */
         default Aws2SqsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Aws2SqsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -438,20 +432,6 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS SQS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.sqs.Sqs2Configuration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default Aws2SqsComponentBuilder configuration(
-                org.apache.camel.component.aws2.sqs.Sqs2Configuration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
@@ -564,6 +544,28 @@ public interface Aws2SqsComponentBuilderFactory {
             doSetProperty("redrivePolicy", redrivePolicy);
             return this;
         }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2SqsComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2SqsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
     }
 
     class Aws2SqsComponentBuilderImpl
@@ -588,15 +590,14 @@ public interface Aws2SqsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((Sqs2Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonAWSHost": getOrCreateConfiguration((Sqs2Component) component).setAmazonAWSHost((java.lang.String) value); return true;
             case "amazonSQSClient": getOrCreateConfiguration((Sqs2Component) component).setAmazonSQSClient((software.amazon.awssdk.services.sqs.SqsClient) value); return true;
             case "autoCreateQueue": getOrCreateConfiguration((Sqs2Component) component).setAutoCreateQueue((boolean) value); return true;
+            case "configuration": ((Sqs2Component) component).setConfiguration((org.apache.camel.component.aws2.sqs.Sqs2Configuration) value); return true;
             case "protocol": getOrCreateConfiguration((Sqs2Component) component).setProtocol((java.lang.String) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Sqs2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "queueOwnerAWSAccountId": getOrCreateConfiguration((Sqs2Component) component).setQueueOwnerAWSAccountId((java.lang.String) value); return true;
-            case "region": ((Sqs2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((Sqs2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Sqs2Component) component).setRegion((java.lang.String) value); return true;
             case "attributeNames": getOrCreateConfiguration((Sqs2Component) component).setAttributeNames((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Sqs2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((Sqs2Component) component).setConcurrentConsumers((int) value); return true;
@@ -616,7 +617,6 @@ public interface Aws2SqsComponentBuilderFactory {
             case "messageGroupIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((Sqs2Component) component).setOperation((org.apache.camel.component.aws2.sqs.Sqs2Operations) value); return true;
             case "basicPropertyBinding": ((Sqs2Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((Sqs2Component) component).setConfiguration((org.apache.camel.component.aws2.sqs.Sqs2Configuration) value); return true;
             case "delayQueue": getOrCreateConfiguration((Sqs2Component) component).setDelayQueue((boolean) value); return true;
             case "queueUrl": getOrCreateConfiguration((Sqs2Component) component).setQueueUrl((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sqs2Component) component).setProxyHost((java.lang.String) value); return true;
@@ -626,6 +626,8 @@ public interface Aws2SqsComponentBuilderFactory {
             case "policy": getOrCreateConfiguration((Sqs2Component) component).setPolicy((java.lang.String) value); return true;
             case "receiveMessageWaitTimeSeconds": getOrCreateConfiguration((Sqs2Component) component).setReceiveMessageWaitTimeSeconds((java.lang.Integer) value); return true;
             case "redrivePolicy": getOrCreateConfiguration((Sqs2Component) component).setRedrivePolicy((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((Sqs2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Sqs2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

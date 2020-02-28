@@ -247,8 +247,8 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
 
         context.getRegistry().bind("amazonSQSClient", mock);
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -259,9 +259,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -273,9 +273,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithoutAutoCreation() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&autoCreateQueue=false");
 
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -288,9 +288,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Sqs2Endpoint endpoint = (Sqs2Endpoint)component
             .createEndpoint("aws2-sqs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 

@@ -34,13 +34,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 public class Sqs2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private Sqs2Configuration configuration;
+    private Sqs2Configuration configuration = new Sqs2Configuration();
 
     public Sqs2Component() {
         this(null);
@@ -71,9 +65,6 @@ public class Sqs2Component extends DefaultComponent {
             configuration.setQueueName(remaining);
         }
         Sqs2Endpoint sqsEndpoint = new Sqs2Endpoint(uri, this, configuration);
-        sqsEndpoint.getConfiguration().setAccessKey(accessKey);
-        sqsEndpoint.getConfiguration().setSecretKey(secretKey);
-        sqsEndpoint.getConfiguration().setRegion(region);
         setProperties(sqsEndpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -97,40 +88,6 @@ public class Sqs2Component extends DefaultComponent {
      */
     public void setConfiguration(Sqs2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Specify the queue region which could be used with queueOwnerAWSAccountId
-     * to build the service URL.
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(Sqs2Configuration configuration) {
