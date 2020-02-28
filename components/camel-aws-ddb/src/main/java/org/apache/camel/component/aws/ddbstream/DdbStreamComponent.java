@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 public class DdbStreamComponent extends DefaultComponent {
     
     @Metadata 
-    private DdbStreamConfiguration configuration;
+    private DdbStreamConfiguration configuration = new DdbStreamConfiguration();
 
     public DdbStreamComponent() {
         this(null);
