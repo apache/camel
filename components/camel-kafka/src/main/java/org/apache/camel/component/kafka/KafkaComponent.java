@@ -33,8 +33,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
     @Metadata
     private KafkaConfiguration configuration = new KafkaConfiguration();
-    @Metadata(label = "advanced")
-    private ExecutorService workerPool;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "consumer,advanced")
@@ -57,9 +55,7 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
         KafkaConfiguration copy = getConfiguration().copy();
         endpoint.setConfiguration(copy);
-
         endpoint.getConfiguration().setTopic(remaining);
-        endpoint.getConfiguration().setWorkerPool(getWorkerPool());
 
         setProperties(endpoint, parameters);
 
@@ -89,21 +85,6 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
      */
     public void setConfiguration(KafkaConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public ExecutorService getWorkerPool() {
-        return workerPool;
-    }
-
-    /**
-     * To use a shared custom worker pool for continue routing {@link Exchange}
-     * after kafka server has acknowledge the message that was sent to it from
-     * {@link KafkaProducer} using asynchronous non-blocking processing. If
-     * using this option then you must handle the lifecycle of the thread pool
-     * to shut the pool down when no longer needed.
-     */
-    public void setWorkerPool(ExecutorService workerPool) {
-        this.workerPool = workerPool;
     }
 
     @Override
