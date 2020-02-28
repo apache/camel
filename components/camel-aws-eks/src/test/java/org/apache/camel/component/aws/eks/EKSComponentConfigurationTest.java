@@ -27,8 +27,8 @@ public class EKSComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         EKSComponent component = context.getComponent("aws-eks", EKSComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-eks://label");
         
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
@@ -38,9 +38,9 @@ public class EKSComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         EKSComponent component = context.getComponent("aws-eks", EKSComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
         EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-eks://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -51,9 +51,9 @@ public class EKSComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         EKSComponent component = context.getComponent("aws-eks", EKSComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
         EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-eks://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
         
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
