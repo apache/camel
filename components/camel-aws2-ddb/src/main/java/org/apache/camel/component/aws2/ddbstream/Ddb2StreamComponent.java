@@ -30,13 +30,7 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 public class Ddb2StreamComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private Ddb2StreamConfiguration configuration;
+    private Ddb2StreamConfiguration configuration = new Ddb2StreamConfiguration();
 
     public Ddb2StreamComponent() {
         this(null);
@@ -57,9 +51,6 @@ public class Ddb2StreamComponent extends DefaultComponent {
         Ddb2StreamConfiguration configuration = this.configuration != null ? this.configuration.copy() : new Ddb2StreamConfiguration();
         configuration.setTableName(remaining);
         Ddb2StreamEndpoint endpoint = new Ddb2StreamEndpoint(uri, configuration, this);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonDynamoDbStreamsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -73,43 +64,10 @@ public class Ddb2StreamComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS DDB stream default configuration
+     * The component configuration
      */
     public void setConfiguration(Ddb2StreamConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Amazon AWS Region
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(Ddb2StreamConfiguration configuration) {
