@@ -140,7 +140,10 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which CW client needs to work.
+         * The region in which EKS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -253,7 +256,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((Cw2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Cw2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Cw2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": ((Cw2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Cw2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Cw2Component) component).setSecretKey((java.lang.String) value); return true;
             case "timestamp": getOrCreateConfiguration((Cw2Component) component).setTimestamp((java.time.Instant) value); return true;
             case "unit": getOrCreateConfiguration((Cw2Component) component).setUnit((java.lang.String) value); return true;

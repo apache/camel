@@ -147,7 +147,10 @@ public interface Aws2Ec2ComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which EC2 client needs to work.
+         * The region in which EC2 client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -227,7 +230,7 @@ public interface Aws2Ec2ComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((AWS2EC2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((AWS2EC2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((AWS2EC2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": ((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((AWS2EC2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((AWS2EC2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((AWS2EC2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((AWS2EC2Component) component).setConfiguration((org.apache.camel.component.aws2.ec2.AWS2EC2Configuration) value); return true;

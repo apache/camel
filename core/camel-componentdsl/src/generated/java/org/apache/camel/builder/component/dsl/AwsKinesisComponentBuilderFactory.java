@@ -110,7 +110,10 @@ public interface AwsKinesisComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * The region in which Kinesis client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1)You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -298,7 +301,7 @@ public interface AwsKinesisComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((KinesisComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((KinesisComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((KinesisComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((KinesisComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((KinesisComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((KinesisComponent) component).setSecretKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((KinesisComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((KinesisComponent) component).setIteratorType((com.amazonaws.services.kinesis.model.ShardIteratorType) value); return true;

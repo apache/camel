@@ -292,7 +292,7 @@ public interface AwsDdbComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((DdbComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((DdbComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "readCapacity": getOrCreateConfiguration((DdbComponent) component).setReadCapacity((java.lang.Long) value); return true;
-            case "region": ((DdbComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((DdbComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((DdbComponent) component).setSecretKey((java.lang.String) value); return true;
             case "writeCapacity": getOrCreateConfiguration((DdbComponent) component).setWriteCapacity((java.lang.Long) value); return true;
             case "basicPropertyBinding": ((DdbComponent) component).setBasicPropertyBinding((boolean) value); return true;

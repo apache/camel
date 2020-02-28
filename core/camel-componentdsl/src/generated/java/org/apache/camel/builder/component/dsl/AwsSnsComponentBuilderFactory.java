@@ -201,7 +201,10 @@ public interface AwsSnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which SNS client needs to work.
+         * The region in which SNS client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -325,7 +328,7 @@ public interface AwsSnsComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((SnsComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((SnsComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "queueUrl": getOrCreateConfiguration((SnsComponent) component).setQueueUrl((java.lang.String) value); return true;
-            case "region": ((SnsComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((SnsComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((SnsComponent) component).setSecretKey((java.lang.String) value); return true;
             case "serverSideEncryptionEnabled": getOrCreateConfiguration((SnsComponent) component).setServerSideEncryptionEnabled((boolean) value); return true;
             case "subject": getOrCreateConfiguration((SnsComponent) component).setSubject((java.lang.String) value); return true;

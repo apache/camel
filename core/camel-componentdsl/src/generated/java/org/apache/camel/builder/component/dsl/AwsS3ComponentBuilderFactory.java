@@ -144,8 +144,10 @@ public interface AwsS3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The region where the bucket is located. This option is used in the
-         * com.amazonaws.services.s3.model.CreateBucketRequest.
+         * The region in which S3 client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -571,7 +573,7 @@ public interface AwsS3ComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((S3Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((S3Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((S3Component) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((S3Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((S3Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((S3Component) component).setSecretKey((java.lang.String) value); return true;
             case "useIAMCredentials": getOrCreateConfiguration((S3Component) component).setUseIAMCredentials((boolean) value); return true;
             case "encryptionMaterials": getOrCreateConfiguration((S3Component) component).setEncryptionMaterials((com.amazonaws.services.s3.model.EncryptionMaterials) value); return true;

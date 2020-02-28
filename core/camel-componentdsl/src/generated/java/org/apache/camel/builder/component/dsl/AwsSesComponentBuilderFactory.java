@@ -128,7 +128,10 @@ public interface AwsSesComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which SES client needs to work.
+         * The region in which SES client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -256,7 +259,7 @@ public interface AwsSesComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((SesComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((SesComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((SesComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((SesComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((SesComponent) component).setRegion((java.lang.String) value); return true;
             case "replyToAddresses": getOrCreateConfiguration((SesComponent) component).setReplyToAddresses((java.util.List) value); return true;
             case "returnPath": getOrCreateConfiguration((SesComponent) component).setReturnPath((java.lang.String) value); return true;
             case "secretKey": ((SesComponent) component).setSecretKey((java.lang.String) value); return true;

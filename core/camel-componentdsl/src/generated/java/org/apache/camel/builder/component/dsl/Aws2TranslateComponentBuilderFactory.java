@@ -147,7 +147,10 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which Translate client needs to work.
+         * The region in which Translate client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -264,7 +267,7 @@ public interface Aws2TranslateComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((Translate2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Translate2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Translate2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
-            case "region": ((Translate2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Translate2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Translate2Component) component).setSecretKey((java.lang.String) value); return true;
             case "sourceLanguage": getOrCreateConfiguration((Translate2Component) component).setSourceLanguage((java.lang.String) value); return true;
             case "targetLanguage": getOrCreateConfiguration((Translate2Component) component).setTargetLanguage((java.lang.String) value); return true;

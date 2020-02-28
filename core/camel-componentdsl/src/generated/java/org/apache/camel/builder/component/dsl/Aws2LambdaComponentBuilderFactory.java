@@ -99,7 +99,10 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * The region in which ECS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -224,7 +227,7 @@ public interface Aws2LambdaComponentBuilderFactory {
             case "accessKey": ((Lambda2Component) component).setAccessKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((Lambda2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
-            case "region": ((Lambda2Component) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Lambda2Component) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((Lambda2Component) component).setSecretKey((java.lang.String) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
             case "basicPropertyBinding": ((Lambda2Component) component).setBasicPropertyBinding((boolean) value); return true;

@@ -39,6 +39,8 @@ public class BraintreeComponentConfigurer extends PropertyConfigurerSupport impl
         case "httplogname":
         case "httpLogName": getOrCreateConfiguration(target).setHttpLogName(property(camelContext, java.lang.String.class, value)); return true;
         case "loghandlerenabled":
+        case "logHandlerEnabled": target.setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "loghandlerenabled":
         case "logHandlerEnabled": getOrCreateConfiguration(target).setLogHandlerEnabled(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;

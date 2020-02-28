@@ -141,7 +141,10 @@ public interface AwsMqComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which MQ client needs to work.
+         * The region in which MQ client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -220,7 +223,7 @@ public interface AwsMqComponentBuilderFactory {
             case "proxyHost": getOrCreateConfiguration((MQComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((MQComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((MQComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
-            case "region": ((MQComponent) component).setRegion((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((MQComponent) component).setRegion((java.lang.String) value); return true;
             case "secretKey": ((MQComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((MQComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
