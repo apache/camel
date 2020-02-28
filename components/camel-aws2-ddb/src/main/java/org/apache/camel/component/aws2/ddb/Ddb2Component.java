@@ -30,13 +30,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class Ddb2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private Ddb2Configuration configuration;
+    private Ddb2Configuration configuration = new Ddb2Configuration();
 
     public Ddb2Component() {
         this(null);
@@ -57,9 +51,6 @@ public class Ddb2Component extends DefaultComponent {
         Ddb2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Ddb2Configuration();
         configuration.setTableName(remaining);
         Ddb2Endpoint endpoint = new Ddb2Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonDDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -74,43 +65,10 @@ public class Ddb2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS DDB default configuration
+     * The component configuration
      */
     public void setConfiguration(Ddb2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    /**
-     * The region in which DDB client needs to work
-     */
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(Ddb2Configuration configuration) {
