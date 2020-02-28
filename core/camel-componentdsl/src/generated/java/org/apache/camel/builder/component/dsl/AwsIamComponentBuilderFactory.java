@@ -58,6 +58,20 @@ public interface AwsIamComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.iam.IAMConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder configuration(
+                org.apache.camel.component.aws.iam.IAMConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * To use a existing configured AWS IAM as client.
          * 
          * The option is a:
@@ -178,20 +192,6 @@ public interface AwsIamComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS IAM default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.iam.IAMConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsIamComponentBuilder configuration(
-                org.apache.camel.component.aws.iam.IAMConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsIamComponentBuilderImpl
@@ -216,7 +216,8 @@ public interface AwsIamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((IAMComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "accessKey": getOrCreateConfiguration((IAMComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;
             case "iamClient": getOrCreateConfiguration((IAMComponent) component).setIamClient((com.amazonaws.services.identitymanagement.AmazonIdentityManagement) value); return true;
             case "lazyStartProducer": ((IAMComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((IAMComponent) component).setOperation((org.apache.camel.component.aws.iam.IAMOperations) value); return true;
@@ -224,9 +225,8 @@ public interface AwsIamComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((IAMComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((IAMComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((IAMComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((IAMComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;
             default: return false;
             }
         }
