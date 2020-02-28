@@ -49,6 +49,21 @@ public interface NettyHttpComponentBuilderFactory {
             extends
                 ComponentBuilder<NettyHttpComponent> {
         /**
+         * To use the NettyConfiguration as configuration when creating
+         * endpoints.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.netty.NettyConfiguration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default NettyHttpComponentBuilder configuration(
+                org.apache.camel.component.netty.NettyConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
@@ -637,21 +652,6 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
-         * To use the NettyConfiguration as configuration when creating
-         * endpoints.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.netty.NettyConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default NettyHttpComponentBuilder configuration(
-                org.apache.camel.component.netty.NettyConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * headers.
          * 
@@ -1152,6 +1152,7 @@ public interface NettyHttpComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((NettyHttpComponent) component).setConfiguration((org.apache.camel.component.netty.NettyConfiguration) value); return true;
             case "disconnect": getOrCreateConfiguration((NettyHttpComponent) component).setDisconnect((boolean) value); return true;
             case "keepAlive": getOrCreateConfiguration((NettyHttpComponent) component).setKeepAlive((boolean) value); return true;
             case "reuseAddress": getOrCreateConfiguration((NettyHttpComponent) component).setReuseAddress((boolean) value); return true;
@@ -1192,7 +1193,6 @@ public interface NettyHttpComponentBuilderFactory {
             case "allowSerializedHeaders": getOrCreateConfiguration((NettyHttpComponent) component).setAllowSerializedHeaders((boolean) value); return true;
             case "basicPropertyBinding": ((NettyHttpComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "channelGroup": getOrCreateConfiguration((NettyHttpComponent) component).setChannelGroup((io.netty.channel.group.ChannelGroup) value); return true;
-            case "configuration": ((NettyHttpComponent) component).setConfiguration((org.apache.camel.component.netty.NettyConfiguration) value); return true;
             case "headerFilterStrategy": ((NettyHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "nativeTransport": getOrCreateConfiguration((NettyHttpComponent) component).setNativeTransport((boolean) value); return true;
             case "nettyHttpBinding": ((NettyHttpComponent) component).setNettyHttpBinding((org.apache.camel.component.netty.http.NettyHttpBinding) value); return true;
