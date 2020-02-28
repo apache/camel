@@ -51,17 +51,6 @@ public interface AwsKinesisComponentBuilderFactory {
             extends
                 ComponentBuilder<KinesisComponent> {
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AwsKinesisComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -72,6 +61,19 @@ public interface AwsKinesisComponentBuilderFactory {
         default AwsKinesisComponentBuilder amazonKinesisClient(
                 com.amazonaws.services.kinesis.AmazonKinesis amazonKinesisClient) {
             doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.kinesis.KinesisConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default AwsKinesisComponentBuilder configuration(
+                org.apache.camel.component.aws.kinesis.KinesisConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -121,17 +123,6 @@ public interface AwsKinesisComponentBuilderFactory {
          */
         default AwsKinesisComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AwsKinesisComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -260,16 +251,25 @@ public interface AwsKinesisComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS S3 default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.kinesis.KinesisConfiguration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default AwsKinesisComponentBuilder configuration(
-                org.apache.camel.component.aws.kinesis.KinesisConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default AwsKinesisComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsKinesisComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -296,13 +296,12 @@ public interface AwsKinesisComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((KinesisComponent) component).setAccessKey((java.lang.String) value); return true;
             case "amazonKinesisClient": getOrCreateConfiguration((KinesisComponent) component).setAmazonKinesisClient((com.amazonaws.services.kinesis.AmazonKinesis) value); return true;
+            case "configuration": ((KinesisComponent) component).setConfiguration((org.apache.camel.component.aws.kinesis.KinesisConfiguration) value); return true;
             case "proxyHost": getOrCreateConfiguration((KinesisComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((KinesisComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((KinesisComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
             case "region": getOrCreateConfiguration((KinesisComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((KinesisComponent) component).setSecretKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((KinesisComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "iteratorType": getOrCreateConfiguration((KinesisComponent) component).setIteratorType((com.amazonaws.services.kinesis.model.ShardIteratorType) value); return true;
             case "maxResultsPerRequest": getOrCreateConfiguration((KinesisComponent) component).setMaxResultsPerRequest((int) value); return true;
@@ -311,7 +310,8 @@ public interface AwsKinesisComponentBuilderFactory {
             case "shardId": getOrCreateConfiguration((KinesisComponent) component).setShardId((java.lang.String) value); return true;
             case "lazyStartProducer": ((KinesisComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((KinesisComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((KinesisComponent) component).setConfiguration((org.apache.camel.component.aws.kinesis.KinesisConfiguration) value); return true;
+            case "accessKey": getOrCreateConfiguration((KinesisComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((KinesisComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }
