@@ -31,7 +31,7 @@ public class Lambda2Configuration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(label = "producer")
+    @UriParam
     private String region;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
