@@ -51,14 +51,16 @@ public interface Aws2LambdaComponentBuilderFactory {
             extends
                 ComponentBuilder<Lambda2Component> {
         /**
-         * Amazon AWS Access Key.
+         * Component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.lambda.Lambda2Configuration</code> type.
          * 
          * Group: producer
          */
-        default Aws2LambdaComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2LambdaComponentBuilder configuration(
+                org.apache.camel.component.aws2.lambda.Lambda2Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -113,17 +115,6 @@ public interface Aws2LambdaComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2LambdaComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * To use a existing configured AwsLambdaClient as client.
          * 
          * The option is a:
@@ -149,19 +140,6 @@ public interface Aws2LambdaComponentBuilderFactory {
         default Aws2LambdaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * The AWS Lambda default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.lambda.Lambda2Configuration</code> type.
-         * 
-         * Group: advanced
-         */
-        default Aws2LambdaComponentBuilder configuration(
-                org.apache.camel.component.aws2.lambda.Lambda2Configuration configuration) {
-            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -200,6 +178,28 @@ public interface Aws2LambdaComponentBuilderFactory {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2LambdaComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2LambdaComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
     }
 
     class Aws2LambdaComponentBuilderImpl
@@ -224,17 +224,17 @@ public interface Aws2LambdaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((Lambda2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "configuration": ((Lambda2Component) component).setConfiguration((org.apache.camel.component.aws2.lambda.Lambda2Configuration) value); return true;
             case "lazyStartProducer": ((Lambda2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((Lambda2Component) component).setOperation((org.apache.camel.component.aws2.lambda.Lambda2Operations) value); return true;
             case "region": getOrCreateConfiguration((Lambda2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((Lambda2Component) component).setSecretKey((java.lang.String) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((Lambda2Component) component).setAwsLambdaClient((software.amazon.awssdk.services.lambda.LambdaClient) value); return true;
             case "basicPropertyBinding": ((Lambda2Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((Lambda2Component) component).setConfiguration((org.apache.camel.component.aws2.lambda.Lambda2Configuration) value); return true;
             case "proxyHost": getOrCreateConfiguration((Lambda2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Lambda2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Lambda2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "accessKey": getOrCreateConfiguration((Lambda2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Lambda2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }
