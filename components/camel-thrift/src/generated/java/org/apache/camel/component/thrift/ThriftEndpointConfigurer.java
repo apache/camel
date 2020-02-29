@@ -15,32 +15,32 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ThriftEndpoint target = (ThriftEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "compressiontype":
-        case "compressionType": target.getConfiguration().setCompressionType(property(camelContext, org.apache.camel.component.thrift.ThriftCompressionType.class, value)); return true;
-        case "exchangeprotocol":
-        case "exchangeProtocol": target.getConfiguration().setExchangeProtocol(property(camelContext, org.apache.camel.component.thrift.ThriftExchangeProtocol.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clienttimeout":
         case "clientTimeout": target.getConfiguration().setClientTimeout(property(camelContext, int.class, value)); return true;
-        case "maxpoolsize":
-        case "maxPoolSize": target.getConfiguration().setMaxPoolSize(property(camelContext, int.class, value)); return true;
-        case "poolsize":
-        case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
+        case "compressiontype":
+        case "compressionType": target.getConfiguration().setCompressionType(property(camelContext, org.apache.camel.component.thrift.ThriftCompressionType.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "exchangeprotocol":
+        case "exchangeProtocol": target.getConfiguration().setExchangeProtocol(property(camelContext, org.apache.camel.component.thrift.ThriftExchangeProtocol.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxpoolsize":
+        case "maxPoolSize": target.getConfiguration().setMaxPoolSize(property(camelContext, int.class, value)); return true;
         case "method": target.getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "negotiationtype":
         case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, org.apache.camel.component.thrift.ThriftNegotiationType.class, value)); return true;
+        case "poolsize":
+        case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
         case "sslparameters":
         case "sslParameters": target.getConfiguration().setSslParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

@@ -15,8 +15,8 @@ public class VertxEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxEndpoint target = (VertxEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "pubsub":
-        case "pubSub": target.setPubSub(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -25,8 +25,8 @@ public class VertxEndpointConfigurer extends PropertyConfigurerSupport implement
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "pubsub":
+        case "pubSub": target.setPubSub(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

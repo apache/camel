@@ -17,27 +17,26 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autorejoin":
         case "autoRejoin": target.getConfiguration().setAutoRejoin(property(camelContext, boolean.class, value)); return true;
-        case "channels": target.getConfiguration().setChannels(property(camelContext, java.lang.String.class, value)); return true;
-        case "commandtimeout":
-        case "commandTimeout": target.getConfiguration().setCommandTimeout(property(camelContext, long.class, value)); return true;
-        case "keys": target.getConfiguration().setKeys(property(camelContext, java.lang.String.class, value)); return true;
-        case "namesonjoin":
-        case "namesOnJoin": target.getConfiguration().setNamesOnJoin(property(camelContext, boolean.class, value)); return true;
-        case "nickname": target.getConfiguration().setNickname(property(camelContext, java.lang.String.class, value)); return true;
-        case "persistent": target.getConfiguration().setPersistent(property(camelContext, boolean.class, value)); return true;
-        case "realname": target.getConfiguration().setRealname(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "channels": target.getConfiguration().setChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "colors": target.getConfiguration().setColors(property(camelContext, boolean.class, value)); return true;
+        case "commandtimeout":
+        case "commandTimeout": target.getConfiguration().setCommandTimeout(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "keys": target.getConfiguration().setKeys(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "colors": target.getConfiguration().setColors(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "namesonjoin":
+        case "namesOnJoin": target.getConfiguration().setNamesOnJoin(property(camelContext, boolean.class, value)); return true;
+        case "nickpassword":
+        case "nickPassword": target.getConfiguration().setNickPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "nickname": target.getConfiguration().setNickname(property(camelContext, java.lang.String.class, value)); return true;
         case "onjoin":
         case "onJoin": target.getConfiguration().setOnJoin(property(camelContext, boolean.class, value)); return true;
         case "onkick":
@@ -56,11 +55,12 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "onReply": target.getConfiguration().setOnReply(property(camelContext, boolean.class, value)); return true;
         case "ontopic":
         case "onTopic": target.getConfiguration().setOnTopic(property(camelContext, boolean.class, value)); return true;
-        case "nickpassword":
-        case "nickPassword": target.getConfiguration().setNickPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "persistent": target.getConfiguration().setPersistent(property(camelContext, boolean.class, value)); return true;
+        case "realname": target.getConfiguration().setRealname(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustmanager":
         case "trustManager": target.getConfiguration().setTrustManager(property(camelContext, org.schwering.irc.lib.ssl.SSLTrustManager.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;

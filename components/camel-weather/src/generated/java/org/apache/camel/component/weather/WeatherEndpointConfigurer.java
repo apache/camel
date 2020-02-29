@@ -16,67 +16,44 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         WeatherEndpoint target = (WeatherEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "appid": target.getConfiguration().setAppid(property(camelContext, java.lang.String.class, value)); return true;
-        case "headername":
-        case "headerName": target.getConfiguration().setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "language": target.getConfiguration().setLanguage(property(camelContext, org.apache.camel.component.weather.WeatherLanguage.class, value)); return true;
-        case "mode": target.getConfiguration().setMode(property(camelContext, org.apache.camel.component.weather.WeatherMode.class, value)); return true;
-        case "period": target.getConfiguration().setPeriod(property(camelContext, java.lang.String.class, value)); return true;
-        case "units": target.getConfiguration().setUnits(property(camelContext, org.apache.camel.component.weather.WeatherUnits.class, value)); return true;
-        case "weatherapi":
-        case "weatherApi": target.getConfiguration().setWeatherApi(property(camelContext, org.apache.camel.component.weather.WeatherApi.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "httpconnectionmanager":
-        case "httpConnectionManager": target.getConfiguration().setHttpConnectionManager(property(camelContext, org.apache.commons.httpclient.HttpConnectionManager.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "cnt": target.getConfiguration().setCnt(property(camelContext, java.lang.Integer.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "geolocationaccesskey":
+        case "geolocationAccessKey": target.getConfiguration().setGeolocationAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "geolocationrequesthostip":
+        case "geolocationRequestHostIP": target.getConfiguration().setGeolocationRequestHostIP(property(camelContext, java.lang.String.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "headername":
+        case "headerName": target.getConfiguration().setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpconnectionmanager":
+        case "httpConnectionManager": target.getConfiguration().setHttpConnectionManager(property(camelContext, org.apache.commons.httpclient.HttpConnectionManager.class, value)); return true;
+        case "ids": target.getConfiguration().setIds(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "repeatcount":
-        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
-        case "runlogginglevel":
-        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
-        case "schedulerproperties":
-        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "startscheduler":
-        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "timeunit":
-        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
-        case "usefixeddelay":
-        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "cnt": target.getConfiguration().setCnt(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "ids": target.getConfiguration().setIds(property(camelContext, java.lang.String.class, value)); return true;
+        case "language": target.getConfiguration().setLanguage(property(camelContext, org.apache.camel.component.weather.WeatherLanguage.class, value)); return true;
         case "lat": target.getConfiguration().setLat(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "location": target.getConfiguration().setLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "lon": target.getConfiguration().setLon(property(camelContext, java.lang.String.class, value)); return true;
-        case "rightlon":
-        case "rightLon": target.getConfiguration().setRightLon(property(camelContext, java.lang.String.class, value)); return true;
-        case "toplat":
-        case "topLat": target.getConfiguration().setTopLat(property(camelContext, java.lang.String.class, value)); return true;
-        case "zip": target.getConfiguration().setZip(property(camelContext, java.lang.String.class, value)); return true;
-        case "zoom": target.getConfiguration().setZoom(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "mode": target.getConfiguration().setMode(property(camelContext, org.apache.camel.component.weather.WeatherMode.class, value)); return true;
+        case "period": target.getConfiguration().setPeriod(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "proxyauthdomain":
         case "proxyAuthDomain": target.getConfiguration().setProxyAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthhost":
@@ -91,10 +68,33 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "geolocationaccesskey":
-        case "geolocationAccessKey": target.getConfiguration().setGeolocationAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "geolocationrequesthostip":
-        case "geolocationRequestHostIP": target.getConfiguration().setGeolocationRequestHostIP(property(camelContext, java.lang.String.class, value)); return true;
+        case "repeatcount":
+        case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "rightlon":
+        case "rightLon": target.getConfiguration().setRightLon(property(camelContext, java.lang.String.class, value)); return true;
+        case "runlogginglevel":
+        case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "schedulerproperties":
+        case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "timeunit":
+        case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "toplat":
+        case "topLat": target.getConfiguration().setTopLat(property(camelContext, java.lang.String.class, value)); return true;
+        case "units": target.getConfiguration().setUnits(property(camelContext, org.apache.camel.component.weather.WeatherUnits.class, value)); return true;
+        case "usefixeddelay":
+        case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "weatherapi":
+        case "weatherApi": target.getConfiguration().setWeatherApi(property(camelContext, org.apache.camel.component.weather.WeatherApi.class, value)); return true;
+        case "zip": target.getConfiguration().setZip(property(camelContext, java.lang.String.class, value)); return true;
+        case "zoom": target.getConfiguration().setZoom(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
     }

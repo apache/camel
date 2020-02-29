@@ -16,11 +16,11 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         SchematronEndpoint target = (SchematronEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abort": target.setAbort(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "rules": target.setRules(property(camelContext, javax.xml.transform.Templates.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uriresolver":
         case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;

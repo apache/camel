@@ -15,10 +15,16 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DataSetEndpoint target = (DataSetEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "datasetindex":
-        case "dataSetIndex": target.setDataSetIndex(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumedelay":
+        case "consumeDelay": target.setConsumeDelay(property(camelContext, long.class, value)); return true;
+        case "datasetindex":
+        case "dataSetIndex": target.setDataSetIndex(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "minrate":
@@ -27,12 +33,6 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
         case "preloadSize": target.setPreloadSize(property(camelContext, long.class, value)); return true;
         case "producedelay":
         case "produceDelay": target.setProduceDelay(property(camelContext, long.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "consumedelay":
-        case "consumeDelay": target.setConsumeDelay(property(camelContext, long.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }

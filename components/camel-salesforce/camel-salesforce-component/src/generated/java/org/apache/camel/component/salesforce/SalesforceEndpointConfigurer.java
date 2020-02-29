@@ -25,12 +25,20 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "backoffincrement":
         case "backoffIncrement": target.getConfiguration().setBackoffIncrement(property(camelContext, long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batchid":
         case "batchId": target.getConfiguration().setBatchId(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "contenttype":
         case "contentType": target.getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
         case "defaultReplayId": target.getConfiguration().setDefaultReplayId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "format": target.getConfiguration().setFormat(property(camelContext, org.apache.camel.component.salesforce.internal.PayloadFormat.class, value)); return true;
         case "httpclient":
         case "httpClient": target.getConfiguration().setHttpClient(property(camelContext, org.apache.camel.component.salesforce.SalesforceHttpClient.class, value)); return true;
@@ -42,6 +50,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "instanceId": target.getConfiguration().setInstanceId(property(camelContext, java.lang.String.class, value)); return true;
         case "jobid":
         case "jobId": target.getConfiguration().setJobId(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "limit": target.getConfiguration().setLimit(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxbackoff":
         case "maxBackoff": target.getConfiguration().setMaxBackoff(property(camelContext, long.class, value)); return true;
@@ -53,16 +63,18 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyForOperationCreate": target.getConfiguration().setNotifyForOperationCreate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "notifyforoperationdelete":
         case "notifyForOperationDelete": target.getConfiguration().setNotifyForOperationDelete(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "notifyforoperations":
-        case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "notifyforoperationundelete":
         case "notifyForOperationUndelete": target.getConfiguration().setNotifyForOperationUndelete(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "notifyforoperationupdate":
         case "notifyForOperationUpdate": target.getConfiguration().setNotifyForOperationUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "notifyforoperations":
+        case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
         case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         case "rawpayload":
         case "rawPayload": target.getConfiguration().setRawPayload(property(camelContext, boolean.class, value)); return true;
+        case "replayid":
+        case "replayId": target.setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
         case "reportid":
         case "reportId": target.getConfiguration().setReportId(property(camelContext, java.lang.String.class, value)); return true;
         case "reportmetadata":
@@ -87,21 +99,9 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sObjectQuery": target.getConfiguration().setSObjectQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "sobjectsearch":
         case "sObjectSearch": target.getConfiguration().setSObjectSearch(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "updatetopic":
         case "updateTopic": target.getConfiguration().setUpdateTopic(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "replayid":
-        case "replayId": target.setReplayId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

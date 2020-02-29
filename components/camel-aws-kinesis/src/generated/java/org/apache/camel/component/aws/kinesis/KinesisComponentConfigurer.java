@@ -22,9 +22,21 @@ public class KinesisComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KinesisComponent target = (KinesisComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisclient":
         case "amazonKinesisClient": getOrCreateConfiguration(target).setAmazonKinesisClient(property(camelContext, com.amazonaws.services.kinesis.AmazonKinesis.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.kinesis.KinesisConfiguration.class, value)); return true;
+        case "iteratortype":
+        case "iteratorType": getOrCreateConfiguration(target).setIteratorType(property(camelContext, com.amazonaws.services.kinesis.model.ShardIteratorType.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxresultsperrequest":
+        case "maxResultsPerRequest": getOrCreateConfiguration(target).setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -32,26 +44,14 @@ public class KinesisComponentConfigurer extends PropertyConfigurerSupport implem
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "iteratortype":
-        case "iteratorType": getOrCreateConfiguration(target).setIteratorType(property(camelContext, com.amazonaws.services.kinesis.model.ShardIteratorType.class, value)); return true;
-        case "maxresultsperrequest":
-        case "maxResultsPerRequest": getOrCreateConfiguration(target).setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
+        case "secretkey":
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sequencenumber":
         case "sequenceNumber": getOrCreateConfiguration(target).setSequenceNumber(property(camelContext, java.lang.String.class, value)); return true;
         case "shardclosed":
         case "shardClosed": getOrCreateConfiguration(target).setShardClosed(property(camelContext, org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum.class, value)); return true;
         case "shardid":
         case "shardId": getOrCreateConfiguration(target).setShardId(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

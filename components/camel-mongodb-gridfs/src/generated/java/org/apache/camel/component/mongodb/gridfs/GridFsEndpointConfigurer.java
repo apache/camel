@@ -15,19 +15,24 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GridFsEndpoint target = (GridFsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
-        case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
-        case "readpreference":
-        case "readPreference": target.setReadPreference(property(camelContext, com.mongodb.ReadPreference.class, value)); return true;
-        case "writeconcern":
-        case "writeConcern": target.setWriteConcern(property(camelContext, com.mongodb.WriteConcern.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
+        case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fileattributename":
         case "fileAttributeName": target.setFileAttributeName(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "persistenttscollection":
         case "persistentTSCollection": target.setPersistentTSCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "persistenttsobject":
@@ -35,16 +40,11 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "querystrategy":
         case "queryStrategy": target.setQueryStrategy(property(camelContext, org.apache.camel.component.mongodb.gridfs.QueryStrategy.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "readpreference":
+        case "readPreference": target.setReadPreference(property(camelContext, com.mongodb.ReadPreference.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "writeconcern":
+        case "writeConcern": target.setWriteConcern(property(camelContext, com.mongodb.WriteConcern.class, value)); return true;
         default: return false;
         }
     }

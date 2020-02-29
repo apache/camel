@@ -24,6 +24,8 @@ public class IAMComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.iam.IAMConfiguration.class, value)); return true;
         case "iamclient":
         case "iamClient": getOrCreateConfiguration(target).setIamClient(property(camelContext, com.amazonaws.services.identitymanagement.AmazonIdentityManagement.class, value)); return true;
@@ -39,8 +41,6 @@ public class IAMComponentConfigurer extends PropertyConfigurerSupport implements
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

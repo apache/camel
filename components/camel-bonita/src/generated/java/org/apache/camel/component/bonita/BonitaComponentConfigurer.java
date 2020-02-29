@@ -15,10 +15,10 @@ public class BonitaComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BonitaComponent target = (BonitaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

@@ -15,50 +15,38 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CouchbaseEndpoint target = (CouchbaseEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
-        case "key": target.setKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "additionalhosts":
+        case "additionalHosts": target.setAdditionalHosts(property(camelContext, java.lang.String.class, value)); return true;
+        case "autostartidforinserts":
+        case "autoStartIdForInserts": target.setAutoStartIdForInserts(property(camelContext, boolean.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": target.setConsumerProcessedStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "descending": target.setDescending(property(camelContext, boolean.class, value)); return true;
         case "designdocumentname":
         case "designDocumentName": target.setDesignDocumentName(property(camelContext, java.lang.String.class, value)); return true;
-        case "limit": target.setLimit(property(camelContext, int.class, value)); return true;
-        case "rangeendkey":
-        case "rangeEndKey": target.setRangeEndKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "rangestartkey":
-        case "rangeStartKey": target.setRangeStartKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "skip": target.setSkip(property(camelContext, int.class, value)); return true;
-        case "viewname":
-        case "viewName": target.setViewName(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "autostartidforinserts":
-        case "autoStartIdForInserts": target.setAutoStartIdForInserts(property(camelContext, boolean.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "key": target.setKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "persistto":
-        case "persistTo": target.setPersistTo(property(camelContext, int.class, value)); return true;
-        case "producerretryattempts":
-        case "producerRetryAttempts": target.setProducerRetryAttempts(property(camelContext, int.class, value)); return true;
-        case "producerretrypause":
-        case "producerRetryPause": target.setProducerRetryPause(property(camelContext, int.class, value)); return true;
-        case "replicateto":
-        case "replicateTo": target.setReplicateTo(property(camelContext, int.class, value)); return true;
-        case "startingidforinsertsfrom":
-        case "startingIdForInsertsFrom": target.setStartingIdForInsertsFrom(property(camelContext, long.class, value)); return true;
-        case "additionalhosts":
-        case "additionalHosts": target.setAdditionalHosts(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "limit": target.setLimit(property(camelContext, int.class, value)); return true;
         case "maxreconnectdelay":
         case "maxReconnectDelay": target.setMaxReconnectDelay(property(camelContext, long.class, value)); return true;
         case "obspollinterval":
@@ -69,25 +57,26 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "opQueueMaxBlockTime": target.setOpQueueMaxBlockTime(property(camelContext, long.class, value)); return true;
         case "optimeout":
         case "opTimeOut": target.setOpTimeOut(property(camelContext, long.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "persistto":
+        case "persistTo": target.setPersistTo(property(camelContext, int.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "producerretryattempts":
+        case "producerRetryAttempts": target.setProducerRetryAttempts(property(camelContext, int.class, value)); return true;
+        case "producerretrypause":
+        case "producerRetryPause": target.setProducerRetryPause(property(camelContext, int.class, value)); return true;
+        case "rangeendkey":
+        case "rangeEndKey": target.setRangeEndKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "rangestartkey":
+        case "rangeStartKey": target.setRangeStartKey(property(camelContext, java.lang.String.class, value)); return true;
         case "readbuffersize":
         case "readBufferSize": target.setReadBufferSize(property(camelContext, int.class, value)); return true;
-        case "shouldoptimize":
-        case "shouldOptimize": target.setShouldOptimize(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeoutexceptionthreshold":
-        case "timeoutExceptionThreshold": target.setTimeoutExceptionThreshold(property(camelContext, int.class, value)); return true;
-        case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier":
-        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay":
-        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "replicateto":
+        case "replicateTo": target.setReplicateTo(property(camelContext, int.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -95,14 +84,25 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "shouldoptimize":
+        case "shouldOptimize": target.setShouldOptimize(property(camelContext, boolean.class, value)); return true;
+        case "skip": target.setSkip(property(camelContext, int.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "startingidforinsertsfrom":
+        case "startingIdForInsertsFrom": target.setStartingIdForInsertsFrom(property(camelContext, long.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "timeoutexceptionthreshold":
+        case "timeoutExceptionThreshold": target.setTimeoutExceptionThreshold(property(camelContext, int.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "viewname":
+        case "viewName": target.setViewName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

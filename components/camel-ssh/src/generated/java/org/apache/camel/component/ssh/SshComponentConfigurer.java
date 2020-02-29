@@ -22,35 +22,35 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "failonunknownhost":
-        case "failOnUnknownHost": getOrCreateConfiguration(target).setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
-        case "knownhostsresource":
-        case "knownHostsResource": getOrCreateConfiguration(target).setKnownHostsResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, long.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "pollcommand":
-        case "pollCommand": getOrCreateConfiguration(target).setPollCommand(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "channeltype":
-        case "channelType": getOrCreateConfiguration(target).setChannelType(property(camelContext, java.lang.String.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
-        case "shellprompt":
-        case "shellPrompt": getOrCreateConfiguration(target).setShellPrompt(property(camelContext, java.lang.String.class, value)); return true;
-        case "sleepforshellprompt":
-        case "sleepForShellPrompt": getOrCreateConfiguration(target).setSleepForShellPrompt(property(camelContext, long.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "certresource":
         case "certResource": getOrCreateConfiguration(target).setCertResource(property(camelContext, java.lang.String.class, value)); return true;
         case "certresourcepassword":
         case "certResourcePassword": getOrCreateConfiguration(target).setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "channeltype":
+        case "channelType": getOrCreateConfiguration(target).setChannelType(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
+        case "failonunknownhost":
+        case "failOnUnknownHost": getOrCreateConfiguration(target).setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
         case "keypairprovider":
         case "keyPairProvider": getOrCreateConfiguration(target).setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
         case "keytype":
         case "keyType": getOrCreateConfiguration(target).setKeyType(property(camelContext, java.lang.String.class, value)); return true;
+        case "knownhostsresource":
+        case "knownHostsResource": getOrCreateConfiguration(target).setKnownHostsResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollcommand":
+        case "pollCommand": getOrCreateConfiguration(target).setPollCommand(property(camelContext, java.lang.String.class, value)); return true;
+        case "shellprompt":
+        case "shellPrompt": getOrCreateConfiguration(target).setShellPrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "sleepforshellprompt":
+        case "sleepForShellPrompt": getOrCreateConfiguration(target).setSleepForShellPrompt(property(camelContext, long.class, value)); return true;
+        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, long.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }

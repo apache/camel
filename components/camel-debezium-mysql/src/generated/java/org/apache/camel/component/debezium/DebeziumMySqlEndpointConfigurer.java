@@ -17,39 +17,14 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "internalkeyconverter":
-        case "internalKeyConverter": target.getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "internalvalueconverter":
-        case "internalValueConverter": target.getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetcommitpolicy":
-        case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetcommittimeoutms":
-        case "offsetCommitTimeoutMs": target.getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
-        case "offsetflushintervalms":
-        case "offsetFlushIntervalMs": target.getConfiguration().setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
-        case "offsetstorage":
-        case "offsetStorage": target.getConfiguration().setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetstoragefilename":
-        case "offsetStorageFileName": target.getConfiguration().setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetstoragepartitions":
-        case "offsetStoragePartitions": target.getConfiguration().setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
-        case "offsetstoragereplicationfactor":
-        case "offsetStorageReplicationFactor": target.getConfiguration().setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
-        case "offsetstoragetopic":
-        case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": target.getConfiguration().setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": target.getConfiguration().setBinlogBufferSize(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
         case "columnBlacklist": target.getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "connectkeepalive":
@@ -112,6 +87,10 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "enableTimeAdjuster": target.getConfiguration().setEnableTimeAdjuster(property(camelContext, boolean.class, value)); return true;
         case "eventdeserializationfailurehandlingmode":
         case "eventDeserializationFailureHandlingMode": target.getConfiguration().setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "gtidnewchannelposition":
         case "gtidNewChannelPosition": target.getConfiguration().setGtidNewChannelPosition(property(camelContext, java.lang.String.class, value)); return true;
         case "gtidsourceexcludes":
@@ -130,12 +109,32 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "includeSchemaChanges": target.getConfiguration().setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
         case "inconsistentschemahandlingmode":
         case "inconsistentSchemaHandlingMode": target.getConfiguration().setInconsistentSchemaHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "internalkeyconverter":
+        case "internalKeyConverter": target.getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "internalvalueconverter":
+        case "internalValueConverter": target.getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbatchsize":
         case "maxBatchSize": target.getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
         case "maxQueueSize": target.getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": target.getConfiguration().setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": target.getConfiguration().setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": target.getConfiguration().setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
+        case "offsetstorage":
+        case "offsetStorage": target.getConfiguration().setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": target.getConfiguration().setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": target.getConfiguration().setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": target.getConfiguration().setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": target.getConfiguration().setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, long.class, value)); return true;
         case "snapshotdelayms":
@@ -152,6 +151,7 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "snapshotSelectStatementOverrides": target.getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcestructversion":
         case "sourceStructVersion": target.getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": target.getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":

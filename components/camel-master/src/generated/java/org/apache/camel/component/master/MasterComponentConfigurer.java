@@ -15,10 +15,10 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MasterComponent target = (MasterComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "service": target.setService(property(camelContext, org.apache.camel.cluster.CamelClusterService.class, value)); return true;
         case "serviceselector":
         case "serviceSelector": target.setServiceSelector(property(camelContext, org.apache.camel.cluster.CamelClusterService.Selector.class, value)); return true;

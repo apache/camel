@@ -22,8 +22,12 @@ public class KinesisFirehoseComponentConfigurer extends PropertyConfigurerSuppor
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KinesisFirehoseComponent target = (KinesisFirehoseComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": getOrCreateConfiguration(target).setAmazonKinesisFirehoseClient(property(camelContext, com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.firehose.KinesisFirehoseConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -34,10 +38,6 @@ public class KinesisFirehoseComponentConfigurer extends PropertyConfigurerSuppor
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;

@@ -15,41 +15,52 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BoxEndpoint target = (BoxEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "clientid":
-        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "enterpriseid":
-        case "enterpriseId": target.getConfiguration().setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
-        case "inbody":
-        case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "userid":
-        case "userId": target.getConfiguration().setUserId(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "httpparams":
-        case "httpParams": target.getConfiguration().setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "accesstokencache":
         case "accessTokenCache": target.getConfiguration().setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
+        case "authenticationtype":
+        case "authenticationType": target.getConfiguration().setAuthenticationType(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clientid":
+        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientsecret":
+        case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "encryptionalgorithm":
+        case "encryptionAlgorithm": target.getConfiguration().setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
+        case "enterpriseid":
+        case "enterpriseId": target.getConfiguration().setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "httpparams":
+        case "httpParams": target.getConfiguration().setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "inbody":
+        case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxcacheentries":
+        case "maxCacheEntries": target.getConfiguration().setMaxCacheEntries(property(camelContext, int.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "privatekeyfile":
+        case "privateKeyFile": target.getConfiguration().setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekeypassword":
+        case "privateKeyPassword": target.getConfiguration().setPrivateKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "publickeyid":
+        case "publicKeyId": target.getConfiguration().setPublicKeyId(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -59,30 +70,19 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "startscheduler":
+        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "clientsecret":
-        case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "encryptionalgorithm":
-        case "encryptionAlgorithm": target.getConfiguration().setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
-        case "maxcacheentries":
-        case "maxCacheEntries": target.getConfiguration().setMaxCacheEntries(property(camelContext, int.class, value)); return true;
-        case "authenticationtype":
-        case "authenticationType": target.getConfiguration().setAuthenticationType(property(camelContext, java.lang.String.class, value)); return true;
-        case "initialdelay":
-        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
-        case "startscheduler":
-        case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
-        case "privatekeyfile":
-        case "privateKeyFile": target.getConfiguration().setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "privatekeypassword":
-        case "privateKeyPassword": target.getConfiguration().setPrivateKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "publickeyid":
-        case "publicKeyId": target.getConfiguration().setPublicKeyId(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "userid":
+        case "userId": target.getConfiguration().setUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
         case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "userpassword":

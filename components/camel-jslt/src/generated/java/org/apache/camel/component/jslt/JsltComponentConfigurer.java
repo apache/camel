@@ -15,11 +15,11 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsltComponent target = (JsltComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "functions": target.setFunctions(property(camelContext, java.util.Collection.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

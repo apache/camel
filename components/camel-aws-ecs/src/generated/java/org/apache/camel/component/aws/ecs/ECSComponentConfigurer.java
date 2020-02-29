@@ -24,6 +24,8 @@ public class ECSComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.ecs.ECSConfiguration.class, value)); return true;
         case "ecsclient":
         case "ecsClient": getOrCreateConfiguration(target).setEcsClient(property(camelContext, com.amazonaws.services.ecs.AmazonECS.class, value)); return true;
@@ -39,8 +41,6 @@ public class ECSComponentConfigurer extends PropertyConfigurerSupport implements
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

@@ -26,8 +26,12 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clientfactory":
+        case "clientFactory": target.setClientFactory(property(camelContext, org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -49,10 +53,6 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "spreadsheetId": getOrCreateConfiguration(target).setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
         case "valuerenderoption":
         case "valueRenderOption": getOrCreateConfiguration(target).setValueRenderOption(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "clientfactory":
-        case "clientFactory": target.setClientFactory(property(camelContext, org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class, value)); return true;
         default: return false;
         }
     }

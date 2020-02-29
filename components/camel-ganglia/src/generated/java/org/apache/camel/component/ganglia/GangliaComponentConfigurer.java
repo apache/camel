@@ -22,6 +22,9 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GangliaComponent target = (GangliaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ganglia.GangliaConfiguration.class, value)); return true;
         case "dmax": getOrCreateConfiguration(target).setDmax(property(camelContext, int.class, value)); return true;
         case "groupname":
         case "groupName": getOrCreateConfiguration(target).setGroupName(property(camelContext, java.lang.String.class, value)); return true;
@@ -40,9 +43,6 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
         case "units": getOrCreateConfiguration(target).setUnits(property(camelContext, java.lang.String.class, value)); return true;
         case "wireformat31x":
         case "wireFormat31x": getOrCreateConfiguration(target).setWireFormat31x(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ganglia.GangliaConfiguration.class, value)); return true;
         default: return false;
         }
     }

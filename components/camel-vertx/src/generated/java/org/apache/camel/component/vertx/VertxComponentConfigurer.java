@@ -15,20 +15,20 @@ public class VertxComponentConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxComponent target = (VertxComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, int.class, value)); return true;
         case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
-        case "vertxoptions":
-        case "vertxOptions": target.setVertxOptions(property(camelContext, io.vertx.core.VertxOptions.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "vertxfactory":
         case "vertxFactory": target.setVertxFactory(property(camelContext, io.vertx.core.spi.VertxFactory.class, value)); return true;
+        case "vertxoptions":
+        case "vertxOptions": target.setVertxOptions(property(camelContext, io.vertx.core.VertxOptions.class, value)); return true;
         default: return false;
         }
     }

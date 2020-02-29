@@ -15,49 +15,41 @@ public class IronMQEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IronMQEndpoint target = (IronMQEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "client": target.getConfiguration().setClient(property(camelContext, io.iron.ironmq.Client.class, value)); return true;
-        case "ironmqcloud":
-        case "ironMQCloud": target.getConfiguration().setIronMQCloud(property(camelContext, java.lang.String.class, value)); return true;
-        case "preserveheaders":
-        case "preserveHeaders": target.getConfiguration().setPreserveHeaders(property(camelContext, boolean.class, value)); return true;
-        case "projectid":
-        case "projectId": target.getConfiguration().setProjectId(property(camelContext, java.lang.String.class, value)); return true;
-        case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "batchdelete":
-        case "batchDelete": target.getConfiguration().setBatchDelete(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "concurrentconsumers":
-        case "concurrentConsumers": target.getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.getConfiguration().setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
-        case "wait": target.getConfiguration().setWait(property(camelContext, int.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "visibilitydelay":
-        case "visibilityDelay": target.getConfiguration().setVisibilityDelay(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "batchdelete":
+        case "batchDelete": target.getConfiguration().setBatchDelete(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "client": target.getConfiguration().setClient(property(camelContext, io.iron.ironmq.Client.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.getConfiguration().setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "ironmqcloud":
+        case "ironMQCloud": target.getConfiguration().setIronMQCloud(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.getConfiguration().setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "preserveheaders":
+        case "preserveHeaders": target.getConfiguration().setPreserveHeaders(property(camelContext, boolean.class, value)); return true;
+        case "projectid":
+        case "projectId": target.getConfiguration().setProjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -67,12 +59,20 @@ public class IronMQEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
+        case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "visibilitydelay":
+        case "visibilityDelay": target.getConfiguration().setVisibilityDelay(property(camelContext, int.class, value)); return true;
+        case "wait": target.getConfiguration().setWait(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }

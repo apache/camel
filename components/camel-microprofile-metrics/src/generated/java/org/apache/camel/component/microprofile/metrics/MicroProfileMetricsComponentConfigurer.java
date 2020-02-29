@@ -15,10 +15,10 @@ public class MicroProfileMetricsComponentConfigurer extends PropertyConfigurerSu
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MicroProfileMetricsComponent target = (MicroProfileMetricsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "metricregistry":
         case "metricRegistry": target.setMetricRegistry(property(camelContext, org.eclipse.microprofile.metrics.MetricRegistry.class, value)); return true;
         default: return false;

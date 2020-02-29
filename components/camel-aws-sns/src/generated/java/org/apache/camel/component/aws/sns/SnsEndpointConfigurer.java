@@ -15,12 +15,16 @@ public class SnsEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SnsEndpoint target = (SnsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsnsclient":
         case "amazonSNSClient": target.getConfiguration().setAmazonSNSClient(property(camelContext, com.amazonaws.services.sns.AmazonSNS.class, value)); return true;
         case "amazonsqsclient":
         case "amazonSQSClient": target.getConfiguration().setAmazonSQSClient(property(camelContext, com.amazonaws.services.sqs.AmazonSQS.class, value)); return true;
         case "autocreatetopic":
         case "autoCreateTopic": target.getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "kmsmasterkeyid":
@@ -39,18 +43,14 @@ public class SnsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "queueurl":
         case "queueUrl": target.getConfiguration().setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": target.getConfiguration().setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "subscribesnstosqs":
         case "subscribeSNStoSQS": target.getConfiguration().setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accesskey":
-        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

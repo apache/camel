@@ -15,18 +15,18 @@ public class DirectVmComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DirectVmComponent target = (DirectVmComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "propagateproperties":
         case "propagateProperties": target.setPropagateProperties(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }

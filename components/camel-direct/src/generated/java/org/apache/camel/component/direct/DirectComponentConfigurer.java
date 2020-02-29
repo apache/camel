@@ -15,14 +15,14 @@ public class DirectComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DirectComponent target = (DirectComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

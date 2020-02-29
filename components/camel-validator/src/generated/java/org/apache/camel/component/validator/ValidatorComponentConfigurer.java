@@ -15,10 +15,10 @@ public class ValidatorComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ValidatorComponent target = (ValidatorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "resourceresolverfactory":
         case "resourceResolverFactory": target.setResourceResolverFactory(property(camelContext, org.apache.camel.component.validator.ValidatorResourceResolverFactory.class, value)); return true;
         default: return false;

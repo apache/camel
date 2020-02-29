@@ -15,6 +15,8 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CMEndpoint target = (CMEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "defaultfrom":
         case "defaultFrom": target.getConfiguration().setDefaultFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "defaultmaxnumberofparts":
@@ -23,11 +25,9 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "producttoken":
         case "productToken": target.getConfiguration().setProductToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.getConfiguration().setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

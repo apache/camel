@@ -15,19 +15,19 @@ public class AtmosComponentConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AtmosComponent target = (AtmosComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "uri": target.setUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "fulltokenid":
         case "fullTokenId": target.setFullTokenId(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "secretkey":
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sslvalidation":
         case "sslValidation": target.setSslValidation(property(camelContext, boolean.class, value)); return true;
+        case "uri": target.setUri(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

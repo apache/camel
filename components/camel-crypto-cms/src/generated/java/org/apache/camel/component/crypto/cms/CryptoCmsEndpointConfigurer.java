@@ -15,34 +15,34 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoCmsEndpoint target = (CryptoCmsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "contentencryptionalgorithm":
+        case "contentEncryptionAlgorithm": target.getEncryptConfig().setContentEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "frombase64":
+        case "fromBase64": target.getVerifyConfig().setFromBase64(property(camelContext, boolean.class, value)); return true;
+        case "includecontent":
+        case "includeContent": target.getSignConfig().setIncludeContent(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "keystore":
         case "keyStore": target.getVerifyConfig().setKeyStore(property(camelContext, java.security.KeyStore.class, value)); return true;
         case "keystoreparameters":
         case "keyStoreParameters": target.getVerifyConfig().setKeyStoreParameters(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": target.getDecryptConfig().setPassword(property(camelContext, char[].class, value)); return true;
-        case "frombase64":
-        case "fromBase64": target.getVerifyConfig().setFromBase64(property(camelContext, boolean.class, value)); return true;
-        case "contentencryptionalgorithm":
-        case "contentEncryptionAlgorithm": target.getEncryptConfig().setContentEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "originatorinformationprovider":
         case "originatorInformationProvider": target.getEncryptConfig().setOriginatorInformationProvider(property(camelContext, org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider.class, value)); return true;
+        case "password": target.getDecryptConfig().setPassword(property(camelContext, char[].class, value)); return true;
         case "recipient": target.getEncryptConfig().setRecipient(property(camelContext, java.util.List.class, value)); return true;
         case "secretkeylength":
         case "secretKeyLength": target.getEncryptConfig().setSecretKeyLength(property(camelContext, int.class, value)); return true;
-        case "unprotectedattributesgeneratorprovider":
-        case "unprotectedAttributesGeneratorProvider": target.getEncryptConfig().setUnprotectedAttributesGeneratorProvider(property(camelContext, org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class, value)); return true;
-        case "tobase64":
-        case "toBase64": target.getSignConfig().setToBase64(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "includecontent":
-        case "includeContent": target.getSignConfig().setIncludeContent(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "signer": target.getSignConfig().setSigner(property(camelContext, java.lang.String.class, value)); return true;
         case "signeddataheaderbase64":
         case "signedDataHeaderBase64": target.getVerifyConfig().setSignedDataHeaderBase64(property(camelContext, boolean.class, value)); return true;
+        case "signer": target.getSignConfig().setSigner(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "tobase64":
+        case "toBase64": target.getSignConfig().setToBase64(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "unprotectedattributesgeneratorprovider":
+        case "unprotectedAttributesGeneratorProvider": target.getEncryptConfig().setUnprotectedAttributesGeneratorProvider(property(camelContext, org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class, value)); return true;
         case "verifysignaturesofallsigners":
         case "verifySignaturesOfAllSigners": target.getVerifyConfig().setVerifySignaturesOfAllSigners(property(camelContext, boolean.class, value)); return true;
         default: return false;

@@ -22,13 +22,25 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceNowComponent target = (ServiceNowComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiurl":
+        case "apiUrl": getOrCreateConfiguration(target).setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "apiversion":
+        case "apiVersion": getOrCreateConfiguration(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.servicenow.ServiceNowConfiguration.class, value)); return true;
+        case "dateformat":
+        case "dateFormat": getOrCreateConfiguration(target).setDateFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "datetimeformat":
+        case "dateTimeFormat": getOrCreateConfiguration(target).setDateTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "display": getOrCreateConfiguration(target).setDisplay(property(camelContext, java.lang.String.class, value)); return true;
         case "displayvalue":
         case "displayValue": getOrCreateConfiguration(target).setDisplayValue(property(camelContext, java.lang.String.class, value)); return true;
         case "excludereferencelink":
         case "excludeReferenceLink": getOrCreateConfiguration(target).setExcludeReferenceLink(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "favorites": getOrCreateConfiguration(target).setFavorites(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "httpclientpolicy":
+        case "httpClientPolicy": getOrCreateConfiguration(target).setHttpClientPolicy(property(camelContext, org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class, value)); return true;
         case "includeaggregates":
         case "includeAggregates": getOrCreateConfiguration(target).setIncludeAggregates(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "includeavailableaggregates":
@@ -41,55 +53,13 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         case "includeScores": getOrCreateConfiguration(target).setIncludeScores(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "inputdisplayvalue":
         case "inputDisplayValue": getOrCreateConfiguration(target).setInputDisplayValue(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "instancename":
+        case "instanceName": target.setInstanceName(property(camelContext, java.lang.String.class, value)); return true;
         case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "models": getOrCreateConfiguration(target).setModels(property(camelContext, java.util.Map.class, value)); return true;
-        case "perpage":
-        case "perPage": getOrCreateConfiguration(target).setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "release": getOrCreateConfiguration(target).setRelease(property(camelContext, org.apache.camel.component.servicenow.ServiceNowRelease.class, value)); return true;
-        case "requestmodels":
-        case "requestModels": getOrCreateConfiguration(target).setRequestModels(property(camelContext, java.util.Map.class, value)); return true;
-        case "resource": getOrCreateConfiguration(target).setResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "responsemodels":
-        case "responseModels": getOrCreateConfiguration(target).setResponseModels(property(camelContext, java.util.Map.class, value)); return true;
-        case "sortby":
-        case "sortBy": getOrCreateConfiguration(target).setSortBy(property(camelContext, java.lang.String.class, value)); return true;
-        case "sortdir":
-        case "sortDir": getOrCreateConfiguration(target).setSortDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "suppressautosysfield":
-        case "suppressAutoSysField": getOrCreateConfiguration(target).setSuppressAutoSysField(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "suppresspaginationheader":
-        case "suppressPaginationHeader": getOrCreateConfiguration(target).setSuppressPaginationHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "table": getOrCreateConfiguration(target).setTable(property(camelContext, java.lang.String.class, value)); return true;
-        case "target": getOrCreateConfiguration(target).setTarget(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "toplevelonly":
-        case "topLevelOnly": getOrCreateConfiguration(target).setTopLevelOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "apiversion":
-        case "apiVersion": getOrCreateConfiguration(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "dateformat":
-        case "dateFormat": getOrCreateConfiguration(target).setDateFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "datetimeformat":
-        case "dateTimeFormat": getOrCreateConfiguration(target).setDateTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpclientpolicy":
-        case "httpClientPolicy": getOrCreateConfiguration(target).setHttpClientPolicy(property(camelContext, org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class, value)); return true;
-        case "instancename":
-        case "instanceName": target.setInstanceName(property(camelContext, java.lang.String.class, value)); return true;
         case "mapper": getOrCreateConfiguration(target).setMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
-        case "proxyauthorizationpolicy":
-        case "proxyAuthorizationPolicy": getOrCreateConfiguration(target).setProxyAuthorizationPolicy(property(camelContext, org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class, value)); return true;
-        case "retrievetargetrecordonimport":
-        case "retrieveTargetRecordOnImport": getOrCreateConfiguration(target).setRetrieveTargetRecordOnImport(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "timeformat":
-        case "timeFormat": getOrCreateConfiguration(target).setTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "apiurl":
-        case "apiUrl": getOrCreateConfiguration(target).setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "models": getOrCreateConfiguration(target).setModels(property(camelContext, java.util.Map.class, value)); return true;
         case "oauthclientid":
         case "oauthClientId": getOrCreateConfiguration(target).setOauthClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthclientsecret":
@@ -97,12 +67,42 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         case "oauthtokenurl":
         case "oauthTokenUrl": getOrCreateConfiguration(target).setOauthTokenUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "perpage":
+        case "perPage": getOrCreateConfiguration(target).setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyauthorizationpolicy":
+        case "proxyAuthorizationPolicy": getOrCreateConfiguration(target).setProxyAuthorizationPolicy(property(camelContext, org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxypassword":
         case "proxyPassword": getOrCreateConfiguration(target).setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyusername":
         case "proxyUserName": getOrCreateConfiguration(target).setProxyUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "release": getOrCreateConfiguration(target).setRelease(property(camelContext, org.apache.camel.component.servicenow.ServiceNowRelease.class, value)); return true;
+        case "requestmodels":
+        case "requestModels": getOrCreateConfiguration(target).setRequestModels(property(camelContext, java.util.Map.class, value)); return true;
+        case "resource": getOrCreateConfiguration(target).setResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "responsemodels":
+        case "responseModels": getOrCreateConfiguration(target).setResponseModels(property(camelContext, java.util.Map.class, value)); return true;
+        case "retrievetargetrecordonimport":
+        case "retrieveTargetRecordOnImport": getOrCreateConfiguration(target).setRetrieveTargetRecordOnImport(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "sortby":
+        case "sortBy": getOrCreateConfiguration(target).setSortBy(property(camelContext, java.lang.String.class, value)); return true;
+        case "sortdir":
+        case "sortDir": getOrCreateConfiguration(target).setSortDir(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "suppressautosysfield":
+        case "suppressAutoSysField": getOrCreateConfiguration(target).setSuppressAutoSysField(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "suppresspaginationheader":
+        case "suppressPaginationHeader": getOrCreateConfiguration(target).setSuppressPaginationHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "table": getOrCreateConfiguration(target).setTable(property(camelContext, java.lang.String.class, value)); return true;
+        case "target": getOrCreateConfiguration(target).setTarget(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "timeformat":
+        case "timeFormat": getOrCreateConfiguration(target).setTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "toplevelonly":
+        case "topLevelOnly": getOrCreateConfiguration(target).setTopLevelOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "username":

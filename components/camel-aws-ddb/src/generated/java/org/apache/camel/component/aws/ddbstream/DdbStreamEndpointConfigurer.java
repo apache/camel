@@ -15,14 +15,34 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DdbStreamEndpoint target = (DdbStreamEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": target.getConfiguration().setAmazonDynamoDbStreamsClient(property(camelContext, com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams.class, value)); return true;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
+        case "backoffmultiplier":
+        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "initialdelay":
+        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "iteratortype":
         case "iteratorType": target.getConfiguration().setIteratorType(property(camelContext, com.amazonaws.services.dynamodbv2.model.ShardIteratorType.class, value)); return true;
         case "maxresultsperrequest":
         case "maxResultsPerRequest": target.getConfiguration().setMaxResultsPerRequest(property(camelContext, int.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -30,29 +50,6 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         case "proxyprotocol":
         case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "sequencenumberprovider":
-        case "sequenceNumberProvider": target.getConfiguration().setSequenceNumberProvider(property(camelContext, org.apache.camel.component.aws.ddbstream.SequenceNumberProvider.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
-        case "backoffmultiplier":
-        case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
-        case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
-        case "initialdelay":
-        case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -62,16 +59,19 @@ public class DdbStreamEndpointConfigurer extends PropertyConfigurerSupport imple
         case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sequencenumberprovider":
+        case "sequenceNumberProvider": target.getConfiguration().setSequenceNumberProvider(property(camelContext, org.apache.camel.component.aws.ddbstream.SequenceNumberProvider.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "accesskey":
-        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

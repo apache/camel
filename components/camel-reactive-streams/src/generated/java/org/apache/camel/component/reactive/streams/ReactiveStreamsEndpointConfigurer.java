@@ -15,28 +15,28 @@ public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ReactiveStreamsEndpoint target = (ReactiveStreamsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "backpressurestrategy":
+        case "backpressureStrategy": target.setBackpressureStrategy(property(camelContext, org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "exchangesrefilllowwatermark":
         case "exchangesRefillLowWatermark": target.setExchangesRefillLowWatermark(property(camelContext, double.class, value)); return true;
         case "forwardoncomplete":
         case "forwardOnComplete": target.setForwardOnComplete(property(camelContext, boolean.class, value)); return true;
         case "forwardonerror":
         case "forwardOnError": target.setForwardOnError(property(camelContext, boolean.class, value)); return true;
-        case "maxinflightexchanges":
-        case "maxInflightExchanges": target.setMaxInflightExchanges(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "backpressurestrategy":
-        case "backpressureStrategy": target.setBackpressureStrategy(property(camelContext, org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "maxinflightexchanges":
+        case "maxInflightExchanges": target.setMaxInflightExchanges(property(camelContext, java.lang.Integer.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

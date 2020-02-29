@@ -22,8 +22,12 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Ddb2Component target = (Ddb2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonddbclient":
         case "amazonDDBClient": getOrCreateConfiguration(target).setAmazonDDBClient(property(camelContext, software.amazon.awssdk.services.dynamodb.DynamoDbClient.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ddb.Ddb2Configuration.class, value)); return true;
         case "consistentread":
         case "consistentRead": getOrCreateConfiguration(target).setConsistentRead(property(camelContext, boolean.class, value)); return true;
@@ -43,14 +47,10 @@ public class Ddb2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "readcapacity":
         case "readCapacity": getOrCreateConfiguration(target).setReadCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "writecapacity":
-        case "writeCapacity": getOrCreateConfiguration(target).setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "writecapacity":
+        case "writeCapacity": getOrCreateConfiguration(target).setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }

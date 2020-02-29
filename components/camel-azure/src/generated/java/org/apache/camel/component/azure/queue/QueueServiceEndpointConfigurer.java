@@ -17,9 +17,11 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azurequeueclient":
         case "azureQueueClient": target.getConfiguration().setAzureQueueClient(property(camelContext, com.microsoft.azure.storage.queue.CloudQueue.class, value)); return true;
-        case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -33,8 +35,6 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceOperations.class, value)); return true;
         case "queueprefix":
         case "queuePrefix": target.getConfiguration().setQueuePrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

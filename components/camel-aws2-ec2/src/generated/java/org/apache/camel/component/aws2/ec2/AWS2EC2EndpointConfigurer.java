@@ -19,6 +19,8 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonec2client":
         case "amazonEc2Client": target.getConfiguration().setAmazonEc2Client(property(camelContext, software.amazon.awssdk.services.ec2.Ec2Client.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.ec2.AWS2EC2Operations.class, value)); return true;
@@ -31,8 +33,6 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

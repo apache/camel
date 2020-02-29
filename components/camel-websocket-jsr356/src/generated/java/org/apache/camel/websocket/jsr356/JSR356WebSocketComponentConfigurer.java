@@ -15,12 +15,12 @@ public class JSR356WebSocketComponentConfigurer extends PropertyConfigurerSuppor
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JSR356WebSocketComponent target = (JSR356WebSocketComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "serverendpointdeploymentstrategy":
         case "serverEndpointDeploymentStrategy": target.setServerEndpointDeploymentStrategy(property(camelContext, org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy.class, value)); return true;
         default: return false;

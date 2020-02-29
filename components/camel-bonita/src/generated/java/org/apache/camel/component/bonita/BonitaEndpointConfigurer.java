@@ -15,16 +15,16 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BonitaEndpoint target = (BonitaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "hostname": target.getConfiguration().setHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.getConfiguration().setPort(property(camelContext, java.lang.String.class, value)); return true;
         case "processname":
         case "processName": target.getConfiguration().setProcessName(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }

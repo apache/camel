@@ -15,8 +15,12 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KinesisFirehoseEndpoint target = (KinesisFirehoseEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": target.getConfiguration().setAmazonKinesisFirehoseClient(property(camelContext, com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -26,13 +30,9 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "proxyprotocol":
         case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, com.amazonaws.Protocol.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accesskey":
-        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

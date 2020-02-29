@@ -16,6 +16,8 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         CaffeineLoadCacheEndpoint target = (CaffeineLoadCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cache": target.getConfiguration().setCache(property(camelContext, com.github.benmanes.caffeine.cache.Cache.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": target.getConfiguration().setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
@@ -30,6 +32,8 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         case "initialcapacity":
         case "initialCapacity": target.getConfiguration().setInitialCapacity(property(camelContext, int.class, value)); return true;
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
+        case "keytype":
+        case "keyType": target.getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maximumsize":
@@ -40,10 +44,6 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         case "statsCounter": target.getConfiguration().setStatsCounter(property(camelContext, com.github.benmanes.caffeine.cache.stats.StatsCounter.class, value)); return true;
         case "statsenabled":
         case "statsEnabled": target.getConfiguration().setStatsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "keytype":
-        case "keyType": target.getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "valuetype":
         case "valueType": target.getConfiguration().setValueType(property(camelContext, java.lang.String.class, value)); return true;

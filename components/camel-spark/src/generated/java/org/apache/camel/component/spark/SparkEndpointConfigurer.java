@@ -15,6 +15,8 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SparkEndpoint target = (SparkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "collect": target.setCollect(property(camelContext, boolean.class, value)); return true;
         case "dataframe":
         case "dataFrame": target.setDataFrame(property(camelContext, org.apache.spark.sql.Dataset.class, value)); return true;
@@ -25,8 +27,6 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "rdd": target.setRdd(property(camelContext, org.apache.spark.api.java.JavaRDDLike.class, value)); return true;
         case "rddcallback":
         case "rddCallback": target.setRddCallback(property(camelContext, org.apache.camel.component.spark.RddCallback.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

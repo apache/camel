@@ -15,6 +15,8 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringBatchEndpoint target = (SpringBatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "jobfromheader":
         case "jobFromHeader": target.setJobFromHeader(property(camelContext, boolean.class, value)); return true;
         case "joblauncher":
@@ -23,8 +25,6 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
         case "jobRegistry": target.setJobRegistry(property(camelContext, org.springframework.batch.core.configuration.JobRegistry.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

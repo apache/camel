@@ -24,33 +24,13 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
-        case "internalkeyconverter":
-        case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "internalvalueconverter":
-        case "internalValueConverter": getOrCreateConfiguration(target).setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetcommitpolicy":
-        case "offsetCommitPolicy": getOrCreateConfiguration(target).setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetcommittimeoutms":
-        case "offsetCommitTimeoutMs": getOrCreateConfiguration(target).setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
-        case "offsetflushintervalms":
-        case "offsetFlushIntervalMs": getOrCreateConfiguration(target).setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
-        case "offsetstorage":
-        case "offsetStorage": getOrCreateConfiguration(target).setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetstoragefilename":
-        case "offsetStorageFileName": getOrCreateConfiguration(target).setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "offsetstoragepartitions":
-        case "offsetStoragePartitions": getOrCreateConfiguration(target).setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
-        case "offsetstoragereplicationfactor":
-        case "offsetStorageReplicationFactor": getOrCreateConfiguration(target).setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
-        case "offsetstoragetopic":
-        case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
         case "columnBlacklist": getOrCreateConfiguration(target).setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": getOrCreateConfiguration(target).setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistoryfilefilename":
@@ -91,6 +71,10 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "hstoreHandlingMode": getOrCreateConfiguration(target).setHstoreHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "includeunknowndatatypes":
         case "includeUnknownDatatypes": getOrCreateConfiguration(target).setIncludeUnknownDatatypes(property(camelContext, boolean.class, value)); return true;
+        case "internalkeyconverter":
+        case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "internalvalueconverter":
+        case "internalValueConverter": getOrCreateConfiguration(target).setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "intervalhandlingmode":
         case "intervalHandlingMode": getOrCreateConfiguration(target).setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbatchsize":
@@ -99,6 +83,22 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "maxQueueSize": getOrCreateConfiguration(target).setMaxQueueSize(property(camelContext, int.class, value)); return true;
         case "messagekeycolumns":
         case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": getOrCreateConfiguration(target).setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": getOrCreateConfiguration(target).setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": getOrCreateConfiguration(target).setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
+        case "offsetstorage":
+        case "offsetStorage": getOrCreateConfiguration(target).setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": getOrCreateConfiguration(target).setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": getOrCreateConfiguration(target).setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": getOrCreateConfiguration(target).setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "pluginname":
         case "pluginName": getOrCreateConfiguration(target).setPluginName(property(camelContext, java.lang.String.class, value)); return true;
         case "pollintervalms":

@@ -17,6 +17,10 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": target.setAssertPeriod(property(camelContext, long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "copyonexchange":
+        case "copyOnExchange": target.setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
         case "expectedcount":
         case "expectedCount": target.setExpectedCount(property(camelContext, int.class, value)); return true;
         case "failfast":
@@ -35,10 +39,6 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         case "retainLast": target.setRetainLast(property(camelContext, int.class, value)); return true;
         case "sleepforemptytest":
         case "sleepForEmptyTest": target.setSleepForEmptyTest(property(camelContext, long.class, value)); return true;
-        case "copyonexchange":
-        case "copyOnExchange": target.setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

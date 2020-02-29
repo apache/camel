@@ -22,27 +22,29 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Sqs2Component target = (Sqs2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonawshost":
         case "amazonAWSHost": getOrCreateConfiguration(target).setAmazonAWSHost(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsqsclient":
         case "amazonSQSClient": getOrCreateConfiguration(target).setAmazonSQSClient(property(camelContext, software.amazon.awssdk.services.sqs.SqsClient.class, value)); return true;
-        case "autocreatequeue":
-        case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Configuration.class, value)); return true;
-        case "protocol": getOrCreateConfiguration(target).setProtocol(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
-        case "queueownerawsaccountid":
-        case "queueOwnerAWSAccountId": getOrCreateConfiguration(target).setQueueOwnerAWSAccountId(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "attributenames":
         case "attributeNames": getOrCreateConfiguration(target).setAttributeNames(property(camelContext, java.lang.String.class, value)); return true;
+        case "autocreatequeue":
+        case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": getOrCreateConfiguration(target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Configuration.class, value)); return true;
         case "defaultvisibilitytimeout":
         case "defaultVisibilityTimeout": getOrCreateConfiguration(target).setDefaultVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "delayqueue":
+        case "delayQueue": getOrCreateConfiguration(target).setDelayQueue(property(camelContext, boolean.class, value)); return true;
+        case "delayseconds":
+        case "delaySeconds": getOrCreateConfiguration(target).setDelaySeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "deleteafterread":
         case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "deleteiffiltered":
@@ -53,46 +55,44 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "kmsDataKeyReusePeriodSeconds": getOrCreateConfiguration(target).setKmsDataKeyReusePeriodSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": getOrCreateConfiguration(target).setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maximummessagesize":
+        case "maximumMessageSize": getOrCreateConfiguration(target).setMaximumMessageSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "messageattributenames":
         case "messageAttributeNames": getOrCreateConfiguration(target).setMessageAttributeNames(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": getOrCreateConfiguration(target).setMessageDeduplicationIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": getOrCreateConfiguration(target).setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "messageretentionperiod":
+        case "messageRetentionPeriod": getOrCreateConfiguration(target).setMessageRetentionPeriod(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Operations.class, value)); return true;
+        case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "protocol": getOrCreateConfiguration(target).setProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyprotocol":
+        case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
+        case "queueownerawsaccountid":
+        case "queueOwnerAWSAccountId": getOrCreateConfiguration(target).setQueueOwnerAWSAccountId(property(camelContext, java.lang.String.class, value)); return true;
+        case "queueurl":
+        case "queueUrl": getOrCreateConfiguration(target).setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "receivemessagewaittimeseconds":
+        case "receiveMessageWaitTimeSeconds": getOrCreateConfiguration(target).setReceiveMessageWaitTimeSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "redrivepolicy":
+        case "redrivePolicy": getOrCreateConfiguration(target).setRedrivePolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "secretkey":
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "serversideencryptionenabled":
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
         case "waitTimeSeconds": getOrCreateConfiguration(target).setWaitTimeSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "delayseconds":
-        case "delaySeconds": getOrCreateConfiguration(target).setDelaySeconds(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "messagededuplicationidstrategy":
-        case "messageDeduplicationIdStrategy": getOrCreateConfiguration(target).setMessageDeduplicationIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
-        case "messagegroupidstrategy":
-        case "messageGroupIdStrategy": getOrCreateConfiguration(target).setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
-        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.sqs.Sqs2Operations.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "delayqueue":
-        case "delayQueue": getOrCreateConfiguration(target).setDelayQueue(property(camelContext, boolean.class, value)); return true;
-        case "queueurl":
-        case "queueUrl": getOrCreateConfiguration(target).setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maximummessagesize":
-        case "maximumMessageSize": getOrCreateConfiguration(target).setMaximumMessageSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "messageretentionperiod":
-        case "messageRetentionPeriod": getOrCreateConfiguration(target).setMessageRetentionPeriod(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "receivemessagewaittimeseconds":
-        case "receiveMessageWaitTimeSeconds": getOrCreateConfiguration(target).setReceiveMessageWaitTimeSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "redrivepolicy":
-        case "redrivePolicy": getOrCreateConfiguration(target).setRedrivePolicy(property(camelContext, java.lang.String.class, value)); return true;
-        case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

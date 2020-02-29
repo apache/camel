@@ -26,6 +26,8 @@ public class MQComponentConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonmqclient":
         case "amazonMqClient": getOrCreateConfiguration(target).setAmazonMqClient(property(camelContext, com.amazonaws.services.mq.AmazonMQ.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.mq.MQConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -39,8 +41,6 @@ public class MQComponentConfigurer extends PropertyConfigurerSupport implements 
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

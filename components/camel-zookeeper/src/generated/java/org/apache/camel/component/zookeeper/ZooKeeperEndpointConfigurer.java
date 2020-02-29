@@ -15,27 +15,27 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ZooKeeperEndpoint target = (ZooKeeperEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "listchildren":
-        case "listChildren": target.getConfiguration().setListChildren(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         case "backoff": target.getConfiguration().setBackoff(property(camelContext, long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "repeat": target.getConfiguration().setRepeat(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessageondelete":
-        case "sendEmptyMessageOnDelete": target.getConfiguration().setSendEmptyMessageOnDelete(property(camelContext, boolean.class, value)); return true;
+        case "create": target.getConfiguration().setCreate(property(camelContext, boolean.class, value)); return true;
+        case "createmode":
+        case "createMode": target.getConfiguration().setCreateMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "create": target.getConfiguration().setCreate(property(camelContext, boolean.class, value)); return true;
-        case "createmode":
-        case "createMode": target.getConfiguration().setCreateMode(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "listchildren":
+        case "listChildren": target.getConfiguration().setListChildren(property(camelContext, boolean.class, value)); return true;
+        case "repeat": target.getConfiguration().setRepeat(property(camelContext, boolean.class, value)); return true;
+        case "sendemptymessageondelete":
+        case "sendEmptyMessageOnDelete": target.getConfiguration().setSendEmptyMessageOnDelete(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }

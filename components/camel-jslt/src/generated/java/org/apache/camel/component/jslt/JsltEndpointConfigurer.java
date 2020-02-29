@@ -15,14 +15,14 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsltEndpoint target = (JsltEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "contentcache":
-        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
-        case "prettyprint":
-        case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "contentcache":
+        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "prettyprint":
+        case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

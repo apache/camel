@@ -22,23 +22,23 @@ public class EtcdWatchComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EtcdWatchComponent target = (EtcdWatchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.etcd.EtcdConfiguration.class, value)); return true;
-        case "recursive": getOrCreateConfiguration(target).setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "servicepath":
-        case "servicePath": getOrCreateConfiguration(target).setServicePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "uris": getOrCreateConfiguration(target).setUris(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendemptyexchangeontimeout":
-        case "sendEmptyExchangeOnTimeout": getOrCreateConfiguration(target).setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
         case "fromindex":
         case "fromIndex": getOrCreateConfiguration(target).setFromIndex(property(camelContext, long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "recursive": getOrCreateConfiguration(target).setRecursive(property(camelContext, boolean.class, value)); return true;
+        case "sendemptyexchangeontimeout":
+        case "sendEmptyExchangeOnTimeout": getOrCreateConfiguration(target).setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
+        case "servicepath":
+        case "servicePath": getOrCreateConfiguration(target).setServicePath(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "uris": getOrCreateConfiguration(target).setUris(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "username":

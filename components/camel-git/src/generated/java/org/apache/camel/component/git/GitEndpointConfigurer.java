@@ -15,31 +15,31 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GitEndpoint target = (GitEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowempty":
+        case "allowEmpty": target.setAllowEmpty(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "branchname":
         case "branchName": target.setBranchName(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "remotename":
         case "remoteName": target.setRemoteName(property(camelContext, java.lang.String.class, value)); return true;
         case "remotepath":
         case "remotePath": target.setRemotePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tagname":
         case "tagName": target.setTagName(property(camelContext, java.lang.String.class, value)); return true;
-        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "type": target.setType(property(camelContext, org.apache.camel.component.git.consumer.GitType.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "allowempty":
-        case "allowEmpty": target.setAllowEmpty(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

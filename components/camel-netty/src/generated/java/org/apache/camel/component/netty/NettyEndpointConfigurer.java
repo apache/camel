@@ -15,61 +15,71 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NettyEndpoint target = (NettyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "keepalive":
-        case "keepAlive": target.getConfiguration().setKeepAlive(property(camelContext, boolean.class, value)); return true;
-        case "reuseaddress":
-        case "reuseAddress": target.getConfiguration().setReuseAddress(property(camelContext, boolean.class, value)); return true;
-        case "reusechannel":
-        case "reuseChannel": target.getConfiguration().setReuseChannel(property(camelContext, boolean.class, value)); return true;
-        case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
-        case "tcpnodelay":
-        case "tcpNoDelay": target.getConfiguration().setTcpNoDelay(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "broadcast": target.getConfiguration().setBroadcast(property(camelContext, boolean.class, value)); return true;
-        case "clientmode":
-        case "clientMode": target.getConfiguration().setClientMode(property(camelContext, boolean.class, value)); return true;
-        case "reconnect": target.getConfiguration().setReconnect(property(camelContext, boolean.class, value)); return true;
-        case "reconnectinterval":
-        case "reconnectInterval": target.getConfiguration().setReconnectInterval(property(camelContext, int.class, value)); return true;
+        case "allowdefaultcodec":
+        case "allowDefaultCodec": target.getConfiguration().setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
+        case "allowserializedheaders":
+        case "allowSerializedHeaders": target.getConfiguration().setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
+        case "autoappenddelimiter":
+        case "autoAppendDelimiter": target.getConfiguration().setAutoAppendDelimiter(property(camelContext, boolean.class, value)); return true;
         case "backlog": target.getConfiguration().setBacklog(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bosscount":
         case "bossCount": target.getConfiguration().setBossCount(property(camelContext, int.class, value)); return true;
         case "bossgroup":
         case "bossGroup": target.getConfiguration().setBossGroup(property(camelContext, io.netty.channel.EventLoopGroup.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "broadcast": target.getConfiguration().setBroadcast(property(camelContext, boolean.class, value)); return true;
+        case "channelgroup":
+        case "channelGroup": target.getConfiguration().setChannelGroup(property(camelContext, io.netty.channel.group.ChannelGroup.class, value)); return true;
+        case "clientinitializerfactory":
+        case "clientInitializerFactory": target.getConfiguration().setClientInitializerFactory(property(camelContext, org.apache.camel.component.netty.ClientInitializerFactory.class, value)); return true;
+        case "clientmode":
+        case "clientMode": target.getConfiguration().setClientMode(property(camelContext, boolean.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
+        case "correlationmanager":
+        case "correlationManager": target.getConfiguration().setCorrelationManager(property(camelContext, org.apache.camel.component.netty.NettyCamelStateCorrelationManager.class, value)); return true;
+        case "decodermaxlinelength":
+        case "decoderMaxLineLength": target.getConfiguration().setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
+        case "decoders": target.getConfiguration().setDecoders(property(camelContext, java.util.List.class, value)); return true;
+        case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, org.apache.camel.component.netty.TextLineDelimiter.class, value)); return true;
+        case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "disconnectonnoreply":
         case "disconnectOnNoReply": target.getConfiguration().setDisconnectOnNoReply(property(camelContext, boolean.class, value)); return true;
+        case "enabledprotocols":
+        case "enabledProtocols": target.getConfiguration().setEnabledProtocols(property(camelContext, java.lang.String.class, value)); return true;
+        case "encoders": target.getConfiguration().setEncoders(property(camelContext, java.util.List.class, value)); return true;
+        case "encoding": target.getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "keepalive":
+        case "keepAlive": target.getConfiguration().setKeepAlive(property(camelContext, boolean.class, value)); return true;
+        case "keystorefile":
+        case "keyStoreFile": target.getConfiguration().setKeyStoreFile(property(camelContext, java.io.File.class, value)); return true;
+        case "keystoreformat":
+        case "keyStoreFormat": target.getConfiguration().setKeyStoreFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoreresource":
+        case "keyStoreResource": target.getConfiguration().setKeyStoreResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazychannelcreation":
+        case "lazyChannelCreation": target.getConfiguration().setLazyChannelCreation(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "nativetransport":
+        case "nativeTransport": target.getConfiguration().setNativeTransport(property(camelContext, boolean.class, value)); return true;
+        case "needclientauth":
+        case "needClientAuth": target.getConfiguration().setNeedClientAuth(property(camelContext, boolean.class, value)); return true;
         case "nettyserverbootstrapfactory":
         case "nettyServerBootstrapFactory": target.getConfiguration().setNettyServerBootstrapFactory(property(camelContext, org.apache.camel.component.netty.NettyServerBootstrapFactory.class, value)); return true;
         case "networkinterface":
         case "networkInterface": target.getConfiguration().setNetworkInterface(property(camelContext, java.lang.String.class, value)); return true;
         case "noreplyloglevel":
         case "noReplyLogLevel": target.getConfiguration().setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "serverclosedchannelexceptioncaughtloglevel":
-        case "serverClosedChannelExceptionCaughtLogLevel": target.getConfiguration().setServerClosedChannelExceptionCaughtLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "serverexceptioncaughtloglevel":
-        case "serverExceptionCaughtLogLevel": target.getConfiguration().setServerExceptionCaughtLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
-        case "serverinitializerfactory":
-        case "serverInitializerFactory": target.getConfiguration().setServerInitializerFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
-        case "usingexecutorservice":
-        case "usingExecutorService": target.getConfiguration().setUsingExecutorService(property(camelContext, boolean.class, value)); return true;
-        case "connecttimeout":
-        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "requesttimeout":
-        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
-        case "clientinitializerfactory":
-        case "clientInitializerFactory": target.getConfiguration().setClientInitializerFactory(property(camelContext, org.apache.camel.component.netty.ClientInitializerFactory.class, value)); return true;
-        case "correlationmanager":
-        case "correlationManager": target.getConfiguration().setCorrelationManager(property(camelContext, org.apache.camel.component.netty.NettyCamelStateCorrelationManager.class, value)); return true;
-        case "lazychannelcreation":
-        case "lazyChannelCreation": target.getConfiguration().setLazyChannelCreation(property(camelContext, boolean.class, value)); return true;
+        case "options": target.getConfiguration().setOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "passphrase": target.getConfiguration().setPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "producerpoolenabled":
         case "producerPoolEnabled": target.getConfiguration().setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
         case "producerpoolmaxactive":
@@ -80,58 +90,29 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "producerPoolMinEvictableIdle": target.getConfiguration().setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
         case "producerPoolMinIdle": target.getConfiguration().setProducerPoolMinIdle(property(camelContext, int.class, value)); return true;
-        case "udpconnectionlesssending":
-        case "udpConnectionlessSending": target.getConfiguration().setUdpConnectionlessSending(property(camelContext, boolean.class, value)); return true;
-        case "usebytebuf":
-        case "useByteBuf": target.getConfiguration().setUseByteBuf(property(camelContext, boolean.class, value)); return true;
-        case "allowserializedheaders":
-        case "allowSerializedHeaders": target.getConfiguration().setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "channelgroup":
-        case "channelGroup": target.getConfiguration().setChannelGroup(property(camelContext, io.netty.channel.group.ChannelGroup.class, value)); return true;
-        case "nativetransport":
-        case "nativeTransport": target.getConfiguration().setNativeTransport(property(camelContext, boolean.class, value)); return true;
-        case "options": target.getConfiguration().setOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "receivebuffersize":
         case "receiveBufferSize": target.getConfiguration().setReceiveBufferSize(property(camelContext, int.class, value)); return true;
         case "receivebuffersizepredictor":
         case "receiveBufferSizePredictor": target.getConfiguration().setReceiveBufferSizePredictor(property(camelContext, int.class, value)); return true;
-        case "sendbuffersize":
-        case "sendBufferSize": target.getConfiguration().setSendBufferSize(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transferexchange":
-        case "transferExchange": target.getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
-        case "udpbytearraycodec":
-        case "udpByteArrayCodec": target.getConfiguration().setUdpByteArrayCodec(property(camelContext, boolean.class, value)); return true;
-        case "workercount":
-        case "workerCount": target.getConfiguration().setWorkerCount(property(camelContext, int.class, value)); return true;
-        case "workergroup":
-        case "workerGroup": target.getConfiguration().setWorkerGroup(property(camelContext, io.netty.channel.EventLoopGroup.class, value)); return true;
-        case "allowdefaultcodec":
-        case "allowDefaultCodec": target.getConfiguration().setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
-        case "autoappenddelimiter":
-        case "autoAppendDelimiter": target.getConfiguration().setAutoAppendDelimiter(property(camelContext, boolean.class, value)); return true;
-        case "decodermaxlinelength":
-        case "decoderMaxLineLength": target.getConfiguration().setDecoderMaxLineLength(property(camelContext, int.class, value)); return true;
-        case "decoders": target.getConfiguration().setDecoders(property(camelContext, java.util.List.class, value)); return true;
-        case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, org.apache.camel.component.netty.TextLineDelimiter.class, value)); return true;
-        case "encoders": target.getConfiguration().setEncoders(property(camelContext, java.util.List.class, value)); return true;
-        case "encoding": target.getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "textline": target.getConfiguration().setTextline(property(camelContext, boolean.class, value)); return true;
-        case "enabledprotocols":
-        case "enabledProtocols": target.getConfiguration().setEnabledProtocols(property(camelContext, java.lang.String.class, value)); return true;
-        case "keystorefile":
-        case "keyStoreFile": target.getConfiguration().setKeyStoreFile(property(camelContext, java.io.File.class, value)); return true;
-        case "keystoreformat":
-        case "keyStoreFormat": target.getConfiguration().setKeyStoreFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "keystoreresource":
-        case "keyStoreResource": target.getConfiguration().setKeyStoreResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "needclientauth":
-        case "needClientAuth": target.getConfiguration().setNeedClientAuth(property(camelContext, boolean.class, value)); return true;
-        case "passphrase": target.getConfiguration().setPassphrase(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnect": target.getConfiguration().setReconnect(property(camelContext, boolean.class, value)); return true;
+        case "reconnectinterval":
+        case "reconnectInterval": target.getConfiguration().setReconnectInterval(property(camelContext, int.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "reuseaddress":
+        case "reuseAddress": target.getConfiguration().setReuseAddress(property(camelContext, boolean.class, value)); return true;
+        case "reusechannel":
+        case "reuseChannel": target.getConfiguration().setReuseChannel(property(camelContext, boolean.class, value)); return true;
         case "securityprovider":
         case "securityProvider": target.getConfiguration().setSecurityProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendbuffersize":
+        case "sendBufferSize": target.getConfiguration().setSendBufferSize(property(camelContext, int.class, value)); return true;
+        case "serverclosedchannelexceptioncaughtloglevel":
+        case "serverClosedChannelExceptionCaughtLogLevel": target.getConfiguration().setServerClosedChannelExceptionCaughtLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "serverexceptioncaughtloglevel":
+        case "serverExceptionCaughtLogLevel": target.getConfiguration().setServerExceptionCaughtLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "serverinitializerfactory":
+        case "serverInitializerFactory": target.getConfiguration().setServerInitializerFactory(property(camelContext, org.apache.camel.component.netty.ServerInitializerFactory.class, value)); return true;
         case "ssl": target.getConfiguration().setSsl(property(camelContext, boolean.class, value)); return true;
         case "sslclientcertheaders":
         case "sslClientCertHeaders": target.getConfiguration().setSslClientCertHeaders(property(camelContext, boolean.class, value)); return true;
@@ -139,10 +120,29 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "sslhandler":
         case "sslHandler": target.getConfiguration().setSslHandler(property(camelContext, io.netty.handler.ssl.SslHandler.class, value)); return true;
+        case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "tcpnodelay":
+        case "tcpNoDelay": target.getConfiguration().setTcpNoDelay(property(camelContext, boolean.class, value)); return true;
+        case "textline": target.getConfiguration().setTextline(property(camelContext, boolean.class, value)); return true;
+        case "transferexchange":
+        case "transferExchange": target.getConfiguration().setTransferExchange(property(camelContext, boolean.class, value)); return true;
         case "truststorefile":
         case "trustStoreFile": target.getConfiguration().setTrustStoreFile(property(camelContext, java.io.File.class, value)); return true;
         case "truststoreresource":
         case "trustStoreResource": target.getConfiguration().setTrustStoreResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "udpbytearraycodec":
+        case "udpByteArrayCodec": target.getConfiguration().setUdpByteArrayCodec(property(camelContext, boolean.class, value)); return true;
+        case "udpconnectionlesssending":
+        case "udpConnectionlessSending": target.getConfiguration().setUdpConnectionlessSending(property(camelContext, boolean.class, value)); return true;
+        case "usebytebuf":
+        case "useByteBuf": target.getConfiguration().setUseByteBuf(property(camelContext, boolean.class, value)); return true;
+        case "usingexecutorservice":
+        case "usingExecutorService": target.getConfiguration().setUsingExecutorService(property(camelContext, boolean.class, value)); return true;
+        case "workercount":
+        case "workerCount": target.getConfiguration().setWorkerCount(property(camelContext, int.class, value)); return true;
+        case "workergroup":
+        case "workerGroup": target.getConfiguration().setWorkerGroup(property(camelContext, io.netty.channel.EventLoopGroup.class, value)); return true;
         default: return false;
         }
     }

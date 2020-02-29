@@ -15,23 +15,23 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GraphqlEndpoint target = (GraphqlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operationname":
         case "operationName": target.setOperationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "queryfile":
         case "queryFile": target.setQueryFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "variables": target.setVariables(property(camelContext, org.apache.camel.util.json.JsonObject.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accesstoken":
-        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "variables": target.setVariables(property(camelContext, org.apache.camel.util.json.JsonObject.class, value)); return true;
         default: return false;
         }
     }

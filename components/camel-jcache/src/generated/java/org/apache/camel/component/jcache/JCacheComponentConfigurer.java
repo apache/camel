@@ -15,6 +15,10 @@ public class JCacheComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JCacheComponent target = (JCacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cacheconfiguration":
         case "cacheConfiguration": target.setCacheConfiguration(property(camelContext, javax.cache.configuration.Configuration.class, value)); return true;
         case "cacheconfigurationproperties":
@@ -25,12 +29,8 @@ public class JCacheComponentConfigurer extends PropertyConfigurerSupport impleme
         case "cachingProvider": target.setCachingProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "configurationuri":
         case "configurationUri": target.setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

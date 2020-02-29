@@ -22,29 +22,8 @@ public class SWFComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SWFComponent target = (SWFComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "amazonswclient":
-        case "amazonSWClient": getOrCreateConfiguration(target).setAmazonSWClient(property(camelContext, com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.swf.SWFConfiguration.class, value)); return true;
-        case "dataconverter":
-        case "dataConverter": getOrCreateConfiguration(target).setDataConverter(property(camelContext, com.amazonaws.services.simpleworkflow.flow.DataConverter.class, value)); return true;
-        case "domainname":
-        case "domainName": getOrCreateConfiguration(target).setDomainName(property(camelContext, java.lang.String.class, value)); return true;
-        case "eventname":
-        case "eventName": getOrCreateConfiguration(target).setEventName(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "version": getOrCreateConfiguration(target).setVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "clientconfigurationparameters":
-        case "clientConfigurationParameters": getOrCreateConfiguration(target).setClientConfigurationParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "startworkflowoptionsparameters":
-        case "startWorkflowOptionsParameters": getOrCreateConfiguration(target).setStartWorkflowOptionsParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "swclientparameters":
-        case "sWClientParameters": getOrCreateConfiguration(target).setSWClientParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "accesskey":
+        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "activitylist":
         case "activityList": getOrCreateConfiguration(target).setActivityList(property(camelContext, java.lang.String.class, value)); return true;
         case "activityschedulingoptions":
@@ -55,13 +34,37 @@ public class SWFComponentConfigurer extends PropertyConfigurerSupport implements
         case "activityTypeExecutionOptions": getOrCreateConfiguration(target).setActivityTypeExecutionOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions.class, value)); return true;
         case "activitytyperegistrationoptions":
         case "activityTypeRegistrationOptions": getOrCreateConfiguration(target).setActivityTypeRegistrationOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class, value)); return true;
+        case "amazonswclient":
+        case "amazonSWClient": getOrCreateConfiguration(target).setAmazonSWClient(property(camelContext, com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "childpolicy":
         case "childPolicy": getOrCreateConfiguration(target).setChildPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientconfigurationparameters":
+        case "clientConfigurationParameters": getOrCreateConfiguration(target).setClientConfigurationParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.swf.SWFConfiguration.class, value)); return true;
+        case "dataconverter":
+        case "dataConverter": getOrCreateConfiguration(target).setDataConverter(property(camelContext, com.amazonaws.services.simpleworkflow.flow.DataConverter.class, value)); return true;
+        case "domainname":
+        case "domainName": getOrCreateConfiguration(target).setDomainName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventname":
+        case "eventName": getOrCreateConfiguration(target).setEventName(property(camelContext, java.lang.String.class, value)); return true;
         case "executionstarttoclosetimeout":
         case "executionStartToCloseTimeout": getOrCreateConfiguration(target).setExecutionStartToCloseTimeout(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "swclientparameters":
+        case "sWClientParameters": getOrCreateConfiguration(target).setSWClientParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "secretkey":
+        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "signalname":
         case "signalName": getOrCreateConfiguration(target).setSignalName(property(camelContext, java.lang.String.class, value)); return true;
+        case "startworkflowoptionsparameters":
+        case "startWorkflowOptionsParameters": getOrCreateConfiguration(target).setStartWorkflowOptionsParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "stateresulttype":
         case "stateResultType": getOrCreateConfiguration(target).setStateResultType(property(camelContext, java.lang.String.class, value)); return true;
         case "taskstarttoclosetimeout":
@@ -70,14 +73,11 @@ public class SWFComponentConfigurer extends PropertyConfigurerSupport implements
         case "terminationDetails": getOrCreateConfiguration(target).setTerminationDetails(property(camelContext, java.lang.String.class, value)); return true;
         case "terminationreason":
         case "terminationReason": getOrCreateConfiguration(target).setTerminationReason(property(camelContext, java.lang.String.class, value)); return true;
+        case "version": getOrCreateConfiguration(target).setVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "workflowlist":
         case "workflowList": getOrCreateConfiguration(target).setWorkflowList(property(camelContext, java.lang.String.class, value)); return true;
         case "workflowtyperegistrationoptions":
         case "workflowTypeRegistrationOptions": getOrCreateConfiguration(target).setWorkflowTypeRegistrationOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class, value)); return true;
-        case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

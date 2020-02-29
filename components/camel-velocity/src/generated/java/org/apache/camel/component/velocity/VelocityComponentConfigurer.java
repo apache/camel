@@ -15,10 +15,10 @@ public class VelocityComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VelocityComponent target = (VelocityComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "velocityengine":
         case "velocityEngine": target.setVelocityEngine(property(camelContext, org.apache.velocity.app.VelocityEngine.class, value)); return true;
         default: return false;

@@ -15,14 +15,19 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GeoCoderEndpoint target = (GeoCoderEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "clientid":
+        case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientkey":
+        case "clientKey": target.setClientKey(property(camelContext, java.lang.String.class, value)); return true;
         case "headersonly":
         case "headersOnly": target.setHeadersOnly(property(camelContext, boolean.class, value)); return true;
         case "language": target.setLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "proxyauthdomain":
         case "proxyAuthDomain": target.setProxyAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthhost":
@@ -37,12 +42,7 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "apikey":
-        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientid":
-        case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientkey":
-        case "clientKey": target.setClientKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

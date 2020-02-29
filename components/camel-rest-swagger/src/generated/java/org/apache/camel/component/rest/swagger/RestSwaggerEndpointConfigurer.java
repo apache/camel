@@ -17,6 +17,8 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basepath":
         case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "componentname":
         case "componentName": target.setComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
@@ -24,11 +26,9 @@ public class RestSwaggerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

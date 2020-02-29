@@ -22,6 +22,13 @@ public class AvroComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AvroComponent target = (AvroComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.avro.AvroConfiguration.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "protocol": getOrCreateConfiguration(target).setProtocol(property(camelContext, org.apache.avro.Protocol.class, value)); return true;
         case "protocolclassname":
         case "protocolClassName": getOrCreateConfiguration(target).setProtocolClassName(property(camelContext, java.lang.String.class, value)); return true;
@@ -33,13 +40,6 @@ public class AvroComponentConfigurer extends PropertyConfigurerSupport implement
         case "singleParameter": getOrCreateConfiguration(target).setSingleParameter(property(camelContext, boolean.class, value)); return true;
         case "uriauthority":
         case "uriAuthority": getOrCreateConfiguration(target).setUriAuthority(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.avro.AvroConfiguration.class, value)); return true;
         default: return false;
         }
     }
