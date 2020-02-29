@@ -19,7 +19,9 @@ package org.apache.camel.maven.packaging;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 
@@ -45,6 +47,9 @@ public final class PropertyConfigurerGenerator {
         w.write("public class " + cn + " extends " + psn + " implements GeneratedPropertyConfigurer {\n");
         w.write("\n");
         if (!options.isEmpty() || !hasSuper) {
+
+            // sort options A..Z so they always have same order
+            options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
 
             if (component) {
                 // if its a component configurer then configuration classes are optional and we need
