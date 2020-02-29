@@ -47,14 +47,17 @@ public interface Aws2EksComponentBuilderFactory {
      */
     interface Aws2EksComponentBuilder extends ComponentBuilder<EKS2Component> {
         /**
-         * Amazon AWS Access Key.
+         * Component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.eks.EKS2Configuration</code>
+         * type.
          * 
          * Group: producer
          */
-        default Aws2EksComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2EksComponentBuilder configuration(
+                org.apache.camel.component.aws2.eks.EKS2Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -155,17 +158,6 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2EksComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -180,17 +172,25 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS EKS default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.eks.EKS2Configuration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2EksComponentBuilder configuration(
-                org.apache.camel.component.aws2.eks.EKS2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2EksComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2EksComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -217,7 +217,7 @@ public interface Aws2EksComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((EKS2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "configuration": ((EKS2Component) component).setConfiguration((org.apache.camel.component.aws2.eks.EKS2Configuration) value); return true;
             case "eksClient": getOrCreateConfiguration((EKS2Component) component).setEksClient((software.amazon.awssdk.services.eks.EksClient) value); return true;
             case "lazyStartProducer": ((EKS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((EKS2Component) component).setOperation((org.apache.camel.component.aws2.eks.EKS2Operations) value); return true;
@@ -225,9 +225,9 @@ public interface Aws2EksComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((EKS2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((EKS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((EKS2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((EKS2Component) component).setSecretKey((java.lang.String) value); return true;
             case "basicPropertyBinding": ((EKS2Component) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((EKS2Component) component).setConfiguration((org.apache.camel.component.aws2.eks.EKS2Configuration) value); return true;
+            case "accessKey": getOrCreateConfiguration((EKS2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((EKS2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }
