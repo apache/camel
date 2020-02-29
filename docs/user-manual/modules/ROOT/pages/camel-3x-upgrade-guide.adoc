@@ -576,3 +576,23 @@ Should now be:
   </property>
 </bean>
 ----
+
+=== Configuring components via Spring Boot auto configuration
+
+Configuring Camel spring boot components has changed its option keys to be flattened and have the `.configuration` prefix
+removed now.
+
+Before in application.properties
+
+[source,properties]
+----
+camel.component.kafka.configuration.brokers=mybroker1:1234,mybroker2:1234
+----
+
+Should now be
+[source,properties]
+----
+camel.component.kafka.brokers=mybroker1:1234,mybroker2:1234
+----
+
+This applies to all the Camel spring boot _starter_ JARs where basically `.configuration` should be removed.
