@@ -30,28 +30,28 @@ public class Translate2Configuration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
-    @UriParam(label = "producer")
+    @UriParam
     private TranslateClient translateClient;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(label = "producer")
-    @Metadata(required = true, defaultValue = "translateText")
+    @UriParam(defaultValue = "translateText")
+    @Metadata(required = true)
     private Translate2Operations operation = Translate2Operations.translateText;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "producer")
+    @UriParam
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam
     private String sourceLanguage;
-    @UriParam(label = "producer")
+    @UriParam
     private String targetLanguage;
-    @UriParam(label = "producer")
+    @UriParam
     private Integer proxyPort;
     @UriParam
     private String region;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private boolean autodetectSourceLanguage;
 
     public TranslateClient getTranslateClient() {
