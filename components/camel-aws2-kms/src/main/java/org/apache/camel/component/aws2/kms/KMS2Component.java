@@ -33,13 +33,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 public class KMS2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private KMS2Configuration configuration;
+    private KMS2Configuration configuration = new KMS2Configuration();
 
     public KMS2Component() {
         this(null);
@@ -56,9 +50,6 @@ public class KMS2Component extends DefaultComponent {
         KMS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new KMS2Configuration();
 
         KMS2Endpoint endpoint = new KMS2Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getKmsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -73,43 +64,10 @@ public class KMS2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS KMS default configuration
+     * Component configuration
      */
     public void setConfiguration(KMS2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which KMS client needs to work
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(KMS2Configuration configuration) {
