@@ -41,11 +41,15 @@ public class Pair<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Pair<?> that = (Pair<?>) o;
-        return Objects.equals(left, that.left) &&
-                Objects.equals(right, that.right);
+        return Objects.equals(left, that.left)
+                && Objects.equals(right, that.right);
     }
 
     @Override

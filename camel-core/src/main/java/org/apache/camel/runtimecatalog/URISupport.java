@@ -28,16 +28,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import org.apache.camel.runtimecatalog.Pair;
-
 /**
  * Copied from org.apache.camel.util.URISupport
  */
 public final class URISupport {
 
     public static final String RAW_TOKEN_PREFIX = "RAW";
-    public static final char[] RAW_TOKEN_START = { '(', '{' };
-    public static final char[] RAW_TOKEN_END = { ')', '}' };
+    public static final char[] RAW_TOKEN_START = {'(', '{' };
+    public static final char[] RAW_TOKEN_END = {')', '}' };
 
     private static final String CHARSET = "UTF-8";
 
