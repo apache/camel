@@ -33,13 +33,7 @@ import software.amazon.awssdk.services.iam.IamClient;
 public class IAM2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private IAM2Configuration configuration;
+    private IAM2Configuration configuration = new IAM2Configuration();
 
     public IAM2Component() {
         this(null);
@@ -55,9 +49,6 @@ public class IAM2Component extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         IAM2Configuration configuration = this.configuration != null ? this.configuration.copy() : new IAM2Configuration();
         IAM2Endpoint endpoint = new IAM2Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getIamClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -72,43 +63,10 @@ public class IAM2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS IAM default configuration
+     * Component configuration
      */
     public void setConfiguration(IAM2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which IAM client needs to work
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(IAM2Configuration configuration) {
