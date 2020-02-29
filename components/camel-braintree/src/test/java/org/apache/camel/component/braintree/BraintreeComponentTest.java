@@ -49,7 +49,8 @@ public class BraintreeComponentTest {
         BraintreeConfiguration configuration = createBraintreeConfiguration();
 
         BraintreeComponent component = new BraintreeComponent();
-        component.setLogHandlerEnabled(false);
+        component.setConfiguration(configuration);
+        component.getConfiguration().setLogHandlerEnabled(false);
         component.createEndpoint("", "", BraintreeApiName.CLIENTTOKEN, configuration);
 
         BraintreeGateway braintreeGateway = component.getGateway(configuration);
