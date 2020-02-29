@@ -19,6 +19,8 @@ package org.apache.camel.impl;
 import java.io.IOException;
 import java.net.ConnectException;
 
+import javax.activation.DataHandler;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.InvalidPayloadException;
@@ -246,6 +248,52 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         assertEquals("Dest message should be of the same type as source message",
                      sourceIn.getClass(), destIn.getClass());
+    }
+
+    @Test
+    public void testSafeCopyWithAttachments() {
+        DefaultExchange sourceExchange = new DefaultExchange(context);
+        MyMessage sourceIn = new MyMessage();
+        sourceIn.setCamelContext(context);
+        sourceIn.setHeader("test-header-in", "test-header-in-value");
+        final String attachmentIdIn = "test-attachment-in";
+        sourceIn.addAttachment(attachmentIdIn, new DataHandler("test-content","text/plain"));
+        sourceExchange.setIn(sourceIn);
+        MyMessage sourceOut = new MyMessage();
+        sourceOut.setCamelContext(context);
+        sourceOut.setHeader("test-header-out", "test-header-out-value");
+        final String attachmentIdOut = "test-attachment-out";
+        sourceOut.addAttachment(attachmentIdOut, new DataHandler("test-content","text/plain"));
+        sourceExchange.setOut(sourceOut);
+        Exchange destExchange = sourceExchange.copy(true);
+        Message destIn = destExchange.getIn();
+        Message destOut = destExchange.getOut();
+
+        assertEquals("Dest message in attachments should equal source message in attachments",
+                sourceIn.getAttachment(attachmentIdIn), destIn.getAttachment(attachmentIdIn));
+        assertEquals("Dest message out attachments should equal source message out attachments",
+                sourceOut.getAttachment(attachmentIdOut), destOut.getAttachment(attachmentIdOut));
+    }
+
+    @Test
+    public void testSafeCopyWithAttachmentsNoHeaders() {
+        DefaultExchange sourceExchange = new DefaultExchange(context);
+        MyMessage sourceIn = new MyMessage();
+        final String attachmentIdIn = "test-attachment-in";
+        sourceIn.addAttachment(attachmentIdIn, new DataHandler("test-content","text/plain"));
+        sourceExchange.setIn(sourceIn);
+        MyMessage sourceOut = new MyMessage();
+        final String attachmentIdOut = "test-attachment-out";
+        sourceOut.addAttachment(attachmentIdOut, new DataHandler("test-content","text/plain"));
+        sourceExchange.setOut(sourceOut);
+        Exchange destExchange = sourceExchange.copy(true);
+        Message destIn = destExchange.getIn();
+        Message destOut = destExchange.getOut();
+
+        assertEquals("Dest message in attachments should equal source message in attachments",
+                sourceIn.getAttachment(attachmentIdIn), destIn.getAttachment(attachmentIdIn));
+        assertEquals("Dest message out attachments should equal source message out attachments",
+                sourceOut.getAttachment(attachmentIdOut), destOut.getAttachment(attachmentIdOut));
     }
 
     @Test
