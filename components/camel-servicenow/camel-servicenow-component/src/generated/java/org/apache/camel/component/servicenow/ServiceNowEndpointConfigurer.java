@@ -15,12 +15,24 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceNowEndpoint target = (ServiceNowEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiurl":
+        case "apiUrl": target.getConfiguration().setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "apiversion":
+        case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "dateformat":
+        case "dateFormat": target.getConfiguration().setDateFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "datetimeformat":
+        case "dateTimeFormat": target.getConfiguration().setDateTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "display": target.getConfiguration().setDisplay(property(camelContext, java.lang.String.class, value)); return true;
         case "displayvalue":
         case "displayValue": target.getConfiguration().setDisplayValue(property(camelContext, java.lang.String.class, value)); return true;
         case "excludereferencelink":
         case "excludeReferenceLink": target.getConfiguration().setExcludeReferenceLink(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "favorites": target.getConfiguration().setFavorites(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "httpclientpolicy":
+        case "httpClientPolicy": target.getConfiguration().setHttpClientPolicy(property(camelContext, org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class, value)); return true;
         case "includeaggregates":
         case "includeAggregates": target.getConfiguration().setIncludeAggregates(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "includeavailableaggregates":
@@ -36,51 +48,8 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "models": target.getConfiguration().setModels(property(camelContext, java.util.Map.class, value)); return true;
-        case "perpage":
-        case "perPage": target.getConfiguration().setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "release": target.getConfiguration().setRelease(property(camelContext, org.apache.camel.component.servicenow.ServiceNowRelease.class, value)); return true;
-        case "requestmodels":
-        case "requestModels": target.getConfiguration().setRequestModels(property(camelContext, java.util.Map.class, value)); return true;
-        case "resource": target.getConfiguration().setResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "responsemodels":
-        case "responseModels": target.getConfiguration().setResponseModels(property(camelContext, java.util.Map.class, value)); return true;
-        case "sortby":
-        case "sortBy": target.getConfiguration().setSortBy(property(camelContext, java.lang.String.class, value)); return true;
-        case "sortdir":
-        case "sortDir": target.getConfiguration().setSortDir(property(camelContext, java.lang.String.class, value)); return true;
-        case "suppressautosysfield":
-        case "suppressAutoSysField": target.getConfiguration().setSuppressAutoSysField(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "suppresspaginationheader":
-        case "suppressPaginationHeader": target.getConfiguration().setSuppressPaginationHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "table": target.getConfiguration().setTable(property(camelContext, java.lang.String.class, value)); return true;
-        case "target": target.getConfiguration().setTarget(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "toplevelonly":
-        case "topLevelOnly": target.getConfiguration().setTopLevelOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "apiversion":
-        case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "dateformat":
-        case "dateFormat": target.getConfiguration().setDateFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "datetimeformat":
-        case "dateTimeFormat": target.getConfiguration().setDateTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpclientpolicy":
-        case "httpClientPolicy": target.getConfiguration().setHttpClientPolicy(property(camelContext, org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class, value)); return true;
         case "mapper": target.getConfiguration().setMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
-        case "proxyauthorizationpolicy":
-        case "proxyAuthorizationPolicy": target.getConfiguration().setProxyAuthorizationPolicy(property(camelContext, org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class, value)); return true;
-        case "retrievetargetrecordonimport":
-        case "retrieveTargetRecordOnImport": target.getConfiguration().setRetrieveTargetRecordOnImport(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "timeformat":
-        case "timeFormat": target.getConfiguration().setTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyhost":
-        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "proxyport":
-        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "apiurl":
-        case "apiUrl": target.getConfiguration().setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "models": target.getConfiguration().setModels(property(camelContext, java.util.Map.class, value)); return true;
         case "oauthclientid":
         case "oauthClientId": target.getConfiguration().setOauthClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthclientsecret":
@@ -88,12 +57,43 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "oauthtokenurl":
         case "oauthTokenUrl": target.getConfiguration().setOauthTokenUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "perpage":
+        case "perPage": target.getConfiguration().setPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "proxyauthorizationpolicy":
+        case "proxyAuthorizationPolicy": target.getConfiguration().setProxyAuthorizationPolicy(property(camelContext, org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class, value)); return true;
+        case "proxyhost":
+        case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxypassword":
         case "proxyPassword": target.getConfiguration().setProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyport":
+        case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyusername":
         case "proxyUserName": target.getConfiguration().setProxyUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "release": target.getConfiguration().setRelease(property(camelContext, org.apache.camel.component.servicenow.ServiceNowRelease.class, value)); return true;
+        case "requestmodels":
+        case "requestModels": target.getConfiguration().setRequestModels(property(camelContext, java.util.Map.class, value)); return true;
+        case "resource": target.getConfiguration().setResource(property(camelContext, java.lang.String.class, value)); return true;
+        case "responsemodels":
+        case "responseModels": target.getConfiguration().setResponseModels(property(camelContext, java.util.Map.class, value)); return true;
+        case "retrievetargetrecordonimport":
+        case "retrieveTargetRecordOnImport": target.getConfiguration().setRetrieveTargetRecordOnImport(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "sortby":
+        case "sortBy": target.getConfiguration().setSortBy(property(camelContext, java.lang.String.class, value)); return true;
+        case "sortdir":
+        case "sortDir": target.getConfiguration().setSortDir(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "suppressautosysfield":
+        case "suppressAutoSysField": target.getConfiguration().setSuppressAutoSysField(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "suppresspaginationheader":
+        case "suppressPaginationHeader": target.getConfiguration().setSuppressPaginationHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "table": target.getConfiguration().setTable(property(camelContext, java.lang.String.class, value)); return true;
+        case "target": target.getConfiguration().setTarget(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "timeformat":
+        case "timeFormat": target.getConfiguration().setTimeFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "toplevelonly":
+        case "topLevelOnly": target.getConfiguration().setTopLevelOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "username":
         case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;

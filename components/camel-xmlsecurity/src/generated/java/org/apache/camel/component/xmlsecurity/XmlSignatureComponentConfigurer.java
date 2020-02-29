@@ -26,6 +26,8 @@ public class XmlSignatureComponentConfigurer extends PropertyConfigurerSupport i
         case "addKeyInfoReference": getOrCreateConfiguration(target).setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "baseuri":
         case "baseUri": getOrCreateConfiguration(target).setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "canonicalizationmethod":
         case "canonicalizationMethod": getOrCreateConfiguration(target).setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
         case "clearheaders":
@@ -44,12 +46,12 @@ public class XmlSignatureComponentConfigurer extends PropertyConfigurerSupport i
         case "disallowDoctypeDecl": getOrCreateConfiguration(target).setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "keyaccessor":
         case "keyAccessor": getOrCreateConfiguration(target).setKeyAccessor(property(camelContext, org.apache.camel.component.xmlsecurity.api.KeyAccessor.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "omitxmldeclaration":
         case "omitXmlDeclaration": getOrCreateConfiguration(target).setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "outputxmlencoding":
         case "outputXmlEncoding": getOrCreateConfiguration(target).setOutputXmlEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "parentlocalname":
         case "parentLocalName": getOrCreateConfiguration(target).setParentLocalName(property(camelContext, java.lang.String.class, value)); return true;
         case "parentnamespace":
@@ -69,16 +71,14 @@ public class XmlSignatureComponentConfigurer extends PropertyConfigurerSupport i
         case "signatureAlgorithm": getOrCreateConfiguration(target).setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signatureid":
         case "signatureId": getOrCreateConfiguration(target).setSignatureId(property(camelContext, java.lang.String.class, value)); return true;
-        case "transformmethods":
-        case "transformMethods": getOrCreateConfiguration(target).setTransformMethods(property(camelContext, java.util.List.class, value)); return true;
-        case "xpathstoidattributes":
-        case "xpathsToIdAttributes": getOrCreateConfiguration(target).setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "signerconfiguration":
         case "signerConfiguration": target.setSignerConfiguration(property(camelContext, org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration.class, value)); return true;
+        case "transformmethods":
+        case "transformMethods": getOrCreateConfiguration(target).setTransformMethods(property(camelContext, java.util.List.class, value)); return true;
         case "uridereferencer":
         case "uriDereferencer": getOrCreateConfiguration(target).setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
+        case "xpathstoidattributes":
+        case "xpathsToIdAttributes": getOrCreateConfiguration(target).setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }

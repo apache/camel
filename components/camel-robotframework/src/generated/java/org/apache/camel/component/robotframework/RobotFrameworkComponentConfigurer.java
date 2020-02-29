@@ -24,8 +24,13 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "argumentfile":
         case "argumentFile": getOrCreateConfiguration(target).setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "combinedtagstats":
         case "combinedTagStats": getOrCreateConfiguration(target).setCombinedTagStats(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration.class, value)); return true;
         case "criticaltags":
         case "criticalTags": getOrCreateConfiguration(target).setCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
         case "debugfile":
@@ -36,6 +41,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "exitonfailure":
         case "exitOnFailure": getOrCreateConfiguration(target).setExitOnFailure(property(camelContext, boolean.class, value)); return true;
         case "includes": getOrCreateConfiguration(target).setIncludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "listener": getOrCreateConfiguration(target).setListener(property(camelContext, java.lang.String.class, value)); return true;
         case "listeners": getOrCreateConfiguration(target).setListeners(property(camelContext, java.lang.String.class, value)); return true;
         case "log": getOrCreateConfiguration(target).setLog(property(camelContext, java.io.File.class, value)); return true;
@@ -49,10 +56,10 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "monitorwidth":
         case "monitorWidth": getOrCreateConfiguration(target).setMonitorWidth(property(camelContext, java.lang.String.class, value)); return true;
         case "name": getOrCreateConfiguration(target).setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "noncriticaltags":
-        case "nonCriticalTags": getOrCreateConfiguration(target).setNonCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
         case "nostatusreturncode":
         case "noStatusReturnCode": getOrCreateConfiguration(target).setNoStatusReturnCode(property(camelContext, boolean.class, value)); return true;
+        case "noncriticaltags":
+        case "nonCriticalTags": getOrCreateConfiguration(target).setNonCriticalTags(property(camelContext, java.lang.String.class, value)); return true;
         case "output": getOrCreateConfiguration(target).setOutput(property(camelContext, java.io.File.class, value)); return true;
         case "outputdirectory":
         case "outputDirectory": getOrCreateConfiguration(target).setOutputDirectory(property(camelContext, java.io.File.class, value)); return true;
@@ -72,20 +79,20 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "skipTeardownOnExit": getOrCreateConfiguration(target).setSkipTeardownOnExit(property(camelContext, boolean.class, value)); return true;
         case "splitoutputs":
         case "splitOutputs": getOrCreateConfiguration(target).setSplitOutputs(property(camelContext, java.lang.String.class, value)); return true;
-        case "suites": getOrCreateConfiguration(target).setSuites(property(camelContext, java.lang.String.class, value)); return true;
         case "suitestatlevel":
         case "suiteStatLevel": getOrCreateConfiguration(target).setSuiteStatLevel(property(camelContext, java.lang.String.class, value)); return true;
+        case "suites": getOrCreateConfiguration(target).setSuites(property(camelContext, java.lang.String.class, value)); return true;
         case "summarytitle":
         case "summaryTitle": getOrCreateConfiguration(target).setSummaryTitle(property(camelContext, java.lang.String.class, value)); return true;
         case "tagdocs":
         case "tagDocs": getOrCreateConfiguration(target).setTagDocs(property(camelContext, java.lang.String.class, value)); return true;
-        case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "tagstatexcludes":
         case "tagStatExcludes": getOrCreateConfiguration(target).setTagStatExcludes(property(camelContext, java.lang.String.class, value)); return true;
         case "tagstatincludes":
         case "tagStatIncludes": getOrCreateConfiguration(target).setTagStatIncludes(property(camelContext, java.lang.String.class, value)); return true;
         case "tagstatlinks":
         case "tagStatLinks": getOrCreateConfiguration(target).setTagStatLinks(property(camelContext, java.lang.String.class, value)); return true;
+        case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "tests": getOrCreateConfiguration(target).setTests(property(camelContext, java.lang.String.class, value)); return true;
         case "timestampoutputs":
         case "timestampOutputs": getOrCreateConfiguration(target).setTimestampOutputs(property(camelContext, boolean.class, value)); return true;
@@ -96,13 +103,6 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "warnOnSkippedFiles": getOrCreateConfiguration(target).setWarnOnSkippedFiles(property(camelContext, boolean.class, value)); return true;
         case "xunitfile":
         case "xunitFile": getOrCreateConfiguration(target).setXunitFile(property(camelContext, java.io.File.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration.class, value)); return true;
         default: return false;
         }
     }

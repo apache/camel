@@ -15,6 +15,8 @@ public class FileWatchComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FileWatchComponent target = (FileWatchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -27,8 +29,6 @@ public class FileWatchComponentConfigurer extends PropertyConfigurerSupport impl
         case "queueSize": target.setQueueSize(property(camelContext, int.class, value)); return true;
         case "usefilehashing":
         case "useFileHashing": target.setUseFileHashing(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

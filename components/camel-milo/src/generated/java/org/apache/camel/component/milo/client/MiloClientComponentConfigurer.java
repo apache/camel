@@ -22,6 +22,18 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MiloClientComponent target = (MiloClientComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedsecuritypolicies":
+        case "allowedSecurityPolicies": getOrCreateConfiguration(target).setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationname":
+        case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationuri":
+        case "applicationUri": getOrCreateConfiguration(target).setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "channellifetime":
+        case "channelLifetime": getOrCreateConfiguration(target).setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.milo.client.MiloClientConfiguration.class, value)); return true;
@@ -29,20 +41,6 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "discoveryEndpointSuffix": getOrCreateConfiguration(target).setDiscoveryEndpointSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "discoveryendpointuri":
         case "discoveryEndpointUri": getOrCreateConfiguration(target).setDiscoveryEndpointUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "allowedsecuritypolicies":
-        case "allowedSecurityPolicies": getOrCreateConfiguration(target).setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationname":
-        case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "applicationuri":
-        case "applicationUri": getOrCreateConfiguration(target).setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "channellifetime":
-        case "channelLifetime": getOrCreateConfiguration(target).setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
         case "keyalias":
         case "keyAlias": getOrCreateConfiguration(target).setKeyAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "keypassword":
@@ -53,6 +51,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "keyStoreType": getOrCreateConfiguration(target).setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "keystoreurl":
         case "keyStoreUrl": getOrCreateConfiguration(target).setKeyStoreUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxpendingpublishrequests":
         case "maxPendingPublishRequests": getOrCreateConfiguration(target).setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
         case "maxresponsemessagesize":

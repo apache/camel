@@ -23,9 +23,12 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         CaffeineCacheComponent target = (CaffeineCacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cache": getOrCreateConfiguration(target).setCache(property(camelContext, com.github.benmanes.caffeine.cache.Cache.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": getOrCreateConfiguration(target).setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.caffeine.CaffeineConfiguration.class, value)); return true;
         case "createcacheifnotexist":
         case "createCacheIfNotExist": getOrCreateConfiguration(target).setCreateCacheIfNotExist(property(camelContext, boolean.class, value)); return true;
         case "evictiontype":
@@ -37,6 +40,8 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         case "initialcapacity":
         case "initialCapacity": getOrCreateConfiguration(target).setInitialCapacity(property(camelContext, int.class, value)); return true;
         case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.Object.class, value)); return true;
+        case "keytype":
+        case "keyType": getOrCreateConfiguration(target).setKeyType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maximumsize":
@@ -47,11 +52,6 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         case "statsCounter": getOrCreateConfiguration(target).setStatsCounter(property(camelContext, com.github.benmanes.caffeine.cache.stats.StatsCounter.class, value)); return true;
         case "statsenabled":
         case "statsEnabled": getOrCreateConfiguration(target).setStatsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.caffeine.CaffeineConfiguration.class, value)); return true;
-        case "keytype":
-        case "keyType": getOrCreateConfiguration(target).setKeyType(property(camelContext, java.lang.String.class, value)); return true;
         case "valuetype":
         case "valueType": getOrCreateConfiguration(target).setValueType(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;

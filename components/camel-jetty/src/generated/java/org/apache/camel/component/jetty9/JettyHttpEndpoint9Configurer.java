@@ -15,44 +15,24 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JettyHttpEndpoint9 target = (JettyHttpEndpoint9) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "disablestreamcache":
-        case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy":
-        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "httpbinding":
-        case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
         case "continuationtimeout":
         case "continuationTimeout": target.setContinuationTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "disablestreamcache":
+        case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": target.setEagerCheckContentAvailable(property(camelContext, boolean.class, value)); return true;
         case "enablecors":
         case "enableCORS": target.setEnableCORS(property(camelContext, boolean.class, value)); return true;
         case "enablejmx":
         case "enableJmx": target.setEnableJmx(property(camelContext, boolean.class, value)); return true;
         case "enablemultipartfilter":
         case "enableMultipartFilter": target.setEnableMultipartFilter(property(camelContext, boolean.class, value)); return true;
-        case "httpmethodrestrict":
-        case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
-        case "matchonuriprefix":
-        case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
-        case "muteexception":
-        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
-        case "responsebuffersize":
-        case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "senddateheader":
-        case "sendDateHeader": target.setSendDateHeader(property(camelContext, boolean.class, value)); return true;
-        case "sendserverversion":
-        case "sendServerVersion": target.setSendServerVersion(property(camelContext, boolean.class, value)); return true;
-        case "sessionsupport":
-        case "sessionSupport": target.setSessionSupport(property(camelContext, boolean.class, value)); return true;
-        case "transferexception":
-        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "usecontinuation":
-        case "useContinuation": target.setUseContinuation(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "eagercheckcontentavailable":
-        case "eagerCheckContentAvailable": target.setEagerCheckContentAvailable(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -61,23 +41,43 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "filterInitParameters": target.setFilterInitParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "filters": target.setFilters(property(camelContext, java.util.List.class, value)); return true;
         case "handlers": target.setHandlers(property(camelContext, java.util.List.class, value)); return true;
-        case "multipartfilter":
-        case "multipartFilter": target.setMultipartFilter(property(camelContext, javax.servlet.Filter.class, value)); return true;
-        case "optionsenabled":
-        case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
-        case "traceenabled":
-        case "traceEnabled": target.setTraceEnabled(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "httpbinding":
+        case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
         case "maphttpmessagebody":
         case "mapHttpMessageBody": target.setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessageformurlencodedbody":
         case "mapHttpMessageFormUrlEncodedBody": target.setMapHttpMessageFormUrlEncodedBody(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessageheaders":
         case "mapHttpMessageHeaders": target.setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
+        case "multipartfilter":
+        case "multipartFilter": target.setMultipartFilter(property(camelContext, javax.servlet.Filter.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
+        case "optionsenabled":
+        case "optionsEnabled": target.setOptionsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "responsebuffersize":
+        case "responseBufferSize": target.setResponseBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "senddateheader":
+        case "sendDateHeader": target.setSendDateHeader(property(camelContext, boolean.class, value)); return true;
+        case "sendserverversion":
+        case "sendServerVersion": target.setSendServerVersion(property(camelContext, boolean.class, value)); return true;
+        case "sessionsupport":
+        case "sessionSupport": target.setSessionSupport(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "traceenabled":
+        case "traceEnabled": target.setTraceEnabled(property(camelContext, boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "usecontinuation":
+        case "useContinuation": target.setUseContinuation(property(camelContext, java.lang.Boolean.class, value)); return true;
         default: return false;
         }
     }

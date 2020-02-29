@@ -15,21 +15,21 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ChunkEndpoint target = (ChunkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "extension": target.setExtension(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "themefolder":
         case "themeFolder": target.setThemeFolder(property(camelContext, java.lang.String.class, value)); return true;
         case "themelayer":
         case "themeLayer": target.setThemeLayer(property(camelContext, java.lang.String.class, value)); return true;
         case "themesubfolder":
         case "themeSubfolder": target.setThemeSubfolder(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

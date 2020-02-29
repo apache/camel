@@ -15,41 +15,41 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfinispanEndpoint target = (InfinispanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "hosts": target.getConfiguration().setHosts(property(camelContext, java.lang.String.class, value)); return true;
-        case "querybuilder":
-        case "queryBuilder": target.getConfiguration().setQueryBuilder(property(camelContext, org.apache.camel.component.infinispan.InfinispanQueryBuilder.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "clusteredlistener":
-        case "clusteredListener": target.getConfiguration().setClusteredListener(property(camelContext, boolean.class, value)); return true;
-        case "command": target.getConfiguration().setCommand(property(camelContext, java.lang.String.class, value)); return true;
-        case "customlistener":
-        case "customListener": target.getConfiguration().setCustomListener(property(camelContext, org.apache.camel.component.infinispan.InfinispanCustomListener.class, value)); return true;
-        case "eventtypes":
-        case "eventTypes": target.getConfiguration().setEventTypes(property(camelContext, java.lang.String.class, value)); return true;
-        case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.infinispan.InfinispanOperation.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachecontainer":
         case "cacheContainer": target.getConfiguration().setCacheContainer(property(camelContext, org.infinispan.commons.api.BasicCacheContainer.class, value)); return true;
         case "cachecontainerconfiguration":
         case "cacheContainerConfiguration": target.getConfiguration().setCacheContainerConfiguration(property(camelContext, java.lang.Object.class, value)); return true;
+        case "clusteredlistener":
+        case "clusteredListener": target.getConfiguration().setClusteredListener(property(camelContext, boolean.class, value)); return true;
+        case "command": target.getConfiguration().setCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "configurationproperties":
         case "configurationProperties": target.getConfiguration().setConfigurationProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "configurationuri":
         case "configurationUri": target.getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "customlistener":
+        case "customListener": target.getConfiguration().setCustomListener(property(camelContext, org.apache.camel.component.infinispan.InfinispanCustomListener.class, value)); return true;
+        case "eventtypes":
+        case "eventTypes": target.getConfiguration().setEventTypes(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "flags": target.getConfiguration().setFlags(property(camelContext, java.lang.String.class, value)); return true;
+        case "hosts": target.getConfiguration().setHosts(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.infinispan.InfinispanOperation.class, value)); return true;
+        case "querybuilder":
+        case "queryBuilder": target.getConfiguration().setQueryBuilder(property(camelContext, org.apache.camel.component.infinispan.InfinispanQueryBuilder.class, value)); return true;
         case "remappingfunction":
         case "remappingFunction": target.getConfiguration().setRemappingFunction(property(camelContext, java.util.function.BiFunction.class, value)); return true;
         case "resultheader":
         case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.Object.class, value)); return true;
+        case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

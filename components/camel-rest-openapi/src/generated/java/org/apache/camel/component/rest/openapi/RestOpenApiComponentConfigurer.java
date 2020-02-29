@@ -17,6 +17,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basepath":
         case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "componentname":
         case "componentName": target.setComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
@@ -26,8 +28,6 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
         case "specificationuri":
         case "specificationUri": target.setSpecificationUri(property(camelContext, java.net.URI.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":

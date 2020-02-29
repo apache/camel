@@ -16,6 +16,8 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         MicroProfileMetricsEndpoint target = (MicroProfileMetricsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "counterincrement":
         case "counterIncrement": target.setCounterIncrement(property(camelContext, java.lang.Long.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
@@ -32,11 +34,9 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         case "mark": target.setMark(property(camelContext, java.lang.Long.class, value)); return true;
         case "metricunit":
         case "metricUnit": target.setMetricUnit(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.setValue(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

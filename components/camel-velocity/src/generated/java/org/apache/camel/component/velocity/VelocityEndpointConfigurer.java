@@ -15,6 +15,8 @@ public class VelocityEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VelocityEndpoint target = (VelocityEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
@@ -24,8 +26,6 @@ public class VelocityEndpointConfigurer extends PropertyConfigurerSupport implem
         case "loaderCache": target.setLoaderCache(property(camelContext, boolean.class, value)); return true;
         case "propertiesfile":
         case "propertiesFile": target.setPropertiesFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

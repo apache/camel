@@ -17,6 +17,8 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "logginglevel":
@@ -25,8 +27,6 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "restartDelay": target.setRestartDelay(property(camelContext, int.class, value)); return true;
         case "routeid":
         case "routeId": target.setRouteId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

@@ -15,6 +15,8 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PrinterEndpoint target = (PrinterEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "copies": target.getConfig().setCopies(property(camelContext, int.class, value)); return true;
         case "docflavor":
         case "docFlavor": target.getConfig().setDocFlavor(property(camelContext, javax.print.DocFlavor.class, value)); return true;
@@ -33,8 +35,6 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "sendtoprinter":
         case "sendToPrinter": target.getConfig().setSendToPrinter(property(camelContext, boolean.class, value)); return true;
         case "sides": target.getConfig().setSides(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

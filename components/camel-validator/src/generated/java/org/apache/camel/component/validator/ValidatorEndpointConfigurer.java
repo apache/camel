@@ -15,6 +15,10 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "errorhandler":
+        case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
         case "failonnullbody":
         case "failOnNullBody": target.setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
         case "failonnullheader":
@@ -23,10 +27,6 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
         case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "errorhandler":
-        case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
         case "resourceresolver":
         case "resourceResolver": target.setResourceResolver(property(camelContext, org.w3c.dom.ls.LSResourceResolver.class, value)); return true;
         case "resourceresolverfactory":

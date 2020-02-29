@@ -23,6 +23,9 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
         LuceneComponent target = (LuceneComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": getOrCreateConfiguration(target).setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "config": target.setConfig(property(camelContext, org.apache.camel.component.lucene.LuceneConfiguration.class, value)); return true;
         case "indexdir":
         case "indexDir": getOrCreateConfiguration(target).setIndexDir(property(camelContext, java.io.File.class, value)); return true;
         case "lazystartproducer":
@@ -31,9 +34,6 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
         case "maxHits": getOrCreateConfiguration(target).setMaxHits(property(camelContext, int.class, value)); return true;
         case "srcdir":
         case "srcDir": getOrCreateConfiguration(target).setSrcDir(property(camelContext, java.io.File.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "config": target.setConfig(property(camelContext, org.apache.camel.component.lucene.LuceneConfiguration.class, value)); return true;
         default: return false;
         }
     }

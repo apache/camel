@@ -15,14 +15,14 @@ public class SoroushBotComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SoroushBotComponent target = (SoroushBotComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authorizationtoken":
+        case "authorizationToken": target.setAuthorizationToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "authorizationtoken":
-        case "authorizationToken": target.setAuthorizationToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

@@ -22,20 +22,12 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FhirComponent target = (FhirComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "encoding": getOrCreateConfiguration(target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "fhirversion":
-        case "fhirVersion": getOrCreateConfiguration(target).setFhirVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "log": getOrCreateConfiguration(target).setLog(property(camelContext, boolean.class, value)); return true;
-        case "prettyprint":
-        case "prettyPrint": getOrCreateConfiguration(target).setPrettyPrint(property(camelContext, boolean.class, value)); return true;
-        case "serverurl":
-        case "serverUrl": getOrCreateConfiguration(target).setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "client": getOrCreateConfiguration(target).setClient(property(camelContext, ca.uhn.fhir.rest.client.api.IGenericClient.class, value)); return true;
         case "clientfactory":
         case "clientFactory": getOrCreateConfiguration(target).setClientFactory(property(camelContext, ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class, value)); return true;
@@ -45,17 +37,19 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionTimeout": getOrCreateConfiguration(target).setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "defermodelscanning":
         case "deferModelScanning": getOrCreateConfiguration(target).setDeferModelScanning(property(camelContext, boolean.class, value)); return true;
+        case "encoding": getOrCreateConfiguration(target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "fhircontext":
         case "fhirContext": getOrCreateConfiguration(target).setFhirContext(property(camelContext, ca.uhn.fhir.context.FhirContext.class, value)); return true;
+        case "fhirversion":
+        case "fhirVersion": getOrCreateConfiguration(target).setFhirVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "forceconformancecheck":
         case "forceConformanceCheck": getOrCreateConfiguration(target).setForceConformanceCheck(property(camelContext, boolean.class, value)); return true;
-        case "sessioncookie":
-        case "sessionCookie": getOrCreateConfiguration(target).setSessionCookie(property(camelContext, java.lang.String.class, value)); return true;
-        case "sockettimeout":
-        case "socketTimeout": getOrCreateConfiguration(target).setSocketTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "summary": getOrCreateConfiguration(target).setSummary(property(camelContext, java.lang.String.class, value)); return true;
-        case "validationmode":
-        case "validationMode": getOrCreateConfiguration(target).setValidationMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "log": getOrCreateConfiguration(target).setLog(property(camelContext, boolean.class, value)); return true;
+        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "prettyprint":
+        case "prettyPrint": getOrCreateConfiguration(target).setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxypassword":
@@ -64,10 +58,16 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
         case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyuser":
         case "proxyUser": getOrCreateConfiguration(target).setProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "accesstoken":
-        case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverurl":
+        case "serverUrl": getOrCreateConfiguration(target).setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessioncookie":
+        case "sessionCookie": getOrCreateConfiguration(target).setSessionCookie(property(camelContext, java.lang.String.class, value)); return true;
+        case "sockettimeout":
+        case "socketTimeout": getOrCreateConfiguration(target).setSocketTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "summary": getOrCreateConfiguration(target).setSummary(property(camelContext, java.lang.String.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "validationmode":
+        case "validationMode": getOrCreateConfiguration(target).setValidationMode(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

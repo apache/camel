@@ -22,10 +22,15 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FacebookComponent target = (FacebookComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clienturl":
         case "clientURL": getOrCreateConfiguration(target).setClientURL(property(camelContext, java.lang.String.class, value)); return true;
         case "clientversion":
         case "clientVersion": getOrCreateConfiguration(target).setClientVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.facebook.config.FacebookConfiguration.class, value)); return true;
         case "debugenabled":
         case "debugEnabled": getOrCreateConfiguration(target).setDebugEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "gzipenabled":
@@ -36,6 +41,14 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
         case "httpDefaultMaxPerRoute": getOrCreateConfiguration(target).setHttpDefaultMaxPerRoute(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpmaxtotalconnections":
         case "httpMaxTotalConnections": getOrCreateConfiguration(target).setHttpMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpproxyhost":
+        case "httpProxyHost": getOrCreateConfiguration(target).setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxypassword":
+        case "httpProxyPassword": getOrCreateConfiguration(target).setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxyport":
+        case "httpProxyPort": getOrCreateConfiguration(target).setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpproxyuser":
+        case "httpProxyUser": getOrCreateConfiguration(target).setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
         case "httpreadtimeout":
         case "httpReadTimeout": getOrCreateConfiguration(target).setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpretrycount":
@@ -46,31 +59,10 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
         case "httpStreamingReadTimeout": getOrCreateConfiguration(target).setHttpStreamingReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "jsonstoreenabled":
         case "jsonStoreEnabled": getOrCreateConfiguration(target).setJsonStoreEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "mbeanenabled":
-        case "mbeanEnabled": getOrCreateConfiguration(target).setMbeanEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "prettydebugenabled":
-        case "prettyDebugEnabled": getOrCreateConfiguration(target).setPrettyDebugEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "restbaseurl":
-        case "restBaseURL": getOrCreateConfiguration(target).setRestBaseURL(property(camelContext, java.lang.String.class, value)); return true;
-        case "usessl":
-        case "useSSL": getOrCreateConfiguration(target).setUseSSL(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "videobaseurl":
-        case "videoBaseURL": getOrCreateConfiguration(target).setVideoBaseURL(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.facebook.config.FacebookConfiguration.class, value)); return true;
-        case "httpproxyhost":
-        case "httpProxyHost": getOrCreateConfiguration(target).setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxypassword":
-        case "httpProxyPassword": getOrCreateConfiguration(target).setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxyport":
-        case "httpProxyPort": getOrCreateConfiguration(target).setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "httpproxyuser":
-        case "httpProxyUser": getOrCreateConfiguration(target).setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "mbeanenabled":
+        case "mbeanEnabled": getOrCreateConfiguration(target).setMbeanEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "oauthaccesstoken":
         case "oAuthAccessToken": getOrCreateConfiguration(target).setOAuthAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthaccesstokenurl":
@@ -83,6 +75,14 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
         case "oAuthAuthorizationURL": getOrCreateConfiguration(target).setOAuthAuthorizationURL(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthpermissions":
         case "oAuthPermissions": getOrCreateConfiguration(target).setOAuthPermissions(property(camelContext, java.lang.String.class, value)); return true;
+        case "prettydebugenabled":
+        case "prettyDebugEnabled": getOrCreateConfiguration(target).setPrettyDebugEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "restbaseurl":
+        case "restBaseURL": getOrCreateConfiguration(target).setRestBaseURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "usessl":
+        case "useSSL": getOrCreateConfiguration(target).setUseSSL(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "videobaseurl":
+        case "videoBaseURL": getOrCreateConfiguration(target).setVideoBaseURL(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

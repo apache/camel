@@ -15,18 +15,18 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NagiosEndpoint target = (NagiosEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "connectiontimeout":
-        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "sendsync":
-        case "sendSync": target.setSendSync(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "encryption": target.getConfiguration().setEncryption(property(camelContext, com.googlecode.jsendnsca.encryption.Encryption.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendsync":
+        case "sendSync": target.setSendSync(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }

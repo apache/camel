@@ -15,77 +15,63 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JpaEndpoint target = (JpaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "jointransaction":
-        case "joinTransaction": target.setJoinTransaction(property(camelContext, boolean.class, value)); return true;
-        case "maximumresults":
-        case "maximumResults": target.setMaximumResults(property(camelContext, int.class, value)); return true;
-        case "namedquery":
-        case "namedQuery": target.setNamedQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "nativequery":
-        case "nativeQuery": target.setNativeQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "persistenceunit":
-        case "persistenceUnit": target.setPersistenceUnit(property(camelContext, java.lang.String.class, value)); return true;
-        case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
-        case "resultclass":
-        case "resultClass": target.setResultClass(property(camelContext, java.lang.Class.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "consumedelete":
-        case "consumeDelete": target.setConsumeDelete(property(camelContext, boolean.class, value)); return true;
-        case "consumelockentity":
-        case "consumeLockEntity": target.setConsumeLockEntity(property(camelContext, boolean.class, value)); return true;
-        case "deletehandler":
-        case "deleteHandler": target.setDeleteHandler(property(camelContext, org.apache.camel.component.jpa.DeleteHandler.class, value)); return true;
-        case "lockmodetype":
-        case "lockModeType": target.setLockModeType(property(camelContext, javax.persistence.LockModeType.class, value)); return true;
-        case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
-        case "predeletehandler":
-        case "preDeleteHandler": target.setPreDeleteHandler(property(camelContext, org.apache.camel.component.jpa.DeleteHandler.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "skiplockedentity":
-        case "skipLockedEntity": target.setSkipLockedEntity(property(camelContext, boolean.class, value)); return true;
-        case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "findentity":
-        case "findEntity": target.setFindEntity(property(camelContext, boolean.class, value)); return true;
-        case "flushonsend":
-        case "flushOnSend": target.setFlushOnSend(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "remove": target.setRemove(property(camelContext, boolean.class, value)); return true;
-        case "useexecuteupdate":
-        case "useExecuteUpdate": target.setUseExecuteUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "usepersist":
-        case "usePersist": target.setUsePersist(property(camelContext, boolean.class, value)); return true;
-        case "usepassedinentitymanager":
-        case "usePassedInEntityManager": target.setUsePassedInEntityManager(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "entitymanagerproperties":
-        case "entityManagerProperties": target.setEntityManagerProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "sharedentitymanager":
-        case "sharedEntityManager": target.setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "consumedelete":
+        case "consumeDelete": target.setConsumeDelete(property(camelContext, boolean.class, value)); return true;
+        case "consumelockentity":
+        case "consumeLockEntity": target.setConsumeLockEntity(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "deletehandler":
+        case "deleteHandler": target.setDeleteHandler(property(camelContext, org.apache.camel.component.jpa.DeleteHandler.class, value)); return true;
+        case "entitymanagerproperties":
+        case "entityManagerProperties": target.setEntityManagerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "findentity":
+        case "findEntity": target.setFindEntity(property(camelContext, boolean.class, value)); return true;
+        case "flushonsend":
+        case "flushOnSend": target.setFlushOnSend(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "jointransaction":
+        case "joinTransaction": target.setJoinTransaction(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "lockmodetype":
+        case "lockModeType": target.setLockModeType(property(camelContext, javax.persistence.LockModeType.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
+        case "maximumresults":
+        case "maximumResults": target.setMaximumResults(property(camelContext, int.class, value)); return true;
+        case "namedquery":
+        case "namedQuery": target.setNamedQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "nativequery":
+        case "nativeQuery": target.setNativeQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "persistenceunit":
+        case "persistenceUnit": target.setPersistenceUnit(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "predeletehandler":
+        case "preDeleteHandler": target.setPreDeleteHandler(property(camelContext, org.apache.camel.component.jpa.DeleteHandler.class, value)); return true;
+        case "query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
+        case "remove": target.setRemove(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "resultclass":
+        case "resultClass": target.setResultClass(property(camelContext, java.lang.Class.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -93,12 +79,26 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "sharedentitymanager":
+        case "sharedEntityManager": target.setSharedEntityManager(property(camelContext, boolean.class, value)); return true;
+        case "skiplockedentity":
+        case "skipLockedEntity": target.setSkipLockedEntity(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
+        case "useexecuteupdate":
+        case "useExecuteUpdate": target.setUseExecuteUpdate(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "usepassedinentitymanager":
+        case "usePassedInEntityManager": target.setUsePassedInEntityManager(property(camelContext, boolean.class, value)); return true;
+        case "usepersist":
+        case "usePersist": target.setUsePersist(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

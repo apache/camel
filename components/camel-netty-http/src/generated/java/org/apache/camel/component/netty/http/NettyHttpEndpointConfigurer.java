@@ -17,50 +17,50 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeendpoint":
         case "bridgeEndpoint": target.getConfiguration().setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
-        case "matchonuriprefix":
-        case "matchOnUriPrefix": target.getConfiguration().setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
-        case "muteexception":
-        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
-        case "send503whensuspended":
-        case "send503whenSuspended": target.getConfiguration().setSend503whenSuspended(property(camelContext, boolean.class, value)); return true;
         case "chunkedmaxcontentlength":
         case "chunkedMaxContentLength": target.getConfiguration().setChunkedMaxContentLength(property(camelContext, int.class, value)); return true;
         case "compression": target.getConfiguration().setCompression(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpConfiguration.class, value)); return true;
+        case "cookiehandler":
+        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "disablestreamcache":
+        case "disableStreamCache": target.getConfiguration().setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpmethodrestrict":
         case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
         case "logwarnonbadrequest":
         case "logWarnOnBadRequest": target.getConfiguration().setLogWarnOnBadRequest(property(camelContext, boolean.class, value)); return true;
         case "mapheaders":
         case "mapHeaders": target.getConfiguration().setMapHeaders(property(camelContext, boolean.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": target.getConfiguration().setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "maxheadersize":
         case "maxHeaderSize": target.getConfiguration().setMaxHeaderSize(property(camelContext, int.class, value)); return true;
-        case "nettysharedhttpserver":
-        case "nettySharedHttpServer": target.setNettySharedHttpServer(property(camelContext, org.apache.camel.component.netty.http.NettySharedHttpServer.class, value)); return true;
-        case "traceenabled":
-        case "traceEnabled": target.setTraceEnabled(property(camelContext, boolean.class, value)); return true;
-        case "urldecodeheaders":
-        case "urlDecodeHeaders": target.getConfiguration().setUrlDecodeHeaders(property(camelContext, boolean.class, value)); return true;
-        case "cookiehandler":
-        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "throwexceptiononfailure":
-        case "throwExceptionOnFailure": target.getConfiguration().setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "okstatuscoderange":
-        case "okStatusCodeRange": target.getConfiguration().setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
-        case "userelativepath":
-        case "useRelativePath": target.getConfiguration().setUseRelativePath(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpConfiguration.class, value)); return true;
-        case "disablestreamcache":
-        case "disableStreamCache": target.getConfiguration().setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy":
-        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "nettyhttpbinding":
         case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
-        case "transferexception":
-        case "transferException": target.getConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "nettysharedhttpserver":
+        case "nettySharedHttpServer": target.setNettySharedHttpServer(property(camelContext, org.apache.camel.component.netty.http.NettySharedHttpServer.class, value)); return true;
+        case "okstatuscoderange":
+        case "okStatusCodeRange": target.getConfiguration().setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
         case "securityconfiguration":
         case "securityConfiguration": target.setSecurityConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration.class, value)); return true;
         case "securityoptions":
         case "securityOptions": target.setSecurityOptions(property(camelContext, java.util.Map.class, value)); return true;
+        case "send503whensuspended":
+        case "send503whenSuspended": target.getConfiguration().setSend503whenSuspended(property(camelContext, boolean.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.getConfiguration().setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
+        case "traceenabled":
+        case "traceEnabled": target.setTraceEnabled(property(camelContext, boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.getConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "urldecodeheaders":
+        case "urlDecodeHeaders": target.getConfiguration().setUrlDecodeHeaders(property(camelContext, boolean.class, value)); return true;
+        case "userelativepath":
+        case "useRelativePath": target.getConfiguration().setUseRelativePath(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }

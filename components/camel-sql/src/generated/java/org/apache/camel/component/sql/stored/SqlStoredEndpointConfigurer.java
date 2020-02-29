@@ -15,6 +15,8 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqlStoredEndpoint target = (SqlStoredEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
@@ -24,11 +26,9 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
         case "noop": target.setNoop(property(camelContext, boolean.class, value)); return true;
         case "outputheader":
         case "outputHeader": target.setOutputHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usemessagebodyfortemplate":
         case "useMessageBodyForTemplate": target.setUseMessageBodyForTemplate(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

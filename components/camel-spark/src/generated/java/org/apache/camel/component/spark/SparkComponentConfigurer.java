@@ -15,13 +15,13 @@ public class SparkComponentConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SparkComponent target = (SparkComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "rdd": target.setRdd(property(camelContext, org.apache.spark.api.java.JavaRDDLike.class, value)); return true;
         case "rddcallback":
         case "rddCallback": target.setRddCallback(property(camelContext, org.apache.camel.component.spark.RddCallback.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

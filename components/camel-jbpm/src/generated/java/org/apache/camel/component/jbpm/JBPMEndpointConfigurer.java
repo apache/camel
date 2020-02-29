@@ -17,25 +17,43 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "attachmentid":
         case "attachmentId": target.getConfiguration().setAttachmentId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "contentid":
         case "contentId": target.getConfiguration().setContentId(property(camelContext, java.lang.Long.class, value)); return true;
         case "deploymentid":
         case "deploymentId": target.getConfiguration().setDeploymentId(property(camelContext, java.lang.String.class, value)); return true;
         case "emittersenditems":
         case "emitterSendItems": target.getConfiguration().setEmitterSendItems(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "entities": target.getConfiguration().setEntities(property(camelContext, java.util.List.class, value)); return true;
         case "event": target.getConfiguration().setEvent(property(camelContext, java.lang.Object.class, value)); return true;
         case "eventtype":
         case "eventType": target.getConfiguration().setEventType(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "extrajaxbclasses":
+        case "extraJaxbClasses": target.getConfiguration().setExtraJaxbClasses(property(camelContext, java.lang.Class[].class, value)); return true;
         case "identifier": target.getConfiguration().setIdentifier(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxnumber":
         case "maxNumber": target.getConfiguration().setMaxNumber(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "page": target.getConfiguration().setPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "pagesize":
         case "pageSize": target.getConfiguration().setPageSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "parameters": target.getConfiguration().setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "processid":
         case "processId": target.getConfiguration().setProcessId(property(camelContext, java.lang.String.class, value)); return true;
         case "processinstanceid":
         case "processInstanceId": target.getConfiguration().setProcessInstanceId(property(camelContext, java.lang.Long.class, value)); return true;
+        case "statuses": target.getConfiguration().setStatuses(property(camelContext, java.util.List.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targetuserid":
         case "targetUserId": target.getConfiguration().setTargetUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "task": target.getConfiguration().setTask(property(camelContext, org.kie.api.task.model.Task.class, value)); return true;
@@ -44,29 +62,11 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "userid":
         case "userId": target.getConfiguration().setUserId(property(camelContext, java.lang.String.class, value)); return true;
+        case "username":
+        case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Object.class, value)); return true;
         case "workitemid":
         case "workItemId": target.getConfiguration().setWorkItemId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "entities": target.getConfiguration().setEntities(property(camelContext, java.util.List.class, value)); return true;
-        case "extrajaxbclasses":
-        case "extraJaxbClasses": target.getConfiguration().setExtraJaxbClasses(property(camelContext, java.lang.Class[].class, value)); return true;
-        case "parameters": target.getConfiguration().setParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "statuses": target.getConfiguration().setStatuses(property(camelContext, java.util.List.class, value)); return true;
-        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "username":
-        case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

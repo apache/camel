@@ -15,6 +15,8 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DozerEndpoint target = (DozerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mappingconfiguration":
@@ -25,13 +27,11 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
         case "marshalId": target.getConfiguration().setMarshalId(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcemodel":
         case "sourceModel": target.getConfiguration().setSourceModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targetmodel":
         case "targetModel": target.getConfiguration().setTargetModel(property(camelContext, java.lang.String.class, value)); return true;
         case "unmarshalid":
         case "unmarshalId": target.getConfiguration().setUnmarshalId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

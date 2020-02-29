@@ -22,32 +22,32 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EhcacheComponent target = (EhcacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachemanager":
         case "cacheManager": getOrCreateConfiguration(target).setCacheManager(property(camelContext, org.ehcache.CacheManager.class, value)); return true;
         case "cachemanagerconfiguration":
         case "cacheManagerConfiguration": getOrCreateConfiguration(target).setCacheManagerConfiguration(property(camelContext, org.ehcache.config.Configuration.class, value)); return true;
+        case "configuration": getOrCreateConfiguration(target).setConfiguration(property(camelContext, org.ehcache.config.CacheConfiguration.class, value)); return true;
         case "configurationuri":
         case "configurationUri": getOrCreateConfiguration(target).setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "configurations": getOrCreateConfiguration(target).setConfigurations(property(camelContext, java.util.Map.class, value)); return true;
         case "createcacheifnotexist":
         case "createCacheIfNotExist": getOrCreateConfiguration(target).setCreateCacheIfNotExist(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "eventfiring":
         case "eventFiring": getOrCreateConfiguration(target).setEventFiring(property(camelContext, org.ehcache.event.EventFiring.class, value)); return true;
         case "eventordering":
         case "eventOrdering": getOrCreateConfiguration(target).setEventOrdering(property(camelContext, org.ehcache.event.EventOrdering.class, value)); return true;
         case "eventtypes":
         case "eventTypes": getOrCreateConfiguration(target).setEventTypes(property(camelContext, java.lang.String.class, value)); return true;
-        case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
         case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": getOrCreateConfiguration(target).setConfiguration(property(camelContext, org.ehcache.config.CacheConfiguration.class, value)); return true;
-        case "configurations": getOrCreateConfiguration(target).setConfigurations(property(camelContext, java.util.Map.class, value)); return true;
         case "keytype":
         case "keyType": getOrCreateConfiguration(target).setKeyType(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "valuetype":
         case "valueType": getOrCreateConfiguration(target).setValueType(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;

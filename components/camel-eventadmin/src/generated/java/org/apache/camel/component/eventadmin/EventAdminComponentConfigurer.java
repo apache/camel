@@ -15,14 +15,14 @@ public class EventAdminComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EventAdminComponent target = (EventAdminComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bundlecontext":
-        case "bundleContext": target.setBundleContext(property(camelContext, org.osgi.framework.BundleContext.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "bundlecontext":
+        case "bundleContext": target.setBundleContext(property(camelContext, org.osgi.framework.BundleContext.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

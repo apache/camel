@@ -22,8 +22,11 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebhookComponent target = (WebhookComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.webhook.WebhookConfiguration.class, value)); return true;
         case "webhookautoregister":
         case "webhookAutoRegister": getOrCreateConfiguration(target).setWebhookAutoRegister(property(camelContext, boolean.class, value)); return true;
         case "webhookbasepath":
@@ -34,9 +37,6 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
         case "webhookExternalUrl": getOrCreateConfiguration(target).setWebhookExternalUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "webhookpath":
         case "webhookPath": getOrCreateConfiguration(target).setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.webhook.WebhookConfiguration.class, value)); return true;
         default: return false;
         }
     }

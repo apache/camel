@@ -15,16 +15,16 @@ public class JcloudsComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JcloudsComponent target = (JcloudsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "blobstores":
-        case "blobStores": target.setBlobStores(property(camelContext, java.util.List.class, value)); return true;
-        case "computeservices":
-        case "computeServices": target.setComputeServices(property(camelContext, java.util.List.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "blobstores":
+        case "blobStores": target.setBlobStores(property(camelContext, java.util.List.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "computeservices":
+        case "computeServices": target.setComputeServices(property(camelContext, java.util.List.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

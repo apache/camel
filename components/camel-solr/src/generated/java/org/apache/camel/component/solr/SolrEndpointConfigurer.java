@@ -17,6 +17,9 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": target.setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "defaultmaxconnectionsperhost":
@@ -29,6 +32,7 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxRetries": target.setMaxRetries(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "requesthandler":
         case "requestHandler": target.setRequestHandler(property(camelContext, java.lang.String.class, value)); return true;
         case "sotimeout":
@@ -37,12 +41,8 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamingQueueSize": target.setStreamingQueueSize(property(camelContext, int.class, value)); return true;
         case "streamingthreadcount":
         case "streamingThreadCount": target.setStreamingThreadCount(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "zkhost":
         case "zkHost": target.setZkHost(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;

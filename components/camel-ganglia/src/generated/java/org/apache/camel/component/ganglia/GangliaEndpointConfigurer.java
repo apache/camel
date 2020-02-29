@@ -15,6 +15,8 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GangliaEndpoint target = (GangliaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "dmax": target.getConfiguration().setDmax(property(camelContext, int.class, value)); return true;
         case "groupname":
         case "groupName": target.getConfiguration().setGroupName(property(camelContext, java.lang.String.class, value)); return true;
@@ -27,15 +29,13 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "slope": target.getConfiguration().setSlope(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricSlope.class, value)); return true;
         case "spoofhostname":
         case "spoofHostname": target.getConfiguration().setSpoofHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tmax": target.getConfiguration().setTmax(property(camelContext, int.class, value)); return true;
         case "ttl": target.getConfiguration().setTtl(property(camelContext, int.class, value)); return true;
         case "type": target.getConfiguration().setType(property(camelContext, info.ganglia.gmetric4j.gmetric.GMetricType.class, value)); return true;
         case "units": target.getConfiguration().setUnits(property(camelContext, java.lang.String.class, value)); return true;
         case "wireformat31x":
         case "wireFormat31x": target.getConfiguration().setWireFormat31x(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
