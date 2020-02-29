@@ -30,13 +30,7 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 public class Kinesis2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private Kinesis2Configuration configuration;
+    private Kinesis2Configuration configuration = new Kinesis2Configuration();
 
     public Kinesis2Component() {
         this(null);
@@ -53,9 +47,6 @@ public class Kinesis2Component extends DefaultComponent {
         Kinesis2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Kinesis2Configuration();
         configuration.setStreamName(remaining);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -69,43 +60,10 @@ public class Kinesis2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS S3 default configuration
+     * Component configuration
      */
     public void setConfiguration(Kinesis2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Amazon AWS Region
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(Kinesis2Configuration configuration) {
