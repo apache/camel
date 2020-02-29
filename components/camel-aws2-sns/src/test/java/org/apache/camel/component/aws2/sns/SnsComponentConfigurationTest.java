@@ -149,8 +149,8 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
@@ -161,9 +161,9 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
@@ -175,9 +175,9 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithoutAutocreation() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Sns2Endpoint endpoint = (Sns2Endpoint)component.createEndpoint("aws2-sns://MyTopic?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&autoCreateTopic=false");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
@@ -190,9 +190,9 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Sns2Endpoint endpoint = (Sns2Endpoint)component
             .createEndpoint("aws2-sns://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 

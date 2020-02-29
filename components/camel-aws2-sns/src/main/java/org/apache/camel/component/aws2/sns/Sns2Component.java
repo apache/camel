@@ -31,13 +31,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
 public class Sns2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private Sns2Configuration configuration;
+    private Sns2Configuration configuration = new Sns2Configuration();
 
     public Sns2Component() {
         this(null);
@@ -67,9 +61,6 @@ public class Sns2Component extends DefaultComponent {
             configuration.setTopicName(remaining);
         }
         Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -84,43 +75,10 @@ public class Sns2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS SNS default configuration
+     * Component configuration
      */
     public void setConfiguration(Sns2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    /**
-     * The region in which SNS client needs to work
-     */
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(Sns2Configuration configuration) {
