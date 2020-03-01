@@ -527,17 +527,17 @@ is more consistent and aligned with how endpoints is configured as well, and by 
 
 The following Camel components has been affected and changed on the component level:
 
-- aws
-- aws2
-- consul
-- etcd
-- infinispan
-- kafka
-- servicenow
-- ssh
-- stomp
-- xmlsecurity
-- yammer
+- camel-aws
+- camel-aws2
+- camel-consul
+- camel-etcd
+- camel-infinispan
+- camel-kafka
+- camel-servicenow
+- camel-ssh
+- camel-stomp
+- camel-xmlsecurity
+- camel-yammer
 
 This only affects if you are configuring these components using Java code or XML `<bean>` style.
 
@@ -596,3 +596,22 @@ camel.component.kafka.brokers=mybroker1:1234,mybroker2:1234
 ----
 
 This applies to all the Camel spring boot _starter_ JARs where basically `.configuration` should be removed.
+
+=== Configuring camel-activemq, camel-amqp and camel-stomp via Spring Boot auto configuration
+
+When configuring these components from spring boot auto-configuration then the URL for the broker was named `broker-u-r-l`
+in the spring boot auto configuration support. This has been renamed to `broker-url` and a few other options too.
+
+Before:
+
+[source,properties]
+----
+camel.component.activemq.broker-u-r-l=tcp://localhost:61616
+----
+
+After:
+
+[source,properties]
+----
+camel.component.activemq.broker-url=tcp://localhost:61616
+----
