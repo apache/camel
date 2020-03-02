@@ -14,38 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support;
 
-import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.util.StringHelper;
 
-/**
- * Key used in {@link DefaultEndpointRegistry} in {@link AbstractCamelContext},
- * to ensure a consistent lookup.
- */
-public final class EndpointKey extends ValueHolder<String> implements NormalizedEndpointUri {
+public final class NormalizedUri implements NormalizedEndpointUri {
 
-    public EndpointKey(String uri) {
-        this(uri, false);
-    }
+    private final String uri;
 
-    /**
-     * Optimized when the uri is already normalized.
-     */
-    public EndpointKey(String uri, boolean normalized) {
-        super(normalized ? uri : AbstractCamelContext.normalizeEndpointUri(uri));
-        StringHelper.notEmpty(uri, "uri");
+    public NormalizedUri(String uri) {
+        this.uri = uri;
     }
 
     @Override
     public String getUri() {
-        return get();
+        return uri;
     }
 
     @Override
     public String toString() {
-        return get();
+        return uri;
     }
-
 }

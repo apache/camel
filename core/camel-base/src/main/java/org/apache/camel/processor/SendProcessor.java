@@ -71,12 +71,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         this.destination = destination;
         this.camelContext = (ExtendedCamelContext) destination.getCamelContext();
         this.pattern = pattern;
-        try {
-            this.destinationExchangePattern = null;
-            this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
-        } catch (URISyntaxException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+        this.destinationExchangePattern = null;
+        this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
         ObjectHelper.notNull(this.camelContext, "camelContext");
     }
 

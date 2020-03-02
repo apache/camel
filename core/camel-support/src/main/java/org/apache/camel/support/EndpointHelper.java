@@ -40,6 +40,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import static org.apache.camel.util.StringHelper.after;
 
 /**
@@ -378,17 +379,15 @@ public final class EndpointHelper {
      *
      * @param url the url
      * @return the exchange pattern, or <tt>null</tt> if the url has no <tt>exchangePattern</tt> configured.
-     * @throws URISyntaxException is thrown if uri is invalid
      */
-    public static ExchangePattern resolveExchangePatternFromUrl(String url) throws URISyntaxException {
-        int idx = url.indexOf("?");
-        if (idx > 0) {
-            url = url.substring(idx + 1);
-        }
-        Map<String, Object> parameters = URISupport.parseQuery(url, true);
-        String pattern = (String) parameters.get("exchangePattern");
-        if (pattern != null) {
-            return ExchangePattern.asEnum(pattern);
+    public static ExchangePattern resolveExchangePatternFromUrl(String url) {
+        // optimize to use simple string contains check
+        if (url.contains("exchangePattern=InOnly")) {
+            return ExchangePattern.InOnly;
+        } else if (url.contains("exchangePattern=InOut")) {
+            return ExchangePattern.InOut;
+        } else if (url.contains("exchangePattern=InOptionalOut")) {
+            return ExchangePattern.InOptionalOut;
         }
         return null;
     }

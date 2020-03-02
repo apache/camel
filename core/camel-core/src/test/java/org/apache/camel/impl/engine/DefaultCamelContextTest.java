@@ -119,7 +119,7 @@ public class DefaultCamelContextTest extends TestSupport {
         assertNotNull(endpoint);
 
         try {
-            ctx.getEndpoint(null);
+            ctx.getEndpoint((String) null);
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             // expected
@@ -280,7 +280,7 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(1, map.size());
 
         try {
-            ctx.hasEndpoint(null);
+            ctx.hasEndpoint((String) null);
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
             // expected
