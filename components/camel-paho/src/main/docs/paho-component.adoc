@@ -25,23 +25,6 @@ for this component:
 </dependency>
 ----
 
-Keep in mind that Paho artifacts are not hosted in the Maven Central, so
-you need to add Eclipse Paho repository to your POM xml file:
-
-[source,xml]
-----
-<repositories>
-  <repository>
-    <id>eclipse-paho</id>
-    <url>https://repo.eclipse.org/content/repositories/paho-releases</url>
-    <snapshots>
-      <enabled>false</enabled>
-    </snapshots>
-  </repository>
-</repositories>
-----
-
-
 == URI format
 
 [source]
