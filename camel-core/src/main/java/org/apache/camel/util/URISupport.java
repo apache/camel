@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
 public final class URISupport {
 
     public static final String RAW_TOKEN_PREFIX = "RAW";
-    public static final char[] RAW_TOKEN_START = { '(', '{' };
-    public static final char[] RAW_TOKEN_END = { ')', '}' };
+    public static final char[] RAW_TOKEN_START = {'(', '{' };
+    public static final char[] RAW_TOKEN_END = {')', '}' };
 
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
