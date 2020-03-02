@@ -76,21 +76,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>jboss.thirdparty</id>
-            <name>JBoss Thirdparty Repository</name>
-            <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
+    
     <build>
         <plugins>
             <plugin>
