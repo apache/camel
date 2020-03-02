@@ -181,7 +181,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         if (channel == null) {
             throw new IOException("The RabbitMQ channel is not open");
         }
-        tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(), "", false, consumer.getEndpoint().isExclusiveConsumer(), null, this);
+        tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(), consumer.getEndpoint().getConsumerTag(), false, consumer.getEndpoint().isExclusiveConsumer(), null, this);
     }
 
     @Override
