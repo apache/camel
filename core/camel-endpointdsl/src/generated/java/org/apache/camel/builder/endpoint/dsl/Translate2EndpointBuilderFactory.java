@@ -358,8 +358,8 @@ public interface Translate2EndpointBuilderFactory {
      * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     public interface Translate2Builders {
