@@ -32,7 +32,7 @@ import spark.route.HttpMethod;
  * The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, label = "rest")
-public class SparkEndpoint extends DefaultEndpoint {
+public class SparkRestEndpoint extends DefaultEndpoint {
     @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = true)
     private String verb;
     @UriPath @Metadata(required = true)
@@ -44,7 +44,7 @@ public class SparkEndpoint extends DefaultEndpoint {
     @UriParam(label = "advanced")
     private SparkBinding sparkBinding;
 
-    public SparkEndpoint(String endpointUri, Component component) {
+    public SparkRestEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
@@ -129,7 +129,7 @@ public class SparkEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public SparkComponent getComponent() {
-        return (SparkComponent) super.getComponent();
+    public SparkRestComponent getComponent() {
+        return (SparkRestComponent) super.getComponent();
     }
 }

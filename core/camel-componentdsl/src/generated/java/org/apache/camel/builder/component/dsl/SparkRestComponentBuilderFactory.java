@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.sparkrest.SparkComponent;
+import org.apache.camel.component.sparkrest.SparkRestComponent;
 
 /**
  * The spark-rest component is used for hosting REST services which has been
@@ -49,7 +49,7 @@ public interface SparkRestComponentBuilderFactory {
      */
     interface SparkRestComponentBuilder
             extends
-                ComponentBuilder<SparkComponent> {
+                ComponentBuilder<SparkRestComponent> {
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -308,15 +308,15 @@ public interface SparkRestComponentBuilderFactory {
 
     class SparkRestComponentBuilderImpl
             extends
-                AbstractComponentBuilder<SparkComponent>
+                AbstractComponentBuilder<SparkRestComponent>
             implements
                 SparkRestComponentBuilder {
         @Override
-        protected SparkComponent buildConcreteComponent() {
-            return new SparkComponent();
+        protected SparkRestComponent buildConcreteComponent() {
+            return new SparkRestComponent();
         }
         private org.apache.camel.component.sparkrest.SparkConfiguration getOrCreateConfiguration(
-                org.apache.camel.component.sparkrest.SparkComponent component) {
+                org.apache.camel.component.sparkrest.SparkRestComponent component) {
             if (component.getSparkConfiguration() == null) {
                 component.setSparkConfiguration(new org.apache.camel.component.sparkrest.SparkConfiguration());
             }
@@ -328,24 +328,24 @@ public interface SparkRestComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((SparkComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "disableStreamCache": getOrCreateConfiguration((SparkComponent) component).setDisableStreamCache((boolean) value); return true;
-            case "ipAddress": ((SparkComponent) component).setIpAddress((java.lang.String) value); return true;
-            case "mapHeaders": getOrCreateConfiguration((SparkComponent) component).setMapHeaders((boolean) value); return true;
-            case "port": ((SparkComponent) component).setPort((int) value); return true;
-            case "transferException": getOrCreateConfiguration((SparkComponent) component).setTransferException((boolean) value); return true;
-            case "urlDecodeHeaders": getOrCreateConfiguration((SparkComponent) component).setUrlDecodeHeaders((boolean) value); return true;
-            case "basicPropertyBinding": ((SparkComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "matchOnUriPrefix": getOrCreateConfiguration((SparkComponent) component).setMatchOnUriPrefix((boolean) value); return true;
-            case "maxThreads": ((SparkComponent) component).setMaxThreads((int) value); return true;
-            case "minThreads": ((SparkComponent) component).setMinThreads((int) value); return true;
-            case "sparkBinding": ((SparkComponent) component).setSparkBinding((org.apache.camel.component.sparkrest.SparkBinding) value); return true;
-            case "sparkConfiguration": ((SparkComponent) component).setSparkConfiguration((org.apache.camel.component.sparkrest.SparkConfiguration) value); return true;
-            case "timeOutMillis": ((SparkComponent) component).setTimeOutMillis((int) value); return true;
-            case "keystoreFile": ((SparkComponent) component).setKeystoreFile((java.lang.String) value); return true;
-            case "keystorePassword": ((SparkComponent) component).setKeystorePassword((java.lang.String) value); return true;
-            case "truststoreFile": ((SparkComponent) component).setTruststoreFile((java.lang.String) value); return true;
-            case "truststorePassword": ((SparkComponent) component).setTruststorePassword((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((SparkRestComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "disableStreamCache": getOrCreateConfiguration((SparkRestComponent) component).setDisableStreamCache((boolean) value); return true;
+            case "ipAddress": ((SparkRestComponent) component).setIpAddress((java.lang.String) value); return true;
+            case "mapHeaders": getOrCreateConfiguration((SparkRestComponent) component).setMapHeaders((boolean) value); return true;
+            case "port": ((SparkRestComponent) component).setPort((int) value); return true;
+            case "transferException": getOrCreateConfiguration((SparkRestComponent) component).setTransferException((boolean) value); return true;
+            case "urlDecodeHeaders": getOrCreateConfiguration((SparkRestComponent) component).setUrlDecodeHeaders((boolean) value); return true;
+            case "basicPropertyBinding": ((SparkRestComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "matchOnUriPrefix": getOrCreateConfiguration((SparkRestComponent) component).setMatchOnUriPrefix((boolean) value); return true;
+            case "maxThreads": ((SparkRestComponent) component).setMaxThreads((int) value); return true;
+            case "minThreads": ((SparkRestComponent) component).setMinThreads((int) value); return true;
+            case "sparkBinding": ((SparkRestComponent) component).setSparkBinding((org.apache.camel.component.sparkrest.SparkBinding) value); return true;
+            case "sparkConfiguration": ((SparkRestComponent) component).setSparkConfiguration((org.apache.camel.component.sparkrest.SparkConfiguration) value); return true;
+            case "timeOutMillis": ((SparkRestComponent) component).setTimeOutMillis((int) value); return true;
+            case "keystoreFile": ((SparkRestComponent) component).setKeystoreFile((java.lang.String) value); return true;
+            case "keystorePassword": ((SparkRestComponent) component).setKeystorePassword((java.lang.String) value); return true;
+            case "truststoreFile": ((SparkRestComponent) component).setTruststoreFile((java.lang.String) value); return true;
+            case "truststorePassword": ((SparkRestComponent) component).setTruststorePassword((java.lang.String) value); return true;
             default: return false;
             }
         }

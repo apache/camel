@@ -36,8 +36,8 @@ public class SparkConsumer extends DefaultConsumer {
     }
 
     @Override
-    public SparkEndpoint getEndpoint() {
-        return (SparkEndpoint) super.getEndpoint();
+    public SparkRestEndpoint getEndpoint() {
+        return (SparkRestEndpoint) super.getEndpoint();
     }
 
     public boolean isEnableCors() {
