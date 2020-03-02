@@ -33,6 +33,10 @@
     <name>Camel :: Base</name>
     <description>The Base Camel Framework</description>
 
+    <properties>
+        <camel-prepare-component>true</camel-prepare-component>
+    </properties>
+
     <dependencies>
 
         <!-- required dependencies by camel-base -->

@@ -111,4 +111,27 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <!-- The non generated code depends on the generated code,
+                     so skip the first compilation phase -->
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://packages.atlassian.com/maven-external</url>
+        </repository>
+    </repositories>
+
 </project>

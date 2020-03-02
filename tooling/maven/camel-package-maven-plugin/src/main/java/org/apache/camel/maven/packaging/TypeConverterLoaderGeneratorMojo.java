@@ -70,6 +70,9 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         if (resourcesOutputDir == null) {
             resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
         }
+        if (!classesDirectory.isDirectory()) {
+            return;
+        }
         if ("pom".equals(project.getPackaging())) {
             return;
         }

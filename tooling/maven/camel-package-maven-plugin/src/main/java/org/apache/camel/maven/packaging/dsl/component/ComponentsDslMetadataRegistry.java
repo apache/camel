@@ -52,7 +52,12 @@ public class ComponentsDslMetadataRegistry {
     }
 
     private Map<String, ComponentModel> loadMetadataFileIntoMap(final File metadataFile) {
-        String json = loadJson(metadataFile);
+        String json;
+        if (metadataFile.isFile()) {
+            json = loadJson(metadataFile);
+        } else {
+            json = "{ }";
+        }
         JsonObject jsonObject = JsonMapper.deserialize(json);
         Map<String, ComponentModel> models = new TreeMap<>();
         jsonObject.forEach((jsonKey, jsonValue) -> models.put(jsonKey, loadModel((JsonObject) jsonValue)));
