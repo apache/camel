@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.reactive.streams.engine;
 
-import org.apache.camel.spi.Metadata;
-
 /**
  * Configuration parameters for the Camel internal reactive-streams engine.
  */
-public class ReactiveStreamsEngineConfiguration implements Cloneable {
+public class ReactiveStreamsEngineConfiguration {
 
-    @Metadata(defaultValue = "CamelReactiveStreamsWorker", description = "The name of the thread pool used by the reactive streams internal engine.")
     private String threadPoolName = "CamelReactiveStreamsWorker";
-    @Metadata(description = "The minimum number of threads used by the reactive streams internal engine.")
     private int threadPoolMinSize;
-    @Metadata(defaultValue = "10", description = "The maximum number of threads used by the reactive streams internal engine.")
     private int threadPoolMaxSize = 10;
 
     public ReactiveStreamsEngineConfiguration() {
