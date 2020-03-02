@@ -39,7 +39,7 @@ import org.apache.camel.util.StringHelper;
 import spark.Service;
 
 @Component("spark-rest")
-public class SparkComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
+public class SparkRestComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
     
@@ -205,7 +205,7 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SparkConfiguration config = getSparkConfiguration().copy();
 
-        SparkEndpoint answer = new SparkEndpoint(uri, this);
+        SparkRestEndpoint answer = new SparkRestEndpoint(uri, this);
         answer.setSparkConfiguration(config);
         answer.setSparkBinding(getSparkBinding());
         setProperties(answer, parameters);
@@ -343,7 +343,7 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
         String url = RestComponentHelper.createRestConsumerUrl("spark-rest", verb, path, map);
 
         // get the endpoint
-        SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);
+        SparkRestEndpoint endpoint = camelContext.getEndpoint(url, SparkRestEndpoint.class);
         setProperties(endpoint, parameters);
 
         // configure consumer properties
