@@ -145,7 +145,12 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
         try (final InputStreamReader isr = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange));
              final BufferedReader reader = IOHelper.buffered(isr)) {
-            if (unmarshalGenericType == null) {
+
+            String type = exchange.getIn().getHeader(GsonConstants.UNMARSHAL_TYPE, String.class);
+            if (type != null) {
+                Class<?> clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
+                return gson.fromJson(reader, clazz);
+            } else if (unmarshalGenericType == null) {
                 return gson.fromJson(reader, unmarshalType);
             } else {
                 return gson.fromJson(reader, unmarshalGenericType);
