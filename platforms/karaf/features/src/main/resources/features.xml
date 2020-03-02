@@ -1125,53 +1125,6 @@
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-mail-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-mail/${project.version}</bundle>
   </feature>
-  <feature name='camel-google-pubsub' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:com.google.cloud/google-cloud-pubsub/${google-cloud-pubsub-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-api/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-context/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.codehaus.mojo/animal-sniffer-annotations/${animal-sniffer-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-stub/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-protobuf/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-protobuf-lite/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.api/api-common/${google-api-common-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.api.grpc/proto-google-common-protos/${google-proto-common-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.api.grpc/proto-google-cloud-pubsub-v1/${google-proto-pubsub-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.api.grpc/proto-google-iam-v1/${google-proto-iam-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-pubsub-guava-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.api/gax/${google-gax-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-oauth2-http/${grpc-google-auth-library-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-http-jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.api/gax-grpc/${google-gax-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-auth/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-credentials/${grpc-google-auth-library-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-netty-shaded/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-alts/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-grpclb/${grpc-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java-util/${protobuf-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.conscrypt/conscrypt-openjdk-uber/${conscrypt-uber-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.threeten/threetenbp/${threetenbp-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-api/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.grpc/grpc-core/${grpc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.code.gson/gson/${gson-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.android/annotations/${android-annotations-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.perfmark/perfmark-api/${perfmark-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-contrib-grpc-metrics/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.errorprone/error_prone_annotations/${google-errorprone-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.auto.value/auto-value-annotations/${google-auto-value-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-http-client-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:commons-logging/commons-logging/${commons-logging-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.j2objc/j2objc-annotations/${google-j2objc-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-contrib-http-util/${opencensus-api-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-google-pubsub/${project.version}</bundle>
-  </feature>
   <feature name='camel-grape' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
