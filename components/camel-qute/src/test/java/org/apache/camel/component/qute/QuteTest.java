@@ -44,10 +44,8 @@ public class QuteTest extends CamelTestSupport {
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: example
                 from("direct:a").
                         to("qute:org/apache/camel/component/qute/example.txt");
-                // END SNIPPET: example
             }
         };
     }

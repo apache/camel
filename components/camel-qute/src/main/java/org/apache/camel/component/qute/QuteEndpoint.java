@@ -32,7 +32,6 @@ import io.quarkus.qute.TemplateInstance;
 import io.quarkus.qute.TemplateLocator.TemplateLocation;
 import io.quarkus.qute.Variant;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -54,11 +53,6 @@ public class QuteEndpoint extends ResourceEndpoint {
 
     public QuteEndpoint(String uri, QuteComponent component, String resourceUri) {
         super(uri, component, resourceUri);
-    }
-
-    @Override
-    public ExchangePattern getExchangePattern() {
-        return ExchangePattern.InOut;
     }
 
     @Override
