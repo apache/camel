@@ -413,8 +413,8 @@ public interface Ddb2EndpointBuilderFactory {
      * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     public interface Ddb2Builders {

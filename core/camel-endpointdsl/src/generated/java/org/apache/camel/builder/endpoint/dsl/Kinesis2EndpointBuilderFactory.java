@@ -1339,8 +1339,8 @@ public interface Kinesis2EndpointBuilderFactory {
      * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     /**
@@ -1353,7 +1353,7 @@ public interface Kinesis2EndpointBuilderFactory {
         TRIM_HORIZON,
         LATEST,
         AT_TIMESTAMP,
-        null;
+        UNKNOWN_TO_SDK_VERSION;
     }
 
     /**

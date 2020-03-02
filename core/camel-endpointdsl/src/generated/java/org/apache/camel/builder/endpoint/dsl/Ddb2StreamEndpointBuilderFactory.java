@@ -856,15 +856,15 @@ public interface Ddb2StreamEndpointBuilderFactory {
         LATEST,
         AT_SEQUENCE_NUMBER,
         AFTER_SEQUENCE_NUMBER,
-        null;
+        UNKNOWN_TO_SDK_VERSION;
     }
 
     /**
      * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     public interface Ddb2StreamBuilders {
