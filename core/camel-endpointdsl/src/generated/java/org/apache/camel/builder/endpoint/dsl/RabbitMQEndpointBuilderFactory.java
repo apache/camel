@@ -555,6 +555,18 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify a client-generated consumer tag to establish context when
+         * invoking the consume operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default RabbitMQEndpointConsumerBuilder consumerTag(String consumerTag) {
+            doSetProperty("consumerTag", consumerTag);
+            return this;
+        }
+        /**
          * Request exclusive access to the queue (meaning only this consumer can
          * access the queue). This is useful when you want a long-lived shared
          * queue to be temporarily accessible by just one consumer.
