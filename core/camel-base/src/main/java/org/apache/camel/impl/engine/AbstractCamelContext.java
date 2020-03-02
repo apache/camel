@@ -119,6 +119,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
@@ -149,6 +150,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -682,6 +684,20 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public Endpoint hasEndpoint(NormalizedEndpointUri uri) {
+        if (endpoints.isEmpty()) {
+            return null;
+        }
+        EndpointKey key;
+        if (uri instanceof EndpointKey) {
+            key = (EndpointKey) uri;
+        } else {
+            key = new EndpointKey(uri.getUri(), true);
+        }
+        return endpoints.get(key);
+    }
+
+    @Override
     public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
         Endpoint oldEndpoint;
 
@@ -736,16 +752,37 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public NormalizedEndpointUri normalizeUri(String uri) {
+        try {
+            uri = resolvePropertyPlaceholders(uri);
+            uri = normalizeEndpointUri(uri);
+            return new NormalizedUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+    }
+
+    @Override
     public Endpoint getEndpoint(String uri) {
-        return doGetEndpoint(uri, false);
+        return doGetEndpoint(uri, false, false);
+    }
+
+    @Override
+    public Endpoint getEndpoint(NormalizedEndpointUri uri) {
+        return doGetEndpoint(uri.getUri(), true, false);
     }
 
     @Override
     public Endpoint getPrototypeEndpoint(String uri) {
-        return doGetEndpoint(uri, true);
+        return doGetEndpoint(uri, false, true);
     }
 
-    protected Endpoint doGetEndpoint(String uri, boolean prototype) {
+    @Override
+    public Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri) {
+        return doGetEndpoint(uri.getUri(), true, true);
+    }
+
+    protected Endpoint doGetEndpoint(String uri, boolean normalized, boolean prototype) {
         // ensure CamelContext are initialized before we can get an endpoint
         init();
 
@@ -755,17 +792,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         // in case path has property placeholders then try to let property
         // component resolve those
-        try {
-            uri = resolvePropertyPlaceholders(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
+        if (!normalized) {
+            try {
+                uri = resolvePropertyPlaceholders(uri);
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
         }
 
         final String rawUri = uri;
 
         // normalize uri so we can do endpoint hits with minor mistakes and
         // parameters is not in the same order
-        uri = normalizeEndpointUri(uri);
+        if (!normalized) {
+            uri = normalizeEndpointUri(uri);
+        }
 
         LOG.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 

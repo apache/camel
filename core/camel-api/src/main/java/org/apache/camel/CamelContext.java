@@ -16,7 +16,11 @@
  */
 package org.apache.camel;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -434,8 +438,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @param uri the URI of the endpoint
      * @return the endpoint
-     *
-     * @see #getPrototypeEndpoint(String)
      */
     Endpoint getEndpoint(String uri);
 

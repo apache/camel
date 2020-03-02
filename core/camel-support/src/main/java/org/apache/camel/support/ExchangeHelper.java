@@ -49,6 +49,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.IOHelper;
@@ -95,6 +96,9 @@ public final class ExchangeHelper {
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), nu);
         } else {
             String uri = value.toString().trim();
             endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
@@ -119,6 +123,9 @@ public final class ExchangeHelper {
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(exchange.getContext(), nu);
         } else {
             String uri = value.toString().trim();
             endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(exchange.getContext(), uri);

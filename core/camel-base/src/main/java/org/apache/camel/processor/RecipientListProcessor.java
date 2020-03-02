@@ -31,10 +31,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -210,6 +212,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             Producer producer;
             ExchangePattern pattern;
             try {
+                recipient = prepareRecipient(exchange, recipient);
                 Endpoint existing = getExistingEndpoint(exchange, recipient);
                 if (existing == null) {
                     endpoint = resolveEndpoint(exchange, recipient, prototype);
@@ -291,41 +294,62 @@ public class RecipientListProcessor extends MulticastProcessor {
         return answer;
     }
 
-    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof Endpoint) {
-            return (Endpoint) recipient;
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
         } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
             recipient = ((String) recipient).trim();
         }
         if (recipient != null) {
-            // convert to a string type we can work with
-            String uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
-            return exchange.getContext().hasEndpoint(uri);
+            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            String uri;
+            if (recipient instanceof String) {
+                uri = (String) recipient;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint
+            return ecc.normalizeUri(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        }
+        if (recipient != null) {
+            if (recipient instanceof NormalizedEndpointUri) {
+                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+                return ecc.hasEndpoint(nu);
+            } else {
+                String uri = recipient.toString().trim();
+                return exchange.getContext().hasEndpoint(uri);
+            }
         }
         return null;
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            recipient = ((String) recipient).trim();
-        }
-        if (recipient != null) {
-            return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
-        } else {
-            return null;
-        }
+        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
-    protected ExchangePattern resolveExchangePattern(Object recipient) throws UnsupportedEncodingException, URISyntaxException, MalformedURLException {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            String s = ((String) recipient).trim();
-            // see if exchangePattern is a parameter in the url
-            s = URISupport.normalizeUri(s);
+    protected ExchangePattern resolveExchangePattern(Object recipient) {
+        String s = null;
+
+        if (recipient instanceof NormalizedEndpointUri) {
+            s = ((NormalizedEndpointUri) recipient).getUri();
+        } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
+            s = ((String) recipient).trim();
+        }
+        if (s != null) {
             return EndpointHelper.resolveExchangePatternFromUrl(s);
         }
+
         return null;
     }
 
