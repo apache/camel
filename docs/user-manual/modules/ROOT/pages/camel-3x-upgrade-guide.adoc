@@ -426,6 +426,11 @@ Should now be:
 The class `org.apache.camel.model.ModelHelper` has been removed. Instead you can use its functionality from `ExtendedCamelContext` by
 the `getModelToXMLDumper` and `getXMLRoutesDefinitionLoader` methods which has APIs similar to `ModelHelper`.
 
+==== JsonSchemaHelper removed
+
+The class `org.apache.camel.tooling.util.JSonSchemaHelper` has been removed. Instead you can use utils coming from camel-util-json
+and the class `org.apache.camel.tooling.util.PackageHelper`
+
 ==== camel-xml-jaxp
 
 The class `org.apache.camel.processor.validation.PredicateValidatingProcessor` has moved from `camel-xml-jaxp` JAR
