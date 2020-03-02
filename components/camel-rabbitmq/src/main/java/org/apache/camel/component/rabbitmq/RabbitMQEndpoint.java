@@ -166,6 +166,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean guaranteedDeliveries;
     @UriParam(label = "producer")
     private boolean allowNullHeaders;
+    @UriParam (label = "consumer")
+    private String consumerTag = "";
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
@@ -942,4 +944,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.passive = passive;
     }
 
+	public String getConsumerTag() {
+		return consumerTag;
+	}
+	
+    /**
+     * Specify a client-generated consumer tag to establish context when invoking the consume operation
+     */
+	public void setConsumerTag(String consumerTag) {
+		this.consumerTag = consumerTag;
+	}
 }

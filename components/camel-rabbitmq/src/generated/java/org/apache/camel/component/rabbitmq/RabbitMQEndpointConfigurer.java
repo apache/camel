@@ -43,6 +43,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "connectionFactory": target.setConnectionFactory(property(camelContext, com.rabbitmq.client.ConnectionFactory.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "consumertag":
+        case "consumerTag": target.setConsumerTag(property(camelContext, java.lang.String.class, value)); return true;
         case "deadletterexchange":
         case "deadLetterExchange": target.setDeadLetterExchange(property(camelContext, java.lang.String.class, value)); return true;
         case "deadletterexchangetype":
