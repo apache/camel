@@ -122,39 +122,54 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
 
+        List<Class<?>> classes = new ArrayList<>();
         for (AnnotationInstance ai : getIndex().getAnnotations(URI_ENDPOINT)) {
-
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());
             final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
             if (uriEndpoint != null) {
                 String scheme = uriEndpoint.scheme();
-                String extendsScheme = uriEndpoint.extendsScheme();
-                String title = uriEndpoint.title();
-                final String label = uriEndpoint.label();
-                validateSchemaName(scheme, classElement);
                 if (!Strings.isNullOrEmpty(scheme)) {
-                    // support multiple schemes separated by comma, which maps to
-                    // the exact same component
-                    // for example camel-mail has a bunch of component schema names
-                    // that does that
-                    String[] schemes = scheme.split(",");
-                    String[] titles = title.split(",");
-                    String[] extendsSchemes = extendsScheme.split(",");
-                    for (int i = 0; i < schemes.length; i++) {
-                        final String alias = schemes[i];
-                        final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
-                        String aTitle = i < titles.length ? titles[i] : titles[0];
-
-                        // some components offer a secure alternative which we need
-                        // to amend the title accordingly
-                        if (secureAlias(schemes[0], alias)) {
-                            aTitle += " (Secure)";
-                        }
-                        final String aliasTitle = aTitle;
-
-                        writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
-                    }
+                    classes.add(classElement);
                 }
+            }
+        }
+        // make sure we sort the classes in case one inherit from the other
+        classes.sort((c1, c2) -> {
+            if (c1.isAssignableFrom(c2)) {
+                return -1;
+            } else if (c2.isAssignableFrom(c1)) {
+                return +1;
+            } else {
+                return c1.getName().compareTo(c2.getName());
+            }
+        });
+        for (Class<?> classElement : classes) {
+            UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
+            String scheme = uriEndpoint.scheme();
+            String extendsScheme = uriEndpoint.extendsScheme();
+            String title = uriEndpoint.title();
+            final String label = uriEndpoint.label();
+            validateSchemaName(scheme, classElement);
+            // support multiple schemes separated by comma, which maps to
+            // the exact same component
+            // for example camel-mail has a bunch of component schema names
+            // that does that
+            String[] schemes = scheme.split(",");
+            String[] titles = title.split(",");
+            String[] extendsSchemes = extendsScheme.split(",");
+            for (int i = 0; i < schemes.length; i++) {
+                final String alias = schemes[i];
+                final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
+                String aTitle = i < titles.length ? titles[i] : titles[0];
+
+                // some components offer a secure alternative which we need
+                // to amend the title accordingly
+                if (secureAlias(schemes[0], alias)) {
+                    aTitle += " (Secure)";
+                }
+                final String aliasTitle = aTitle;
+
+                writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
             }
         }
     }
