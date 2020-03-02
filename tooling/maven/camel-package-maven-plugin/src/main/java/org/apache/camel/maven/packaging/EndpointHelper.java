@@ -151,10 +151,13 @@ public final class EndpointHelper {
             } else if (score2 < score1) {
                 return 1;
             } else {
-                // compare by full label and name
-                int score = label1.compareToIgnoreCase(label2);
+                int score = group1.compareToIgnoreCase(group2);
                 if (score == 0) {
-                    score = name1.compareToIgnoreCase(name2);
+                    // compare by full label and name
+                    score = label1.compareToIgnoreCase(label2);
+                    if (score == 0) {
+                        score = name1.compareToIgnoreCase(name2);
+                    }
                 }
                 return score;
             }
