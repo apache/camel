@@ -1601,7 +1601,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Google Pubsub (camel-google-pubsub)
-     * Messaging client for Google Cloud Platform PubSub Service
+     * Messaging client for Google Cloud Platform PubSub Service Built on top of
+     * the Google Cloud Pub/Sub libraries.
      * 
      * Category: messaging
      * Since: 2.19

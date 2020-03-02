@@ -141,6 +141,10 @@ with the following path and query parameters:
 | *summary* (advanced) | Request that the server modify the response using the _summary param. The value can be one of: COUNT, TEXT, DATA, TRUE, FALSE |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *validationMode* (advanced) | When should Camel validate the FHIR Server's conformance statement. The value can be one of: NEVER, ONCE | ONCE | String
+| *proxyHost* (proxy) | The proxy host |  | String
+| *proxyPassword* (proxy) | The proxy password |  | String
+| *proxyPort* (proxy) | The proxy port |  | Integer
+| *proxyUser* (proxy) | The proxy username |  | String
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
@@ -155,10 +159,6 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *proxyHost* (proxy) | The proxy host |  | String
-| *proxyPassword* (proxy) | The proxy password |  | String
-| *proxyPort* (proxy) | The proxy port |  | Integer
-| *proxyUser* (proxy) | The proxy username |  | String
 | *accessToken* (security) | OAuth access token |  | String
 | *password* (security) | Username to use for basic authentication |  | String
 | *username* (security) | Username to use for basic authentication |  | String

@@ -493,6 +493,33 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
+                Integer receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
+                String receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
+            return this;
+        }
+        /**
          * Enable/disable the SO_REUSEADDR socket option.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
@@ -517,6 +544,33 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointConsumerBuilder reuseAddress(
                 String reuseAddress) {
             doSetProperty("reuseAddress", reuseAddress);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+                Integer sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_SNDBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+                String sendBufferSize) {
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -603,33 +657,6 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
-                Integer sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_SNDBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
-                String sendBufferSize) {
-            doSetProperty("sendBufferSize", sendBufferSize);
-            return this;
-        }
-        /**
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
@@ -685,33 +712,6 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
                 String maxReceiveTimeouts) {
             doSetProperty("maxReceiveTimeouts", maxReceiveTimeouts);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
-                Integer receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
-                String receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1112,6 +1112,33 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
+                Integer receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
+                String receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
+            return this;
+        }
+        /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -1219,33 +1246,6 @@ public interface MllpEndpointBuilderFactory {
         default AdvancedMllpEndpointProducerBuilder idleTimeout(
                 String idleTimeout) {
             doSetProperty("idleTimeout", idleTimeout);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
-                Integer receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
-                String receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1575,6 +1575,33 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointBuilder receiveBufferSize(
+                Integer receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
+            return this;
+        }
+        /**
+         * Sets the SO_RCVBUF option to the specified value (in bytes).
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 8192
+         * Group: tcp
+         */
+        default AdvancedMllpEndpointBuilder receiveBufferSize(
+                String receiveBufferSize) {
+            doSetProperty("receiveBufferSize", receiveBufferSize);
+            return this;
+        }
+        /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -1625,33 +1652,6 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointBuilder idleTimeout(String idleTimeout) {
             doSetProperty("idleTimeout", idleTimeout);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointBuilder receiveBufferSize(
-                Integer receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * Sets the SO_RCVBUF option to the specified value (in bytes).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Default: 8192
-         * Group: tcp
-         */
-        default AdvancedMllpEndpointBuilder receiveBufferSize(
-                String receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**

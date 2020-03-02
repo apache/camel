@@ -5,7 +5,7 @@
     "extendsScheme": "",
     "syntax": "google-pubsub:projectId:destinationName",
     "title": "Google Pubsub",
-    "description": "Messaging client for Google Cloud Platform PubSub Service",
+    "description": "Messaging client for Google Cloud Platform PubSub Service Built on top of the Google Cloud Pub\/Sub libraries.",
     "label": "messaging",
     "deprecated": false,
     "async": false,

@@ -884,33 +884,6 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sorting order for messages. Only natively supported for IMAP.
-         * Emulated to some degree when using POP3 or when IMAP server does not
-         * have the SORT capability.
-         * 
-         * The option is a: <code>com.sun.mail.imap.SortTerm[]</code> type.
-         * 
-         * Group: sort
-         */
-        default MailEndpointConsumerBuilder sortTerm(Object[] sortTerm) {
-            doSetProperty("sortTerm", sortTerm);
-            return this;
-        }
-        /**
-         * Sorting order for messages. Only natively supported for IMAP.
-         * Emulated to some degree when using POP3 or when IMAP server does not
-         * have the SORT capability.
-         * 
-         * The option will be converted to a
-         * <code>com.sun.mail.imap.SortTerm[]</code> type.
-         * 
-         * Group: sort
-         */
-        default MailEndpointConsumerBuilder sortTerm(String sortTerm) {
-            doSetProperty("sortTerm", sortTerm);
-            return this;
-        }
-        /**
          * The password for login.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -956,6 +929,33 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Sorting order for messages. Only natively supported for IMAP.
+         * Emulated to some degree when using POP3 or when IMAP server does not
+         * have the SORT capability.
+         * 
+         * The option is a: <code>com.sun.mail.imap.SortTerm[]</code> type.
+         * 
+         * Group: sort
+         */
+        default MailEndpointConsumerBuilder sortTerm(Object[] sortTerm) {
+            doSetProperty("sortTerm", sortTerm);
+            return this;
+        }
+        /**
+         * Sorting order for messages. Only natively supported for IMAP.
+         * Emulated to some degree when using POP3 or when IMAP server does not
+         * have the SORT capability.
+         * 
+         * The option will be converted to a
+         * <code>com.sun.mail.imap.SortTerm[]</code> type.
+         * 
+         * Group: sort
+         */
+        default MailEndpointConsumerBuilder sortTerm(String sortTerm) {
+            doSetProperty("sortTerm", sortTerm);
             return this;
         }
     }

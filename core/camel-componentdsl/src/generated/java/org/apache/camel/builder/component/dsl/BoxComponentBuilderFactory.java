@@ -161,6 +161,21 @@ public interface BoxComponentBuilderFactory {
             return this;
         }
         /**
+         * The type of authentication for connection. Types of Authentication:
+         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
+         * - OAuth 2.0 with JSON Web Tokens.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: APP_USER_AUTHENTICATION
+         * Group: authentication
+         */
+        default BoxComponentBuilder authenticationType(
+                java.lang.String authenticationType) {
+            doSetProperty("authenticationType", authenticationType);
+            return this;
+        }
+        /**
          * Custom Access Token Cache for storing and retrieving access tokens.
          * 
          * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
@@ -207,21 +222,6 @@ public interface BoxComponentBuilderFactory {
          */
         default BoxComponentBuilder maxCacheEntries(int maxCacheEntries) {
             doSetProperty("maxCacheEntries", maxCacheEntries);
-            return this;
-        }
-        /**
-         * The type of authentication for connection. Types of Authentication:
-         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
-         * - OAuth 2.0 with JSON Web Tokens.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: APP_USER_AUTHENTICATION
-         * Group: authentication
-         */
-        default BoxComponentBuilder authenticationType(
-                java.lang.String authenticationType) {
-            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -327,11 +327,11 @@ public interface BoxComponentBuilderFactory {
             case "lazyStartProducer": ((BoxComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((BoxComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "httpParams": getOrCreateConfiguration((BoxComponent) component).setHttpParams((java.util.Map) value); return true;
+            case "authenticationType": getOrCreateConfiguration((BoxComponent) component).setAuthenticationType((java.lang.String) value); return true;
             case "accessTokenCache": getOrCreateConfiguration((BoxComponent) component).setAccessTokenCache((com.box.sdk.IAccessTokenCache) value); return true;
             case "clientSecret": getOrCreateConfiguration((BoxComponent) component).setClientSecret((java.lang.String) value); return true;
             case "encryptionAlgorithm": getOrCreateConfiguration((BoxComponent) component).setEncryptionAlgorithm((com.box.sdk.EncryptionAlgorithm) value); return true;
             case "maxCacheEntries": getOrCreateConfiguration((BoxComponent) component).setMaxCacheEntries((int) value); return true;
-            case "authenticationType": getOrCreateConfiguration((BoxComponent) component).setAuthenticationType((java.lang.String) value); return true;
             case "privateKeyFile": getOrCreateConfiguration((BoxComponent) component).setPrivateKeyFile((java.lang.String) value); return true;
             case "privateKeyPassword": getOrCreateConfiguration((BoxComponent) component).setPrivateKeyPassword((java.lang.String) value); return true;
             case "publicKeyId": getOrCreateConfiguration((BoxComponent) component).setPublicKeyId((java.lang.String) value); return true;
