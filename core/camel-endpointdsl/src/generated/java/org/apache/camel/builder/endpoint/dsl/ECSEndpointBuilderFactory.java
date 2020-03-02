@@ -304,8 +304,8 @@ public interface ECSEndpointBuilderFactory {
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     public interface ECSBuilders {

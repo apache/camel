@@ -505,8 +505,8 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
      * <code>org.apache.camel.component.caffeine.EvictionType</code> enum.
      */
     enum EvictionType {
-        size_based,
-        time_based;
+        SIZE_BASED,
+        TIME_BASED;
     }
 
     public interface CaffeineLoadCacheBuilders {
