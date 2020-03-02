@@ -288,44 +288,6 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * The second to wait for a watch event, default 10 seconds.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Default: 10
-         * Group: watch
-         */
-        default ConsulComponentBuilder blockSeconds(
-                java.lang.Integer blockSeconds) {
-            doSetProperty("blockSeconds", blockSeconds);
-            return this;
-        }
-        /**
-         * The first index for watch for, default 0.
-         * 
-         * The option is a: <code>java.math.BigInteger</code> type.
-         * 
-         * Default: 0
-         * Group: watch
-         */
-        default ConsulComponentBuilder firstIndex(
-                java.math.BigInteger firstIndex) {
-            doSetProperty("firstIndex", firstIndex);
-            return this;
-        }
-        /**
-         * Recursively watch, default false.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: watch
-         */
-        default ConsulComponentBuilder recursive(boolean recursive) {
-            doSetProperty("recursive", recursive);
-            return this;
-        }
-        /**
          * Sets the ACL token to be used with Consul.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -385,6 +347,44 @@ public interface ConsulComponentBuilderFactory {
             doSetProperty("userName", userName);
             return this;
         }
+        /**
+         * The second to wait for a watch event, default 10 seconds.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 10
+         * Group: watch
+         */
+        default ConsulComponentBuilder blockSeconds(
+                java.lang.Integer blockSeconds) {
+            doSetProperty("blockSeconds", blockSeconds);
+            return this;
+        }
+        /**
+         * The first index for watch for, default 0.
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Default: 0
+         * Group: watch
+         */
+        default ConsulComponentBuilder firstIndex(
+                java.math.BigInteger firstIndex) {
+            doSetProperty("firstIndex", firstIndex);
+            return this;
+        }
+        /**
+         * Recursively watch, default false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: watch
+         */
+        default ConsulComponentBuilder recursive(boolean recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
     }
 
     class ConsulComponentBuilderImpl
@@ -427,14 +427,14 @@ public interface ConsulComponentBuilderFactory {
             case "datacenter": getOrCreateConfiguration((ConsulComponent) component).setDatacenter((java.lang.String) value); return true;
             case "nearNode": getOrCreateConfiguration((ConsulComponent) component).setNearNode((java.lang.String) value); return true;
             case "nodeMeta": getOrCreateConfiguration((ConsulComponent) component).setNodeMeta((java.util.List) value); return true;
-            case "blockSeconds": getOrCreateConfiguration((ConsulComponent) component).setBlockSeconds((java.lang.Integer) value); return true;
-            case "firstIndex": getOrCreateConfiguration((ConsulComponent) component).setFirstIndex((java.math.BigInteger) value); return true;
-            case "recursive": getOrCreateConfiguration((ConsulComponent) component).setRecursive((boolean) value); return true;
             case "aclToken": getOrCreateConfiguration((ConsulComponent) component).setAclToken((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((ConsulComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((ConsulComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ConsulComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "userName": getOrCreateConfiguration((ConsulComponent) component).setUserName((java.lang.String) value); return true;
+            case "blockSeconds": getOrCreateConfiguration((ConsulComponent) component).setBlockSeconds((java.lang.Integer) value); return true;
+            case "firstIndex": getOrCreateConfiguration((ConsulComponent) component).setFirstIndex((java.math.BigInteger) value); return true;
+            case "recursive": getOrCreateConfiguration((ConsulComponent) component).setRecursive((boolean) value); return true;
             default: return false;
             }
         }

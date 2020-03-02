@@ -442,20 +442,6 @@ public interface AwsS3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsS3ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define if Accelerate Mode enabled is true or false.
          * 
          * The option is a: <code>boolean</code> type.
@@ -517,6 +503,20 @@ public interface AwsS3ComponentBuilderFactory {
         default AwsS3ComponentBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
             doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsS3ComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -594,12 +594,12 @@ public interface AwsS3ComponentBuilderFactory {
             case "storageClass": getOrCreateConfiguration((S3Component) component).setStorageClass((java.lang.String) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((S3Component) component).setUseAwsKMS((boolean) value); return true;
-            case "basicPropertyBinding": ((S3Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accelerateModeEnabled": getOrCreateConfiguration((S3Component) component).setAccelerateModeEnabled((boolean) value); return true;
             case "chunkedEncodingDisabled": getOrCreateConfiguration((S3Component) component).setChunkedEncodingDisabled((boolean) value); return true;
             case "dualstackEnabled": getOrCreateConfiguration((S3Component) component).setDualstackEnabled((boolean) value); return true;
             case "forceGlobalBucketAccessEnabled": getOrCreateConfiguration((S3Component) component).setForceGlobalBucketAccessEnabled((boolean) value); return true;
             case "payloadSigningEnabled": getOrCreateConfiguration((S3Component) component).setPayloadSigningEnabled((boolean) value); return true;
+            case "basicPropertyBinding": ((S3Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((S3Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((S3Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

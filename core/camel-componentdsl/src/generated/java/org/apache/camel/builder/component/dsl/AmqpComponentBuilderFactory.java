@@ -1443,6 +1443,20 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         */
+        default AmqpComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Allows to configure the default errorHandler logging level for
          * logging uncaught exceptions.
          * 
@@ -1468,20 +1482,6 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * header to and from Camel message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * 
-         * Group: filter
-         */
-        default AmqpComponentBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1682,9 +1682,9 @@ public interface AmqpComponentBuilderFactory {
             case "useMessageIDAsCorrelationID": getOrCreateConfiguration((AMQPComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
             case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
+            case "headerFilterStrategy": ((AMQPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
-            case "headerFilterStrategy": ((AMQPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "password": getOrCreateConfiguration((AMQPComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((AMQPComponent) component).setUsername((java.lang.String) value); return true;
             case "transacted": getOrCreateConfiguration((AMQPComponent) component).setTransacted((boolean) value); return true;

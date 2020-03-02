@@ -254,6 +254,251 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
+         * Number of results to be found.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder cnt(Integer cnt) {
+            doSetProperty("cnt", cnt);
+            return this;
+        }
+        /**
+         * Number of results to be found.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder cnt(String cnt) {
+            doSetProperty("cnt", cnt);
+            return this;
+        }
+        /**
+         * List of id's of city/stations. You can separate multiple ids by
+         * comma.
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder ids(List<String> ids) {
+            doSetProperty("ids", ids);
+            return this;
+        }
+        /**
+         * List of id's of city/stations. You can separate multiple ids by
+         * comma.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder ids(String ids) {
+            doSetProperty("ids", ids);
+            return this;
+        }
+        /**
+         * Latitude of location. You can use lat and lon options instead of
+         * location. For boxed queries this is the bottom latitude.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder lat(String lat) {
+            doSetProperty("lat", lat);
+            return this;
+        }
+        /**
+         * If null Camel will try and determine your current location using the
+         * geolocation of your ip address, else specify the city,country. For
+         * well known city names, Open Weather Map will determine the best fit,
+         * but multiple results may be returned. Hence specifying and country as
+         * well will return more accurate data. If you specify current as the
+         * location then the component will try to get the current latitude and
+         * longitude and use that to get the weather details. You can use lat
+         * and lon options instead of location.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder location(String location) {
+            doSetProperty("location", location);
+            return this;
+        }
+        /**
+         * Longitude of location. You can use lat and lon options instead of
+         * location. For boxed queries this is the left longtitude.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder lon(String lon) {
+            doSetProperty("lon", lon);
+            return this;
+        }
+        /**
+         * For boxed queries this is the right longtitude. Needs to be used in
+         * combination with topLat and zoom.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder rightLon(String rightLon) {
+            doSetProperty("rightLon", rightLon);
+            return this;
+        }
+        /**
+         * For boxed queries this is the top latitude. Needs to be used in
+         * combination with rightLon and zoom.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder topLat(String topLat) {
+            doSetProperty("topLat", topLat);
+            return this;
+        }
+        /**
+         * Zip-code, e.g. 94040,us.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder zip(String zip) {
+            doSetProperty("zip", zip);
+            return this;
+        }
+        /**
+         * For boxed queries this is the zoom. Needs to be used in combination
+         * with rightLon and topLat.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder zoom(Integer zoom) {
+            doSetProperty("zoom", zoom);
+            return this;
+        }
+        /**
+         * For boxed queries this is the zoom. Needs to be used in combination
+         * with rightLon and topLat.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: filter
+         */
+        default WeatherEndpointConsumerBuilder zoom(String zoom) {
+            doSetProperty("zoom", zoom);
+            return this;
+        }
+        /**
+         * Domain for proxy NTLM authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyAuthDomain(
+                String proxyAuthDomain) {
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
+            return this;
+        }
+        /**
+         * Optional host for proxy NTLM authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyAuthHost(
+                String proxyAuthHost) {
+            doSetProperty("proxyAuthHost", proxyAuthHost);
+            return this;
+        }
+        /**
+         * Authentication method for proxy, either as Basic, Digest or NTLM.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyAuthMethod(
+                String proxyAuthMethod) {
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
+            return this;
+        }
+        /**
+         * Password for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyAuthPassword(
+                String proxyAuthPassword) {
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
+            return this;
+        }
+        /**
+         * Username for proxy authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyAuthUsername(
+                String proxyAuthUsername) {
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
+            return this;
+        }
+        /**
+         * The proxy host name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The proxy port number.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy port number.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default WeatherEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -627,251 +872,6 @@ public interface WeatherEndpointBuilderFactory {
         default WeatherEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * Number of results to be found.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder cnt(Integer cnt) {
-            doSetProperty("cnt", cnt);
-            return this;
-        }
-        /**
-         * Number of results to be found.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder cnt(String cnt) {
-            doSetProperty("cnt", cnt);
-            return this;
-        }
-        /**
-         * List of id's of city/stations. You can separate multiple ids by
-         * comma.
-         * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder ids(List<String> ids) {
-            doSetProperty("ids", ids);
-            return this;
-        }
-        /**
-         * List of id's of city/stations. You can separate multiple ids by
-         * comma.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder ids(String ids) {
-            doSetProperty("ids", ids);
-            return this;
-        }
-        /**
-         * Latitude of location. You can use lat and lon options instead of
-         * location. For boxed queries this is the bottom latitude.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder lat(String lat) {
-            doSetProperty("lat", lat);
-            return this;
-        }
-        /**
-         * If null Camel will try and determine your current location using the
-         * geolocation of your ip address, else specify the city,country. For
-         * well known city names, Open Weather Map will determine the best fit,
-         * but multiple results may be returned. Hence specifying and country as
-         * well will return more accurate data. If you specify current as the
-         * location then the component will try to get the current latitude and
-         * longitude and use that to get the weather details. You can use lat
-         * and lon options instead of location.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder location(String location) {
-            doSetProperty("location", location);
-            return this;
-        }
-        /**
-         * Longitude of location. You can use lat and lon options instead of
-         * location. For boxed queries this is the left longtitude.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder lon(String lon) {
-            doSetProperty("lon", lon);
-            return this;
-        }
-        /**
-         * For boxed queries this is the right longtitude. Needs to be used in
-         * combination with topLat and zoom.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder rightLon(String rightLon) {
-            doSetProperty("rightLon", rightLon);
-            return this;
-        }
-        /**
-         * For boxed queries this is the top latitude. Needs to be used in
-         * combination with rightLon and zoom.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder topLat(String topLat) {
-            doSetProperty("topLat", topLat);
-            return this;
-        }
-        /**
-         * Zip-code, e.g. 94040,us.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder zip(String zip) {
-            doSetProperty("zip", zip);
-            return this;
-        }
-        /**
-         * For boxed queries this is the zoom. Needs to be used in combination
-         * with rightLon and topLat.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder zoom(Integer zoom) {
-            doSetProperty("zoom", zoom);
-            return this;
-        }
-        /**
-         * For boxed queries this is the zoom. Needs to be used in combination
-         * with rightLon and topLat.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: filter
-         */
-        default WeatherEndpointConsumerBuilder zoom(String zoom) {
-            doSetProperty("zoom", zoom);
-            return this;
-        }
-        /**
-         * Domain for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthDomain(
-                String proxyAuthDomain) {
-            doSetProperty("proxyAuthDomain", proxyAuthDomain);
-            return this;
-        }
-        /**
-         * Optional host for proxy NTLM authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthHost(
-                String proxyAuthHost) {
-            doSetProperty("proxyAuthHost", proxyAuthHost);
-            return this;
-        }
-        /**
-         * Authentication method for proxy, either as Basic, Digest or NTLM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthMethod(
-                String proxyAuthMethod) {
-            doSetProperty("proxyAuthMethod", proxyAuthMethod);
-            return this;
-        }
-        /**
-         * Password for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthPassword(
-                String proxyAuthPassword) {
-            doSetProperty("proxyAuthPassword", proxyAuthPassword);
-            return this;
-        }
-        /**
-         * Username for proxy authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyAuthUsername(
-                String proxyAuthUsername) {
-            doSetProperty("proxyAuthUsername", proxyAuthUsername);
-            return this;
-        }
-        /**
-         * The proxy host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port number.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default WeatherEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**

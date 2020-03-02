@@ -178,62 +178,6 @@ public interface AwsSwfComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AwsSwfComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To configure the ClientConfiguration using the key/values from the
-         * Map.
-         * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsSwfComponentBuilder clientConfigurationParameters(
-                java.util.Map<java.lang.String, java.lang.Object> clientConfigurationParameters) {
-            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
-            return this;
-        }
-        /**
-         * To configure the StartWorkflowOptions using the key/values from the
-         * Map.
-         * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsSwfComponentBuilder startWorkflowOptionsParameters(
-                java.util.Map<java.lang.String, java.lang.Object> startWorkflowOptionsParameters) {
-            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
-            return this;
-        }
-        /**
-         * To configure the AmazonSimpleWorkflowClient using the key/values from
-         * the Map.
-         * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsSwfComponentBuilder sWClientParameters(
-                java.util.Map<java.lang.String, java.lang.Object> sWClientParameters) {
-            doSetProperty("sWClientParameters", sWClientParameters);
-            return this;
-        }
-        /**
          * The list name to consume activities from.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -295,6 +239,84 @@ public interface AwsSwfComponentBuilderFactory {
         default AwsSwfComponentBuilder activityTypeRegistrationOptions(
                 com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions activityTypeRegistrationOptions) {
             doSetProperty("activityTypeRegistrationOptions", activityTypeRegistrationOptions);
+            return this;
+        }
+        /**
+         * Whether the component should use basic property binding (Camel 2.x)
+         * or the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AwsSwfComponentBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To configure the ClientConfiguration using the key/values from the
+         * Map.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsSwfComponentBuilder clientConfigurationParameters(
+                java.util.Map<java.lang.String, java.lang.Object> clientConfigurationParameters) {
+            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
+            return this;
+        }
+        /**
+         * To configure the StartWorkflowOptions using the key/values from the
+         * Map.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsSwfComponentBuilder startWorkflowOptionsParameters(
+                java.util.Map<java.lang.String, java.lang.Object> startWorkflowOptionsParameters) {
+            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
+            return this;
+        }
+        /**
+         * To configure the AmazonSimpleWorkflowClient using the key/values from
+         * the Map.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: advanced
+         */
+        default AwsSwfComponentBuilder sWClientParameters(
+                java.util.Map<java.lang.String, java.lang.Object> sWClientParameters) {
+            doSetProperty("sWClientParameters", sWClientParameters);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsSwfComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsSwfComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -418,28 +440,6 @@ public interface AwsSwfComponentBuilderFactory {
             doSetProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
             return this;
         }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default AwsSwfComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default AwsSwfComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
     }
 
     class AwsSwfComponentBuilderImpl
@@ -473,15 +473,17 @@ public interface AwsSwfComponentBuilderFactory {
             case "version": getOrCreateConfiguration((SWFComponent) component).setVersion((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((SWFComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SWFComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((SWFComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "clientConfigurationParameters": getOrCreateConfiguration((SWFComponent) component).setClientConfigurationParameters((java.util.Map) value); return true;
-            case "startWorkflowOptionsParameters": getOrCreateConfiguration((SWFComponent) component).setStartWorkflowOptionsParameters((java.util.Map) value); return true;
-            case "sWClientParameters": getOrCreateConfiguration((SWFComponent) component).setSWClientParameters((java.util.Map) value); return true;
             case "activityList": getOrCreateConfiguration((SWFComponent) component).setActivityList((java.lang.String) value); return true;
             case "activitySchedulingOptions": getOrCreateConfiguration((SWFComponent) component).setActivitySchedulingOptions((com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions) value); return true;
             case "activityThreadPoolSize": getOrCreateConfiguration((SWFComponent) component).setActivityThreadPoolSize((int) value); return true;
             case "activityTypeExecutionOptions": getOrCreateConfiguration((SWFComponent) component).setActivityTypeExecutionOptions((com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions) value); return true;
             case "activityTypeRegistrationOptions": getOrCreateConfiguration((SWFComponent) component).setActivityTypeRegistrationOptions((com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions) value); return true;
+            case "basicPropertyBinding": ((SWFComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "clientConfigurationParameters": getOrCreateConfiguration((SWFComponent) component).setClientConfigurationParameters((java.util.Map) value); return true;
+            case "startWorkflowOptionsParameters": getOrCreateConfiguration((SWFComponent) component).setStartWorkflowOptionsParameters((java.util.Map) value); return true;
+            case "sWClientParameters": getOrCreateConfiguration((SWFComponent) component).setSWClientParameters((java.util.Map) value); return true;
+            case "accessKey": getOrCreateConfiguration((SWFComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((SWFComponent) component).setSecretKey((java.lang.String) value); return true;
             case "childPolicy": getOrCreateConfiguration((SWFComponent) component).setChildPolicy((java.lang.String) value); return true;
             case "executionStartToCloseTimeout": getOrCreateConfiguration((SWFComponent) component).setExecutionStartToCloseTimeout((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((SWFComponent) component).setOperation((java.lang.String) value); return true;
@@ -492,8 +494,6 @@ public interface AwsSwfComponentBuilderFactory {
             case "terminationReason": getOrCreateConfiguration((SWFComponent) component).setTerminationReason((java.lang.String) value); return true;
             case "workflowList": getOrCreateConfiguration((SWFComponent) component).setWorkflowList((java.lang.String) value); return true;
             case "workflowTypeRegistrationOptions": getOrCreateConfiguration((SWFComponent) component).setWorkflowTypeRegistrationOptions((com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions) value); return true;
-            case "accessKey": getOrCreateConfiguration((SWFComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "secretKey": getOrCreateConfiguration((SWFComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -145,9 +145,9 @@ The ActiveMQ component supports 99 options, which are listed below.
 | *useMessageIDAsCorrelationID* (advanced) | Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages. | false | boolean
 | *waitForProvisionCorrelationTo BeUpdatedCounter* (advanced) | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled. | 50 | int
 | *waitForProvisionCorrelationTo BeUpdatedThreadSleepingTime* (advanced) | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | long
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *errorHandlerLoggingLevel* (logging) | Allows to configure the default errorHandler logging level for logging uncaught exceptions. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
 | *errorHandlerLogStackTrace* (logging) | Allows to control whether stacktraces should be logged or not, by the default errorHandler. | true | boolean
-| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *password* (security) | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *username* (security) | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean

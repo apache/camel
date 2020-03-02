@@ -233,6 +233,62 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
+         * The proxy host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The proxy password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirEndpointConsumerBuilder proxyPassword(String proxyPassword) {
+            doSetProperty("proxyPassword", proxyPassword);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default FhirEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default FhirEndpointConsumerBuilder proxyUser(String proxyUser) {
+            doSetProperty("proxyUser", proxyUser);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -603,62 +659,6 @@ public interface FhirEndpointBuilderFactory {
          */
         default FhirEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * The proxy host.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default FhirEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default FhirEndpointConsumerBuilder proxyPassword(String proxyPassword) {
-            doSetProperty("proxyPassword", proxyPassword);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default FhirEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default FhirEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy username.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default FhirEndpointConsumerBuilder proxyUser(String proxyUser) {
-            doSetProperty("proxyUser", proxyUser);
             return this;
         }
         /**

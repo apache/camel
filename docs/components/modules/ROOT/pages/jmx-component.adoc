@@ -74,9 +74,6 @@ with the following path and query parameters:
 | *reconnectOnConnectionFailure* (advanced) | If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured reconnectionDelay | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *testConnectionOnStartup* (advanced) | If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false, the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured reconnectionDelay | true | boolean
-| *notifyDiffer* (string) | If true, will fire a notification when the string attribute differs from the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
-| *notifyMatch* (string) | If true, will fire a notification when the string attribute matches the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
-| *stringToCompare* (string) | Value for attribute to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. |  | String
 | *initThreshold* (counter) | Initial threshold for the monitor. The value must exceed this before notifications are fired (counter monitor only). |  | int
 | *modulus* (counter) | The value at which the counter is reset to zero (counter monitor only). |  | int
 | *offset* (counter) | The amount to increment the threshold after it's been exceeded (counter monitor only). |  | int
@@ -87,6 +84,9 @@ with the following path and query parameters:
 | *thresholdLow* (gauge) | Value for the gauge's low threshold (gauge monitor only). |  | Double
 | *password* (security) | Credentials for making a remote connection |  | String
 | *user* (security) | Credentials for making a remote connection |  | String
+| *notifyDiffer* (string) | If true, will fire a notification when the string attribute differs from the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
+| *notifyMatch* (string) | If true, will fire a notification when the string attribute matches the string to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. | false | boolean
+| *stringToCompare* (string) | Value for attribute to compare (string monitor or consumer). By default the consumer will notify match if observed attribute and string to compare has been configured. |  | String
 |===
 // endpoint options: END
 

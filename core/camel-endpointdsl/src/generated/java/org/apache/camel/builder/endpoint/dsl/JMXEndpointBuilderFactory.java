@@ -165,79 +165,6 @@ public interface JMXEndpointBuilderFactory {
             return this;
         }
         /**
-         * If true, will fire a notification when the string attribute differs
-         * from the string to compare (string monitor or consumer). By default
-         * the consumer will notify match if observed attribute and string to
-         * compare has been configured.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: string
-         */
-        default JMXEndpointBuilder notifyDiffer(boolean notifyDiffer) {
-            doSetProperty("notifyDiffer", notifyDiffer);
-            return this;
-        }
-        /**
-         * If true, will fire a notification when the string attribute differs
-         * from the string to compare (string monitor or consumer). By default
-         * the consumer will notify match if observed attribute and string to
-         * compare has been configured.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: string
-         */
-        default JMXEndpointBuilder notifyDiffer(String notifyDiffer) {
-            doSetProperty("notifyDiffer", notifyDiffer);
-            return this;
-        }
-        /**
-         * If true, will fire a notification when the string attribute matches
-         * the string to compare (string monitor or consumer). By default the
-         * consumer will notify match if observed attribute and string to
-         * compare has been configured.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: string
-         */
-        default JMXEndpointBuilder notifyMatch(boolean notifyMatch) {
-            doSetProperty("notifyMatch", notifyMatch);
-            return this;
-        }
-        /**
-         * If true, will fire a notification when the string attribute matches
-         * the string to compare (string monitor or consumer). By default the
-         * consumer will notify match if observed attribute and string to
-         * compare has been configured.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: string
-         */
-        default JMXEndpointBuilder notifyMatch(String notifyMatch) {
-            doSetProperty("notifyMatch", notifyMatch);
-            return this;
-        }
-        /**
-         * Value for attribute to compare (string monitor or consumer). By
-         * default the consumer will notify match if observed attribute and
-         * string to compare has been configured.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: string
-         */
-        default JMXEndpointBuilder stringToCompare(String stringToCompare) {
-            doSetProperty("stringToCompare", stringToCompare);
-            return this;
-        }
-        /**
          * Initial threshold for the monitor. The value must exceed this before
          * notifications are fired (counter monitor only).
          * 
@@ -453,6 +380,79 @@ public interface JMXEndpointBuilderFactory {
          */
         default JMXEndpointBuilder user(String user) {
             doSetProperty("user", user);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute differs
+         * from the string to compare (string monitor or consumer). By default
+         * the consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyDiffer(boolean notifyDiffer) {
+            doSetProperty("notifyDiffer", notifyDiffer);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute differs
+         * from the string to compare (string monitor or consumer). By default
+         * the consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyDiffer(String notifyDiffer) {
+            doSetProperty("notifyDiffer", notifyDiffer);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute matches
+         * the string to compare (string monitor or consumer). By default the
+         * consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyMatch(boolean notifyMatch) {
+            doSetProperty("notifyMatch", notifyMatch);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute matches
+         * the string to compare (string monitor or consumer). By default the
+         * consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyMatch(String notifyMatch) {
+            doSetProperty("notifyMatch", notifyMatch);
+            return this;
+        }
+        /**
+         * Value for attribute to compare (string monitor or consumer). By
+         * default the consumer will notify match if observed attribute and
+         * string to compare has been configured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder stringToCompare(String stringToCompare) {
+            doSetProperty("stringToCompare", stringToCompare);
             return this;
         }
     }

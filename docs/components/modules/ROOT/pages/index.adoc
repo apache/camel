@@ -268,7 +268,7 @@ Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 
 | xref:google-mail-stream-component.adoc[Google Mail Stream] (camel-google-mail) | 2.22 | The google-mail component provides access to Google Mail.
 
-| xref:google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) | 2.19 | Messaging client for Google Cloud Platform PubSub Service
+| xref:google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) | 2.19 | Messaging client for Google Cloud Platform PubSub Service Built on top of the Google Cloud Pub/Sub libraries.
 
 | xref:google-sheets-component.adoc[Google Sheets] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
 

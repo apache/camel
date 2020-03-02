@@ -237,10 +237,10 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *sortTerm* (sort) | Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3 or when IMAP server does not have the SORT capability. |  | SortTerm[]
 | *password* (security) | The password for login |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
 | *username* (security) | The username for login |  | String
+| *sortTerm* (sort) | Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3 or when IMAP server does not have the SORT capability. |  | SortTerm[]
 |===
 // endpoint options: END
 

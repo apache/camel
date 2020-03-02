@@ -174,9 +174,6 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *shuffle* (sort) | To shuffle the list of files (sort in random order) | false | boolean
-| *sortBy* (sort) | Built-in sort by using the File Language. Supports nested sorts, so you can have a sort by file name and as a 2nd group sort by modified date. |  | String
-| *sorter* (sort) | Pluggable sorter as a java.util.Comparator class. |  | Comparator
 | *ciphers* (security) | Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used. |  | String
 | *keyPair* (security) | Sets a key pair of the public and private key so to that the SFTP endpoint can do public/private key verification. |  | KeyPair
 | *knownHosts* (security) | Sets the known_hosts from the byte array, so that the SFTP endpoint can do host key verification. |  | byte[]
@@ -191,6 +188,9 @@ with the following path and query parameters:
 | *strictHostKeyChecking* (security) | Sets whether to use strict host key checking. The value can be one of: no, yes | no | String
 | *username* (security) | Username to use for login |  | String
 | *useUserKnownHostsFile* (security) | If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts | true | boolean
+| *shuffle* (sort) | To shuffle the list of files (sort in random order) | false | boolean
+| *sortBy* (sort) | Built-in sort by using the File Language. Supports nested sorts, so you can have a sort by file name and as a 2nd group sort by modified date. |  | String
+| *sorter* (sort) | Pluggable sorter as a java.util.Comparator class. |  | Comparator
 |===
 // endpoint options: END
 

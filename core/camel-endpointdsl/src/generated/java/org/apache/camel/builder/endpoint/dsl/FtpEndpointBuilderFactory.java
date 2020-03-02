@@ -1849,6 +1849,39 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Account to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointConsumerBuilder account(String account) {
+            doSetProperty("account", account);
+            return this;
+        }
+        /**
+         * Password to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to use for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default FtpEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+        /**
          * To shuffle the list of files (sort in random order).
          * 
          * The option is a: <code>boolean</code> type.
@@ -1924,39 +1957,6 @@ public interface FtpEndpointBuilderFactory {
          */
         default FtpEndpointConsumerBuilder sorter(String sorter) {
             doSetProperty("sorter", sorter);
-            return this;
-        }
-        /**
-         * Account to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointConsumerBuilder account(String account) {
-            doSetProperty("account", account);
-            return this;
-        }
-        /**
-         * Password to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Username to use for login.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default FtpEndpointConsumerBuilder username(String username) {
-            doSetProperty("username", username);
             return this;
         }
     }

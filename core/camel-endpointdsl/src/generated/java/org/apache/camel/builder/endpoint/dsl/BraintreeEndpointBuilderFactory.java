@@ -148,6 +148,108 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option is a: <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder httpLogLevel(Level httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option will be converted to a
+         * <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder httpLogLevel(
+                String httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set log category to use to log http calls.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Braintree
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder httpLogName(String httpLogName) {
+            doSetProperty("httpLogName", httpLogName);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
+                String logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * The proxy host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -522,108 +624,6 @@ public interface BraintreeEndpointBuilderFactory {
         default BraintreeEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option is a: <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder httpLogLevel(Level httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option will be converted to a
-         * <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder httpLogLevel(
-                String httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set log category to use to log http calls.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: Braintree
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder httpLogName(String httpLogName) {
-            doSetProperty("httpLogName", httpLogName);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
-                String logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * The proxy host.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The proxy port.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**

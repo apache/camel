@@ -65,14 +65,14 @@ The Consul component supports 26 options, which are listed below.
 | *datacenter* (advanced) | The data center |  | String
 | *nearNode* (advanced) | The near node to use for queries. |  | String
 | *nodeMeta* (advanced) | The note meta-data to use for queries. |  | List
-| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
-| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
-| *recursive* (watch) | Recursively watch, default false | false | boolean
 | *aclToken* (security) | Sets the ACL token to be used with Consul |  | String
 | *password* (security) | Sets the password to be used for basic authentication |  | String
 | *sslContextParameters* (security) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *userName* (security) | Sets the username to be used for basic authentication |  | String
+| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
+| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
+| *recursive* (watch) | Recursively watch, default false | false | boolean
 |===
 // component options: END
 
@@ -126,13 +126,13 @@ with the following path and query parameters:
 | *nearNode* (advanced) | The near node to use for queries. |  | String
 | *nodeMeta* (advanced) | The note meta-data to use for queries. |  | List
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
-| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
-| *recursive* (watch) | Recursively watch, default false | false | boolean
 | *aclToken* (security) | Sets the ACL token to be used with Consul |  | String
 | *password* (security) | Sets the password to be used for basic authentication |  | String
 | *sslContextParameters* (security) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
 | *userName* (security) | Sets the username to be used for basic authentication |  | String
+| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
+| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
+| *recursive* (watch) | Recursively watch, default false | false | boolean
 |===
 // endpoint options: END
 

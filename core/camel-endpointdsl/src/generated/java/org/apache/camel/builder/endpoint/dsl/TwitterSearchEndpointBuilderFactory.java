@@ -268,6 +268,72 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
+         * The http proxy host which can be used for the camel-twitter. Can also
+         * be configured on the TwitterComponent level instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default TwitterSearchEndpointConsumerBuilder httpProxyHost(
+                String httpProxyHost) {
+            doSetProperty("httpProxyHost", httpProxyHost);
+            return this;
+        }
+        /**
+         * The http proxy password which can be used for the camel-twitter. Can
+         * also be configured on the TwitterComponent level instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default TwitterSearchEndpointConsumerBuilder httpProxyPassword(
+                String httpProxyPassword) {
+            doSetProperty("httpProxyPassword", httpProxyPassword);
+            return this;
+        }
+        /**
+         * The http proxy port which can be used for the camel-twitter. Can also
+         * be configured on the TwitterComponent level instead.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default TwitterSearchEndpointConsumerBuilder httpProxyPort(
+                Integer httpProxyPort) {
+            doSetProperty("httpProxyPort", httpProxyPort);
+            return this;
+        }
+        /**
+         * The http proxy port which can be used for the camel-twitter. Can also
+         * be configured on the TwitterComponent level instead.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default TwitterSearchEndpointConsumerBuilder httpProxyPort(
+                String httpProxyPort) {
+            doSetProperty("httpProxyPort", httpProxyPort);
+            return this;
+        }
+        /**
+         * The http proxy user which can be used for the camel-twitter. Can also
+         * be configured on the TwitterComponent level instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default TwitterSearchEndpointConsumerBuilder httpProxyUser(
+                String httpProxyUser) {
+            doSetProperty("httpProxyUser", httpProxyUser);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -644,96 +710,6 @@ public interface TwitterSearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sorts by id, so the oldest are first, and newest last.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: sort
-         */
-        default TwitterSearchEndpointConsumerBuilder sortById(boolean sortById) {
-            doSetProperty("sortById", sortById);
-            return this;
-        }
-        /**
-         * Sorts by id, so the oldest are first, and newest last.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: sort
-         */
-        default TwitterSearchEndpointConsumerBuilder sortById(String sortById) {
-            doSetProperty("sortById", sortById);
-            return this;
-        }
-        /**
-         * The http proxy host which can be used for the camel-twitter. Can also
-         * be configured on the TwitterComponent level instead.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default TwitterSearchEndpointConsumerBuilder httpProxyHost(
-                String httpProxyHost) {
-            doSetProperty("httpProxyHost", httpProxyHost);
-            return this;
-        }
-        /**
-         * The http proxy password which can be used for the camel-twitter. Can
-         * also be configured on the TwitterComponent level instead.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default TwitterSearchEndpointConsumerBuilder httpProxyPassword(
-                String httpProxyPassword) {
-            doSetProperty("httpProxyPassword", httpProxyPassword);
-            return this;
-        }
-        /**
-         * The http proxy port which can be used for the camel-twitter. Can also
-         * be configured on the TwitterComponent level instead.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default TwitterSearchEndpointConsumerBuilder httpProxyPort(
-                Integer httpProxyPort) {
-            doSetProperty("httpProxyPort", httpProxyPort);
-            return this;
-        }
-        /**
-         * The http proxy port which can be used for the camel-twitter. Can also
-         * be configured on the TwitterComponent level instead.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default TwitterSearchEndpointConsumerBuilder httpProxyPort(
-                String httpProxyPort) {
-            doSetProperty("httpProxyPort", httpProxyPort);
-            return this;
-        }
-        /**
-         * The http proxy user which can be used for the camel-twitter. Can also
-         * be configured on the TwitterComponent level instead.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default TwitterSearchEndpointConsumerBuilder httpProxyUser(
-                String httpProxyUser) {
-            doSetProperty("httpProxyUser", httpProxyUser);
-            return this;
-        }
-        /**
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
          * 
@@ -783,6 +759,30 @@ public interface TwitterSearchEndpointBuilderFactory {
         default TwitterSearchEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
             doSetProperty("consumerSecret", consumerSecret);
+            return this;
+        }
+        /**
+         * Sorts by id, so the oldest are first, and newest last.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: sort
+         */
+        default TwitterSearchEndpointConsumerBuilder sortById(boolean sortById) {
+            doSetProperty("sortById", sortById);
+            return this;
+        }
+        /**
+         * Sorts by id, so the oldest are first, and newest last.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: sort
+         */
+        default TwitterSearchEndpointConsumerBuilder sortById(String sortById) {
+            doSetProperty("sortById", sortById);
             return this;
         }
     }

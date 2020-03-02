@@ -151,6 +151,13 @@ with the following path and query parameters:
 | *delayQueue* (advanced) | Define if you want to apply delaySeconds option to the queue or on single messages | false | boolean
 | *queueUrl* (advanced) | To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored. This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *proxyHost* (proxy) | To define a proxy host when instantiating the SQS client |  | String
+| *proxyPort* (proxy) | To define a proxy port when instantiating the SQS client |  | Integer
+| *maximumMessageSize* (queue) | The maximumMessageSize (in bytes) an SQS message can contain for this queue. |  | Integer
+| *messageRetentionPeriod* (queue) | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
+| *policy* (queue) | The policy for this queue |  | String
+| *receiveMessageWaitTimeSeconds* (queue) | If you do not specify WaitTimeSeconds in the request, the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait. |  | Integer
+| *redrivePolicy* (queue) | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs. |  | String
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
@@ -165,13 +172,6 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *proxyHost* (proxy) | To define a proxy host when instantiating the SQS client |  | String
-| *proxyPort* (proxy) | To define a proxy port when instantiating the SQS client |  | Integer
-| *maximumMessageSize* (queue) | The maximumMessageSize (in bytes) an SQS message can contain for this queue. |  | Integer
-| *messageRetentionPeriod* (queue) | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
-| *policy* (queue) | The policy for this queue |  | String
-| *receiveMessageWaitTimeSeconds* (queue) | If you do not specify WaitTimeSeconds in the request, the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait. |  | Integer
-| *redrivePolicy* (queue) | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs. |  | String
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

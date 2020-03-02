@@ -1852,84 +1852,6 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
-         * To shuffle the list of files (sort in random order).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: sort
-         */
-        default FtpsEndpointConsumerBuilder shuffle(boolean shuffle) {
-            doSetProperty("shuffle", shuffle);
-            return this;
-        }
-        /**
-         * To shuffle the list of files (sort in random order).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: sort
-         */
-        default FtpsEndpointConsumerBuilder shuffle(String shuffle) {
-            doSetProperty("shuffle", shuffle);
-            return this;
-        }
-        /**
-         * Built-in sort by using the File Language. Supports nested sorts, so
-         * you can have a sort by file name and as a 2nd group sort by modified
-         * date.
-         * 
-         * The option is a:
-         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
-         * type.
-         * 
-         * Group: sort
-         */
-        default FtpsEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
-            doSetProperty("sortBy", sortBy);
-            return this;
-        }
-        /**
-         * Built-in sort by using the File Language. Supports nested sorts, so
-         * you can have a sort by file name and as a 2nd group sort by modified
-         * date.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
-         * type.
-         * 
-         * Group: sort
-         */
-        default FtpsEndpointConsumerBuilder sortBy(String sortBy) {
-            doSetProperty("sortBy", sortBy);
-            return this;
-        }
-        /**
-         * Pluggable sorter as a java.util.Comparator class.
-         * 
-         * The option is a:
-         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
-         * 
-         * Group: sort
-         */
-        default FtpsEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
-            doSetProperty("sorter", sorter);
-            return this;
-        }
-        /**
-         * Pluggable sorter as a java.util.Comparator class.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
-         * 
-         * Group: sort
-         */
-        default FtpsEndpointConsumerBuilder sorter(String sorter) {
-            doSetProperty("sorter", sorter);
-            return this;
-        }
-        /**
          * Account to use for login.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2151,6 +2073,84 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * To shuffle the list of files (sort in random order).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sort
+         */
+        default FtpsEndpointConsumerBuilder shuffle(boolean shuffle) {
+            doSetProperty("shuffle", shuffle);
+            return this;
+        }
+        /**
+         * To shuffle the list of files (sort in random order).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: sort
+         */
+        default FtpsEndpointConsumerBuilder shuffle(String shuffle) {
+            doSetProperty("shuffle", shuffle);
+            return this;
+        }
+        /**
+         * Built-in sort by using the File Language. Supports nested sorts, so
+         * you can have a sort by file name and as a 2nd group sort by modified
+         * date.
+         * 
+         * The option is a:
+         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
+         * type.
+         * 
+         * Group: sort
+         */
+        default FtpsEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
+            doSetProperty("sortBy", sortBy);
+            return this;
+        }
+        /**
+         * Built-in sort by using the File Language. Supports nested sorts, so
+         * you can have a sort by file name and as a 2nd group sort by modified
+         * date.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
+         * type.
+         * 
+         * Group: sort
+         */
+        default FtpsEndpointConsumerBuilder sortBy(String sortBy) {
+            doSetProperty("sortBy", sortBy);
+            return this;
+        }
+        /**
+         * Pluggable sorter as a java.util.Comparator class.
+         * 
+         * The option is a:
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
+         * 
+         * Group: sort
+         */
+        default FtpsEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
+            doSetProperty("sorter", sorter);
+            return this;
+        }
+        /**
+         * Pluggable sorter as a java.util.Comparator class.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
+         * 
+         * Group: sort
+         */
+        default FtpsEndpointConsumerBuilder sorter(String sorter) {
+            doSetProperty("sorter", sorter);
             return this;
         }
     }

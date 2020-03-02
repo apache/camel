@@ -169,6 +169,40 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
+         * HTTP proxy host which could be used when sending out the message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default TelegramEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * HTTP proxy port which could be used when sending out the message.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default TelegramEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * HTTP proxy port which could be used when sending out the message.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default TelegramEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -542,40 +576,6 @@ public interface TelegramEndpointBuilderFactory {
         default TelegramEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * HTTP proxy host which could be used when sending out the message.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default TelegramEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * HTTP proxy port which could be used when sending out the message.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default TelegramEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * HTTP proxy port which could be used when sending out the message.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default TelegramEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**

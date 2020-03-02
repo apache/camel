@@ -158,6 +158,21 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
+         * The type of authentication for connection. Types of Authentication:
+         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
+         * - OAuth 2.0 with JSON Web Tokens.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: APP_USER_AUTHENTICATION
+         * Group: authentication
+         */
+        default BoxEndpointConsumerBuilder authenticationType(
+                String authenticationType) {
+            doSetProperty("authenticationType", authenticationType);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -298,6 +313,34 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
          * Specifies a maximum limit of number of fires. So if you set it to 1,
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
@@ -427,6 +470,30 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder startScheduler(boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder startScheduler(String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
          * Time unit for initialDelay and delay options.
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
@@ -486,73 +553,6 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
-         * The type of authentication for connection. Types of Authentication:
-         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
-         * - OAuth 2.0 with JSON Web Tokens.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: APP_USER_AUTHENTICATION
-         * Group: authentication
-         */
-        default BoxEndpointConsumerBuilder authenticationType(
-                String authenticationType) {
-            doSetProperty("authenticationType", authenticationType);
-            return this;
-        }
-        /**
-         * Milliseconds before the first poll starts. You can also specify time
-         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder initialDelay(long initialDelay) {
-            doSetProperty("initialDelay", initialDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before the first poll starts. You can also specify time
-         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 1000
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder initialDelay(String initialDelay) {
-            doSetProperty("initialDelay", initialDelay);
-            return this;
-        }
-        /**
-         * Whether the scheduler should be auto started.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder startScheduler(boolean startScheduler) {
-            doSetProperty("startScheduler", startScheduler);
-            return this;
-        }
-        /**
-         * Whether the scheduler should be auto started.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: scheduler
-         */
-        default BoxEndpointConsumerBuilder startScheduler(String startScheduler) {
-            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -998,17 +998,6 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
-         * Box application client secret.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * The type of authentication for connection. Types of Authentication:
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
@@ -1021,6 +1010,17 @@ public interface BoxEndpointBuilderFactory {
         default BoxEndpointProducerBuilder authenticationType(
                 String authenticationType) {
             doSetProperty("authenticationType", authenticationType);
+            return this;
+        }
+        /**
+         * Box application client secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -1336,17 +1336,6 @@ public interface BoxEndpointBuilderFactory {
             return this;
         }
         /**
-         * Box application client secret.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default BoxEndpointBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * The type of authentication for connection. Types of Authentication:
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
@@ -1358,6 +1347,17 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointBuilder authenticationType(String authenticationType) {
             doSetProperty("authenticationType", authenticationType);
+            return this;
+        }
+        /**
+         * Box application client secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxEndpointBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
