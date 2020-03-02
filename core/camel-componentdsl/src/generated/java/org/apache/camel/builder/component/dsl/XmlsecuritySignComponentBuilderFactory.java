@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.xmlsecurity.XmlSignatureComponent;
+import org.apache.camel.component.xmlsecurity.XmlSignerComponent;
 
 /**
  * Used to sign exchanges using the XML signature specification.
@@ -47,7 +47,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
      */
     interface XmlsecuritySignComponentBuilder
             extends
-                ComponentBuilder<XmlSignatureComponent> {
+                ComponentBuilder<XmlSignerComponent> {
         /**
          * In order to protect the KeyInfo element from tampering you can add a
          * reference to the signed info element so that it is protected via the
@@ -524,15 +524,15 @@ public interface XmlsecuritySignComponentBuilderFactory {
 
     class XmlsecuritySignComponentBuilderImpl
             extends
-                AbstractComponentBuilder<XmlSignatureComponent>
+                AbstractComponentBuilder<XmlSignerComponent>
             implements
                 XmlsecuritySignComponentBuilder {
         @Override
-        protected XmlSignatureComponent buildConcreteComponent() {
-            return new XmlSignatureComponent();
+        protected XmlSignerComponent buildConcreteComponent() {
+            return new XmlSignerComponent();
         }
         private org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration getOrCreateConfiguration(
-                org.apache.camel.component.xmlsecurity.XmlSignatureComponent component) {
+                org.apache.camel.component.xmlsecurity.XmlSignerComponent component) {
             if (component.getSignerConfiguration() == null) {
                 component.setSignerConfiguration(new org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration());
             }
@@ -544,35 +544,35 @@ public interface XmlsecuritySignComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "addKeyInfoReference": getOrCreateConfiguration((XmlSignatureComponent) component).setAddKeyInfoReference((java.lang.Boolean) value); return true;
-            case "baseUri": getOrCreateConfiguration((XmlSignatureComponent) component).setBaseUri((java.lang.String) value); return true;
-            case "canonicalizationMethod": getOrCreateConfiguration((XmlSignatureComponent) component).setCanonicalizationMethod((javax.xml.crypto.AlgorithmMethod) value); return true;
-            case "clearHeaders": getOrCreateConfiguration((XmlSignatureComponent) component).setClearHeaders((java.lang.Boolean) value); return true;
-            case "contentObjectId": getOrCreateConfiguration((XmlSignatureComponent) component).setContentObjectId((java.lang.String) value); return true;
-            case "contentReferenceType": getOrCreateConfiguration((XmlSignatureComponent) component).setContentReferenceType((java.lang.String) value); return true;
-            case "contentReferenceUri": getOrCreateConfiguration((XmlSignatureComponent) component).setContentReferenceUri((java.lang.String) value); return true;
-            case "cryptoContextProperties": getOrCreateConfiguration((XmlSignatureComponent) component).setCryptoContextProperties((java.util.Map) value); return true;
-            case "digestAlgorithm": getOrCreateConfiguration((XmlSignatureComponent) component).setDigestAlgorithm((java.lang.String) value); return true;
-            case "disallowDoctypeDecl": getOrCreateConfiguration((XmlSignatureComponent) component).setDisallowDoctypeDecl((java.lang.Boolean) value); return true;
-            case "keyAccessor": getOrCreateConfiguration((XmlSignatureComponent) component).setKeyAccessor((org.apache.camel.component.xmlsecurity.api.KeyAccessor) value); return true;
-            case "omitXmlDeclaration": getOrCreateConfiguration((XmlSignatureComponent) component).setOmitXmlDeclaration((java.lang.Boolean) value); return true;
-            case "outputXmlEncoding": getOrCreateConfiguration((XmlSignatureComponent) component).setOutputXmlEncoding((java.lang.String) value); return true;
-            case "lazyStartProducer": ((XmlSignatureComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "parentLocalName": getOrCreateConfiguration((XmlSignatureComponent) component).setParentLocalName((java.lang.String) value); return true;
-            case "parentNamespace": getOrCreateConfiguration((XmlSignatureComponent) component).setParentNamespace((java.lang.String) value); return true;
-            case "parentXpath": getOrCreateConfiguration((XmlSignatureComponent) component).setParentXpath((javax.xml.crypto.dsig.spec.XPathFilterParameterSpec) value); return true;
-            case "plainText": getOrCreateConfiguration((XmlSignatureComponent) component).setPlainText((java.lang.Boolean) value); return true;
-            case "plainTextEncoding": getOrCreateConfiguration((XmlSignatureComponent) component).setPlainTextEncoding((java.lang.String) value); return true;
-            case "prefixForXmlSignatureNamespace": getOrCreateConfiguration((XmlSignatureComponent) component).setPrefixForXmlSignatureNamespace((java.lang.String) value); return true;
-            case "properties": getOrCreateConfiguration((XmlSignatureComponent) component).setProperties((org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties) value); return true;
-            case "schemaResourceUri": getOrCreateConfiguration((XmlSignatureComponent) component).setSchemaResourceUri((java.lang.String) value); return true;
-            case "signatureAlgorithm": getOrCreateConfiguration((XmlSignatureComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
-            case "signatureId": getOrCreateConfiguration((XmlSignatureComponent) component).setSignatureId((java.lang.String) value); return true;
-            case "transformMethods": getOrCreateConfiguration((XmlSignatureComponent) component).setTransformMethods((java.util.List) value); return true;
-            case "xpathsToIdAttributes": getOrCreateConfiguration((XmlSignatureComponent) component).setXpathsToIdAttributes((java.util.List) value); return true;
-            case "basicPropertyBinding": ((XmlSignatureComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "signerConfiguration": ((XmlSignatureComponent) component).setSignerConfiguration((org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration) value); return true;
-            case "uriDereferencer": getOrCreateConfiguration((XmlSignatureComponent) component).setUriDereferencer((javax.xml.crypto.URIDereferencer) value); return true;
+            case "addKeyInfoReference": getOrCreateConfiguration((XmlSignerComponent) component).setAddKeyInfoReference((java.lang.Boolean) value); return true;
+            case "baseUri": getOrCreateConfiguration((XmlSignerComponent) component).setBaseUri((java.lang.String) value); return true;
+            case "canonicalizationMethod": getOrCreateConfiguration((XmlSignerComponent) component).setCanonicalizationMethod((javax.xml.crypto.AlgorithmMethod) value); return true;
+            case "clearHeaders": getOrCreateConfiguration((XmlSignerComponent) component).setClearHeaders((java.lang.Boolean) value); return true;
+            case "contentObjectId": getOrCreateConfiguration((XmlSignerComponent) component).setContentObjectId((java.lang.String) value); return true;
+            case "contentReferenceType": getOrCreateConfiguration((XmlSignerComponent) component).setContentReferenceType((java.lang.String) value); return true;
+            case "contentReferenceUri": getOrCreateConfiguration((XmlSignerComponent) component).setContentReferenceUri((java.lang.String) value); return true;
+            case "cryptoContextProperties": getOrCreateConfiguration((XmlSignerComponent) component).setCryptoContextProperties((java.util.Map) value); return true;
+            case "digestAlgorithm": getOrCreateConfiguration((XmlSignerComponent) component).setDigestAlgorithm((java.lang.String) value); return true;
+            case "disallowDoctypeDecl": getOrCreateConfiguration((XmlSignerComponent) component).setDisallowDoctypeDecl((java.lang.Boolean) value); return true;
+            case "keyAccessor": getOrCreateConfiguration((XmlSignerComponent) component).setKeyAccessor((org.apache.camel.component.xmlsecurity.api.KeyAccessor) value); return true;
+            case "omitXmlDeclaration": getOrCreateConfiguration((XmlSignerComponent) component).setOmitXmlDeclaration((java.lang.Boolean) value); return true;
+            case "outputXmlEncoding": getOrCreateConfiguration((XmlSignerComponent) component).setOutputXmlEncoding((java.lang.String) value); return true;
+            case "lazyStartProducer": ((XmlSignerComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "parentLocalName": getOrCreateConfiguration((XmlSignerComponent) component).setParentLocalName((java.lang.String) value); return true;
+            case "parentNamespace": getOrCreateConfiguration((XmlSignerComponent) component).setParentNamespace((java.lang.String) value); return true;
+            case "parentXpath": getOrCreateConfiguration((XmlSignerComponent) component).setParentXpath((javax.xml.crypto.dsig.spec.XPathFilterParameterSpec) value); return true;
+            case "plainText": getOrCreateConfiguration((XmlSignerComponent) component).setPlainText((java.lang.Boolean) value); return true;
+            case "plainTextEncoding": getOrCreateConfiguration((XmlSignerComponent) component).setPlainTextEncoding((java.lang.String) value); return true;
+            case "prefixForXmlSignatureNamespace": getOrCreateConfiguration((XmlSignerComponent) component).setPrefixForXmlSignatureNamespace((java.lang.String) value); return true;
+            case "properties": getOrCreateConfiguration((XmlSignerComponent) component).setProperties((org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties) value); return true;
+            case "schemaResourceUri": getOrCreateConfiguration((XmlSignerComponent) component).setSchemaResourceUri((java.lang.String) value); return true;
+            case "signatureAlgorithm": getOrCreateConfiguration((XmlSignerComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
+            case "signatureId": getOrCreateConfiguration((XmlSignerComponent) component).setSignatureId((java.lang.String) value); return true;
+            case "transformMethods": getOrCreateConfiguration((XmlSignerComponent) component).setTransformMethods((java.util.List) value); return true;
+            case "xpathsToIdAttributes": getOrCreateConfiguration((XmlSignerComponent) component).setXpathsToIdAttributes((java.util.List) value); return true;
+            case "basicPropertyBinding": ((XmlSignerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "signerConfiguration": ((XmlSignerComponent) component).setSignerConfiguration((org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration) value); return true;
+            case "uriDereferencer": getOrCreateConfiguration((XmlSignerComponent) component).setUriDereferencer((javax.xml.crypto.URIDereferencer) value); return true;
             default: return false;
             }
         }

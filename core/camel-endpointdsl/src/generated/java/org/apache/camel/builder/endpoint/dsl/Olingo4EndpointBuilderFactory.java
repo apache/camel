@@ -115,72 +115,6 @@ public interface Olingo4EndpointBuilderFactory {
             return this;
         }
         /**
-         * Custom HTTP async client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointConsumerBuilder httpAsyncClientBuilder(
-                Object httpAsyncClientBuilder) {
-            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP async client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointConsumerBuilder httpAsyncClientBuilder(
-                String httpAsyncClientBuilder) {
-            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointConsumerBuilder httpClientBuilder(
-                Object httpClientBuilder) {
-            doSetProperty("httpClientBuilder", httpClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointConsumerBuilder httpClientBuilder(
-                String httpClientBuilder) {
-            doSetProperty("httpClientBuilder", httpClientBuilder);
-            return this;
-        }
-        /**
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
@@ -279,32 +213,6 @@ public interface Olingo4EndpointBuilderFactory {
         default Olingo4EndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointConsumerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -777,6 +685,32 @@ public interface Olingo4EndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default Olingo4EndpointConsumerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default Olingo4EndpointConsumerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
     }
 
     /**
@@ -906,6 +840,72 @@ public interface Olingo4EndpointBuilderFactory {
             return this;
         }
         /**
+         * Custom HTTP async client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointConsumerBuilder httpAsyncClientBuilder(
+                Object httpAsyncClientBuilder) {
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP async client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointConsumerBuilder httpAsyncClientBuilder(
+                String httpAsyncClientBuilder) {
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointConsumerBuilder httpClientBuilder(
+                Object httpClientBuilder) {
+            doSetProperty("httpClientBuilder", httpClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointConsumerBuilder httpClientBuilder(
+                String httpClientBuilder) {
+            doSetProperty("httpClientBuilder", httpClientBuilder);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1013,72 +1013,6 @@ public interface Olingo4EndpointBuilderFactory {
             return this;
         }
         /**
-         * Custom HTTP async client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointProducerBuilder httpAsyncClientBuilder(
-                Object httpAsyncClientBuilder) {
-            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP async client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointProducerBuilder httpAsyncClientBuilder(
-                String httpAsyncClientBuilder) {
-            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointProducerBuilder httpClientBuilder(
-                Object httpClientBuilder) {
-            doSetProperty("httpClientBuilder", httpClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointProducerBuilder httpClientBuilder(
-                String httpClientBuilder) {
-            doSetProperty("httpClientBuilder", httpClientBuilder);
-            return this;
-        }
-        /**
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
@@ -1180,32 +1114,6 @@ public interface Olingo4EndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointProducerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1247,6 +1155,32 @@ public interface Olingo4EndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default Olingo4EndpointProducerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default Olingo4EndpointProducerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
     }
 
     /**
@@ -1284,6 +1218,72 @@ public interface Olingo4EndpointBuilderFactory {
         default AdvancedOlingo4EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Custom HTTP async client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointProducerBuilder httpAsyncClientBuilder(
+                Object httpAsyncClientBuilder) {
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP async client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointProducerBuilder httpAsyncClientBuilder(
+                String httpAsyncClientBuilder) {
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointProducerBuilder httpClientBuilder(
+                Object httpClientBuilder) {
+            doSetProperty("httpClientBuilder", httpClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointProducerBuilder httpClientBuilder(
+                String httpClientBuilder) {
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -1394,72 +1394,6 @@ public interface Olingo4EndpointBuilderFactory {
             return this;
         }
         /**
-         * Custom HTTP async client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointBuilder httpAsyncClientBuilder(
-                Object httpAsyncClientBuilder) {
-            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP async client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointBuilder httpAsyncClientBuilder(
-                String httpAsyncClientBuilder) {
-            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointBuilder httpClientBuilder(
-                Object httpClientBuilder) {
-            doSetProperty("httpClientBuilder", httpClientBuilder);
-            return this;
-        }
-        /**
-         * Custom HTTP client builder for more complex HTTP client
-         * configuration, overrides connectionTimeout, socketTimeout, proxy and
-         * sslContext. Note that a socketTimeout MUST be specified in the
-         * builder, otherwise OData requests could block indefinitely.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo4EndpointBuilder httpClientBuilder(
-                String httpClientBuilder) {
-            doSetProperty("httpClientBuilder", httpClientBuilder);
-            return this;
-        }
-        /**
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
@@ -1565,7 +1499,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Group: common
+         * Group: security
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1578,7 +1512,7 @@ public interface Olingo4EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * 
-         * Group: common
+         * Group: security
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1623,6 +1557,72 @@ public interface Olingo4EndpointBuilderFactory {
         default AdvancedOlingo4EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Custom HTTP async client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointBuilder httpAsyncClientBuilder(
+                Object httpAsyncClientBuilder) {
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP async client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointBuilder httpAsyncClientBuilder(
+                String httpAsyncClientBuilder) {
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option is a:
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointBuilder httpClientBuilder(
+                Object httpClientBuilder) {
+            doSetProperty("httpClientBuilder", httpClientBuilder);
+            return this;
+        }
+        /**
+         * Custom HTTP client builder for more complex HTTP client
+         * configuration, overrides connectionTimeout, socketTimeout, proxy and
+         * sslContext. Note that a socketTimeout MUST be specified in the
+         * builder, otherwise OData requests could block indefinitely.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedOlingo4EndpointBuilder httpClientBuilder(
+                String httpClientBuilder) {
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**

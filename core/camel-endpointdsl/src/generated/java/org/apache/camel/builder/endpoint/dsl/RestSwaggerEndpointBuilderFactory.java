@@ -275,7 +275,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * and as such it can be cumbersome to setup TLS/SSL certificates for
          * https (such as setting a number of javax.net.ssl JVM system
          * properties). How to do that consult the JDK documentation for
-         * UrlHandler.
+         * UrlHandler. Default value notice: By default loads swagger.json file
          * Default value: swagger.json
          * 
          * Path parameter: operationId (required)
@@ -308,7 +308,8 @@ public interface RestSwaggerEndpointBuilderFactory {
      * limited to using the JDK installed UrlHandler, and as such it can be
      * cumbersome to setup TLS/SSL certificates for https (such as setting a
      * number of javax.net.ssl JVM system properties). How to do that consult
-     * the JDK documentation for UrlHandler.
+     * the JDK documentation for UrlHandler. Default value notice: By default
+     * loads swagger.json file
      * Default value: swagger.json
      * 
      * Path parameter: operationId (required)

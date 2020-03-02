@@ -42,84 +42,6 @@ public interface WebhookEndpointBuilderFactory {
             return (AdvancedWebhookEndpointBuilder) this;
         }
         /**
-         * Automatically register the webhook at startup and unregister it on
-         * shutdown.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default WebhookEndpointBuilder webhookAutoRegister(
-                boolean webhookAutoRegister) {
-            doSetProperty("webhookAutoRegister", webhookAutoRegister);
-            return this;
-        }
-        /**
-         * Automatically register the webhook at startup and unregister it on
-         * shutdown.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default WebhookEndpointBuilder webhookAutoRegister(
-                String webhookAutoRegister) {
-            doSetProperty("webhookAutoRegister", webhookAutoRegister);
-            return this;
-        }
-        /**
-         * The first (base) path element where the webhook will be exposed. It's
-         * a good practice to set it to a random string, so that it cannot be
-         * guessed by unauthorized parties.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebhookEndpointBuilder webhookBasePath(String webhookBasePath) {
-            doSetProperty("webhookBasePath", webhookBasePath);
-            return this;
-        }
-        /**
-         * The Camel Rest component to use for the REST transport, such as
-         * netty-http.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebhookEndpointBuilder webhookComponentName(
-                String webhookComponentName) {
-            doSetProperty("webhookComponentName", webhookComponentName);
-            return this;
-        }
-        /**
-         * The URL of the current service as seen by the webhook provider.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebhookEndpointBuilder webhookExternalUrl(
-                String webhookExternalUrl) {
-            doSetProperty("webhookExternalUrl", webhookExternalUrl);
-            return this;
-        }
-        /**
-         * The path where the webhook endpoint will be exposed (relative to
-         * basePath, if any).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebhookEndpointBuilder webhookPath(String webhookPath) {
-            doSetProperty("webhookPath", webhookPath);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -155,6 +77,84 @@ public interface WebhookEndpointBuilderFactory {
         default WebhookEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Automatically register the webhook at startup and unregister it on
+         * shutdown.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default WebhookEndpointBuilder webhookAutoRegister(
+                boolean webhookAutoRegister) {
+            doSetProperty("webhookAutoRegister", webhookAutoRegister);
+            return this;
+        }
+        /**
+         * Automatically register the webhook at startup and unregister it on
+         * shutdown.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default WebhookEndpointBuilder webhookAutoRegister(
+                String webhookAutoRegister) {
+            doSetProperty("webhookAutoRegister", webhookAutoRegister);
+            return this;
+        }
+        /**
+         * The first (base) path element where the webhook will be exposed. It's
+         * a good practice to set it to a random string, so that it cannot be
+         * guessed by unauthorized parties.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookEndpointBuilder webhookBasePath(String webhookBasePath) {
+            doSetProperty("webhookBasePath", webhookBasePath);
+            return this;
+        }
+        /**
+         * The Camel Rest component to use for the REST transport, such as
+         * netty-http.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookEndpointBuilder webhookComponentName(
+                String webhookComponentName) {
+            doSetProperty("webhookComponentName", webhookComponentName);
+            return this;
+        }
+        /**
+         * The URL of the current service as seen by the webhook provider.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookEndpointBuilder webhookExternalUrl(
+                String webhookExternalUrl) {
+            doSetProperty("webhookExternalUrl", webhookExternalUrl);
+            return this;
+        }
+        /**
+         * The path where the webhook endpoint will be exposed (relative to
+         * basePath, if any).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default WebhookEndpointBuilder webhookPath(String webhookPath) {
+            doSetProperty("webhookPath", webhookPath);
             return this;
         }
     }
@@ -294,7 +294,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * Syntax: <code>webhook:endpointUri</code>
          * 
-         * Path parameter: endpointUri
+         * Path parameter: endpointUri (required)
          * The delegate uri. Must belong to a component that supports webhooks.
          */
         default WebhookEndpointBuilder webhook(String path) {
@@ -313,7 +313,7 @@ public interface WebhookEndpointBuilderFactory {
      * 
      * Syntax: <code>webhook:endpointUri</code>
      * 
-     * Path parameter: endpointUri
+     * Path parameter: endpointUri (required)
      * The delegate uri. Must belong to a component that supports webhooks.
      */
     static WebhookEndpointBuilder webhook(String path) {

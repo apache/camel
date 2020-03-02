@@ -54,6 +54,32 @@ public interface SftpEndpointBuilderFactory {
             return (AdvancedSftpEndpointConsumerBuilder) this;
         }
         /**
+         * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
+         * (false).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder binary(boolean binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
+         * (false).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder binary(String binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
          * This option is used to specify the encoding of the file. You can use
          * this on the consumer, to specify the encodings of the files, which
          * allow Camel to know the charset it should load the file content in
@@ -203,6 +229,30 @@ public interface SftpEndpointBuilderFactory {
         default SftpEndpointConsumerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
             doSetProperty("jschLoggingLevel", jschLoggingLevel);
+            return this;
+        }
+        /**
+         * Sets passive mode connections. Default is active mode connections.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder passiveMode(boolean passiveMode) {
+            doSetProperty("passiveMode", passiveMode);
+            return this;
+        }
+        /**
+         * Sets passive mode connections. Default is active mode connections.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointConsumerBuilder passiveMode(String passiveMode) {
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -475,7 +525,9 @@ public interface SftpEndpointBuilderFactory {
          * Sets the download method to use when not using a local working
          * directory. If set to true, the remote files are streamed to the route
          * as they are read. When set to false, the remote files are loaded into
-         * memory before being sent into the route.
+         * memory before being sent into the route. If enabling this option then
+         * you must set stepwise=false as both cannot be enabled at the same
+         * time.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -491,7 +543,9 @@ public interface SftpEndpointBuilderFactory {
          * Sets the download method to use when not using a local working
          * directory. If set to true, the remote files are streamed to the route
          * as they are read. When set to false, the remote files are loaded into
-         * memory before being sent into the route.
+         * memory before being sent into the route. If enabling this option then
+         * you must set stepwise=false as both cannot be enabled at the same
+         * time.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2831,7 +2885,8 @@ public interface SftpEndpointBuilderFactory {
          * file structures when downloading files, or as well when uploading a
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
-         * security reasons.
+         * security reasons. Stepwise cannot be used together with
+         * streamDownload.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2847,7 +2902,8 @@ public interface SftpEndpointBuilderFactory {
          * file structures when downloading files, or as well when uploading a
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
-         * security reasons.
+         * security reasons. Stepwise cannot be used together with
+         * streamDownload.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2954,6 +3010,32 @@ public interface SftpEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedSftpEndpointProducerBuilder advanced() {
             return (AdvancedSftpEndpointProducerBuilder) this;
+        }
+        /**
+         * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
+         * (false).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder binary(boolean binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
+         * (false).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder binary(String binary) {
+            doSetProperty("binary", binary);
+            return this;
         }
         /**
          * This option is used to specify the encoding of the file. You can use
@@ -3105,6 +3187,30 @@ public interface SftpEndpointBuilderFactory {
         default SftpEndpointProducerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
             doSetProperty("jschLoggingLevel", jschLoggingLevel);
+            return this;
+        }
+        /**
+         * Sets passive mode connections. Default is active mode connections.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder passiveMode(boolean passiveMode) {
+            doSetProperty("passiveMode", passiveMode);
+            return this;
+        }
+        /**
+         * Sets passive mode connections. Default is active mode connections.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointProducerBuilder passiveMode(String passiveMode) {
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -4225,7 +4331,8 @@ public interface SftpEndpointBuilderFactory {
          * file structures when downloading files, or as well when uploading a
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
-         * security reasons.
+         * security reasons. Stepwise cannot be used together with
+         * streamDownload.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4241,7 +4348,8 @@ public interface SftpEndpointBuilderFactory {
          * file structures when downloading files, or as well when uploading a
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
-         * security reasons.
+         * security reasons. Stepwise cannot be used together with
+         * streamDownload.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4349,6 +4457,32 @@ public interface SftpEndpointBuilderFactory {
                 SftpEndpointProducerBuilder {
         default AdvancedSftpEndpointBuilder advanced() {
             return (AdvancedSftpEndpointBuilder) this;
+        }
+        /**
+         * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
+         * (false).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointBuilder binary(boolean binary) {
+            doSetProperty("binary", binary);
+            return this;
+        }
+        /**
+         * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
+         * (false).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointBuilder binary(String binary) {
+            doSetProperty("binary", binary);
+            return this;
         }
         /**
          * This option is used to specify the encoding of the file. You can use
@@ -4499,6 +4633,30 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder jschLoggingLevel(String jschLoggingLevel) {
             doSetProperty("jschLoggingLevel", jschLoggingLevel);
+            return this;
+        }
+        /**
+         * Sets passive mode connections. Default is active mode connections.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointBuilder passiveMode(boolean passiveMode) {
+            doSetProperty("passiveMode", passiveMode);
+            return this;
+        }
+        /**
+         * Sets passive mode connections. Default is active mode connections.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SftpEndpointBuilder passiveMode(String passiveMode) {
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -5129,7 +5287,8 @@ public interface SftpEndpointBuilderFactory {
          * file structures when downloading files, or as well when uploading a
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
-         * security reasons.
+         * security reasons. Stepwise cannot be used together with
+         * streamDownload.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -5145,7 +5304,8 @@ public interface SftpEndpointBuilderFactory {
          * file structures when downloading files, or as well when uploading a
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
-         * security reasons.
+         * security reasons. Stepwise cannot be used together with
+         * streamDownload.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

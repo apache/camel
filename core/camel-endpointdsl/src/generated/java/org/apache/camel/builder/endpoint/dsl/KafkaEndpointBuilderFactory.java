@@ -174,7 +174,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow doing manual commits via KafkaManualCommit . If this
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
          * option is enabled then an instance of KafkaManualCommit is stored on
          * the Exchange message header, which allows end users to access this
          * API and perform manual offset commits via the Kafka consumer.
@@ -190,7 +190,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow doing manual commits via KafkaManualCommit . If this
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
          * option is enabled then an instance of KafkaManualCommit is stored on
          * the Exchange message header, which allows end users to access this
          * API and perform manual offset commits via the Kafka consumer.
@@ -646,8 +646,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for deserialization kafka headers
-         * values to camel headers values.
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
          * 
          * The option is a:
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
@@ -660,8 +660,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for deserialization kafka headers
-         * values to camel headers values.
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
@@ -1137,8 +1137,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
+         * For the valid values see a href=
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtmlhttp://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1721,8 +1721,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for serialization camel headers
-         * values to kafka headers values.
+         * To use a custom KafkaHeaderSerializer to serialize kafka headers
+         * values.
          * 
          * The option is a:
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
@@ -1735,8 +1735,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for serialization camel headers
-         * values to kafka headers values.
+         * To use a custom KafkaHeaderSerializer to serialize kafka headers
+         * values.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
@@ -2468,7 +2468,9 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * To use a custom worker pool for continue routing Exchange after kafka
          * server has acknowledge the message that was sent to it from
-         * KafkaProducer using asynchronous non-blocking processing.
+         * KafkaProducer using asynchronous non-blocking processing. If using
+         * this option then you must handle the lifecycle of the thread pool to
+         * shut the pool down when no longer needed.
          * 
          * The option is a: <code>java.util.concurrent.ExecutorService</code>
          * type.
@@ -2483,7 +2485,9 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * To use a custom worker pool for continue routing Exchange after kafka
          * server has acknowledge the message that was sent to it from
-         * KafkaProducer using asynchronous non-blocking processing.
+         * KafkaProducer using asynchronous non-blocking processing. If using
+         * this option then you must handle the lifecycle of the thread pool to
+         * shut the pool down when no longer needed.
          * 
          * The option will be converted to a
          * <code>java.util.concurrent.ExecutorService</code> type.
@@ -2719,8 +2723,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
+         * For the valid values see a href=
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtmlhttp://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3347,8 +3351,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
+         * For the valid values see a href=
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtmlhttp://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

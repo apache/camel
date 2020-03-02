@@ -146,6 +146,9 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * StreamList streams the result of the query using an Iterator. This
+         * can be used with the Splitter EIP in streaming mode to process the
+         * ResultSet in streaming fashion.
          * 
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -168,6 +171,9 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * StreamList streams the result of the query using an Iterator. This
+         * can be used with the Splitter EIP in streaming mode to process the
+         * ResultSet in streaming fashion.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -421,7 +427,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Enables or disables transaction. If enabled then if processing an
-         * exchange failed then the consumer break out processing any further
+         * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
          * The option is a: <code>boolean</code> type.
@@ -435,7 +441,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Enables or disables transaction. If enabled then if processing an
-         * exchange failed then the consumer break out processing any further
+         * exchange failed then the consumer breaks out processing any further
          * exchanges to cause a rollback eager.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -1173,7 +1179,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries. This option is default true.
+         * characters with sign in the SQL queries.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1187,7 +1193,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries. This option is default true.
+         * characters with sign in the SQL queries.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1310,6 +1316,9 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * StreamList streams the result of the query using an Iterator. This
+         * can be used with the Splitter EIP in streaming mode to process the
+         * ResultSet in streaming fashion.
          * 
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -1332,6 +1341,9 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * StreamList streams the result of the query using an Iterator. This
+         * can be used with the Splitter EIP in streaming mode to process the
+         * ResultSet in streaming fashion.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -1702,7 +1714,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries. This option is default true.
+         * characters with sign in the SQL queries.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1716,7 +1728,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries. This option is default true.
+         * characters with sign in the SQL queries.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1840,6 +1852,9 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * StreamList streams the result of the query using an Iterator. This
+         * can be used with the Splitter EIP in streaming mode to process the
+         * ResultSet in streaming fashion.
          * 
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -1862,6 +1877,9 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * StreamList streams the result of the query using an Iterator. This
+         * can be used with the Splitter EIP in streaming mode to process the
+         * ResultSet in streaming fashion.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
@@ -2107,7 +2125,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries. This option is default true.
+         * characters with sign in the SQL queries.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2120,7 +2138,7 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to use placeholder and replace all placeholder
-         * characters with sign in the SQL queries. This option is default true.
+         * characters with sign in the SQL queries.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

@@ -48,6 +48,31 @@ public interface JooqEndpointBuilderFactory {
             return (AdvancedJooqEndpointConsumerBuilder) this;
         }
         /**
+         * To use a specific database configuration.
+         * 
+         * The option is a: <code>org.jooq.Configuration</code> type.
+         * 
+         * Group: common
+         */
+        default JooqEndpointConsumerBuilder databaseConfiguration(
+                Object databaseConfiguration) {
+            doSetProperty("databaseConfiguration", databaseConfiguration);
+            return this;
+        }
+        /**
+         * To use a specific database configuration.
+         * 
+         * The option will be converted to a <code>org.jooq.Configuration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default JooqEndpointConsumerBuilder databaseConfiguration(
+                String databaseConfiguration) {
+            doSetProperty("databaseConfiguration", databaseConfiguration);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -678,6 +703,31 @@ public interface JooqEndpointBuilderFactory {
             return (AdvancedJooqEndpointProducerBuilder) this;
         }
         /**
+         * To use a specific database configuration.
+         * 
+         * The option is a: <code>org.jooq.Configuration</code> type.
+         * 
+         * Group: common
+         */
+        default JooqEndpointProducerBuilder databaseConfiguration(
+                Object databaseConfiguration) {
+            doSetProperty("databaseConfiguration", databaseConfiguration);
+            return this;
+        }
+        /**
+         * To use a specific database configuration.
+         * 
+         * The option will be converted to a <code>org.jooq.Configuration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default JooqEndpointProducerBuilder databaseConfiguration(
+                String databaseConfiguration) {
+            doSetProperty("databaseConfiguration", databaseConfiguration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -834,6 +884,31 @@ public interface JooqEndpointBuilderFactory {
                 JooqEndpointProducerBuilder {
         default AdvancedJooqEndpointBuilder advanced() {
             return (AdvancedJooqEndpointBuilder) this;
+        }
+        /**
+         * To use a specific database configuration.
+         * 
+         * The option is a: <code>org.jooq.Configuration</code> type.
+         * 
+         * Group: common
+         */
+        default JooqEndpointBuilder databaseConfiguration(
+                Object databaseConfiguration) {
+            doSetProperty("databaseConfiguration", databaseConfiguration);
+            return this;
+        }
+        /**
+         * To use a specific database configuration.
+         * 
+         * The option will be converted to a <code>org.jooq.Configuration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default JooqEndpointBuilder databaseConfiguration(
+                String databaseConfiguration) {
+            doSetProperty("databaseConfiguration", databaseConfiguration);
+            return this;
         }
     }
 

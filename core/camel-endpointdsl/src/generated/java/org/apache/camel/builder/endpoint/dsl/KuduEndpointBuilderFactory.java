@@ -80,7 +80,7 @@ public interface KuduEndpointBuilderFactory {
             return this;
         }
         /**
-         * What kind of operation is to be performed in the table.
+         * Operation to perform.
          * 
          * The option is a:
          * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
@@ -92,7 +92,7 @@ public interface KuduEndpointBuilderFactory {
             return this;
         }
         /**
-         * What kind of operation is to be performed in the table.
+         * Operation to perform.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
@@ -194,13 +194,13 @@ public interface KuduEndpointBuilderFactory {
          * Syntax: <code>kudu:host:port/tableName</code>
          * 
          * Path parameter: host
-         * Kudu master to connect to
+         * Host of the server to connect to
          * 
          * Path parameter: port
-         * Port where kudu service is listening
+         * Port of the server to connect to
          * 
          * Path parameter: tableName
-         * The name of the table where the rows are stored
+         * Table to connect to
          */
         default KuduEndpointBuilder kudu(String path) {
             return KuduEndpointBuilderFactory.kudu(path);
@@ -219,13 +219,13 @@ public interface KuduEndpointBuilderFactory {
      * Syntax: <code>kudu:host:port/tableName</code>
      * 
      * Path parameter: host
-     * Kudu master to connect to
+     * Host of the server to connect to
      * 
      * Path parameter: port
-     * Port where kudu service is listening
+     * Port of the server to connect to
      * 
      * Path parameter: tableName
-     * The name of the table where the rows are stored
+     * Table to connect to
      */
     static KuduEndpointBuilder kudu(String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {

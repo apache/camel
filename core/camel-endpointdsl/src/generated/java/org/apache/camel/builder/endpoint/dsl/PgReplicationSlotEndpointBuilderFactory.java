@@ -47,7 +47,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
             return (AdvancedPgReplicationSlotEndpointBuilder) this;
         }
         /**
-         * PostgreSQL password.
+         * Postgres password.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -58,7 +58,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
             return this;
         }
         /**
-         * PostgreSQL username.
+         * Postgres user.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -770,15 +770,15 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Replication Slot name
          * 
          * Path parameter: host
-         * PostgreSQL server host
+         * Postgres host
          * Default value: localhost
          * 
          * Path parameter: port
-         * PostgreSQL server port
+         * Postgres port
          * Default value: 5432
          * 
          * Path parameter: database (required)
-         * PostgreSQL database name
+         * Postgres database name
          * 
          * Path parameter: outputPlugin (required)
          * Output plugin name
@@ -802,15 +802,15 @@ public interface PgReplicationSlotEndpointBuilderFactory {
      * Replication Slot name
      * 
      * Path parameter: host
-     * PostgreSQL server host
+     * Postgres host
      * Default value: localhost
      * 
      * Path parameter: port
-     * PostgreSQL server port
+     * Postgres port
      * Default value: 5432
      * 
      * Path parameter: database (required)
-     * PostgreSQL database name
+     * Postgres database name
      * 
      * Path parameter: outputPlugin (required)
      * Output plugin name

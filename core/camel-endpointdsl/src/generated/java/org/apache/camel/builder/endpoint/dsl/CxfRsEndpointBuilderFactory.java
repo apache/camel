@@ -253,7 +253,7 @@ public interface CxfRsEndpointBuilderFactory {
          * values are possible: SimpleConsumer: This binding style processes
          * request parameters, multiparts, etc. and maps them to IN headers, IN
          * attachments and to the message body. It aims to eliminate low-level
-         * processing of org.apache.cxf.message.MessageContentsList . It also
+         * processing of org.apache.cxf.message.MessageContentsList. It also
          * also adds more flexibility and simplicity to the response mapping.
          * Only available for consumers. Default: The default style. For
          * consumers this passes on a MessageContentsList to the route,
@@ -281,7 +281,7 @@ public interface CxfRsEndpointBuilderFactory {
          * values are possible: SimpleConsumer: This binding style processes
          * request parameters, multiparts, etc. and maps them to IN headers, IN
          * attachments and to the message body. It aims to eliminate low-level
-         * processing of org.apache.cxf.message.MessageContentsList . It also
+         * processing of org.apache.cxf.message.MessageContentsList. It also
          * also adds more flexibility and simplicity to the response mapping.
          * Only available for consumers. Default: The default style. For
          * consumers this passes on a MessageContentsList to the route,
@@ -427,7 +427,23 @@ public interface CxfRsEndpointBuilderFactory {
          * want to export as REST service. Multiple beans can be separated by
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCxfRsEndpointConsumerBuilder serviceBeans(
+                List<Object> serviceBeans) {
+            doSetProperty("serviceBeans", serviceBeans);
+            return this;
+        }
+        /**
+         * The service beans (the bean ids to lookup in the registry) which you
+         * want to export as REST service. Multiple beans can be separated by
+         * comma.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
          * 
          * Group: consumer (advanced)
          */

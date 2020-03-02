@@ -141,6 +141,29 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
+         * Starting index of the response.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder from(Integer from) {
+            doSetProperty("from", from);
+            return this;
+        }
+        /**
+         * Starting index of the response.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder from(String from) {
+            doSetProperty("from", from);
+            return this;
+        }
+        /**
          * Comma separated list with ip:port formatted remote transport
          * addresses to use.
          * 
@@ -280,6 +303,29 @@ public interface ElasticsearchEndpointBuilderFactory {
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 String scrollKeepAliveMs) {
             doSetProperty("scrollKeepAliveMs", scrollKeepAliveMs);
+            return this;
+        }
+        /**
+         * Size of the response.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder size(Integer size) {
+            doSetProperty("size", size);
+            return this;
+        }
+        /**
+         * Size of the response.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder size(String size) {
+            doSetProperty("size", size);
             return this;
         }
         /**

@@ -282,6 +282,20 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * After processing a mail message, it can be moved to a mail folder
+         * with the given name. You can override this configuration value, with
+         * a header with the key moveTo, allowing you to move messages to folder
+         * names configured at runtime.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default MailEndpointConsumerBuilder moveTo(String moveTo) {
+            doSetProperty("moveTo", moveTo);
+            return this;
+        }
+        /**
          * Will mark the javax.mail.Message as peeked before processing the mail
          * message. This applies to IMAPMessage messages types only. By using
          * peek the mail will not be eager marked as SEEN on the mail server,
@@ -1504,6 +1518,33 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the java mail options. Will clear any default properties and
+         * only use the properties provided for this method.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointConsumerBuilder javaMailProperties(
+                Properties javaMailProperties) {
+            doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
+         * Sets the java mail options. Will clear any default properties and
+         * only use the properties provided for this method.
+         * 
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointConsumerBuilder javaMailProperties(
+                String javaMailProperties) {
+            doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
          * managed by some other resource, such as a JavaEE container. When
@@ -2116,6 +2157,33 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the java mail options. Will clear any default properties and
+         * only use the properties provided for this method.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointProducerBuilder javaMailProperties(
+                Properties javaMailProperties) {
+            doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
+         * Sets the java mail options. Will clear any default properties and
+         * only use the properties provided for this method.
+         * 
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointProducerBuilder javaMailProperties(
+                String javaMailProperties) {
+            doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
          * managed by some other resource, such as a JavaEE container. When
@@ -2584,6 +2652,33 @@ public interface MailEndpointBuilderFactory {
         default AdvancedMailEndpointBuilder ignoreUriScheme(
                 String ignoreUriScheme) {
             doSetProperty("ignoreUriScheme", ignoreUriScheme);
+            return this;
+        }
+        /**
+         * Sets the java mail options. Will clear any default properties and
+         * only use the properties provided for this method.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointBuilder javaMailProperties(
+                Properties javaMailProperties) {
+            doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
+         * Sets the java mail options. Will clear any default properties and
+         * only use the properties provided for this method.
+         * 
+         * The option will be converted to a <code>java.util.Properties</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMailEndpointBuilder javaMailProperties(
+                String javaMailProperties) {
+            doSetProperty("javaMailProperties", javaMailProperties);
             return this;
         }
         /**

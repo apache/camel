@@ -559,7 +559,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Syntax: <code>asterisk:name</code>
          * 
          * Path parameter: name (required)
-         * Logical name
+         * Name of component
          */
         default AsteriskEndpointBuilder asterisk(String path) {
             return AsteriskEndpointBuilderFactory.asterisk(path);
@@ -576,7 +576,7 @@ public interface AsteriskEndpointBuilderFactory {
      * Syntax: <code>asterisk:name</code>
      * 
      * Path parameter: name (required)
-     * Logical name
+     * Name of component
      */
     static AsteriskEndpointBuilder asterisk(String path) {
         class AsteriskEndpointBuilderImpl extends AbstractEndpointBuilder implements AsteriskEndpointBuilder, AdvancedAsteriskEndpointBuilder {

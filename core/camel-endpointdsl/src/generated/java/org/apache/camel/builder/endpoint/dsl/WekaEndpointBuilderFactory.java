@@ -111,7 +111,7 @@ public interface WekaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Numer of folds to use for cross-validation.
+         * Number of folds to use for cross-validation.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -123,7 +123,7 @@ public interface WekaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Numer of folds to use for cross-validation.
+         * Number of folds to use for cross-validation.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

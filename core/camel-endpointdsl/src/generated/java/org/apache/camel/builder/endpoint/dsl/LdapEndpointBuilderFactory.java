@@ -226,8 +226,8 @@ public interface LdapEndpointBuilderFactory {
          * Syntax: <code>ldap:dirContextName</code>
          * 
          * Path parameter: dirContextName (required)
-         * Name of either a javax.naming.directory.DirContext , or
-         * java.util.Hashtable , or Map bean to lookup in the registry. If the
+         * Name of either a javax.naming.directory.DirContext, or
+         * java.util.Hashtable, or Map bean to lookup in the registry. If the
          * bean is either a Hashtable or Map then a new
          * javax.naming.directory.DirContext instance is created for each use.
          * If the bean is a javax.naming.directory.DirContext then the bean is
@@ -252,8 +252,8 @@ public interface LdapEndpointBuilderFactory {
      * Syntax: <code>ldap:dirContextName</code>
      * 
      * Path parameter: dirContextName (required)
-     * Name of either a javax.naming.directory.DirContext , or
-     * java.util.Hashtable , or Map bean to lookup in the registry. If the bean
+     * Name of either a javax.naming.directory.DirContext, or
+     * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
      * is either a Hashtable or Map then a new javax.naming.directory.DirContext
      * instance is created for each use. If the bean is a
      * javax.naming.directory.DirContext then the bean is used as given. The
