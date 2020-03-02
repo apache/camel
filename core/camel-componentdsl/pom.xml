@@ -35,10 +35,10 @@
 
     <dependencies>
 
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-api</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
@@ -51,13 +51,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-allcomponents</artifactId>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-allcomponents</artifactId>
             <type>pom</type>
-			<scope>provided</scope>
-		</dependency>
-		<!-- testing -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
