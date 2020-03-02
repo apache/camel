@@ -3095,7 +3095,7 @@ public interface ComponentsBuilderFactory {
      * Transforms the message using a Quarkus Qute template.
      * 
      * Category: transformation
-     * Since: 3.1
+     * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-qute
      */
     static org.apache.camel.builder.component.dsl.QuteComponentBuilderFactory.QuteComponentBuilder qute() {
