@@ -158,6 +158,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File baseDir;
 
     /**
+     * The camel-core-languages directory
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-languages")
+    protected File languagesDir;
+
+    /**
      * The camel-xml-jaxp directory
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-xml-jaxp")
@@ -217,7 +223,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allJsonFiles = new TreeSet<>();
             allPropertiesFiles = new TreeSet<>();
 
-            Stream.concat(list(componentsDir.toPath()), Stream.of(coreDir.toPath(), baseDir.toPath(), jaxpDir.toPath(), springDir.toPath()))
+            Stream.concat(list(componentsDir.toPath()), Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(), springDir.toPath()))
                     .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath).filter(dir -> Files.isDirectory(dir.resolve("src")))
                     .map(p -> p.resolve("target/classes")).flatMap(PackageHelper::walk).forEach(p -> {
                         String f = p.getFileName().toString();
@@ -645,7 +651,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // find all camel maven modules
         Stream.concat(list(componentsDir.toPath()).filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath),
-                Stream.of(coreDir.toPath(), baseDir.toPath(), jaxpDir.toPath()))
+                Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
                 .forEach(dir -> {
                     List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs")).filter(f -> f.getFileName().toString().endsWith(".adoc")).collect(Collectors.toList());
                     if (l.isEmpty()) {

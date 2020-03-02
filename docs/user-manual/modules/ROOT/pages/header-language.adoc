@@ -1,6 +1,6 @@
 [[header-language]]
 = Header Language
-:page-source: core/camel-base/src/main/docs/header-language.adoc
+:page-source: core/camel-core-languages/src/main/docs/header-language.adoc
 
 *Since Camel 1.5*
 

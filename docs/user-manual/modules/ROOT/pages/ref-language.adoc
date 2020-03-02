@@ -1,6 +1,6 @@
 [[ref-language]]
 = Ref Language
-:page-source: core/camel-base/src/main/docs/ref-language.adoc
+:page-source: core/camel-core-languages/src/main/docs/ref-language.adoc
 
 *Since Camel 2.8*
 
