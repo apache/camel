@@ -824,7 +824,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 enumClass.getJavaDoc().setText("Proxy enum for <code>" + type + "</code> enum.");
                 enumClasses.put(enumClassName, enumClass);
                 for (Object value : loadClass(type).getEnumConstants()) {
-                    enumClass.addValue(value.toString().replace('.', '_').replace('-', '_'));
+                    enumClass.addValue((((Enum<?>) value).name()).replace('.', '_').replace('-', '_'));
                 }
             }
             type = javaClass.getPackage() + "." + javaClass.getName() + "$" + enumClassName;

@@ -68,6 +68,11 @@
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-languages</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-file</artifactId>
             <scope>test</scope>
         </dependency>
