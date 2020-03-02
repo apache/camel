@@ -35,7 +35,7 @@ import org.apache.lucene.store.RAMDirectory;
 public class LuceneSuggestionStrategy implements SuggestionStrategy {
 
     private int maxSuggestions = 3;
-	private SpellChecker checker;
+    private SpellChecker checker;
 
     @Override
     public String[] suggestEndpointOptions(Set<String> names, String unknownOption) {
