@@ -132,6 +132,41 @@
     <!-- Comment out the snapshot repositories as we don't need them now -->
     <repositories>
         <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+            <name>Maven Central</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <!-- camel-jira -->
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://packages.atlassian.com/maven-external</url>
+            <name>Atlassian Public Repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <!-- camel-ipfs and camel-weka -->
+        <repository>
+            <id>jboss.thirdparty</id>
+            <name>JBoss Thirdparty Repository</name>
+            <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
             <id>apache.snapshots</id>
             <url>https://repository.apache.org/snapshots/</url>
             <name>Apache Snapshot Repo</name>
