@@ -1,6 +1,6 @@
 [[constant-language]]
 = Constant Language
-:page-source: core/camel-base/src/main/docs/constant-language.adoc
+:page-source: core/camel-core-languages/src/main/docs/constant-language.adoc
 
 *Since Camel 1.5*
 
