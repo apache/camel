@@ -38,17 +38,6 @@ public interface ECS2EndpointBuilderFactory {
             return (AdvancedECS2EndpointBuilder) this;
         }
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ECS2EndpointBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * To use a existing configured AWS ECS as client.
          * 
          * The option is a:
@@ -213,11 +202,22 @@ public interface ECS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ECS2EndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: security
          */
         default ECS2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);

@@ -358,9 +358,7 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the queue instance which will be used by the endpoint. This
-         * option is only for rare use-cases where you want to use a custom
-         * queue instance.
+         * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
@@ -372,9 +370,7 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the queue instance which will be used by the endpoint. This
-         * option is only for rare use-cases where you want to use a custom
-         * queue instance.
+         * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
@@ -756,9 +752,7 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the queue instance which will be used by the endpoint. This
-         * option is only for rare use-cases where you want to use a custom
-         * queue instance.
+         * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
@@ -770,9 +764,7 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the queue instance which will be used by the endpoint. This
-         * option is only for rare use-cases where you want to use a custom
-         * queue instance.
+         * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
@@ -892,9 +884,7 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the queue instance which will be used by the endpoint. This
-         * option is only for rare use-cases where you want to use a custom
-         * queue instance.
+         * Define the queue instance which will be used by the endpoint.
          * 
          * The option is a: <code>java.util.concurrent.BlockingQueue</code>
          * type.
@@ -906,9 +896,7 @@ public interface SedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the queue instance which will be used by the endpoint. This
-         * option is only for rare use-cases where you want to use a custom
-         * queue instance.
+         * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.

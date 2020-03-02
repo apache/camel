@@ -47,19 +47,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return (AdvancedGoogleSheetsEndpointConsumerBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointConsumerBuilder accessToken(
-                String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
@@ -84,18 +71,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the sheets application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointConsumerBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -104,20 +79,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
          */
         default GoogleSheetsEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Sheets component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointConsumerBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -565,6 +526,45 @@ public interface GoogleSheetsEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointConsumerBuilder accessToken(
+                String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointConsumerBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Sheets component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointConsumerBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     /**
@@ -733,19 +733,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return (AdvancedGoogleSheetsEndpointProducerBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointProducerBuilder accessToken(
-                String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
@@ -770,18 +757,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the sheets application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointProducerBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -790,20 +765,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
          */
         default GoogleSheetsEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Sheets component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointProducerBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -846,6 +807,45 @@ public interface GoogleSheetsEndpointBuilderFactory {
         default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointProducerBuilder accessToken(
+                String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointProducerBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Sheets component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointProducerBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }
@@ -928,18 +928,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return (AdvancedGoogleSheetsEndpointBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
@@ -964,17 +952,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the sheets application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -986,13 +963,36 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsEndpointBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          */
         default GoogleSheetsEndpointBuilder refreshToken(String refreshToken) {
             doSetProperty("refreshToken", refreshToken);

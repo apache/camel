@@ -105,7 +105,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Mongo instance that represents the backing connection.
+         * Sets the connection bean used as a client for connecting to a
+         * database.
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
@@ -117,7 +118,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Mongo instance that represents the backing connection.
+         * Sets the connection bean used as a client for connecting to a
+         * database.
          * 
          * The option will be converted to a
          * <code>com.mongodb.client.MongoClient</code> type.
@@ -687,7 +689,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Mongo instance that represents the backing connection.
+         * Sets the connection bean used as a client for connecting to a
+         * database.
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
@@ -699,7 +702,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Mongo instance that represents the backing connection.
+         * Sets the connection bean used as a client for connecting to a
+         * database.
          * 
          * The option will be converted to a
          * <code>com.mongodb.client.MongoClient</code> type.
@@ -1203,7 +1207,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Mongo instance that represents the backing connection.
+         * Sets the connection bean used as a client for connecting to a
+         * database.
          * 
          * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
@@ -1214,7 +1219,8 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the Mongo instance that represents the backing connection.
+         * Sets the connection bean used as a client for connecting to a
+         * database.
          * 
          * The option will be converted to a
          * <code>com.mongodb.client.MongoClient</code> type.
@@ -1640,7 +1646,8 @@ public interface MongoDbEndpointBuilderFactory {
          * Syntax: <code>mongodb:connectionBean</code>
          * 
          * Path parameter: connectionBean (required)
-         * Name of com.mongodb.Mongo to use.
+         * Sets the connection bean reference used to lookup a client for
+         * connecting to a database.
          */
         default MongoDbEndpointBuilder mongodb(String path) {
             return MongoDbEndpointBuilderFactory.mongodb(path);
@@ -1657,7 +1664,8 @@ public interface MongoDbEndpointBuilderFactory {
      * Syntax: <code>mongodb:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
-     * Name of com.mongodb.Mongo to use.
+     * Sets the connection bean reference used to lookup a client for connecting
+     * to a database.
      */
     static MongoDbEndpointBuilder mongodb(String path) {
         class MongoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements MongoDbEndpointBuilder, AdvancedMongoDbEndpointBuilder {

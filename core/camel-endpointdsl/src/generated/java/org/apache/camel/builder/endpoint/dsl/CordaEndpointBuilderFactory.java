@@ -80,6 +80,102 @@ public interface CordaEndpointBuilderFactory {
             return this;
         }
         /**
+         * PageSpecification allows specification of a page number (starting
+         * from 1) and page size (defaulting to 200 with a maximum page size of
+         * (Integer.MAX_INT) Note: we default the page number to 200 to enable
+         * queries without requiring a page specification but enabling detection
+         * of large results sets that fall out of the 200 requirement. Max page
+         * size should be used with extreme caution as results may exceed your
+         * JVM memory footprint.
+         * 
+         * The option is a:
+         * <code>net.corda.core.node.services.vault.PageSpecification</code>
+         * type.
+         * 
+         * Default: 200
+         * Group: consumer
+         */
+        default CordaEndpointConsumerBuilder pageSpecification(
+                Object pageSpecification) {
+            doSetProperty("pageSpecification", pageSpecification);
+            return this;
+        }
+        /**
+         * PageSpecification allows specification of a page number (starting
+         * from 1) and page size (defaulting to 200 with a maximum page size of
+         * (Integer.MAX_INT) Note: we default the page number to 200 to enable
+         * queries without requiring a page specification but enabling detection
+         * of large results sets that fall out of the 200 requirement. Max page
+         * size should be used with extreme caution as results may exceed your
+         * JVM memory footprint.
+         * 
+         * The option will be converted to a
+         * <code>net.corda.core.node.services.vault.PageSpecification</code>
+         * type.
+         * 
+         * Default: 200
+         * Group: consumer
+         */
+        default CordaEndpointConsumerBuilder pageSpecification(
+                String pageSpecification) {
+            doSetProperty("pageSpecification", pageSpecification);
+            return this;
+        }
+        /**
+         * Whether to process snapshots or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default CordaEndpointConsumerBuilder processSnapshot(
+                boolean processSnapshot) {
+            doSetProperty("processSnapshot", processSnapshot);
+            return this;
+        }
+        /**
+         * Whether to process snapshots or not.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default CordaEndpointConsumerBuilder processSnapshot(
+                String processSnapshot) {
+            doSetProperty("processSnapshot", processSnapshot);
+            return this;
+        }
+        /**
+         * Sort allows specification of a set of entity attribute names and
+         * their associated directionality and null handling, to be applied upon
+         * processing a query specification.
+         * 
+         * The option is a: <code>net.corda.core.node.services.vault.Sort</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default CordaEndpointConsumerBuilder sort(Object sort) {
+            doSetProperty("sort", sort);
+            return this;
+        }
+        /**
+         * Sort allows specification of a set of entity attribute names and
+         * their associated directionality and null handling, to be applied upon
+         * processing a query specification.
+         * 
+         * The option will be converted to a
+         * <code>net.corda.core.node.services.vault.Sort</code> type.
+         * 
+         * Group: consumer
+         */
+        default CordaEndpointConsumerBuilder sort(String sort) {
+            doSetProperty("sort", sort);
+            return this;
+        }
+        /**
          * Password for login.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -111,6 +207,46 @@ public interface CordaEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default CordaEndpointConsumerBuilder basic() {
             return (CordaEndpointConsumerBuilder) this;
+        }
+        /**
+         * A contract state (or just state) contains opaque data used by a
+         * contract program. It can be thought of as a disk file that the
+         * program can use to persist data across transactions. States are
+         * immutable: once created they are never updated, instead, any changes
+         * must generate a new successor state. States can be updated (consumed)
+         * only once: the notary is responsible for ensuring there is no double
+         * spending by only signing a transaction if the input states are all
+         * free.
+         * 
+         * The option is a:
+         * <code>java.lang.Class&lt;net.corda.core.contracts.ContractState&gt;</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder contractStateClass(
+                Class<Object> contractStateClass) {
+            doSetProperty("contractStateClass", contractStateClass);
+            return this;
+        }
+        /**
+         * A contract state (or just state) contains opaque data used by a
+         * contract program. It can be thought of as a disk file that the
+         * program can use to persist data across transactions. States are
+         * immutable: once created they are never updated, instead, any changes
+         * must generate a new successor state. States can be updated (consumed)
+         * only once: the notary is responsible for ensuring there is no double
+         * spending by only signing a transaction if the input states are all
+         * free.
+         * 
+         * The option will be converted to a
+         * <code>java.lang.Class&lt;net.corda.core.contracts.ContractState&gt;</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder contractStateClass(
+                String contractStateClass) {
+            doSetProperty("contractStateClass", contractStateClass);
+            return this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -167,6 +303,97 @@ public interface CordaEndpointBuilderFactory {
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Start the given flow with the given arguments, returning an
+         * Observable with a single observation of the result of running the
+         * flow. The flowLogicClass must be annotated with
+         * net.corda.core.flows.StartableByRPC.
+         * 
+         * The option is a: <code>java.lang.Object[]</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder flowLogicArguments(
+                Object[] flowLogicArguments) {
+            doSetProperty("flowLogicArguments", flowLogicArguments);
+            return this;
+        }
+        /**
+         * Start the given flow with the given arguments, returning an
+         * Observable with a single observation of the result of running the
+         * flow. The flowLogicClass must be annotated with
+         * net.corda.core.flows.StartableByRPC.
+         * 
+         * The option will be converted to a <code>java.lang.Object[]</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder flowLogicArguments(
+                String flowLogicArguments) {
+            doSetProperty("flowLogicArguments", flowLogicArguments);
+            return this;
+        }
+        /**
+         * Start the given flow with the given arguments, returning an
+         * Observable with a single observation of the result of running the
+         * flow. The flowLogicClass must be annotated with
+         * net.corda.core.flows.StartableByRPC.
+         * 
+         * The option is a:
+         * <code>java.lang.Class&lt;net.corda.core.flows.FlowLogic&lt;java.lang.Object&gt;&gt;</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder flowLogicClass(
+                Class<Object> flowLogicClass) {
+            doSetProperty("flowLogicClass", flowLogicClass);
+            return this;
+        }
+        /**
+         * Start the given flow with the given arguments, returning an
+         * Observable with a single observation of the result of running the
+         * flow. The flowLogicClass must be annotated with
+         * net.corda.core.flows.StartableByRPC.
+         * 
+         * The option will be converted to a
+         * <code>java.lang.Class&lt;net.corda.core.flows.FlowLogic&lt;java.lang.Object&gt;&gt;</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder flowLogicClass(
+                String flowLogicClass) {
+            doSetProperty("flowLogicClass", flowLogicClass);
+            return this;
+        }
+        /**
+         * QueryCriteria assumes underlying schema tables are correctly indexed
+         * for performance.
+         * 
+         * The option is a:
+         * <code>net.corda.core.node.services.vault.QueryCriteria</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder queryCriteria(
+                Object queryCriteria) {
+            doSetProperty("queryCriteria", queryCriteria);
+            return this;
+        }
+        /**
+         * QueryCriteria assumes underlying schema tables are correctly indexed
+         * for performance.
+         * 
+         * The option will be converted to a
+         * <code>net.corda.core.node.services.vault.QueryCriteria</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedCordaEndpointConsumerBuilder queryCriteria(
+                String queryCriteria) {
+            doSetProperty("queryCriteria", queryCriteria);
             return this;
         }
         /**

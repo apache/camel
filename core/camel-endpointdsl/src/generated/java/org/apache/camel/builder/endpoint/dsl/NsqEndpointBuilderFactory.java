@@ -65,8 +65,8 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * Automatically finish the NSQ message when it is retrieved from the
-         * quese and before the Exchange is processed.
+         * Automatically finish the NSQ Message when it is retrieved from the
+         * queue and before the Exchange is processed.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -78,8 +78,8 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * Automatically finish the NSQ message when it is retrieved from the
-         * quese and before the Exchange is processed.
+         * Automatically finish the NSQ Message when it is retrieved from the
+         * queue and before the Exchange is processed.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -130,7 +130,7 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of channel we want to use.
+         * The NSQ channel.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -141,7 +141,7 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The lookup retry interval.
+         * The lookup interval.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -153,7 +153,7 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The lookup retry interval.
+         * The lookup interval.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -165,7 +165,7 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The port of the nsqdlookupd server.
+         * The NSQ lookup server port.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -177,7 +177,7 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The port of the nsqdlookupd server.
+         * The NSQ lookup server port.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -190,7 +190,8 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The NSQ message timeout for a consumer.
+         * The NSQ consumer timeout period for messages retrieved from the
+         * queue. A value of -1 is the server default.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -202,7 +203,8 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The NSQ message timeout for a consumer.
+         * The NSQ consumer timeout period for messages retrieved from the
+         * queue. A value of -1 is the server default.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -238,7 +240,8 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The requeue interval.
+         * The requeue interval in milliseconds. A value of -1 is the server
+         * default.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -250,7 +253,8 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
-         * The requeue interval.
+         * The requeue interval in milliseconds. A value of -1 is the server
+         * default.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -818,7 +822,7 @@ public interface NsqEndpointBuilderFactory {
          * Syntax: <code>nsq:topic</code>
          * 
          * Path parameter: topic (required)
-         * The name of topic we want to use
+         * The NSQ topic
          */
         default NsqEndpointBuilder nsq(String path) {
             return NsqEndpointBuilderFactory.nsq(path);
@@ -835,7 +839,7 @@ public interface NsqEndpointBuilderFactory {
      * Syntax: <code>nsq:topic</code>
      * 
      * Path parameter: topic (required)
-     * The name of topic we want to use
+     * The NSQ topic
      */
     static NsqEndpointBuilder nsq(String path) {
         class NsqEndpointBuilderImpl extends AbstractEndpointBuilder implements NsqEndpointBuilder, AdvancedNsqEndpointBuilder {

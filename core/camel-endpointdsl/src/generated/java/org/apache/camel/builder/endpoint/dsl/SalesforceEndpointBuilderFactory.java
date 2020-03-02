@@ -583,7 +583,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Use raw payload String for request and response (either JSON or XML
-         * depending on format ), instead of DTOs, false by default.
+         * depending on format), instead of DTOs, false by default.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -596,7 +596,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Use raw payload String for request and response (either JSON or XML
-         * depending on format ), instead of DTOs, false by default.
+         * depending on format), instead of DTOs, false by default.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1524,7 +1524,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Use raw payload String for request and response (either JSON or XML
-         * depending on format ), instead of DTOs, false by default.
+         * depending on format), instead of DTOs, false by default.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1537,7 +1537,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Use raw payload String for request and response (either JSON or XML
-         * depending on format ), instead of DTOs, false by default.
+         * depending on format), instead of DTOs, false by default.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2381,7 +2381,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Use raw payload String for request and response (either JSON or XML
-         * depending on format ), instead of DTOs, false by default.
+         * depending on format), instead of DTOs, false by default.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2394,7 +2394,7 @@ public interface SalesforceEndpointBuilderFactory {
         }
         /**
          * Use raw payload String for request and response (either JSON or XML
-         * depending on format ), instead of DTOs, false by default.
+         * depending on format), instead of DTOs, false by default.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

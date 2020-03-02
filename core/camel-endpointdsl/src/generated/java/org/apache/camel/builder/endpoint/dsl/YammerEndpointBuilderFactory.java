@@ -795,6 +795,30 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointConsumerBuilder requestor(Object requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointConsumerBuilder requestor(String requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -978,6 +1002,30 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointProducerBuilder requestor(Object requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointProducerBuilder requestor(String requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1117,6 +1165,30 @@ public interface YammerEndpointBuilderFactory {
         default AdvancedYammerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointBuilder requestor(Object requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointBuilder requestor(String requestor) {
+            doSetProperty("requestor", requestor);
             return this;
         }
         /**

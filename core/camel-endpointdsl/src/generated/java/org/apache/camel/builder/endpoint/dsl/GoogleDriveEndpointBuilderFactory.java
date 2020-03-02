@@ -49,19 +49,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (AdvancedGoogleDriveEndpointConsumerBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointConsumerBuilder accessToken(
-                String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
          * 
@@ -114,18 +101,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the drive application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointConsumerBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -134,20 +109,6 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointConsumerBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -623,6 +584,45 @@ public interface GoogleDriveEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointConsumerBuilder accessToken(
+                String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the drive application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointConsumerBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointConsumerBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     /**
@@ -791,19 +791,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (AdvancedGoogleDriveEndpointProducerBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointProducerBuilder accessToken(
-                String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
          * 
@@ -856,18 +843,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the drive application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointProducerBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -876,20 +851,6 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointProducerBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -960,6 +921,45 @@ public interface GoogleDriveEndpointBuilderFactory {
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointProducerBuilder accessToken(
+                String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the drive application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointProducerBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointProducerBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }
@@ -1042,18 +1042,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (AdvancedGoogleDriveEndpointBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
          * 
@@ -1104,17 +1092,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the drive application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1123,19 +1100,6 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointBuilder refreshToken(String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -1164,6 +1128,42 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
+            return this;
+        }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the drive application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleDriveEndpointBuilder refreshToken(String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }

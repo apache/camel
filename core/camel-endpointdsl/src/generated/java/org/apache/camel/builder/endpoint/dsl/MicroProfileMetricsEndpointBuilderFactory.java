@@ -40,7 +40,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return (AdvancedMicroProfileMetricsEndpointBuilder) this;
         }
         /**
-         * The action to use when using the Timer metric type.
+         * Action to use when using the timer type.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -51,7 +51,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount to increment to use when using the Counter metric type.
+         * Increment value when using the counter type.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -63,7 +63,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The amount to increment to use when using the Counter metric type.
+         * Increment value when using the counter type.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -75,7 +75,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a description within the metric metadata.
+         * Metric description.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -87,7 +87,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a display name within the metric metadata.
+         * Metric display name.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -99,7 +99,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Decrements a gauge value when using the ConcurrentGauge metric type.
+         * Decrement metric value when using concurrent gauge type.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -111,7 +111,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Decrements a gauge value when using the ConcurrentGauge metric type.
+         * Decrement metric value when using concurrent gauge type.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -124,7 +124,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Increments a gauge value when using the ConcurrentGauge metric type.
+         * Increment metric value when using the concurrent gauge type.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -136,7 +136,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Increments a gauge value when using the ConcurrentGauge metric type.
+         * Increment metric value when using the concurrent gauge type.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -149,7 +149,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the gauge value when using the Gauge metric type.
+         * Decrement metric value when using concurrent gauge type.
          * 
          * The option is a: <code>java.lang.Number</code> type.
          * 
@@ -160,7 +160,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the gauge value when using the Gauge metric type.
+         * Decrement metric value when using concurrent gauge type.
          * 
          * The option will be converted to a <code>java.lang.Number</code> type.
          * 
@@ -213,7 +213,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The mark value to set when using the Meter metric type.
+         * Mark value to set when using the meter type.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -224,7 +224,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The mark value to set when using the Meter metric type.
+         * Mark value to set when using the meter type.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -235,7 +235,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a metric unit within the metric metadata.
+         * Metric unit. See org.eclipse.microprofile.metrics.MetricUnits.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -258,7 +258,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The value to set when using the Histogram metric type.
+         * Value to set when using the histogram type.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -269,7 +269,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * The value to set when using the Histogram metric type.
+         * Value to set when using the histogram type.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -362,7 +362,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Path parameter: metricType (required)
          * Metric type
          * The value can be one of: concurrent gauge, counter, gauge, meter,
-         * histogram, timer, invalid
+         * histogram, timer, simple timer, invalid
          * 
          * Path parameter: metricName (required)
          * Metric name
@@ -385,7 +385,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
      * Path parameter: metricType (required)
      * Metric type
      * The value can be one of: concurrent gauge, counter, gauge, meter,
-     * histogram, timer, invalid
+     * histogram, timer, simple timer, invalid
      * 
      * Path parameter: metricName (required)
      * Metric name

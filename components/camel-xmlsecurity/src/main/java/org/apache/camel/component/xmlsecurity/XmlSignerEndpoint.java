@@ -40,7 +40,7 @@ public class XmlSignerEndpoint extends DefaultEndpoint {
     @UriParam
     private XmlSignerConfiguration configuration;
 
-    public XmlSignerEndpoint(String uri, XmlSignatureComponent component, XmlSignerConfiguration configuration) {
+    public XmlSignerEndpoint(String uri, XmlSignerComponent component, XmlSignerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

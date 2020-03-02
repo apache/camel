@@ -146,7 +146,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Sets the password of the private keys. It is assumed that all private
          * keys in the keystore have the same password. If not set then it is
          * assumed that the password of the private keys is given by the
-         * keystore password given in the KeyStoreParameters .
+         * keystore password given in the KeyStoreParameters.
          * 
          * The option is a: <code>char[]</code> type.
          * 
@@ -160,7 +160,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Sets the password of the private keys. It is assumed that all private
          * keys in the keystore have the same password. If not set then it is
          * assumed that the password of the private keys is given by the
-         * keystore password given in the KeyStoreParameters .
+         * keystore password given in the KeyStoreParameters.
          * 
          * The option will be converted to a <code>char[]</code> type.
          * 

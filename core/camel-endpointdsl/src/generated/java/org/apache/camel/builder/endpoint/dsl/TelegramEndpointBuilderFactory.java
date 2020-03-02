@@ -692,8 +692,8 @@ public interface TelegramEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set an alternative base URI, e.g. when you want to test the component
-         * against a mock Telegram API.
+         * Can be used to set an alternative base URI, e.g. when you want to
+         * test the component against a mock Telegram API.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -943,8 +943,8 @@ public interface TelegramEndpointBuilderFactory {
             return (TelegramEndpointProducerBuilder) this;
         }
         /**
-         * Set an alternative base URI, e.g. when you want to test the component
-         * against a mock Telegram API.
+         * Can be used to set an alternative base URI, e.g. when you want to
+         * test the component against a mock Telegram API.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1138,8 +1138,8 @@ public interface TelegramEndpointBuilderFactory {
             return (TelegramEndpointBuilder) this;
         }
         /**
-         * Set an alternative base URI, e.g. when you want to test the component
-         * against a mock Telegram API.
+         * Can be used to set an alternative base URI, e.g. when you want to
+         * test the component against a mock Telegram API.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

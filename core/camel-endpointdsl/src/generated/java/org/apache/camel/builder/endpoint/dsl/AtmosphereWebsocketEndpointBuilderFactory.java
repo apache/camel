@@ -460,7 +460,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
         }
         /**
          * Whether to automatic bind multipart/form-data as attachments on the
-         * Camel Exchange . The options attachmentMultipartBinding=true and
+         * Camel Exchange. The options attachmentMultipartBinding=true and
          * disableStreamCache=false cannot work together. Remove
          * disableStreamCache to use AttachmentMultipartBinding. This is turn
          * off by default as this may require servlet specific configuration to
@@ -478,7 +478,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
         }
         /**
          * Whether to automatic bind multipart/form-data as attachments on the
-         * Camel Exchange . The options attachmentMultipartBinding=true and
+         * Camel Exchange. The options attachmentMultipartBinding=true and
          * disableStreamCache=false cannot work together. Remove
          * disableStreamCache to use AttachmentMultipartBinding. This is turn
          * off by default as this may require servlet specific configuration to
