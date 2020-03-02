@@ -34,8 +34,6 @@
     <properties>
         <firstVersion>3.0</firstVersion>
         <label>core</label>
-
-        <camel-generate-main>true</camel-generate-main>
     </properties>
 
 
