@@ -1146,6 +1146,22 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * URL of the Confluent Platform schema registry servers to use. The
+         * format is host1:port1,host2:port2. This is known as
+         * schema.registry.url in the Confluent Platform documentation. This
+         * option is only available in the Confluent Platform (not standard
+         * Apache Kafka).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: confluent
+         */
+        default KafkaComponentBuilder schemaRegistryURL(
+                java.lang.String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
          * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
@@ -1266,8 +1282,8 @@ public interface KafkaComponentBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see a href=
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtmlhttp://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1474,6 +1490,18 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The password for the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default KafkaComponentBuilder sslTruststorePassword(
+                java.lang.String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
+            return this;
+        }
+        /**
          * The file format of the trust store file. Default value is JKS.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1484,34 +1512,6 @@ public interface KafkaComponentBuilderFactory {
         default KafkaComponentBuilder sslTruststoreType(
                 java.lang.String sslTruststoreType) {
             doSetProperty("sslTruststoreType", sslTruststoreType);
-            return this;
-        }
-        /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: confluent
-         */
-        default KafkaComponentBuilder schemaRegistryURL(
-                java.lang.String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
-         * The password for the trust store file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default KafkaComponentBuilder sslTruststorePassword(
-                java.lang.String sslTruststorePassword) {
-            doSetProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
         }
         /**
@@ -1620,6 +1620,7 @@ public interface KafkaComponentBuilderFactory {
             case "workerPoolCoreSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolCoreSize((java.lang.Integer) value); return true;
             case "workerPoolMaxSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolMaxSize((java.lang.Integer) value); return true;
             case "basicPropertyBinding": ((KafkaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;
             case "kerberosInitCmd": getOrCreateConfiguration((KafkaComponent) component).setKerberosInitCmd((java.lang.String) value); return true;
@@ -1643,9 +1644,8 @@ public interface KafkaComponentBuilderFactory {
             case "sslProvider": getOrCreateConfiguration((KafkaComponent) component).setSslProvider((java.lang.String) value); return true;
             case "sslTrustmanagerAlgorithm": getOrCreateConfiguration((KafkaComponent) component).setSslTrustmanagerAlgorithm((java.lang.String) value); return true;
             case "sslTruststoreLocation": getOrCreateConfiguration((KafkaComponent) component).setSslTruststoreLocation((java.lang.String) value); return true;
-            case "sslTruststoreType": getOrCreateConfiguration((KafkaComponent) component).setSslTruststoreType((java.lang.String) value); return true;
-            case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "sslTruststorePassword": getOrCreateConfiguration((KafkaComponent) component).setSslTruststorePassword((java.lang.String) value); return true;
+            case "sslTruststoreType": getOrCreateConfiguration((KafkaComponent) component).setSslTruststoreType((java.lang.String) value); return true;
             case "useGlobalSslContextParameters": ((KafkaComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }

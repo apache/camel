@@ -975,6 +975,22 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * URL of the Confluent Platform schema registry servers to use. The
+         * format is host1:port1,host2:port2. This is known as
+         * schema.registry.url in the Confluent Platform documentation. This
+         * option is only available in the Confluent Platform (not standard
+         * Apache Kafka).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: confluent
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryURL(
+                String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
          * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
@@ -1137,8 +1153,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see a href=
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtmlhttp://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1317,22 +1333,6 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointConsumerBuilder sslTruststoreType(
                 String sslTruststoreType) {
             doSetProperty("sslTruststoreType", sslTruststoreType);
-            return this;
-        }
-        /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: confluent
-         */
-        default KafkaEndpointConsumerBuilder schemaRegistryURL(
-                String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
     }
@@ -2561,6 +2561,22 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * URL of the Confluent Platform schema registry servers to use. The
+         * format is host1:port1,host2:port2. This is known as
+         * schema.registry.url in the Confluent Platform documentation. This
+         * option is only available in the Confluent Platform (not standard
+         * Apache Kafka).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: confluent
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryURL(
+                String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
          * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
@@ -2723,8 +2739,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see a href=
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtmlhttp://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2968,22 +2984,6 @@ public interface KafkaEndpointBuilderFactory {
             doSetProperty("sslTruststoreType", sslTruststoreType);
             return this;
         }
-        /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: confluent
-         */
-        default KafkaEndpointProducerBuilder schemaRegistryURL(
-                String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
     }
 
     /**
@@ -3191,6 +3191,21 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * URL of the Confluent Platform schema registry servers to use. The
+         * format is host1:port1,host2:port2. This is known as
+         * schema.registry.url in the Confluent Platform documentation. This
+         * option is only available in the Confluent Platform (not standard
+         * Apache Kafka).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: confluent
+         */
+        default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
+            return this;
+        }
+        /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
          * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
@@ -3351,8 +3366,8 @@ public interface KafkaEndpointBuilderFactory {
         }
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see a href=
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtmlhttp://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3527,21 +3542,6 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslTruststoreType(String sslTruststoreType) {
             doSetProperty("sslTruststoreType", sslTruststoreType);
-            return this;
-        }
-        /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: confluent
-         */
-        default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
     }
