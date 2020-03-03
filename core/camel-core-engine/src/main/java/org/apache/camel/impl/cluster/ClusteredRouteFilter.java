@@ -17,7 +17,7 @@
 package org.apache.camel.impl.cluster;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.NamedNode;
 
 @FunctionalInterface
 public interface ClusteredRouteFilter {
@@ -29,5 +29,5 @@ public interface ClusteredRouteFilter {
      * @param route the route definition
      * @return true if the route should be included
      */
-    boolean test(CamelContext camelContext, String routeId, RouteDefinition route);
+    boolean test(CamelContext camelContext, String routeId, NamedNode route);
 }
