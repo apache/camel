@@ -38,8 +38,8 @@ public class EndpointHelperTest {
 
         componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("schemaRegistryURL,sslTrustmanagerAlgorithm,sslTruststoreLocation,sslTruststorePassword," +
-                        "sslTruststoreType,useGlobalSslContextParameters",
+        assertEquals("schemaRegistryURL,sslTrustmanagerAlgorithm,sslTruststoreLocation,sslTruststorePassword,"
+                        + "sslTruststoreType,useGlobalSslContextParameters",
                 componentModel.getComponentOptions().stream()
                     .map(ComponentOptionModel::getName).collect(Collectors.joining(",")));
     }
@@ -51,11 +51,11 @@ public class EndpointHelperTest {
 
         componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("baseUri,clearHeaders,cryptoContextProperties,disallowDoctypeDecl," +
-                        "keySelector,omitXmlDeclaration,lazyStartProducer,outputNodeSearch,outputNodeSearchType," +
-                        "outputXmlEncoding,removeSignatureElements,schemaResourceUri,secureValidation," +
-                        "validationFailedHandler,xmlSignature2Message,xmlSignatureChecker,basicPropertyBinding," +
-                        "uriDereferencer,verifierConfiguration",
+        assertEquals("baseUri,clearHeaders,cryptoContextProperties,disallowDoctypeDecl,"
+                        + "keySelector,omitXmlDeclaration,lazyStartProducer,outputNodeSearch,outputNodeSearchType,"
+                        + "outputXmlEncoding,removeSignatureElements,schemaResourceUri,secureValidation,"
+                        + "validationFailedHandler,xmlSignature2Message,xmlSignatureChecker,basicPropertyBinding,"
+                        + "uriDereferencer,verifierConfiguration",
                 componentModel.getComponentOptions().stream()
                         .map(ComponentOptionModel::getName).collect(Collectors.joining(",")));
     }
