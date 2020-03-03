@@ -60,8 +60,6 @@ public class GenerateMojo extends AbstractGenerateMojo {
         invoke(ComponentDslMojo.class);
         // update-readme
         invoke(UpdateReadmeMojo.class);
-        // generate-xml-parser
-        invoke(ModelXmlParserGeneratorMojo.class);
     }
 
 }
