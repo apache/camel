@@ -54,7 +54,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlsecurityVerifyComponentBuilder baseUri(
                 java.lang.String baseUri) {
@@ -68,7 +68,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlsecurityVerifyComponentBuilder clearHeaders(
                 java.lang.Boolean clearHeaders) {
@@ -88,7 +88,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * The option is a: <code>java.util.Map<java.lang.String,
          * java.lang.Object></code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlsecurityVerifyComponentBuilder cryptoContextProperties(
                 java.util.Map<java.lang.String, java.lang.Object> cryptoContextProperties) {
@@ -102,7 +102,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlsecurityVerifyComponentBuilder disallowDoctypeDecl(
                 java.lang.Boolean disallowDoctypeDecl) {
@@ -122,6 +122,27 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default XmlsecurityVerifyComponentBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * Indicator whether the XML declaration in the outgoing message body
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
@@ -129,7 +150,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: producer
          */
         default XmlsecurityVerifyComponentBuilder omitXmlDeclaration(
                 java.lang.Boolean omitXmlDeclaration) {
@@ -173,7 +194,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlsecurityVerifyComponentBuilder outputXmlEncoding(
                 java.lang.String outputXmlEncoding) {
@@ -210,32 +231,11 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlsecurityVerifyComponentBuilder schemaResourceUri(
                 java.lang.String schemaResourceUri) {
             doSetProperty("schemaResourceUri", schemaResourceUri);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         */
-        default XmlsecurityVerifyComponentBuilder lazyStartProducer(
-                boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -393,13 +393,13 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
             case "cryptoContextProperties": getOrCreateConfiguration((XmlVerifierComponent) component).setCryptoContextProperties((java.util.Map) value); return true;
             case "disallowDoctypeDecl": getOrCreateConfiguration((XmlVerifierComponent) component).setDisallowDoctypeDecl((java.lang.Boolean) value); return true;
             case "keySelector": getOrCreateConfiguration((XmlVerifierComponent) component).setKeySelector((javax.xml.crypto.KeySelector) value); return true;
+            case "lazyStartProducer": ((XmlVerifierComponent) component).setLazyStartProducer((boolean) value); return true;
             case "omitXmlDeclaration": getOrCreateConfiguration((XmlVerifierComponent) component).setOmitXmlDeclaration((java.lang.Boolean) value); return true;
             case "outputNodeSearch": getOrCreateConfiguration((XmlVerifierComponent) component).setOutputNodeSearch((java.lang.Object) value); return true;
             case "outputNodeSearchType": getOrCreateConfiguration((XmlVerifierComponent) component).setOutputNodeSearchType((java.lang.String) value); return true;
             case "outputXmlEncoding": getOrCreateConfiguration((XmlVerifierComponent) component).setOutputXmlEncoding((java.lang.String) value); return true;
             case "removeSignatureElements": getOrCreateConfiguration((XmlVerifierComponent) component).setRemoveSignatureElements((java.lang.Boolean) value); return true;
             case "schemaResourceUri": getOrCreateConfiguration((XmlVerifierComponent) component).setSchemaResourceUri((java.lang.String) value); return true;
-            case "lazyStartProducer": ((XmlVerifierComponent) component).setLazyStartProducer((boolean) value); return true;
             case "secureValidation": getOrCreateConfiguration((XmlVerifierComponent) component).setSecureValidation((java.lang.Boolean) value); return true;
             case "validationFailedHandler": getOrCreateConfiguration((XmlVerifierComponent) component).setValidationFailedHandler((org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler) value); return true;
             case "xmlSignature2Message": getOrCreateConfiguration((XmlVerifierComponent) component).setXmlSignature2Message((org.apache.camel.component.xmlsecurity.api.XmlSignature2Message) value); return true;
