@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.qute;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -43,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "qute", title = "Qute", syntax = "qute:resourceUri", producerOnly = true, label = "transformation")
 public class QuteEndpoint extends ResourceEndpoint {
-    private Engine quarkusEngine;
+    private Engine quteEngine;
 
     @UriParam
     private String encoding;
@@ -60,19 +59,19 @@ public class QuteEndpoint extends ResourceEndpoint {
         return "qute:" + getResourceUri();
     }
 
-    public void setQuarkusEngine(Engine engine) {
-        this.quarkusEngine = engine;
+    public void setQuteEngine(Engine engine) {
+        this.quteEngine = engine;
     }
 
-    private synchronized Engine getQuarkusEngine() {
-        if (quarkusEngine == null) {
+    private synchronized Engine getQuteEngine() {
+        if (quteEngine == null) {
             EngineBuilder builder = Engine.builder().addDefaults();
             builder.addValueResolver(ReflectionValueResolver::new);
             builder.addLocator(this::locate);
 
-            quarkusEngine = builder.build();
+            quteEngine = builder.build();
         }
-        return quarkusEngine;
+        return quteEngine;
     }
 
     private Optional<TemplateLocation> locate(String path) {
@@ -99,7 +98,7 @@ public class QuteEndpoint extends ResourceEndpoint {
                     Reader reader = getEncoding() != null ? new InputStreamReader(in, getEncoding()) : new InputStreamReader(in);
                     return reader;
                 } catch (Exception e) {
-                    log.warn("can not load template " + path + " due to " + e);
+                    log.warn("Can not load template " + path + " due to " + e);
                     return null;
                 }
             }
@@ -158,12 +157,12 @@ public class QuteEndpoint extends ResourceEndpoint {
             exchange.getIn().removeHeader(QuteConstants.QUTE_TEMPLATE_INSTANCE);
         } else {
             Template template;
+            Engine engine = getQuteEngine();
             if (content == null) {
-                quarkusEngine = getQuarkusEngine();
-                template = quarkusEngine.getTemplate(path);
+                template = engine.getTemplate(path);
             } else {
                 // This is the first time to parse the content
-                template = quarkusEngine.parse(content);
+                template = engine.parse(content);
             }
             instance = template.instance();
         }

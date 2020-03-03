@@ -29,19 +29,19 @@ import org.apache.camel.support.ResourceHelper;
 public class QuteComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
-    private Engine quarkusEngine;
+    private Engine quteEngine;
 
     public QuteComponent() {
     }
 
-    public Engine getQuarkusEngine() {
-        return quarkusEngine;
+    public Engine getQuteEngine() {
+        return quteEngine;
     }
     /**
      * To use the {@link Engine} otherwise a new engine is created
      */
-    public void setQuarkusEngine(Engine quarkusEngine) {
-        this.quarkusEngine = quarkusEngine;
+    public void setQuteEngine(Engine quteEngine) {
+        this.quteEngine = quteEngine;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class QuteComponent extends DefaultComponent {
         QuteEndpoint answer = new QuteEndpoint(uri, this, remaining);
         setProperties(answer, parameters);
         answer.setContentCache(cache);
-        answer.setQuarkusEngine(quarkusEngine);
+        answer.setQuteEngine(quteEngine);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {

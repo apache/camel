@@ -87,9 +87,9 @@ public interface QuteComponentBuilderFactory {
          * 
          * Group: advanced
          */
-        default QuteComponentBuilder quarkusEngine(
-                io.quarkus.qute.Engine quarkusEngine) {
-            doSetProperty("quarkusEngine", quarkusEngine);
+        default QuteComponentBuilder quteEngine(
+                io.quarkus.qute.Engine quteEngine) {
+            doSetProperty("quteEngine", quteEngine);
             return this;
         }
     }
@@ -111,7 +111,7 @@ public interface QuteComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((QuteComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((QuteComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "quarkusEngine": ((QuteComponent) component).setQuarkusEngine((io.quarkus.qute.Engine) value); return true;
+            case "quteEngine": ((QuteComponent) component).setQuteEngine((io.quarkus.qute.Engine) value); return true;
             default: return false;
             }
         }

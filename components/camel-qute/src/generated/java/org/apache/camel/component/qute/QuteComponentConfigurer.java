@@ -19,8 +19,8 @@ public class QuteComponentConfigurer extends PropertyConfigurerSupport implement
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "quarkusengine":
-        case "quarkusEngine": target.setQuarkusEngine(property(camelContext, io.quarkus.qute.Engine.class, value)); return true;
+        case "quteengine":
+        case "quteEngine": target.setQuteEngine(property(camelContext, io.quarkus.qute.Engine.class, value)); return true;
         default: return false;
         }
     }
