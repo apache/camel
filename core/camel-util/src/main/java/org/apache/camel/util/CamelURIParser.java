@@ -23,6 +23,9 @@ package org.apache.camel.util;
  * Camel does not use or need.
  */
 public final class CamelURIParser {
+ 
+    private CamelURIParser() {
+    }
 
     /**
      * Parses the URI.
