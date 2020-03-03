@@ -64,6 +64,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-languages</artifactId>
+        </dependency>
         <!-- and use the caffeine lrucache which is the best LRU cache implementation -->
         <dependency>
             <groupId>org.apache.camel</groupId>
