@@ -16,75 +16,26 @@
  */
 package org.apache.camel.component.snakeyaml.custom;
 
-import java.util.List;
-import java.util.Map;
-
-import org.yaml.snakeyaml.constructor.ConstructorException;
-import org.yaml.snakeyaml.error.Mark;
-import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 /**
- * A CustomClassLoaderConstructor which picks up the options to disallow recursive keys
- *
- * NOTE - If this PR gets applied then we can remove it:
- * https://bitbucket.org/asomov/snakeyaml/pull-requests/55/allow-configuration-for-preventing-billion/diff
+ * A CustomClassLoaderConstructor which allows to set the LoaderOptions
  */
-public class CustomClassLoaderConstructor extends org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor {
+public class CustomClassLoaderConstructor extends Constructor {
 
-    private boolean allowRecursiveKeys;
+    private ClassLoader loader = this.getClass().getClassLoader();
 
-    public CustomClassLoaderConstructor(ClassLoader cLoader) {
-        super(cLoader);
-    }
-
-    public CustomClassLoaderConstructor(Class<? extends Object> theRoot, ClassLoader theLoader) {
-        super(theRoot, theLoader);
+    public CustomClassLoaderConstructor(ClassLoader theLoader, LoaderOptions options) {
+        super(Object.class, options);
+        if (theLoader == null) {
+            throw new NullPointerException("Loader must be provided.");
+        }
+        this.loader = theLoader;
     }
 
     @Override
-    protected void constructMapping2ndStep(MappingNode node, Map<Object, Object> mapping) {
-        List<NodeTuple> nodeValue = node.getValue();
-        for (NodeTuple tuple : nodeValue) {
-            Node keyNode = tuple.getKeyNode();
-            Node valueNode = tuple.getValueNode();
-            Object key = constructObject(keyNode);
-            if (key != null) {
-                try {
-                    key.hashCode(); // check circular dependencies
-                } catch (Exception e) {
-                    throw new CustomConstructorException("while constructing a mapping",
-                            node.getStartMark(), "found unacceptable key " + key,
-                            tuple.getKeyNode().getStartMark(), e);
-                }
-            }
-            Object value = constructObject(valueNode);
-            if (keyNode.isTwoStepsConstruction()) {
-                if (allowRecursiveKeys) {
-                    postponeMapFilling(mapping, key, value);
-                } else {
-                    throw new YAMLException("Recursive key for mapping is detected but it is not configured to be allowed.");
-                }
-            } else {
-                mapping.put(key, value);
-            }
-        }
-    }
-
-    public boolean isAllowRecursiveKeys() {
-        return allowRecursiveKeys;
-    }
-
-    public void setAllowRecursiveKeys(boolean allowRecursiveKeys) {
-        this.allowRecursiveKeys = allowRecursiveKeys;
-    }
-
-    private static class CustomConstructorException extends ConstructorException {
-        public CustomConstructorException(String context, Mark contextMark, String problem,
-                                       Mark problemMark, Throwable cause) {
-            super(context, contextMark, problem, problemMark, cause);
-        }
+    protected Class<?> getClassForName(String name) throws ClassNotFoundException {
+        return Class.forName(name, true, loader);
     }
 }
