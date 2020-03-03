@@ -16,7 +16,7 @@
     "firstVersion": "2.18.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ehcache",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.1.1-SNAPSHOT"
   },
   "componentProperties": {
     "cacheConfiguration": { "kind": "property", "displayName": "Cache Configuration", "group": "common", "required": false, "type": "object", "javaType": "org.ehcache.config.CacheConfiguration", "deprecated": false, "secret": false, "description": "The default cache configuration to be used to create caches." },

@@ -16,7 +16,7 @@
     "firstVersion": "2.24.0",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pulsar",
-    "version": "3.1.0-SNAPSHOT"
+    "version": "3.1.1-SNAPSHOT"
   },
   "componentProperties": {
     "allowManualAcknowledgement": { "kind": "property", "displayName": "Allow Manual Acknowledgement", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Whether to allow manual message acknowledgements. If this option is enabled, then messages are not immediately acknowledged after being consumed. Instead, an instance of PulsarMessageReceipt is stored as a header on the org.apache.camel.Exchange. Messages can then be acknowledged using PulsarMessageReceipt at any time before the ackTimeout occurs." },

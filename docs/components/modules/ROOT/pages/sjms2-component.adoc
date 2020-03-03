@@ -89,7 +89,7 @@ You append query options to the URI using the following format,
 
 
 // component options: START
-The Simple JMS2 component supports 17 options, which are listed below.
+The Simple JMS2 component supports 19 options, which are listed below.
 
 
 
@@ -98,6 +98,8 @@ The Simple JMS2 component supports 17 options, which are listed below.
 | Name | Description | Default | Type
 | *connectionCount* (common) | The maximum number of connections available to endpoints started under this component | 1 | Integer
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *reconnectBackOff* (consumer) | Backoff in millis on consumer pool reconnection attempts | 5000 | long
+| *reconnectOnError* (consumer) | Try to apply reconnection logic on consumer pool | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *connectionClientId* (advanced) | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
@@ -143,7 +145,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (39 parameters):
+=== Query Parameters (41 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -154,6 +156,8 @@ with the following path and query parameters:
 | *consumerCount* (consumer) | Sets the number of consumer listeners used for this endpoint. | 1 | int
 | *durable* (consumer) | Sets topic consumer to durable. | false | boolean
 | *durableSubscriptionId* (consumer) | Sets the durable subscription Id required for durable topics. |  | String
+| *reconnectBackOff* (consumer) | Backoff in millis on consumer pool reconnection attempts | 5000 | long
+| *reconnectOnError* (consumer) | Try to apply reconnection logic on consumer pool | true | boolean
 | *shared* (consumer) | Sets the consumer to shared. | false | boolean
 | *subscriptionId* (consumer) | Sets the subscription Id, required for durable or shared topics. |  | String
 | *synchronous* (consumer) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | true | boolean
