@@ -3522,7 +3522,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getPackageScanClassResolver();
         try {
             getRestRegistryFactory();
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
             // ignore in case camel-rest is not on the classpath
         }
         getReactiveExecutor();
@@ -3554,7 +3554,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getUnitOfWorkFactory();
         getRouteController();
         try {
-            addService(getBeanProxyFactory());
+            getBeanProxyFactory();
             getBeanProcessorFactory();
         } catch (Exception e) {
             // ignore in case camel-bean is not on the classpath
