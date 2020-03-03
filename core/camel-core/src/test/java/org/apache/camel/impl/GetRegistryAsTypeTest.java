@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class GetRegistryAsTypeTest extends Assert {
         assertNotNull(context.getRegistry());
 
         assertNull(context.getRegistry(Map.class));
-        assertNull(context.getRegistry(JndiRegistry.class));
+        assertNull(context.getRegistry(JndiBeanRepository.class));
         assertNull(context.getRegistry(SimpleRegistry.class));
 
         context.stop();
@@ -51,7 +52,7 @@ public class GetRegistryAsTypeTest extends Assert {
 
         // simple extends Map
         assertNotNull(context.getRegistry(Map.class));
-        assertNull(context.getRegistry(JndiRegistry.class));
+        assertNull(context.getRegistry(JndiBeanRepository.class));
 
         context.stop();
     }

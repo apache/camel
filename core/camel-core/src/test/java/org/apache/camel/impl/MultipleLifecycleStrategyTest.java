@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.log.LogComponent;
-import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
 public class MultipleLifecycleStrategyTest extends TestSupport {
@@ -32,7 +31,7 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
     private DummyLifecycleStrategy dummy2 = new DummyLifecycleStrategy();
 
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(new JndiContext());
+        CamelContext context = new DefaultCamelContext();
         context.addLifecycleStrategy(dummy1);
         context.addLifecycleStrategy(dummy2);
         return context;

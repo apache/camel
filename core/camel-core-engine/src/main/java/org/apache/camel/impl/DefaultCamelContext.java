@@ -18,8 +18,6 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
-import javax.naming.Context;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.TypeConverter;
@@ -126,19 +124,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
      */
     public DefaultCamelContext(BeanRepository repository) {
         super(new DefaultRegistry(repository));
-    }
-
-    /**
-     * Creates the {@link CamelContext} using the given JNDI context as the
-     * registry
-     *
-     * @param jndiContext the JNDI context
-     * @deprecated create a new {@link JndiRegistry} and use the constructor
-     *             that accepts this registry.
-     */
-    @Deprecated
-    public DefaultCamelContext(Context jndiContext) {
-        this(new JndiRegistry(jndiContext));
     }
 
     /**
