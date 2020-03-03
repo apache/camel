@@ -37,6 +37,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
  * The properties component allows you to use property placeholders in Camel.
  */
 @ManagedResource(description = "Managed PropertiesComponent")
+@JdkService(org.apache.camel.spi.PropertiesComponent.FACTORY)
 public class PropertiesComponent extends ServiceSupport implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 
     /**

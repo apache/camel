@@ -23,11 +23,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanProcessorFactory;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@JdkService(BeanProcessorFactory.FACTORY)
 public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanProcessorFactory.class);

@@ -40,7 +40,7 @@ public class ReactiveExecutorResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("reactive-executor", context);
+            type = findFactory(ReactiveExecutor.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

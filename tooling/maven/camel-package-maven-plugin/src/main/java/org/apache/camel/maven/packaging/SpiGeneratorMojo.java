@@ -142,7 +142,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                 for (String pval : pvals.split(",")) {
                     if (ServiceFactory.JDK_SERVICE.equals(sfa.value().asString())) {
                         updateResource(resourcesOutputDir.toPath(),
-                                "META-INF/services/" + pval.replace('.', '/'),
+                                "META-INF/services/org/apache/camel/" + pval,
                                 "# " + GENERATED_MSG + NL + "class=" + className + NL);
                     } else {
                         StringBuilder sb = new StringBuilder();

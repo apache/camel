@@ -20,6 +20,7 @@ import io.vertx.core.Vertx;
 import org.apache.camel.Experimental;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.ReactiveExecutor;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
  * NOTE: This is an experimental implementation (use with care)
  */
 @Experimental
+@JdkService(ReactiveExecutor.FACTORY)
 public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExecutor, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertXReactiveExecutor.class);

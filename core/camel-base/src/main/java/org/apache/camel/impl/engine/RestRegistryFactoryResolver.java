@@ -42,7 +42,7 @@ public class RestRegistryFactoryResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("rest-registry-factory", context);
+            type = findFactory(RestRegistryFactory.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

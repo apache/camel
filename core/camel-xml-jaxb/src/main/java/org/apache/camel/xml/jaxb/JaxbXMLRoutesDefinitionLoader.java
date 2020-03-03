@@ -48,6 +48,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
@@ -56,6 +57,7 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
  * JAXB based {@link XMLRoutesDefinitionLoader}. This is the default loader used historically by Camel.
  * The camel-xml-io parser is a light-weight alternative.
  */
+@JdkService(XMLRoutesDefinitionLoader.FACTORY)
 public class JaxbXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
 
     @Override

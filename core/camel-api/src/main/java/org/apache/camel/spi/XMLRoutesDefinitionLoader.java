@@ -28,6 +28,11 @@ import org.apache.camel.NamedNode;
 public interface XMLRoutesDefinitionLoader {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "xmlroutes-loader";
+
+    /**
      * Loads from XML into routes.
      */
     Object loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception;
