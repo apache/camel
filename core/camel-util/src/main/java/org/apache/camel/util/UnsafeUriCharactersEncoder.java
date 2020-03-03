@@ -95,21 +95,6 @@ public final class UnsafeUriCharactersEncoder {
         return !unsafeCharactersFastParser.get(ch);
     }
 
-    public static boolean isSafeFastParser(String s) {
-        int len = s.length();
-        for (int i = 0; i < len; i++) {
-            char ch = s.charAt(i);
-            if (ch > 128) {
-                // must be an ascii char
-                return false;
-            }
-            if (unsafeCharactersFastParser.get(ch)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static String encode(String s) {
         return encode(s, unsafeCharactersRfc1738);
     }
