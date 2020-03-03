@@ -19,8 +19,10 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.junit.jupiter.api.Test;
@@ -30,18 +32,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EndpointHelperTest {
 
     @Test
-    public void testIfCreateJavaClassCorrectly() throws IOException {
+    public void testSort1() throws IOException {
         final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component3.json")).getFile()));
         final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
 
         componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
 
-        assertEquals("schemaRegistryURL", componentModel.getComponentOptions().get(0).getName());
-        assertEquals("sslTrustmanagerAlgorithm", componentModel.getComponentOptions().get(1).getName());
-        assertEquals("sslTruststoreLocation", componentModel.getComponentOptions().get(2).getName());
-        assertEquals("sslTruststorePassword", componentModel.getComponentOptions().get(3).getName());
-        assertEquals("sslTruststoreType", componentModel.getComponentOptions().get(4).getName());
-        assertEquals("useGlobalSslContextParameters", componentModel.getComponentOptions().get(5).getName());
+        assertEquals("schemaRegistryURL,sslTrustmanagerAlgorithm,sslTruststoreLocation,sslTruststorePassword," +
+                        "sslTruststoreType,useGlobalSslContextParameters",
+                componentModel.getComponentOptions().stream()
+                    .map(ComponentOptionModel::getName).collect(Collectors.joining(",")));
+    }
+
+    @Test
+    public void testSort2() throws IOException {
+        final String json = PackageHelper.loadText(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("json/test_component4.json")).getFile()));
+        final ComponentModel componentModel = JsonMapper.generateComponentModel(json);
+
+        componentModel.getComponentOptions().sort(EndpointHelper.createGroupAndLabelComparator());
+
+        assertEquals("baseUri,clearHeaders,cryptoContextProperties,disallowDoctypeDecl," +
+                        "keySelector,omitXmlDeclaration,lazyStartProducer,outputNodeSearch,outputNodeSearchType," +
+                        "outputXmlEncoding,removeSignatureElements,schemaResourceUri,secureValidation," +
+                        "validationFailedHandler,xmlSignature2Message,xmlSignatureChecker,basicPropertyBinding," +
+                        "uriDereferencer,verifierConfiguration",
+                componentModel.getComponentOptions().stream()
+                        .map(ComponentOptionModel::getName).collect(Collectors.joining(",")));
     }
 
 }

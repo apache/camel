@@ -32,19 +32,19 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public abstract class XmlSignatureConfiguration implements Cloneable {
 
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private String baseUri;
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private Map<String, ?> cryptoContextProperties;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "producer", defaultValue = "false")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private String schemaResourceUri;
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private String outputXmlEncoding;
     @UriParam(label = "advanced")
     private URIDereferencer uriDereferencer;

@@ -70,7 +70,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlsecuritySignComponentBuilder baseUri(java.lang.String baseUri) {
             doSetProperty("baseUri", baseUri);
@@ -100,7 +100,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlsecuritySignComponentBuilder clearHeaders(
                 java.lang.Boolean clearHeaders) {
@@ -165,7 +165,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * The option is a: <code>java.util.Map<java.lang.String,
          * java.lang.Object></code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlsecuritySignComponentBuilder cryptoContextProperties(
                 java.util.Map<java.lang.String, java.lang.Object> cryptoContextProperties) {
@@ -195,7 +195,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlsecuritySignComponentBuilder disallowDoctypeDecl(
                 java.lang.Boolean disallowDoctypeDecl) {
@@ -222,34 +222,6 @@ public interface XmlsecuritySignComponentBuilderFactory {
             return this;
         }
         /**
-         * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is false. Can be overwritten by the
-         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default XmlsecuritySignComponentBuilder omitXmlDeclaration(
-                java.lang.Boolean omitXmlDeclaration) {
-            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
-            return this;
-        }
-        /**
-         * The character encoding of the resulting signed XML document. If null
-         * then the encoding of the original XML document is used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmlsecuritySignComponentBuilder outputXmlEncoding(
-                java.lang.String outputXmlEncoding) {
-            doSetProperty("outputXmlEncoding", outputXmlEncoding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -268,6 +240,34 @@ public interface XmlsecuritySignComponentBuilderFactory {
         default XmlsecuritySignComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Indicator whether the XML declaration in the outgoing message body
+         * should be omitted. Default value is false. Can be overwritten by the
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default XmlsecuritySignComponentBuilder omitXmlDeclaration(
+                java.lang.Boolean omitXmlDeclaration) {
+            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
+            return this;
+        }
+        /**
+         * The character encoding of the resulting signed XML document. If null
+         * then the encoding of the original XML document is used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default XmlsecuritySignComponentBuilder outputXmlEncoding(
+                java.lang.String outputXmlEncoding) {
+            doSetProperty("outputXmlEncoding", outputXmlEncoding);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlsecuritySignComponentBuilder schemaResourceUri(
                 java.lang.String schemaResourceUri) {
@@ -555,9 +555,9 @@ public interface XmlsecuritySignComponentBuilderFactory {
             case "digestAlgorithm": getOrCreateConfiguration((XmlSignerComponent) component).setDigestAlgorithm((java.lang.String) value); return true;
             case "disallowDoctypeDecl": getOrCreateConfiguration((XmlSignerComponent) component).setDisallowDoctypeDecl((java.lang.Boolean) value); return true;
             case "keyAccessor": getOrCreateConfiguration((XmlSignerComponent) component).setKeyAccessor((org.apache.camel.component.xmlsecurity.api.KeyAccessor) value); return true;
+            case "lazyStartProducer": ((XmlSignerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "omitXmlDeclaration": getOrCreateConfiguration((XmlSignerComponent) component).setOmitXmlDeclaration((java.lang.Boolean) value); return true;
             case "outputXmlEncoding": getOrCreateConfiguration((XmlSignerComponent) component).setOutputXmlEncoding((java.lang.String) value); return true;
-            case "lazyStartProducer": ((XmlSignerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "parentLocalName": getOrCreateConfiguration((XmlSignerComponent) component).setParentLocalName((java.lang.String) value); return true;
             case "parentNamespace": getOrCreateConfiguration((XmlSignerComponent) component).setParentNamespace((java.lang.String) value); return true;
             case "parentXpath": getOrCreateConfiguration((XmlSignerComponent) component).setParentXpath((javax.xml.crypto.dsig.spec.XPathFilterParameterSpec) value); return true;

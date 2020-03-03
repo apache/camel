@@ -46,7 +46,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder baseUri(String baseUri) {
             doSetProperty("baseUri", baseUri);
@@ -59,7 +59,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder clearHeaders(Boolean clearHeaders) {
             doSetProperty("clearHeaders", clearHeaders);
@@ -73,7 +73,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder clearHeaders(String clearHeaders) {
             doSetProperty("clearHeaders", clearHeaders);
@@ -92,7 +92,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder cryptoContextProperties(
                 Map<String, Object> cryptoContextProperties) {
@@ -113,7 +113,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder cryptoContextProperties(
                 String cryptoContextProperties) {
@@ -127,7 +127,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder disallowDoctypeDecl(
                 Boolean disallowDoctypeDecl) {
@@ -142,7 +142,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder disallowDoctypeDecl(
                 String disallowDoctypeDecl) {
@@ -170,37 +170,6 @@ public interface XmlVerifierEndpointBuilderFactory {
          */
         default XmlVerifierEndpointBuilder keySelector(String keySelector) {
             doSetProperty("keySelector", keySelector);
-            return this;
-        }
-        /**
-         * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is false. Can be overwritten by the
-         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default XmlVerifierEndpointBuilder omitXmlDeclaration(
-                Boolean omitXmlDeclaration) {
-            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
-            return this;
-        }
-        /**
-         * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is false. Can be overwritten by the
-         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default XmlVerifierEndpointBuilder omitXmlDeclaration(
-                String omitXmlDeclaration) {
-            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
             return this;
         }
         /**
@@ -243,6 +212,37 @@ public interface XmlVerifierEndpointBuilderFactory {
         default XmlVerifierEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Indicator whether the XML declaration in the outgoing message body
+         * should be omitted. Default value is false. Can be overwritten by the
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default XmlVerifierEndpointBuilder omitXmlDeclaration(
+                Boolean omitXmlDeclaration) {
+            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
+            return this;
+        }
+        /**
+         * Indicator whether the XML declaration in the outgoing message body
+         * should be omitted. Default value is false. Can be overwritten by the
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default XmlVerifierEndpointBuilder omitXmlDeclaration(
+                String omitXmlDeclaration) {
+            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
             return this;
         }
         /**
@@ -297,7 +297,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder outputXmlEncoding(
                 String outputXmlEncoding) {
@@ -355,7 +355,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlVerifierEndpointBuilder schemaResourceUri(
                 String schemaResourceUri) {

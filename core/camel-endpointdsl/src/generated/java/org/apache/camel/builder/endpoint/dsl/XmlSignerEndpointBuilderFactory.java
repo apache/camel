@@ -78,7 +78,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder baseUri(String baseUri) {
             doSetProperty("baseUri", baseUri);
@@ -126,7 +126,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder clearHeaders(Boolean clearHeaders) {
             doSetProperty("clearHeaders", clearHeaders);
@@ -140,7 +140,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder clearHeaders(String clearHeaders) {
             doSetProperty("clearHeaders", clearHeaders);
@@ -203,7 +203,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder cryptoContextProperties(
                 Map<String, Object> cryptoContextProperties) {
@@ -224,7 +224,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder cryptoContextProperties(
                 String cryptoContextProperties) {
@@ -253,7 +253,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder disallowDoctypeDecl(
                 Boolean disallowDoctypeDecl) {
@@ -268,7 +268,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * type.
          * 
          * Default: true
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder disallowDoctypeDecl(
                 String disallowDoctypeDecl) {
@@ -312,50 +312,6 @@ public interface XmlSignerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is false. Can be overwritten by the
-         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default XmlSignerEndpointBuilder omitXmlDeclaration(
-                Boolean omitXmlDeclaration) {
-            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
-            return this;
-        }
-        /**
-         * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is false. Can be overwritten by the
-         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default XmlSignerEndpointBuilder omitXmlDeclaration(
-                String omitXmlDeclaration) {
-            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
-            return this;
-        }
-        /**
-         * The character encoding of the resulting signed XML document. If null
-         * then the encoding of the original XML document is used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmlSignerEndpointBuilder outputXmlEncoding(
-                String outputXmlEncoding) {
-            doSetProperty("outputXmlEncoding", outputXmlEncoding);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -395,6 +351,50 @@ public interface XmlSignerEndpointBuilderFactory {
         default XmlSignerEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Indicator whether the XML declaration in the outgoing message body
+         * should be omitted. Default value is false. Can be overwritten by the
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default XmlSignerEndpointBuilder omitXmlDeclaration(
+                Boolean omitXmlDeclaration) {
+            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
+            return this;
+        }
+        /**
+         * Indicator whether the XML declaration in the outgoing message body
+         * should be omitted. Default value is false. Can be overwritten by the
+         * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default XmlSignerEndpointBuilder omitXmlDeclaration(
+                String omitXmlDeclaration) {
+            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
+            return this;
+        }
+        /**
+         * The character encoding of the resulting signed XML document. If null
+         * then the encoding of the original XML document is used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default XmlSignerEndpointBuilder outputXmlEncoding(
+                String outputXmlEncoding) {
+            doSetProperty("outputXmlEncoding", outputXmlEncoding);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: producer
          */
         default XmlSignerEndpointBuilder schemaResourceUri(
                 String schemaResourceUri) {
