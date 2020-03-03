@@ -25,6 +25,11 @@ import javax.xml.bind.JAXBException;
 public interface ModelJAXBContextFactory {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "model-jaxbcontext-factory";
+
+    /**
      * Creates a new {@link javax.xml.bind.JAXBContext} used for loading the Camel model
      *
      * @return a new JAXBContext
