@@ -82,7 +82,7 @@ The component supports 19 options, which are listed below.
 | *camel.dataformat.jaxb.xml-stream-writer-wrapper* | To use a custom xml stream writer. |  | String
 |===
 // spring-boot-auto-configure options: END
-ND
+
 
 == Using the Java DSL
 
@@ -163,7 +163,7 @@ false.
 
 == Ignoring the NonXML Character
 
- JaxbDataFromat supports to ignore the
+ JaxbDataFormat supports to ignore the
 http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char[NonXML Character],
 you just need to set the filterNonXmlChars property to be true,
 JaxbDataFormat will replace the NonXML character with " " when it is
