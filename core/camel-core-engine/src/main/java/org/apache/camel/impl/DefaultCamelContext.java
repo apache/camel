@@ -218,7 +218,10 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
-        return new DefaultModelJAXBContextFactory();
+        return new BaseServiceResolver<>(ModelJAXBContextFactory.FACTORY, ModelJAXBContextFactory.class)
+                .resolve(this)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find ModelJAXBContextFactory on classpath. "
+                        + "Add camel-xml-jaxb to classpath."));
     }
 
     @Override

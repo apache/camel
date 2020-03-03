@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.camel.impl.DefaultModelJAXBContextFactory;
+import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;

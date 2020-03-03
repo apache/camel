@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.xml.jaxb;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.Constants;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * Default implementation of
  * {@link org.apache.camel.spi.ModelJAXBContextFactory}.
  */
+@JdkService(ModelJAXBContextFactory.FACTORY)
 public class DefaultModelJAXBContextFactory implements ModelJAXBContextFactory {
 
     private volatile JAXBContext context;

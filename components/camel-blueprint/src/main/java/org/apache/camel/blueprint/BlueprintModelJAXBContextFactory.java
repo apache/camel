@@ -20,7 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
-import org.apache.camel.impl.DefaultModelJAXBContextFactory;
+import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
 
 public class BlueprintModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
