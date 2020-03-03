@@ -26,8 +26,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.BeanProcessorFactoryResolver;
-import org.apache.camel.impl.engine.BeanProxyFactoryResolver;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
 import org.apache.camel.impl.engine.DefaultBeanIntrospection;
 import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
@@ -38,6 +36,7 @@ import org.apache.camel.impl.engine.DefaultConfigurerResolver;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
 import org.apache.camel.impl.engine.DefaultEndpointRegistry;
 import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
+import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.apache.camel.impl.engine.DefaultInflightRepository;
 import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
@@ -47,6 +46,7 @@ import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanResourceResolver;
 import org.apache.camel.impl.engine.DefaultProcessorFactory;
+import org.apache.camel.impl.engine.DefaultReactiveExecutor;
 import org.apache.camel.impl.engine.DefaultRouteController;
 import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.apache.camel.impl.engine.DefaultStreamCachingStrategy;
@@ -54,12 +54,8 @@ import org.apache.camel.impl.engine.DefaultTracer;
 import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
 import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.impl.engine.EndpointKey;
-import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
-import org.apache.camel.impl.engine.PropertiesComponentFactoryResolver;
-import org.apache.camel.impl.engine.ReactiveExecutorResolver;
-import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
-import org.apache.camel.impl.engine.RuntimeCamelCatalogResolver;
 import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
+import org.apache.camel.impl.engine.BaseServiceResolver;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -170,7 +166,8 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter(this, getPackageScanClassResolver(), getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
+        return new DefaultTypeConverter(this, getPackageScanClassResolver(), getInjector(),
+                getDefaultFactoryFinder(), isLoadTypeConverters());
     }
 
     @Override
@@ -194,7 +191,9 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected PropertiesComponent createPropertiesComponent() {
-        return new PropertiesComponentFactoryResolver().resolve(this);
+        return new BaseServiceResolver<>(PropertiesComponent.FACTORY, PropertiesComponent.class)
+                .resolve(this)
+                .orElseGet(org.apache.camel.component.properties.PropertiesComponent::new);
     }
 
     @Override
@@ -307,7 +306,10 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
-        return new RuntimeCamelCatalogResolver().resolve(this);
+        return new BaseServiceResolver<>(RuntimeCamelCatalog.FACTORY, RuntimeCamelCatalog.class)
+                .resolve(this)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find RuntimeCamelCatalog on classpath. "
+                        + "Add camel-core-catalog to classpath."));
     }
 
     @Override
@@ -322,17 +324,25 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected HeadersMapFactory createHeadersMapFactory() {
-        return new HeadersMapFactoryResolver().resolve(this);
+        return new BaseServiceResolver<>(HeadersMapFactory.FACTORY, HeadersMapFactory.class)
+                .resolve(this)
+                .orElseGet(DefaultHeadersMapFactory::new);
     }
 
     @Override
     protected BeanProxyFactory createBeanProxyFactory() {
-        return new BeanProxyFactoryResolver().resolve(this);
+        return new BaseServiceResolver<>(BeanProxyFactory.FACTORY, BeanProxyFactory.class)
+                .resolve(this)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find BeanProxyFactory on classpath. "
+                        + "Add camel-bean to classpath."));
     }
 
     @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
-        return new BeanProcessorFactoryResolver().resolve(this);
+        return new BaseServiceResolver<>(BeanProcessorFactory.FACTORY, BeanProcessorFactory.class)
+                .resolve(this)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find BeanProcessorFactory on classpath. "
+                        + "Add camel-bean to classpath."));
     }
 
     @Override
@@ -342,12 +352,18 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader() {
-        return new XMLRoutesDefinitionLoaderResolver().resolve(this);
+        return new BaseServiceResolver<>(XMLRoutesDefinitionLoader.FACTORY, XMLRoutesDefinitionLoader.class)
+                .resolve(this)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find XMLRoutesDefinitionLoader on classpath. "
+                        + "Add either camel-xml-io or camel-xml-jaxb to classpath."));
     }
 
     @Override
     protected ModelToXMLDumper createModelToXMLDumper() {
-        return new ModelToXMLDumperResolver().resolve(this);
+        return new BaseServiceResolver<>(ModelToXMLDumper.FACTORY, ModelToXMLDumper.class)
+                .resolve(this)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. "
+                        + "Add camel-xml-jaxb to classpath."));
     }
 
     @Override
@@ -382,7 +398,10 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected RestRegistryFactory createRestRegistryFactory() {
-        return new RestRegistryFactoryResolver().resolve(this);
+        return new BaseServiceResolver<>(RestRegistryFactory.FACTORY, RestRegistryFactory.class)
+                .resolve(this)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find RestRegistryFactory on classpath. "
+                        + "Add camel-rest to classpath."));
     }
 
     @Override
@@ -397,7 +416,9 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     @Override
     protected ReactiveExecutor createReactiveExecutor() {
-        return new ReactiveExecutorResolver().resolve(this);
+        return new BaseServiceResolver<>(ReactiveExecutor.FACTORY, ReactiveExecutor.class)
+                .resolve(this)
+                .orElseGet(DefaultReactiveExecutor::new);
     }
 
 }

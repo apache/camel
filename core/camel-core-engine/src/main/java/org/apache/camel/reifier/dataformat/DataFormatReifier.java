@@ -23,8 +23,6 @@ import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
@@ -271,18 +269,14 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             }
         }
         if (configurer == null) {
-            try {
-                Class<?> clazz = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
-                        .findOptionalClass(name + "-dataformat-configurer", null)
-                        .orElse(null);
-                if (clazz != null) {
-                    configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, PropertyConfigurer.class);
-                    if (LOG.isDebugEnabled() && configurer != null) {
-                        LOG.debug("Discovered dataformat property configurer using the FactoryFinder: {} -> {}", name, configurer);
-                    }
+            Class<?> clazz = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
+                    .findOptionalClass(name + "-dataformat-configurer", null)
+                    .orElse(null);
+            if (clazz != null) {
+                configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, PropertyConfigurer.class);
+                if (LOG.isDebugEnabled() && configurer != null) {
+                    LOG.debug("Discovered dataformat property configurer using the FactoryFinder: {} -> {}", name, configurer);
                 }
-            } catch (NoFactoryAvailableException e) {
-                throw new RuntimeCamelException("Unable to retrieve dataformat property configurer factory finder", e);
             }
         }
         return configurer;
