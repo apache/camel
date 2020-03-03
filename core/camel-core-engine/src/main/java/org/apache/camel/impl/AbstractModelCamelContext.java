@@ -157,12 +157,12 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     @Override
-    public ProcessorDefinition getProcessorDefinition(String id) {
+    public ProcessorDefinition<?> getProcessorDefinition(String id) {
         return model.getProcessorDefinition(id);
     }
 
     @Override
-    public <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type) {
+    public <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type) {
         return model.getProcessorDefinition(id, type);
     }
 

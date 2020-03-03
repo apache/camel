@@ -242,12 +242,13 @@ public class DefaultModel implements Model {
         return type;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public ProcessorDefinition getProcessorDefinition(String id) {
+    public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
             Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             while (it.hasNext()) {
-                ProcessorDefinition proc = it.next();
+                ProcessorDefinition<?> proc = it.next();
                 if (id.equals(proc.getId())) {
                     return proc;
                 }
@@ -257,8 +258,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type) {
-        ProcessorDefinition answer = getProcessorDefinition(id);
+    public <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type) {
+        ProcessorDefinition<?> answer = getProcessorDefinition(id);
         if (answer != null) {
             return type.cast(answer);
         }
