@@ -22,8 +22,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class EnricherRefTest extends ContextTestSupport {
@@ -31,8 +31,8 @@ public class EnricherRefTest extends ContextTestSupport {
     private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("cool", cool);
         jndi.bind("agg", new UseLatestAggregationStrategy());
         return jndi;

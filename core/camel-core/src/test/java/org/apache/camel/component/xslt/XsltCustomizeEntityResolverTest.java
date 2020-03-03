@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
@@ -64,8 +64,8 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
         EntityResolver customEntityResolver = getCustomEntityResolver();
         registry.bind("customEntityResolver", customEntityResolver);
         return registry;

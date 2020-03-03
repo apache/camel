@@ -27,6 +27,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.junit.Test;
 
@@ -263,17 +264,17 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected Registry createRegistry() throws Exception {
         Date bean1 = new Date(10);
         Date bean2 = new Date(11);
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("beginning", new Date(0));
-        jndiRegistry.bind("bean1", bean1);
-        jndiRegistry.bind("bean2", bean2);
-        jndiRegistry.bind("listBean", Arrays.asList(bean1, bean2));
-        jndiRegistry.bind("numeric", "12345");
-        jndiRegistry.bind("non-numeric", "abc");
-        return jndiRegistry;
+        Registry registry = super.createRegistry();
+        registry.bind("beginning", new Date(0));
+        registry.bind("bean1", bean1);
+        registry.bind("bean2", bean2);
+        registry.bind("listBean", Arrays.asList(bean1, bean2));
+        registry.bind("numeric", "12345");
+        registry.bind("non-numeric", "abc");
+        return registry;
     }
 
 }

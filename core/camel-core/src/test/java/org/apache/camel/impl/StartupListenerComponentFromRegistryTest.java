@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StartupListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class StartupListenerComponentFromRegistryTest extends ContextTestSupport {
@@ -28,10 +29,10 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
     private MyComponent my;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected Registry createRegistry() throws Exception {
         my = new MyComponent();
 
-        JndiRegistry jndi = super.createRegistry();
+        Registry jndi = super.createRegistry();
         jndi.bind("my", my);
         return jndi;
     }

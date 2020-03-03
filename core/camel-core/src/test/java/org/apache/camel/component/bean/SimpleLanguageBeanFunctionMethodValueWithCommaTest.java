@@ -18,7 +18,7 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 /**
@@ -67,8 +67,8 @@ public class SimpleLanguageBeanFunctionMethodValueWithCommaTest extends ContextT
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyBean());
         return jndi;
     }

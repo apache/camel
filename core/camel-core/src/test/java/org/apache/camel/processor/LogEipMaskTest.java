@@ -20,18 +20,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.support.jndi.JndiTest;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class LogEipMaskTest {
 
-    protected JndiRegistry registry;
+    protected Registry registry;
 
     protected CamelContext createCamelContext() throws Exception {
-        registry = new JndiRegistry(JndiTest.createInitialContext());
+        registry = new DefaultRegistry();
         CamelContext context = new DefaultCamelContext(registry);
         context.addRoutes(createRouteBuilder());
         return context;

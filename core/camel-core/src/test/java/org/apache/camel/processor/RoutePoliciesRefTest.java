@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.Test;
 
@@ -31,8 +31,8 @@ public class RoutePoliciesRefTest extends ContextTestSupport {
     private final MyCustomRoutePolicy policyB = new MyCustomRoutePolicy("B");
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("policy-a", policyA);
         jndi.bind("policy-b", policyB);
         return jndi;

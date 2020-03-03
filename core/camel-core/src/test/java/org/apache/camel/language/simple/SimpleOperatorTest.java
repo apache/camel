@@ -18,15 +18,15 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class SimpleOperatorTest extends LanguageTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("generator", new MyFileNameGenerator());
         return jndi;
     }

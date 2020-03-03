@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.simple.Simple;
 import org.apache.camel.processor.BeanRouteTest;
-import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +40,9 @@ public class BeanWithExpressionInjectionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+
         answer.bind("myBean", myBean);
         return answer;
     }

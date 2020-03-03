@@ -19,7 +19,7 @@ package org.apache.camel.component.bean.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class BeanRouteToDerivedClassTest extends ContextTestSupport {
@@ -103,8 +103,8 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("derived", derived);
         return jndi;
     }

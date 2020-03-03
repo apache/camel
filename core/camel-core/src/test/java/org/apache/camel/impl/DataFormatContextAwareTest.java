@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.Test;
 
@@ -35,10 +36,10 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
     private MyDataFormat my = new MyDataFormat();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("my", my);
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("my", my);
+        return registry;
     }
 
     @Test

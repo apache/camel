@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 /**
@@ -35,8 +33,8 @@ public class BeanInPipelineTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("one", new MyBean("one"));
         answer.bind("two", new MyBean("two"));
         answer.bind("three", new MyBean("three"));

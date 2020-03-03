@@ -24,9 +24,10 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jndi.JndiTest;
 import org.junit.After;
 import org.junit.Before;
@@ -190,8 +191,8 @@ public abstract class ContextTestSupport extends TestSupport {
         return context;
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
-        return new JndiRegistry(createJndiContext());
+    protected Registry createRegistry() throws Exception {
+        return new DefaultRegistry();
     }
 
     protected Context createJndiContext() throws Exception {

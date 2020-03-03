@@ -27,7 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.Test;
 
@@ -80,8 +80,8 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
         URIResolver customURIResolver = getCustomURIResolver();
         registry.bind("customURIResolver", customURIResolver);
         return registry;

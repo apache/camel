@@ -18,14 +18,14 @@ package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.FooBar;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myDummy", new FooBar());
         return jndi;
     }

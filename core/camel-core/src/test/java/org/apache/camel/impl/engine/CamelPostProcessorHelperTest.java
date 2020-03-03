@@ -39,8 +39,9 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.FooBar;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Test;
@@ -53,8 +54,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = new DefaultRegistry();
         jndi.bind("myProp", myProp);
         jndi.bind("foo", new FooBar());
         return jndi;
