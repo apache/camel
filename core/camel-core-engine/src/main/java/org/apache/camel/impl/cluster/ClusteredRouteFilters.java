@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.CamelContextHelper;
@@ -32,13 +33,14 @@ public final class ClusteredRouteFilters {
 
     public static final class IsAutoStartup implements ClusteredRouteFilter {
         @Override
-        public boolean test(CamelContext camelContext, String routeId, RouteDefinition route) {
+        public boolean test(CamelContext camelContext, String routeId, NamedNode route) {
             try {
-                if (route.getAutoStartup() == null) {
+                String autoStartup = ((RouteDefinition) route).getAutoStartup();
+                if (autoStartup == null) {
                     // should auto startup by default
                     return true;
                 }
-                Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, route.getAutoStartup());
+                Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, autoStartup);
                 return isAutoStartup != null && isAutoStartup;
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -58,7 +60,7 @@ public final class ClusteredRouteFilters {
         }
 
         @Override
-        public boolean test(CamelContext camelContext, String routeId, RouteDefinition route) {
+        public boolean test(CamelContext camelContext, String routeId, NamedNode route) {
             return !names.contains(routeId);
         }
     }
