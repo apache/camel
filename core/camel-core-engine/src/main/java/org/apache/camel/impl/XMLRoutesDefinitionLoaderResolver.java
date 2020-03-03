@@ -44,7 +44,7 @@ public class XMLRoutesDefinitionLoaderResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("xmlroutes-loader", context);
+            type = findFactory(XMLRoutesDefinitionLoader.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -32,6 +33,7 @@ import org.apache.camel.tooling.model.OtherModel;
 /**
  * Default {@link RuntimeCamelCatalog}.
  */
+@JdkService(RuntimeCamelCatalog.FACTORY)
 public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements RuntimeCamelCatalog {
 
     private CamelContext camelContext;

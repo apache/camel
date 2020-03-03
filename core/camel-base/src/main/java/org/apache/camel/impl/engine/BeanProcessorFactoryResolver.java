@@ -40,7 +40,7 @@ public class BeanProcessorFactoryResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("bean-processor-factory", context);
+            type = findFactory(BeanProcessorFactory.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

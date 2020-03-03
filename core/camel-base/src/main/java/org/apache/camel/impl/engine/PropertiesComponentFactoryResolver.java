@@ -40,7 +40,7 @@ public class PropertiesComponentFactoryResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("properties-component-factory", context);
+            type = findFactory(PropertiesComponent.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

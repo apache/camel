@@ -43,7 +43,7 @@ public class ModelToXMLDumperResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("modelxml-dumper", context);
+            type = findFactory(ModelToXMLDumper.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

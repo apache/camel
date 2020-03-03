@@ -42,7 +42,7 @@ public class HeadersMapFactoryResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("headers-map-factory", context);
+            type = findFactory(HeadersMapFactory.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

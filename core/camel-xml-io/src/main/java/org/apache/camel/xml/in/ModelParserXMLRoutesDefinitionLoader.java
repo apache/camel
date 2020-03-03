@@ -21,11 +21,13 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
+import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * {@link XMLRoutesDefinitionLoader} that uses {@link ModelParser} to load and parse the routes from XML
  * which is fast and light-weight compared to the default that uses JAXB.
  */
+@JdkService(XMLRoutesDefinitionLoader.FACTORY)
 public class ModelParserXMLRoutesDefinitionLoader implements XMLRoutesDefinitionLoader {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";

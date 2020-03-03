@@ -42,7 +42,7 @@ public class RuntimeCamelCatalogResolver {
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory("runtime-camelcatalog", context);
+            type = findFactory(RuntimeCamelCatalog.FACTORY, context);
         } catch (Exception e) {
             // ignore
         }

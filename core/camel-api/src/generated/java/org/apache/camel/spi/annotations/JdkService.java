@@ -28,6 +28,6 @@ import java.lang.annotation.Target;
 @ServiceFactory(ServiceFactory.JDK_SERVICE)
 public @interface JdkService {
 
-    Class value();
+    String value();
 
 }
