@@ -87,7 +87,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * @throws Exception can be thrown from the route builder
      * @see AdviceWithRouteBuilder
      */
-    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, AdviceWithRouteBuilder builder) throws Exception {
+    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(definition, "RouteDefinition");
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
@@ -156,17 +156,21 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * @see AdviceWithRouteBuilder
      */
     @SuppressWarnings("deprecation")
-    public RouteDefinition adviceWith(AdviceWithRouteBuilder builder) throws Exception {
+    public RouteDefinition adviceWith(RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(builder, "RouteBuilder");
-        Model model = camelContext.getExtension(Model.class);
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
         log.debug("AdviceWith route before: {}", this);
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        Model model = camelContext.getExtension(Model.class);
 
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
-        boolean logRoutesAsXml = builder.isLogRouteAsXml();
-        builder.setOriginalRoute(definition);
+        boolean logRoutesAsXml = true;
+        if (builder instanceof AdviceWithRouteBuilder) {
+            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
+            arb.setOriginalRoute(definition);
+            logRoutesAsXml = arb.isLogRouteAsXml();
+        }
 
         // configure and prepare the routes from the builder
         RoutesDefinition routes = builder.configureRoutes(camelContext);
@@ -201,9 +205,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         model.removeRouteDefinition(definition);
 
         // any advice with tasks we should execute first?
-        List<AdviceWithTask> tasks = builder.getAdviceWithTasks();
-        for (AdviceWithTask task : tasks) {
-            task.task();
+        if (builder instanceof AdviceWithRouteBuilder) {
+            List<AdviceWithTask> tasks = ((AdviceWithRouteBuilder) builder).getAdviceWithTasks();
+            for (AdviceWithTask task : tasks) {
+                task.task();
+            }
         }
 
         // now merge which also ensures that interceptors and the likes get
