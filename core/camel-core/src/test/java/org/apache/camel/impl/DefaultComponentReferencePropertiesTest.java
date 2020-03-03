@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
@@ -103,10 +104,10 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myExpression", ExpressionBuilder.bodyExpression());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("myExpression", ExpressionBuilder.bodyExpression());
+        return registry;
     }
 
     @Test

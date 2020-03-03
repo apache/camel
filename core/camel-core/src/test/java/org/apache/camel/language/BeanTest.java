@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language;
 
-import javax.naming.Context;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Header;
@@ -25,6 +23,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class BeanTest extends LanguageTestSupport {
@@ -118,11 +117,11 @@ public class BeanTest extends LanguageTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", new MyBean());
-        context.bind("my.company.MyClass", new MyBean());
-        return context;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", new MyBean());
+        answer.bind("my.company.MyClass", new MyBean());
+        return answer;
     }
 
     public static class MyBean {

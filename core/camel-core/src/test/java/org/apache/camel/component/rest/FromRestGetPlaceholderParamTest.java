@@ -18,23 +18,22 @@ package org.apache.camel.component.rest;
 
 import java.util.List;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;
 import org.apache.camel.model.rest.RestParamType;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("dummy-rest", new DummyRestConsumerFactory());
-        return context;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("dummy-rest", new DummyRestConsumerFactory());
+        return answer;
     }
 
     @Test

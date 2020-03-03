@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.Test;
 
@@ -32,10 +33,10 @@ import org.junit.Test;
 public class RefDataFormatTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("reverse", new MyReverseDataFormat());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("reverse", new MyReverseDataFormat());
+        return registry;
     }
 
     @Test

@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +42,8 @@ public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myRepo", myRepo);
         return jndi;
     }

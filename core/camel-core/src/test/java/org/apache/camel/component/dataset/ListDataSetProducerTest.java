@@ -19,11 +19,10 @@ package org.apache.camel.component.dataset;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.Registry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,10 +35,10 @@ public class ListDataSetProducerTest extends ContextTestSupport {
     final String dataSetUri = "dataset://" + dataSetName;
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", dataSet);
+        return answer;
     }
 
     @Test

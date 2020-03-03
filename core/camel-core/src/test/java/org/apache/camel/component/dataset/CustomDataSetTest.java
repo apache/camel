@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.dataset;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -26,6 +24,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.xpath.XPathBuilder;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.junit.Test;
 
@@ -48,10 +47,10 @@ public class CustomDataSetTest extends ContextTestSupport {
     };
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", dataSet);
+        return answer;
     }
 
     @Test

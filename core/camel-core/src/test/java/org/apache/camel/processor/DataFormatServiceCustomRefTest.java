@@ -17,13 +17,13 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 
 public class DataFormatServiceCustomRefTest extends DataFormatServiceTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myCustomDataFormat", my);
         return jndi;
     }

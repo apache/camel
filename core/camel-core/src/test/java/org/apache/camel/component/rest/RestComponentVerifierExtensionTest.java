@@ -28,7 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
@@ -38,8 +38,8 @@ import org.junit.Test;
 
 public class RestComponentVerifierExtensionTest extends ContextTestSupport {
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
         registry.bind("rest", new RestComponent());
         registry.bind("rest-component", new MyComponent());
         return registry;

@@ -22,8 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.apache.camel.spi.Registry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,8 +38,8 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
     private String fileUrl = "file://target/data/pollstrategy/?pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10";
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
         return jndi;
     }

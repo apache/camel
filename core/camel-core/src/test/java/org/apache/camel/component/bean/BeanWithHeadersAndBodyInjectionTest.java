@@ -18,8 +18,6 @@ package org.apache.camel.component.bean;
 
 import java.util.Map;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Headers;
@@ -27,7 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
-import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +58,8 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", myBean);
         return answer;
     }

@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.xpath.XPath;
-import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSupport {
@@ -35,8 +33,9 @@ public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSuppor
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+
         answer.bind("myBean", myBean);
         return answer;
     }

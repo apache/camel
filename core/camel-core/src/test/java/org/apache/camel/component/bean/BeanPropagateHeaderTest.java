@@ -19,7 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class BeanPropagateHeaderTest extends ContextTestSupport {
@@ -37,8 +37,8 @@ public class BeanPropagateHeaderTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("order", new MyOrderService());
         return jndi;
     }

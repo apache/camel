@@ -27,8 +27,8 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FileUtil;
 import org.junit.Test;
 
@@ -40,8 +40,8 @@ public class FileLanguageTest extends LanguageTestSupport {
     private File file;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("generator", new MyFileNameGenerator());
         return jndi;
     }

@@ -30,6 +30,7 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.Registry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,11 +39,11 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     protected JAXBContext jaxbContext;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("dummy-rest", new DummyRestConsumerFactory());
+        registry.bind("dummy-rest-api", new DummyRestProcessorFactory());
+        return registry;
     }
 
     @Override

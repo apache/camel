@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
@@ -30,8 +30,8 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
     private static final AtomicBoolean CALLLED = new AtomicBoolean();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myHandler", new MyExceptionHandler());
         return jndi;
     }
