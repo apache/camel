@@ -4310,7 +4310,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
-        this.xmlRoutesDefinitionLoader = xmlRoutesDefinitionLoader;
+        this.xmlRoutesDefinitionLoader = doAddService(xmlRoutesDefinitionLoader);
     }
 
     public ModelToXMLDumper getModelToXMLDumper() {
@@ -4325,7 +4325,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
-        this.modelToXMLDumper = modelToXMLDumper;
+        this.modelToXMLDumper = doAddService(modelToXMLDumper);
     }
 
     @Override
@@ -4342,7 +4342,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        this.runtimeCamelCatalog = runtimeCamelCatalog;
+        this.runtimeCamelCatalog = doAddService(runtimeCamelCatalog);
     }
 
     @Override
@@ -4379,11 +4379,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         if (beanProxyFactory == null) {
             synchronized (lock) {
                 if (beanProxyFactory == null) {
-                    beanProxyFactory = createBeanProxyFactory();
+                    setBeanProxyFactory(createBeanProxyFactory());
                 }
             }
         }
         return beanProxyFactory;
+    }
+
+    public void setBeanProxyFactory(BeanProxyFactory beanProxyFactory) {
+        this.beanProxyFactory = doAddService(beanProxyFactory);
     }
 
     @Override
@@ -4391,11 +4395,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         if (beanProcessorFactory == null) {
             synchronized (lock) {
                 if (beanProcessorFactory == null) {
-                    beanProcessorFactory = createBeanProcessorFactory();
+                    setBeanProcessorFactory(createBeanProcessorFactory());
                 }
             }
         }
         return beanProcessorFactory;
+    }
+
+    public void setBeanProcessorFactory(BeanProcessorFactory beanProcessorFactory) {
+        this.beanProcessorFactory = doAddService(beanProcessorFactory);
     }
 
     protected Map<String, BaseRouteService> getRouteServices() {
