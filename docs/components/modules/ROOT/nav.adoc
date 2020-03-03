@@ -47,7 +47,6 @@
 * xref:aws2-ddb-component.adoc[AWS 2 DynamoDB Component]
 * xref:aws2-ddbstream-component.adoc[AWS 2 DynamoDB Streams Component]
 * xref:aws2-ec2-component.adoc[AWS 2 EC2 Component]
-* xref:aws2-ec2-component.adoc[AWS 2 EC2 Component]
 * xref:aws2-ecs-component.adoc[AWS 2 ECS Component]
 * xref:aws2-eks-component.adoc[AWS 2 EKS Component]
 * xref:aws2-iam-component.adoc[AWS 2 IAM Component]
