@@ -143,6 +143,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 return c1.getName().compareTo(c2.getName());
             }
         });
+        Map<Class, ComponentModel> models = new HashMap<>();
         for (Class<?> classElement : classes) {
             UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
             String scheme = uriEndpoint.scheme();
@@ -169,7 +170,26 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
                 final String aliasTitle = aTitle;
 
-                writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
+                ComponentModel parentData = null;
+                Class<?> superclass = classElement.getSuperclass();
+                if (superclass != null) {
+                    parentData = models.get(superclass);
+                    if (parentData == null) {
+                        UriEndpoint parentUriEndpoint = superclass.getAnnotation(UriEndpoint.class);
+                        if (parentUriEndpoint != null) {
+                            String parentScheme = parentUriEndpoint.scheme().split(",")[0];
+                            String superClassName = superclass.getName();
+                            String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
+                            String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
+                            String json = loadResource(fileName);
+                            parentData = JsonMapper.generateComponentModel(json);
+                        }
+                    }
+                }
+
+                ComponentModel model = writeJSonSchemeAndPropertyConfigurer(classElement, uriEndpoint, aliasTitle, alias,
+                        extendsAlias, label, schemes, parentData);
+                models.put(classElement, model);
             }
         }
     }
@@ -182,26 +202,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    protected void writeJSonSchemeAndPropertyConfigurer(Class<?> classElement, UriEndpoint uriEndpoint, String title,
-                                                        String scheme, String extendsScheme, String label, String[] schemes) {
+    protected ComponentModel writeJSonSchemeAndPropertyConfigurer(Class<?> classElement, UriEndpoint uriEndpoint, String title,
+                                                        String scheme, String extendsScheme, String label,
+                                                        String[] schemes, ComponentModel parentData) {
         // gather component information
         ComponentModel componentModel = findComponentProperties(uriEndpoint, classElement, title, scheme, extendsScheme, label, schemes);
 
         // get endpoint information which is divided into paths and options
         // (though there should really only be one path)
-        ComponentModel parentData = null;
-        Class<?> superclass = classElement.getSuperclass();
-        if (superclass != null) {
-            UriEndpoint parentUriEndpoint = superclass.getAnnotation(UriEndpoint.class);
-            if (parentUriEndpoint != null) {
-                String parentScheme = parentUriEndpoint.scheme().split(",")[0];
-                String superClassName = superclass.getName();
-                String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
-                String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
-                String json = loadResource(fileName);
-                parentData = JsonMapper.generateComponentModel(json);
-            }
-        }
 
         // component options
         Class<?> componentClassElement = loadClass(componentModel.getJavaType());
@@ -231,6 +239,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         updateResource(resourcesOutputDir.toPath(), file, json);
 
         generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
+
+        return componentModel;
     }
 
     protected void updateResource(Path dir, String file, String data) {
