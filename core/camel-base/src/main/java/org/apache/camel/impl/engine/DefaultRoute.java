@@ -613,7 +613,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     public void initialized() {
-        errorHandlers.clear();
-        eventDrivenProcessors.clear();
+
     }
 }
