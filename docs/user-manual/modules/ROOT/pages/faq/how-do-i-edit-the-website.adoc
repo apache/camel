@@ -36,4 +36,7 @@ Steps to edit a file:
 . Revert changes to `site.yml`.
 . Push your changes to your forked repositories and send a pull request.
 
-NOTE: It's a good idea to spend some time and learn how https://antora.org[Antora] and https://gohugo.io/[Hugo] work.
+[NOTE]
+====
+It's a good idea to spend some time and learn how https://antora.org[Antora] and https://gohugo.io/[Hugo] work.
+====

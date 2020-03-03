@@ -86,7 +86,7 @@ public class AbstractCamelContextFactoryBeanTest {
 
     // properties that should return value that can be converted to boolean
     Set<String> valuesThatReturnBoolean = new HashSet<>(asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
-        "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}",
+        "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}", "{{getCaseInsensitiveHeaders}}",
         "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}", "{{getAllowUseOriginalMessage}}"));
 
     // properties that should return value that can be converted to long

@@ -36,35 +36,37 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ServiceSupport implements StatefulService {
 
-    protected static final int NEW = 0;
-    protected static final int BUILDED = 1;
-    protected static final int INITIALIZED = 2;
-    protected static final int STARTING = 3;
-    protected static final int STARTED = 4;
-    protected static final int SUSPENDING = 5;
-    protected static final int SUSPENDED = 6;
-    protected static final int STOPPING = 7;
-    protected static final int STOPPED = 8;
-    protected static final int SHUTTINGDOWN = 9;
-    protected static final int SHUTDOWN = 10;
-    protected static final int FAILED = 11;
+    protected static final byte NEW = 0;
+    protected static final byte BUILDED = 1;
+    protected static final byte INITIALIZED = 2;
+    protected static final byte STARTING = 3;
+    protected static final byte STARTED = 4;
+    protected static final byte SUSPENDING = 5;
+    protected static final byte SUSPENDED = 6;
+    protected static final byte STOPPING = 7;
+    protected static final byte STOPPED = 8;
+    protected static final byte SHUTTINGDOWN = 9;
+    protected static final byte SHUTDOWN = 10;
+    protected static final byte FAILED = 11;
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceSupport.class);
+
     protected final Object lock = new Object();
-    protected volatile int status = NEW;
+    protected volatile byte status = NEW;
 
     @Override
     public void build() {
         if (status == NEW) {
             synchronized (lock) {
                 if (status == NEW) {
-                    log.trace("Building service: {}", this);
+                    LOG.trace("Building service: {}", this);
                     try {
                         doBuild();
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeException(e);
                     }
                     status = BUILDED;
+                    LOG.trace("Built service: {}", this);
                 }
             }
         }
@@ -72,16 +74,18 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public void init() {
-        if (status <= BUILDED) {
+        // allow to initialize again if stopped or failed
+        if (status <= BUILDED || status >= STOPPED) {
             synchronized (lock) {
-                if (status <= BUILDED) {
-                    log.trace("Initializing service: {}", this);
+                if (status <= BUILDED || status >= STOPPED) {
+                    LOG.trace("Initializing service: {}", this);
                     try {
                         doInit();
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeException(e);
                     }
                     status = INITIALIZED;
+                    LOG.trace("Initialized service: {}", this);
                 }
             }
         }
@@ -97,36 +101,36 @@ public abstract class ServiceSupport implements StatefulService {
     public void start() {
         synchronized (lock) {
             if (status == STARTED) {
-                log.trace("Service: {} already started", this);
+                LOG.trace("Service: {} already started", this);
                 return;
             }
             if (status == STARTING) {
-                log.trace("Service: {} already starting", this);
+                LOG.trace("Service: {} already starting", this);
                 return;
             }
             try {
                 init();
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while initializing service: " + this, e);
+                LOG.trace("Error while initializing service: " + this, e);
                 throw e;
             }
             try {
                 status = STARTING;
-                log.trace("Starting service: {}", this);
+                LOG.trace("Starting service: {}", this);
                 doStart();
                 status = STARTED;
-                log.trace("Service started: {}", this);
+                LOG.trace("Started service: {}", this);
             } catch (Exception e) {
                 // need to stop as some resources may have been started during startup
                 try {
                     stop();
                 } catch (Exception e2) {
                     // ignore
-                    log.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored", e);
+                    LOG.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored", e);
                 }
                 status = FAILED;
-                log.trace("Error while starting service: " + this, e);
+                LOG.trace("Error while starting service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
@@ -142,26 +146,26 @@ public abstract class ServiceSupport implements StatefulService {
     public void stop() {
         synchronized (lock) {
             if (status == FAILED) {
-                log.trace("Service: {} failed and regarded as already stopped", this);
+                LOG.trace("Service: {} failed and regarded as already stopped", this);
                 return;
             }
             if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
-                log.trace("Service: {} already stopped", this);
+                LOG.trace("Service: {} already stopped", this);
                 return;
             }
             if (status == STOPPING) {
-                log.trace("Service: {} already stopping", this);
+                LOG.trace("Service: {} already stopping", this);
                 return;
             }
             status = STOPPING;
-            log.trace("Stopping service: {}", this);
+            LOG.trace("Stopping service: {}", this);
             try {
                 doStop();
                 status = STOPPED;
-                log.trace("Service: {} stopped service", this);
+                LOG.trace("Stopped: {} service", this);
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while stopping service: " + this, e);
+                LOG.trace("Error while stopping service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
@@ -177,22 +181,22 @@ public abstract class ServiceSupport implements StatefulService {
     public void suspend() {
         synchronized (lock) {
             if (status == SUSPENDED) {
-                log.trace("Service: {} already suspended", this);
+                LOG.trace("Service: {} already suspended", this);
                 return;
             }
             if (status == SUSPENDING) {
-                log.trace("Service: {} already suspending", this);
+                LOG.trace("Service: {} already suspending", this);
                 return;
             }
             status = SUSPENDING;
-            log.trace("Suspending service: {}", this);
+            LOG.trace("Suspending service: {}", this);
             try {
                 doSuspend();
                 status = SUSPENDED;
-                log.trace("Service suspended: {}", this);
+                LOG.trace("Suspended service: {}", this);
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while suspending service: " + this, e);
+                LOG.trace("Error while suspending service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
@@ -208,18 +212,18 @@ public abstract class ServiceSupport implements StatefulService {
     public void resume() {
         synchronized (lock) {
             if (status != SUSPENDED) {
-                log.trace("Service is not suspended: {}", this);
+                LOG.trace("Service is not suspended: {}", this);
                 return;
             }
             status = STARTING;
-            log.trace("Resuming service: {}", this);
+            LOG.trace("Resuming service: {}", this);
             try {
                 doResume();
                 status = STARTED;
-                log.trace("Service resumed: {}", this);
+                LOG.trace("Resumed service: {}", this);
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error while resuming service: " + this, e);
+                LOG.trace("Error while resuming service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
@@ -235,23 +239,23 @@ public abstract class ServiceSupport implements StatefulService {
     public void shutdown() {
         synchronized (lock) {
             if (status == SHUTDOWN) {
-                log.trace("Service: {} already shut down", this);
+                LOG.trace("Service: {} already shutdown", this);
                 return;
             }
             if (status == SHUTTINGDOWN) {
-                log.trace("Service: {} already shutting down", this);
+                LOG.trace("Service: {} already shutting down", this);
                 return;
             }
             stop();
             status = SHUTDOWN;
-            log.trace("Shutting down service: {}", this);
+            LOG.trace("Shutting down service: {}", this);
             try {
                 doShutdown();
-                log.trace("Service: {} shut down", this);
+                LOG.trace("Shutdown service: {}", this);
                 status = SHUTDOWN;
             } catch (Exception e) {
                 status = FAILED;
-                log.trace("Error shutting down service: " + this, e);
+                LOG.trace("Error shutting down service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
@@ -260,18 +264,18 @@ public abstract class ServiceSupport implements StatefulService {
     @Override
     public ServiceStatus getStatus() {
         switch (status) {
-        case STARTING:
-            return ServiceStatus.Starting;
-        case STARTED:
-            return ServiceStatus.Started;
-        case SUSPENDING:
-            return ServiceStatus.Suspending;
-        case SUSPENDED:
-            return ServiceStatus.Suspended;
-        case STOPPING:
-            return ServiceStatus.Stopping;
-        default:
-            return ServiceStatus.Stopped;
+            case STARTING:
+                return ServiceStatus.Starting;
+            case STARTED:
+                return ServiceStatus.Started;
+            case SUSPENDING:
+                return ServiceStatus.Suspending;
+            case SUSPENDED:
+                return ServiceStatus.Suspended;
+            case STOPPING:
+                return ServiceStatus.Stopping;
+            default:
+                return ServiceStatus.Stopped;
         }
     }
 
@@ -304,7 +308,7 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isStopped() {
-        return status == NEW || status == INITIALIZED || status == BUILDED || status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN || status == FAILED;
+        return status < STARTING || status >= STOPPED;
     }
 
     @Override
@@ -319,7 +323,7 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isRunAllowed() {
-        return isStartingOrStarted() || isSuspendingOrSuspended();
+        return status >= STARTING && status <= SUSPENDED;
     }
 
     public boolean isShutdown() {
@@ -330,21 +334,21 @@ public abstract class ServiceSupport implements StatefulService {
      * Is the service in progress of being stopped or already stopped
      */
     public boolean isStoppingOrStopped() {
-        return isStopping() || isStopped();
+        return status < STARTING || status > SUSPENDED;
     }
 
     /**
      * Is the service in progress of being suspended or already suspended
      */
     public boolean isSuspendingOrSuspended() {
-        return isSuspending() || isSuspended();
+        return status == SUSPENDING || status == SUSPENDED;
     }
 
     /**
      * Is the service in progress of being suspended or already suspended
      */
     public boolean isStartingOrStarted() {
-        return isStarting() || isStarted();
+        return status == STARTING || status == STARTED;
     }
 
     /**
@@ -365,7 +369,7 @@ public abstract class ServiceSupport implements StatefulService {
      * Implementations override this method to support customized start/stop.
      * <p/>
      * <b>Important: </b> See {@link #doStop()} for more details.
-     * 
+     *
      * @see #doStop()
      */
     protected abstract void doStart() throws Exception;
@@ -379,8 +383,8 @@ public abstract class ServiceSupport implements StatefulService {
      * been started). The method is <b>always</b> called to allow the service
      * to do custom logic when the service is being stopped, such as when
      * {@link org.apache.camel.CamelContext} is shutting down.
-     * 
-     * @see #doStart() 
+     *
+     * @see #doStart()
      */
     protected abstract void doStop() throws Exception;
 

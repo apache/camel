@@ -16,24 +16,26 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.simple.Simple;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.PredicateToExpressionAdapter;
 import org.apache.camel.support.ScriptHelper;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
- * Creates an {@link Simple} language builder.
+ * Creates an {@link org.apache.camel.language.simple.Simple} language builder.
  * <p/>
  * This builder is available in the Java DSL from the {@link RouteBuilder} which
  * means that using simple language for {@link Expression}s or
  * {@link Predicate}s is very easy with the help of this builder.
  */
-public class SimpleBuilder implements Predicate, Expression, ExpressionResultTypeAware {
+public class SimpleBuilder implements Predicate, Expression, ExpressionResultTypeAware, PropertyConfigurer {
 
     private final String text;
     private Class<?> resultType;
@@ -61,6 +63,20 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
 
     public static SimpleBuilder simpleF(String formatText, Class<?> resultType, Object... values) {
         return simple(String.format(formatText, values), resultType);
+    }
+
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "resulttype":
+            case "resultType":
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+            default:
+                return false;
+        }
     }
 
     public String getText() {

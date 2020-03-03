@@ -384,12 +384,52 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
      * reuse producers when using this recipient list, when uris are reused.
      *
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
+     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
+     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
+     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
+     * are stored in memory in the caches.
+     *
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can
+     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
+     * can be set accordingly or rely on the default size (1000).
+     *
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
+     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     *
      * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
      *            or <tt>-1</tt> to turn cache off.
      * @return the builder
      */
     public RecipientListDefinition<Type> cacheSize(int cacheSize) {
         setCacheSize(Integer.toString(cacheSize));
+        return this;
+    }
+
+    /**
+     * Sets the maximum size used by the
+     * {@link org.apache.camel.spi.ProducerCache} which is used to cache and
+     * reuse producers when using this recipient list, when uris are reused.
+     *
+     * Beware that when using dynamic endpoints then it affects how well the cache can be utilized.
+     * If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which
+     * allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped
+     * and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints
+     * are stored in memory in the caches.
+     *
+     * However if there are a high degree of dynamic endpoints that have been used before, then it can
+     * benefit to use the cache to reuse both producers and endpoints and therefore the cache size
+     * can be set accordingly or rely on the default size (1000).
+     *
+     * If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size
+     * can help reduce memory usage to avoid storing too many non frequent used producers.
+     *
+     * @param cacheSize the cache size, use <tt>0</tt> for default cache size,
+     *            or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> cacheSize(String cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 

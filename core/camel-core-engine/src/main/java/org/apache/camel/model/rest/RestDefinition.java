@@ -38,7 +38,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
@@ -773,16 +772,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 route.getOutputs().add(def);
             }
 
-            // ensure property placeholders is resolved on the verb
-            try {
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, verb);
-                for (RestOperationParamDefinition param : verb.getParams()) {
-                    ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, param);
-                }
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-
             // add the binding
             RestBindingDefinition binding = new RestBindingDefinition();
             binding.setComponent(component);
@@ -821,16 +810,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
             for (RestOperationParamDefinition param : verb.getParams()) {
                 // register all the default values for the query parameters
-                if (RestParamType.query == param.getType() && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
+                RestParamType type = param.getType();
+                if (RestParamType.query == type && ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                     binding.addDefaultValue(param.getName(), param.getDefaultValue());
                 }
                 // register which parameters are required
-                if (param.getRequired()) {
-                    if (RestParamType.query == param.getType()) {
+                Boolean required = param.getRequired();
+                if (required != null && required) {
+                    if (RestParamType.query == type) {
                         binding.addRequiredQueryParameter(param.getName());
-                    } else if (RestParamType.header == param.getType()) {
+                    } else if (RestParamType.header == type) {
                         binding.addRequiredHeader(param.getName());
-                    } else if (RestParamType.body == param.getType()) {
+                    } else if (RestParamType.body == type) {
                         binding.setRequiredBody(true);
                     }
                 }

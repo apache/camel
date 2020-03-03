@@ -31,12 +31,17 @@ import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource> extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractAtomixClientProducer.class);
 
     private final Map<String, AtomixAsyncMessageProcessor> processors;
     private ConcurrentMap<String, R> resources;
@@ -133,8 +138,10 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
                 throw new IllegalArgumentException("Second argument should be of type AsyncCallback");
             }
 
-            log.debug("bind key={}, class={}, method={}",
-                annotation.value(), this.getClass(), method.getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("bind key={}, class={}, method={}",
+                        annotation.value(), this.getClass(), method.getName());
+            }
 
             this.processors.put(annotation.value(), (m, c) -> (boolean)invokeMethodSafe(method, this, m, c));
         } else {

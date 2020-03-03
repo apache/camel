@@ -1,0 +1,175 @@
+[[aws2-translate-component]]
+= AWS 2 Translate Component
+
+*Since Camel 3.1*
+
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The Translate component supports translate a text in multiple languages.
+https://aws.amazon.com/translate/[AWS Translate] clusters instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Translate. More information is available at
+https://aws.amazon.com/translate/[Amazon Translate].
+
+[NOTE]
+====
+The AWS2 Translate component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-translate://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 Translate component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *autodetectSourceLanguage* (producer) | Being able to autodetect the source language | false | boolean
+| *configuration* (producer) | Component configuration |  | Translate2Configuration
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: translateText | translateText | Translate2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the Translate client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the Translate client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Translate client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which Translate client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *sourceLanguage* (producer) | Source language to use |  | String
+| *targetLanguage* (producer) | Target language to use |  | String
+| *translateClient* (producer) | To use a existing configured AWS Translate as client |  | TranslateClient
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS 2 Translate endpoint is configured using URI syntax:
+
+----
+aws2-translate:label
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+=== Query Parameters (14 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *autodetectSourceLanguage* (producer) | Being able to autodetect the source language | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: translateText | translateText | Translate2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the Translate client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the Translate client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Translate client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which Translate client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *sourceLanguage* (producer) | Source language to use |  | String
+| *targetLanguage* (producer) | Target language to use |  | String
+| *translateClient* (producer) | To use a existing configured AWS Translate as client |  | TranslateClient
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+
+Required Translate component options
+
+You have to provide the amazonTranslateClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/translate/[Amazon Translate] service.
+
+== Usage
+
+=== Message headers evaluated by the Translate producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsTranslateSourceLanguage` |`String` |The text source language
+
+|`CamelAwsTranslateTargetLanguage` |`String` |The text target language
+
+|`CamelAwsTranslateTerminologyNames` |`String` |The terminologies to use
+
+|`CamelAwsTranslateOperation` |`String` |The operation to perform
+|=======================================================================
+
+=== Translate Producer operations
+
+Camel-AWS Translate component provides the following operation on the producer side:
+
+- translateText
+
+== Automatic detection of TranslateClient client in registry
+
+The component is capable of detecting the presence of an TranslateClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+== Translate Text example
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN)
+  .setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN)
+  .setBody("Ciao")
+  .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing the translated text.
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-translate</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$aws2-translate-starter.adoc[]

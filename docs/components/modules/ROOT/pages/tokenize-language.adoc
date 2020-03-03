@@ -1,6 +1,6 @@
 [[tokenize-language]]
 = Tokenize Language
-:page-source: core/camel-base/src/main/docs/tokenize-language.adoc
+:page-source: core/camel-core-languages/src/main/docs/tokenize-language.adoc
 
 *Since Camel 2.0*
 

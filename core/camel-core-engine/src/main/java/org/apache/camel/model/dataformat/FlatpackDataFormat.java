@@ -35,19 +35,22 @@ public class FlatpackDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String definition;
     @XmlAttribute
-    private Boolean fixed;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String fixed;
     @XmlAttribute
-    @Metadata(defaultValue = "true")
-    private Boolean ignoreFirstRecord;
+    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    private String ignoreFirstRecord;
     @XmlAttribute
     private String textQualifier;
     @XmlAttribute
     @Metadata(defaultValue = ",")
     private String delimiter;
     @XmlAttribute
-    private Boolean allowShortLines;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String allowShortLines;
     @XmlAttribute
-    private Boolean ignoreExtraColumns;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String ignoreExtraColumns;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String parserFactoryRef;
@@ -68,18 +71,18 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         this.definition = definition;
     }
 
-    public Boolean getFixed() {
+    public String getFixed() {
         return fixed;
     }
 
     /**
      * Delimited or fixed. Is by default false = delimited
      */
-    public void setFixed(Boolean fixed) {
+    public void setFixed(String fixed) {
         this.fixed = fixed;
     }
 
-    public Boolean getIgnoreFirstRecord() {
+    public String getIgnoreFirstRecord() {
         return ignoreFirstRecord;
     }
 
@@ -89,7 +92,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
      * <p/>
      * Is by default true.
      */
-    public void setIgnoreFirstRecord(Boolean ignoreFirstRecord) {
+    public void setIgnoreFirstRecord(String ignoreFirstRecord) {
         this.ignoreFirstRecord = ignoreFirstRecord;
     }
 
@@ -117,7 +120,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
         this.delimiter = delimiter;
     }
 
-    public Boolean getAllowShortLines() {
+    public String getAllowShortLines() {
         return allowShortLines;
     }
 
@@ -125,11 +128,11 @@ public class FlatpackDataFormat extends DataFormatDefinition {
      * Allows for lines to be shorter than expected and ignores the extra
      * characters
      */
-    public void setAllowShortLines(Boolean allowShortLines) {
+    public void setAllowShortLines(String allowShortLines) {
         this.allowShortLines = allowShortLines;
     }
 
-    public Boolean getIgnoreExtraColumns() {
+    public String getIgnoreExtraColumns() {
         return ignoreExtraColumns;
     }
 
@@ -137,7 +140,7 @@ public class FlatpackDataFormat extends DataFormatDefinition {
      * Allows for lines to be longer than expected and ignores the extra
      * characters.
      */
-    public void setIgnoreExtraColumns(Boolean ignoreExtraColumns) {
+    public void setIgnoreExtraColumns(String ignoreExtraColumns) {
         this.ignoreExtraColumns = ignoreExtraColumns;
     }
 

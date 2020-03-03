@@ -1,0 +1,32 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "cbor",
+    "modelName": "cbor",
+    "title": "CBOR",
+    "description": "CBOR data format is used for unmarshal a CBOR payload to POJO or to marshal POJO back to CBOR payload.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation,json",
+    "firstVersion": "3.0.0",
+    "label": "dataformat,transformation,json",
+    "javaType": "org.apache.camel.component.cbor.CBORDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.CBORDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cbor",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "objectMapper": { "kind": "attribute", "displayName": "Object Mapper", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Lookup and use the existing CBOR ObjectMapper with the given id when using Jackson." },
+    "useDefaultObjectMapper": { "kind": "attribute", "displayName": "Use Default Object Mapper", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to lookup and use default Jackson CBOR ObjectMapper from the registry." },
+    "unmarshalTypeName": { "kind": "attribute", "displayName": "Unmarshal Type Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" },
+    "collectionTypeName": { "kind": "attribute", "displayName": "Collection Type Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default." },
+    "useList": { "kind": "attribute", "displayName": "Use List", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To unmarshal to a List of Map or a List of Pojo." },
+    "allowUnmarshallType": { "kind": "attribute", "displayName": "Allow Unmarshall Type", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If enabled then Jackson CBOR is allowed to attempt to use the CamelCBORUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used." },
+    "prettyPrint": { "kind": "attribute", "displayName": "Pretty Print", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. Is by default false." },
+    "allowJmsType": { "kind": "attribute", "displayName": "Allow Jms Type", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to." },
+    "enableFeatures": { "kind": "attribute", "displayName": "Enable Features", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma" },
+    "disableFeatures": { "kind": "attribute", "displayName": "Disable Features", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

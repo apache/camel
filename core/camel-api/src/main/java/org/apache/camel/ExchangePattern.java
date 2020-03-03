@@ -38,12 +38,7 @@ public enum ExchangePattern {
      * Return true if there can be an OUT message
      */
     public boolean isOutCapable() {
-        switch (this) {
-        case InOnly:
-            return false;
-        default:
-            return true;
-        }
+        return this != ExchangePattern.InOnly;
     }
 
     public static ExchangePattern asEnum(String value) {

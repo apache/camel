@@ -49,7 +49,6 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        log.trace("Creating a consumer");
         if (getConfiguration().getBlobName() == null) {
             throw new IllegalArgumentException("Blob name must be specified.");
         }
@@ -60,7 +59,6 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        log.trace("Creating a producer");
         if (getConfiguration().getBlobName() == null
             && getConfiguration().getOperation() != null 
             && BlobServiceOperations.listBlobs != configuration.getOperation()) {

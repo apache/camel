@@ -32,4 +32,9 @@ public class InetAddressUtilTest extends Assert {
             // ignore if this test is run on a OS which cannot resolve hostname
         }
     }
+
+    @Test
+    public void testGetLocalHostNameSafe() {
+        InetAddressUtil.getLocalHostNameSafe();
+    }
 }

@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "cxf-transport",
+    "title": "CXF Transport",
+    "description": "Camel Transport for Apache CXF",
+    "deprecated": false,
+    "firstVersion": "2.8.0",
+    "label": "soap,webservice",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cxf-transport",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

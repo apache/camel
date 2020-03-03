@@ -29,12 +29,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientConsumer;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.CHANNEL_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.MEMBER_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 
 public final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<AtomixMessagingEndpoint> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AtomixMessagingConsumer.class);
 
     private final List<Listener<Message<Object>>> listeners;
     private final String resultHeader;
@@ -71,7 +76,7 @@ public final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<
         this.localMember = group.join(memberName).join();
         this.consumer = localMember.messaging().consumer(channelName);
 
-        log.debug("Subscribe to group: {}, member: {}, channel: {}", groupName, memberName, channelName);
+        LOG.debug("Subscribe to group: {}, member: {}, channel: {}", groupName, memberName, channelName);
         this.listeners.add(consumer.onMessage(this::onMessage));
     }
 

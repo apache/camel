@@ -22,10 +22,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.activemq.Service;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
@@ -127,6 +130,21 @@ public class ActiveMQComponent extends JmsComponent {
         if (getConfiguration() instanceof ActiveMQConfiguration) {
             ((ActiveMQConfiguration)getConfiguration()).setUseSingleConnection(useSingleConnection);
         }
+    }
+
+    @Override
+    protected void setProperties(Endpoint bean, Map<String, Object> parameters) throws Exception {
+        Object useSingleConnection = parameters.remove("useSingleConnection");
+        if (useSingleConnection != null) {
+            ((ActiveMQConfiguration) ((JmsEndpoint) bean).getConfiguration())
+                    .setUseSingleConnection(PropertyConfigurerSupport.property(getCamelContext(), boolean.class, useSingleConnection));
+        }
+        Object usePooledConnection = parameters.remove("usePooledConnection");
+        if (usePooledConnection != null) {
+            ((ActiveMQConfiguration) ((JmsEndpoint) bean).getConfiguration())
+                    .setUsePooledConnection(PropertyConfigurerSupport.property(getCamelContext(), boolean.class, usePooledConnection));
+        }
+        super.setProperties(bean, parameters);
     }
 
     protected void addPooledConnectionFactoryService(Service pooledConnectionFactoryService) {

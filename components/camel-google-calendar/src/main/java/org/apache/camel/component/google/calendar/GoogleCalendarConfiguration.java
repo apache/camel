@@ -46,13 +46,13 @@ public class GoogleCalendarConfiguration {
     @UriParam
     private String emailAddress;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
 
     @UriParam

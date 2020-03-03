@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "stream-config",
+    "title": "Stream-config",
+    "description": "Configures stream-processing resequence eip.",
+    "javaType": "org.apache.camel.model.config.StreamResequencerConfig",
+    "label": "eip,routing,resequence",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "capacity": { "kind": "attribute", "displayName": "Capacity", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "100", "description": "Sets the capacity of the resequencer's inbound queue." },
+    "timeout": { "kind": "attribute", "displayName": "Timeout", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "defaultValue": "1000", "description": "Sets minimum time to wait for missing elements (messages)." },
+    "deliveryAttemptInterval": { "kind": "attribute", "displayName": "Delivery Attempt Interval", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "defaultValue": "1000", "description": "Sets the interval in milli seconds the stream resequencer will at most wait while waiting for condition of being able to deliver." },
+    "ignoreInvalidExchanges": { "kind": "attribute", "displayName": "Ignore Invalid Exchanges", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to ignore invalid exchanges" },
+    "comparatorRef": { "kind": "attribute", "displayName": "Comparator Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use a custom comparator" },
+    "rejectOld": { "kind": "attribute", "displayName": "Reject Old", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If true, throws an exception when messages older than the last delivered message are processed" }
+  }
+}

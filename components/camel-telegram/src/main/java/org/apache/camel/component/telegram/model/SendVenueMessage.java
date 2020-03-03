@@ -40,7 +40,7 @@ public class SendVenueMessage extends OutgoingMessage {
     private String foursquareType;
 
     @JsonProperty("reply_markup")
-    private ReplyKeyboardMarkup replyKeyboardMarkup;
+    private ReplyMarkup replyMarkup;
 
     public SendVenueMessage() {
     }
@@ -100,12 +100,12 @@ public class SendVenueMessage extends OutgoingMessage {
         this.foursquareType = foursquareType;
     }
 
-    public ReplyKeyboardMarkup getReplyKeyboardMarkup() {
-        return replyKeyboardMarkup;
+    public ReplyMarkup getReplyMarkup() {
+        return replyMarkup;
     }
 
-    public void setReplyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup) {
-        this.replyKeyboardMarkup = replyKeyboardMarkup;
+    public void setReplyMarkup(ReplyMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SendVenueMessage extends OutgoingMessage {
         sb.append(", foursquareType=").append(foursquareType).append('\'');
         sb.append(", disableNotification=").append(disableNotification).append('\'');
         sb.append(", replyToMessageId=").append(replyToMessageId).append('\'');
-        sb.append(", replyKeyboardMarkup=").append(replyKeyboardMarkup);
+        sb.append(", replyMarkup=").append(replyMarkup);
         sb.append('}');
         return sb.toString();
     }

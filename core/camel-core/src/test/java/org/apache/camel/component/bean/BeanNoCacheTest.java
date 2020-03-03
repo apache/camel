@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class BeanNoCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MyCoolBean.class, "doSomething", false).to("mock:result");
+                from("direct:start").bean(MyCoolBean.class, "doSomething", BeanScope.Prototype).to("mock:result");
             }
         };
     }

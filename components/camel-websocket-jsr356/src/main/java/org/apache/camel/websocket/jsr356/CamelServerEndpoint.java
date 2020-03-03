@@ -63,7 +63,7 @@ public class CamelServerEndpoint extends Endpoint {
         synchronized (session) {
             if (session.isOpen()) {
                 try {
-                    session.close(new CloseReason(CloseReason.CloseCodes.CLOSED_ABNORMALLY, "an exception occured"));
+                    session.close(new CloseReason(CloseReason.CloseCodes.CLOSED_ABNORMALLY, "an exception occurred"));
                 } catch (final IOException e) {
                     log.debug("Error closing session #{}", session.getId(), e);
                 }

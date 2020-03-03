@@ -32,7 +32,6 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
@@ -225,7 +224,8 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
             org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
-            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, removeParameters, mandatory,
+            return doBindProperties(camelContext, target,  removeParameters ? properties : new HashMap<>(properties),
+                    optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
         }
 
@@ -247,7 +247,8 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(obj, "target");
             org.apache.camel.util.ObjectHelper.notNull(prop, "properties");
 
-            return doBindProperties(context, obj, prop, optionPrefix, ignoreCase, removeParameters, mandatory,
+            return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
+                    optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
         }
 
@@ -269,7 +270,7 @@ public final class PropertyBindingSupport {
             Map<String, Object> properties = new HashMap<>(1);
             properties.put(key, value);
 
-            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, removeParameters, mandatory,
+            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
         }
 
@@ -353,7 +354,7 @@ public final class PropertyBindingSupport {
             Object value = entry.getValue();
 
             // skip based on some known names
-            if ("basicPropertyBinding".equals(key)) {
+            if ("basicPropertyBinding".equals(key) || "bridgeErrorHandler".equals(key) || "lazyStartProducer".equals(key)) {
                 continue;
             }
 
@@ -476,9 +477,7 @@ public final class PropertyBindingSupport {
         final String uOptionPrefix = ignoreCase && isNotEmpty(optionPrefix) ? optionPrefix.toUpperCase(Locale.US) : "";
         final int size = properties.size();
 
-        if (configurer instanceof GeneratedPropertyConfigurer) {
-            GeneratedPropertyConfigurer gen = (GeneratedPropertyConfigurer) configurer;
-
+        if (configurer != null) {
             for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, Object> entry = iter.next();
                 String key = entry.getKey();
@@ -487,14 +486,14 @@ public final class PropertyBindingSupport {
                 // property configurer does not support nested names so skip if the name has a dot
                 if (key.indexOf('.') == -1) {
                     try {
-                        // GeneratedPropertyConfigurer works by invoking the methods directly but it does
+                        // PropertyConfigurer works by invoking the methods directly but it does
                         // not resolve property placeholders eventually defined in the value before invoking
                         // the setter.
                         if (value instanceof String) {
                             value = camelContext.resolvePropertyPlaceholders((String) value);
                         }
                         value = resolveValue(camelContext, target, key, value, ignoreCase, fluentBuilder, allowPrivateSetter);
-                        boolean hit = gen.configure(camelContext, target, key, value, ignoreCase);
+                        boolean hit = configurer.configure(camelContext, target, key, value, ignoreCase);
                         if (removeParameter && hit) {
                             iter.remove();
                         }
@@ -553,45 +552,7 @@ public final class PropertyBindingSupport {
     private static Object resolveValue(CamelContext context, Object target, String name, Object value,
                                        boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter) throws Exception {
         if (value instanceof String) {
-            if (value.toString().startsWith("#class:")) {
-                // its a new class to be created
-                String className = value.toString().substring(7);
-                String factoryMethod = null;
-                String parameters = null;
-                if (className.endsWith(")") && className.indexOf('(') != -1) {
-                    parameters = StringHelper.after(className, "(");
-                    parameters = parameters.substring(0, parameters.length() - 1); // clip last )
-                    className = StringHelper.before(className, "(");
-                }
-                if (className != null && className.indexOf('#') != -1) {
-                    factoryMethod = StringHelper.after(className, "#");
-                    className = StringHelper.before(className, "#");
-                }
-                Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
-                if (factoryMethod != null) {
-                    value = context.getInjector().newInstance(type, factoryMethod);
-                } else if (parameters != null) {
-                    // special to support constructor parameters
-                    value = newInstanceConstructorParameters(context, type, parameters);
-                } else {
-                    value = context.getInjector().newInstance(type);
-                }
-                if (value == null) {
-                    throw new IllegalStateException("Cannot create instance of class: " + className);
-                }
-            } else if (value.toString().startsWith("#type:")) {
-                // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
-                String typeName = value.toString().substring(6);
-                Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
-                Set<?> types = context.getRegistry().findByType(type);
-                if (types.size() == 1) {
-                    value = types.iterator().next();
-                } else if (types.size() > 1) {
-                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
-                } else {
-                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
-                }
-            } else if (value.toString().equals("#autowired")) {
+            if (value.toString().equals("#autowired")) {
                 // we should get the type from the setter
                 Method method = findBestSetterMethod(context, target.getClass(), name, fluentBuilder, allowPrivateSetter, ignoreCase);
                 if (method != null) {
@@ -607,9 +568,8 @@ public final class PropertyBindingSupport {
                 } else {
                     throw new IllegalStateException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
                 }
-            } else if (value.toString().startsWith("#bean:")) {
-                String key = value.toString().substring(6);
-                value = context.getRegistry().lookupByName(key);
+            } else {
+                value = resolveBean(context, name, value);
             }
         }
         return value;
@@ -953,6 +913,62 @@ public final class PropertyBindingSupport {
             }
         }
         return parameterType.isAssignableFrom(expectedType);
+    }
+
+    /**
+     * Resolves the value as either a class, type or bean.
+     *
+     * @param camelContext       the camel context
+     * @param name               the name of the bean
+     * @param value              how to resolve the bean with a prefix of either class#:, type#: or bean#:
+     * @return the resolve bean
+     * @throws Exception is thrown if error resolving the bean, or if the value is invalid.
+     */
+    public static Object resolveBean(CamelContext camelContext, String name, Object value) throws Exception {
+        if (value.toString().startsWith("#class:")) {
+            // its a new class to be created
+            String className = value.toString().substring(7);
+            String factoryMethod = null;
+            String parameters = null;
+            if (className.endsWith(")") && className.indexOf('(') != -1) {
+                parameters = StringHelper.after(className, "(");
+                parameters = parameters.substring(0, parameters.length() - 1); // clip last )
+                className = StringHelper.before(className, "(");
+            }
+            if (className != null && className.indexOf('#') != -1) {
+                factoryMethod = StringHelper.after(className, "#");
+                className = StringHelper.before(className, "#");
+            }
+            Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(className);
+            if (factoryMethod != null) {
+                value = camelContext.getInjector().newInstance(type, factoryMethod);
+            } else if (parameters != null) {
+                // special to support constructor parameters
+                value = newInstanceConstructorParameters(camelContext, type, parameters);
+            } else {
+                value = camelContext.getInjector().newInstance(type);
+            }
+            if (value == null) {
+                throw new IllegalStateException("Cannot create instance of class: " + className);
+            }
+        } else if (value.toString().startsWith("#type:")) {
+            // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
+            String typeName = value.toString().substring(6);
+            Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(typeName);
+            Set<?> types = camelContext.getRegistry().findByType(type);
+            if (types.size() == 1) {
+                value = types.iterator().next();
+            } else if (types.size() > 1) {
+                throw new IllegalStateException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
+            } else {
+                throw new IllegalStateException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
+            }
+        } else if (value.toString().startsWith("#bean:")) {
+            String key = value.toString().substring(6);
+            value = camelContext.getRegistry().lookupByName(key);
+        }
+
+        return value;
     }
 
 }

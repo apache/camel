@@ -185,7 +185,7 @@ public class CachedOutputStream extends OutputStream {
         }
         
         @Override
-        public void reset() throws IOException {
+        public synchronized void reset() throws IOException {
             inputStream.reset();
         }
         

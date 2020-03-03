@@ -47,4 +47,11 @@ public interface CamelInternalProcessorAdvice<T> {
      */
     void after(Exchange exchange, T data) throws Exception;
 
+    /**
+     * Whether this advice has state or not.
+     */
+    default boolean hasState() {
+        return true;
+    }
+
 }

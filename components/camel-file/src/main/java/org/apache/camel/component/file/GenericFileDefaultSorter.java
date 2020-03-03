@@ -35,43 +35,40 @@ public final class GenericFileDefaultSorter {
     /**
      * Returns a new sory by file language expression
      *
-     * @param context    the camel context
+     * @param context the camel context
      * @param expression the file language expression
-     * @param reverse    true to reverse order
+     * @param reverse true to reverse order
      * @return the comparator
      */
-    public static Comparator<Exchange> sortByFileLanguage(
-            CamelContext context, String expression, boolean reverse) {
+    public static Comparator<Exchange> sortByFileLanguage(CamelContext context, String expression, boolean reverse) {
         return sortByFileLanguage(context, expression, reverse, false, null);
     }
 
     /**
      * Returns a new sory by file language expression
      *
-     * @param context    the camel context
+     * @param context the camel context
      * @param expression the file language expression
-     * @param reverse    true to reverse order
+     * @param reverse true to reverse order
      * @param ignoreCase ignore case if comparing strings
      * @return the comparator
      */
-    public static Comparator<Exchange> sortByFileLanguage(
-            CamelContext context, String expression, boolean reverse, boolean ignoreCase) {
+    public static Comparator<Exchange> sortByFileLanguage(CamelContext context, String expression, boolean reverse, boolean ignoreCase) {
         return sortByFileLanguage(context, expression, reverse, ignoreCase, null);
     }
 
     /**
      * Returns a new sort by file language expression
      *
-     * @param context    the camel context
+     * @param context the camel context
      * @param expression the file language expression
-     * @param reverse    true to reverse order
+     * @param reverse true to reverse order
      * @param ignoreCase ignore case if comparing strings
-     * @param nested     nested comparator for sub group sorting, can be null
+     * @param nested nested comparator for sub group sorting, can be null
      * @return the comparator
      */
-    public static Comparator<Exchange> sortByFileLanguage(
-            final CamelContext context, final String expression, final boolean reverse,
-            final boolean ignoreCase, final Comparator<Exchange> nested) {
+    public static Comparator<Exchange> sortByFileLanguage(final CamelContext context, final String expression, final boolean reverse, final boolean ignoreCase,
+                                                          final Comparator<Exchange> nested) {
 
         // the expression should be enclosed by ${ }
         String text = expression;

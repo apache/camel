@@ -428,9 +428,12 @@ You can see the tests in the `camel-example-cdi-test` example for a
 thorough overview of the following testing patterns for Camel CDI
 applications.
 
-NOTE: While the patterns above are illustrated using the Camel CDI test
+[NOTE]
+====
+While the patterns above are illustrated using the Camel CDI test
 module, they should equally work with Arquillian and PAX Exam unless
 otherwise stated or illustrated with a specific example.
+====
 
 [[CDITesting-Testroutes]]
 == Test routes

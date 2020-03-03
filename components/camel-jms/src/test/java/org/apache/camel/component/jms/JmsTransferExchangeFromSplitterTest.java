@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -40,12 +38,10 @@ public class JmsTransferExchangeFromSplitterTest extends CamelTestSupport {
         mock.expectedBodiesReceived("A", "B", "C");
         mock.allMessages().header("foo").isEqualTo("cheese");
 
-        template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("A,B,C");
-                exchange.getIn().setHeader("foo", "cheese");
-                exchange.setProperty("bar", 123);
-            }
+        template.send("direct:start", exchange -> {
+            exchange.getIn().setBody("A,B,C");
+            exchange.getIn().setHeader("foo", "cheese");
+            exchange.setProperty("bar", 123);
         });
 
         assertMockEndpointsSatisfied();

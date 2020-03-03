@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "base64",
+    "title": "Base64",
+    "description": "The Base64 data format is used for base64 encoding and decoding.",
+    "firstVersion": "2.11.0",
+    "javaType": "org.apache.camel.model.dataformat.Base64DataFormat",
+    "label": "dataformat,transformation",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "lineLength": { "kind": "attribute", "displayName": "Line Length", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "76", "description": "To specific a maximum line length for the encoded data. By default 76 is used." },
+    "lineSeparator": { "kind": "attribute", "displayName": "Line Separator", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The line separators to use. Uses new line characters (CRLF) by default." },
+    "urlSafe": { "kind": "attribute", "displayName": "Url Safe", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Instead of emitting '' and '\/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

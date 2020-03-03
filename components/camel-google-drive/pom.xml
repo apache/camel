@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-drive</artifactId>
@@ -68,14 +68,6 @@
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
             <version>${google-api-services-drive-version}</version>
-        </dependency>
-
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Component API javadoc in provided scope to read API signatures -->
@@ -203,6 +195,7 @@
                                     <replacement>contentChannel</replacement>
                                 </substitution>
                             </substitutions>
+                            <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                         </configuration>
                     </execution>
                 </executions>
@@ -214,17 +207,6 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>1.8</version>
                 <executions>
-                    <execution>
-                        <id>add-generated-sources</id>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/camel-component</source>
-                            </sources>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>add-generated-test-sources</id>
                         <goals>

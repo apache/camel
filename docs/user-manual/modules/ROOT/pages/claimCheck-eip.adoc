@@ -9,8 +9,10 @@ image::eip/StoreInLibrary.gif[image]
 
 It can also be useful in situations where you cannot trust the information with an outside party; in this case, you can use the Claim Check to hide the sensitive portions of data.
 
-NOTE: The Camel implementation of this EIP pattern stores the message content temporarily in an internal memory store.
-
+[NOTE]
+====
+The Camel implementation of this EIP pattern stores the message content temporarily in an internal memory store.
+====
 
 // eip options: START
 The Claim Check EIP supports 5 options which are listed below:

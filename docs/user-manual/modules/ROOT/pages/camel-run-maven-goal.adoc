@@ -127,7 +127,7 @@ Camel-related, or any other CDI enabled services.
 
 You should add the CDI container of your choice (e.g. Weld or
 OpenWebBeans) to the dependencies of the camel-maven-plugin such as
-https://github.com/apache/camel/tree/master/examples/camel-example-cdi/[in
+https://github.com/apache/camel-examples/tree/master/examples/camel-example-cdi/[in
 this example].
 
 From *Camel 2.17* onwards the camel:run goal is able to auto detect if

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-coap</artifactId>
@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.californium</groupId>
-            <artifactId>element-connector-tcp</artifactId>
+            <artifactId>element-connector-tcp-netty</artifactId>
             <version>${californium-version}</version>
         </dependency>
 

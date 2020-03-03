@@ -230,8 +230,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         if (ExchangeHelper.isFailureHandled(exchange)) {
             failuresHandled.increment();
         }
-        Boolean externalRedelivered = exchange.isExternalRedelivered();
-        if (externalRedelivered != null && externalRedelivered) {
+        if (exchange.isExternalRedelivered()) {
             externalRedeliveries.increment();
         }
 
@@ -270,8 +269,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         if (ExchangeHelper.isRedelivered(exchange)) {
             redeliveries.increment();
         }
-        Boolean externalRedelivered = exchange.isExternalRedelivered();
-        if (externalRedelivered != null && externalRedelivered) {
+        if (exchange.isExternalRedelivered()) {
             externalRedeliveries.increment();
         }
 

@@ -29,8 +29,12 @@ import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerEndpoint;
 import org.apache.camel.component.docker.DockerHelper;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DockerEventsConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DockerEventsConsumer.class);
 
     private DockerEndpoint endpoint;
     private DockerComponent component;
@@ -80,18 +84,18 @@ public class DockerEventsConsumer extends DefaultConsumer {
 
         @Override
         public void onNext(Event event) {
-            log.debug("Received Docker Event: {}", event);
+            LOG.debug("Received Docker Event: {}", event);
 
             final Exchange exchange = getEndpoint().createExchange();
             Message message = exchange.getIn();
             message.setBody(event);
 
             try {
-                log.trace("Processing exchange [{}]...", exchange);
+                LOG.trace("Processing exchange [{}]...", exchange);
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
-                        log.trace("Done processing exchange [{}]...", exchange);
+                        LOG.trace("Done processing exchange [{}]...", exchange);
                     }
                 });
             } catch (Exception e) {

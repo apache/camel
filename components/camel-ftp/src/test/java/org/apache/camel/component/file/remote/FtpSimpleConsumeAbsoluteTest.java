@@ -52,10 +52,9 @@ public class FtpSimpleConsumeAbsoluteTest extends FtpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 // notice we use an absolute starting path: /tmp/mytemp
-                // - we must remember to use // slash because of the url separator
-                from("ftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
-                    .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                // - we must remember to use // slash because of the url
+                // separator
+                from("ftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true").routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

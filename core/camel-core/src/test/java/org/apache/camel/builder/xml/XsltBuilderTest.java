@@ -33,6 +33,7 @@ import org.xml.sax.InputSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.xslt.StreamResultHandlerFactory;
 import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -257,7 +258,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         assertTrue(body.endsWith("<goodbye>world!</goodbye>"));
 
         // now done the exchange
-        List<Synchronization> onCompletions = exchange.handoverCompletions();
+        List<Synchronization> onCompletions = exchange.adapt(ExtendedExchange.class).handoverCompletions();
         UnitOfWorkHelper.doneSynchronizations(exchange, onCompletions, log);
 
         // the file should be deleted

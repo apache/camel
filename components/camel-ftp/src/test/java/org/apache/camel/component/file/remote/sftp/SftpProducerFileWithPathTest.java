@@ -37,7 +37,7 @@ public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME,  "hello/claus.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello/claus.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");

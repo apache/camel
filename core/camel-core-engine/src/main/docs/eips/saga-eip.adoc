@@ -32,6 +32,7 @@ The Saga EIP supports 6 options which are listed below:
 | *compensation* | The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the saga service may call again the compensation URI to retry. |  | SagaActionUri Definition
 | *completion* | The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga service may call again the completion URI to retry. |  | SagaActionUri Definition
 | *option* | Allows to save properties of the current exchange in order to re-use them in a compensation/completion callback route. Options are usually helpful e.g. to store and retrieve identifiers of objects that should be deleted in compensating actions. Option values will be transformed into input headers of the compensation/completion exchange. |  | List
+| *sagaServiceRef* |  Refers to the id to lookup in the registry for the specific CamelSagaService to use. | | String
 |===
 // eip options: END
 
@@ -126,14 +127,14 @@ include the *camel-lra-starter* module in their project:
 [source,xml]
 ----
 <dependency>
- <groupId>org.apache.camel</groupId>
+ <groupId>org.apache.camel.springboot</groupId>
  <artifactId>camel-lra-starter</artifactId>
  <!-- use the same version as your Camel core version -->
  <version>x.y.z</version>
 </dependency>
 
 <dependency>
- <groupId>org.apache.camel</groupId>
+ <groupId>org.apache.camel.springboot</groupId>
  <artifactId>camel-undertow-starter</artifactId>
  <!-- use the same version as your Camel core version -->
  <version>x.y.z</version>
@@ -174,8 +175,10 @@ from("direct:buy")
 *That's it*. The buy action will not change for the rest of the examples. We'll just see different options that can be used to model the "New Order" and "Reserve Credit" actions in the following.
 
 [NOTE]
+====
 We have used a _direct_ endpoint to model the two actions since this example can be used with both implementations of the Saga service,
 but we could have used *http* or other kinds of endpoint with the LRA Saga service.
+====
 
 Both services called by the _direct:buy_ route can *participate to the Saga* and declare their compensating actions.
 
@@ -331,7 +334,10 @@ Since the _direct:creditReservation_ endpoint can be now called also from outsid
 Sagas are long running actions, but this does not mean that they should not have a bounded timeframe to execute.
 *Setting timeouts on Sagas is always a good practice* as it guarantees that a Saga does not remain stuck forever in the case of machine failure.
 
-NOTE: The Saga EIP implementation may have a default timeout set on all Sagas that don't specify it explicitly
+[NOTE]
+====
+The Saga EIP implementation may have a default timeout set on all Sagas that don't specify it explicitly
+====
 
 When the timeout expires, the Saga EIP will decide to *cancel the Saga* (and compensate all participants), unless a different decision has been taken before.
 

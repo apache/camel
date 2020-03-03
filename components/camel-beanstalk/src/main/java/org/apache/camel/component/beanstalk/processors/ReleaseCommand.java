@@ -37,7 +37,7 @@ public class ReleaseCommand extends DefaultCommand {
     public void act(final Client client, final Exchange exchange) throws NoSuchHeaderException {
         final Message in = exchange.getIn();
 
-        final Long jobId = BeanstalkExchangeHelper.getJobID(exchange);
+        final long jobId = BeanstalkExchangeHelper.getJobID(exchange);
         final long priority = BeanstalkExchangeHelper.getPriority(endpoint, in);
         final int delay = BeanstalkExchangeHelper.getDelay(endpoint, in);
 

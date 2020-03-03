@@ -1,0 +1,25 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "zipfile",
+    "modelName": "zipfile",
+    "title": "Zip File",
+    "description": "The Zip File data format is a message compression and de-compression format of zip files.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation,file",
+    "firstVersion": "2.11.0",
+    "label": "dataformat,transformation,file",
+    "javaType": "org.apache.camel.dataformat.zipfile.ZipFileDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.ZipFileDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-zipfile",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "usingIterator": { "kind": "attribute", "displayName": "Using Iterator", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode." },
+    "allowEmptyDirectory": { "kind": "attribute", "displayName": "Allow Empty Directory", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the zip file has more then one entry, setting this option to true, allows to get the iterator even if the directory is empty" },
+    "preservePathElements": { "kind": "attribute", "displayName": "Preserve Path Elements", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the file name contains path elements, setting this option to true, allows the path to be maintained in the zip file." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

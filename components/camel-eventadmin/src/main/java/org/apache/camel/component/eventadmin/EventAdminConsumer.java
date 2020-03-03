@@ -26,8 +26,12 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventAdminConsumer extends DefaultConsumer implements EventHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EventAdminConsumer.class);
 
     private final EventAdminEndpoint endpoint;
     private ServiceRegistration<?> registration;
@@ -43,7 +47,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
         // TODO: populate exchange headers
         exchange.getIn().setBody(event);
 
-        log.trace("EventAdmin {} is firing", endpoint.getTopic());
+        LOG.trace("EventAdmin {} is firing", endpoint.getTopic());
         try {
             getProcessor().process(exchange);
             // log exception if an exception occurred and was not handled

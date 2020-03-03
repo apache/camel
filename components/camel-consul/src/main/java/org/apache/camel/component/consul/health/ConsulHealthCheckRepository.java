@@ -105,7 +105,7 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
         private final String checkId;
 
         ConsulHealthCheck(String checkId) {
-            super("consul-" + checkId.replaceAll(":", "-"));
+            super("consul-" + checkId.replace(':', '-'));
 
             this.checkId = checkId;
 

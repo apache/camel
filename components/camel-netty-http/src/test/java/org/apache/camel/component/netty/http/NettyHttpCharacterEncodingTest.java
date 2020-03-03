@@ -25,16 +25,12 @@ public class NettyHttpCharacterEncodingTest extends BaseNettyTest {
 
     @Test
     public void testSendToNetty() throws Exception {
-        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/myapp/myservice", new Processor() {
-
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World Thai Elephant \u0E08");
-                exchange.getIn().setHeader("Content-Type", "text/html; charset=utf-8");
-            }
-
+        Exchange exchange = template.request("netty-http:http://localhost:{{port}}/myapp/myservice", exchange1 -> {
+            exchange1.getIn().setBody("Hello World Thai Elephant \u0E08");
+            exchange1.getIn().setHeader("Content-Type", "text/html; charset=utf-8");
         });
         // convert the response to a String
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("Response message is Thai Elephant \u0E08", body);
     }
 
@@ -57,8 +53,8 @@ public class NettyHttpCharacterEncodingTest extends BaseNettyTest {
             assertEquals("Hello World Thai Elephant \u0E08", body);
 
             // send a html response
-            exchange.getOut().setHeader("Content-Type", "text/html; charset=utf-8");
-            exchange.getOut().setBody("Response message is Thai Elephant \u0E08");
+            exchange.getMessage().setHeader("Content-Type", "text/html; charset=utf-8");
+            exchange.getMessage().setBody("Response message is Thai Elephant \u0E08");
         }
     }
 }

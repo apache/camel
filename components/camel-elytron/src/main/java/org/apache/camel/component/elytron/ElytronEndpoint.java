@@ -32,9 +32,8 @@ import org.apache.camel.spi.UriParam;
 import org.wildfly.security.auth.server.SecurityIdentity;
 
 /**
- * Endpoint
+ * The elytron component is allows you to work with the Elytron Security Framework
  *
- * @author JiriOndrusek
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "elytron", title = "Elytron", syntax = "elytron:httpURI",
         label = "http", lenientProperties = true, extendsScheme = "undertow")

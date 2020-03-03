@@ -36,7 +36,7 @@ public class JMXConsumerNotificationFilter extends AttributeChangeNotificationFi
     }
 
     @Override
-    public boolean isNotificationEnabled(Notification notification) {
+    public synchronized boolean isNotificationEnabled(Notification notification) {
         boolean enabled = super.isNotificationEnabled(notification);
         if (!enabled) {
             return false;

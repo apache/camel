@@ -30,6 +30,9 @@ public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:foo", "Bye World");
+
+        Thread.sleep(10);
+
         // this message will be discarded
         template.sendBody("seda:foo", "Hi World");
 
@@ -49,8 +52,9 @@ public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
             public void configure() throws Exception {
                 SedaComponent seda = context.getComponent("seda", SedaComponent.class);
                 seda.setDefaultDiscardWhenFull(true);
+                seda.setQueueSize(2);
 
-                from("seda:foo?size=2").routeId("foo").noAutoStartup()
+                from("seda:foo").routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };

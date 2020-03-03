@@ -75,7 +75,8 @@ public class FtpConsumerLocalWorkDirectoryAsAbsolutePathTest extends FtpServerTe
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -86,7 +87,7 @@ public class FtpConsumerLocalWorkDirectoryAsAbsolutePathTest extends FtpServerTe
         producer.process(exchange);
         producer.stop();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

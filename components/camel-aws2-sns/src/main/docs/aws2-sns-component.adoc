@@ -1,0 +1,217 @@
+[[aws2-sns-component]]
+= AWS 2 Simple Notification System Component
+
+*Since Camel 3.1*
+
+*Since Camel 3.1*
+
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The SNS component allows messages to be sent to an
+https://aws.amazon.com/sns[Amazon Simple Notification] Topic. The
+implementation of the Amazon API is provided by
+the https://aws.amazon.com/sdkforjava/[AWS SDK].
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon SNS. More information is available at
+https://aws.amazon.com/sns[Amazon SNS].
+
+[NOTE]
+====
+The AWS2 SNS component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-----------------------------
+aws2-sns://topicNameOrArn[?options]
+-----------------------------
+
+The topic will be created if they don't already exists. +
+ You can append query options to the URI in the following format,
+`?options=value&option2=value&...`
+
+== URI Options
+
+
+// component options: START
+The AWS 2 Simple Notification System component supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | SnsClient
+| *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
+| *configuration* (producer) | Component configuration |  | Sns2Configuration
+| *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageStructure* (producer) | The message structure to use such as json |  | String
+| *policy* (producer) | The policy for this queue |  | String
+| *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *queueUrl* (producer) | The queueUrl to subscribe to |  | String
+| *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
+| *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
+| *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The AWS 2 Simple Notification System endpoint is configured using URI syntax:
+
+----
+aws2-sns:topicNameOrArn
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *topicNameOrArn* | *Required* Topic name or ARN |  | String
+|===
+
+
+=== Query Parameters (19 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | SnsClient
+| *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
+| *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
+| *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageStructure* (producer) | The message structure to use such as json |  | String
+| *policy* (producer) | The policy for this queue |  | String
+| *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *queueUrl* (producer) | The queueUrl to subscribe to |  | String
+| *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
+| *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
+| *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+Required SNS component options
+
+You have to provide the amazonSNSClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/sns[Amazon's SNS].
+
+== Usage
+
+=== Message headers evaluated by the SNS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSnsSubject` |`String` |The Amazon SNS message subject. If not set, the subject from the
+`SnsConfiguration` is used.
+|=======================================================================
+
+=== Message headers set by the SNS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSnsMessageId` |`String` |The Amazon SNS message ID.
+|=======================================================================
+
+=== Advanced AmazonSNS configuration
+
+If you need more control over the `SnsClient` instance configuration you
+can create your own instance and refer to it from the URI:
+
+[source,java]
+-------------------------------------------------
+from("direct:start")
+.to("aws2-sns://MyTopic?amazonSNSClient=#client");
+-------------------------------------------------
+
+The `#client` refers to a `AmazonSNS` in the
+Registry.
+
+=== Create a subscription between an AWS SNS Topic and an AWS SQS Queue
+
+You can create a subscription of an SQS Queue to an SNS Topic in this way:
+
+[source,java]
+-------------------------------------------------
+from("direct:start")
+.to("aws2-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&subscribeSNStoSQS=true&queueUrl=https://sqs.eu-central-1.amazonaws.com/780410022472/test-camel");
+-------------------------------------------------
+
+The `#amazonSNSClient` refers to a `SnsClient` in the
+Registry.
+By specifying `subscribeSNStoSQS` to true and a `queueUrl` of an existing SQS Queue,
+you'll be able to subscribe your SQS Queue to your SNS Topic.
+
+At this point you can consume messages coming from SNS Topic through your SQS Queue
+
+[source,java]
+-------------------------------------------------
+from("aws2-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5")
+    .to(...);
+-------------------------------------------------
+
+== Topic Autocreation
+
+With the option `autoCreateTopic` users are able to avoid the autocreation of an SNS Topic in case it doesn't exist. The default for this option is `true`.
+If set to false any operation on a not-existent topic in AWS won't be successful and an error will be returned.
+
+== Automatic detection of SnsClient client in registry
+
+The component is capable of detecting the presence of an SnsClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-sns</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+
+include::camel-spring-boot::page$aws2-sns-starter.adoc[]

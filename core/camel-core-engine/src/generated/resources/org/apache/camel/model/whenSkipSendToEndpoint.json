@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "whenSkipSendToEndpoint",
+    "title": "When Skip Send To Endpoint",
+    "description": "Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.",
+    "javaType": "org.apache.camel.model.WhenSkipSendToEndpointDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": true,
+    "output": true
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "asPredicate": true, "description": "Expression used as the predicate to evaluate whether the message should be sent or not to the endpoint" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -175,7 +175,7 @@ public final class GrpcUtils {
     public static String convertMethod2CamelCase(final String method) {
         StringBuilder sb = new StringBuilder(method.length());
         sb.append(method.substring(0, 1).toLowerCase());
-        Boolean afterUnderscore = false;
+        boolean afterUnderscore = false;
         for (int i = 1; i < method.length(); i++) {
             if (method.charAt(i) == '_') {
                 afterUnderscore = true;

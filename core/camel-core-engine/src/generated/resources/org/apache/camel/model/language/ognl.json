@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "ognl",
+    "title": "OGNL",
+    "description": "To use OGNL scripts in Camel expressions or predicates.",
+    "firstVersion": "1.1.0",
+    "javaType": "org.apache.camel.model.language.OgnlExpression",
+    "label": "language,java",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

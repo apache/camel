@@ -1,0 +1,141 @@
+[[jslt-component]]
+= JSLT Component
+
+*Since Camel 3.1*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The Jslt component allows you to process a JSON messages using an
+https://github.com/schibsted/jslt[JSLT] expression. This can be
+ideal when doing JSON to JSON transformation or querying data.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jslt</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+ 
+
+== URI format
+
+[source,java]
+-----------------------
+jslt:specName[?options]
+-----------------------
+
+Where *specName* is the classpath-local URI of the specification to
+invoke; or the complete URL of the remote specification
+(eg: \file://folder/myfile.vm).
+
+You can append query options to the URI in the following
+format, `?option=value&option=value&...`
+
+== Options
+
+
+
+
+// component options: START
+The JSLT component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *functions* (advanced) | JSLT can be extended by plugging in functions written in Java. |  | Collection
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The JSLT endpoint is configured using URI syntax:
+
+----
+jslt:resourceUri
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+=== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *prettyPrint* (common) | If true, JSON in output message is pretty printed. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+
+
+== Samples
+
+For example you could use something like
+
+[source,java]
+--------------------------------------
+from("activemq:My.Queue").
+  to("jslt:com/acme/MyResponse.json");
+--------------------------------------
+
+And a file based resource:
+
+[source,java]
+---------------------------------------------------------------
+from("activemq:My.Queue").
+  to("jslt:file://myfolder/MyResponse.json?contentCache=true").
+  to("activemq:Another.Queue");
+---------------------------------------------------------------
+
+You can also specify which JSLT expression the component should use
+dynamically via a header, so for example:
+
+[source,java]
+---------------------------------------------------------------------
+from("direct:in").
+  setHeader("CamelJsltResourceUri").constant("path/to/my/spec.json").
+  to("jslt:dummy");
+---------------------------------------------------------------------
+
+Or send whole jslt expression via header: (suitable for querying)
+ 
+[source,java]
+---------------------------------------------------------------------
+from("direct:in").
+  setHeader("CamelJsltResourceUri").constant(".published").
+  to("jslt:dummy");
+---------------------------------------------------------------------
+
+include::camel-spring-boot::page$jslt-starter.adoc[]

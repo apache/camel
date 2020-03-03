@@ -32,6 +32,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Camel Component for <a href="http://vertx.io/">vert.x</a>
@@ -39,15 +41,21 @@ import org.apache.camel.util.ObjectHelper;
 @Component("vertx")
 public class VertxComponent extends DefaultComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(VertxComponent.class);
+
     private volatile boolean createdVertx;
 
     @Metadata(label = "advanced")
     private VertxFactory vertxFactory;
+    @Metadata
     private Vertx vertx;
+    @Metadata
     private String host;
+    @Metadata
     private int port;
     @Metadata(defaultValue = "60")
     private int timeout = 60;
+    @Metadata
     private VertxOptions vertxOptions;
 
     public VertxComponent() {
@@ -161,34 +169,34 @@ public class VertxComponent extends DefaultComponent {
 
             // lets using a host / port if a host name is specified
             if (vertxOptions.isClustered()) {
-                log.info("Creating Clustered Vertx {}:{}", vertxOptions.getClusterHost(), vertxOptions.getClusterPort());
+                LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getClusterHost(), vertxOptions.getClusterPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
                 vertxFactory.clusteredVertx(vertxOptions, new Handler<AsyncResult<Vertx>>() {
                     @Override
                     public void handle(AsyncResult<Vertx> event) {
                         if (event.cause() != null) {
-                            log.warn("Error creating Clustered Vertx " + host + ":" + port + " due " + event.cause().getMessage(), event.cause());
+                            LOG.warn("Error creating Clustered Vertx " + host + ":" + port + " due " + event.cause().getMessage(), event.cause());
                         } else if (event.succeeded()) {
                             vertx = event.result();
-                            log.info("EventBus is ready: {}", vertx);
+                            LOG.info("EventBus is ready: {}", vertx);
                         }
 
                         latch.countDown();
                     }
                 });
             } else {
-                log.info("Creating Non-Clustered Vertx");
+                LOG.info("Creating Non-Clustered Vertx");
                 vertx = vertxFactory.vertx();
-                log.info("EventBus is ready: {}", vertx);
+                LOG.info("EventBus is ready: {}", vertx);
                 latch.countDown();
             }
 
             if (latch.getCount() > 0) {
-                log.info("Waiting for EventBus to be ready using {} sec as timeout", timeout);
+                LOG.info("Waiting for EventBus to be ready using {} sec as timeout", timeout);
                 latch.await(timeout, TimeUnit.SECONDS);
             }
         } else {
-            log.debug("Using Vert.x instance set on the component level.");
+            LOG.debug("Using Vertx instance set on the component level.");
         }
     }
 
@@ -197,7 +205,7 @@ public class VertxComponent extends DefaultComponent {
         super.doStop();
 
         if (createdVertx && vertx != null) {
-            log.info("Stopping Vertx {}", vertx);
+            LOG.info("Stopping Vertx {}", vertx);
             vertx.close();
         }
     }

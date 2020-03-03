@@ -17,23 +17,24 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.camel.maven.packaging.model.ComponentModel;
-import org.apache.camel.maven.packaging.model.DataFormatModel;
-import org.apache.camel.maven.packaging.model.EipModel;
-import org.apache.camel.maven.packaging.model.LanguageModel;
-import org.apache.camel.maven.packaging.model.OtherModel;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,12 +45,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
 
-import static java.util.stream.Collectors.toSet;
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.writeText;
-
 /**
- * Updates the website docs with the component list to be up to date with all the artifacts that Apache Camel ships.
+ * Updates the website docs with the component list to be up to date with all
+ * the artifacts that Apache Camel ships.
  */
 @Mojo(name = "update-doc-component-list", threadSafe = true)
 public class UpdateDocComponentListMojo extends AbstractMojo {
@@ -100,8 +98,8 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -124,12 +122,12 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         try {
             List<ComponentModel> models = new ArrayList<>();
             for (File file : componentFiles) {
-                String json = loadText(new FileInputStream(file));
-                ComponentModel model = generateComponentModel(json);
+                String json = PackageHelper.loadText(file);
+                ComponentModel model = JsonMapper.generateComponentModel(json);
 
                 // filter out alternative schemas which reuses documentation
                 boolean add = true;
-                if (!model.getAlternativeSchemes().isEmpty()) {
+                if (!Strings.isNullOrEmpty(model.getAlternativeSchemes())) {
                     String first = model.getAlternativeSchemes().split(",")[0];
                     if (!model.getScheme().equals(first)) {
                         add = false;
@@ -138,7 +136,8 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
                 if (add) {
                     models.add(model);
 
-                    // special for camel-mail where we want to refer its imap scheme to mail so its mail.adoc in the doc link
+                    // special for camel-mail where we want to refer its imap
+                    // scheme to mail so its mail.adoc in the doc link
                     if ("imap".equals(model.getScheme())) {
                         model.setScheme("mail");
                         model.setTitle("Mail");
@@ -147,17 +146,13 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             }
 
             // sort the models
-            Collections.sort(models, new ComponentComparator());
+            models.sort((m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle()));
 
             // how many different artifacts
-            int count = models.stream()
-                    .map(ComponentModel::getArtifactId)
-                    .collect(toSet()).size();
+            long count = models.stream().map(ComponentModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = models.stream()
-                    .filter(c -> "true".equals(c.getDeprecated()))
-                    .count();
+            long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
@@ -187,30 +182,26 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
 
         try {
-            List<OtherModel> others = new ArrayList<>();
+            List<OtherModel> models = new ArrayList<>();
             for (File file : otherFiles) {
-                String json = loadText(new FileInputStream(file));
-                OtherModel model = generateOtherModel(json);
-                others.add(model);
+                String json = PackageHelper.loadText(file);
+                OtherModel model = JsonMapper.generateOtherModel(json);
+                models.add(model);
             }
 
             // sort the models
-            Collections.sort(others, new OtherComparator());
+            models.sort((m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle()));
 
             // how many different artifacts
-            int count = others.stream()
-                    .map(OtherModel::getArtifactId)
-                    .collect(toSet()).size();
+            long count = models.stream().map(OtherModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = others.stream()
-                    .filter(o -> "true".equals(o.getDeprecated()))
-                    .count();
+            long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
             boolean exists = file.exists();
-            String changed = templateOthers(others, count, deprecated);
+            String changed = templateOthers(models, count, deprecated);
             boolean updated = updateOthers(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
@@ -238,8 +229,8 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         try {
             List<DataFormatModel> models = new ArrayList<>();
             for (File file : dataFormatFiles) {
-                String json = loadText(new FileInputStream(file));
-                DataFormatModel model = generateDataFormatModel(json);
+                String json = PackageHelper.loadText(file);
+                DataFormatModel model = JsonMapper.generateDataFormatModel(json);
 
                 // special for bindy as we have one common file
                 if (model.getName().startsWith("bindy")) {
@@ -250,17 +241,13 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             }
 
             // sort the models
-            Collections.sort(models, new DataFormatComparator());
+            models.sort((m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle()));
 
             // how many different artifacts
-            int count = models.stream()
-                    .map(DataFormatModel::getArtifactId)
-                    .collect(toSet()).size();
+            long count = models.stream().map(DataFormatModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = models.stream()
-                    .filter(m -> "true".equals(m.getDeprecated()))
-                    .count();
+            long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
@@ -293,23 +280,19 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         try {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
-                String json = loadText(new FileInputStream(file));
-                LanguageModel model = generateLanguageModel(json);
+                String json = PackageHelper.loadText(file);
+                LanguageModel model = JsonMapper.generateLanguageModel(json);
                 models.add(model);
             }
 
             // sort the models
-            Collections.sort(models, new LanguageComparator());
+            models.sort((m1, m2) -> m1.getTitle().compareToIgnoreCase(m2.getTitle()));
 
             // how many different artifacts
-            int count = models.stream()
-                    .map(LanguageModel::getArtifactId)
-                    .collect(toSet()).size();
+            long count = models.stream().map(LanguageModel::getArtifactId).distinct().count();
 
             // how many deprecated
-            long deprecated = models.stream()
-                    .filter(l -> "true".equals(l.getDeprecated()))
-                    .count();
+            long deprecated = models.stream().filter(BaseModel::isDeprecated).count();
 
             // update doc in the website dir
             File file = websiteDocFile;
@@ -329,60 +312,64 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateComponents(List<ComponentModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateComponents(List<ComponentModel> models, long artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-components-list.mvel"));
+            String template = loadResource("website-components-list.mvel");
             Map<String, Object> map = new HashMap<>();
             map.put("components", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
         }
     }
 
-    private String templateOthers(List<OtherModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateOthers(List<OtherModel> models, long artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-others-list.mvel"));
+            String template = loadResource("website-others-list.mvel");
             Map<String, Object> map = new HashMap<>();
             map.put("others", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
         }
     }
 
-    private String templateDataFormats(List<DataFormatModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateDataFormats(List<DataFormatModel> models, long artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-dataformats-list.mvel"));
+            String template = loadResource("website-dataformats-list.mvel");
             Map<String, Object> map = new HashMap<>();
             map.put("dataformats", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
         }
     }
 
-    private String templateLanguages(List<LanguageModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateLanguages(List<LanguageModel> models, long artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-languages-list.mvel"));
+            String template = loadResource("website-languages-list.mvel");
             Map<String, Object> map = new HashMap<>();
             map.put("languages", models);
             map.put("numberOfArtifacts", artifacts);
             map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            String out = (String)TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
         }
+    }
+
+    private String loadResource(String name) throws IOException {
+        return PackageHelper.loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(name));
     }
 
     private boolean updateComponents(File file, String changed) throws MojoExecutionException {
@@ -391,9 +378,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "// components: START", "// components: END");
+            String existing = Strings.between(text, "// components: START", "// components: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -401,10 +388,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "// components: START");
-                    String after = StringHelper.after(text, "// components: END");
+                    String before = Strings.before(text, "// components: START");
+                    String after = Strings.after(text, "// components: END");
                     text = before + "// components: START\n" + changed + "\n// components: END" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -425,9 +412,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "// others: START", "// others: END");
+            String existing = Strings.between(text, "// others: START", "// others: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -435,10 +422,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "// others: START");
-                    String after = StringHelper.after(text, "// others: END");
+                    String before = Strings.before(text, "// others: START");
+                    String after = Strings.after(text, "// others: END");
                     text = before + "// others: START\n" + changed + "\n// others: END" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -459,9 +446,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "// dataformats: START", "// dataformats: END");
+            String existing = Strings.between(text, "// dataformats: START", "// dataformats: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -469,10 +456,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "// dataformats: START");
-                    String after = StringHelper.after(text, "// dataformats: END");
+                    String before = Strings.before(text, "// dataformats: START");
+                    String after = Strings.after(text, "// dataformats: END");
                     text = before + "// dataformats: START\n" + changed + "\n// dataformats: END" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -493,9 +480,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "// languages: START", "// languages: END");
+            String existing = Strings.between(text, "// languages: START", "// languages: END");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -503,10 +490,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "// languages: START");
-                    String after = StringHelper.after(text, "// languages: END");
+                    String before = Strings.before(text, "// languages: START");
+                    String after = Strings.after(text, "// languages: END");
                     text = before + "// languages: START\n" + changed + "\n// languages: END" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -519,150 +506,6 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
-    }
-
-    private static class EipComparator implements Comparator<EipModel> {
-
-        @Override
-        public int compare(EipModel o1, EipModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private static class ComponentComparator implements Comparator<ComponentModel> {
-
-        @Override
-        public int compare(ComponentModel o1, ComponentModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private static class OtherComparator implements Comparator<OtherModel> {
-
-        @Override
-        public int compare(OtherModel o1, OtherModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private static class DataFormatComparator implements Comparator<DataFormatModel> {
-
-        @Override
-        public int compare(DataFormatModel o1, DataFormatModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private static class LanguageComparator implements Comparator<LanguageModel> {
-
-        @Override
-        public int compare(LanguageModel o1, LanguageModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private EipModel generateEipModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-
-        EipModel eip = new EipModel();
-        eip.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        eip.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        eip.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        eip.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        eip.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        eip.setDeprecated("true".equals(JSonSchemaHelper.getSafeValue("deprecated", rows)));
-        eip.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        eip.setInput("true".equals(JSonSchemaHelper.getSafeValue("input", rows)));
-        eip.setOutput("true".equals(JSonSchemaHelper.getSafeValue("output", rows)));
-
-        return eip;
-    }
-
-    private ComponentModel generateComponentModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-
-        ComponentModel component = new ComponentModel();
-        component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
-        component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
-        component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
-        component.setAlternativeSchemes(JSonSchemaHelper.getSafeValue("alternativeSchemes", rows));
-        component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        component.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
-        component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
-        component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        component.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        component.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return component;
-    }
-
-    private OtherModel generateOtherModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
-
-        OtherModel other = new OtherModel();
-        other.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        other.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        other.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        other.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        other.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        other.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        other.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        other.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        other.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        other.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return other;
-    }
-
-    private DataFormatModel generateDataFormatModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
-
-        DataFormatModel dataFormat = new DataFormatModel();
-        dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        dataFormat.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return dataFormat;
-    }
-
-    private LanguageModel generateLanguageModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
-
-        LanguageModel language = new LanguageModel();
-        language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        language.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        language.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        language.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return language;
     }
 
 }

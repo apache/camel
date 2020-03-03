@@ -55,7 +55,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();
@@ -80,7 +80,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl() + "&sortBy=file:name", FtpEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();
@@ -109,7 +109,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl() + "&recursive=true&sortBy=file:name", FtpEndpoint.class);
         assertNotNull(endpoint);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
         List<Exchange> list = endpoint.getExchanges();

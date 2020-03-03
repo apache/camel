@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,6 +43,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which
@@ -60,10 +61,12 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public final class BacklogDebugger extends ServiceSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
+
     private long fallbackTimeout = 300;
     private final CamelContext camelContext;
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
-    private final CamelLogger logger = new CamelLogger(log, loggingLevel);
+    private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;
@@ -498,7 +501,7 @@ public final class BacklogDebugger extends ServiceSupport {
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
             // store a copy of the message so we can see that from the debugger
-            Date timestamp = new Date();
+            long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
@@ -558,7 +561,7 @@ public final class BacklogDebugger extends ServiceSupport {
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
             // store a copy of the message so we can see that from the debugger
-            Date timestamp = new Date();
+            long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();

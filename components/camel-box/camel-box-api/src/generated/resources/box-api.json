@@ -1,0 +1,12 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "box-api",
+    "title": "Box Api",
+    "description": "Camel Box API",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-box-api",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

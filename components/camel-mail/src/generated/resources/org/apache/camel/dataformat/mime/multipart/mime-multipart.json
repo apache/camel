@@ -1,0 +1,27 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "mime-multipart",
+    "modelName": "mime-multipart",
+    "title": "MIME Multipart",
+    "description": "The MIME Multipart data format is used for marshalling Camel messages with attachments into MIME-Multipart message, and vise-versa.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation",
+    "firstVersion": "2.17.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.dataformat.mime.multipart.MimeMultipartDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.MimeMultipartDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-mail",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "multipartSubType": { "kind": "attribute", "displayName": "Multipart Sub Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "mixed", "description": "Specify the subtype of the MIME Multipart. Default is mixed." },
+    "multipartWithoutAttachment": { "kind": "attribute", "displayName": "Multipart Without Attachment", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false." },
+    "headersInline": { "kind": "attribute", "displayName": "Headers Inline", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default is false." },
+    "includeHeaders": { "kind": "attribute", "displayName": "Include Headers", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work if headersInline is set to true. Default is to include no headers" },
+    "binaryContent": { "kind": "attribute", "displayName": "Binary Content", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

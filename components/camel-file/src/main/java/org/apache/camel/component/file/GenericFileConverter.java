@@ -50,13 +50,13 @@ public final class GenericFileConverter {
     }
 
     @Converter(fallback = true)
-    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
-        throws IOException, NoTypeConversionAvailableException {
+    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws IOException, NoTypeConversionAvailableException {
 
-        // use a fallback type converter so we can convert the embedded body if the value is GenericFile
+        // use a fallback type converter so we can convert the embedded body if
+        // the value is GenericFile
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
 
-            GenericFile<?> file = (GenericFile<?>) value;
+            GenericFile<?> file = (GenericFile<?>)value;
             Class<?> from = file.getBody().getClass();
 
             // maybe from is already the type we want
@@ -68,11 +68,15 @@ public final class GenericFileConverter {
             TypeConverter tc = registry.lookup(type, from);
             if (tc != null) {
                 Object body = file.getBody();
-                // if its a file and we have a charset then use a reader to ensure we read the content using the given charset
-                // this is a bit complicated, but a file consumer can be configured with an explicit charset, which means
-                // we should read the file content with that given charset, and ignore any other charset properties
+                // if its a file and we have a charset then use a reader to
+                // ensure we read the content using the given charset
+                // this is a bit complicated, but a file consumer can be
+                // configured with an explicit charset, which means
+                // we should read the file content with that given charset, and
+                // ignore any other charset properties
 
-                // if the desired type is InputStream or Reader we can use the optimized methods
+                // if the desired type is InputStream or Reader we can use the
+                // optimized methods
                 if (Reader.class.isAssignableFrom(type)) {
                     Reader reader = genericFileToReader(file, exchange);
                     if (reader != null) {
@@ -86,11 +90,14 @@ public final class GenericFileConverter {
                     }
                 }
 
-                // okay if the file has a charset configured then we must try to load the file using that charset
-                // which mean we have to use the Reader first, and then convert from there
+                // okay if the file has a charset configured then we must try to
+                // load the file using that charset
+                // which mean we have to use the Reader first, and then convert
+                // from there
                 if (body instanceof File && file.getCharset() != null) {
                     Reader reader = genericFileToReader(file, exchange);
-                    // we dont want a reader back, so use the type converter registry to find a suitable converter
+                    // we dont want a reader back, so use the type converter
+                    // registry to find a suitable converter
                     TypeConverter readerTc = registry.lookup(type, Reader.class);
                     if (readerTc != null) {
                         // use the reader based type converter
@@ -101,7 +108,7 @@ public final class GenericFileConverter {
                 return tc.convertTo(type, exchange, body);
             }
         }
-        
+
         return null;
     }
 
@@ -109,7 +116,7 @@ public final class GenericFileConverter {
     public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
-            File f = (File) file.getFile();
+            File f = (File)file.getFile();
             // the file must exists
             if (f.exists()) {
                 // read the file using the specified charset
@@ -123,7 +130,8 @@ public final class GenericFileConverter {
             }
         }
         if (exchange != null) {
-            // otherwise ensure the body is loaded as we want the input stream of the body
+            // otherwise ensure the body is loaded as we want the input stream
+            // of the body
             file.getBinding().loadContent(exchange, file);
             return exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
         } else {
@@ -140,7 +148,8 @@ public final class GenericFileConverter {
             return IOHelper.toString(reader);
         }
         if (exchange != null) {
-            // otherwise ensure the body is loaded as we want the content of the body
+            // otherwise ensure the body is loaded as we want the content of the
+            // body
             file.getBinding().loadContent(exchange, file);
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, file.getBody());
         } else {
@@ -169,12 +178,13 @@ public final class GenericFileConverter {
     private static BufferedReader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
-            File f = (File) file.getFile();
+            File f = (File)file.getFile();
             // the file must exists
             if (!f.exists()) {
                 return null;
             }
-            // and use the charset if the file was explicit configured with a charset
+            // and use the charset if the file was explicit configured with a
+            // charset
             String charset = file.getCharset();
             if (charset != null) {
                 LOG.debug("Read file {} with charset {}", f, file.getCharset());

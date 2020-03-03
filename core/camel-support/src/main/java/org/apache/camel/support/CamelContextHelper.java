@@ -30,6 +30,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -57,6 +58,51 @@ public final class CamelContextHelper {
         Endpoint endpoint = camelContext.getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Returns the mandatory endpoint for the given URI or the
+     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     */
+    public static Endpoint getMandatoryEndpoint(CamelContext camelContext, NormalizedEndpointUri uri)
+        throws NoSuchEndpointException {
+        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
+        Endpoint endpoint = ecc.getEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri.getUri());
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Returns the mandatory endpoint (prototype scope) for the given URI or the
+     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     */
+    public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, String uri)
+        throws NoSuchEndpointException {
+        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
+        Endpoint endpoint = ecc.getPrototypeEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri);
+        } else {
+            return endpoint;
+        }
+    }
+
+    /**
+     * Returns the mandatory endpoint (prototype scope) for the given URI or the
+     * {@link org.apache.camel.NoSuchEndpointException} is thrown
+     */
+    public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, NormalizedEndpointUri uri)
+        throws NoSuchEndpointException {
+        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
+        Endpoint endpoint = ecc.getPrototypeEndpoint(uri);
+        if (endpoint == null) {
+            throw new NoSuchEndpointException(uri.getUri());
         } else {
             return endpoint;
         }
@@ -378,15 +424,39 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Parses the given text and converts it to an Integer and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the int value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Integer parseInt(CamelContext camelContext, String text) {
+        return parse(camelContext, Integer.class, text);
+    }
+
+    /**
      * Parses the given text and converts it to an Long and handling property placeholders as well
      *
      * @param camelContext the camel context
      * @param text  the text
-     * @return the long vale, or <tt>null</tt> if the text was <tt>null</tt>
+     * @return the long value, or <tt>null</tt> if the text was <tt>null</tt>
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Long parseLong(CamelContext camelContext, String text) {
         return parse(camelContext, Long.class, text);
+    }
+
+    /**
+     * Parses the given text and converts it to a Float and handling property placeholders as well
+     *
+     * @param camelContext the camel context
+     * @param text  the text
+     * @return the float value, or <tt>null</tt> if the text was <tt>null</tt>
+     * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
+     */
+    public static Float parseFloat(CamelContext camelContext, String text) {
+        return parse(camelContext, Float.class, text);
     }
 
     /**

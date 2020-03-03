@@ -21,41 +21,12 @@ The Any23 dataformat supports 4 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| outputFormat | RDF4JMODEL | Any23Type | What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL.
+| outputFormat | RDF4JMODEL | Any23OutputFormat | What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL. The value can be one of: JSONLD, NQUADS, NTRIPLES, RDF4JMODEL, RDFJSON, RDFXML, TURTLE
 | extractors |  | List | List of Any23 extractors to be used in the unmarshal operation. A list of the available extractors can be found here here. If not provided, all the available extractors are used.
 | baseURI |  | String | The URI to use as base for building RDF entities if only relative paths are provided.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-any23-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 4 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.dataformat.any23.base-u-r-i* | The URI to use as base for building RDF entities if only relative paths are provided. |  | String
-| *camel.dataformat.any23.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.any23.enabled* | Whether to enable auto configuration of the any23 data format. This is enabled by default. |  | Boolean
-| *camel.dataformat.any23.extractors* | List of Any23 extractors to be used in the unmarshal operation. A list of the available extractors can be found here here. If not provided, all the available extractors are used. |  | List
-|===
-// spring-boot-auto-configure options: END
 
 
 
@@ -116,3 +87,5 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ----------------------------------------
+
+include::camel-spring-boot::page$any23-starter.adoc[]

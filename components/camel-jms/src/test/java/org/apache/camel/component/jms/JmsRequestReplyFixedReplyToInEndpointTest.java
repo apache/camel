@@ -20,7 +20,6 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -31,48 +30,32 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport 
 
     @Test
     public void testJmsRequestReplyTempReplyTo() throws Exception {
-        Exchange reply = template.request("activemq:queue:foo", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("World");
-            }
-        });
-        assertEquals("Hello World", reply.getOut().getBody());
-        assertTrue("Should have headers", reply.getOut().hasHeaders());
-        String replyTo = reply.getOut().getHeader("JMSReplyTo", String.class);
+        Exchange reply = template.request("activemq:queue:foo", exchange -> exchange.getIn().setBody("World"));
+        assertEquals("Hello World", reply.getMessage().getBody());
+        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        String replyTo = reply.getMessage().getHeader("JMSReplyTo", String.class);
         assertTrue("Should be a temp queue", replyTo.startsWith("temp-queue"));
     }
 
     @Test
     public void testJmsRequestReplyFixedReplyToInEndpoint() throws Exception {
-        Exchange reply = template.request("activemq:queue:foo?replyTo=bar", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("World");
-            }
-        });
-        assertEquals("Hello World", reply.getOut().getBody());
-        assertTrue("Should have headers", reply.getOut().hasHeaders());
-        assertEquals("queue://bar", reply.getOut().getHeader("JMSReplyTo", String.class));
+        Exchange reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("World"));
+        assertEquals("Hello World", reply.getMessage().getBody());
+        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        assertEquals("queue://bar", reply.getMessage().getHeader("JMSReplyTo", String.class));
     }
 
     @Test
     public void testJmsRequestReplyFixedReplyToInEndpointTwoMessages() throws Exception {
-        Exchange reply = template.request("activemq:queue:foo?replyTo=bar", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("World");
-            }
-        });
-        assertEquals("Hello World", reply.getOut().getBody());
-        assertTrue("Should have headers", reply.getOut().hasHeaders());
-        assertEquals("queue://bar", reply.getOut().getHeader("JMSReplyTo", String.class));
+        Exchange reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("World"));
+        assertEquals("Hello World", reply.getMessage().getBody());
+        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        assertEquals("queue://bar", reply.getMessage().getHeader("JMSReplyTo", String.class));
 
-        reply = template.request("activemq:queue:foo?replyTo=bar", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Moon");
-            }
-        });
-        assertEquals("Hello Moon", reply.getOut().getBody());
-        assertTrue("Should have headers", reply.getOut().hasHeaders());
-        assertEquals("queue://bar", reply.getOut().getHeader("JMSReplyTo", String.class));
+        reply = template.request("activemq:queue:foo?replyTo=bar", exchange -> exchange.getIn().setBody("Moon"));
+        assertEquals("Hello Moon", reply.getMessage().getBody());
+        assertTrue("Should have headers", reply.getMessage().hasHeaders());
+        assertEquals("queue://bar", reply.getMessage().getHeader("JMSReplyTo", String.class));
     }
 
     @Override

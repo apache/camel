@@ -36,6 +36,7 @@ public class WordpressComponentTest extends CamelTestSupport {
     @Test
     public void testParseUriPropertiesCriteria() throws Exception {
         final WordpressComponent component = new WordpressComponent(context);
+        component.init();
 
         final WordpressEndpoint endpoint = (WordpressEndpoint)component
             .createEndpoint("wordpress:post?apiVersion=2&url=http://mysite.com/&criteria.search=test&criteria.page=1&criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json");

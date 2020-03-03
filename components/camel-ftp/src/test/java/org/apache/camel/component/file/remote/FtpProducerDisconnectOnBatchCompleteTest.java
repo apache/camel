@@ -52,7 +52,7 @@ public class FtpProducerDisconnectOnBatchCompleteTest extends FtpServerTestSuppo
         assertFalse(endpoint.getFtpClient().isConnected(), "The FTPClient should be already disconnected");
         assertTrue(endpoint.isDisconnectOnBatchComplete(), "The FtpEndpoint should be configured to disconnect");
     }
-    
+
     @Override
     public void sendFile(String url, Object body, String fileName) {
         template.send(url, new Processor() {

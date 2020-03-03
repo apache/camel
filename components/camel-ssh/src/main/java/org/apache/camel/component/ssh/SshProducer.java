@@ -26,7 +26,6 @@ import org.apache.sshd.client.SshClient;
 
 public class SshProducer extends DefaultProducer {
     private SshEndpoint endpoint;
-
     private SshClient client;
 
     public SshProducer(SshEndpoint endpoint) {
@@ -50,6 +49,12 @@ public class SshProducer extends DefaultProducer {
             client.stop();
             client = null;
         }
+    }
+
+    @Override
+    public boolean isSingleton() {
+        // SshClient is not thread-safe to be shared
+        return true;
     }
 
     @Override

@@ -70,7 +70,6 @@ public class NoConnectionFactoryTest {
             context.start();
         } catch (Throwable t) {
             Assert.assertEquals(FailedToStartRouteException.class, t.getClass());
-            Assert.assertEquals(FailedToCreateProducerException.class, t.getCause().getClass());
             Assert.assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
             LOG.info("Expected exception was thrown", t);
             return;
@@ -86,7 +85,6 @@ public class NoConnectionFactoryTest {
             context.start();
         } catch (Throwable t) {
             Assert.assertEquals(FailedToStartRouteException.class, t.getClass());
-            Assert.assertEquals(FailedToCreateProducerException.class, t.getCause().getClass());
             Assert.assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
             LOG.info("Expected exception was thrown", t);
             return;

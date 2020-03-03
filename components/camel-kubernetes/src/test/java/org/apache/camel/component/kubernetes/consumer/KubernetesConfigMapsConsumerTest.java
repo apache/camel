@@ -46,53 +46,37 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
 
         mockResultEndpoint.expectedMessageCount(3);
         mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "MODIFIED", "MODIFIED");
-        Exchange ex = template.request("direct:createConfigmap", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
-                HashMap<String, String> configMapData = new HashMap<>();
-                configMapData.put("test", "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
-            }
+        Exchange ex = template.request("direct:createConfigmap", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
+            HashMap<String, String> configMapData = new HashMap<>();
+            configMapData.put("test", "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
         });
 
-        ex = template.request("direct:createConfigmap", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().removeHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS);
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
-                HashMap<String, String> configMapData = new HashMap<>();
-                configMapData.put("test", "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
-            }
+        ex = template.request("direct:createConfigmap", exchange -> {
+            exchange.getIn().removeHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
+            HashMap<String, String> configMapData = new HashMap<>();
+            configMapData.put("test", "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
         });
 
-        ex = template.request("direct:deleteConfigmap", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
-            }
+        ex = template.request("direct:deleteConfigmap", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
         });
 
-        ex = template.request("direct:deleteConfigmap", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
-            }
+        ex = template.request("direct:deleteConfigmap", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
         });
 
-        boolean cmDeleted = ex.getOut().getBody(Boolean.class);
+        boolean cmDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(cmDeleted);
 
@@ -108,12 +92,12 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
             public void configure() throws Exception {
                 from("direct:createConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host, authToken);
                 from("direct:deleteConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=deleteConfigMap", host, authToken);
-                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
+                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
     }
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();

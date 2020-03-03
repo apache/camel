@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "doCatch",
+    "title": "Do Catch",
+    "description": "Catches exceptions as part of a try, catch, finally block",
+    "javaType": "org.apache.camel.model.CatchDefinition",
+    "label": "error",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "exception": { "kind": "element", "displayName": "Exception", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "The exception(s) to catch." },
+    "onWhen": { "kind": "element", "displayName": "On When", "required": false, "type": "object", "javaType": "org.apache.camel.model.WhenDefinition", "deprecated": false, "secret": false, "asPredicate": true, "description": "Sets an additional predicate that should be true before the onCatch is triggered. To be used for fine grained controlling whether a thrown exception should be intercepted by this exception type or not." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

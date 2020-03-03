@@ -95,7 +95,7 @@ public final class ClassUtil {
      * @param type type of the artifact
      * @return true if type is an instance of <code>ParameterizedType</code>
      */
-    public static boolean isParametrizedType(Type type) {
+    public static boolean isParameterizedType(Type type) {
         return type instanceof ParameterizedType;
     }
 

@@ -23,7 +23,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public class NatsAuthTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.2";
+    public static final String CONTAINER_IMAGE = "nats:2.1.4";
     public static final String CONTAINER_NAME = "nats-auth";
     public static final String USERNAME = "admin";
     public static final String PASSWORD = "password";

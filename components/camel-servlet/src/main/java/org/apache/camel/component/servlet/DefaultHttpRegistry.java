@@ -34,6 +34,8 @@ public class DefaultHttpRegistry implements HttpRegistry {
 
     private static Map<String, HttpRegistry> registries = new HashMap<>();
     
+    private final Object lock = new Object();
+
     private final Set<HttpConsumer> consumers;
     private final Set<CamelServlet> providers;
 
@@ -63,23 +65,27 @@ public class DefaultHttpRegistry implements HttpRegistry {
     
     @Override
     public void register(HttpConsumer consumer) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Registering consumer for path {} providers present: {}", consumer.getPath(), providers.size());
-        }
-        consumers.add(consumer);
-        for (CamelServlet provider : providers) {
-            provider.connect(consumer);
+        synchronized (lock) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Registering consumer for path {} providers present: {}", consumer.getPath(), providers.size());
+            }
+            consumers.add(consumer);
+            for (CamelServlet provider : providers) {
+                provider.connect(consumer);
+            }
         }
     }
     
     @Override
     public void unregister(HttpConsumer consumer) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Unregistering consumer for path {}", consumer.getPath());
-        }
-        consumers.remove(consumer);
-        for (CamelServlet provider : providers) {
-            provider.disconnect(consumer);
+        synchronized (lock) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unregistering consumer for path {}", consumer.getPath());
+            }
+            consumers.remove(consumer);
+            for (CamelServlet provider : providers) {
+                provider.disconnect(consumer);
+            }
         }
     }
     
@@ -96,38 +102,46 @@ public class DefaultHttpRegistry implements HttpRegistry {
     
     @Override
     public void register(CamelServlet provider) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Registering CamelServlet with name {} consumers present: {}", provider.getServletName(), consumers.size());
-        }
-        providers.add(provider);
-        for (HttpConsumer consumer : consumers) {
-            provider.connect(consumer);
+        synchronized (lock) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Registering CamelServlet with name {} consumers present: {}", provider.getServletName(), consumers.size());
+            }
+            providers.add(provider);
+            for (HttpConsumer consumer : consumers) {
+                provider.connect(consumer);
+            }
         }
     }
 
     @Override
     public void unregister(CamelServlet provider) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Unregistering CamelServlet with name {}", provider.getServletName());
+        synchronized (lock) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unregistering CamelServlet with name {}", provider.getServletName());
+            }
+            providers.remove(provider);
         }
-        providers.remove(provider);
     }
 
     @Override
     public CamelServlet getCamelServlet(String servletName) {
-        for (CamelServlet provider : providers) {
-            if (provider.getServletName().equals(servletName)) {
-                return provider;
+        synchronized (lock) {
+            for (CamelServlet provider : providers) {
+                if (provider.getServletName().equals(servletName)) {
+                    return provider;
+                }
             }
+            return null;
         }
-        return null;
     }
 
     public void setServlets(List<Servlet> servlets) {
-        providers.clear();
-        for (Servlet servlet : servlets) {
-            if (servlet instanceof CamelServlet) {
-                providers.add((CamelServlet) servlet);
+        synchronized (lock) {
+            providers.clear();
+            for (Servlet servlet : servlets) {
+                if (servlet instanceof CamelServlet) {
+                    providers.add((CamelServlet) servlet);
+                }
             }
         }
     }

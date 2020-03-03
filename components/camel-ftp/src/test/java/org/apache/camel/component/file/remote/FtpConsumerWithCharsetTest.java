@@ -88,7 +88,6 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
         assertEquals(-87, data[4]);
     }
 
-
     @Test
     public void testConsumerWithCharset() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -96,7 +95,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        RemoteFile<?> file = (RemoteFile<?>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        RemoteFile<?> file = (RemoteFile<?>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         assertNotNull(file);
         assertEquals("iso-8859-1", file.getCharset());
         // The String will be encoded with UTF-8 by default
@@ -119,7 +118,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
         assertEquals(-62, data[7]);
         assertEquals(-87, data[8]);
     }
-    
+
     private void prepareFtpServer() throws Exception {
         sendFile(getFtpUrl(), payload, "iso.txt");
     }

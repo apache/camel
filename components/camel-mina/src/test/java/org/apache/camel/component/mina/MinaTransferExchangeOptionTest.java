@@ -68,12 +68,12 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
 
     private void assertExchange(Exchange exchange, boolean hasException) {
         if (!hasException) {
-            Message out = exchange.getOut();
+            Message out = exchange.getMessage();
             assertNotNull(out);
             assertEquals("Goodbye!", out.getBody());
             assertEquals("cheddar", out.getHeader("cheese"));
         } else {
-            Message fault = exchange.getOut();
+            Message fault = exchange.getMessage();
             assertNotNull(fault);
             assertNotNull(fault.getBody());
             assertTrue("Should get the InterruptedException exception", fault.getBody() instanceof InterruptedException);

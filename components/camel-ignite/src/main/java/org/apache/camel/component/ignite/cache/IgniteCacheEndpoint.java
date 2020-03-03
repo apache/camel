@@ -89,7 +89,9 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new IgniteCacheContinuousQueryConsumer(this, processor, obtainCache());
+        Consumer consumer = new IgniteCacheContinuousQueryConsumer(this, processor, obtainCache());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     private IgniteCache<Object, Object> obtainCache() throws CamelException {

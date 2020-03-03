@@ -283,11 +283,6 @@ public class JMXEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("producing JMX notifications is not supported");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     public String getFormat() {
         return format;
     }

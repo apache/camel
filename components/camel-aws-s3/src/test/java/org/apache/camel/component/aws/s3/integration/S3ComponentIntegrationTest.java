@@ -82,7 +82,7 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
 
         assertResultExchange(result.getExchanges().get(0));
 
-        assertResponseMessage(exchange.getOut());
+        assertResponseMessage(exchange.getMessage());
     }
 
     private void assertResultExchange(Exchange resultExchange) {

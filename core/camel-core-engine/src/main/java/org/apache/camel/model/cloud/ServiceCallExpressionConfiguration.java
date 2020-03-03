@@ -16,16 +16,12 @@
  */
 package org.apache.camel.model.cloud;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -36,9 +32,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.cloud.ServiceExpressionFactory;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
@@ -47,14 +41,11 @@ import org.apache.camel.support.PropertyBindingSupport;
 @Metadata(label = "routing,cloud")
 @XmlRootElement(name = "serviceExpression")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceCallExpressionConfiguration extends IdentifiedType implements ServiceExpressionFactory {
+public class ServiceCallExpressionConfiguration extends ServiceCallConfiguration implements ServiceExpressionFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
     @XmlTransient
     private final String factoryKey;
-    @XmlElement(name = "properties")
-    @Metadata(label = "advanced")
-    private List<PropertyDefinition> properties;
     @XmlAttribute
     @Metadata(defaultValue = ServiceCallConstants.SERVICE_HOST)
     private String hostHeader = ServiceCallConstants.SERVICE_HOST;
@@ -87,55 +78,8 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     //
     // *************************************************************************
 
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    /**
-     * Set client properties to use.
-     * <p/>
-     * These properties are specific to what service call implementation are in
-     * use. For example if using ribbon, then the client properties are define
-     * in com.netflix.client.config.CommonClientConfigKey.
-     */
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    /**
-     * Adds a custom property to use.
-     * <p/>
-     * These properties are specific to what service call implementation are in
-     * use. For example if using ribbon, then the client properties are define
-     * in com.netflix.client.config.CommonClientConfigKey.
-     */
-    public ServiceCallExpressionConfiguration property(String key, String value) {
-        if (properties == null) {
-            properties = new ArrayList<>();
-        }
-        PropertyDefinition prop = new PropertyDefinition();
-        prop.setKey(key);
-        prop.setValue(value);
-        properties.add(prop);
-        return this;
-    }
-
-    protected Map<String, String> getPropertiesAsMap(CamelContext camelContext) throws Exception {
-        Map<String, String> answer;
-
-        if (properties == null || properties.isEmpty()) {
-            answer = Collections.emptyMap();
-        } else {
-            answer = new HashMap<>();
-            for (PropertyDefinition prop : properties) {
-                // support property placeholders
-                String key = CamelContextHelper.parseText(camelContext, prop.getKey());
-                String value = CamelContextHelper.parseText(camelContext, prop.getValue());
-                answer.put(key, value);
-            }
-        }
-
-        return answer;
+    public ServiceCallServiceChooserConfiguration property(String key, String value) {
+        return (ServiceCallServiceChooserConfiguration) super.property(key, value);
     }
 
     public String getHostHeader() {
@@ -282,10 +226,4 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
         return answer;
     }
 
-    // *************************************************************************
-    // Utilities
-    // *************************************************************************
-
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
-    }
 }

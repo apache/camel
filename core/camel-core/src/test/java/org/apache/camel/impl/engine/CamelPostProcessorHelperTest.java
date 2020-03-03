@@ -27,6 +27,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
@@ -506,7 +507,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         @Consume("seda:foo")
         public void consumeSomething(String body, Exchange exchange) {
-            exchange.addOnCompletion(mySynchronization);
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(mySynchronization);
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
         }
@@ -521,7 +522,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             assertEquals("Hello World", body);
 
             Exchange exchange = producer.getEndpoint().createExchange();
-            exchange.addOnCompletion(mySynchronization);
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(mySynchronization);
             exchange.getIn().setBody(body);
             producer.process(exchange);
         }

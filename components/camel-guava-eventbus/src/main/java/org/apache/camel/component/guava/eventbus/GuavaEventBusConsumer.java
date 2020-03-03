@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  */
 public class GuavaEventBusConsumer extends DefaultConsumer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GuavaEventBusConsumer.class);
+
     private final EventBus eventBus;
     private final Object eventHandler;
 
@@ -54,13 +56,13 @@ public class GuavaEventBusConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        log.debug("Registering event handler: {} to EventBus: {}", eventHandler, eventBus);
+        LOG.debug("Registering event handler: {} to EventBus: {}", eventHandler, eventBus);
         eventBus.register(eventHandler);
     }
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Unregistering event handler: {} from EventBus: {}", eventHandler, eventBus);
+        LOG.debug("Unregistering event handler: {} from EventBus: {}", eventHandler, eventBus);
         eventBus.unregister(eventHandler);
         super.doStop();
     }

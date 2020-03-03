@@ -1,7 +1,7 @@
 [[BrowsableEndpoint-BrowsableEndpoint]]
 = BrowsableEndpoint
 
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/BrowsableEndpoint.html[BrowsableEndpoint]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/spi/BrowsableEndpoint.html[BrowsableEndpoint]
 is an extension interface an Endpoint may implement
 to support the browsing of the Message exchanges
 which are pending or have been sent on it.

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-catalog-lucene</artifactId>
@@ -34,13 +34,6 @@
     <properties>
         <firstVersion>2.17.0</firstVersion>
         <label>tooling</label>
-
-        <camel.osgi.import.additional>
-            org.apache.lucene.*;version="${lucene-version-range}"
-        </camel.osgi.import.additional>
-        <camel.osgi.export.pkg>
-            org.apache.camel.catalog.lucene
-        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
@@ -88,9 +81,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

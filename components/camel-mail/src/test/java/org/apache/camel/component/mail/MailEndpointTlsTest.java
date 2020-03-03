@@ -53,7 +53,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
 
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol(protocol);
+        cfg.configureProtocol(protocol);
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");
@@ -70,7 +70,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
     public void testMailEndpointNoTlsConfig() throws Exception {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol(protocol);
+        cfg.configureProtocol(protocol);
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");
@@ -100,7 +100,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
 
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol(protocol);
+        cfg.configureProtocol(protocol);
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");

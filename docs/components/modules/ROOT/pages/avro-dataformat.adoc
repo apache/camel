@@ -142,46 +142,6 @@ The Avro dataformat supports 2 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-avro-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 17 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.avro.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.avro.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
-| *camel.component.avro.configuration.host* | Hostname to use |  | String
-| *camel.component.avro.configuration.message-name* | The name of the message to send. |  | String
-| *camel.component.avro.configuration.port* | Port number to use |  | Integer
-| *camel.component.avro.configuration.protocol* | Avro protocol to use |  | Protocol
-| *camel.component.avro.configuration.protocol-class-name* | Avro protocol to use defined by the FQN class name |  | String
-| *camel.component.avro.configuration.protocol-location* | Avro protocol location |  | String
-| *camel.component.avro.configuration.reflection-protocol* | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | Boolean
-| *camel.component.avro.configuration.single-parameter* | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | Boolean
-| *camel.component.avro.configuration.transport* | Transport to use, can be either http or netty |  | AvroTransport
-| *camel.component.avro.configuration.uri-authority* | Authority to use (username and password) |  | String
-| *camel.component.avro.enabled* | Whether to enable auto configuration of the avro component. This is enabled by default. |  | Boolean
-| *camel.component.avro.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
-| *camel.dataformat.avro.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.avro.enabled* | Whether to enable auto configuration of the avro data format. This is enabled by default. |  | Boolean
-| *camel.dataformat.avro.instance-class-name* | Class name to use for marshal and unmarshalling |  | String
-|===
-// spring-boot-auto-configure options: END
 ND
+
+include::camel-spring-boot::page$avro-starter.adoc[]

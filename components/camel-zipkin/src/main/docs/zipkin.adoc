@@ -90,41 +90,6 @@ debug log size].
 
 |===
 
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-zipkin-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 10 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.zipkin.client-service-mappings* | Sets client service mapping(s) that matches Camel events to the given zipkin service name. The key is the pattern, the value is the service name. |  | Map
-| *camel.zipkin.endpoint* | Sets the POST URL for zipkin's <a href="http://zipkin.io/zipkin-api/#/">v2 api</a>, usually "\http://zipkinhost:9411/api/v2/spans" |  | String
-| *camel.zipkin.exclude-patterns* | Sets exclude pattern(s) that will disable tracing with zipkin for Camel messages that matches the pattern. |  | Set
-| *camel.zipkin.host-name* | Sets the hostname if sending spans to a remote zipkin scribe (thrift RPC) collector. |  | String
-| *camel.zipkin.include-message-body* | Whether to include the Camel message body in the zipkin traces. This is not recommended for production usage, or when having big payloads. You can limit the size by configuring camel.springboot.log-debug-max-chars option. | false | Boolean
-| *camel.zipkin.include-message-body-streams* | Whether to include message bodies that are stream based in the zipkin traces. This is not recommended for production usage, or when having big payloads. You can limit the size by configuring camel.springboot.log-debug-max-chars option. | false | Boolean
-| *camel.zipkin.port* | Sets the port if sending spans to a remote zipkin scribe (thrift RPC) collector. | 0 | Integer
-| *camel.zipkin.rate* | Configures a rate that decides how many events should be traced by zipkin. The rate is expressed as a percentage (1.0f = 100%, 0.5f is 50%, 0.1f is 10%). | 1 | Float
-| *camel.zipkin.server-service-mappings* | Sets server service mapping(s) that matches Camel events to the given zipkin service name. The key is the pattern, the value is the service name. |  | Map
-| *camel.zipkin.service-name* | To use a global service name that matches all Camel events |  | String
-|===
-// spring-boot-auto-configure options: END
 
 [[camel-zipkin-Example]]
 == Example
@@ -310,4 +275,6 @@ exchange.setProperty("camel.client.customtags", customTags);
 If you are using Spring Boot then you can add the `camel-zipkin-starter` dependency, and turn on zipkin by annotating the main class with `@CamelZipkin`.
 You can then configure camel-zipkin in the `application.properties` file where you can configure the hostname and port number for the Zipkin Server, and all the other options as listed in the options table above.
 
-You can find an example of this in the https://github.com/apache/camel/tree/master/examples/camel-example-zipkin[camel-example-zipkin]
+You can find an example of this in the https://github.com/apache/camel-spring-boot/tree/master/examples/camel-example-spring-boot-zipkin[camel-example-spring-boot-zipkin]
+
+include::camel-spring-boot::page$zipkin-starter.adoc[]

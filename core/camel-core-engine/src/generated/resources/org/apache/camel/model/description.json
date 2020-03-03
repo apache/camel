@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "description",
+    "title": "Description",
+    "description": "To provide comments about the node.",
+    "javaType": "org.apache.camel.model.DescriptionDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "lang": { "kind": "attribute", "displayName": "Lang", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Language, such as en for english." },
+    "text": { "kind": "value", "displayName": "Text", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The description as human readable text" }
+  }
+}

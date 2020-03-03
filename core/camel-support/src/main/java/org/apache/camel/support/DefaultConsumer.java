@@ -21,30 +21,38 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default consumer useful for implementation inheritance.
  */
-public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
+public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumer.class);
 
     private transient String consumerToString;
     private final Endpoint endpoint;
     private final Processor processor;
-    private volatile AsyncProcessor asyncProcessor;
+    private final AsyncProcessor asyncProcessor;
     private ExceptionHandler exceptionHandler;
     private Route route;
+    private String routeId;
 
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
+        this.asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
     }
 
@@ -66,6 +74,16 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         this.route = route;
     }
 
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
     /**
      * If the consumer needs to defer done the {@link org.apache.camel.spi.UnitOfWork} on
      * the processed {@link Exchange} then this method should be use to create and start
@@ -81,11 +99,11 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         // if the exchange doesn't have from route id set, then set it if it originated
         // from this unit of work
         if (route != null && exchange.getFromRouteId() == null) {
-            exchange.setFromRouteId(route.getId());
+            exchange.adapt(ExtendedExchange.class).setFromRouteId(route.getId());
         }
 
         UnitOfWork uow = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
-        exchange.setUnitOfWork(uow);
+        exchange.adapt(ExtendedExchange.class).setUnitOfWork(uow);
         uow.start();
         return uow;
     }
@@ -119,13 +137,6 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
      * it will be adapted so that it does.
      */
     public AsyncProcessor getAsyncProcessor() {
-        if (asyncProcessor == null) {
-            synchronized (this) {
-                if (asyncProcessor == null) {
-                    asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
-                }
-            }
-        }
         return asyncProcessor;
     }
 
@@ -139,19 +150,19 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     @Override
     protected void doInit() throws Exception {
-        log.debug("Init consumer: {}", this);
+        LOG.debug("Init consumer: {}", this);
         ServiceHelper.initService(processor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Stopping consumer: {}", this);
+        LOG.debug("Stopping consumer: {}", this);
         ServiceHelper.stopService(processor);
     }
 
     @Override
     protected void doStart() throws Exception {
-        log.debug("Starting consumer: {}", this);
+        LOG.debug("Starting consumer: {}", this);
         ServiceHelper.startService(processor);
     }
 

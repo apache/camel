@@ -26,8 +26,12 @@ import org.apache.camel.component.iec60870.ObjectAddress;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
 import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServerConsumer.class);
 
     private final ServerInstance server;
     private final ServerEndpoint endpoint;
@@ -73,7 +77,7 @@ public class ServerConsumer extends DefaultConsumer {
 
             // we failed triggering the process
 
-            log.debug("Failed to process message", e);
+            LOG.debug("Failed to process message", e);
 
             // create a future
 

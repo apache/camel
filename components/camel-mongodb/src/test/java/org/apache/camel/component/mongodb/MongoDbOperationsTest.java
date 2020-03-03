@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
@@ -42,7 +41,6 @@ import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.currentTimestamp;
 import static com.mongodb.client.model.Updates.set;
-import static java.util.Arrays.asList;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -95,7 +93,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     public void testStoreOidsOnInsert() throws Exception {
         Document firsDocument = new Document();
         Document secondDoocument = new Document();
-        List<?> oids = template.requestBody("direct:testStoreOidOnInsert", asList(firsDocument, secondDoocument), List.class);
+        List<?> oids = template.requestBody("direct:testStoreOidOnInsert", Arrays.asList(firsDocument, secondDoocument), List.class);
         assertTrue(oids.contains(firsDocument.get(MONGO_ID)));
         assertTrue(oids.contains(secondDoocument.get(MONGO_ID)));
     }

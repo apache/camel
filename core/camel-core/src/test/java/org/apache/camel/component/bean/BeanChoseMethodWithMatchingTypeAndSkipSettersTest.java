@@ -46,7 +46,6 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        service.setConverter(context.getTypeConverter());
         return context;
     }
 
@@ -76,6 +75,8 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                service.setConverter(context.getTypeConverter());
+
                 from("file://target/data/file/order?initialDelay=0&delay=10").bean("orderService").to("mock:queue:order");
 
                 from("seda:xml").bean("orderService").to("mock:queue:order");

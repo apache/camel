@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -43,13 +43,16 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
@@ -89,13 +92,27 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
-    private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
+    private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
 
-    public CamelInternalProcessor() {
+    private static final Object[] EMPTY_STATES = new Object[0];
+
+    private final CamelContext camelContext;
+    private final ReactiveExecutor reactiveExecutor;
+    private final ShutdownStrategy shutdownStrategy;
+    private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
+    private byte statefulAdvices;
+
+    public CamelInternalProcessor(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
-    public CamelInternalProcessor(Processor processor) {
+    public CamelInternalProcessor(CamelContext camelContext, Processor processor) {
         super(processor);
+        this.camelContext = camelContext;
+        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
     /**
@@ -107,6 +124,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
         advices.sort(OrderedComparator.get());
+
+        if (advice.hasState()) {
+            statefulAdvices++;
+        }
     }
 
     /**
@@ -125,7 +146,54 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         return null;
     }
 
+    /**
+     * Callback task to process the advices after processing.
+     */
+    private final class AsyncAfterTask implements AsyncCallback {
+
+        private final Object[] states;
+        private final Exchange exchange;
+        private final AsyncCallback originalCallback;
+
+        private AsyncAfterTask(Object[] states, Exchange exchange, AsyncCallback originalCallback) {
+            this.states = states;
+            this.exchange = exchange;
+            this.originalCallback = originalCallback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            try {
+                for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
+                    CamelInternalProcessorAdvice task = advices.get(i);
+                    Object state = null;
+                    if (task.hasState()) {
+                        state = states[j--];
+                    }
+                    try {
+                        task.after(exchange, state);
+                    } catch (Throwable e) {
+                        exchange.setException(e);
+                        // allow all advices to complete even if there was an exception
+                    }
+                }
+            } finally {
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ START +++
+                // ----------------------------------------------------------
+                // callback must be called
+                if (originalCallback != null) {
+                    reactiveExecutor.schedule(originalCallback);
+                }
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ END +++
+                // ----------------------------------------------------------
+            }
+        }
+    }
+
     @Override
+    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback originalCallback) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
@@ -141,20 +209,35 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         // you can see in the code below.
         // ----------------------------------------------------------
 
-        if (processor == null || !continueProcessing(exchange)) {
+        if (processor == null || exchange.isRouteStop()) {
             // no processor or we should not continue then we are done
             originalCallback.done(true);
             return true;
         }
 
-        // optimise to use object array for states
-        final Object[] states = new Object[advices.size()];
+        boolean forceShutdown = shutdownStrategy.forceShutdown(this);
+        if (forceShutdown) {
+            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
+            LOG.debug(msg);
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException(msg));
+            }
+            // force shutdown so we should not continue
+            originalCallback.done(true);
+            return true;
+
+        }
+
+        // optimise to use object array for states, and only for the number of advices that keep state
+        final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
-        for (int i = 0; i < advices.size(); i++) {
+        for (int i = 0, j = 0; i < advices.size(); i++) {
             CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
-                states[i] = state;
+                if (task.hasState()) {
+                    states[j++] = state;
+                }
             } catch (Throwable e) {
                 exchange.setException(e);
                 originalCallback.done(true);
@@ -163,38 +246,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         // create internal callback which will execute the advices in reverse order when done
-        AsyncCallback callback = doneSync -> {
-            try {
-                for (int i = advices.size() - 1; i >= 0; i--) {
-                    CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states[i];
-                    try {
-                        task.after(exchange, state);
-                    } catch (Throwable e) {
-                        exchange.setException(e);
-                        // allow all advices to complete even if there was an exception
-                    }
-                }
-            } finally {
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ START +++
-                // ----------------------------------------------------------
-                // callback must be called
-                exchange.getContext().getReactiveExecutor().callback(originalCallback);
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ END +++
-                // ----------------------------------------------------------
-            }
-        };
+        AsyncCallback callback = new AsyncAfterTask(states, exchange, originalCallback);
 
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
-            if (log.isTraceEnabled()) {
-                if (exchange.isTransacted()) {
-                    log.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
-                } else {
-                    log.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
-                }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
@@ -212,35 +269,38 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         } else {
             final UnitOfWork uow = exchange.getUnitOfWork();
 
-            // allow unit of work to wrap callback in case it need to do some special work
-            // for example the MDCUnitOfWork
+            // do uow before processing and if a value is returned the the uow wants to be processed after
+            // was well in the same thread
             AsyncCallback async = callback;
-            if (uow != null) {
-                async = uow.beforeProcess(processor, exchange, callback);
+            boolean beforeAndAfter = uow != null && uow.isBeforeAfterProcess();
+            if (beforeAndAfter) {
+                async = uow.beforeProcess(processor, exchange, async);
             }
 
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
             // ----------------------------------------------------------
-            if (log.isTraceEnabled()) {
-                log.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
             processor.process(exchange, async);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            exchange.getContext().getReactiveExecutor().schedule(() -> {
-                // execute any after processor work (in current thread, not in the callback)
-                if (uow != null) {
+            // optimize to only do after uow processing if really needed
+            if (beforeAndAfter) {
+                reactiveExecutor.schedule(() -> {
+                    // execute any after processor work (in current thread, not in the callback)
                     uow.afterProcess(processor, exchange, callback, false);
-                }
+                });
+            }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
-                             exchange.getExchangeId(), exchange);
-                }
-            }, "CamelInternalProcessor - UnitOfWork - afterProcess - " + processor + " - " + exchange.getExchangeId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                        exchange.getExchangeId(), exchange);
+            }
+            // must return false
             return false;
         }
     }
@@ -248,34 +308,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     @Override
     public String toString() {
         return processor != null ? processor.toString() : super.toString();
-    }
-
-    /**
-     * Strategy to determine if we should continue processing the {@link Exchange}.
-     */
-    private boolean continueProcessing(Exchange exchange) {
-        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
-        if (stop != null) {
-            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
-            if (doStop) {
-                log.debug("Exchange is marked to stop routing: {}", exchange);
-                return false;
-            }
-        }
-
-        // determine if we can still run, or the camel context is forcing a shutdown
-        boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
-        if (forceShutdown) {
-            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
-            log.debug(msg);
-            if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException(msg));
-            }
-            return false;
-        }
-
-        // yes we can continue
-        return true;
     }
 
     /**
@@ -305,6 +337,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 uow.afterRoute(exchange, route);
             }
         }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
     }
 
     /**
@@ -329,6 +366,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, Object state) throws Exception {
             inflightRepository.remove(exchange, id);
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
         }
     }
 
@@ -405,6 +447,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
             return false;
         }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
     }
 
     /**
@@ -428,7 +475,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public Object before(Exchange exchange) throws Exception {
             if (backlogTracer.shouldTrace(processorDefinition, exchange)) {
-                Date timestamp = new Date();
+                long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
                 String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4,
@@ -437,7 +484,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
                 String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                 if (first) {
-                    Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
+                    long created = exchange.getCreated();
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
                     backlogTracer.traceEvent(pseudo);
                 }
@@ -454,11 +501,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         @Override
+        public boolean hasState() {
+            return false;
+        }
+
+        @Override
         public int getOrder() {
             // we want tracer just before calling the processor
             return Ordered.LOWEST - 1;
         }
-
     }
 
     /**
@@ -544,12 +595,16 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final RouteContext routeContext;
         private String routeId;
+        private UnitOfWorkFactory uowFactory;
 
-        public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
+        public UnitOfWorkProcessorAdvice(RouteContext routeContext, CamelContext camelContext) {
             this.routeContext = routeContext;
             if (routeContext != null) {
                 this.routeId = routeContext.getRouteId();
             }
+            this.uowFactory = camelContext.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
+            // optimize uow factory to initialize it early and once per advice
+            this.uowFactory.afterPropertiesConfigured(camelContext);
         }
 
         @Override
@@ -560,7 +615,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (routeId == null) {
                     this.routeId = routeContext.getRouteId();
                 }
-                exchange.setFromRouteId(routeId);
+                ExtendedExchange ee = (ExtendedExchange) exchange;
+                ee.setFromRouteId(routeId);
             }
 
             // only return UnitOfWork if we created a new as then its us that handle the lifecycle to done the created UoW
@@ -570,7 +626,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // If there is no existing UoW, then we should start one and
                 // terminate it once processing is completed for the exchange.
                 created = createUnitOfWork(exchange);
-                exchange.setUnitOfWork(created);
+                ExtendedExchange ee = (ExtendedExchange) exchange;
+                ee.setUnitOfWork(created);
                 created.start();
             }
 
@@ -601,7 +658,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
-            return exchange.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
+            if (uowFactory != null) {
+                return uowFactory.createUnitOfWork(exchange);
+            } else {
+                return exchange.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
+            }
         }
 
     }
@@ -613,8 +674,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final UnitOfWork parent;
 
-        public ChildUnitOfWorkProcessorAdvice(RouteContext routeContext, UnitOfWork parent) {
-            super(routeContext);
+        public ChildUnitOfWorkProcessorAdvice(RouteContext routeContext, CamelContext camelContext, UnitOfWork parent) {
+            super(routeContext, camelContext);
             this.parent = parent;
         }
 
@@ -644,24 +705,24 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public MessageHistory before(Exchange exchange) throws Exception {
-            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
-            if (list == null) {
-                list = new LinkedList<>();
-                exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
-            }
-
             // we may be routing outside a route in an onException or interceptor and if so then grab
             // route id from the exchange UoW state
             String targetRouteId = this.routeId;
             if (targetRouteId == null) {
                 UnitOfWork uow = exchange.getUnitOfWork();
-                if (uow != null && uow.getRouteContext() != null) {
-                    targetRouteId = uow.getRouteContext().getRouteId();
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    targetRouteId = rc.getRouteId();
                 }
             }
 
             MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis(), exchange);
             if (history != null) {
+                List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+                if (list == null) {
+                    list = new LinkedList<>();
+                    exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
+                }
                 list.add(history);
             }
             return history;
@@ -672,6 +733,40 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (history != null) {
                 history.nodeProcessingDone();
             }
+        }
+    }
+
+    /**
+     * Advice that stores the node id and label of the processor that is processing the exchange.
+     */
+    public static class NodeHistoryAdvice implements CamelInternalProcessorAdvice {
+
+        private final String id;
+        private final String label;
+
+        public NodeHistoryAdvice(NamedNode definition) {
+            this.id = definition.getId();
+            this.label = definition.getLabel();
+        }
+
+        @Override
+        public String before(Exchange exchange) throws Exception {
+            ExtendedExchange ee = (ExtendedExchange) exchange;
+            ee.setHistoryNodeId(id);
+            ee.setHistoryNodeLabel(label);
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            ExtendedExchange ee = (ExtendedExchange) exchange;
+            ee.setHistoryNodeId(null);
+            ee.setHistoryNodeLabel(null);
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
         }
     }
 
@@ -751,6 +846,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, Object data) throws Exception {
             // noop
         }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
     }
 
     /**
@@ -779,7 +879,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (!contains) {
                     added = true;
                     tracer.traceBeforeRoute(routeDefinition, exchange);
-                    exchange.addOnCompletion(tracingAfterRoute);
+                    exchange.adapt(ExtendedExchange.class).addOnCompletion(tracingAfterRoute);
                 }
             }
 
@@ -790,6 +890,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
             tracer.traceAfterNode(processorDefinition, exchange);
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
         }
 
         private static final class TracingAfterRoute extends SynchronizationAdapter {

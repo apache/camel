@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "export",
+    "title": "Export",
+    "description": "Used for export a service using Spring Remoting to hide the network call using an interface.",
+    "javaType": "org.apache.camel.core.xml.CamelServiceExporterDefinition",
+    "label": "spring,configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Camel endpoint uri to use a remote transport when calling the service" },
+    "serviceRef": { "kind": "attribute", "displayName": "Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to the service name to lookup in the registry." },
+    "method": { "kind": "attribute", "displayName": "Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of method to invoke on service" },
+    "serviceInterface": { "kind": "attribute", "displayName": "Service Interface", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>", "deprecated": false, "secret": false, "description": "Java interfaces to use as facade for the service to be exported" },
+    "camelContextId": { "kind": "attribute", "displayName": "Camel Context Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of the CamelContext to use, if there is multiple CamelContext in the same JVM." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

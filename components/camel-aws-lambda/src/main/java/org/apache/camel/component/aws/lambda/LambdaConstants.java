@@ -51,4 +51,7 @@ public interface LambdaConstants {
     String RESOURCE_TAG_KEYS = "CamelAwsLambdaResourceTagKeys";
     String VERSION_DESCRIPTION = "CamelAwsLambdaVersionDescription";
     String VERSION_REVISION_ID = "CamelAwsLambdaVersionRevisionId";
+    String FUNCTION_VERSION = "CamelAwsLambdaFunctionVersion";
+    String FUNCTION_ALIAS_NAME = "CamelAwsLambdaAliasFunctionName";
+    String FUNCTION_ALIAS_DESCRIPTION = "CamelAwsLambdaAliasFunctionDescription";
 }

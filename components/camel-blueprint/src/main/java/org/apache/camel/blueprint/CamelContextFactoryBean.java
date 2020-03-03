@@ -68,6 +68,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StringHelper;
@@ -79,10 +80,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A bean to create and initialize a {@link BlueprintCamelContext}
- * and install routes either explicitly configured in
- * Blueprint XML or found by searching the classpath for Java classes which extend
- * {@link RouteBuilder} using the nested {@link #setPackages(String[])}.
+ * A bean to create and initialize a {@link BlueprintCamelContext} and install
+ * routes either explicitly configured in Blueprint XML or found by searching
+ * the classpath for Java classes which extend {@link RouteBuilder} using the
+ * nested {@link #setPackages(String[])}.
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -124,12 +125,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String allowUseOriginalMessage;
     @XmlAttribute
+    private String caseInsensitiveHeaders;
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
     @XmlAttribute
     private String managementNamePattern;
     @XmlAttribute
     private String threadNamePattern;
     @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean useBlueprintPropertyResolver;
     @XmlAttribute
     private ShutdownRoute shutdownRoute;
@@ -139,6 +143,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private Boolean loadTypeConverters;
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
+    @XmlAttribute
+    private Boolean inflightRepositoryBrowseEnabled;
     @XmlAttribute
     private TypeConverterExists typeConverterExists;
     @XmlAttribute
@@ -157,15 +163,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private CamelJMXAgentDefinition camelJMXAgent;
     @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class)
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
-    @XmlElements({
-        @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class),
-        @XmlElement(name = "fluentTemplate", type = CamelFluentProducerTemplateFactoryBean.class),
-        @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class),
-        @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class),
-        @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class)})
+    @XmlElements({@XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class),
+                  @XmlElement(name = "fluentTemplate", type = CamelFluentProducerTemplateFactoryBean.class),
+                  @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class), @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class),
+                  @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class)})
     private List<AbstractCamelFactoryBean<?>> beansFactory;
-    @XmlElements({
-        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class) })
+    @XmlElements({@XmlElement(name = "export", type = CamelServiceExporterDefinition.class)})
     private List<?> beans;
     @XmlElement(name = "defaultServiceCallConfiguration")
     private ServiceCallConfigurationDefinition defaultServiceCallConfiguration;
@@ -276,15 +279,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     protected void initPropertyPlaceholder() throws Exception {
         super.initPropertyPlaceholder();
 
-        // if blueprint property resolver is enabled on CamelContext then bridge PropertiesComponent to blueprint
+        // if blueprint property resolver is enabled on CamelContext then bridge
+        // PropertiesComponent to blueprint
         if (isUseBlueprintPropertyResolver()) {
             // lookup existing configured properties component
-            PropertiesComponent pc = (PropertiesComponent) getContext().getPropertiesComponent();
+            PropertiesComponent pc = (PropertiesComponent)getContext().getPropertiesComponent();
 
             // any extra properties
             ServiceReference<?> ref = bundleContext.getServiceReference(PropertiesComponent.OVERRIDE_PROPERTIES);
             if (ref != null) {
-                Properties extra = (Properties) bundleContext.getService(ref);
+                Properties extra = (Properties)bundleContext.getService(ref);
                 if (extra != null) {
                     pc.setOverrideProperties(extra);
                 }
@@ -299,7 +303,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
                 }
             }
             if (ids.isEmpty()) {
-                // no blueprint locations has been set, so auto-detect the blueprint property placeholders to use (convention over configuration)
+                // no blueprint locations has been set, so auto-detect the
+                // blueprint property placeholders to use (convention over
+                // configuration)
                 ids = lookupPropertyPlaceholderIds();
             }
             pc.addPropertiesSource(new BlueprintPropertiesSource(blueprintContainer, ids));
@@ -316,10 +322,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         List<String> ids = new ArrayList<>();
 
         for (Object componentId : blueprintContainer.getComponentIds()) {
-            String id = (String) componentId;
+            String id = (String)componentId;
             ComponentMetadata meta = blueprintContainer.getComponentMetadata(id);
             if (meta instanceof ExtendedBeanMetadata) {
-                Class<?> clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
+                Class<?> clazz = ((ExtendedBeanMetadata)meta).getRuntimeClass();
                 if (clazz != null && PropertyPlaceholderExt.class.isAssignableFrom(clazz)) {
                     ids.add(id);
                 }
@@ -342,8 +348,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         // add filter to class resolver which then will filter
         getContext().getPackageScanClassResolver().addFilter(filter);
         ClassLoader classLoader = new BundleDelegatingClassLoader(bundleContext.getBundle());
-        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, classLoader,
-                                                                                 getContext().getPackageScanClassResolver());
+        PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(getContext(), packages, classLoader, getContext().getPackageScanClassResolver());
         finder.appendBuilders(builders);
 
         // and remove the filter
@@ -359,7 +364,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
-        // setup the application context classloader with the bundle delegating classloader
+        // setup the application context classloader with the bundle delegating
+        // classloader
         ClassLoader cl = new BundleDelegatingClassLoader(bundleContext.getBundle());
         LOG.debug("Set the application context classloader to: {}", cl);
         getContext().setApplicationContextClassLoader(cl);
@@ -370,7 +376,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             getClass().getClassLoader().loadClass("org.osgi.service.event.EventAdmin");
             getContext().getManagementStrategy().addEventNotifier(new OsgiEventAdminNotifier(bundleContext));
         } catch (Throwable t) {
-            // Ignore, if the EventAdmin package is not available, just don't use it
+            // Ignore, if the EventAdmin package is not available, just don't
+            // use it
             LOG.debug("EventAdmin package is not available, just don't use it");
         }
         // ensure routes is setup
@@ -446,6 +453,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setAllowUseOriginalMessage(String allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    @Override
+    public String getCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    public void setCaseInsensitiveHeaders(String caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
     }
 
     @Override
@@ -928,7 +944,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     public boolean isImplicitId() {
         return implicitId;
     }
-    
+
     public void setImplicitId(boolean flag) {
         implicitId = flag;
     }
@@ -937,6 +953,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         return useBlueprintPropertyResolver;
     }
 
+    /**
+     * Whether to automatic detect OSGi Blueprint property placeholder service in use,
+     * and bridge with Camel property placeholder.
+     * When enabled this allows you to only setup OSGi Blueprint property placeholder
+     * and Camel can use the properties in the <camelContext>.
+     */
     public void setUseBlueprintPropertyResolver(Boolean useBlueprintPropertyResolver) {
         this.useBlueprintPropertyResolver = useBlueprintPropertyResolver;
     }
@@ -946,4 +968,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         return useBlueprintPropertyResolver == null || useBlueprintPropertyResolver.booleanValue();
     }
 
+    @Override
+    public Boolean getInflightRepositoryBrowseEnabled() {
+        return inflightRepositoryBrowseEnabled;
+    }
+
+    public void setInflightRepositoryBrowseEnabled(Boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
+    }
 }

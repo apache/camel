@@ -48,10 +48,10 @@ public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 //In Only
                 from("avro:netty:localhost:" + avroPort + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").choice()
                         .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + "} == 'put'").process(new PutProcessor(keyValue))

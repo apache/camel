@@ -65,8 +65,6 @@ public class AtmosEndpoint extends DefaultEndpoint {
      */
     @Override
     public Producer createProducer() throws Exception {
-        log.debug("resolve producer atmos endpoint {{}}", configuration.getOperation());
-        log.debug("resolve producer atmos attached client: {}", configuration.getClient());
         if (configuration.getOperation() == AtmosOperation.put) {
             return new AtmosPutProducer(this, configuration);
         } else if (this.configuration.getOperation() == AtmosOperation.del) {
@@ -88,9 +86,6 @@ public class AtmosEndpoint extends DefaultEndpoint {
      */
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        log.debug("resolve consumer atmos endpoint {{}}", configuration.getOperation());
-        log.debug("resolve consumer atmos attached client:{}", configuration.getClient());
-
         AtmosScheduledPollConsumer consumer;
         if (this.configuration.getOperation() == AtmosOperation.get) {
             consumer = new AtmosScheduledPollGetConsumer(this, processor, configuration);

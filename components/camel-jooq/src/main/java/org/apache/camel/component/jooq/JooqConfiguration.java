@@ -37,6 +37,7 @@ public class JooqConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "To execute plain SQL query")
     private String query;
 
+    @UriParam(label = "common", description = "To use a specific database configuration")
     private Configuration databaseConfiguration;
 
     public JooqConfiguration() {

@@ -49,5 +49,5 @@ public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
 
     public void setExpression(Expression expression) {
         this.expression = expression;
-    }    
+    }
 }

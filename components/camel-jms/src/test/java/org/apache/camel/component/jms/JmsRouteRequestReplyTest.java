@@ -30,11 +30,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -74,10 +72,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         public void configure() throws Exception {
             from(endpointUriA)
                 // We are not expect the response here
-                .setExchangePattern(ExchangePattern.InOnly).process(new Processor() {
-                    public void process(Exchange e) {
-                        // do nothing
-                    }
+                .setExchangePattern(ExchangePattern.InOnly).process(e -> {
+                    // do nothing
                 });
         }
     }
@@ -85,11 +81,9 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     public static class SingleNodeRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {
-            from(endpointUriA).process(new Processor() {
-                public void process(Exchange e) {
-                    String request = e.getIn().getBody(String.class);
-                    e.getOut().setBody(expectedReply + request.substring(request.indexOf('-')));
-                }
+            from(endpointUriA).process(e -> {
+                String request = e.getIn().getBody(String.class);
+                e.getMessage().setBody(expectedReply + request.substring(request.indexOf('-')));
             });
         }
     }
@@ -98,11 +92,9 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         @Override
         public void configure() throws Exception {
             from(endpointUriA).to(endpointUriB);
-            from(endpointUriB).process(new Processor() {
-                public void process(Exchange e) {
-                    String request = e.getIn().getBody(String.class);
-                    e.getOut().setBody(expectedReply + request.substring(request.indexOf('-')));
-                }
+            from(endpointUriB).process(e -> {
+                String request = e.getIn().getBody(String.class);
+                e.getMessage().setBody(expectedReply + request.substring(request.indexOf('-')));
             });
         }
     }
@@ -111,15 +103,13 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         @Override
         public void configure() throws Exception {
             from(endpointUriA).to(endpointReplyToUriB);
-            from(endpointUriB).process(new Processor() {
-                public void process(Exchange e) {
-                    Message in = e.getIn();
-                    Message out = e.getOut();
-                    String selectorValue = in.getHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, String.class);
-                    String request = in.getBody(String.class);
-                    out.setHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, selectorValue);
-                    out.setBody(expectedReply + request.substring(request.indexOf('-')));
-                }
+            from(endpointUriB).process(e -> {
+                Message in = e.getIn();
+                Message out = e.getMessage();
+                String selectorValue = in.getHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, String.class);
+                String request = in.getBody(String.class);
+                out.setHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, selectorValue);
+                out.setBody(expectedReply + request.substring(request.indexOf('-')));
             });
         }
     }
@@ -128,11 +118,9 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         @Override
         public void configure() throws Exception {
             from(endpointUriA).to(endpointUriB1);
-            from(endpointUriB1).process(new Processor() {
-                public void process(Exchange e) {
-                    String request = e.getIn().getBody(String.class);
-                    e.getOut().setBody(expectedReply + request.substring(request.indexOf('-')));
-                }
+            from(endpointUriB1).process(e -> {
+                String request = e.getIn().getBody(String.class);
+                e.getMessage().setBody(expectedReply + request.substring(request.indexOf('-')));
             });
         }
     }
@@ -143,8 +131,8 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             ConnectionFactory connectionFactory =
                 CamelJmsTestHelper.createConnectionFactory();
             JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-            jmsComponent.setUseMessageIDAsCorrelationID(true);
-            jmsComponent.setConcurrentConsumers(maxServerTasks);
+            jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(true);
+            jmsComponent.getConfiguration().setConcurrentConsumers(maxServerTasks);
             context.addComponent(componentName, jmsComponent);
             return context;
         }
@@ -155,71 +143,61 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
             ContextBuilder contextBuilderMessageID = new ContextBuilderMessageID();
 
-            ContextBuilder contextBuilderCorrelationID = new ContextBuilder() {
-                public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-                    JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                    jms.setUseMessageIDAsCorrelationID(false);
-                    jms.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName, jms);
-                    return context;
-                }
+            ContextBuilder contextBuilderCorrelationID = context -> {
+                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                context.addComponent(componentName, jms);
+                return context;
             };
 
-            ContextBuilder contextBuilderMessageIDNamedReplyToSelector = new ContextBuilder() {
-                public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-                    JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                    jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
-                    jms.setUseMessageIDAsCorrelationID(true);
-                    jms.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName, jms);
-                    return context;
-                }
+            ContextBuilder contextBuilderMessageIDNamedReplyToSelector = context -> {
+                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+                jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                context.addComponent(componentName, jms);
+                return context;
             };
 
-            ContextBuilder contextBuilderCorrelationIDNamedReplyToSelector = new ContextBuilder() {
-                public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-                    JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                    jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
-                    jms.setUseMessageIDAsCorrelationID(false);
-                    jms.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName, jms);
-                    return context;
-                }
+            ContextBuilder contextBuilderCorrelationIDNamedReplyToSelector = context -> {
+                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+                jms.getConfiguration().setReplyToDestinationSelectorName(REPLY_TO_DESTINATION_SELECTOR_NAME);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(false);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                context.addComponent(componentName, jms);
+                return context;
             };
 
 
-            ContextBuilder contextBuilderCorrelationIDDiffComp = new ContextBuilder() {
-                public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-                    JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                    jms.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName, jms);
+            ContextBuilder contextBuilderCorrelationIDDiffComp = context -> {
+                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                context.addComponent(componentName, jms);
 
-                    JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
-                    jms1.setUseMessageIDAsCorrelationID(false);
-                    jms1.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName1, jms1);
-                    return context;
-                }
+                JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
+                jms1.getConfiguration().setUseMessageIDAsCorrelationID(false);
+                jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                context.addComponent(componentName1, jms1);
+                return context;
             };
 
-            ContextBuilder contextBuilderMessageIDDiffComp = new ContextBuilder() {
-                public CamelContext buildContext(CamelContext context) throws Exception {
-                    ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-                    JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-                    jms.setUseMessageIDAsCorrelationID(true);
-                    jms.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName, jms);
+            ContextBuilder contextBuilderMessageIDDiffComp = context -> {
+                ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+                JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+                jms.getConfiguration().setUseMessageIDAsCorrelationID(true);
+                jms.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                context.addComponent(componentName, jms);
 
-                    JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
-                    jms1.setUseMessageIDAsCorrelationID(true);
-                    jms1.setConcurrentConsumers(maxServerTasks);
-                    context.addComponent(componentName1, jms1);
-                    return context;
-                }
+                JmsComponent jms1 = jmsComponentAutoAcknowledge(connectionFactory);
+                jms1.getConfiguration().setUseMessageIDAsCorrelationID(true);
+                jms1.getConfiguration().setConcurrentConsumers(maxServerTasks);
+                context.addComponent(componentName1, jms1);
+                return context;
             };
 
 

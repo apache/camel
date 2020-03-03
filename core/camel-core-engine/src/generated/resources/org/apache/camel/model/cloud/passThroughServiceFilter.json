@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "passThroughServiceFilter",
+    "title": "Pass Through Service Filter",
+    "javaType": "org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration",
+    "label": "routing,cloud,service-filter",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

@@ -16,15 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
 
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
@@ -35,14 +31,12 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatDefinition extends IdentifiedType implements OtherAttributesAware, DefinitionPropertyPlaceholderConfigurer {
+@SuppressWarnings("rawtypes")
+public class DataFormatDefinition extends IdentifiedType {
     @XmlTransient
     private DataFormat dataFormat;
     @XmlTransient
     private String dataFormatName;
-    // use xs:any to support optional property placeholders
-    @XmlAnyAttribute
-    private Map<QName, Object> otherAttributes;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String contentTypeHeader;
@@ -72,19 +66,6 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
 
     public void setDataFormat(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
-    }
-
-    @Override
-    public Map<QName, Object> getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    /**
-     * Adds an optional attribute
-     */
-    @Override
-    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
-        this.otherAttributes = otherAttributes;
     }
 
     public String getContentTypeHeader() {

@@ -41,7 +41,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> implements OutputNode {
+public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition> {
     @Metadata(required = false)
     @XmlElements({@XmlElement(name = "batch-config", type = BatchResequencerConfig.class), @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)})
     private ResequencerConfig resequencerConfig;
@@ -52,8 +52,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     @XmlElementRef
     @Metadata(required = true)
     private ExpressionDefinition expression;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public ResequenceDefinition() {
     }
@@ -69,8 +67,10 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return outputs;
     }
 
+    @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
+        super.setOutputs(outputs);
     }
 
     // Fluent API

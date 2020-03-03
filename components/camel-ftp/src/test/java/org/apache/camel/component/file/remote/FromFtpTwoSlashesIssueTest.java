@@ -43,7 +43,7 @@ public class FromFtpTwoSlashesIssueTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testPollFileAndShouldBeDeleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -53,7 +53,8 @@ public class FromFtpTwoSlashesIssueTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();

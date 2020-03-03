@@ -38,6 +38,18 @@ public interface Endpoint extends IsSingleton, Service {
     String getEndpointUri();
 
     /**
+     * Returns the string representation of the base endpoint URI (without query parameters).
+     */
+    default String getEndpointBaseUri() {
+        String value = getEndpointUri();
+        int pos = value.indexOf('?');
+        if (pos > 0) {
+            value = value.substring(0, pos);
+        }
+        return value;
+    }
+
+    /**
      * Returns a string key of this endpoint.
      * <p/>
      * This key is used by {@link org.apache.camel.spi.LifecycleStrategy} when registering endpoint.
@@ -81,6 +93,13 @@ public interface Endpoint extends IsSingleton, Service {
      * @throws Exception can be thrown
      */
     Producer createProducer() throws Exception;
+
+    /**
+     * Whether this endpoint creates singleton producers
+     */
+    default boolean isSingletonProducer() {
+        return isSingleton();
+    }
 
     /**
      * Creates a new producer which is used send messages into the endpoint

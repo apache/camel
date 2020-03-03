@@ -17,7 +17,6 @@
 package org.apache.camel.component.stringtemplate;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -28,26 +27,16 @@ public class StringTemplateCustomDelimiterTest extends CamelTestSupport {
 
     @Test
     public void testWithBraceDelimiter() {
-        Exchange response = template.request(DIRECT_BRACE, new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Yay !");
-            }
-        });
+        Exchange response = template.request(DIRECT_BRACE, exchange -> exchange.getIn().setBody("Yay !"));
 
-        assertEquals("With brace delimiter Yay !", response.getOut().getBody().toString().trim());
+        assertEquals("With brace delimiter Yay !", response.getMessage().getBody().toString().trim());
     }
 
     @Test
     public void testWithDollarDelimiter() {
-        Exchange response = template.request(DIRECT_DOLLAR, new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Yay !");
-            }
-        });
+        Exchange response = template.request(DIRECT_DOLLAR, exchange -> exchange.getIn().setBody("Yay !"));
 
-        assertEquals("With identical dollar delimiter Yay !", response.getOut().getBody().toString().trim());
+        assertEquals("With identical dollar delimiter Yay !", response.getMessage().getBody().toString().trim());
     }
 
     @Override

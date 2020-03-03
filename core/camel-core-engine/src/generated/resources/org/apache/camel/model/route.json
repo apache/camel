@@ -1,0 +1,30 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "route",
+    "title": "Route",
+    "description": "A Camel route",
+    "javaType": "org.apache.camel.model.RouteDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": true,
+    "output": true
+  },
+  "properties": {
+    "group": { "kind": "attribute", "displayName": "Group", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The group that this route belongs to; could be the name of the RouteBuilder class or be explicitly configured in the XML. May be null." },
+    "streamCache": { "kind": "attribute", "displayName": "Stream Cache", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether stream caching is enabled on this route." },
+    "trace": { "kind": "attribute", "displayName": "Trace", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether tracing is enabled on this route." },
+    "messageHistory": { "kind": "attribute", "displayName": "Message History", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether message history is enabled on this route." },
+    "logMask": { "kind": "attribute", "displayName": "Log Mask", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Whether security mask for Logging is enabled on this route." },
+    "delayer": { "kind": "attribute", "displayName": "Delayer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to slow down processing messages by a given delay in msec." },
+    "autoStartup": { "kind": "attribute", "displayName": "Auto Startup", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether to auto start this route" },
+    "startupOrder": { "kind": "attribute", "displayName": "Startup Order", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "To configure the ordering of the routes being started" },
+    "errorHandlerRef": { "kind": "attribute", "displayName": "Error Handler", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the bean ref name of the error handler builder to use on this route" },
+    "routePolicyRef": { "kind": "attribute", "displayName": "Route Policy", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to custom org.apache.camel.spi.RoutePolicy to use by the route. Multiple policies can be configured by separating values using comma." },
+    "shutdownRoute": { "kind": "attribute", "displayName": "Shutdown Route", "required": false, "type": "enum", "javaType": "org.apache.camel.ShutdownRoute", "enum": [ "Default", "Defer" ], "deprecated": false, "secret": false, "description": "To control how to shutdown the route." },
+    "shutdownRunningTask": { "kind": "attribute", "displayName": "Shutdown Running Task", "required": false, "type": "enum", "javaType": "org.apache.camel.ShutdownRunningTask", "enum": [ "CompleteCurrentTaskOnly", "CompleteAllTasks" ], "deprecated": false, "secret": false, "description": "To control how to shutdown the route." },
+    "input": { "kind": "element", "displayName": "Input", "required": true, "type": "object", "javaType": "org.apache.camel.model.FromDefinition", "oneOf": [ "from" ], "deprecated": false, "secret": false, "description": "Input to the route." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 /**
@@ -64,7 +65,7 @@ public final class JpaHelper {
             if (exchange != null) {
                 // we want to reuse the EM so store as property and make sure we close it when done with the exchange
                 exchange.setProperty(JpaConstants.ENTITY_MANAGER, em);
-                exchange.addOnCompletion(new JpaCloseEntityManagerOnCompletion(em));
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new JpaCloseEntityManagerOnCompletion(em));
             }
         }
 
@@ -74,7 +75,7 @@ public final class JpaHelper {
             if (exchange != null) {
                 // we want to reuse the EM so store as property and make sure we close it when done with the exchange
                 exchange.setProperty(JpaConstants.ENTITY_MANAGER, em);
-                exchange.addOnCompletion(new JpaCloseEntityManagerOnCompletion(em));
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new JpaCloseEntityManagerOnCompletion(em));
             }
         }
 

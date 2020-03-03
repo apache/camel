@@ -23,9 +23,8 @@ import org.eclipse.californium.core.CoapResponse;
 import org.junit.Test;
 
 /**
- * https://issues.apache.org/jira/browse/CAMEL-10985
- *
- * CORS configuration is ignored and REST endpoints function as per normal
+ * https://issues.apache.org/jira/browse/CAMEL-10985 CORS configuration is
+ * ignored and REST endpoints function as per normal
  */
 public class CoAPCORSTest extends CoAPTestSupport {
     private static final String COAP_RESPONSE = "{ \"foo\": \"bar\" }";

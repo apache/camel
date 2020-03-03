@@ -70,7 +70,7 @@ public class S3ComponentSpringTest extends CamelSpringTestSupport {
 
         assertResultExchange(result.getExchanges().get(0));
 
-        assertResponseMessage(exchange.getOut());
+        assertResponseMessage(exchange.getMessage());
     }
 
     private void assertResultExchange(Exchange resultExchange) {

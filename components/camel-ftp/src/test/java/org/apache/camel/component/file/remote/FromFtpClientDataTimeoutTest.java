@@ -36,12 +36,12 @@ public class FromFtpClientDataTimeoutTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        
+
         mock.assertIsSatisfied();
     }
 

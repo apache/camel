@@ -34,11 +34,15 @@ import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of @{link Producer} which use the SMPP protocol
  */
 public class SmppProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SmppProducer.class);
 
     private SmppConfiguration configuration;
     private SMPPSession session;
@@ -56,7 +60,7 @@ public class SmppProducer extends DefaultProducer {
                 }
                 
                 if (newState.equals(SessionState.CLOSED)) {
-                    log.warn("Lost connection to: {} - trying to reconnect...", getEndpoint().getConnectionString());
+                    LOG.warn("Lost connection to: {} - trying to reconnect...", getEndpoint().getConnectionString());
                     closeSession();
                     reconnect(configuration.getInitialReconnectDelay());
                 }
@@ -80,7 +84,7 @@ public class SmppProducer extends DefaultProducer {
     }
 
     private SMPPSession createSession() throws IOException {
-        log.debug("Connecting to: {}...", getEndpoint().getConnectionString());
+        LOG.debug("Connecting to: {}...", getEndpoint().getConnectionString());
         
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
@@ -98,7 +102,7 @@ public class SmppProducer extends DefaultProducer {
                         NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
                         ""));
         
-        log.info("Connected to: {}", getEndpoint().getConnectionString());
+        LOG.info("Connected to: {}", getEndpoint().getConnectionString());
         
         return session;
     }
@@ -126,7 +130,7 @@ public class SmppProducer extends DefaultProducer {
                             String systemId = in.getHeader(SmppConstants.SYSTEM_ID, String.class);
                             String password = in.getHeader(SmppConstants.PASSWORD, String.class);
                             if (systemId != null && password != null) {
-                                log.info("using the system id '{}' to connect to the SMSC...", systemId);
+                                LOG.info("using the system id '{}' to connect to the SMSC...", systemId);
                                 this.configuration.setSystemId(systemId);
                                 this.configuration.setPassword(password);
                             }
@@ -150,12 +154,12 @@ public class SmppProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Disconnecting from: {}...", getEndpoint().getConnectionString());
+        LOG.debug("Disconnecting from: {}...", getEndpoint().getConnectionString());
 
         super.doStop();
         closeSession();
 
-        log.info("Disconnected from: {}", getEndpoint().getConnectionString());
+        LOG.info("Disconnected from: {}", getEndpoint().getConnectionString());
     }
     
     private void closeSession() {
@@ -174,7 +178,7 @@ public class SmppProducer extends DefaultProducer {
                     public void run() {
                         boolean reconnected = false;
                         
-                        log.info("Schedule reconnect after {} millis", initialReconnectDelay);
+                        LOG.info("Schedule reconnect after {} millis", initialReconnectDelay);
                         try {
                             Thread.sleep(initialReconnectDelay);
                         } catch (InterruptedException e) {
@@ -185,11 +189,11 @@ public class SmppProducer extends DefaultProducer {
                                 && attempt < configuration.getMaxReconnect()) {
                             try {
                                 attempt++;
-                                log.info("Trying to reconnect to {} - attempt #{}", getEndpoint().getConnectionString(), attempt);
+                                LOG.info("Trying to reconnect to {} - attempt #{}", getEndpoint().getConnectionString(), attempt);
                                 session = createSession();
                                 reconnected = true;
                             } catch (IOException e) {
-                                log.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
+                                LOG.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
                                 closeSession();
                                 try {
                                     Thread.sleep(configuration.getReconnectDelay());
@@ -199,7 +203,7 @@ public class SmppProducer extends DefaultProducer {
                         }
                         
                         if (reconnected) {
-                            log.info("Reconnected to {}", getEndpoint().getConnectionString());
+                            LOG.info("Reconnected to {}", getEndpoint().getConnectionString());
                         }
                     }
                 };

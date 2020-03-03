@@ -32,7 +32,7 @@ import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
-import org.jboss.forge.roaster.model.util.Strings;
+import org.apache.camel.tooling.util.Strings;
 
 import static org.apache.camel.parser.helper.CamelXmlHelper.getSafeAttribute;
 
@@ -131,7 +131,7 @@ public final class XmlRouteParser {
                     // trim and remove whitespace noise
                     uri = trimEndpointUri(uri);
                 }
-                if (!Strings.isBlank(uri)) {
+                if (!Strings.isNullOrEmpty(uri)) {
                     String id = getSafeAttribute(node, "id");
                     String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
                     String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);

@@ -25,11 +25,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.engine.DefaultClaimCheckRepository;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ClaimCheck EIP implementation.
@@ -39,10 +42,13 @@ import org.apache.camel.util.ObjectHelper;
  * This guards against concurrent and thread-safe issues. For off-memory persistent storage of data, then use
  * any of the many Camel components that support persistent storage, and do not use this Claim Check EIP implementation.
  */
-public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAware, CamelContextAware {
+public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ClaimCheckProcessor.class);
 
     private CamelContext camelContext;
     private String id;
+    private String routeId;
     private String operation;
     private AggregationStrategy aggregationStrategy;
     private String key;
@@ -67,6 +73,16 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public String getOperation() {
@@ -118,13 +134,13 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
                 boolean addedNew = repo.add(claimKey, copy);
                 if (addedNew) {
-                    log.debug("Add: {} -> {}", claimKey, copy);
+                    LOG.debug("Add: {} -> {}", claimKey, copy);
                 } else {
-                    log.debug("Override: {} -> {}", claimKey, copy);
+                    LOG.debug("Override: {} -> {}", claimKey, copy);
                 }
             } else if ("Get".equals(operation)) {
                 Exchange copy = repo.get(claimKey);
-                log.debug("Get: {} -> {}", claimKey, exchange);
+                LOG.debug("Get: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     Exchange result = aggregationStrategy.aggregate(exchange, copy);
                     if (result != null) {
@@ -133,7 +149,7 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
                 }
             } else if ("GetAndRemove".equals(operation)) {
                 Exchange copy = repo.getAndRemove(claimKey);
-                log.debug("GetAndRemove: {} -> {}", claimKey, exchange);
+                LOG.debug("GetAndRemove: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -145,11 +161,11 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
             } else if ("Push".equals(operation)) {
                 // copy exchange, and do not share the unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                log.debug("Push: {} -> {}", claimKey, copy);
+                LOG.debug("Push: {} -> {}", claimKey, copy);
                 repo.push(copy);
             } else if ("Pop".equals(operation)) {
                 Exchange copy = repo.pop();
-                log.debug("Pop: {} -> {}", claimKey, exchange);
+                LOG.debug("Pop: {} -> {}", claimKey, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -194,7 +210,7 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
 
     @Override
     public String toString() {
-        return "ClaimCheck[" + operation + "]";
+        return id;
     }
 
     protected AggregationStrategy createAggregationStrategy() {

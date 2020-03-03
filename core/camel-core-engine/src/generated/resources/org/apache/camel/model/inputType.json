@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "inputType",
+    "title": "Input Type",
+    "description": "Set the expected data type of the input message. If the actual message type is different at runtime, camel look for a required Transformer and apply if exists. If validate attribute is true then camel applies Validator as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name' is a fully qualified class name. For example {code java:java.lang.String} , {code json:ABCOrder} . It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML message matches. It's handy to add only one transformer\/validator for all the transformation from\/to XML.",
+    "javaType": "org.apache.camel.model.InputTypeDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "urn": { "kind": "attribute", "displayName": "Urn", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set input type URN." },
+    "validate": { "kind": "attribute", "displayName": "Validate", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Set if validation is required for this input type." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

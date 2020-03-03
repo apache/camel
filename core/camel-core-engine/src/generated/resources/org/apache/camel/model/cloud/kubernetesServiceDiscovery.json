@@ -1,0 +1,35 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "kubernetesServiceDiscovery",
+    "title": "Kubernetes Service Discovery",
+    "javaType": "org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration",
+    "label": "routing,cloud,service-discovery",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "lookup": { "kind": "attribute", "displayName": "Lookup", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "client", "dns", "environment" ], "deprecated": false, "secret": false, "defaultValue": "environment", "description": "How to perform service lookup. Possible values: client, dns, environment. When using client, then the client queries the kubernetes master to obtain a list of active pods that provides the service, and then random (or round robin) select a pod. When using dns the service name is resolved as name.namespace.svc.dnsDomain. When using dnssrv the service name is resolved with SRV query for _._...svc... When using environment then environment variables are used to lookup the service. By default environment is used." },
+    "dnsDomain": { "kind": "attribute", "displayName": "Dns Domain", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the DNS domain to use for DNS lookup." },
+    "portName": { "kind": "attribute", "displayName": "Port Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Port Name to use for DNS\/DNSSRV lookup." },
+    "portProtocol": { "kind": "attribute", "displayName": "Port Protocol", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Port Protocol to use for DNS\/DNSSRV lookup." },
+    "namespace": { "kind": "attribute", "displayName": "Namespace", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the namespace to use. Will by default use namespace from the ENV variable KUBERNETES_MASTER." },
+    "apiVersion": { "kind": "attribute", "displayName": "Api Version", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the API version when using client lookup" },
+    "masterUrl": { "kind": "attribute", "displayName": "Master Url", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the URL to the master when using client lookup" },
+    "username": { "kind": "attribute", "displayName": "Username", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the username for authentication when using client lookup" },
+    "password": { "kind": "attribute", "displayName": "Password", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the password for authentication when using client lookup" },
+    "oauthToken": { "kind": "attribute", "displayName": "Oauth Token", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the OAUTH token for authentication (instead of username\/password) when using client lookup" },
+    "caCertData": { "kind": "attribute", "displayName": "Ca Cert Data", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Certificate Authority data when using client lookup" },
+    "caCertFile": { "kind": "attribute", "displayName": "Ca Cert File", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Certificate Authority data that are loaded from the file when using client lookup" },
+    "clientCertData": { "kind": "attribute", "displayName": "Client Cert Data", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Client Certificate data when using client lookup" },
+    "clientCertFile": { "kind": "attribute", "displayName": "Client Cert File", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Client Certificate data that are loaded from the file when using client lookup" },
+    "clientKeyAlgo": { "kind": "attribute", "displayName": "Client Key Algo", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Client Keystore algorithm, such as RSA when using client lookup" },
+    "clientKeyData": { "kind": "attribute", "displayName": "Client Key Data", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Client Keystore data when using client lookup" },
+    "clientKeyFile": { "kind": "attribute", "displayName": "Client Key File", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Client Keystore data that are loaded from the file when using client lookup" },
+    "clientKeyPassphrase": { "kind": "attribute", "displayName": "Client Key Passphrase", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Client Keystore passphrase when using client lookup" },
+    "trustCerts": { "kind": "attribute", "displayName": "Trust Certs", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Sets whether to turn on trust certificate check when using client lookup" },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

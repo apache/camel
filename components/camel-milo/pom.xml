@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-milo</artifactId>
@@ -53,6 +53,12 @@
             <groupId>org.eclipse.milo</groupId>
             <artifactId>sdk-client</artifactId>
             <version>${milo-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${milo-guava-version}</version>
         </dependency>
 
         <!-- testing -->

@@ -26,12 +26,16 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Ensures a {@link Producer} do send {@link org.apache.camel.spi.EventNotifier} notifications when
  * sending.
  */
 public final class EventNotifierProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EventNotifierProducer.class);
 
     private final AsyncProducer producer;
 
@@ -63,7 +67,7 @@ public final class EventNotifierProducer extends DefaultAsyncProducer {
         }
 
         try {
-            log.debug(">>>> {} {}", getEndpoint(), exchange);
+            LOG.debug(">>>> {} {}", getEndpoint(), exchange);
             return producer.process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {

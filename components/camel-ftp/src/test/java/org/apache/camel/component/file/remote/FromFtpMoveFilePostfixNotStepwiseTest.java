@@ -23,8 +23,7 @@ public class FromFtpMoveFilePostfixNotStepwiseTest extends FromFtpMoveFilePostfi
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
-                + "&move=${file:name}.old&delay=5000&stepwise=false";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false" + "&move=${file:name}.old&delay=5000&stepwise=false";
     }
 
 }

@@ -23,9 +23,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WeatherConsumer extends ScheduledPollConsumer {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 60 * 1000L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(WeatherConsumer.class);
 
     private final String query;
 
@@ -41,17 +45,17 @@ public class WeatherConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        log.debug("Going to execute the Weather query {}", query);
+        LOG.debug("Going to execute the Weather query {}", query);
         HttpClient httpClient = ((WeatherComponent) getEndpoint().getComponent()).getHttpClient();
         GetMethod getMethod = new GetMethod(query);
         try {
             int status = httpClient.executeMethod(getMethod);
             if (status != HttpStatus.SC_OK) {
-                log.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}", status, getMethod.getStatusLine(), query);
+                LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}", status, getMethod.getStatusLine(), query);
                 return 0;
             }
             String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, getMethod.getResponseBodyAsStream());
-            log.debug("Got back the Weather information {}", weather);
+            LOG.debug("Got back the Weather information {}", weather);
             if (ObjectHelper.isEmpty(weather)) {
                 // empty response
                 return 0;

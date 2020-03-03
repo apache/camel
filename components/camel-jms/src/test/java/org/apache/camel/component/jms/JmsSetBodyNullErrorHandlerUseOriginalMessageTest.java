@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -60,12 +58,9 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends CamelTestS
 
                 from("activemq:queue:foo")
                     .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // an end user may set the message body explicit to null
-                            exchange.getIn().setBody(null);
-                        }
+                    .process(exchange -> {
+                        // an end user may set the message body explicit to null
+                        exchange.getIn().setBody(null);
                     })
                     .to("mock:bar")
                     .throwException(new IllegalArgumentException("Forced"));

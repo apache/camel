@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "leveldb",
+    "title": "LevelDB",
+    "description": "Using LevelDB as persistent EIP store",
+    "deprecated": false,
+    "firstVersion": "2.10.0",
+    "label": "database",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-leveldb",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

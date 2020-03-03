@@ -25,13 +25,13 @@ import org.apache.camel.spi.RouteContext;
 
 public class ScriptReifier extends ExpressionReifier<ScriptDefinition> {
 
-    public ScriptReifier(ProcessorDefinition<?> definition) {
-        super((ScriptDefinition)definition);
+    public ScriptReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ScriptDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expr = definition.getExpression().createExpression(routeContext);
+    public Processor createProcessor() throws Exception {
+        Expression expr = createExpression(definition.getExpression());
         return new ScriptProcessor(expr);
     }
 }

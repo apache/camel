@@ -233,8 +233,6 @@ public final class XmlSignatureHelper {
      * Returns a configuration for an XPATH2 transformation which consists of
      * several XPATH expressions.
      * 
-     * @param xpathAndFilterList
-     *            list of XPATH expressions with their filters
      * @param namespaceMap
      *            namespace map, key is the prefix, value is the namespace, can
      *            be <code>null</code>
@@ -332,7 +330,7 @@ public final class XmlSignatureHelper {
      * @throws Exception
      *             if an error during the reading of the XSL file occurs
      */
-    public static AlgorithmMethod getXslTransform(String path) throws Exception { //NOPMD
+    public static AlgorithmMethod getXslTransform(String path) throws Exception {
         InputStream is = readXslTransform(path);
         if (is == null) {
             throw new IllegalStateException(String.format("XSL file %s not found", path));
@@ -368,7 +366,7 @@ public final class XmlSignatureHelper {
         return transformXslt;
     }
 
-    protected static InputStream readXslTransform(String path) throws Exception { //NOPMD
+    protected static InputStream readXslTransform(String path) throws Exception {
         if (path == null) {
             throw new IllegalArgumentException("path is null");
         }
@@ -420,7 +418,7 @@ public final class XmlSignatureHelper {
         return dbf.newDocumentBuilder();
     }
 
-    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding) throws Exception { //NOPMD
+    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding) throws Exception {
 
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node, encoding);
@@ -435,7 +433,7 @@ public final class XmlSignatureHelper {
      * instead.
      */
     @Deprecated
-    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception { //NOPMD
+    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception {
 
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node);
@@ -451,7 +449,7 @@ public final class XmlSignatureHelper {
      * instead.
      */
     @Deprecated
-    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception { //NOPMD
+    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception {
         transformNonTextNodeToOutputStream(node, os, omitXmlDeclaration, null);
     }
 
@@ -470,7 +468,7 @@ public final class XmlSignatureHelper {
      * @throws Exception
      */
     public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding)
-        throws Exception { //NOPMD
+        throws Exception {
         // previously we used javax.xml.transform.Transformer, however the JDK xalan implementation did not work correctly with a specified encoding
         // therefore we switched to DOMImplementationLS
         if (encoding == null) {

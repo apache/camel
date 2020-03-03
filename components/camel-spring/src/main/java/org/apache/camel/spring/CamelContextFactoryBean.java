@@ -110,7 +110,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String tracePattern;
     @XmlAttribute
     private String debug;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String messageHistory;
     @XmlAttribute @Metadata(defaultValue = "false")
     private String logMask;
@@ -137,6 +137,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String allowUseOriginalMessage;
     @XmlAttribute
+    private String caseInsensitiveHeaders;
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
     @XmlAttribute @Metadata(defaultValue = "#name#")
     private String managementNamePattern;
@@ -150,6 +152,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private Boolean loadTypeConverters;
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
+    @XmlAttribute
+    private Boolean inflightRepositoryBrowseEnabled;
     @XmlAttribute @Metadata(defaultValue = "Override")
     private TypeConverterExists typeConverterExists;
     @XmlAttribute @Metadata(defaultValue = "WARN")
@@ -908,6 +912,25 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
+    public String getCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as content-type and Content-Type are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     *
+     * Default is true.
+     */
+    public void setCaseInsensitiveHeaders(String caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
     public String getRuntimeEndpointRegistryEnabled() {
         return runtimeEndpointRegistryEnabled;
     }
@@ -917,6 +940,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setRuntimeEndpointRegistryEnabled(String runtimeEndpointRegistryEnabled) {
         this.runtimeEndpointRegistryEnabled = runtimeEndpointRegistryEnabled;
+    }
+
+    @Override
+    public Boolean getInflightRepositoryBrowseEnabled() {
+        return inflightRepositoryBrowseEnabled;
+    }
+
+    /**
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
+     *
+     * This is by default disabled as there is a very slight performance overhead when enabled.
+     */
+    public void setInflightRepositoryBrowseEnabled(Boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     @Override

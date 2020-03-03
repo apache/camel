@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "loadBalance",
+    "title": "Load Balance",
+    "description": "Balances message processing among a number of nodes",
+    "javaType": "org.apache.camel.model.LoadBalanceDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "loadBalancerType": { "kind": "element", "displayName": "Load Balancer Type", "required": true, "type": "object", "javaType": "org.apache.camel.model.LoadBalancerDefinition", "oneOf": [ "customLoadBalancer", "failover", "random", "roundRobin", "sticky", "topic", "weighted" ], "deprecated": false, "secret": false, "description": "The load balancer to be used" },
+    "inheritErrorHandler": { "kind": "attribute", "displayName": "Inherit Error Handler", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

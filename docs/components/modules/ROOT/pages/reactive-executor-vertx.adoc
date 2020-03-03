@@ -9,7 +9,10 @@ By default Camel uses its own reactive engine for routing messages, but you can 
 different engines via a SPI interface. This is a VertX based plugin that uses the VertX event loop
 for processing message during routing.
 
-NOTE: At this time this component is an experiment so use it with care.
+[NOTE]
+====
+At this time this component is an experiment so use it with care.
+====
 
 == VertX instance
 

@@ -25,8 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientConsumer;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AtomixSetConsumer extends AbstractAtomixClientConsumer<AtomixSetEndpoint> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AtomixSetConsumer.class);
 
     private final List<Listener<DistributedSet.ValueEvent<Object>>> listeners;
     private final String resourceName;
@@ -53,7 +57,7 @@ public final class AtomixSetConsumer extends AbstractAtomixClientConsumer<Atomix
             .join();
 
 
-        log.debug("Subscribe to events for set: {}", resourceName);
+        LOG.debug("Subscribe to events for set: {}", resourceName);
         this.listeners.add(this.set.onAdd(this::onEvent).join());
         this.listeners.add(this.set.onRemove(this::onEvent).join());
     }

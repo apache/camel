@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "openapi-java",
+    "title": "Openapi Java",
+    "description": "Rest-dsl support for using openapi doc",
+    "deprecated": false,
+    "firstVersion": "3.1.0",
+    "label": "rest,api",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-openapi-java",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "groovy",
+    "modelName": "groovy",
+    "title": "Groovy",
+    "description": "To use Groovy scripts in Camel expressions or predicates.",
+    "deprecated": false,
+    "deprecationNote": "language,script",
+    "firstVersion": "1.3.0",
+    "label": "language,script",
+    "javaType": "org.apache.camel.language.groovy.GroovyLanguage",
+    "modelJavaType": "org.apache.camel.model.language.GroovyExpression",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-groovy",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

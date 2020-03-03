@@ -33,9 +33,9 @@ public class ReflectionInOutProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         if (body instanceof Object[] && ((Object[])body).length == 0) {
-            exchange.getOut().setBody(testReflection.getTestPojo());
+            exchange.getMessage().setBody(testReflection.getTestPojo());
         } else if (body instanceof Object) {
-            exchange.getOut().setBody(testReflection.increaseAge((Integer)body));
+            exchange.getMessage().setBody(testReflection.increaseAge((Integer)body));
         }
     }
 }

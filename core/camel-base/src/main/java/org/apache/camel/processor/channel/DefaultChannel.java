@@ -42,6 +42,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DefaultChannel is the default {@link Channel}.
@@ -55,6 +57,8 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
+
     private Processor errorHandler;
     // the next processor (non wrapped)
     private Processor nextProcessor;
@@ -65,6 +69,10 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private CamelContext camelContext;
     private RouteContext routeContext;
     private boolean routeScoped = true;
+
+    public DefaultChannel(CamelContext camelContext) {
+        super(camelContext);
+    }
 
     @Override
     public Processor getOutput() {
@@ -129,6 +137,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doStart() throws Exception {
+        // do not call super as we want to be in control here of the lifecycle
+
         // the output has now been created, so assign the output as the processor
         setProcessor(getOutput());
         ServiceHelper.startService(errorHandler, output);
@@ -136,6 +146,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doStop() throws Exception {
+        // do not call super as we want to be in control here of the lifecycle
+
         if (isRouteScoped()) {
             // only stop services if not context scoped (as context scoped is reused by others)
             ServiceHelper.stopService(output, errorHandler);
@@ -144,6 +156,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
     @Override
     protected void doShutdown() throws Exception {
+        // do not call super as we want to be in control here of the lifecycle
+
         ServiceHelper.stopAndShutdownServices(output, errorHandler);
     }
 
@@ -183,7 +197,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
         NamedNode targetOutputDef = childDefinition != null ? childDefinition : definition;
-        log.debug("Initialize channel for target: '{}'", targetOutputDef);
+        LOG.trace("Initialize channel for target: {}", targetOutputDef);
 
         // setup instrumentation processor for management (jmx)
         // this is later used in postInitChannel as we need to setup the error handler later as well
@@ -197,6 +211,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
             addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
+        // add advice that keeps track of which node is processing
+        addAdvice(new NodeHistoryAdvice(targetOutputDef));
 
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
@@ -235,7 +251,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
-                log.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
+                LOG.warn("Interceptor: " + strategy + " at: " + definition + " does not return an AsyncProcessor instance."
                         + " This causes the asynchronous routing engine to not work as optimal as possible."
                         + " See more details at the InterceptStrategy javadoc."
                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"

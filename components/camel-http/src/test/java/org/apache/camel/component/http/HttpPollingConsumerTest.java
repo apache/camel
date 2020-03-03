@@ -26,25 +26,30 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.http.HttpMethods.GET;
+
 public class HttpPollingConsumerTest extends BaseHttpTest {
 
     private HttpServer localServer;
     private String user = "camel";
     private String password = "password";
+    private String endpointUrl;
 
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+
         localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
                 setConnectionReuseStrategy(getConnectionReuseStrategy()).
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/", new DelayValidationHandler("GET", null, null, getExpectedContent(), 1000)).create();
+                registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
         localServer.start();
 
-        super.setUp();
+        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
     }
 
     @After
@@ -59,7 +64,7 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationShouldSuccess() throws Exception {
-        String body = consumer.receiveBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?authUsername=" + user + "&authPassword="
+        String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
             + password, String.class);
         assertEquals(getExpectedContent(), body);
 
@@ -68,27 +73,27 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     @Test
     public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
 
-        String body = consumer.receiveBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?authUsername=" + user + "&authPassword="
+        String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
                 + password + "&authenticationPreemptive=true", String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
     public void testReceive() throws Exception {
-        String body = consumer.receiveBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", String.class);
+        String body = consumer.receiveBody(endpointUrl + "/", String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
     public void testReceiveTimeout() throws Exception {
-        String body = consumer.receiveBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", 5000, String.class);
+        String body = consumer.receiveBody(endpointUrl + "/", 5000, String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
     public void testReceiveTimeoutTriggered() throws Exception {
         try {
-            consumer.receiveBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", 250, String.class);
+            consumer.receiveBody(endpointUrl + "/", 250, String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(SocketTimeoutException.class, e.getCause());

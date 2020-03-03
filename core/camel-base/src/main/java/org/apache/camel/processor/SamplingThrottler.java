@@ -23,7 +23,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <code>SamplingThrottler</code> is a special kind of throttler. It also
@@ -36,9 +39,12 @@ import org.apache.camel.support.AsyncProcessorSupport;
  * an exchange stream, rough consolidation of noisy and bursty exchange traffic
  * or where queuing of throttled exchanges is undesirable.
  */
-public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware {
+public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SamplingThrottler.class);
 
     private String id;
+    private String routeId;
     private long messageFrequency;
     private long currentMessageCount;
     private long samplePeriod;
@@ -70,11 +76,7 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
 
     @Override
     public String toString() {
-        if (messageFrequency > 0) {
-            return "SamplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
-        } else {
-            return "SamplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH) + "]";
-        }
+        return id;
     }
 
     @Override
@@ -85,6 +87,16 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override
@@ -123,13 +135,13 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
                 long now = System.currentTimeMillis();
                 if (now >= timeOfLastExchange + periodInMillis) {
                     doSend = true;
-                    if (log.isTraceEnabled()) {
-                        log.trace(sampled.sample());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace(sampled.sample());
                     }
                     timeOfLastExchange = now;
                 } else {
-                    if (log.isTraceEnabled()) {
-                        log.trace(sampled.drop());
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace(sampled.drop());
                     }
                 }
             }

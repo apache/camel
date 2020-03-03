@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "routingSlip",
+    "title": "Routing Slip",
+    "description": "Routes a message through a series of steps that are pre-determined (the slip)",
+    "javaType": "org.apache.camel.model.RoutingSlipDefinition",
+    "label": "eip,endpoint,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style. Notice the expression is evaluated once, if you want a more dynamic style, then the dynamic router eip is a better choice." },
+    "uriDelimiter": { "kind": "attribute", "displayName": "Uri Delimiter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": ",", "description": "Sets the uri delimiter to use" },
+    "ignoreInvalidEndpoints": { "kind": "attribute", "displayName": "Ignore Invalid Endpoints", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint" },
+    "cacheSize": { "kind": "attribute", "displayName": "Cache Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this routing slip, when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise producers\/endpoints are stored in memory in the caches. However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non frequent used producers." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

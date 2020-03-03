@@ -1,0 +1,177 @@
+[[aws2-eks-component]]
+= AWS 2 EKS Component
+
+*Since Camel 3.1*
+
+*Since Camel 3.1*
+
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The EKS component supports create, delete, describe and list
+https://aws.amazon.com/eks/[AWS EKS] clusters instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon EKS. More information is available at
+https://aws.amazon.com/eks/[Amazon EKS].
+
+[NOTE]
+====
+The AWS2 EKS component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-eks://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 EKS component supports 11 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (producer) | Component configuration |  | EKS2Configuration
+| *eksClient* (producer) | To use a existing configured AWS EKS as client |  | EksClient
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: listClusters, describeCluster, createCluster, deleteCluster |  | EKS2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the EKS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the EKS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EKS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which EKS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS 2 EKS endpoint is configured using URI syntax:
+
+----
+aws2-eks:label
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+=== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *eksClient* (producer) | To use a existing configured AWS EKS as client |  | EksClient
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: listClusters, describeCluster, createCluster, deleteCluster |  | EKS2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the EKS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the EKS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EKS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which EKS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+
+
+Required EKS component options
+
+You have to provide the amazonEKSClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/eks/[Amazon EKS] service.
+
+== Usage
+
+=== Message headers evaluated by the EKS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsEKSMaxResults` |`Integer` |The limit number of results while listing clusters
+
+|`CamelAwsEKSOperation` |`String` |The operation we want to perform
+
+|`CamelAwsEKSDescription` |`String` |A key description to use while performing a createKey operation
+
+|`CamelAwsEKSClusterName` |`String` |The cluster name
+
+|`CamelAwsEKSRoleARN` |`String` |The role ARN to use while creating the cluster
+
+|`CamelAwsEKSVPCConfig` |`VPCConfigRequest` |The VPC config for the creations of an EKS cluster
+|=======================================================================
+
+=== EKS Producer operations
+
+Camel-AWS EKS component provides the following operation on the producer side:
+
+- listClusters
+- createCluster
+- describeCluster
+- deleteCluster
+
+== Producer Examples
+
+- listClusters: this operation will list the available clusters in EKS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listClusters")
+    .to("aws2-eks://test?ecsClient=#amazonEksClient&operation=listClusters")
+--------------------------------------------------------------------------------
+
+== Automatic detection of EksClient client in registry
+
+The component is capable of detecting the presence of an EksClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-eks</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$aws2-eks-starter.adoc[]

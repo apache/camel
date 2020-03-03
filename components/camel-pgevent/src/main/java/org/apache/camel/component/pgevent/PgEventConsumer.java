@@ -24,11 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The PgEvent consumer.
  */
 public class PgEventConsumer extends DefaultConsumer implements PGNotificationListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PgEventConsumer.class);
 
     private final PgEventEndpoint endpoint;
     private PGConnection dbConnection;
@@ -52,8 +56,8 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
 
     @Override
     public void notification(int processId, String channel, String payload) {
-        if (log.isDebugEnabled()) {
-            log.debug("Notification processId: {}, channel: {}, payload: {}", processId, channel, payload);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Notification processId: {}, channel: {}, payload: {}", processId, channel, payload);
         }
 
         Exchange exchange = endpoint.createExchange();

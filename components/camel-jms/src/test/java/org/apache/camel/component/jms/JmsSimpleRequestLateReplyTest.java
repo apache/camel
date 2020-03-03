@@ -25,10 +25,8 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -109,25 +107,23 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(getQueueEndpointName())
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // set the MEP to InOnly as we are not able to send a reply right now but will do it later
-                            // from that other thread
-                            exchange.setPattern(ExchangePattern.InOnly);
+                    .process(exchange -> {
+                        // set the MEP to InOnly as we are not able to send a reply right now but will do it later
+                        // from that other thread
+                        exchange.setPattern(ExchangePattern.InOnly);
 
-                            Message in = exchange.getIn();
-                            assertEquals("Hello World", in.getBody());
-    
-                            replyDestination = in.getHeader("JMSReplyTo", Destination.class);
-                            cid = in.getHeader("JMSCorrelationID", String.class);
-    
-                            LOG.info("ReplyDestination: " + replyDestination);
-                            LOG.info("JMSCorrelationID: " + cid);
-    
-                            LOG.info("Ahh I cannot send a reply. Someone else must do it.");
-                            // signal to the other thread to send back the reply message
-                            latch.countDown();
-                        }
+                        Message in = exchange.getIn();
+                        assertEquals("Hello World", in.getBody());
+
+                        replyDestination = in.getHeader("JMSReplyTo", Destination.class);
+                        cid = in.getHeader("JMSCorrelationID", String.class);
+
+                        LOG.info("ReplyDestination: " + replyDestination);
+                        LOG.info("JMSCorrelationID: " + cid);
+
+                        LOG.info("Ahh I cannot send a reply. Someone else must do it.");
+                        // signal to the other thread to send back the reply message
+                        latch.countDown();
                     })
                     .to("mock:result");
             }

@@ -98,6 +98,10 @@ public class SolrProducer extends DefaultProducer {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.setAction(ACTION.COMMIT, true, true);
             updateRequest.process(serverToUse);
+        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_SOFT_COMMIT)) {
+            UpdateRequest updateRequest = createUpdateRequest();
+            updateRequest.setAction(ACTION.COMMIT, true, true, true);
+            updateRequest.process(serverToUse);
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
             UpdateRequest updateRequest = createUpdateRequest();
             updateRequest.rollback();

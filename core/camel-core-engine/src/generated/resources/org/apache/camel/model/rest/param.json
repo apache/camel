@@ -1,0 +1,26 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "param",
+    "title": "Param",
+    "description": "To specify the rest operation parameters using Swagger. This maps to the Swagger Parameter Message Object.",
+    "javaType": "org.apache.camel.model.rest.RestOperationParamDefinition",
+    "label": "rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter name." },
+    "type": { "kind": "attribute", "displayName": "Type", "required": false, "type": "enum", "javaType": "org.apache.camel.model.rest.RestParamType", "enum": [ "body", "formData", "header", "path", "query" ], "deprecated": false, "secret": false, "defaultValue": "path", "description": "Sets the Swagger Parameter type." },
+    "defaultValue": { "kind": "attribute", "displayName": "Default Value", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter default value." },
+    "required": { "kind": "attribute", "displayName": "Required", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Sets the Swagger Parameter required flag." },
+    "collectionFormat": { "kind": "attribute", "displayName": "Collection Format", "required": false, "type": "enum", "javaType": "org.apache.camel.model.rest.CollectionFormat", "enum": [ "csv", "multi", "pipes", "ssv", "tsv" ], "deprecated": false, "secret": false, "defaultValue": "csv", "description": "Sets the Swagger Parameter collection format." },
+    "arrayType": { "kind": "attribute", "displayName": "Array Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "string", "description": "Sets the Swagger Parameter array type. Required if data type is array. Describes the type of items in the array." },
+    "dataType": { "kind": "attribute", "displayName": "Data Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "string", "description": "Sets the Swagger Parameter data type." },
+    "dataFormat": { "kind": "attribute", "displayName": "Data Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter data format." },
+    "value": { "kind": "element", "displayName": "Value", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter list of allowable values (enum)." },
+    "examples": { "kind": "element", "displayName": "Examples", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter examples." },
+    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter description." }
+  }
+}

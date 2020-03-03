@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "contextScan",
+    "title": "Context Scan",
+    "description": "Scans for Java org.apache.camel.builder.RouteBuilder instances in the context org.apache.camel.spi.Registry .",
+    "javaType": "org.apache.camel.model.ContextScanDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "includeNonSingletons": { "kind": "attribute", "displayName": "Include Non Singletons", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to include non-singleton beans (prototypes) By default only singleton beans is included in the context scan" },
+    "excludes": { "kind": "element", "displayName": "Excludes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "Exclude finding route builder from these java package names." },
+    "includes": { "kind": "element", "displayName": "Includes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "Include finding route builder from these java package names." }
+  }
+}

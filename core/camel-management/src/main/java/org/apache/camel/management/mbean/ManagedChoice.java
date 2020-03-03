@@ -75,7 +75,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
                 CompositeType ct = CamelOpenMBeanTypes.choiceCompositeType();
                 String predicate = when.getExpression().getExpression();
                 String language = when.getExpression().getLanguage();
-                Long matches = filter.getFilteredCount();
+                long matches = filter.getFilteredCount();
 
                 CompositeData data = new CompositeDataSupport(ct,
                         new String[]{"predicate", "language", "matches"},
@@ -86,7 +86,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
                 CompositeType ct = CamelOpenMBeanTypes.choiceCompositeType();
                 String predicate = "otherwise";
                 String language = "";
-                Long matches = processor.getNotFilteredCount();
+                long matches = processor.getNotFilteredCount();
 
                 CompositeData data = new CompositeDataSupport(ct,
                         new String[]{"predicate", "language", "matches"},

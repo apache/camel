@@ -25,13 +25,14 @@ import ca.uhn.fhir.context.ParserOptions;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.parser.IParserErrorHandler;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
-public abstract class FhirDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public abstract class FhirDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader {
 
     private FhirContext fhirContext;
     private String fhirVersion;

@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.DefaultRuntimeProvider;
+import org.apache.camel.catalog.impl.CatalogHelper;
 import org.apache.camel.catalog.karaf.KarafRuntimeProvider;
 import org.junit.Assert;
 import org.junit.Ignore;

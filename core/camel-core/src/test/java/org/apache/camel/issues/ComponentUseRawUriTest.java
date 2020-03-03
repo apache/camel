@@ -18,6 +18,7 @@ package org.apache.camel.issues;
 
 import java.util.Map;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -34,13 +35,12 @@ import org.junit.Test;
 public class ComponentUseRawUriTest extends ContextTestSupport {
 
     public static class MyEndpoint extends DefaultEndpoint {
-        String uri;
         String remaining;
         String foo;
         String bar;
 
-        public MyEndpoint(final String uri, final String remaining) {
-            this.uri = uri;
+        public MyEndpoint(final String uri, Component component, final String remaining) {
+            super(uri, component);
             this.remaining = remaining;
         }
 
@@ -76,7 +76,7 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
         }
 
         public String getUri() {
-            return uri;
+            return getEndpointUri();
         }
     }
 
@@ -84,7 +84,7 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
 
         @Override
         protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-            MyEndpoint answer = new MyEndpoint(uri, remaining);
+            MyEndpoint answer = new MyEndpoint(uri, this, remaining);
             setProperties(answer, parameters);
             return answer;
         }

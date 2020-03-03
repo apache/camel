@@ -35,6 +35,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.postgresql.PGProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer endpoint to receive from PostgreSQL Replication Slot.
@@ -42,6 +44,8 @@ import org.postgresql.PGProperty;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgresSQL Replication Slot",
         syntax = "pg-replication-slot:host:port/database/slot:outputPlugin", label = "database,sql", consumerOnly = true)
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);
 
     private static final Pattern URI_PATTERN = Pattern.compile(
             "^pg-replication-slot:(//)?(?<host>[^:]*):?(?<port>\\d*)?/(?<database>\\w+)/(?<slot>\\w+):(?<plugin>\\w+).*$");
@@ -77,7 +81,7 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return null;
+        throw new UnsupportedOperationException("Producer not supported");
     }
 
     @Override
@@ -87,16 +91,8 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * Creates a new PostgreSQL JDBC connection that's setup for replication.
-     *
-     * @return JDBC connection
-     * @throws SQLException
      */
     Connection newDbConnection() throws SQLException {
         Properties props = new Properties();
@@ -119,7 +115,7 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
      * @throws IllegalArgumentException if there is an error in the parameters
      */
     protected final void parseUri(String uri) {
-        log.info("URI: {}", uri);
+        LOG.debug("URI: {}", uri);
 
         Matcher matcher = URI_PATTERN.matcher(uri);
 

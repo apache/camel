@@ -1,0 +1,28 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "soapjaxb",
+    "modelName": "soapjaxb",
+    "title": "SOAP",
+    "description": "SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation,xml",
+    "firstVersion": "2.3.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.dataformat.soap.SoapJaxbDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.SoapJaxbDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-soap",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "contextPath": { "kind": "attribute", "displayName": "Context Path", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Package name where your JAXB classes are located." },
+    "encoding": { "kind": "attribute", "displayName": "Encoding", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To overrule and use a specific encoding" },
+    "elementNameStrategyRef": { "kind": "attribute", "displayName": "Element Name Strategy Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy." },
+    "version": { "kind": "attribute", "displayName": "Version", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "1.1", "description": "SOAP version should either be 1.1 or 1.2. Is by default 1.1" },
+    "namespacePrefixRef": { "kind": "attribute", "displayName": "Namespace Prefix Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping." },
+    "schema": { "kind": "attribute", "displayName": "Schema", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should by resolved. You can separate multiple schema files by using the ',' character." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

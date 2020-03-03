@@ -23,7 +23,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import org.apache.camel.component.netty.codec.DatagramPacketByteArrayDecoder;
@@ -31,13 +30,9 @@ import org.apache.camel.component.netty.codec.DatagramPacketByteArrayEncoder;
 import org.apache.camel.component.netty.codec.DatagramPacketDecoder;
 import org.apache.camel.component.netty.codec.DatagramPacketDelimiterDecoder;
 import org.apache.camel.component.netty.codec.DatagramPacketEncoder;
-import org.apache.camel.component.netty.codec.DatagramPacketObjectDecoder;
-import org.apache.camel.component.netty.codec.DatagramPacketObjectEncoder;
 import org.apache.camel.component.netty.codec.DatagramPacketStringDecoder;
 import org.apache.camel.component.netty.codec.DatagramPacketStringEncoder;
 import org.apache.camel.component.netty.codec.DelimiterBasedFrameDecoder;
-import org.apache.camel.component.netty.codec.ObjectDecoder;
-import org.apache.camel.component.netty.codec.ObjectEncoder;
 
 /**
  * Helper to create commonly used {@link ChannelHandlerFactory} instances.
@@ -63,32 +58,6 @@ public final class ChannelHandlerFactories {
         }
     }
 
-
-    public static ChannelHandlerFactory newObjectDecoder(String protocol) {
-        if ("udp".equalsIgnoreCase(protocol)) {
-            return new DefaultChannelHandlerFactory() {
-                @Override
-                public ChannelHandler newChannelHandler() {
-                    return new DatagramPacketObjectDecoder(ClassResolvers.weakCachingResolver(null));
-                }
-            };
-        } else {
-            return new DefaultChannelHandlerFactory() {
-                @Override
-                public ChannelHandler newChannelHandler() {
-                    return new ObjectDecoder(ClassResolvers.weakCachingResolver(null));
-                }
-            };
-        }
-    }
-
-    public static ChannelHandlerFactory newObjectEncoder(String protocol) {
-        if ("udp".equals(protocol)) {
-            return new ShareableChannelHandlerFactory(new DatagramPacketObjectEncoder());
-        } else {
-            return new ShareableChannelHandlerFactory(new ObjectEncoder());
-        }
-    }
 
     public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, String protocol) {
         return newDelimiterBasedFrameDecoder(maxFrameLength, delimiters, true, protocol);

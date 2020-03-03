@@ -67,7 +67,7 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
             }
         });
         
-        assertEquals("1", exchange.getOut().getHeader(SesConstants.MESSAGE_ID));
+        assertEquals("1", exchange.getMessage().getHeader(SesConstants.MESSAGE_ID));
     }
     
     @Test
@@ -80,7 +80,7 @@ public class SesComponentSpringTest extends CamelSpringTestSupport {
             }
         });
         
-        assertEquals("1", exchange.getOut().getHeader(SesConstants.MESSAGE_ID));
+        assertEquals("1", exchange.getMessage().getHeader(SesConstants.MESSAGE_ID));
         
         SendRawEmailRequest sendRawEmailRequest = sesClient.getSendRawEmailRequest();
         assertEquals("from@example.com", sendRawEmailRequest.getSource());

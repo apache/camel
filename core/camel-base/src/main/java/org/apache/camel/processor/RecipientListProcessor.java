@@ -28,18 +28,24 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +69,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     private final Iterator<?> iter;
     private boolean ignoreInvalidEndpoints;
     private ProducerCache producerCache;
+    private int cacheSize;
 
     /**
      * Class that represent each step in the recipient list to do
@@ -79,9 +86,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         private final ProducerCache producerCache;
         private final ExchangePattern pattern;
         private volatile ExchangePattern originalPattern;
+        private final boolean prototypeEndpoint;
 
         private RecipientProcessorExchangePair(int index, ProducerCache producerCache, Endpoint endpoint, Producer producer,
-                                               Processor prepared, Exchange exchange, ExchangePattern pattern) {
+                                               Processor prepared, Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
             this.index = index;
             this.producerCache = producerCache;
             this.endpoint = endpoint;
@@ -89,6 +97,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             this.prepared = prepared;
             this.exchange = exchange;
             this.pattern = pattern;
+            this.prototypeEndpoint = prototypeEndpoint;
         }
 
         @Override
@@ -136,6 +145,10 @@ public class RecipientListProcessor extends MulticastProcessor {
                 }
                 // when we are done we should release back in pool
                 producerCache.releaseProducer(endpoint, producer);
+                // and stop prototype endpoints
+                if (prototypeEndpoint) {
+                    ServiceHelper.stopAndShutdownService(endpoint);
+                }
             } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Error releasing producer: " + producer + ". This exception will be ignored.", e);
@@ -144,6 +157,8 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
     }
+
+    // TODO: camel-bean @RecipientList cacheSize
 
     public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter) {
         super(camelContext, null);
@@ -158,19 +173,20 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                                  boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, producerCache, iter, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
-             shareUnitOfWork, parallelAggregate, false);
-    }
-
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException,
                                   long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
         super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
               shareUnitOfWork, parallelAggregate, stopOnAggregateException);
         this.producerCache = producerCache;
         this.iter = iter;
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
     }
 
     public boolean isIgnoreInvalidEndpoints() {
@@ -189,18 +205,28 @@ public class RecipientListProcessor extends MulticastProcessor {
         // at first we must lookup the endpoint and acquire the producer which can send to the endpoint
         int index = 0;
         while (iter.hasNext()) {
+            boolean prototype = cacheSize < 0;
+
             Object recipient = iter.next();
             Endpoint endpoint;
             Producer producer;
             ExchangePattern pattern;
             try {
-                endpoint = resolveEndpoint(exchange, recipient);
+                recipient = prepareRecipient(exchange, recipient);
+                Endpoint existing = getExistingEndpoint(exchange, recipient);
+                if (existing == null) {
+                    endpoint = resolveEndpoint(exchange, recipient, prototype);
+                } else {
+                    endpoint = existing;
+                    // we have an existing endpoint then its not a prototype scope
+                    prototype = false;
+                }
                 pattern = resolveExchangePattern(recipient);
                 producer = producerCache.acquireProducer(endpoint);
             } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                     }
                     continue;
                 } else {
@@ -210,7 +236,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             }
 
             // then create the exchange pair
-            result.add(createProcessorExchangePair(index++, endpoint, producer, exchange, pattern));
+            result.add(createProcessorExchangePair(index++, endpoint, producer, exchange, pattern, prototype));
         }
 
         return result;
@@ -219,7 +245,8 @@ public class RecipientListProcessor extends MulticastProcessor {
     /**
      * This logic is similar to MulticastProcessor but we have to return a RecipientProcessorExchangePair instead
      */
-    protected ProcessorExchangePair createProcessorExchangePair(int index, Endpoint endpoint, Producer producer, Exchange exchange, ExchangePattern pattern) {
+    protected ProcessorExchangePair createProcessorExchangePair(int index, Endpoint endpoint, Producer producer,
+                                                                Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
         Processor prepared = producer;
 
         // copy exchange, and do not share the unit of work
@@ -247,34 +274,89 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         // and create the pair
-        return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy, pattern);
+        return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy, pattern, prototypeEndpoint);
     }
 
-    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
+    @Override
+    protected Processor createErrorHandler(RouteContext routeContext, ErrorHandlerFactory builder, Exchange exchange, Processor processor) throws Exception {
+        // in case its a reference to another builder then we want the real builder
+        final ErrorHandlerFactory ehBuilder = builder.getOrLookupErrorHandlerFactory(routeContext);
+
+        Processor answer = super.createErrorHandler(routeContext, ehBuilder, exchange, processor);
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                // remove error handler builder from route context as we are done with the recipient list
+                // and we cannot reuse this and must remove it to avoid leaking the error handler on the route context
+                routeContext.removeErrorHandlers(ehBuilder);
+            }
+        });
+        return answer;
+    }
+
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
+        } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
             recipient = ((String) recipient).trim();
         }
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
+        if (recipient != null) {
+            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            String uri;
+            if (recipient instanceof String) {
+                uri = (String) recipient;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint
+            return ecc.normalizeUri(uri);
+        }
+        return null;
     }
 
-    protected ExchangePattern resolveExchangePattern(Object recipient) throws UnsupportedEncodingException, URISyntaxException, MalformedURLException {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            String s = ((String) recipient).trim();
-            // see if exchangePattern is a parameter in the url
-            s = URISupport.normalizeUri(s);
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        }
+        if (recipient != null) {
+            if (recipient instanceof NormalizedEndpointUri) {
+                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+                return ecc.hasEndpoint(nu);
+            } else {
+                String uri = recipient.toString().trim();
+                return exchange.getContext().hasEndpoint(uri);
+            }
+        }
+        return null;
+    }
+
+    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {
+        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
+    }
+
+    protected ExchangePattern resolveExchangePattern(Object recipient) {
+        String s = null;
+
+        if (recipient instanceof NormalizedEndpointUri) {
+            s = ((NormalizedEndpointUri) recipient).getUri();
+        } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
+            s = ((String) recipient).trim();
+        }
+        if (s != null) {
             return EndpointHelper.resolveExchangePatternFromUrl(s);
         }
+
         return null;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, getCamelContext(), 0);
-        }
+        ObjectHelper.notNull(producerCache, "producerCache", this);
         ServiceHelper.startService(producerCache);
     }
 
@@ -288,11 +370,6 @@ public class RecipientListProcessor extends MulticastProcessor {
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(producerCache);
         super.doShutdown();
-    }
-
-    @Override
-    public String toString() {
-        return "RecipientList";
     }
 
     @Override

@@ -21,11 +21,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.jgroups.raft.RaftHandle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Call setX methods on JGroups-raft cluster RaftHandle ({@code org.jgroups.raft.RaftHandle}).
  */
 public class JGroupsRaftProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftProducer.class);
 
     // Producer settings
     private final JGroupsRaftEndpoint endpoint;
@@ -68,19 +72,19 @@ public class JGroupsRaftProducer extends DefaultProducer {
         if (body != null) {
             byte[] result;
             if (setOffset != null && setLength != null && setTimeout != null && setTimeUnit != null) {
-                log.debug("Calling set(byte[] {}, int {}, int {}, long {}, TimeUnit {}) method on raftHandle.", body, setOffset, setLength, setTimeout, setTimeUnit);
+                LOG.debug("Calling set(byte[] {}, int {}, int {}, long {}, TimeUnit {}) method on raftHandle.", body, setOffset, setLength, setTimeout, setTimeUnit);
                 result = raftHandle.set(body, setOffset, setLength, setTimeout, setTimeUnit);
             } else if (setOffset != null && setLength != null) {
-                log.debug("Calling set(byte[] {}, int {}, int {}) method on raftHandle.", body, setOffset, setLength);
+                LOG.debug("Calling set(byte[] {}, int {}, int {}) method on raftHandle.", body, setOffset, setLength);
                 result = raftHandle.set(body, setOffset, setLength);
             } else {
-                log.debug("Calling set(byte[] {}, int {}, int {} (i.e. body.length)) method on raftHandle.", body, 0, body.length);
+                LOG.debug("Calling set(byte[] {}, int {}, int {} (i.e. body.length)) method on raftHandle.", body, 0, body.length);
                 result = raftHandle.set(body, 0, body.length);
             }
             endpoint.populateJGroupsRaftHeaders(exchange);
             exchange.getIn().setBody(result);
         } else {
-            log.debug("Body is null, cannot call set method on raftHandle.");
+            LOG.debug("Body is null, cannot call set method on raftHandle.");
         }
     }
 

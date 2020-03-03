@@ -125,7 +125,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         String url = RestComponentHelper.createRestConsumerUrl("platform-http", path, map);
 
         PlatformHttpEndpoint endpoint = camelContext.getEndpoint(url, PlatformHttpEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
         endpoint.setConsumes(consumes);
         endpoint.setProduces(produces);
 

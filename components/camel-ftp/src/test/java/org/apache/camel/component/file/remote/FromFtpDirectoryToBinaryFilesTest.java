@@ -34,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin"
-                + "&binary=true&useFixedDelay=false&recursive=false&delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin" + "&binary=true&useFixedDelay=false&recursive=false&delay=5000";
     }
 
     @Override
@@ -67,7 +66,8 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         template.sendBodyAndHeader(getFtpUrl(), IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"), Exchange.FILE_NAME, "logo.jpeg");
         template.sendBodyAndHeader(getFtpUrl(), IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"), Exchange.FILE_NAME, "logo1.jpeg");

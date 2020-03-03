@@ -1,0 +1,25 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "bean",
+    "modelName": "method",
+    "title": "Bean method",
+    "description": "To use a Java bean (aka method call) in Camel expressions or predicates.",
+    "deprecated": false,
+    "deprecationNote": "language,core,java",
+    "firstVersion": "1.3.0",
+    "label": "language,core,java",
+    "javaType": "org.apache.camel.language.bean.BeanLanguage",
+    "modelJavaType": "org.apache.camel.model.language.MethodCallExpression",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-bean",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to bean to lookup in the registry" },
+    "method": { "kind": "attribute", "displayName": "Method", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of method to call" },
+    "beanType": { "kind": "attribute", "displayName": "Bean Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Class name of the bean to use" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

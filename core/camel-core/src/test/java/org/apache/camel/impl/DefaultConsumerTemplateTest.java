@@ -343,9 +343,11 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
             template.receiveNoWait(e);
         }
 
-        // the eviction is async so force cleanup
-        template.cleanUp();
-        await().atMost(1, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 500);
+        await().atMost(3, TimeUnit.SECONDS).until(() -> {
+            // the eviction is async so force cleanup
+            template.cleanUp();
+            return template.getCurrentCacheSize() == 500;
+        });
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 
@@ -366,9 +368,11 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
             template.receiveNoWait(e);
         }
 
-        // the eviction is async so force cleanup
-        template.cleanUp();
-        await().atMost(1, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 500);
+        await().atMost(3, TimeUnit.SECONDS).until(() -> {
+            // the eviction is async so force cleanup
+            template.cleanUp();
+            return template.getCurrentCacheSize() == 500;
+        });
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 

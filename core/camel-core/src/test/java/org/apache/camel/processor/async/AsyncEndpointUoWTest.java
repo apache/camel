@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -60,7 +61,7 @@ public class AsyncEndpointUoWTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
-                        exchange.addOnCompletion(sync);
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(sync);
                     }
                 }).to("mock:before").to("log:before").to("async:bye:camel").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -61,6 +61,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private String pattern;
     @UriParam(label = "advanced")
     private Timer timer;
+    @UriParam(defaultValue = "true")
+    private boolean includeMetadata = true;
 
     public TimerEndpoint() {
     }
@@ -242,6 +244,20 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
             return timer;
         }
         return getComponent().getTimer(consumer);
+    }
+
+    @ManagedAttribute(description = "Include metadata")
+    public boolean isIncludeMetadata() {
+        return includeMetadata;
+    }
+
+    /**
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
+     * This information is default included.
+     */
+    @ManagedAttribute(description = "Include metadata")
+    public void setIncludeMetadata(boolean includeMetadata) {
+        this.includeMetadata = includeMetadata;
     }
 
     public void removeTimer(TimerConsumer consumer) {

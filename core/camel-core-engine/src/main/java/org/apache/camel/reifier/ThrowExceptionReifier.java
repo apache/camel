@@ -25,28 +25,26 @@ import org.apache.camel.spi.RouteContext;
 
 public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefinition> {
 
-    public ThrowExceptionReifier(ProcessorDefinition<?> definition) {
-        super((ThrowExceptionDefinition)definition);
+    public ThrowExceptionReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (ThrowExceptionDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        if (definition.getRef() != null && definition.getException() == null) {
-            definition.setException(routeContext.lookup(definition.getRef(), Exception.class));
+    public Processor createProcessor() {
+        Exception exception = definition.getException();
+        if (exception == null && definition.getRef() != null) {
+            exception = routeContext.lookup(parseString(definition.getRef()), Exception.class);
         }
 
-        if (definition.getExceptionType() != null && definition.getExceptionClass() == null) {
-            try {
-                definition.setExceptionClass(routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(definition.getExceptionType(), Exception.class));
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
+        Class<? extends Exception> exceptionClass = definition.getExceptionClass();
+        if (exceptionClass == null && definition.getExceptionType() != null) {
+            exceptionClass = parse(Class.class, definition.getExceptionType());
         }
 
-        if (definition.getException() == null && definition.getExceptionClass() == null) {
-            throw new IllegalArgumentException("exception or exceptionClass/exceptionType must be configured on: " + this);
+        if (exception == null && exceptionClass == null) {
+            throw new IllegalArgumentException("exception/ref or exceptionClass/exceptionType must be configured on: " + this);
         }
-        return new ThrowExceptionProcessor(definition.getException(), definition.getExceptionClass(), definition.getMessage());
+        return new ThrowExceptionProcessor(exception, exceptionClass, parseString(definition.getMessage()));
     }
 
 }

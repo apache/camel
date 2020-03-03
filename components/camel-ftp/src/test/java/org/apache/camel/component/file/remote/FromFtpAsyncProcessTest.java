@@ -45,8 +45,10 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
 
-        // the log file should log that all the ftp client work is done in the same thread (fully synchronous)
-        // as the ftp client is not thread safe and must process fully synchronous
+        // the log file should log that all the ftp client work is done in the
+        // same thread (fully synchronous)
+        // as the ftp client is not thread safe and must process fully
+        // synchronous
 
         context.getRouteController().startRoute("foo");
 
@@ -66,9 +68,7 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("foo").noAutoStartup()
-                    .process(new MyAsyncProcessor())
-                    .to("mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().process(new MyAsyncProcessor()).to("mock:result");
             }
         };
     }

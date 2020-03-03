@@ -27,6 +27,7 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
@@ -36,7 +37,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * using <a href="https://github.com/alibaba/fastjson">Fastjson</a> to marshal to and from JSON.
  */
 @Dataformat("json-fastjson")
-public class FastjsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public class FastjsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader {
 
     private FastJsonConfig config;
     private Class<?> unmarshalType;

@@ -47,7 +47,7 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
     @EndpointInject("mock:sendResult")
     private MockEndpoint sendResult;
 
-    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
+    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=true")
     private Endpoint pubsubSubscription;
 
     @EndpointInject("mock:receiveResult")
@@ -56,13 +56,13 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
     @Produce("direct:from")
     private ProducerTemplate producer;
 
-    @BeforeClass
-    public static void createTopicSubscription() throws Exception {
+    @Override
+    public void createTopicSubscription() {
         createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(directIn).routeId("Single_Send").to(pubsubTopic).to(sendResult);
@@ -109,7 +109,6 @@ public class SingleExchangeRoundtripTest extends PubsubTestSupport {
         Exchange receivedExchange = receivedExchanges.get(0);
 
         assertNotNull("PUBSUB Message ID Property", receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
-        assertNotNull("PUBSUB Ack ID Property", receivedExchange.getIn().getHeader(GooglePubsubConstants.ACK_ID));
         assertNotNull("PUBSUB Published Time", receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME));
 
         assertEquals("PUBSUB Header Attribute", attributeValue, ((Map)receivedExchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES)).get(attributeKey));

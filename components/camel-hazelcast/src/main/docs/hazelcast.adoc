@@ -11,7 +11,7 @@ to use Hazelcast is its simple cluster support. If you have enabled
 multicast on your network you can run a cluster with hundred nodes with
 no extra configuration. Hazelcast can simply configured to add
 additional features like n copies between nodes (default is 1), cache
-persistence, network configuration (if needed), near cache, enviction
+persistence, network configuration (if needed), near cache, eviction
 and so on. For more information consult the Hazelcast documentation on
 http://www.hazelcast.com/docs.jsp[http://www.hazelcast.com/docs.jsp].
 
@@ -112,6 +112,31 @@ See followings for each component usage:
 </camelContext>
 ------------------------------------------------------------------------------
 
+=== Configuring HazelcastInstance on component
+
+You can also configure the hazelcast instance on the component which will then be used by all hazelcast endpoints.
+In the example above we setup this for the hazelcast map component and setup hazelcast via verbose `<bean>` configurations.
+
+[source,xml]
+------------------------------------------------------------------------------
+<bean id="config" class="com.hazelcast.config.Config">
+    <constructor-arg type="java.lang.String" value="HZ.INSTANCE" />
+    <propety name="networkConfig" ref="myNetworkConfig"/>
+</bean>
+
+<bean id="myNetworkConfig" class="com.hazelcast.config.NetworkConfig">
+  <propety name="port">1234</propety>
+</bean>
+
+<bean id="myHazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+    <constructor-arg type="com.hazelcast.config.Config" ref="config"/>
+</bean>
+
+<bean id="hazelcast" class="org.apache.camel.component.hazelcast.map.HazelcastMapComponent">
+  <propety name="hazelcastInstance" ref="myHazelcastInstance"/>
+</bean>
+------------------------------------------------------------------------------
+
 == Publishing hazelcast instance as an OSGI service
 
 If operating in an OSGI container and you would want to use one instance
@@ -120,8 +145,6 @@ the instance as an OSGI service and bundles using the cache al need is
 to reference the service in the hazelcast endpoint.
 
 === Bundle A create an instance and publishes it as an OSGI service
-
- 
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------
@@ -163,3 +186,5 @@ to reference the service in the hazelcast endpoint.
     </route>
 </camelContext>
 --------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$hazelcast-starter.adoc[]

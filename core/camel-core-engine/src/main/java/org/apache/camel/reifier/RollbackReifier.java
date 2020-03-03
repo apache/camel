@@ -24,14 +24,14 @@ import org.apache.camel.spi.RouteContext;
 
 public class RollbackReifier extends ProcessorReifier<RollbackDefinition> {
 
-    public RollbackReifier(ProcessorDefinition<?> definition) {
-        super((RollbackDefinition)definition);
+    public RollbackReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (RollbackDefinition)definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        boolean isMarkRollbackOnly = definition.getMarkRollbackOnly() != null && parseBoolean(routeContext, definition.getMarkRollbackOnly());
-        boolean isMarkRollbackOnlyLast = definition.getMarkRollbackOnlyLast() != null && parseBoolean(routeContext, definition.getMarkRollbackOnlyLast());
+    public Processor createProcessor() {
+        boolean isMarkRollbackOnly = parseBoolean(definition.getMarkRollbackOnly(), false);
+        boolean isMarkRollbackOnlyLast = parseBoolean(definition.getMarkRollbackOnlyLast(), false);
 
         // validate that only either mark rollbacks is chosen and not both
         if (isMarkRollbackOnly && isMarkRollbackOnlyLast) {

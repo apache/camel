@@ -35,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-               + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
+        return "ftp://admin@localhost:" + getPort() + "/myserver/?password=admin&localWorkDirectory=target/lwd&resumeDownload=true&binary=true";
     }
 
     @Override
@@ -95,8 +94,7 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup()
-                    .to("mock:result", "file://target/out");
+                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", "file://target/out");
             }
         };
     }

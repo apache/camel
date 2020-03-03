@@ -26,35 +26,25 @@ public class RestNettyHttpOptionsTest extends BaseNettyTest {
 
     @Test
     public void testNettyServerOptions() throws Exception {
-        Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v1/customers", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
-            }
-        });
+        Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v1/customers", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("GET,OPTIONS", exchange.getOut().getHeader("ALLOW"));
-        assertEquals("", exchange.getOut().getBody(String.class));
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("GET,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
+        assertEquals("", exchange.getMessage().getBody(String.class));
 
         exchange = fluentTemplate.to("http://localhost:" + getPort() + "/users/v1/id/123").withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("PUT,OPTIONS", exchange.getOut().getHeader("ALLOW"));
-        assertEquals("", exchange.getOut().getBody(String.class));
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("PUT,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
+        assertEquals("", exchange.getMessage().getBody(String.class));
     }
 
     @Test
     public void testNettyServerMultipleOptions() throws Exception {
-        Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v2/options", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
-            }
-        });
+        Exchange exchange = template.request("http://localhost:" + getPort() + "/users/v2/options", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("GET,POST,OPTIONS", exchange.getOut().getHeader("ALLOW"));
-        assertEquals("", exchange.getOut().getBody(String.class));
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("GET,POST,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
+        assertEquals("", exchange.getMessage().getBody(String.class));
     }
 
     @Override

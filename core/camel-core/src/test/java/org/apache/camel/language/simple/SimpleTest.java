@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
@@ -40,6 +41,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.InetAddressUtil;
 import org.junit.Test;
 
 public class SimpleTest extends LanguageTestSupport {
@@ -216,7 +218,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${header.foo}", "abc");
         assertExpression("${headers.foo}", "abc");
         assertExpression("${routeId}", exchange.getFromRouteId());
-        exchange.setFromRouteId("myRouteId");
+        exchange.adapt(ExtendedExchange.class).setFromRouteId("myRouteId");
         assertExpression("${routeId}", "myRouteId");
     }
 
@@ -233,6 +235,13 @@ public class SimpleTest extends LanguageTestSupport {
         String name = Thread.currentThread().getName();
         assertExpression("${threadName}", name);
         assertExpression("The name is ${threadName}", "The name is " + name);
+    }
+
+    @Test
+    public void testSimpleHostname() throws Exception {
+        String name = InetAddressUtil.getLocalHostNameSafe();
+        assertExpression("${hostname}", name);
+        assertExpression("The host is ${hostname}", "The host is " + name);
     }
 
     @Test

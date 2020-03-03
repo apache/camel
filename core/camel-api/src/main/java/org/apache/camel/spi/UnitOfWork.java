@@ -110,13 +110,6 @@ public interface UnitOfWork extends Service {
     void afterRoute(Exchange exchange, Route route);
 
     /**
-     * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
-     *
-     * @return the unique ID
-     */
-    String getId();
-
-    /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
      * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
@@ -163,9 +156,7 @@ public interface UnitOfWork extends Service {
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the
      * {@link org.apache.camel.spi.RouteContext} can change over time.
      *
-     * @return the route context
-     * @see #pushRouteContext(RouteContext)
-     * @see #popRouteContext()
+     * @return the route context, maybe be <tt>null</tt> if not routed through a route currently.
      */
     RouteContext getRouteContext();
 
@@ -188,11 +179,18 @@ public interface UnitOfWork extends Service {
     RouteContext popRouteContext();
 
     /**
-     * Strategy for optional work to be execute before processing
+     * Whether the unit of work should call the before/after process methods or not.
+     */
+    boolean isBeforeAfterProcess();
+
+    /**
+     * Strategy for work to be execute before processing.
      * <p/>
      * For example the MDCUnitOfWork leverages this
      * to ensure MDC is handled correctly during routing exchanges using the
      * asynchronous routing engine.
+     * <p/>
+     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
      *
      * @param processor the processor to be executed
      * @param exchange  the current exchange
@@ -202,7 +200,9 @@ public interface UnitOfWork extends Service {
     AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback);
 
     /**
-     * Strategy for optional work to be executed after the processing
+     * Strategy for work to be executed after the processing
+     * <p/>
+     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
      *
      * @param processor the processor executed
      * @param exchange  the current exchange

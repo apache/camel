@@ -21,9 +21,9 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestBindingDefinition;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
@@ -35,31 +35,30 @@ public class RestBindingReifier extends AbstractReifier {
 
     private final RestBindingDefinition definition;
 
-    public RestBindingReifier(RestBindingDefinition definition) {
+    public RestBindingReifier(RouteContext routeContext, RestBindingDefinition definition) {
+        super(routeContext);
         this.definition = definition;
     }
 
-    public RestBindingAdvice createRestBindingAdvice(RouteContext routeContext) throws Exception {
-
-        CamelContext context = routeContext.getCamelContext();
-        RestConfiguration config = context.getRestConfiguration(definition.getComponent(), true);
+    public RestBindingAdvice createRestBindingAdvice() throws Exception {
+        RestConfiguration config = camelContext.getRestConfiguration(definition.getComponent(), true);
 
         // these options can be overridden per rest verb
         String mode = config.getBindingMode().name();
         if (definition.getBindingMode() != null) {
-            mode = definition.getBindingMode();
+            mode = parse(RestBindingMode.class, definition.getBindingMode()).name();
         }
         boolean cors = config.isEnableCORS();
         if (definition.getEnableCORS() != null) {
-            cors = parseBoolean(routeContext, definition.getEnableCORS());
+            cors = parseBoolean(definition.getEnableCORS(), false);
         }
         boolean skip = config.isSkipBindingOnErrorCode();
         if (definition.getSkipBindingOnErrorCode() != null) {
-            skip = parseBoolean(routeContext, definition.getSkipBindingOnErrorCode());
+            skip = parseBoolean(definition.getSkipBindingOnErrorCode(), false);
         }
         boolean validation = config.isClientRequestValidation();
         if (definition.getClientRequestValidation() != null) {
-            validation = parseBoolean(routeContext, definition.getClientRequestValidation());
+            validation = parseBoolean(definition.getClientRequestValidation(), false);
         }
 
         // cors headers
@@ -67,7 +66,8 @@ public class RestBindingReifier extends AbstractReifier {
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingAdvice(context, null, null, null, null, definition.getConsumes(), definition.getProduces(), mode, skip, validation, cors, corsHeaders,
+            return new RestBindingAdvice(camelContext, null, null, null, null,
+                                         parseString(definition.getConsumes()), parseString(definition.getProduces()), mode, skip, validation, cors, corsHeaders,
                                          definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                                          definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
         }
@@ -79,7 +79,7 @@ public class RestBindingReifier extends AbstractReifier {
             String name = config.getJsonDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
-                Object instance = context.getRegistry().lookupByName(name);
+                Object instance = camelContext.getRegistry().lookupByName(name);
                 if (instance != null) {
                     throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
                 }
@@ -88,11 +88,11 @@ public class RestBindingReifier extends AbstractReifier {
             }
             // this will create a new instance as the name was not already
             // pre-created
-            json = context.resolveDataFormat(name);
-            outJson = context.resolveDataFormat(name);
+            json = camelContext.resolveDataFormat(name);
+            outJson = camelContext.resolveDataFormat(name);
 
             if (json != null) {
-                setupJson(context, config, definition.getType(), definition.getOutType(), json, outJson);
+                setupJson(config, parseString(definition.getType()), parseString(definition.getOutType()), json, outJson);
             }
         }
 
@@ -103,7 +103,7 @@ public class RestBindingReifier extends AbstractReifier {
             String name = config.getXmlDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
-                Object instance = context.getRegistry().lookupByName(name);
+                Object instance = camelContext.getRegistry().lookupByName(name);
                 if (instance != null) {
                     throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
                 }
@@ -112,8 +112,8 @@ public class RestBindingReifier extends AbstractReifier {
             }
             // this will create a new instance as the name was not already
             // pre-created
-            jaxb = context.resolveDataFormat(name);
-            outJaxb = context.resolveDataFormat(name);
+            jaxb = camelContext.resolveDataFormat(name);
+            outJaxb = camelContext.resolveDataFormat(name);
 
             // is xml binding required?
             if (mode.contains("xml") && jaxb == null) {
@@ -121,68 +121,74 @@ public class RestBindingReifier extends AbstractReifier {
             }
 
             if (jaxb != null) {
-                setupJaxb(context, config, definition.getType(), definition.getOutType(), jaxb, outJaxb);
+                setupJaxb(config, parseString(definition.getType()), parseString(definition.getOutType()), jaxb, outJaxb);
             }
         }
 
-        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, definition.getConsumes(), definition.getProduces(), mode, skip, validation, cors, corsHeaders,
+        return new RestBindingAdvice(camelContext, json, jaxb, outJson, outJaxb,
+                                     parseString(definition.getConsumes()), parseString(definition.getProduces()),
+                                     mode, skip, validation, cors, corsHeaders,
                                      definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                                      definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
     }
 
-    protected void setupJson(CamelContext context, RestConfiguration config, String type, String outType, DataFormat json, DataFormat outJson) throws Exception {
+    protected void setupJson(RestConfiguration config, String type, String outType, DataFormat json, DataFormat outJson) throws Exception {
         Class<?> clazz = null;
         if (type != null) {
             String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-            clazz = context.getClassResolver().resolveMandatoryClass(typeName);
+            clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
         if (clazz != null) {
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, json, "unmarshalType", clazz);
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, json, "useList", type.endsWith("[]"));
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, json, "unmarshalType", clazz);
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, json, "useList", type.endsWith("[]"));
         }
-        setAdditionalConfiguration(config, context, json, "json.in.");
+        setAdditionalConfiguration(config, json, "json.in.");
 
         Class<?> outClazz = null;
         if (outType != null) {
             String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-            outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
+            outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
         if (outClazz != null) {
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJson, "unmarshalType", outClazz);
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJson, "useList", outType.endsWith("[]"));
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJson, "unmarshalType", outClazz);
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, outJson, "useList", outType.endsWith("[]"));
         }
-        setAdditionalConfiguration(config, context, outJson, "json.out.");
+        setAdditionalConfiguration(config, outJson, "json.out.");
     }
 
-    protected void setupJaxb(CamelContext context, RestConfiguration config, String type, String outType, DataFormat jaxb, DataFormat outJaxb) throws Exception {
+    protected void setupJaxb(RestConfiguration config, String type, String outType, DataFormat jaxb, DataFormat outJaxb) throws Exception {
         Class<?> clazz = null;
         if (type != null) {
             String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-            clazz = context.getClassResolver().resolveMandatoryClass(typeName);
+            clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
         if (clazz != null) {
             JAXBContext jc = JAXBContext.newInstance(clazz);
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, jaxb, "context", jc);
+            setJaxbContext(jaxb, jc);
         }
-        setAdditionalConfiguration(config, context, jaxb, "xml.in.");
+        setAdditionalConfiguration(config, jaxb, "xml.in.");
 
         Class<?> outClazz = null;
         if (outType != null) {
             String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-            outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
+            outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
         if (outClazz != null) {
             JAXBContext jc = JAXBContext.newInstance(outClazz);
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJaxb, "context", jc);
+            setJaxbContext(outJaxb, jc);
         } else if (clazz != null) {
             // fallback and use the context from the input
             JAXBContext jc = JAXBContext.newInstance(clazz);
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJaxb, "context", jc);
+            setJaxbContext(outJaxb, jc);
         }
-        setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
+        setAdditionalConfiguration(config, outJaxb, "xml.out.");
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, CamelContext context, DataFormat dataFormat, String prefix) throws Exception {
+    private void setJaxbContext(DataFormat jaxb, JAXBContext jc) throws Exception {
+        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, jaxb, "context", jc);
+    }
+
+    private void setAdditionalConfiguration(RestConfiguration config, DataFormat dataFormat, String prefix) throws Exception {
         if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties
@@ -207,7 +213,7 @@ public class RestBindingReifier extends AbstractReifier {
                 }
             }
 
-            PropertyBindingSupport.build().bind(context, dataFormat, copy);
+            PropertyBindingSupport.build().bind(camelContext, dataFormat, copy);
         }
     }
 

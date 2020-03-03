@@ -24,19 +24,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-velocity</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Velocity</name>
     <description>Camel Velocity support</description>
-
-    <properties>
-        <camel.osgi.import.additional>
-            org.apache.velocity.*;version="[1.6.2,2)"
-        </camel.osgi.import.additional>
-    </properties>
 
     <dependencies>
 

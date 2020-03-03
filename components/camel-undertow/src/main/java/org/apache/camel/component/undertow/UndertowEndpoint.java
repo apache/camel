@@ -36,7 +36,7 @@ import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
-import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -46,6 +46,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.CollectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xnio.Option;
 import org.xnio.OptionMap;
 import org.xnio.Options;
@@ -56,6 +58,8 @@ import org.xnio.Options;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
         label = "http,websocket", lenientProperties = true)
 public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowComponent component;
     private SSLContext sslContext;
@@ -107,8 +111,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     @UriParam(label = "consumer,websocket", defaultValue = "false")
     private boolean fireWebSocketChannelEvents;
     @UriParam(label = "consumer,advanced",
-        description = "Specifies a comma-delimited set of Undertow HttpHandler instances to lookup in your Registry."
-        + " These handlers are added to the Undertow handler chain (for example, to add security)."
+        description = "Specifies a comma-delimited set of io.undertow.server.HttpHandler instances to lookup in"
+        + " your Registry. These handlers are added to the Undertow handler chain (for example, to add security)."
         + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
         + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
     private String handlers;
@@ -454,7 +458,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
                     key = Options.class.getName() + "." + key;
                     Option option = Option.fromString(key, cl);
                     value = option.parseValue(value.toString(), cl);
-                    log.trace("Parsed option {}={}", option.getName(), value);
+                    LOG.trace("Parsed option {}={}", option.getName(), value);
                     builder.set(option, value);
                 }
             }

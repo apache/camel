@@ -37,14 +37,14 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
 
-        case list:
-            getActions(exchange);
-            break;
-        case get:
-            getAction(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case list:
+                getActions(exchange);
+                break;
+            case get:
+                getAction(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
 
     }

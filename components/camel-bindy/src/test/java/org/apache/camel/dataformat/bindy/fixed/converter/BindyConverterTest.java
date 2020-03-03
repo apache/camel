@@ -190,9 +190,9 @@ public class BindyConverterTest extends CamelTestSupport {
         RouteBuilder routeBuilder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(DataModel.class);
-                bindy.setType(BindyType.Fixed);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(DataModel.class)
+                        .type(BindyType.Fixed);
 
                 from(URI_DIRECT_MARSHALL)
                     .marshal(bindy)
@@ -201,9 +201,9 @@ public class BindyConverterTest extends CamelTestSupport {
                     .unmarshal().bindy(BindyType.Fixed, DataModel.class)
                     .to(URI_MOCK_UNMARSHALL_RESULT);
 
-                BindyDataFormat bindy2 = new BindyDataFormat();
-                bindy2.setClassType(AllCombinations.class);
-                bindy2.setType(BindyType.Fixed);
+                BindyDataFormat bindy2 = new BindyDataFormat()
+                        .classType(AllCombinations.class)
+                        .type(BindyType.Fixed);
                 from(URI_DIRECT_THROUGH)
                         .marshal(bindy2)
                         .unmarshal().bindy(BindyType.Fixed, AllCombinations.class)

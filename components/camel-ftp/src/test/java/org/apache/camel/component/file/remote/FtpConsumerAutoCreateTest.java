@@ -41,7 +41,7 @@ public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
 
     @Test
     public void testAutoCreate() throws Exception {
-        FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
+        FtpEndpoint<?> endpoint = (FtpEndpoint<?>)this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
         assertTrue(new File("target/res/home/foo/bar/baz/xxx").exists());
@@ -57,7 +57,7 @@ public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
 
     @Test
     public void testNoAutoCreate() throws Exception {
-        FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=false");
+        FtpEndpoint<?> endpoint = (FtpEndpoint<?>)this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=false");
         endpoint.start();
         try {
             endpoint.getExchanges();

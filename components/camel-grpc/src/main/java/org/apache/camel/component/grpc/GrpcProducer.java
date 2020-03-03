@@ -40,11 +40,15 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents asynchronous and synchronous gRPC producer implementations.
  */
 public class GrpcProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GrpcProducer.class);
 
     protected final GrpcConfiguration configuration;
     protected final GrpcEndpoint endpoint;
@@ -107,10 +111,10 @@ public class GrpcProducer extends DefaultAsyncProducer {
             }
             
             if (endpoint.isSynchronous()) {
-                log.debug("Getting synchronous method stub from channel");
+                LOG.debug("Getting synchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcBlockingStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, callCreds, endpoint.getCamelContext());
             } else {
-                log.debug("Getting asynchronous method stub from channel");
+                LOG.debug("Getting asynchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcAsyncStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, callCreds, endpoint.getCamelContext());
             }
             forwarder = GrpcExchangeForwarderFactory.createExchangeForwarder(configuration, grpcStub);
@@ -134,7 +138,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
             forwarder.shutdown();
             forwarder = null;
 
-            log.debug("Terminating channel to the remote gRPC server");
+            LOG.debug("Terminating channel to the remote gRPC server");
             channel.shutdown().shutdownNow();
             channel = null;
             grpcStub = null;
@@ -147,7 +151,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
         NettyChannelBuilder channelBuilder;
         
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            log.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
+            LOG.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
             channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
         } else {
             throw new IllegalArgumentException("No connection properties (host or port) specified");

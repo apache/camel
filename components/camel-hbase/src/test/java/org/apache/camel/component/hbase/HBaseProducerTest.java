@@ -71,16 +71,14 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     public void testPutAndGet() throws Exception {
         testPut();
         if (systemReady) {
-            Exchange resp = template.request("direct:start", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
-                    exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
-                }
+            Exchange resp = template.request("direct:start", exchange -> {
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+                exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
             });
 
-            assertEquals(body[0][0][0], resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
+            assertEquals(body[0][0][0], resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
         }
     }
 
@@ -103,15 +101,13 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
 
             template.sendBodyAndHeaders("direct:start", null, headers);
 
-            Exchange resp = template.request("direct:start-with-model", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-                    exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
-                }
+            Exchange resp = template.request("direct:start-with-model", exchange -> {
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
+                exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
             });
 
-            assertEquals(body[0][0][1], resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
-            assertEquals(body[0][1][2], resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2)));
+            assertEquals(body[0][0][1], resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
+            assertEquals(body[0][1][2], resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2)));
         }
     }
 
@@ -150,19 +146,17 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     public void testPutAndGetMultiRows() throws Exception {
         testPutMultiRows();
         if (systemReady) {
-            Exchange resp = template.request("direct:start", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
-                    for (int row = 0; row < key.length; row++) {
-                        exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(row + 1), key[row]);
-                        exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(row + 1), family[0]);
-                        exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(row + 1), column[0][0]);
-                    }
+            Exchange resp = template.request("direct:start", exchange -> {
+                exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
+                for (int row = 0; row < key.length; row++) {
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(row + 1), key[row]);
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(row + 1), family[0]);
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(row + 1), column[0][0]);
                 }
             });
 
             for (int row = 0; row < key.length; row++) {
-                assertEquals(body[row][0][0], resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(row + 1)));
+                assertEquals(body[row][0][0], resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(row + 1)));
             }
         }
     }
@@ -201,19 +195,17 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     public void testPutAndGetMultiColumns() throws Exception {
         testPutMultiColumns();
         if (systemReady) {
-            Exchange resp = template.request("direct:start", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
-                    for (int col = 0; col < column[0].length; col++) {
-                        exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(col + 1), key[0]);
-                        exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(col + 1), family[0]);
-                        exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(col + 1), column[0][col]);
-                    }
+            Exchange resp = template.request("direct:start", exchange -> {
+                exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
+                for (int col = 0; col < column[0].length; col++) {
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(col + 1), key[0]);
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(col + 1), family[0]);
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(col + 1), column[0][col]);
                 }
             });
 
             for (int col = 0; col < column[0].length; col++) {
-                assertEquals(body[0][col][0], resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(col + 1)));
+                assertEquals(body[0][col][0], resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(col + 1)));
             }
         }
     }
@@ -227,20 +219,18 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
             template.sendBodyAndHeaders("direct:start", null, headers);
 
-            Exchange resp = template.request("direct:start", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(2), key[1]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(2), family[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0][0]);
-                }
+            Exchange resp = template.request("direct:start", exchange -> {
+                exchange.getIn().setHeader(HBaseConstants.OPERATION, HBaseConstants.GET);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_ROW_ID.asHeader(2), key[1]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(2), family[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0][0]);
             });
 
-            assertEquals(null, resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
-            assertEquals(body[1][0][0], resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2)));
+            assertEquals(null, resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
+            assertEquals(body[1][0][0], resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2)));
         }
     }
 
@@ -248,17 +238,15 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     public void testPutMultiRowsAndMaxScan() throws Exception {
         testPutMultiRows();
         if (systemReady) {
-            Exchange resp = template.request("direct:maxScan", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
-                }
+            Exchange resp = template.request("direct:maxScan", exchange -> {
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
             });
 
-            Object result1 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
-            Object result2 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
+            Object result1 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
+            Object result2 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
             // as we use maxResults=2 we only get 2 results back
-            Object result3 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
+            Object result3 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
             assertNull(result3, "Should only get 2 results back");
 
             List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0]);
@@ -270,16 +258,14 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     public void testPutMultiRowsAndScan() throws Exception {
         testPutMultiRows();
         if (systemReady) {
-            Exchange resp = template.request("direct:scan", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
-                }
+            Exchange resp = template.request("direct:scan", exchange -> {
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
             });
 
-            Object result1 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
-            Object result2 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
-            Object result3 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
+            Object result1 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
+            Object result2 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
+            Object result3 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
 
             List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0], body[2][0][0]);
             assertTrue(bodies.contains(result1) && bodies.contains(result2) && bodies.contains(result3));
@@ -290,18 +276,16 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
     public void testPutMultiRowsAndScanWithStop() throws Exception {
         testPutMultiRows();
         if (systemReady) {
-            Exchange resp = template.request("direct:scan", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
-                    exchange.getIn().setHeader(HBaseConstants.FROM_ROW, key[0]);
-                    exchange.getIn().setHeader(HBaseConstants.STOP_ROW, key[1]);
-                }
+            Exchange resp = template.request("direct:scan", exchange -> {
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+                exchange.getIn().setHeader(HBaseConstants.FROM_ROW, key[0]);
+                exchange.getIn().setHeader(HBaseConstants.STOP_ROW, key[1]);
             });
 
-            Object result1 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
-            Object result2 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
-            Object result3 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
+            Object result1 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
+            Object result2 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
+            Object result3 = resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
 
             List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0], body[2][0][0]);
             assertTrue(bodies.contains(result1) && !bodies.contains(result2) && !bodies.contains(result3));
@@ -333,17 +317,15 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
 
             IOHelper.close(bar);
 
-            Exchange resp = template.request("direct:scan", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), "info");
-                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), "id");
-                }
+            Exchange resp = template.request("direct:scan", exchange -> {
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), "info");
+                exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), "id");
             });
 
-            assertEquals("1", resp.getOut().getHeader(HBaseAttribute.HBASE_ROW_ID.asHeader()));
-            assertEquals("info", resp.getOut().getHeader(HBaseAttribute.HBASE_FAMILY.asHeader()));
-            assertEquals("id", resp.getOut().getHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader()));
-            assertEquals("3", resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
+            assertEquals("1", resp.getMessage().getHeader(HBaseAttribute.HBASE_ROW_ID.asHeader()));
+            assertEquals("info", resp.getMessage().getHeader(HBaseAttribute.HBASE_FAMILY.asHeader()));
+            assertEquals("id", resp.getMessage().getHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader()));
+            assertEquals("3", resp.getMessage().getHeader(HBaseAttribute.HBASE_VALUE.asHeader()));
         }
     }
 

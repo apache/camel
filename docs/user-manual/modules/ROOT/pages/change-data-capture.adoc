@@ -14,4 +14,4 @@ components that works with different databases such as MySQL, Postgres, and Mong
 
 == Sample
 
-See the https://github.com/apache/camel/tree/master/examples/camel-example-debezium[Camel Debezium Example] for more details.
+See the https://github.com/apache/camel-examples/tree/master/examples/camel-example-debezium[Camel Debezium Example] for more details.

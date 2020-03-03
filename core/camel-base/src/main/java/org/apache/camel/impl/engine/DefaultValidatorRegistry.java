@@ -16,12 +16,17 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Service;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -55,6 +60,13 @@ public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorK
     @Override
     public String toString() {
         return "ValidatorRegistry for " + context.getName() + ", capacity: " + maxCacheSize;
+    }
+
+    @Override
+    public Validator put(ValidatorKey key, Validator validator) {
+        // ensure validator is started before its being used
+        ServiceHelper.startService(validator);
+        return super.put(key, validator);
     }
 
 }

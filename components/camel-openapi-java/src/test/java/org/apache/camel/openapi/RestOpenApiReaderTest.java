@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
@@ -55,6 +57,8 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         config.setHost("localhost:8080");
         config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
+        Oas20Info info = new Oas20Info();
+        config.setInfo(info);
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
@@ -92,6 +96,8 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         config.setHost("localhost:8080");
         config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
+        Oas30Info info = new Oas30Info();
+        config.setInfo(info);
         RestOpenApiReader reader = new RestOpenApiReader();
 
         OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());

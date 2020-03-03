@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -114,11 +113,8 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    log.trace("Processing exchange done");
-                }
+            getAsyncProcessor().process(exchange, doneSync -> {
+                // noop
             });
         }
 

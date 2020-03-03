@@ -62,4 +62,31 @@ public final class InetAddressUtil {
         }
     }
 
+    /**
+     * When using the {@link java.net.InetAddress#getHostName()} method in an
+     * environment where neither a proper DNS lookup nor an <tt>/etc/hosts</tt>
+     * entry exists for a given host, the following exception will be thrown:
+     * <p/>
+     * <code>
+     * java.net.UnknownHostException: &lt;hostname&gt;: &lt;hostname&gt;
+     * at java.net.InetAddress.getLocalHost(InetAddress.java:1425)
+     * ...
+     * </code>
+     * <p/>
+     * Instead of just throwing an UnknownHostException and giving up, this
+     * method grabs a suitable hostname from the exception and prevents the
+     * exception from being thrown. If a suitable hostname cannot be acquired
+     * from the exception, then <tt>null</tt> is returned
+     *
+     * @return the hostname, or <tt>null</tt> if not possible to resolve
+     */
+    public static String getLocalHostNameSafe() {
+        try {
+            return getLocalHostName();
+        } catch (Throwable e) {
+            // ignore
+        }
+        return null;
+    }
+
 }

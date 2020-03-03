@@ -27,12 +27,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
 
-    public PolicyReifier(ProcessorDefinition<?> definition) {
-        super((PolicyDefinition)definition);
+    public PolicyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (PolicyDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         Policy policy = resolvePolicy(routeContext);
         ObjectHelper.notNull(policy, "policy", definition);
 
@@ -40,7 +40,7 @@ public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
         policy.beforeWrap(routeContext, definition);
 
         // create processor after the before wrap
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
+        Processor childProcessor = this.createChildProcessor(true);
 
         // wrap
         Processor target = policy.wrap(routeContext, childProcessor);

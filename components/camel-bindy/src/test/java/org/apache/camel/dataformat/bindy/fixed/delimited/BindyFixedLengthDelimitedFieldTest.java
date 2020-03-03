@@ -153,10 +153,10 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(BindyFixedLengthDelimitedFieldTest.Order.class);
-                bindy.setLocale("en");
-                bindy.setType(BindyType.Fixed);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(BindyFixedLengthDelimitedFieldTest.Order.class)
+                        .locale("en")
+                        .fixed();
 
                 from(URI_DIRECT_MARSHALL)
                     .marshal(bindy)

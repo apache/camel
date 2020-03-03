@@ -25,11 +25,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A polling consumer that reads messages from a chat using the Telegram bot API.
  */
 public class TelegramConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TelegramConsumer.class);
 
     private TelegramEndpoint endpoint;
 
@@ -50,7 +54,7 @@ public class TelegramConsumer extends ScheduledPollConsumer {
 
         TelegramService service = endpoint.getTelegramService();
 
-        log.debug("Polling Telegram service to get updates");
+        LOG.debug("Polling Telegram service to get updates");
 
         UpdateResult updateResult = service.getUpdates(offset, config.getLimit(), config.getTimeout());
         if (updateResult.getUpdates() == null) {
@@ -65,9 +69,9 @@ public class TelegramConsumer extends ScheduledPollConsumer {
         List<Update> updates = updateResult.getUpdates();
 
         if (updates.size() > 0) {
-            log.debug("Received {} updates from Telegram service", updates.size());
+            LOG.debug("Received {} updates from Telegram service", updates.size());
         } else {
-            log.debug("No updates received from Telegram service");
+            LOG.debug("No updates received from Telegram service");
         }
 
         processUpdates(updates);
@@ -81,7 +85,7 @@ public class TelegramConsumer extends ScheduledPollConsumer {
     private void processUpdates(List<Update> updates) throws Exception {
         for (Update update : updates) {
 
-            log.debug("Received update from Telegram service: {}", update);
+            LOG.debug("Received update from Telegram service: {}", update);
 
             Exchange exchange = endpoint.createExchange(update);
             getProcessor().process(exchange);
@@ -93,7 +97,7 @@ public class TelegramConsumer extends ScheduledPollConsumer {
         OptionalLong ol = updates.stream().mapToLong(Update::getUpdateId).max();
         if (ol.isPresent()) {
             this.offset = ol.getAsLong() + 1;
-            log.debug("Next Telegram offset will be {}", this.offset);
+            LOG.debug("Next Telegram offset will be {}", this.offset);
         }
     }
 }

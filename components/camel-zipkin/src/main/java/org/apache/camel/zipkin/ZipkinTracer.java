@@ -127,18 +127,8 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private static final Logger LOG = LoggerFactory.getLogger(ZipkinTracer.class);
     private static final String ZIPKIN_COLLECTOR_HTTP_SERVICE = "zipkin-collector-http";
     private static final String ZIPKIN_COLLECTOR_THRIFT_SERVICE = "zipkin-collector-thrift";
-    private static final Getter<Message, String> GETTER = new Getter<Message, String>() {
-        @Override
-        public String get(Message message, String key) {
-            return message.getHeader(key, String.class);
-        }
-    };
-    private static final Setter<Message, String> SETTER = new Setter<Message, String>() {
-        @Override
-        public void put(Message message, String key, String value) {
-            message.setHeader(key, value);
-        }
-    };
+    private static final Getter<Message, String> GETTER = (message, key) -> message.getHeader(key, String.class);
+    private static final Setter<Message, String> SETTER = (message, key, value) -> message.setHeader(key, value);
     private static final Extractor<Message> EXTRACTOR = B3Propagation.B3_STRING.extractor(GETTER);
     private static final Injector<Message> INJECTOR = B3Propagation.B3_STRING.injector(SETTER);
 
@@ -574,7 +564,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         Tracing brave = null;
         if (camelContext.isUseMDCLogging()) {
             brave = Tracing.newBuilder().currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder().addScopeDecorator(MDCScopeDecorator.create()).build())
-                .localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
+                    .localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
         } else {
             brave = Tracing.newBuilder().localServiceName(serviceName).sampler(Sampler.create(rate)).spanReporter(spanReporter).build();
         }
@@ -770,14 +760,14 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         @Override
         public boolean isEnabled(CamelEvent event) {
             switch (event.getType()) {
-            case ExchangeSending:
-            case ExchangeSent:
-            case ExchangeCreated:
-            case ExchangeCompleted:
-            case ExchangeFailed:
-                return true;
-            default:
-                return false;
+                case ExchangeSending:
+                case ExchangeSent:
+                case ExchangeCreated:
+                case ExchangeCompleted:
+                case ExchangeFailed:
+                    return true;
+                default:
+                    return false;
             }
         }
 

@@ -22,7 +22,6 @@ import java.util.TreeMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
@@ -63,17 +62,14 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
     @Test
     public void testUndertowPojoTypeGetUsers() throws Exception {
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "GET");
-                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-            }
+        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "GET");
+            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
         });
 
         assertNotNull(outExchange);
-        assertEquals("application/json", outExchange.getOut().getHeader(Exchange.CONTENT_TYPE));
-        String out = outExchange.getOut().getBody(String.class);
+        assertEquals("application/json", outExchange.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        String out = outExchange.getMessage().getBody(String.class);
         assertNotNull(out);
 
         UserPojo[] users = mapper.readValue(out, UserPojo[].class);
@@ -84,24 +80,21 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
     @Test
     public void testUndertowPojoTypePutUser() throws Exception {
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
+            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
-                UserPojo user = new UserPojo();
-                user.setId(1);
-                user.setName("Scott");
+            UserPojo user = new UserPojo();
+            user.setId(1);
+            user.setName("Scott");
 
-                String body = mapper.writeValueAsString(user);
-                exchange.getIn().setBody(body);
-            }
+            String body = mapper.writeValueAsString(user);
+            exchange.getIn().setBody(body);
         });
 
         assertNotNull(outExchange);
-        assertEquals(200, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
     @Test
@@ -109,24 +102,21 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         MockEndpoint mock = getMockEndpoint("mock:putUser");
         mock.expectedMessageCount(0);
 
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
+            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
-                CountryPojo country = new CountryPojo();
-                country.setIso("US");
-                country.setCountry("United States");
+            CountryPojo country = new CountryPojo();
+            country.setIso("US");
+            country.setCountry("United States");
 
-                String body = mapper.writeValueAsString(country);
-                exchange.getIn().setBody(body);
-            }
+            String body = mapper.writeValueAsString(country);
+            exchange.getIn().setBody(body);
         });
 
         assertNotNull(outExchange);
-        assertEquals(400, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(400, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
         assertMockEndpointsSatisfied();
     }
@@ -147,20 +137,17 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         mock.expectedMessageCount(1);
         mock.message(0).body(UserPojo[].class);
 
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
+            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
-                String body = mapper.writeValueAsString(users);
-                exchange.getIn().setBody(body);
-            }
+            String body = mapper.writeValueAsString(users);
+            exchange.getIn().setBody(body);
         });
 
         assertNotNull(outExchange);
-        assertEquals(200, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
         assertMockEndpointsSatisfied();
 
@@ -176,24 +163,21 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         MockEndpoint mock = getMockEndpoint("mock:putUsers");
         mock.expectedMessageCount(0);
 
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
+            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
-                UserPojo user = new UserPojo();
-                user.setId(1);
-                user.setName("Scott");
+            UserPojo user = new UserPojo();
+            user.setId(1);
+            user.setName("Scott");
 
-                String body = mapper.writeValueAsString(user);
-                exchange.getIn().setBody(body);
-            }
+            String body = mapper.writeValueAsString(user);
+            exchange.getIn().setBody(body);
         });
 
         assertNotNull(outExchange);
-        assertEquals(400, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(400, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
         assertMockEndpointsSatisfied();
     }
@@ -214,20 +198,17 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         mock.expectedMessageCount(1);
         mock.message(0).body(UserPojo[].class);
 
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/list", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/list", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
+            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
-                String body = mapper.writeValueAsString(users);
-                exchange.getIn().setBody(body);
-            }
+            String body = mapper.writeValueAsString(users);
+            exchange.getIn().setBody(body);
         });
 
         assertNotNull(outExchange);
-        assertEquals(200, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
         assertMockEndpointsSatisfied();
 
@@ -243,24 +224,21 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         MockEndpoint mock = getMockEndpoint("mock:putUsersList");
         mock.expectedMessageCount(0);
 
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/list", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-                exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/list", exchange -> {
+            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
+            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
-                UserPojo user = new UserPojo();
-                user.setId(1);
-                user.setName("Scott");
+            UserPojo user = new UserPojo();
+            user.setId(1);
+            user.setName("Scott");
 
-                String body = mapper.writeValueAsString(user);
-                exchange.getIn().setBody(body);
-            }
+            String body = mapper.writeValueAsString(user);
+            exchange.getIn().setBody(body);
         });
 
         assertNotNull(outExchange);
-        assertEquals(400, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(400, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
 
         assertMockEndpointsSatisfied();
     }
@@ -283,44 +261,35 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
                 // use the rest DSL to define the rest services
                 rest()
                     .get("/users").id("getUsers").outType(UserPojo[].class)
-                        .route().process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                UserPojo user1 = new UserPojo();
-                                user1.setId(1);
-                                user1.setName("Scott");
+                        .route().process(exchange -> {
+                            UserPojo user1 = new UserPojo();
+                            user1.setId(1);
+                            user1.setName("Scott");
 
-                                UserPojo user2 = new UserPojo();
-                                user2.setId(2);
-                                user2.setName("Claus");
+                            UserPojo user2 = new UserPojo();
+                            user2.setId(2);
+                            user2.setName("Claus");
 
-                                exchange.getOut().setBody(new UserPojo[] {user1, user2});
-                            }
+                            exchange.getOut().setBody(new UserPojo[] {user1, user2});
                         }).endRest()
                     .get("/users/list").id("getUsersList").outType(UserPojo[].class)
-                        .route().process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                UserPojo user1 = new UserPojo();
-                                user1.setId(1);
-                                user1.setName("Scott");
+                        .route().process(exchange -> {
+                            UserPojo user1 = new UserPojo();
+                            user1.setId(1);
+                            user1.setName("Scott");
 
-                                UserPojo user2 = new UserPojo();
-                                user2.setId(2);
-                                user2.setName("Claus");
+                            UserPojo user2 = new UserPojo();
+                            user2.setId(2);
+                            user2.setName("Claus");
 
-                                exchange.getOut().setBody(new UserPojo[] {user1, user2});
-                            }
+                            exchange.getMessage().setBody(new UserPojo[] {user1, user2});
                         }).endRest()
                     .get("/users/{id}").id("getUser").outType(UserPojo.class)
-                        .route().process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                UserPojo user1 = new UserPojo();
-                                user1.setId(exchange.getIn().getHeader("id", int.class));
-                                user1.setName("Scott");
-                                exchange.getOut().setBody(user1);
-                            }
+                        .route().process(exchange -> {
+                            UserPojo user1 = new UserPojo();
+                            user1.setId(exchange.getIn().getHeader("id", int.class));
+                            user1.setName("Scott");
+                            exchange.getMessage().setBody(user1);
                         }).endRest()
                     .put("/users/{id}").id("putUser").type(UserPojo.class)
                         .to("mock:putUser")

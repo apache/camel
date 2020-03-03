@@ -46,7 +46,7 @@ public class SchematronEndpointTest extends CamelTestSupport {
         // invoke the component.
         producer.process(exchange);
 
-        String report = exchange.getOut().getHeader(Constants.VALIDATION_REPORT, String.class);
+        String report = exchange.getMessage().getHeader(Constants.VALIDATION_REPORT, String.class);
         assertNotNull(report);
     }
 
@@ -64,7 +64,7 @@ public class SchematronEndpointTest extends CamelTestSupport {
         // invoke the component.
         producer.process(exchange);
 
-        String report = exchange.getOut().getHeader(Constants.VALIDATION_REPORT, String.class);
+        String report = exchange.getMessage().getHeader(Constants.VALIDATION_REPORT, String.class);
         assertNotNull(report);
     }
 

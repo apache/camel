@@ -37,7 +37,8 @@ public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
     }
 
     protected String getFtpUrlInvalid() {
-        // use invalid starting directory and do not allow creating it so we force the poll to fail
+        // use invalid starting directory and do not allow creating it so we
+        // force the poll to fail
         return "ftp://admin@localhost:" + getPort() + "/unknown?password=admin&binary=false&delete=true&autoCreate=false";
     }
 
@@ -60,7 +61,8 @@ public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();

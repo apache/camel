@@ -149,6 +149,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
         // set AbstractAPIMethodGeneratorMojo properties
         mojo.proxyClass = apiProxy.getProxyClass();
+        mojo.classPrefix = apiProxy.getClassPrefix();
     }
 
     private AbstractApiMethodGeneratorMojo getApiMethodGenerator(ApiProxy api) {
@@ -216,18 +217,20 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     private StringBuilder getFileBuilder() {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         return fileName;
     }
 
-    public static String getApiMethod(String proxyClass) {
-        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);        
-        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
+    public static String getApiMethod(String proxyClass, String classPrefix) {
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
+        String prefix = classPrefix != null ? classPrefix : "";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
     }
 
-    public static String getEndpointConfig(String proxyClass) {
+    public static String getEndpointConfig(String proxyClass, String classPrefix) {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
-        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
+        String prefix = classPrefix != null ? classPrefix : "";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
     }
 
     private static String getProxyClassWithCanonicalName(String proxyClass) {

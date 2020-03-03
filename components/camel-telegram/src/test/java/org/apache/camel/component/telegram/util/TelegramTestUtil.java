@@ -49,6 +49,8 @@ public final class TelegramTestUtil {
             img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.png"));
         } else if (imageIOType.equalsIgnoreCase("jpg")) {
             img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.jpg"));
+        } else if ("webp".equalsIgnoreCase(imageIOType)) {
+            img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.webp"));
         } else {
             throw new IllegalArgumentException("Unknown format " + imageIOType);
         }

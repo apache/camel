@@ -33,9 +33,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
-import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -66,6 +66,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the HTTP Component
@@ -73,6 +75,8 @@ import org.apache.http.ssl.SSLContexts;
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("http,https")
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
     @Metadata(label = "advanced", description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
     protected HttpClientConfigurer httpClientConfigurer;
@@ -270,7 +274,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // create the endpoint and set the http uri to be null
         String endpointUriString = endpointUri.toString();
 
-        log.debug("Creating endpoint uri {}", endpointUriString);
+        LOG.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
 
@@ -393,7 +397,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (localConnectionsPerRoute > 0) {
             answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
-        log.info("Created ClientConnectionManager {}", answer);
+        LOG.info("Created ClientConnectionManager {}", answer);
 
         return answer;
     }
@@ -448,15 +452,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             url = url + "?" + query;
         }
 
+        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();
+
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component, one such case is when we switch from "http" to "https" component name
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
-        if (parameters != null && !parameters.isEmpty()) {
-            setProperties(camelContext, endpoint, parameters);
-        }
+        setProperties(endpoint, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
 
@@ -652,7 +656,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     public void doStop() throws Exception {
         // shutdown connection manager
         if (clientConnectionManager != null) {
-            log.info("Shutting down ClientConnectionManager: {}", clientConnectionManager);
+            LOG.info("Shutting down ClientConnectionManager: {}", clientConnectionManager);
             clientConnectionManager.shutdown();
             clientConnectionManager = null;
         }

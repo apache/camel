@@ -19,6 +19,8 @@ package org.apache.camel.component.netty;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import io.netty.channel.ChannelHandler;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -36,6 +38,7 @@ import org.junit.Test;
  * {@link io.netty.util.concurrent.BlockingOperationException} is thrown by netty.
  */
 public class NettyTCPChainedTest extends BaseNettyTest {
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
@@ -60,6 +63,11 @@ public class NettyTCPChainedTest extends BaseNettyTest {
         Assert.assertFalse(exchange.isFailed());
     }
 
+    @BindToRegistry("encoder")
+    public ChannelHandler getEncoder() throws Exception {
+        return ChannelHandlerFactories.newByteArrayEncoder("tcp");
+    }
+
     @Test
     public void testTCPChainedConnectionFromCallbackThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -74,11 +82,11 @@ public class NettyTCPChainedTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=false")
+                from("netty:tcp://localhost:{{port}}?sync=false&encoders=#encoder")
                     .to("log:result")
                     .to("mock:result");
                 from("direct:nettyCall")
-                        .to("netty:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1");
+                        .to("netty:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1&encoders=#encoder");
                 from("direct:chainedCalls")
                         .to("direct:nettyCall")
                         .to("direct:nettyCall");

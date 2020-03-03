@@ -45,23 +45,20 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.apache.camel.reifier.transformer.TransformerReifier;
-import org.apache.camel.reifier.validator.ValidatorReifier;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
-import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the context used to configure routes and the policies to use.
  */
 public abstract class AbstractModelCamelContext extends AbstractCamelContext implements ModelCamelContext, CatalogCamelContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractModelCamelContext.class);
 
     private final Model model = new DefaultModel(this);
 
@@ -89,7 +86,6 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         super(false);
 
         setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
-        setDefaultExtension(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
 
         if (init) {
             init();
@@ -108,11 +104,17 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
 
     @Override
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        if (isStarted() && !isAllowAddingNewRoutes()) {
+            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
+        }
         model.addRouteDefinitions(routeDefinitions);
     }
 
     @Override
     public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+        if (isStarted() && !isAllowAddingNewRoutes()) {
+            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
+        }
         model.addRouteDefinition(routeDefinition);
     }
 
@@ -133,6 +135,9 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
 
     @Override
     public void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
+        if (isStarted() && !isAllowAddingNewRoutes()) {
+            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
+        }
         model.addRestDefinitions(restDefinitions, addToRoutes);
     }
 
@@ -257,41 +262,20 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     @Override
-    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception {
-        DefaultValidatorRegistry registry = new DefaultValidatorRegistry(this);
-        for (ValidatorDefinition def : getValidators()) {
-            Validator validator = ValidatorReifier.reifier(def).createValidator(this);
-            registry.put(createKey(def), doAddService(validator));
-        }
-        return registry;
-    }
-
-    private ValidatorKey createKey(ValidatorDefinition def) {
-        return new ValidatorKey(new DataType(def.getType()));
+    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() {
+        return new DefaultValidatorRegistry(this);
     }
 
     @Override
-    protected TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception {
-        DefaultTransformerRegistry registry = new DefaultTransformerRegistry(this);
-        for (TransformerDefinition def : getTransformers()) {
-            Transformer transformer = TransformerReifier.reifier(def).createTransformer(this);
-            registry.put(createKey(def), doAddService(transformer));
-        }
-        return registry;
-    }
-
-    private TransformerKey createKey(TransformerDefinition def) {
-        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+    protected TransformerRegistry<TransformerKey> createTransformerRegistry() {
+        return new DefaultTransformerRegistry(this);
     }
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
 
-    protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
-
     @Override
     protected void doStartStandardServices() {
         super.doStartStandardServices();
-        getExtension(RuntimeCamelCatalog.class);
     }
 
     @Override
@@ -307,8 +291,8 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         for (Map.Entry<String, DataFormatDefinition> e : model.getDataFormats().entrySet()) {
             String id = e.getKey();
             DataFormatDefinition def = e.getValue();
-            log.debug("Creating Dataformat with id: {} and definition: {}", id, def);
-            DataFormat df = DataFormatReifier.reifier(def).createDataFormat(this);
+            LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
+            DataFormat df = DataFormatReifier.reifier(this, def).createDataFormat();
             addService(df, true);
             getRegistry().bind(id, df);
         }

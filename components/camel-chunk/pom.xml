@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-chunk</artifactId>
@@ -44,6 +44,11 @@
             <groupId>com.x5dev</groupId>
             <artifactId>chunk-templates</artifactId>
             <version>${chunk-templates-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>${json-smart-version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

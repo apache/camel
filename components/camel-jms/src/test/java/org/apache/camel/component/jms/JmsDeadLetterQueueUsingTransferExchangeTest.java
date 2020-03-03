@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -74,12 +72,10 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel(getUri()).disableRedelivery());
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kabom".equals(body)) {
-                            throw new IllegalArgumentException("Kabom");
-                        }
+                from("direct:start").process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    if ("Kabom".equals(body)) {
+                        throw new IllegalArgumentException("Kabom");
                     }
                 }).to("mock:result");
 

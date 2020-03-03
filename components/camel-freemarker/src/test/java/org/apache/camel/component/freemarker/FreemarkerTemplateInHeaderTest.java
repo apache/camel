@@ -59,10 +59,10 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
         });
         assertOutMessageBodyEquals(response, expectedBody);
 
-        Object template = response.getOut().getHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
+        Object template = response.getMessage().getHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
         assertNull("Template header should have been removed", template);
 
-        Set<Entry<String, Object>> entrySet = response.getOut().getHeaders().entrySet();
+        Set<Entry<String, Object>> entrySet = response.getMessage().getHeaders().entrySet();
         boolean keyFound = false;
         for (Entry<String, Object> entry : entrySet) {
             if (entry.getKey().equals(headerName)) {

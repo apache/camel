@@ -1,0 +1,27 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "threads",
+    "title": "Threads",
+    "description": "Specifies that all steps after this node are processed asynchronously",
+    "javaType": "org.apache.camel.model.ThreadsDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "executorServiceRef": { "kind": "attribute", "displayName": "Executor Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To refer to a custom thread pool or use a thread pool profile (as overlay)" },
+    "poolSize": { "kind": "attribute", "displayName": "Pool Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Sets the core pool size" },
+    "maxPoolSize": { "kind": "attribute", "displayName": "Max Pool Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Sets the maximum pool size" },
+    "keepAliveTime": { "kind": "attribute", "displayName": "Keep Alive Time", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "description": "Sets the keep alive time for idle threads" },
+    "timeUnit": { "kind": "attribute", "displayName": "Time Unit", "required": false, "type": "enum", "javaType": "java.util.concurrent.TimeUnit", "enum": [ "DAYS", "HOURS", "MICROSECONDS", "MILLISECONDS", "MINUTES", "NANOSECONDS", "SECONDS" ], "deprecated": false, "secret": false, "description": "Sets the keep alive time unit. By default SECONDS is used." },
+    "maxQueueSize": { "kind": "attribute", "displayName": "Max Queue Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue" },
+    "allowCoreThreadTimeOut": { "kind": "attribute", "displayName": "Allow Core Thread Time Out", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size Is by default false" },
+    "threadName": { "kind": "attribute", "displayName": "Thread Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "Threads", "description": "Sets the thread name to use." },
+    "rejectedPolicy": { "kind": "attribute", "displayName": "Rejected Policy", "required": false, "type": "enum", "javaType": "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy", "enum": [ "Abort", "CallerRuns", "Discard", "DiscardOldest" ], "deprecated": false, "secret": false, "description": "Sets the handler for tasks which cannot be executed by the thread pool." },
+    "callerRunsWhenRejected": { "kind": "attribute", "displayName": "Caller Runs When Rejected", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether or not to use as caller runs as fallback when a task is rejected being added to the thread pool (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has no configured rejection handler. Is by default true" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

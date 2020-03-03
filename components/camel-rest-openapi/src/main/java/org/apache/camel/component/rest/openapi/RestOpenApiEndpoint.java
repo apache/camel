@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,6 +57,7 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Operation;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -321,11 +324,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         Map<String, Object> params = determineEndpointParameters(openapi, operation);
         boolean hasHost = params.containsKey("host");
-        if (endpoint instanceof DefaultEndpoint) {
-            // let the rest endpoint configure itself
-            DefaultEndpoint de = (DefaultEndpoint) endpoint;
-            de.setProperties(endpoint, params);
-        }
+        // let the rest endpoint configure itself
+        endpoint.configureProperties(params);
 
         // if there is a host then we should use this hardcoded host instead of any Header that may have an existing
         // Host header from some other HTTP input, and if so then lets remove it
@@ -342,12 +342,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentBasePath;
         }
 
-        final String specificationBasePath;
-        if (openapi instanceof Oas20Document) {
-            specificationBasePath = ((Oas20Document)openapi).basePath;
-        } else {
-            specificationBasePath = "";
-        } 
+        final String specificationBasePath = getBasePathFromOasDocument((OasDocument)openapi);
+        
         if (isNotEmpty(specificationBasePath)) {
             return specificationBasePath;
         }
@@ -365,6 +361,56 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
+    }
+    
+    public static String getBasePathFromOasDocument(final OasDocument openapi) {
+        String basePath = null;
+        if (openapi instanceof Oas20Document) {
+            basePath = ((Oas20Document)openapi).basePath;
+        } else if (openapi instanceof Oas30Document) {
+            if (((Oas30Document)openapi).getServers() != null 
+                && ((Oas30Document)openapi).getServers().get(0) != null) {
+                try {
+                    Oas30Server server = (Oas30Server)((Oas30Document)openapi).getServers().get(0);
+                    if (server.variables != null && server.variables.get("basePath") != null) {
+                        basePath = server.variables.get("basePath").default_;
+                    }
+                    if (basePath == null) {
+                        // parse server url as fallback
+                        URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, server));
+                        basePath = serverUrl.getPath();
+                        if (basePath.indexOf("//") == 0) {
+                            // strip off the first "/" if double "/" exists
+                            basePath = basePath.substring(1);
+                        }
+                        if ("/".equals(basePath)) {
+                            basePath = "";
+                        }
+                    } 
+                                    
+                } catch (MalformedURLException e) {
+                    //not a valid whole url, just the basePath
+                    basePath = ((Oas30Document)openapi).getServers().get(0).url;
+                }
+            }
+            
+        }
+        return basePath;
+        
+    }
+    
+    public static String parseVariables(String url, Oas30Server server) {
+        Pattern p = Pattern.compile("\\{(.*?)\\}");
+        Matcher m = p.matcher(url);
+        while (m.find()) {
+           
+            String var = m.group(1);
+            if (server != null && server.variables != null && server.variables.get(var) != null) {
+                String varValue = server.variables.get(var).default_;
+                url = url.replace("{" + var + "}", varValue);
+            }
+        }
+        return url;
     }
 
     String determineComponentName() {
@@ -498,7 +544,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             if (oas30Document.getServers() != null 
                 && oas30Document.getServers().get(0) != null) {
                 try {
-                    URL serverUrl = new URL(oas30Document.getServers().get(0).url);
+                    
+                    URL serverUrl = new URL(parseVariables(oas30Document.getServers().get(0).url, (Oas30Server)oas30Document.getServers().get(0)));
                     final String openapiScheme = serverUrl.getProtocol();
                     final String openapiHost = serverUrl.getHost();
                     if (isNotEmpty(openapiScheme) && isNotEmpty(openapiHost)) {
@@ -595,7 +642,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         int pos = 0;
         final StringBuilder resolved = new StringBuilder(uriTemplate.length() * 2);
         while (start != -1) {
-            resolved.append(uriTemplate.substring(pos, start));
+            resolved.append(uriTemplate, pos, start);
 
             final int end = uriTemplate.indexOf('}', start);
 
@@ -614,7 +661,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         if (pos < uriTemplate.length()) {
-            resolved.append(uriTemplate.substring(pos));
+            resolved.append(uriTemplate, pos, uriTemplate.length());
         }
 
         return resolved.toString();

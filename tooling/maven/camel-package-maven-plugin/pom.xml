@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-package-maven-plugin</artifactId>
@@ -49,7 +49,14 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util-json</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-model</artifactId>
         </dependency>
 
         <dependency>
@@ -105,12 +112,10 @@
             <artifactId>gson</artifactId>
             <version>${gson-version}</version>
         </dependency>
-
-        <!-- asciidoc to convert adoc to html files -->
         <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj</artifactId>
-            <version>${asciidoctorj-version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text-version}</version>
         </dependency>
 
         <!-- guava for some word wrap helper -->
@@ -162,6 +167,19 @@
             <version>7.0</version>
         </dependency>
 
+        <!-- camel -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>spi-annotations</artifactId>
+        </dependency>
+
+        <!-- yaml -->
+        <dependency>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
+            <version>2.1</version>
+        </dependency>
+
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -177,12 +195,6 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- camel -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
         </dependency>
 
         <!-- testing -->

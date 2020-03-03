@@ -148,7 +148,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         public void validate(Message message, DataType type) throws ValidationException {
             message.getExchange().setProperty(VALIDATOR_INVOKED, OtherXOrderValidator.class);
             assertEquals("name=XOrder", message.getBody());
-            log.info("Java validation: other XOrder");
+            LOG.info("Java validation: other XOrder");
         }
     }
 
@@ -157,7 +157,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         public void validate(Message message, DataType type) throws ValidationException {
             message.getExchange().setProperty(VALIDATOR_INVOKED, OtherXOrderResponseValidator.class);
             assertEquals("name=XOrderResponse", message.getBody());
-            log.info("Java validation: other XOrderResponse");
+            LOG.info("Java validation: other XOrderResponse");
         }
     }
 

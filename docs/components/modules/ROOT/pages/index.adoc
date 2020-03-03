@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 307 in 245 JAR artifacts (1 deprecated)
+Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -46,6 +46,38 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:avro-component.adoc[Avro] (camel-avro) | 2.10 | Working with Apache Avro for data serialization.
 
+| xref:aws2-cw-component.adoc[AWS 2 CloudWatch] (camel-aws2-cw) | 3.1 | The aws2-cw component is used for sending metrics to an Amazon CloudWatch.
+
+| xref:aws2-ddb-component.adoc[AWS 2 DynamoDB] (camel-aws2-ddb) | 3.1 | The aws2-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+
+| xref:aws2-ddbstream-component.adoc[AWS 2 DynamoDB Streams] (camel-aws2-ddb) | 3.1 | The aws2-ddbstream component is used for working with Amazon DynamoDB Streams.
+
+| xref:aws2-ec2-component.adoc[AWS 2 EC2] (camel-aws2-ec2) | 3.1 | The aws2-ec2 is used for managing Amazon EC2 instances.
+
+| xref:aws2-ecs-component.adoc[AWS 2 ECS] (camel-aws2-ecs) | 3.1 | The aws2-ecs is used for managing Amazon ECS
+
+| xref:aws2-eks-component.adoc[AWS 2 EKS] (camel-aws2-eks) | 3.1 | The aws2-eks is used for managing Amazon EKS
+
+| xref:aws2-iam-component.adoc[AWS 2 IAM] (camel-aws2-iam) | 3.1 | The aws2-iam is used for managing Amazon IAM
+
+| xref:aws2-kinesis-component.adoc[AWS 2 Kinesis] (camel-aws2-kinesis) | 3.2 | The aws2-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+
+| xref:aws2-kinesis-firehose-component.adoc[AWS 2 Kinesis Firehose] (camel-aws2-kinesis) | 3.2 | The aws2-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+
+| xref:aws2-kms-component.adoc[AWS 2 KMS] (camel-aws2-kms) | 3.1 | The aws2-kms is used for managing Amazon KMS
+
+| xref:aws2-mq-component.adoc[AWS 2 MQ] (camel-aws2-mq) | 3.1 | The aws2-mq is used for managing Amazon MQ instances.
+
+| xref:aws2-msk-component.adoc[AWS 2 MSK] (camel-aws2-msk) | 3.1 | The aws2-msk is used for managing Amazon MSK
+
+| xref:aws2-ses-component.adoc[AWS 2 Simple Email Service] (camel-aws2-ses) | 3.1 | The aws2-ses component is used for sending emails with Amazon's SES service.
+
+| xref:aws2-sns-component.adoc[AWS 2 Simple Notification System] (camel-aws2-sns) | 3.1 | The aws2-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| xref:aws2-sqs-component.adoc[AWS 2 Simple Queue Service] (camel-aws2-sqs) | 3.1 | The aws2-sqs component is used for sending and receiving messages to Amazon's SQS service.
+
+| xref:aws2-translate-component.adoc[AWS 2 Translate] (camel-aws2-translate) | 3.1 | The aws2-translate component is used for managing Amazon Translate
+
 | xref:aws-cw-component.adoc[AWS CloudWatch] (camel-aws-cw) | 2.11 | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
 
 | xref:aws-ddb-component.adoc[AWS DynamoDB] (camel-aws-ddb) | 2.10 | The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
@@ -67,6 +99,8 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 | xref:aws-kms-component.adoc[AWS KMS] (camel-aws-kms) | 2.21 | The aws-kms is used for managing Amazon KMS
 
 | xref:aws-lambda-component.adoc[AWS Lambda] (camel-aws-lambda) | 2.20 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
+
+| xref:aws2-lambda-component.adoc[AWS Lambda] (camel-aws2-lambda) | 3.2 | The aws2-lambda is used for managing and invoking functions from Amazon Lambda.
 
 | xref:aws-mq-component.adoc[AWS MQ] (camel-aws-mq) | 2.21 | The aws-mq is used for managing Amazon MQ instances.
 
@@ -114,7 +148,7 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:chunk-component.adoc[Chunk] (camel-chunk) | 2.15 | Transforms the message using a Chunk template.
 
-| xref:class-component.adoc[Class] (camel-bean) | 2.4 | The class component is for invoking Java classes (Java beans) from Camel.
+| xref:class-component.adoc[Class] (camel-bean) | 2.4 | The Class component is for invoking Java classes (Java beans) from Camel.
 
 | xref:cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
 
@@ -133,6 +167,8 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 | xref:couchbase-component.adoc[Couchbase] (camel-couchbase) | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
 | xref:couchdb-component.adoc[CouchDB] (camel-couchdb) | 2.11 | The couchdb component is used for integrate with CouchDB databases.
+
+| xref:cron-component.adoc[Cron] (camel-cron) | 3.1 | Camel Cron Component
 
 | xref:crypto-component.adoc[Crypto (JCE)] (camel-crypto) | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 
@@ -180,9 +216,13 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:elsql-component.adoc[ElSQL] (camel-elsql) | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
-| xref:elytron-component.adoc[Elytron] (camel-elytron) | 3.1 | Endpoint
+| xref:elytron-component.adoc[Elytron] (camel-elytron) | 3.1 | The elytron component is allows you to work with the Elytron Security Framework
 
-| xref:etcd-component.adoc[Etcd] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+| xref:etcd-keys-component.adoc[Etcd Keys] (camel-etcd) | 2.18 | Camel Etcd support
+
+| xref:etcd-stats-component.adoc[Etcd Stats] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+
+| xref:etcd-watch-component.adoc[Etcd Watch] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
 | xref:exec-component.adoc[Exec] (camel-exec) | 2.3 | The exec component can be used to execute OS system commands.
 
@@ -192,7 +232,7 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:file-component.adoc[File] (camel-file) | 1.0 | The file component is used for reading or writing files.
 
-| xref:file-watch-component.adoc[file-watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
+| xref:file-watch-component.adoc[File Watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
 
 | xref:flatpack-component.adoc[Flatpack] (camel-flatpack) | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
 
@@ -220,7 +260,7 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:google-calendar-component.adoc[Google Calendar] (camel-google-calendar) | 2.15 | The google-calendar component provides access to Google Calendar.
 
-| xref:google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mode.
+| xref:google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) | 2.23 | The google-calendar-stream component provides access to Google Calendar in a streaming mode.
 
 | xref:google-drive-component.adoc[Google Drive] (camel-google-drive) | 2.14 | The google-drive component provides access to Google Drive file storage service.
 
@@ -228,11 +268,11 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:google-mail-stream-component.adoc[Google Mail Stream] (camel-google-mail) | 2.22 | The google-mail component provides access to Google Mail.
 
-| xref:google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) | 2.19 | Messaging client for Google Cloud Platform PubSub Service
+| xref:google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) | 2.19 | Messaging client for Google Cloud Platform PubSub Service Built on top of the Google Cloud Pub/Sub libraries.
 
 | xref:google-sheets-component.adoc[Google Sheets] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
 
-| xref:google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
+| xref:google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) | 2.23 | The google-sheets-stream component provides access to Google Sheets.
 
 | xref:gora-component.adoc[Gora] (camel-gora) | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
@@ -337,6 +377,8 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 | xref:jooq-component.adoc[JOOQ] (camel-jooq) | 3.0 | The jooq component enables you to store and retrieve entities from databases using JOOQ
 
 | xref:jpa-component.adoc[JPA] (camel-jpa) | 1.0 | The jpa component enables you to store and retrieve Java objects from databases using JPA.
+
+| xref:jslt-component.adoc[JSLT] (camel-jslt) | 3.1 | The jslt component allows you to process a JSON messages using an JSLT transformations.
 
 | xref:json-validator-component.adoc[JSON Schema Validator] (camel-json-validator) | 2.20 | Validates the payload of a message using NetworkNT JSON Schema library.
 
@@ -602,13 +644,19 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:webhook-component.adoc[Webhook] (camel-webhook) | 3.0 | The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
 
+| xref:weka-component.adoc[Weka] (camel-weka) | 3.1 | The camel-weka component provides Data Mining functionality through Weka.
+
 | xref:wordpress-component.adoc[Wordpress] (camel-wordpress) | 2.21 | Integrates Camel with Wordpress.
+
+| xref:workday-component.adoc[Workday] (camel-workday) | 3.1 | Represents a Workday endpoint.
 
 | xref:xchange-component.adoc[XChange] (camel-xchange) | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
 | xref:xj-component.adoc[XJ] (camel-xj) | 3.0 | Transforms json/xml message back and forth using a XSLT.
 
-| xref:xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) | 2.12 | Used to sign and verify exchanges using the XML signature specification.
+| xref:xmlsecurity-sign-component.adoc[XML Security Sign] (camel-xmlsecurity) | 2.12 | Used to sign exchanges using the XML signature specification.
+
+| xref:xmlsecurity-verify-component.adoc[XML Security Verify] (camel-xmlsecurity) | 2.12 | Used to verify exchanges using the XML signature specification.
 
 | xref:xmpp-component.adoc[XMPP] (camel-xmpp) | 1.0 | To send and receive messages from a XMPP (chat) server.
 
@@ -720,7 +768,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 | xref:secureXML-dataformat.adoc[XML Security] (camel-xmlsecurity) | 2.0 | The XML Security data format facilitates encryption and decryption of XML payloads.
 
-| xref:xstream-dataformat.adoc[XStream] (camel-xstream) | 1.3 | XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+| xref:xstream-dataformat.adoc[XStream] (camel-xstream) | 1.3 | XStream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | xref:yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | YAML is a data format to marshal and unmarshal Java objects to and from YAML.
 
@@ -733,7 +781,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 == Expression Languages
 
 // languages: START
-Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
+Number of Languages: 16 in 10 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -741,15 +789,15 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 | xref:bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
-| xref:constant-language.adoc[Constant] (camel-base) | 1.5 | To use a constant value in Camel expressions or predicates.
+| xref:constant-language.adoc[Constant] (camel-core-languages) | 1.5 | To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.
 
-| xref:exchangeProperty-language.adoc[ExchangeProperty] (camel-base) | 2.0 | To use a Camel Exchange property in expressions or predicates.
+| xref:exchangeProperty-language.adoc[ExchangeProperty] (camel-core-languages) | 2.0 | To use a Camel Exchange property in expressions or predicates.
 
-| xref:file-language.adoc[File] (camel-base) | 1.1 | For expressions and predicates using the file/simple language.
+| xref:file-language.adoc[File] (camel-core-languages) | 1.1 | For expressions and predicates using the file/simple language.
 
 | xref:groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | To use Groovy scripts in Camel expressions or predicates.
 
-| xref:header-language.adoc[Header] (camel-base) | 1.5 | To use a Camel Message header in expressions or predicates.
+| xref:header-language.adoc[Header] (camel-core-languages) | 1.5 | To use a Camel Message header in expressions or predicates.
 
 | xref:hl7terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
 
@@ -759,15 +807,13 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 | xref:ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
 
-| xref:ref-language.adoc[Ref] (camel-base) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
+| xref:ref-language.adoc[Ref] (camel-core-languages) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
 
-| xref:simple-language.adoc[Simple] (camel-base) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+| xref:simple-language.adoc[Simple] (camel-core-languages) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
 
 | xref:spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
 
-| xref:tokenize-language.adoc[Tokenize] (camel-base) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
-
-| xref:xtokenize-language.adoc[XML Tokenize] (camel-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+| xref:tokenize-language.adoc[Tokenize] (camel-core-languages) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
 | xref:xpath-language.adoc[XPath] (camel-xpath) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
 

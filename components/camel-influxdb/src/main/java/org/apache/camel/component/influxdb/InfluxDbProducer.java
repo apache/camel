@@ -27,12 +27,16 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Pong;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer for the InfluxDB components
  *
  */
 public class InfluxDbProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfluxDbProducer.class);
 
     InfluxDbEndpoint endpoint;
     InfluxDB connection;
@@ -60,17 +64,17 @@ public class InfluxDbProducer extends DefaultProducer {
         String dataBaseName = calculateDatabaseName(exchange);
         String retentionPolicy = calculateRetentionPolicy(exchange);
         switch (endpoint.getOperation()) {
-        case InfluxDbOperations.INSERT:
-            doInsert(exchange, dataBaseName, retentionPolicy);
-            break;
-        case InfluxDbOperations.QUERY:
-            doQuery(exchange, dataBaseName, retentionPolicy);
-            break;
-        case InfluxDbOperations.PING:
-            doPing(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
+            case InfluxDbOperations.INSERT:
+                doInsert(exchange, dataBaseName, retentionPolicy);
+                break;
+            case InfluxDbOperations.QUERY:
+                doQuery(exchange, dataBaseName, retentionPolicy);
+                break;
+            case InfluxDbOperations.PING:
+                doPing(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
         }
     }
 
@@ -79,10 +83,10 @@ public class InfluxDbProducer extends DefaultProducer {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
 
             try {
-                log.debug("Writing point {}", p.lineProtocol());
-                
+                LOG.debug("Writing point {}", p.lineProtocol());
+
                 if (!connection.databaseExists(dataBaseName)) {
-                    log.debug("Database {} doesn't exist. Creating it...", dataBaseName);
+                    LOG.debug("Database {} doesn't exist. Creating it...", dataBaseName);
                     connection.createDatabase(dataBaseName);
                 }
                 connection.write(dataBaseName, retentionPolicy, p);
@@ -93,7 +97,7 @@ public class InfluxDbProducer extends DefaultProducer {
             BatchPoints batchPoints = exchange.getIn().getMandatoryBody(BatchPoints.class);
 
             try {
-                log.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
 
                 connection.write(batchPoints);
             } catch (Exception ex) {
@@ -109,7 +113,7 @@ public class InfluxDbProducer extends DefaultProducer {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resultSet);
     }
-    
+
     private void doPing(Exchange exchange) {
         Pong result = connection.ping();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
@@ -135,7 +139,7 @@ public class InfluxDbProducer extends DefaultProducer {
 
         return endpoint.getDatabaseName();
     }
-    
+
     private String calculateQuery(Exchange exchange) {
         String query = exchange.getIn().getHeader(InfluxDbConstants.INFLUXDB_QUERY, String.class);
 
@@ -144,7 +148,7 @@ public class InfluxDbProducer extends DefaultProducer {
         } else {
             query = endpoint.getQuery();
         }
-        
+
         if (ObjectHelper.isEmpty(query)) {
             throw new IllegalArgumentException("The query option must be set if you want to run a query operation");
         }

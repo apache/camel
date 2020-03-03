@@ -126,6 +126,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String allowUseOriginalMessage;
 
     @XmlAttribute
+    private String caseInsensitiveHeaders;
+
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
 
     @XmlAttribute
@@ -145,6 +148,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
+
+    @XmlAttribute
+    private Boolean inflightRepositoryBrowseEnabled;
 
     @XmlAttribute
     private TypeConverterExists typeConverterExists;
@@ -712,6 +718,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     }
 
     @Override
+    public String getCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    public void setCaseInsensitiveHeaders(String caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
     public String getRuntimeEndpointRegistryEnabled() {
         return runtimeEndpointRegistryEnabled;
     }
@@ -754,6 +769,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setTypeConverterStatisticsEnabled(Boolean typeConverterStatisticsEnabled) {
         this.typeConverterStatisticsEnabled = typeConverterStatisticsEnabled;
+    }
+
+    @Override
+    public Boolean getInflightRepositoryBrowseEnabled() {
+        return inflightRepositoryBrowseEnabled;
+    }
+
+    public void setInflightRepositoryBrowseEnabled(Boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     @Override

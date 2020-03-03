@@ -41,7 +41,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
         assertNotNull(out);
         assertTrue(out.hasOut());
-        assertEquals("application/xml", out.getOut().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("application/xml", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
         assertNotNull(out);
         assertTrue(out.hasOut());
-        assertEquals("application/xml", out.getOut().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("application/xml", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
         assertNotNull(out);
         assertTrue(out.hasOut());
-        assertNull(out.getOut().getHeader(Exchange.CONTENT_TYPE));
+        assertNull(out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
     @Override

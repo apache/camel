@@ -44,11 +44,9 @@ public class NettyHttpRedirectTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/test")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
-                                exchange.getOut().setHeader("location", "http://localhost:" + getPort() + "/newtest");
-                            }
+                        .process(exchange -> {
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
+                            exchange.getMessage().setHeader("location", "http://localhost:" + getPort() + "/newtest");
                         });
             }
         };

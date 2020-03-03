@@ -194,7 +194,7 @@ public class RouteIdFactory implements NodeIdFactory {
             uri = uri.substring(0, uri.indexOf('?'));
         }
 
-        return uri.replaceAll("/", String.valueOf(SEPARATOR));
+        return uri.replace('/', SEPARATOR);
     }
 
     /**

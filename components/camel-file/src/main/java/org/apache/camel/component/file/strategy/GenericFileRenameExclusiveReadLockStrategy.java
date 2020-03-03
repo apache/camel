@@ -31,9 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Acquires exclusive read lock to the given file. Will wait until the lock is granted.
- * After granting the read lock it is released, we just want to make sure that when we start
- * consuming the file its not currently in progress of being written by third party.
+ * Acquires exclusive read lock to the given file. Will wait until the lock is
+ * granted. After granting the read lock it is released, we just want to make
+ * sure that when we start consuming the file its not currently in progress of
+ * being written by third party.
  */
 public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFileExclusiveReadLockStrategy<T> {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileRenameExclusiveReadLockStrategy.class);
@@ -47,11 +48,11 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
-                                            Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file, Exchange exchange) throws Exception {
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
-        // the trick is to try to rename the file, if we can rename then we have exclusive read
+        // the trick is to try to rename the file, if we can rename then we have
+        // exclusive read
         // since its a Generic file we cannot use java.nio to get a RW lock
         String newName = file.getFileName() + ".camelExclusiveReadLock";
 
@@ -66,9 +67,9 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
-                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
-                    // we could not get the lock within the timeout period, so return false
+                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    // we could not get the lock within the timeout period, so
+                    // return false
                     return false;
                 }
             }
@@ -89,7 +90,8 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             } else {
                 boolean interrupted = sleep();
                 if (interrupted) {
-                    // we were interrupted while sleeping, we are likely being shutdown so return false
+                    // we were interrupted while sleeping, we are likely being
+                    // shutdown so return false
                     return false;
                 }
             }

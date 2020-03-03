@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "globalOption",
+    "title": "Global Option",
+    "description": "Models a string key\/value pair for configuring some global options on a Camel context such as max debug log length.",
+    "javaType": "org.apache.camel.model.GlobalOptionDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Global option key" },
+    "value": { "kind": "attribute", "displayName": "Value", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Global option value" }
+  }
+}

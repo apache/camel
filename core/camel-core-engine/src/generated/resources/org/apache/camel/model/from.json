@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "from",
+    "title": "From",
+    "description": "Act as a message source as input to a route",
+    "javaType": "org.apache.camel.model.FromDefinition",
+    "label": "eip,endpoint,routing",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the URI of the endpoint to use" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

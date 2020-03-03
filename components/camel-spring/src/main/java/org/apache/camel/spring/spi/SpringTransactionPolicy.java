@@ -121,7 +121,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
     protected TransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor, ErrorHandlerBuilder builder) {
         TransactionErrorHandler answer;
         try {
-            answer = (TransactionErrorHandler) ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, processor);
+            answer = (TransactionErrorHandler) ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

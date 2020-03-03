@@ -1,0 +1,32 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "tokenize",
+    "modelName": "tokenize",
+    "title": "Tokenize",
+    "description": "To use Camel message body or header with a tokenizer in Camel expressions or predicates.",
+    "deprecated": false,
+    "deprecationNote": "language,core",
+    "firstVersion": "2.0.0",
+    "label": "language,core",
+    "javaType": "org.apache.camel.language.tokenizer.TokenizeLanguage",
+    "modelJavaType": "org.apache.camel.model.language.TokenizerExpression",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-languages",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "token": { "kind": "attribute", "displayName": "Token", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as the token to support dynamic tokens." },
+    "endToken": { "kind": "attribute", "displayName": "End Token", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The end token to use as tokenizer if using start\/end token pairs. You can use simple language as the token to support dynamic tokens." },
+    "inheritNamespaceTagName": { "kind": "attribute", "displayName": "Inherit Namespace Tag Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To inherit namespaces from a root\/parent tag name when using XML You can use simple language as the tag name to support dynamic names." },
+    "headerName": { "kind": "attribute", "displayName": "Header Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of header to tokenize instead of using the message body." },
+    "regex": { "kind": "attribute", "displayName": "Regex", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the token is a regular expression pattern. The default value is false" },
+    "xml": { "kind": "attribute", "displayName": "Xml", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the input is XML messages. This option must be set to true if working with XML payloads." },
+    "includeTokens": { "kind": "attribute", "displayName": "Include Tokens", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to include the tokens in the parts when using pairs The default value is false" },
+    "group": { "kind": "attribute", "displayName": "Group", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To group N parts together, for example to split big files into chunks of 1000 lines. You can use simple language as the group to support dynamic group sizes." },
+    "groupDelimiter": { "kind": "attribute", "displayName": "Group Delimiter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the delimiter to use when grouping. If this has not been set then token will be used as the delimiter." },
+    "skipFirst": { "kind": "attribute", "displayName": "Skip First", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To skip the very first element" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

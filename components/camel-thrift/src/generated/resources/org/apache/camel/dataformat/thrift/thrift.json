@@ -1,0 +1,24 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "thrift",
+    "modelName": "thrift",
+    "title": "Thrift",
+    "description": "The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation",
+    "firstVersion": "2.20.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.dataformat.thrift.ThriftDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.ThriftDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-thrift",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "instanceClass": { "kind": "attribute", "displayName": "Instance Class", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of class to use when unmarshalling" },
+    "contentTypeFormat": { "kind": "attribute", "displayName": "Content Type Format", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "binary", "json", "sjson" ], "deprecated": false, "secret": false, "defaultValue": "binary", "description": "Defines a content type format in which thrift message will be serialized\/deserialized from(to) the Java been. The format can either be native or json for either native binary thrift, json or simple json fields representation. The default value is binary." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

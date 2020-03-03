@@ -25,11 +25,11 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.service.ServiceHelper;
 
 @ManagedResource(description = "Managed Processor")
@@ -133,6 +133,8 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     public String getRouteId() {
         if (route != null) {
             return route.getId();
+        } else if (processor instanceof RouteIdAware) {
+            return ((RouteIdAware) processor).getRouteId();
         }
         return null;
     }
@@ -160,6 +162,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     @Override
     public String dumpProcessorAsXml() throws Exception {
-        return ModelHelper.dumpModelAsXml(context, definition);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        return ecc.getModelToXMLDumper().dumpModelAsXml(context, definition);
     }
 }

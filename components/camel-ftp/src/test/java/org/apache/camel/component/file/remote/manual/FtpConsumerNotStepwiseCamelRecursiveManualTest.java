@@ -45,9 +45,7 @@ public class FtpConsumerNotStepwiseCamelRecursiveManualTest extends CamelTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true&stepwise=false")
-                    .to("file:target/ftptest")
-                    .to("mock:result");
+                from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true&stepwise=false").to("file:target/ftptest").to("mock:result");
             }
         };
     }

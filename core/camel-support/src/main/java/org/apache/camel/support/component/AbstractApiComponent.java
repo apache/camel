@@ -34,7 +34,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S extends ApiCollection<E, T>>
         extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Component configuration")
     protected T configuration;
 
     // API collection
@@ -63,17 +63,17 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         String apiNameStr;
         String methodName;
         switch (pathElements.length) {
-        case 1:
-            apiNameStr = "";
-            methodName = pathElements[0];
-            break;
-        case 2:
-            apiNameStr = pathElements[0];
-            methodName = pathElements[1];
-            break;
-        default:
-            throw new CamelException("Invalid URI path [" + remaining
-                + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
+            case 1:
+                apiNameStr = "";
+                methodName = pathElements[0];
+                break;
+            case 2:
+                apiNameStr = pathElements[0];
+                methodName = pathElements[1];
+                break;
+            default:
+                throw new CamelException("Invalid URI path [" + remaining
+                        + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
         }
 
         try {
@@ -83,17 +83,14 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
             final T endpointConfiguration = createEndpointConfiguration(apiName);
             final Endpoint endpoint = createEndpoint(uri, methodName, apiName, endpointConfiguration);
 
-            // set endpoint property inBody
-            setProperties(endpoint, parameters);
-
             // configure endpoint properties and initialize state
-            endpoint.configureProperties(parameters);
+            setProperties(endpoint, parameters);
 
             return endpoint;
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof IllegalArgumentException) {
                 throw new CamelException("Invalid URI path prefix [" + remaining
-                    + "], must be one of " + collection.getApiNames());
+                        + "], must be one of " + collection.getApiNames());
             }
             throw e;
         }

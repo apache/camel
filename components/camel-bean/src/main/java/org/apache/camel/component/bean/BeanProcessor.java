@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -76,16 +77,16 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return delegate.getMethod();
     }
 
-    public Boolean getCache() {
-        return delegate.getCache();
-    }
-
-    public void setCache(Boolean cache) {
-        delegate.setCache(cache);
-    }
-
     public void setMethod(String method) {
         delegate.setMethod(method);
+    }
+
+    public BeanScope getScope() {
+        return delegate.getScope();
+    }
+
+    public void setScope(BeanScope scope) {
+        delegate.setScope(scope);
     }
 
     public boolean isShorthandMethod() {

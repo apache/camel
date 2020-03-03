@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "toD",
+    "title": "To D",
+    "description": "Sends the message to a dynamic endpoint You can specify multiple languages in the uri separated by the plus sign, such as mock:language:xpath:\/order\/uri where mock: would be a prefix to a xpath expression. For more dynamic behavior use Recipient List or Dynamic Router EIP instead.",
+    "javaType": "org.apache.camel.model.ToDynamicDefinition",
+    "label": "eip,endpoint,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression." },
+    "pattern": { "kind": "attribute", "displayName": "Pattern", "required": false, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOptionalOut", "InOut" ], "deprecated": false, "secret": false, "description": "Sets the optional ExchangePattern used to invoke this endpoint" },
+    "cacheSize": { "kind": "attribute", "displayName": "Cache Size", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this recipient list, when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise producers\/endpoints are stored in memory in the caches. However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non frequent used producers." },
+    "ignoreInvalidEndpoint": { "kind": "attribute", "displayName": "Ignore Invalid Endpoint", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint" },
+    "allowOptimisedComponents": { "kind": "attribute", "displayName": "Allow Optimised Components", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware ." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

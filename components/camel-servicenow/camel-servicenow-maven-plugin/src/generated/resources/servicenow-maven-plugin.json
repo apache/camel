@@ -1,0 +1,12 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "servicenow-maven-plugin",
+    "title": "Servicenow Maven Plugin",
+    "description": "Camel ServiceNow Maven plugin",
+    "deprecated": false,
+    "groupId": "org.apache.camel.maven",
+    "artifactId": "camel-servicenow-maven-plugin",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

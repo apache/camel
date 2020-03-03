@@ -95,26 +95,26 @@ public class JavaSocketTests {
                                 readByte = reader.read();
                                 log.trace("Processing byte: {}", readByte);
                                 switch (readByte) {
-                                case -1:
-                                    if (echoSocket.isConnected() && !echoSocket.isClosed()) {
-                                        log.info("Available returned {}", reader.available());
-                                        log.warn("Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
-                                        try {
-                                            echoSocket.close();
-                                        } catch (Exception ex) {
-                                            log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
+                                    case -1:
+                                        if (echoSocket.isConnected() && !echoSocket.isClosed()) {
+                                            log.info("Available returned {}", reader.available());
+                                            log.warn("Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
+                                            try {
+                                                echoSocket.close();
+                                            } catch (Exception ex) {
+                                                log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
+                                            }
                                         }
-                                    }
-                                    break;
-                                case 10:
-                                    log.info("Complete Message - Sending Response");
-                                    byte[] response = responseBuilder.toString().getBytes();
-                                    responseBuilder.setLength(0);
-                                    writer.write(response, 0, response.length);
-                                    writer.write('\n');
-                                    break;
-                                default:
-                                    responseBuilder.append((char) readByte);
+                                        break;
+                                    case 10:
+                                        log.info("Complete Message - Sending Response");
+                                        byte[] response = responseBuilder.toString().getBytes();
+                                        responseBuilder.setLength(0);
+                                        writer.write(response, 0, response.length);
+                                        writer.write('\n');
+                                        break;
+                                    default:
+                                        responseBuilder.append((char) readByte);
                                 }
                             } catch (SocketTimeoutException timeoutEx) {
                                 log.info("Timeout reading data - available returned {}", available);
@@ -200,30 +200,30 @@ public class JavaSocketTests {
                                 readByte = reader.read();
                                 log.trace("Processing byte: {}", readByte);
                                 switch (readByte) {
-                                case -1:
-                                    if (echoSocket.isConnected() && !echoSocket.isClosed()) {
-                                        log.info("Available returned {}", reader.available());
-                                        log.warn("Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
-                                        try {
-                                            echoSocket.close();
-                                        } catch (Exception ex) {
-                                            log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
+                                    case -1:
+                                        if (echoSocket.isConnected() && !echoSocket.isClosed()) {
+                                            log.info("Available returned {}", reader.available());
+                                            log.warn("Socket claims to still be open, but END_OF_STREAM received - closing echoSocket");
+                                            try {
+                                                echoSocket.close();
+                                            } catch (Exception ex) {
+                                                log.warn("Exception encountered closing echoSocket after END_OF_STREAM received", ex);
+                                            }
                                         }
-                                    }
-                                    break;
-                                case 27: // Escape
-                                    log.info("Received Escape - closing connection");
-                                    echoSocket.close();
-                                    break;
-                                case 10:
-                                    log.info("Complete Message - Sending Response");
-                                    byte[] response = responseBuilder.toString().getBytes();
-                                    responseBuilder.setLength(0);
-                                    writer.write(response, 0, response.length);
-                                    writer.write('\n');
-                                    break;
-                                default:
-                                    responseBuilder.append((char) readByte);
+                                        break;
+                                    case 27: // Escape
+                                        log.info("Received Escape - closing connection");
+                                        echoSocket.close();
+                                        break;
+                                    case 10:
+                                        log.info("Complete Message - Sending Response");
+                                        byte[] response = responseBuilder.toString().getBytes();
+                                        responseBuilder.setLength(0);
+                                        writer.write(response, 0, response.length);
+                                        writer.write('\n');
+                                        break;
+                                    default:
+                                        responseBuilder.append((char) readByte);
                                 }
                             } catch (SocketTimeoutException timeoutEx) {
                                 log.info("Timeout reading data - available returned {}", available);

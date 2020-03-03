@@ -38,6 +38,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToSearchMethod;
@@ -53,6 +56,8 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     private FacebookNameStyle nameStyle;
 
@@ -158,10 +163,10 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         }
 
         // log missing/extra properties for debugging
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             final Set<String> missing = getMissingProperties(method, nameStyle, arguments);
             if (!missing.isEmpty()) {
-                log.debug("Method {} could use one or more properties from {}", method, missing);
+                LOG.debug("Method {} could use one or more properties from {}", method, missing);
             }
         }
     }

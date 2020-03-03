@@ -52,8 +52,6 @@ public class ClientComponent extends AbstractIecComponent<ClientConnectionMultip
 
     @Override
     protected ClientConnectionMultiplexor createConnection(final ConnectionId id, final ClientOptions options) {
-        log.debug("Create new connection - id: {}", id);
-
         return new ClientConnectionMultiplexor(new ClientConnection(id.getHost(), id.getPort(), options));
     }
 

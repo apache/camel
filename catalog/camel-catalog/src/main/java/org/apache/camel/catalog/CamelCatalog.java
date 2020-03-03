@@ -21,12 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.MXBean;
-
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
  */
-@MXBean
 public interface CamelCatalog {
 
     /**

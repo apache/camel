@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.AuthenticationValidationHandler;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.HttpRequestInterceptor;
@@ -37,6 +36,8 @@ import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpsAuthenticationTest extends BaseHttpsTest {
 
@@ -59,7 +60,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/", new AuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password)).create();
+                registerHandler("/", new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), user, password)).create();
         localServer.start();
 
         super.setUp();
@@ -79,9 +80,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     public void httpsGetWithAuthentication() throws Exception {
 
         Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
-            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
+            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters", exchange1 -> {
             });
 
         assertExchange(exchange);
@@ -94,8 +93,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseBasicUnauthorized());
-        ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
 
-        return httpproc;
+        return new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
     }
 }

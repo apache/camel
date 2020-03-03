@@ -56,7 +56,7 @@ public class TransactedInterceptUsingAdviceWithSendToEndpointTest extends Transa
     }
     
     private void addInterceptor(String routeId) throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition(routeId), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:(foo|bar)")

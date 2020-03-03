@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -39,6 +40,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
+import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceRegistry;
@@ -51,6 +53,8 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
+import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
@@ -76,13 +80,16 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.runtimecatalog.JSonSchemaResolver;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.reifier.transformer.TransformerReifier;
+import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
@@ -111,9 +118,11 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -250,12 +259,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         HeadersMapFactory headersMapFactory = getBeanForType(HeadersMapFactory.class);
         if (headersMapFactory != null) {
             LOG.info("Using custom HeadersMapFactory: {}", headersMapFactory);
-            getContext().setHeadersMapFactory(headersMapFactory);
-        }
-        JSonSchemaResolver jsonSchemaResolver = getBeanForType(JSonSchemaResolver.class);
-        if (jsonSchemaResolver != null) {
-            LOG.info("Using custom JSonSchemaResolver: {}", jsonSchemaResolver);
-            getContext().getExtension(RuntimeCamelCatalog.class).setJSonSchemaResolver(jsonSchemaResolver);
+            getContext().adapt(ExtendedCamelContext.class).setHeadersMapFactory(headersMapFactory);
         }
         // custom type converters defined as <bean>s
         Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);
@@ -427,6 +431,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // must init rest refs before we add the rests
             initRestRefs();
 
+            initTransformers();
+            initValidators();
+
             // cannot add rests as routes yet as we need to initialize this specially
             getContext().addRestDefinitions(getRests(), false);
 
@@ -472,6 +479,34 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // and we are now finished setting up the routes
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(true);
         }
+    }
+
+    private void initTransformers() {
+        if (getTransformers() != null) {
+            for (TransformerDefinition def : getTransformers().getTransformers()) {
+                // create and register transformers on transformer registry
+                Transformer transformer = TransformerReifier.reifier(getContext(), def).createTransformer();
+                getContext().getTransformerRegistry().put(createTransformerKey(def), transformer);
+            }
+        }
+    }
+
+    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
+        return org.apache.camel.util.ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+    }
+
+    private void initValidators() {
+        if (getValidators() != null) {
+            for (ValidatorDefinition def : getValidators().getValidators()) {
+                // create and register validators on validator registry
+                Validator validator = ValidatorReifier.reifier(getContext(), def).createValidator();
+                getContext().getValidatorRegistry().put(createValidatorKey(def), validator);
+            }
+        }
+    }
+
+    private static ValidatorKey createValidatorKey(ValidatorDefinition def) {
+        return new ValidatorKey(new DataType(def.getType()));
     }
 
     /**
@@ -775,6 +810,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getAllowUseOriginalMessage();
 
+    public abstract String getCaseInsensitiveHeaders();
+
     public abstract String getRuntimeEndpointRegistryEnabled();
 
     public abstract String getManagementNamePattern();
@@ -782,6 +819,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract String getThreadNamePattern();
 
     public abstract Boolean getLoadTypeConverters();
+
+    public abstract Boolean getInflightRepositoryBrowseEnabled();
 
     public abstract Boolean getTypeConverterStatisticsEnabled();
 
@@ -893,6 +932,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getAllowUseOriginalMessage() != null) {
             context.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(context, getAllowUseOriginalMessage()));
         }
+        if (getCaseInsensitiveHeaders() != null) {
+            context.setCaseInsensitiveHeaders(CamelContextHelper.parseBoolean(context, getCaseInsensitiveHeaders()));
+        }
         if (getRuntimeEndpointRegistryEnabled() != null) {
             context.getRuntimeEndpointRegistry().setEnabled(CamelContextHelper.parseBoolean(context, getRuntimeEndpointRegistryEnabled()));
         }
@@ -919,6 +961,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getTypeConverterStatisticsEnabled() != null) {
             context.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
+        }
+        if (getInflightRepositoryBrowseEnabled() != null) {
+            context.getInflightRepository().setInflightBrowseEnabled(getInflightRepositoryBrowseEnabled());
         }
         if (getTypeConverterExists() != null) {
             context.getTypeConverterRegistry().setTypeConverterExists(getTypeConverterExists());
@@ -977,7 +1022,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // use custom profiles defined in the CamelContext
         if (getThreadPoolProfiles() != null && !getThreadPoolProfiles().isEmpty()) {
             for (ThreadPoolProfileDefinition definition : getThreadPoolProfiles()) {
-                if (definition.isDefaultProfile()) {
+                Boolean defaultProfile = CamelContextHelper.parseBoolean(getContext(), definition.getDefaultProfile());
+                if (defaultProfile != null && defaultProfile) {
                     LOG.info("Using custom default ThreadPoolProfile with id: {} and implementation: {}", definition.getId(), definition);
                     context.getExecutorServiceManager().setDefaultThreadPoolProfile(asThreadPoolProfile(context, definition));
                     defaultIds.add(definition.getId());
@@ -1003,14 +1049,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition) throws Exception {
         ThreadPoolProfile answer = new ThreadPoolProfile();
         answer.setId(definition.getId());
-        answer.setDefaultProfile(definition.getDefaultProfile());
+        answer.setDefaultProfile(CamelContextHelper.parseBoolean(context, definition.getDefaultProfile()));
         answer.setPoolSize(CamelContextHelper.parseInteger(context, definition.getPoolSize()));
         answer.setMaxPoolSize(CamelContextHelper.parseInteger(context, definition.getMaxPoolSize()));
         answer.setKeepAliveTime(CamelContextHelper.parseLong(context, definition.getKeepAliveTime()));
         answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, definition.getMaxQueueSize()));
         answer.setAllowCoreThreadTimeOut(CamelContextHelper.parseBoolean(context, definition.getAllowCoreThreadTimeOut()));
         answer.setRejectedPolicy(CamelContextHelper.parse(context, ThreadPoolRejectedPolicy.class, definition.getRejectedPolicy()));
-        answer.setTimeUnit(definition.getTimeUnit());
+        answer.setTimeUnit(CamelContextHelper.parse(context, TimeUnit.class, definition.getTimeUnit()));
         return answer;
     }
 
@@ -1185,7 +1231,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ReactiveExecutor reactiveExecutor = getBeanForType(ReactiveExecutor.class);
         if (reactiveExecutor != null) {
             // already logged in CamelContext
-            getContext().setReactiveExecutor(reactiveExecutor);
+            getContext().adapt(ExtendedCamelContext.class).setReactiveExecutor(reactiveExecutor);
         }
     }
 }

@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "packageScan",
+    "title": "Package Scan",
+    "description": "Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages",
+    "javaType": "org.apache.camel.model.PackageScanDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "package": { "kind": "element", "displayName": "Package", "required": true, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "Sets the java package names to use for scanning for route builder classes" },
+    "excludes": { "kind": "element", "displayName": "Excludes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "Exclude finding route builder from these java package names." },
+    "includes": { "kind": "element", "displayName": "Includes", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "Include finding route builder from these java package names." }
+  }
+}

@@ -20,10 +20,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.junit.Assert;
@@ -36,7 +36,6 @@ import org.ops4j.pax.exam.junit.PaxExam;
 /**
  * CAMEL-10817: dumpModelAsXml can return invalid XML namespace xmlns:xmlns
  */
-
 @RunWith(PaxExam.class)
 public class DuplicateNamespacePrefixIssueTest extends AbstractFeatureTest {
 
@@ -58,14 +57,15 @@ public class DuplicateNamespacePrefixIssueTest extends AbstractFeatureTest {
         });
 
         // Dump the model XML
-        String originalModelXML = ModelHelper.dumpModelAsXml(context, context.getExtension(Model.class).getRouteDefinition("foo"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String originalModelXML = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getExtension(Model.class).getRouteDefinition("foo"));
 
         // Reload routes from dumped XML
         InputStream stream = new ByteArrayInputStream(originalModelXML.getBytes("UTF-8"));
-        RoutesDefinition routesDefinition = ModelHelper.loadRoutesDefinition(context, stream);
+        RoutesDefinition routesDefinition = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, stream);
 
         // Verify namespaces are as we expect
-        String modifiedModelXML = ModelHelper.dumpModelAsXml(context, routesDefinition);
+        String modifiedModelXML = ecc.getModelToXMLDumper().dumpModelAsXml(context, routesDefinition);
         String modifiedRoutesElementXML = modifiedModelXML.split("\n")[1];
         String expectedRoutesElementXML = "<routes xmlns=\"http://camel.apache.org/schema/spring\">";
         Assert.assertEquals(expectedRoutesElementXML, modifiedRoutesElementXML);

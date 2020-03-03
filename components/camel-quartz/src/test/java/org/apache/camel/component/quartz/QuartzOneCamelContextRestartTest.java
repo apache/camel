@@ -51,14 +51,14 @@ public class QuartzOneCamelContextRestartTest {
         mock1.expectedMinimumMessageCount(2);
         mock1.assertIsSatisfied();
 
+        // restart
         camel1.stop();
+        camel1.start();
 
         // fetch mock endpoint again because we have stopped camel context
         mock1 = camel1.getEndpoint("mock:one", MockEndpoint.class);
         // should resume triggers when we start camel 1 again
         mock1.expectedMinimumMessageCount(3);
-        camel1.start();
-
         mock1.assertIsSatisfied();
     }
 

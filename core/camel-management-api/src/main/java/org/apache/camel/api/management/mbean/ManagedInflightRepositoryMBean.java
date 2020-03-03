@@ -26,6 +26,9 @@ public interface ManagedInflightRepositoryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Current size of inflight exchanges.")
     int getSize();
 
+    @ManagedAttribute(description = "Whether browsing inflight exchanges is enabled. This is required to be enabled for the browse operations to function.")
+    boolean isInflightBrowseEnabled();
+
     @ManagedOperation(description = "Current size of inflight exchanges which are from the given route.")
     int size(String routeId);
 

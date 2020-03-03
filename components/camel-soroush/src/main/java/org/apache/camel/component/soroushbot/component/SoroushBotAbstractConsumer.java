@@ -32,6 +32,9 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
 
@@ -41,6 +44,9 @@ import static org.apache.camel.component.soroushbot.utils.StringUtils.ordinal;
  * each subclass should handle how it will start the processing of the exchange
  */
 public abstract class SoroushBotAbstractConsumer extends DefaultConsumer implements org.apache.camel.spi.ShutdownPrepared {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SoroushBotAbstractConsumer.class);
+
     SoroushBotEndpoint endpoint;
     /**
      * {@link ObjectMapper} for parse message JSON
@@ -96,12 +102,12 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                 }
                 if (!shutdown) {
                     if (connectionRetry == 0) {
-                        if (log.isInfoEnabled()) {
-                            log.info("connecting to getMessage from soroush");
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("connecting to getMessage from soroush");
                         }
                     } else {
-                        if (log.isInfoEnabled()) {
-                            log.info("connection is closed. retrying for the " + ordinal(connectionRetry) + " time(s)... ");
+                        if (LOG.isInfoEnabled()) {
+                            LOG.info("connection is closed. retrying for the " + ordinal(connectionRetry) + " time(s)... ");
                         }
                     }
                 }
@@ -111,15 +117,15 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
             @Override
             public void onOpen(EventSource eventSource, Response response) {
                 super.onOpen(eventSource, response);
-                log.info("connection established");
+                LOG.info("connection established");
             }
 
             @Override
             protected boolean handleClose(EventSource eventSource, boolean manuallyClosed) {
                 if (!manuallyClosed) {
-                    log.warn("connection got closed");
+                    LOG.warn("connection got closed");
                 } else {
-                    log.debug("manually reconnecting to ensure we have live connection");
+                    LOG.debug("manually reconnecting to ensure we have live connection");
                 }
                 return true;
             }
@@ -127,9 +133,9 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
             @Override
             protected boolean handleFailure(EventSource eventSource, boolean manuallyClosed, Throwable t, Response response) {
                 if (!manuallyClosed) {
-                    log.error("connection failed due to following error", t);
+                    LOG.error("connection failed due to following error", t);
                 } else {
-                    log.debug("manually reconnecting to ensure we have live connection");
+                    LOG.debug("manually reconnecting to ensure we have live connection");
                 }
                 return true;
             }
@@ -142,8 +148,8 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                     SoroushMessage soroushMessage = objectMapper.readValue(data, SoroushMessage.class);
                     try {
                         exchange.getIn().setBody(soroushMessage);
-                        if (log.isDebugEnabled()) {
-                            log.debug("event data is: " + data);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("event data is: " + data);
                         }
                         // if autoDownload is true, download the resource if provided in the message
                         if (endpoint.isAutoDownload()) {
@@ -155,13 +161,13 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                         handleExceptionThrownWhileCreatingOrProcessingExchange(exchange, soroushMessage, ex);
                     }
                 } catch (IOException ex) {
-                    log.error("can not parse data due to following error", ex);
+                    LOG.error("can not parse data due to following error", ex);
                 }
             }
 
             @Override
             public void onFinishProcess() {
-                log.info("max connection retry reached! we are closing the endpoint!");
+                LOG.info("max connection retry reached! we are closing the endpoint!");
             }
         };
         connection.connect();

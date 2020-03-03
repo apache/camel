@@ -19,19 +19,21 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Stops continue processing the route and marks it as complete.
  */
-public class StopProcessor extends AsyncProcessorSupport implements IdAware {
+public class StopProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // mark the exchange to stop continue routing
-        exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+        exchange.setRouteStop(true);
 
         callback.done(true);
         return true;
@@ -39,7 +41,7 @@ public class StopProcessor extends AsyncProcessorSupport implements IdAware {
 
     @Override
     public String toString() {
-        return "Stop";
+        return id;
     }
 
     @Override
@@ -50,6 +52,16 @@ public class StopProcessor extends AsyncProcessorSupport implements IdAware {
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

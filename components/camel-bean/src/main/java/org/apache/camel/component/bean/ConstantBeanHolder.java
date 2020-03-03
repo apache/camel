@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -51,7 +52,7 @@ public class ConstantBeanHolder implements BeanHolder {
     }
 
     @Override
-    public Object getBean()  {
+    public Object getBean(Exchange exchange)  {
         return bean;
     }
 

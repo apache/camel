@@ -114,9 +114,9 @@ public class MulticastDisruptorComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("disruptor:test?multipleConsumers=true").to("mock:result1")
-                        .setShutdownRoute(ShutdownRoute.Defer);
+                        .shutdownRoute(ShutdownRoute.Defer);
                 from("disruptor:test?multipleConsumers=true").to("mock:result2")
-                        .setShutdownRoute(ShutdownRoute.Defer);
+                        .shutdownRoute(ShutdownRoute.Defer);
 //                from("disruptor:testAsynchronous").process(threadCounter).to("mock:result");
 //                from("disruptor:testMultipleConsumers?concurrentConsumers=4").process(threadCounter).to("mock:result");
             }

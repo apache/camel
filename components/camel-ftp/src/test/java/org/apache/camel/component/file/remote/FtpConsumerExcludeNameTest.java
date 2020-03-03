@@ -27,8 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/excludename?password=admin"
-                + "&exclude=secret.*|.*xml";
+        return "ftp://admin@localhost:" + getPort() + "/excludename?password=admin" + "&exclude=secret.*|.*xml";
     }
 
     @Override
@@ -47,8 +46,9 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool and store as a local file        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool and store as a local file
         sendFile(getFtpUrl(), "Hello World", "hello.xml");
         sendFile(getFtpUrl(), "Reports", "report1.txt");
         sendFile(getFtpUrl(), "Bye World", "secret.txt");

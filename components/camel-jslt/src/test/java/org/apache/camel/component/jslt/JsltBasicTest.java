@@ -1,0 +1,111 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.jslt;
+
+import java.util.Collections;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
+import org.junit.Test;
+
+/**
+ * Unit test based on the JSLT demo playground default values.
+ */
+public class JsltBasicTest extends CamelTestSupport {
+
+    @Test
+    public void testJsltAsInputStream() throws Exception {
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            IOHelper.loadText(
+                ResourceHelper.resolveMandatoryResourceAsInputStream(
+                    context, "org/apache/camel/component/jslt/demoPlayground/output.json")
+            ).trim() // Remove the last newline added by IOHelper.loadText()
+        );
+
+        sendBody("direct://start",
+                ResourceHelper.resolveMandatoryResourceAsInputStream(
+                        context, "org/apache/camel/component/jslt/demoPlayground/input.json"));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testInvalidBody() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        //type integer is not allowed
+        sendBody("direct://start", 4);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testJsltAsText() throws Exception {
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            IOHelper.loadText(
+                ResourceHelper.resolveMandatoryResourceAsInputStream(
+                    context, "org/apache/camel/component/jslt/demoPlayground/output.json")
+            ).trim() // Remove the last newline added by IOHelper.loadText()
+        );
+
+        sendBody("direct://start",
+                IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                        context, "org/apache/camel/component/jslt/demoPlayground/input.json")));
+
+        assertMockEndpointsSatisfied();
+    }
+
+
+    @Test
+    public void testJsltAsInputStreamPrettyPrint() throws Exception {
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+                IOHelper.loadText(
+                        ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                context, "org/apache/camel/component/jslt/demoPlayground/outputPrettyPrint.json")
+                ).trim() // Remove the last newline added by IOHelper.loadText()
+        );
+
+        sendBody("direct://startPrettyPrint",
+                ResourceHelper.resolveMandatoryResourceAsInputStream(
+                        context, "org/apache/camel/component/jslt/demoPlayground/input.json"),
+                Collections.singletonMap(JsltConstants.HEADER_JSLT_RESOURCE_URI, "org/apache/camel/component/jslt/demoPlayground/transformation.json"));
+
+        assertMockEndpointsSatisfied();
+    }
+
+
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct://start")
+                    .to("jslt:org/apache/camel/component/jslt/demoPlayground/transformation.json")
+                    .to("mock:result");
+
+                from("direct://startPrettyPrint")
+                    .to("jslt:dummy?prettyPrint=true")
+                    .to("mock:result");
+            }
+        };
+    }
+}

@@ -20,13 +20,15 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor which removes one ore more headers from the IN or OUT message
  */
-public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
+public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
     private String id;
+    private String routeId;
     private final String pattern;
     private final String[] excludePattern;
 
@@ -49,7 +51,7 @@ public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Tra
 
     @Override
     public String toString() {
-        return "RemoveHeaders(" + pattern + ")";
+        return id;
     }
 
     @Override
@@ -65,6 +67,16 @@ public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Tra
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public String getPattern() {

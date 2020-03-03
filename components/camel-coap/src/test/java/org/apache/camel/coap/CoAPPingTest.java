@@ -26,7 +26,7 @@ public class CoAPPingTest extends CoAPTestSupport {
 
     @Produce("direct:start")
     protected ProducerTemplate sender;
-    
+
     @Test
     public void testCoAP() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -40,15 +40,10 @@ public class CoAPPingTest extends CoAPTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception { 
-                fromF("coap://localhost:%d/TestResource", PORT)
-                    .to("log:exch")
-                    .transform(body().convertTo(Boolean.class))
-                    .to("log:exch");
-                
-                from("direct:start")
-                    .toF("coap://localhost:%d/TestResource", PORT)
-                    .to("mock:result");
+            public void configure() throws Exception {
+                fromF("coap://localhost:%d/TestResource", PORT).to("log:exch").transform(body().convertTo(Boolean.class)).to("log:exch");
+
+                from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
             }
         };
     }

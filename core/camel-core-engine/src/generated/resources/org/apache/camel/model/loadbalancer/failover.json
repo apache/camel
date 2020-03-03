@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "failover",
+    "title": "Failover",
+    "description": "Failover load balancer The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing. You can constrain the failover to activate only when one exception of a list you specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same strategy for matching exceptions as the Exception Clause does for the onException.",
+    "javaType": "org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition",
+    "label": "eip,routing,loadbalance",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "exception": { "kind": "element", "displayName": "Exception", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "A list of class names for specific exceptions to monitor. If no exceptions is configured then all exceptions is monitored" },
+    "roundRobin": { "kind": "attribute", "displayName": "Round Robin", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether or not the failover load balancer should operate in round robin mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting)." },
+    "sticky": { "kind": "attribute", "displayName": "Sticky", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether or not the failover load balancer should operate in sticky mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If sticky is enabled, then it keeps state and will continue with the last known good endpoint. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting)." },
+    "maximumFailoverAttempts": { "kind": "attribute", "displayName": "Maximum Failover Attempts", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "-1", "description": "A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. his option can be used whether or not roundRobin is enabled or not." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

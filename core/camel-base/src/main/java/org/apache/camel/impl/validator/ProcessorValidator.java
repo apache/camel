@@ -18,12 +18,14 @@ package org.apache.camel.impl.validator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -56,15 +58,18 @@ public class ProcessorValidator extends Validator {
         
         LOG.debug("Sending to validate processor '{}'", processor);
         // create a new exchange to use during validation to avoid side-effects on original exchange
-        DefaultExchange validateExchange = new DefaultExchange(exchange);
+        Exchange validateExchange = new DefaultExchange(exchange);
         validateExchange.setIn(message);
-        validateExchange.setProperties(exchange.getProperties());
+        validateExchange.adapt(ExtendedExchange.class).setProperties(exchange.getProperties());
         try {
             processor.process(validateExchange);
 
             // if the validation failed then propagate the exception
             if (validateExchange.getException() != null) {
                 exchange.setException(validateExchange.getException());
+            } else {
+                // success copy result
+                ExchangeHelper.copyResults(exchange, validateExchange);
             }
 
         } catch (Exception e) {

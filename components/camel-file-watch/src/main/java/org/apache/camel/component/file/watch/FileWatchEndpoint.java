@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * The file-watch is used to monitor file events in directory using {@link java.nio.file.WatchService}
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "file-watch", syntax = "file-watch:path",
+@UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "File Watch", syntax = "file-watch:path",
 label = "file", consumerOnly = true)
 public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath(label = "consumer", description = "Path of directory to consume events from.")

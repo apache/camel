@@ -35,5 +35,13 @@ public enum JiraType {
     // transition a status and resolution of an issue
     TRANSITIONISSUE,
     // add/remove watchers of an issue
-    WATCHERS
+    WATCHERS,
+    // link an issue to another
+    ADDISSUELINK,
+    // add a new work log entry
+    ADDWORKLOG,
+    // fetch an issue details
+    FETCHISSUE,
+    // fetch an issue comments
+    FETCHCOMMENTS,
 }

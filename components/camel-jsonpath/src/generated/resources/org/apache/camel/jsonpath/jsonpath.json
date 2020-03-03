@@ -1,0 +1,29 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "jsonpath",
+    "modelName": "jsonpath",
+    "title": "JsonPath",
+    "description": "To use JsonPath in Camel expressions or predicates.",
+    "deprecated": false,
+    "deprecationNote": "language,json",
+    "firstVersion": "2.13.0",
+    "label": "language,json",
+    "javaType": "org.apache.camel.jsonpath.JsonPathLanguage",
+    "modelJavaType": "org.apache.camel.model.language.JsonPathExpression",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jsonpath",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "resultType": { "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the class name of the result type (type from output)" },
+    "suppressExceptions": { "kind": "attribute", "displayName": "Suppress Exceptions", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to suppress exceptions such as PathNotFoundException." },
+    "allowSimple": { "kind": "attribute", "displayName": "Allow Simple", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to allow in inlined simple exceptions in the JsonPath expression" },
+    "allowEasyPredicate": { "kind": "attribute", "displayName": "Allow Easy Predicate", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to allow using the easy predicate parser to pre-parse predicates." },
+    "writeAsString": { "kind": "attribute", "displayName": "Write As String", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to write the output of each row\/element as a JSON String value instead of a Map\/POJO value." },
+    "headerName": { "kind": "attribute", "displayName": "Header Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of header to use as input, instead of the message body" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

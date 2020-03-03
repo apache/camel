@@ -114,18 +114,15 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
         StringHelper.notEmpty(pattern, "pattern");
         StringHelper.notEmpty(name, "name");
 
-        // must quote the names to have it work as literal replacement
-        name = Matcher.quoteReplacement(name);
-
         // replace tokens
         String answer = pattern;
         if (pattern.contains("#counter#")) {
             // only increment the counter on-demand
-            answer = pattern.replaceFirst("#counter#", "" + nextNameCounter());
+            answer = StringHelper.replaceAll(pattern, "#counter#", "" + nextNameCounter());
         }
         // camelId and name is the same tokens
-        answer = answer.replaceFirst("#camelId#", name);
-        answer = answer.replaceFirst("#name#", name);
+        answer = StringHelper.replaceAll(answer, "#camelId#", name);
+        answer = StringHelper.replaceAll(answer, "#name#", name);
 
         // allow custom name resolution as well. For example with camel-core-osgi we have a custom
         // name strategy that supports OSGI specific tokens such as #bundleId# etc.

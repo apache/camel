@@ -53,7 +53,7 @@ public class HeadersMapFactoryResolver {
             }
             if (HeadersMapFactory.class.isAssignableFrom(type)) {
                 HeadersMapFactory answer = (HeadersMapFactory) context.getInjector().newInstance(type, false);
-                LOG.info("Detected and using custom HeadersMapFactory: {}", answer);
+                LOG.info("Detected and using HeadersMapFactory: {}", answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a HeadersMapFactory implementation. Found: " + type.getName());

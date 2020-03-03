@@ -111,7 +111,7 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setClassType(Record.class);
             bindy.setLocale("en");
-            bindy.setType(BindyType.Fixed);
+            bindy.type(BindyType.Fixed);
 
             from(URI_DIRECT_MARSHALL)
                 .marshal(bindy)

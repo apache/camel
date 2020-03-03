@@ -304,6 +304,12 @@ public class URISupportTest {
     }
 
     @Test
+    public void testSanitizeSaslJaasConfig() throws Exception {
+        String out1 = URISupport.sanitizeUri("kafka://MY-TOPIC-NAME?saslJaasConfig=org.apache.kafka.common.security.plain.PlainLoginModule required username=scott password=tiger");
+        assertEquals("kafka://MY-TOPIC-NAME?saslJaasConfig=xxxxxx", out1);
+    }
+
+    @Test
     public void testNormalizeEndpointUriWithUserInfoSpecialSign() throws Exception {
         String out1 = URISupport.normalizeUri("ftp://us%40r:t%st@localhost:21000/tmp3/camel?foo=us@r");
         assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out1);

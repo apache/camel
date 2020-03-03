@@ -1,0 +1,24 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "tidyMarkup",
+    "modelName": "tidyMarkup",
+    "title": "TidyMarkup",
+    "description": "TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation",
+    "firstVersion": "2.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.dataformat.tagsoup.TidyMarkupDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.TidyMarkupDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-tagsoup",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "dataObjectType": { "kind": "attribute", "displayName": "Data Object Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "org.w3c.dom.Node", "description": "What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node" },
+    "omitXmlDeclaration": { "kind": "attribute", "displayName": "Omit Xml Declaration", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "When returning a String, do we omit the XML declaration in the top." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

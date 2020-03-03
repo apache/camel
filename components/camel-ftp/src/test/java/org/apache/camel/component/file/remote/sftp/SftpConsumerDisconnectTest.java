@@ -54,7 +54,7 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
 
         // Check that expectations are satisfied
         assertMockEndpointsSatisfied();
-        
+
         Thread.sleep(250);
 
         // File is deleted
@@ -92,22 +92,19 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delete=true")
-                    .routeId("foo")
-                    .noAutoStartup()
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delete=true").routeId("foo").noAutoStartup().process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        disconnectAllSessions(); // disconnect all Sessions from
+                                                 // the SFTP server
+                    }
+                }).to("mock:result");
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            disconnectAllSessions(); // disconnect all Sessions from
-                                                     // the SFTP server
-                        }
-                    }).to("mock:result");
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&noop=false&move=.camel")
-                    .routeId("bar")
-                    .noAutoStartup().process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            disconnectAllSessions(); // disconnect all Sessions from the SFTP server
+                            disconnectAllSessions(); // disconnect all Sessions
+                                                     // from the SFTP server
                         }
                     }).to("mock:result");
             }

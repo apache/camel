@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-pubsub</artifactId>
@@ -44,13 +44,90 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-pubsub</artifactId>
+            <version>${google-cloud-pubsub-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-alts</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-auth</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-netty-shaded</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-stub</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.grpc</groupId>
+                    <artifactId>grpc-protobuf</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-api</artifactId>
+            <version>${grpc-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-pubsub</artifactId>
-            <version>${google-api-services-pubsub-version}</version>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-alts</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-auth</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-context</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-core</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${google-pubsub-guava-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -70,6 +147,12 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -129,77 +212,4 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <profiles>
-        <profile>
-            <id>google-pubsub-test</id>
-            <build>
-                <plugins>
-
-                    <!--
-                        PUBSUB EMULATOR
-                        depends on Google SDK being installed and available in $PATH
-                        https://cloud.google.com/sdk/downloads
-                     -->
-                    <plugin>
-                        <groupId>com.bazaarvoice.maven.plugins</groupId>
-                        <artifactId>process-exec-maven-plugin</artifactId>
-                        <version>0.7</version>
-                        <executions>
-
-                            <!-- Start : compile, before tests -->
-                            <execution>
-                                <id>pubsub-emulator</id>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                                <configuration>
-                                    <name>Google PubSub Emulator</name>
-                                    <waitForInterrupt>false</waitForInterrupt>
-                                    <healthcheckUrl>http://localhost:8383</healthcheckUrl>
-                                    <workingDir>/tmp</workingDir>
-                                    <arguments>
-                                        <argument>java</argument>
-                                        <argument>
-                                            -Djava.util.logging.config.file=${project.basedir}/src/test/resources/logging.properties
-                                        </argument>
-                                        <argument>-jar</argument>
-                                        <argument>
-                                            ${env.GCLOUD_SDK_PATH}/platform/pubsub-emulator/lib/cloud-pubsub-emulator-0.1-SNAPSHOT-all.jar
-                                        </argument>
-                                        <argument>--port=8383</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-
-                            <!-- Stop : package, after test -->
-                            <execution>
-                                <id>stop-all</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>stop-all</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <childDelegation>false</childDelegation>
-                            <useFile>true</useFile>
-                            <forkCount>1</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <includes>
-                                <include>**/*Test.java</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

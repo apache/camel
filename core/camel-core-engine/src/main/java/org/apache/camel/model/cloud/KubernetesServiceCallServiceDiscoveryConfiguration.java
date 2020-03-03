@@ -80,8 +80,8 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     @Metadata(label = "client")
     private String clientKeyPassphrase;
     @XmlAttribute
-    @Metadata(label = "client")
-    private Boolean trustCerts;
+    @Metadata(label = "client", javaType = "java.lang.Boolean")
+    private String trustCerts;
 
     public KubernetesServiceCallServiceDiscoveryConfiguration() {
         this(null);
@@ -313,14 +313,14 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
         this.clientKeyPassphrase = clientKeyPassphrase;
     }
 
-    public Boolean getTrustCerts() {
+    public String getTrustCerts() {
         return trustCerts;
     }
 
     /**
      * Sets whether to turn on trust certificate check when using client lookup
      */
-    public void setTrustCerts(Boolean trustCerts) {
+    public void setTrustCerts(String trustCerts) {
         this.trustCerts = trustCerts;
     }
 
@@ -481,6 +481,13 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
      * Sets whether to turn on trust certificate check when using client lookup
      */
     public KubernetesServiceCallServiceDiscoveryConfiguration trustCerts(boolean trustCerts) {
+        return trustCerts(Boolean.toString(trustCerts));
+    }
+
+    /**
+     * Sets whether to turn on trust certificate check when using client lookup
+     */
+    public KubernetesServiceCallServiceDiscoveryConfiguration trustCerts(String trustCerts) {
         setTrustCerts(trustCerts);
         return this;
     }

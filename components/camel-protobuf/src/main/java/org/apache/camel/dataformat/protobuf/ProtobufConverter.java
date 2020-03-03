@@ -71,16 +71,16 @@ public final class ProtobufConverter {
         ObjectHelper.notNull(inputValue, "inputValue");
 
         switch (fieldDescriptor.getJavaType()) {
-        case ENUM:
-            return getEnumValue(fieldDescriptor, inputValue);
+            case ENUM:
+                return getEnumValue(fieldDescriptor, inputValue);
 
-        case MESSAGE:
-            final Map<?, ?> nestedValue = castValue(inputValue, Map.class, String.format("Not able to cast value to map, make sure you have a map for the nested field message '%s'", fieldDescriptor.getName()));
-            // we do a nested call until we reach our final message
-            return convertMapToMessage(fieldDescriptor.getMessageType(), builder.newBuilderForField(fieldDescriptor), nestedValue);
+            case MESSAGE:
+                final Map<?, ?> nestedValue = castValue(inputValue, Map.class, String.format("Not able to cast value to map, make sure you have a map for the nested field message '%s'", fieldDescriptor.getName()));
+                // we do a nested call until we reach our final message
+                return convertMapToMessage(fieldDescriptor.getMessageType(), builder.newBuilderForField(fieldDescriptor), nestedValue);
 
-        default:
-            return inputValue;
+            default:
+                return inputValue;
         }
     }
 
@@ -137,16 +137,16 @@ public final class ProtobufConverter {
         Object result;
 
         switch (fieldDescriptor.getJavaType()) {
-        case ENUM:
-        case BYTE_STRING:
-            result = value.toString();
-            break;
-        case MESSAGE:
-            result = convertProtoMessageToMap((Message)value);
-            break;
-        default:
-            result = value;
-            break;
+            case ENUM:
+            case BYTE_STRING:
+                result = value.toString();
+                break;
+            case MESSAGE:
+                result = convertProtoMessageToMap((Message)value);
+                break;
+            default:
+                result = value;
+                break;
         }
 
         return result;

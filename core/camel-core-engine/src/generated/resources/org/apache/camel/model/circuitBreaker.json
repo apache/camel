@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "circuitBreaker",
+    "title": "Circuit Breaker",
+    "javaType": "org.apache.camel.model.CircuitBreakerDefinition",
+    "label": "eip,routing,circuitbreaker",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "hystrixConfiguration": { "kind": "element", "displayName": "Hystrix Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.model.HystrixConfigurationDefinition", "deprecated": false, "secret": false, "description": "Configures the circuit breaker to use Hystrix with the given configuration." },
+    "resilience4jConfiguration": { "kind": "element", "displayName": "Resilience4j Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.model.Resilience4jConfigurationDefinition", "deprecated": false, "secret": false, "description": "Configures the circuit breaker to use Resilience4j with the given configuration." },
+    "configurationRef": { "kind": "attribute", "displayName": "Configuration Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to use for configuring the circuit breaker EIP." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

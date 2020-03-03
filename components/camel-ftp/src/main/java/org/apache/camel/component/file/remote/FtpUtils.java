@@ -35,7 +35,7 @@ public final class FtpUtils {
 
     private FtpUtils() {
     }
-    
+
     public static String extractDirNameFromAbsolutePath(String path) {
         // default is unix so try with '/'
         // otherwise force File.separator
@@ -46,13 +46,14 @@ public final class FtpUtils {
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>,
-     * and uses OS specific file separators (eg {@link java.io.File#separator}).
+     * Compacts a path by stacking it and reducing <tt>..</tt>, and uses OS
+     * specific file separators (eg {@link java.io.File#separator}).
      * <p/>
      * <b>Important: </b> This implementation works for the camel-ftp component
-     * for various FTP clients and FTP servers using different platforms and whatnot.
-     * This implementation has been working for many Camel releases, and is included here
-     * to restore patch compatibility with the Camel releases.
+     * for various FTP clients and FTP servers using different platforms and
+     * whatnot. This implementation has been working for many Camel releases,
+     * and is included here to restore patch compatibility with the Camel
+     * releases.
      */
     public static String compactPath(String path) {
         if (path == null) {
@@ -79,10 +80,12 @@ public final class FtpUtils {
         String[] parts = path.split(separatorRegex);
         for (String part : parts) {
             if (part.equals("..") && !stack.isEmpty() && !"..".equals(stack.peek())) {
-                // only pop if there is a previous path, which is not a ".." path either
+                // only pop if there is a previous path, which is not a ".."
+                // path either
                 stack.pop();
             } else if (part.equals(".") || part.isEmpty()) {
-                // do nothing because we don't want a path like foo/./bar or foo//bar
+                // do nothing because we don't want a path like foo/./bar or
+                // foo//bar
             } else {
                 stack.push(part);
             }
@@ -123,19 +126,19 @@ public final class FtpUtils {
 
     /**
      * Checks whether directory used in ftp/ftps/sftp endpoint URI is relative.
-     * Absolute path will be converted to relative path and a WARN will be printed.
-     * @see <a href="http://camel.apache.org/ftp2.html">FTP/SFTP/FTPS Component</a>
+     * Absolute path will be converted to relative path and a WARN will be
+     * printed.
+     * 
+     * @see <a href="http://camel.apache.org/ftp2.html">FTP/SFTP/FTPS
+     *      Component</a>
      * @param ftpComponent
      * @param configuration
      */
     public static void ensureRelativeFtpDirectory(Component ftpComponent, RemoteFileConfiguration configuration) {
         if (FileUtil.hasLeadingSeparator(configuration.getDirectoryName())) {
             String relativePath = FileUtil.stripLeadingSeparator(configuration.getDirectoryName());
-            LOG.warn(String.format("%s doesn't support absolute paths, \"%s\" will be converted to \"%s\". "
-                    + "After Camel 2.16, absolute paths will be invalid.",
-                    ftpComponent.getClass().getSimpleName(),
-                    configuration.getDirectoryName(),
-                    relativePath));
+            LOG.warn(String.format("%s doesn't support absolute paths, \"%s\" will be converted to \"%s\". " + "After Camel 2.16, absolute paths will be invalid.",
+                                   ftpComponent.getClass().getSimpleName(), configuration.getDirectoryName(), relativePath));
             configuration.setDirectory(relativePath);
             configuration.setDirectoryName(relativePath);
         }

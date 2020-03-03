@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
  * The Schematron producer.
  */
 public class SchematronProducer extends DefaultProducer {
-    private Logger logger = LoggerFactory.getLogger(SchematronProducer.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(SchematronProducer.class);
     private SchematronEndpoint endpoint;
 
     /**
@@ -58,29 +59,25 @@ public class SchematronProducer extends DefaultProducer {
         final String report;
 
         if (payload instanceof Source) {
-            logger.debug("Applying schematron validation on payload: {}", payload);
+            LOG.debug("Applying schematron validation on payload: {}", payload);
             report = schematronProcessor.validate((Source)payload);
         } else if (payload instanceof String) {
-            logger.debug("Applying schematron validation on payload: {}", payload);
+            LOG.debug("Applying schematron validation on payload: {}", payload);
             report = schematronProcessor.validate((String)payload);
         } else {
             String stringPayload = exchange.getIn().getBody(String.class);
-            logger.debug("Applying schematron validation on payload: {}", stringPayload);
+            LOG.debug("Applying schematron validation on payload: {}", stringPayload);
             report = schematronProcessor.validate(stringPayload);
         }
 
-        logger.debug("Schematron validation report \n {}", report);
+        LOG.debug("Schematron validation report \n {}", report);
         String status = getValidationStatus(report);
-        logger.info("Schematron validation status : {}", status);
+        LOG.info("Schematron validation status : {}", status);
         setValidationReport(exchange, report, status);
     }
 
     /**
      * Sets validation report and status
-     *
-     * @param exchange
-     * @param report
-     * @param status
      */
     private void setValidationReport(Exchange exchange, String report, String status) {
         // if exchange pattern is In and Out set details on the Out message.
@@ -97,9 +94,6 @@ public class SchematronProducer extends DefaultProducer {
 
     /**
      * Get validation status, SUCCESS or FAILURE
-     *
-     * @param report
-     * @return
      */
     private String getValidationStatus(final String report) {
         String status = report.contains(Constants.FAILED_ASSERT) ? Constants.FAILED : Constants.SUCCESS;

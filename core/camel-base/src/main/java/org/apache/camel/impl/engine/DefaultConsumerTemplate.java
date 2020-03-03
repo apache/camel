@@ -22,12 +22,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
@@ -35,6 +39,8 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  * Default implementation of {@link ConsumerTemplate}.
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumerTemplate.class);
 
     private final CamelContext camelContext;
     private ConsumerCache consumerCache;
@@ -109,14 +115,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri) {
-        Object answer;
-        Exchange exchange = receive(endpointUri);
-        try {
-            answer = extractResultBody(exchange);
-        } finally {
-            doneUoW(exchange);
-        }
-        return answer;
+        return receiveBody(receive(endpointUri));
     }
 
     @Override
@@ -126,14 +125,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri, long timeout) {
-        Object answer = null;
-        Exchange exchange = receive(endpointUri, timeout);
-        try {
-            answer = extractResultBody(exchange);
-        } finally {
-            doneUoW(exchange);
-        }
-        return answer;
+        return receiveBody(receive(endpointUri, timeout));
     }
 
     @Override
@@ -143,8 +135,11 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBodyNoWait(String endpointUri) {
-        Object answer = null;
-        Exchange exchange = receiveNoWait(endpointUri);
+        return receiveBody(receiveNoWait(endpointUri));
+    }
+
+    private Object receiveBody(Exchange exchange) {
+        Object answer;
         try {
             answer = extractResultBody(exchange);
         } finally {
@@ -152,6 +147,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         }
         return answer;
     }
+
 
     @Override
     public Object receiveBodyNoWait(Endpoint endpoint) {
@@ -161,7 +157,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, Class<T> type) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receive(endpointUri);
         try {
             answer = extractResultBody(exchange);
@@ -180,7 +176,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, long timeout, Class<T> type) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receive(endpointUri, timeout);
         try {
             answer = extractResultBody(exchange);
@@ -199,7 +195,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBodyNoWait(String endpointUri, Class<T> type) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receiveNoWait(endpointUri);
         try {
             answer = extractResultBody(exchange);
@@ -224,14 +220,14 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
-                List<Synchronization> synchronizations = exchange.handoverCompletions();
-                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
+                List<Synchronization> synchronizations = exchange.adapt(ExtendedExchange.class).handoverCompletions();
+                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
             } else {
                 // done the unit of work
                 exchange.getUnitOfWork().done(exchange);
             }
         } catch (Throwable e) {
-            log.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
                     + ". This exception will be ignored.", e);
         }
     }

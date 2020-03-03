@@ -1,0 +1,12 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "salesforce-maven-plugin",
+    "title": "Salesforce Maven Plugin",
+    "description": "Camel Salesforce Maven plugin",
+    "deprecated": false,
+    "groupId": "org.apache.camel.maven",
+    "artifactId": "camel-salesforce-maven-plugin",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

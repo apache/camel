@@ -32,6 +32,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Message;
 import quickfix.SessionID;
 
@@ -44,6 +46,8 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     public static final String SESSION_ID_KEY = "SessionID";
     public static final String MESSAGE_TYPE_KEY = "MessageType";
     public static final String DATA_DICTIONARY_KEY = "DataDictionary";
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEndpoint.class);
 
     private final QuickfixjEngine engine;
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
@@ -99,7 +103,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        log.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
+        LOG.info("Creating QuickFIX/J consumer: {}, ExchangePattern={}", sessionID != null ? sessionID : "No Session", getExchangePattern());
         QuickfixjConsumer consumer = new QuickfixjConsumer(this, processor);
         configureConsumer(consumer);
         consumers.add(consumer);
@@ -108,7 +112,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
 
     @Override
     public Producer createProducer() throws Exception {
-        log.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
+        LOG.info("Creating QuickFIX/J producer: {}", sessionID != null ? sessionID : "No Session");
         if (isWildcarded()) {
             throw new ResolveEndpointFailedException("Cannot create consumer on wildcarded session identifier: " + sessionID);
         }

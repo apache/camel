@@ -29,9 +29,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.http.base.HttpHelper;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.common.HttpCommonEndpoint;
-import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -49,6 +49,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.pool.ConnPoolControl;
 import org.apache.http.pool.PoolStats;
 import org.apache.http.protocol.HttpContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 4.x.
@@ -57,6 +59,8 @@ import org.apache.http.protocol.HttpContext;
     producerOnly = true, label = "http", lenientProperties = true)
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
     @UriParam(label = "security", description = "To configure security using SSLContextParameters."
         + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
@@ -118,7 +122,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private int connectionsPerRoute;
     @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
-    @UriParam(label = "producer", description = "To use custom host header for producer.")
+    @UriParam(label = "producer", description = "To use custom host header for producer. When not set in query will "
+        + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
 
     public HttpEndpoint() {
@@ -203,7 +208,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
                 }
-                log.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
+                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
                 HttpHost proxy = new HttpHost(host, port, scheme);
                 clientBuilder.setProxy(proxy);
             }
@@ -226,7 +231,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
         }
 
-        log.debug("Setup the HttpClientBuilder {}", clientBuilder);
+        LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
         return clientBuilder.build();
     }
 

@@ -55,17 +55,17 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
             ErrorHandlerBuilder builder = handler.getType().getTypeAsClass().newInstance();
 
             switch (handler.getType()) {
-            case DefaultErrorHandler:
-            case DeadLetterChannel:
-                setProperties((DefaultErrorHandlerBuilder) builder);
-                break;
-            case NoErrorHandler:
-                // No configuration required
-                break;
-            case TransactionErrorHandler:
-                break;
-            default:
-                break;
+                case DefaultErrorHandler:
+                case DeadLetterChannel:
+                    setProperties((DefaultErrorHandlerBuilder) builder);
+                    break;
+                case NoErrorHandler:
+                    // No configuration required
+                    break;
+                case TransactionErrorHandler:
+                    break;
+                default:
+                    break;
             }
 
             return builder;
@@ -95,25 +95,25 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
 
         if (isNotEmpty(handler.getOnExceptionOccurredRef())) {
             Processor processor = getReferenceByName(manager, handler.getOnExceptionOccurredRef(), Processor.class)
-                .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    format("No bean with name [%s] to satisfy attribute [%s]",
-                        handler.getOnPrepareFailureRef(), "onExceptionOccurredRef")));
+                    .orElseThrow(() -> new UnsatisfiedResolutionException(
+                            format("No bean with name [%s] to satisfy attribute [%s]",
+                                    handler.getOnPrepareFailureRef(), "onExceptionOccurredRef")));
             builder.setOnExceptionOccurred(processor);
         }
 
         if (isNotEmpty(handler.getOnPrepareFailureRef())) {
             Processor processor = getReferenceByName(manager, handler.getOnPrepareFailureRef(), Processor.class)
-                .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    format("No bean with name [%s] to satisfy attribute [%s]",
-                        handler.getOnPrepareFailureRef(), "onPrepareFailureRef")));
+                    .orElseThrow(() -> new UnsatisfiedResolutionException(
+                            format("No bean with name [%s] to satisfy attribute [%s]",
+                                    handler.getOnPrepareFailureRef(), "onPrepareFailureRef")));
             builder.setOnPrepareFailure(processor);
         }
 
         if (isNotEmpty(handler.getOnRedeliveryRef())) {
             Processor processor = getReferenceByName(manager, handler.getOnRedeliveryRef(), Processor.class)
-                .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    format("No bean with name [%s] to satisfy attribute [%s]",
-                        handler.getOnPrepareFailureRef(), "onRedeliveryRef")));
+                    .orElseThrow(() -> new UnsatisfiedResolutionException(
+                            format("No bean with name [%s] to satisfy attribute [%s]",
+                                    handler.getOnPrepareFailureRef(), "onRedeliveryRef")));
             builder.setOnRedelivery(processor);
         }
 
@@ -125,9 +125,9 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
 
         if (isNotEmpty(handler.getRedeliveryPolicyRef())) {
             RedeliveryPolicy policy = getReferenceByName(manager, handler.getRedeliveryPolicyRef(), RedeliveryPolicy.class)
-                .orElseThrow(() -> new UnsatisfiedResolutionException(
-                    format("No bean with name [%s] to satisfy attribute [%s]",
-                        handler.getRedeliveryPolicyRef(), "redeliveryPolicyRef")));
+                    .orElseThrow(() -> new UnsatisfiedResolutionException(
+                            format("No bean with name [%s] to satisfy attribute [%s]",
+                                    handler.getRedeliveryPolicyRef(), "redeliveryPolicyRef")));
             builder.setRedeliveryPolicy(policy);
         }
     }

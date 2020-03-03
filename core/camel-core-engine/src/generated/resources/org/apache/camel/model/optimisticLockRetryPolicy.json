@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "optimisticLockRetryPolicy",
+    "title": "Optimistic Lock Retry Policy",
+    "description": "To configure optimistic locking",
+    "javaType": "org.apache.camel.model.OptimisticLockRetryPolicyDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "maximumRetries": { "kind": "attribute", "displayName": "Maximum Retries", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the maximum number of retries" },
+    "retryDelay": { "kind": "attribute", "displayName": "Retry Delay", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "50", "description": "Sets the delay in millis between retries" },
+    "maximumRetryDelay": { "kind": "attribute", "displayName": "Maximum Retry Delay", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "1000", "description": "Sets the upper value of retry in millis between retries, when using exponential or random backoff" },
+    "exponentialBackOff": { "kind": "attribute", "displayName": "Exponential Back Off", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Enable exponential backoff" },
+    "randomBackOff": { "kind": "attribute", "displayName": "Random Back Off", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Enables random backoff" }
+  }
+}

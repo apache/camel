@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "grok",
+    "title": "Grok",
+    "description": "The Grok data format is used for unmarshalling unstructured data to objects using Logstash based Grok patterns.",
+    "firstVersion": "3.0.0",
+    "javaType": "org.apache.camel.model.dataformat.GrokDataFormat",
+    "label": "dataformat,transformation",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "pattern": { "kind": "attribute", "displayName": "Pattern", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The grok pattern to match lines of input" },
+    "flattened": { "kind": "attribute", "displayName": "Flattened", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with same key." },
+    "allowMultipleMatchesPerLine": { "kind": "attribute", "displayName": "Allow Multiple Matches Per Line", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple times when non-terminal pattern is used." },
+    "namedOnly": { "kind": "attribute", "displayName": "Named Only", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

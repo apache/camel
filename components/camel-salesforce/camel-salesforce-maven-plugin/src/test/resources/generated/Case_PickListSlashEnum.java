@@ -17,6 +17,7 @@ public enum Case_PickListSlashEnum {
     // Acciones relacionadas con cotizaciones y/o avisos de entrega
     ACCIONES_RELACIONADAS_CON_COTIZACIONES_Y_O_AVISOS_DE_ENTREGA("Acciones relacionadas con cotizaciones y/o avisos de entrega");
 
+
     final String value;
 
     private Case_PickListSlashEnum(String value) {

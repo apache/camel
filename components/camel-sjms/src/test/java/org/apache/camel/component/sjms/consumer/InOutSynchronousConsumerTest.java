@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
@@ -42,25 +40,13 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
+                    .process(exchange -> beforeThreadName = Thread.currentThread().getName())
                     .inOut(url)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    })
+                    .process(exchange -> afterThreadName = Thread.currentThread().getName())
                     .to("log:after")
                     .to("mock:result");
 
-                from("sjms:queue:in?exchangePattern=InOut").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Bye World");
-                    }
-                });
+                from("sjms:queue:in?exchangePattern=InOut").process(exchange -> exchange.getMessage().setBody("Bye World"));
             }
         };
     }

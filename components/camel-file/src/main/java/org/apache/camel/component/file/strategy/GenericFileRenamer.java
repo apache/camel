@@ -27,8 +27,8 @@ public interface GenericFileRenamer<T> {
     /**
      * Renames the given file
      *
-     * @param exchange  the exchange
-     * @param file      the original file.
+     * @param exchange the exchange
+     * @param file the original file.
      * @return the renamed file name.
      */
     GenericFile<T> renameFile(Exchange exchange, GenericFile<T> file);

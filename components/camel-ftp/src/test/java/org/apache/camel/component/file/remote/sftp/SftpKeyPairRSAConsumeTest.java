@@ -86,9 +86,8 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                        + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10s&strictHostKeyChecking=yes&disconnect=true")
-                    .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                     + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10s&strictHostKeyChecking=yes&disconnect=true").routeId("foo").noAutoStartup()
+                         .to("mock:result");
             }
         };
     }

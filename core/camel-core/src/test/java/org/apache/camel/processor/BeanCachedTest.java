@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
+@Deprecated
 public class BeanCachedTest extends ContextTestSupport {
 
     private Context context;

@@ -41,10 +41,10 @@ public class AvroNettyProducerTest extends AvroProducerTestSupport {
     }
 
     @Override
-    public RouteBuilder createRouteBuilder() throws Exception {
+    public RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 //In Only
                 from("direct:in")
                         .to("avro:netty:localhost:" + avroPort + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");

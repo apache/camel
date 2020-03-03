@@ -31,11 +31,15 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.query.ContinuousQuery;
 import org.apache.ignite.cache.query.QueryCursor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A consumer that generates {@link Exchange}s for items received from a continuous query.
  */
 public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IgniteCacheContinuousQueryConsumer.class);
 
     private IgniteCacheEndpoint endpoint;
 
@@ -55,18 +59,18 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         launchContinuousQuery();
 
-        log.info("Started Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
+        LOG.info("Started Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
 
         maybeFireExistingQueryResults();
     }
 
     private void maybeFireExistingQueryResults() {
         if (!endpoint.isFireExistingQueryResults()) {
-            log.info(String.format("Skipping existing cache results for cache name = %s.", endpoint.getCacheName()));
+            LOG.info(String.format("Skipping existing cache results for cache name = %s.", endpoint.getCacheName()));
             return;
         }
 
-        log.info(String.format("Processing existing cache results for cache name = %s.", endpoint.getCacheName()));
+        LOG.info(String.format("Processing existing cache results for cache name = %s.", endpoint.getCacheName()));
 
         for (Entry<Object, Object> entry : cursor) {
             Exchange exchange = createExchange(entry.getValue());
@@ -94,8 +98,8 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         continuousQuery.setLocalListener(new CacheEntryUpdatedListener<Object, Object>() {
             @Override
             public void onUpdated(Iterable<CacheEntryEvent<? extends Object, ? extends Object>> events) throws CacheEntryListenerException {
-                if (log.isTraceEnabled()) {
-                    log.info("Processing Continuous Query event(s): {}.", events);
+                if (LOG.isTraceEnabled()) {
+                    LOG.info("Processing Continuous Query event(s): {}.", events);
                 }
 
                 if (!endpoint.isOneExchangePerUpdate()) {
@@ -122,7 +126,7 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         cursor.close();
         
-        log.info("Stopped Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
+        LOG.info("Stopped Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(), endpoint.getQuery());
     }
 
     private void fireSingleExchange(CacheEntryEvent<? extends Object, ? extends Object> entry) {

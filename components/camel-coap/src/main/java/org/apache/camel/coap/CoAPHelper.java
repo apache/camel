@@ -29,8 +29,9 @@ public final class CoAPHelper {
     }
 
     /**
-     * Determines which CoAP request method to use based on the content of the target
-     * request URI, the message body or value from the CamelCoapMethod header.
+     * Determines which CoAP request method to use based on the content of the
+     * target request URI, the message body or value from the CamelCoapMethod
+     * header.
      *
      * @param exchange the exchange
      * @param client the CoAP client
@@ -50,7 +51,8 @@ public final class CoAPHelper {
     }
 
     /**
-     * Determines which method verbs the CoAP server should be restricted to handling.
+     * Determines which method verbs the CoAP server should be restricted to
+     * handling.
      *
      * @param methodRestrict
      * @return

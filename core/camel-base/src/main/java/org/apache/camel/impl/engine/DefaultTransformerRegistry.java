@@ -21,10 +21,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -79,6 +82,13 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
         }
         
         return answer;
+    }
+
+    @Override
+    public Transformer put(TransformerKey key, Transformer transformer) {
+        // ensure transformer is started before its being used
+        ServiceHelper.startService(transformer);
+        return super.put(key, transformer);
     }
 
     @Override

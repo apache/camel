@@ -1,0 +1,24 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "jsonApi",
+    "modelName": "jsonApi",
+    "title": "JSonApi",
+    "description": "JSonApi data format is used for marshal and unmarshal Json API object.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation",
+    "firstVersion": "3.0.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.component.jsonapi.JsonApiDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.JsonApiDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jsonapi",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "dataFormatTypes": { "kind": "attribute", "displayName": "Data Format Types", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>[]", "deprecated": false, "secret": false, "description": "The classes to take into account for the marshalling" },
+    "mainFormatType": { "kind": "attribute", "displayName": "Main Format Type", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>", "deprecated": false, "secret": false, "description": "The classes to take into account while unmarshalling" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

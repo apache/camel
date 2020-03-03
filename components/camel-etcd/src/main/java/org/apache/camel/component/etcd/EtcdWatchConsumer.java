@@ -36,8 +36,8 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
     private final EtcdConfiguration configuration;
     private final AtomicLong index;
 
-    public EtcdWatchConsumer(EtcdWatchEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
-        super(endpoint, processor, configuration, namespace, path);
+    public EtcdWatchConsumer(EtcdWatchEndpoint endpoint, Processor processor, EtcdConfiguration configuration, String path) {
+        super(endpoint, processor, configuration, path);
 
         this.endpoint = endpoint;
         this.configuration = configuration;
@@ -93,7 +93,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
                 EtcdKeysResponse response = promise.get();
 
                 exchange = endpoint.createExchange();
-                exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
+                exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "watch");
                 exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, response.node.key);
                 exchange.getIn().setBody(response);
 
@@ -105,7 +105,7 @@ public class EtcdWatchConsumer extends AbstractEtcdConsumer implements ResponseP
 
                 if (configuration.isSendEmptyExchangeOnTimeout()) {
                     exchange = endpoint.createExchange();
-                    exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
+                    exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "watch");
                     exchange.getIn().setHeader(EtcdConstants.ETCD_TIMEOUT, true);
                     exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, getPath());
                     exchange.getIn().setBody(null);

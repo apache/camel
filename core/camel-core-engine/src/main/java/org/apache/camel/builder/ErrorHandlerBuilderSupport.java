@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -46,6 +47,12 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
 
     protected void cloneBuilder(ErrorHandlerBuilderSupport other) {
         other.exceptionPolicyStrategy = exceptionPolicyStrategy;
+    }
+
+    @Override
+    public ErrorHandlerFactory getOrLookupErrorHandlerFactory(RouteContext routeContext) {
+        // only ErrorHandlerRef should override to lookup
+        return this;
     }
 
     /**
@@ -106,7 +113,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     }
 
     protected static ExceptionPolicy toExceptionPolicy(OnExceptionDefinition exceptionType, RouteContext routeContext) {
-        return ErrorHandlerReifier.createExceptionPolicy(exceptionType, routeContext);
+        return ErrorHandlerReifier.createExceptionPolicy(exceptionType, routeContext.getCamelContext());
     }
 
     protected static List<Class<? extends Throwable>> createExceptionClasses(OnExceptionDefinition exceptionType, ClassResolver resolver) {

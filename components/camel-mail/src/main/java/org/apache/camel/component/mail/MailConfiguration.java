@@ -40,12 +40,12 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 public class MailConfiguration implements Cloneable {
 
-    private ClassLoader applicationClassLoader;
-    private Properties javaMailProperties;
-    private Map<Message.RecipientType, String> recipients = new HashMap<>();
+    private transient ClassLoader applicationClassLoader;
+    private transient Map<Message.RecipientType, String> recipients = new HashMap<>();
 
     // protocol is implied by component name so it should not be in UriPath
-    private String protocol;
+    private transient String protocol;
+
     @UriPath @Metadata(required = true)
     private String host;
     @UriPath
@@ -76,6 +76,8 @@ public class MailConfiguration implements Cloneable {
     private boolean delete;
     @UriParam @Metadata(label = "consumer")
     private String copyTo;
+    @UriParam @Metadata(label = "consumer")
+    private String moveTo;
     @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean unseen = true;
     @UriParam(label = "advanced")
@@ -114,6 +116,8 @@ public class MailConfiguration implements Cloneable {
     private Properties additionalJavaMailProperties;
     @UriParam(label = "advanced")
     private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
+    @UriParam(label = "advanced")
+    private Properties javaMailProperties;
 
     public MailConfiguration() {
     }
@@ -146,7 +150,7 @@ public class MailConfiguration implements Cloneable {
         if (!isIgnoreUriScheme()) {
             String scheme = uri.getScheme();
             if (scheme != null) {
-                setProtocol(scheme);
+                configureProtocol(scheme);
             }
         }
 
@@ -391,7 +395,7 @@ public class MailConfiguration implements Cloneable {
     /**
      * The protocol for communicating with the mail server
      */
-    public void setProtocol(String protocol) {
+    public void configureProtocol(String protocol) {
         this.protocol = protocol;
     }
 
@@ -671,6 +675,19 @@ public class MailConfiguration implements Cloneable {
 
     public String getCopyTo() {
         return copyTo;
+    }
+
+    public String getMoveTo() {
+        return moveTo;
+    }
+
+    /**
+     * After processing a mail message, it can be moved to a mail folder with the given name.
+     * You can override this configuration value, with a header with the key moveTo, allowing you to move messages
+     * to folder names configured at runtime.
+     */
+    public void setMoveTo(String moveTo) {
+        this.moveTo = moveTo;
     }
 
     /**

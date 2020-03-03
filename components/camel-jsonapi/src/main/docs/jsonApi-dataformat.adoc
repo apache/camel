@@ -17,8 +17,6 @@ The JSonApi dataformat supports 3 options, which are listed below.
 |===
 // dataformat options: END
 
-// spring-boot-auto-configure options: START
-// spring-boot-auto-configure options: END
 
 == Dependencies
 
@@ -38,3 +36,5 @@ the download page for the latest versions).
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----
+
+include::camel-spring-boot::page$jsonapi-starter.adoc[]

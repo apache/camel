@@ -26,7 +26,6 @@ import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
@@ -66,13 +65,9 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         final String responseText = "How are you";
         mc.setMessageListener(new MyMessageListener(requestText, responseText));
         final String correlationId = UUID.randomUUID().toString().replace("-", "");
-        Exchange exchange = template.request("direct:start", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getOut().setBody(requestText);
-                exchange.getOut().setHeader("JMSCorrelationID", correlationId);
-            }
+        Exchange exchange = template.request("direct:start", exchange1 -> {
+            exchange1.getMessage().setBody(requestText);
+            exchange1.getMessage().setHeader("JMSCorrelationID", correlationId);
         });
         assertNotNull(exchange);
         assertTrue(exchange.getIn().getBody() instanceof String);

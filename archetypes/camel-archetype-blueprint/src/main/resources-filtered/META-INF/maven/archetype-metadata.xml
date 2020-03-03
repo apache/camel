@@ -30,8 +30,8 @@
     <requiredProperty key="maven-resources-plugin-version">
       <defaultValue>${maven-resources-plugin-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="maven-bundle-plugin-version">
-      <defaultValue>${maven-bundle-plugin-version}</defaultValue>
+    <requiredProperty key="camel-bundle-plugin-version">
+      <defaultValue>${camel-bundle-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-jar-plugin-version">
       <defaultValue>${maven-jar-plugin-version}</defaultValue>

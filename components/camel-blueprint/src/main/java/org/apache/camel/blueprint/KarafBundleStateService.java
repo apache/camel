@@ -71,17 +71,17 @@ public class KarafBundleStateService implements BundleStateService {
         for (BlueprintCamelStateService.State s : camelStateService.getStates(bundle)) {
             if (effective == BundleState.Unknown || s == BlueprintCamelStateService.State.Failure) {
                 switch (s) {
-                case Starting:
-                    effective = BundleState.Starting;
-                    break;
-                case Active:
-                    effective = BundleState.Active;
-                    break;
-                case Failure:
-                    effective = BundleState.Failure;
-                    break;
-                default:
-                    break;
+                    case Starting:
+                        effective = BundleState.Starting;
+                        break;
+                    case Active:
+                        effective = BundleState.Active;
+                        break;
+                    case Failure:
+                        effective = BundleState.Failure;
+                        break;
+                    default:
+                        break;
                 }
             }
         }

@@ -19,7 +19,7 @@ package org.apache.camel.catalog.maven;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static org.apache.camel.catalog.CatalogHelper.loadText;
+import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 
 /**
  * Helper methods for loading content from Camel components that the {@link org.apache.camel.catalog.CamelCatalog} requires.

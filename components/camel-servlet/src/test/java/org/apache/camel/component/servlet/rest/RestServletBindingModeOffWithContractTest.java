@@ -67,7 +67,7 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
 
                 JsonDataFormat jsondf = new JsonDataFormat();
                 jsondf.setLibrary(JsonLibrary.Jackson);
-                jsondf.setAllowUnmarshallType(true);
+                jsondf.setAllowUnmarshallType(Boolean.toString(true));
                 jsondf.setUnmarshalType(UserPojoEx.class);
                 transformer()
                     .fromType("json")
@@ -84,9 +84,7 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
                         // contract advice converts betweeen JSON and UserPojoEx directly
                         .inputType(UserPojoEx.class)
                         .outputType("json")
-                        .process(ex -> {
-                            ex.getIn().getBody(UserPojoEx.class).setActive(true);
-                        })
+                        .process(ex -> ex.getIn().getBody(UserPojoEx.class).setActive(true))
                         .to("mock:input");
             }
         };

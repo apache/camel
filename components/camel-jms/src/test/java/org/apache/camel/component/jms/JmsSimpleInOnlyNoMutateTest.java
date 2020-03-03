@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -42,11 +40,9 @@ public class JmsSimpleInOnlyNoMutateTest extends CamelTestSupport {
         result.expectedBodiesReceived("Hello World");
         result.expectedHeaderReceived("foo", 123);
 
-        template.send("activemq:queue:hello", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-                exchange.getIn().setHeader("foo", 123);
-            }
+        template.send("activemq:queue:hello", exchange -> {
+            exchange.getIn().setBody("Hello World");
+            exchange.getIn().setHeader("foo", 123);
         });
 
         result.assertIsSatisfied();

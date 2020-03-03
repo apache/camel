@@ -1,0 +1,12 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "debezium-maven-plugin",
+    "title": "Debezium Maven Plugin",
+    "description": "Camel Debezium Maven plugin",
+    "deprecated": false,
+    "groupId": "org.apache.camel.maven",
+    "artifactId": "camel-debezium-maven-plugin",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

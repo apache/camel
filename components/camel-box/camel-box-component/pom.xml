@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-box-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-box</artifactId>
@@ -68,13 +68,6 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup-version}</version>
-        </dependency>
-
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Component API javadoc in provided scope to read API signatures -->

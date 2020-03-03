@@ -280,7 +280,7 @@ public class SubscriptionHelper extends ServiceSupport {
                             lastError = e;
                         }
 
-                        if (client.isHandshook()) {
+                        if (client != null && client.isHandshook()) {
                             LOG.info("Successfully restarted!");
                             // reset backoff interval
                             restartBackoff.set(client.getBackoffIncrement());

@@ -15,7 +15,7 @@ xref:camelcontext.adoc[CamelContext].
 
 [source,java]
 ----
-getCamelContext().getProperties().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "500");
+getCamelContext().getGlobalOptions().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "500");
 ----
 
 You need to configure this before xref:camelcontext.adoc[CamelContext]

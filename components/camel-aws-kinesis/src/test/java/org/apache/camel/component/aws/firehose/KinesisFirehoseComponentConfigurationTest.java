@@ -36,8 +36,8 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://some_stream_name");
         
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
@@ -48,9 +48,9 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
         KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
@@ -62,9 +62,9 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         KinesisFirehoseComponent component = context.getComponent("aws-kinesis-firehose", KinesisFirehoseComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Regions.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
         KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint)component.createEndpoint("aws-kinesis-firehose://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
         
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());

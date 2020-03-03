@@ -1,0 +1,24 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "throttle",
+    "title": "Throttle",
+    "description": "Controls the rate at which messages are passed to the next node in the route",
+    "javaType": "org.apache.camel.model.ThrottleDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "expression": { "kind": "expression", "displayName": "Expression", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "Expression to configure the maximum number of messages to throttle per request" },
+    "correlationExpression": { "kind": "expression", "displayName": "Correlation Expression", "required": false, "type": "object", "javaType": "org.apache.camel.model.ExpressionSubElementDefinition", "oneOf": [ "constant", "exchangeProperty", "groovy", "header", "hl7terser", "jsonpath", "language", "method", "mvel", "ognl", "ref", "simple", "spel", "tokenize", "xpath", "xquery", "xtokenize" ], "deprecated": false, "secret": false, "description": "The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together." },
+    "executorServiceRef": { "kind": "attribute", "displayName": "Executor Service Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use a custom thread pool (ScheduledExecutorService) by the throttler." },
+    "timePeriodMillis": { "kind": "attribute", "displayName": "Time Period Millis", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "secret": false, "defaultValue": "1000", "description": "Sets the time period during which the maximum request count is valid for" },
+    "asyncDelayed": { "kind": "attribute", "displayName": "Async Delayed", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Enables asynchronous delay which means the thread will not block while delaying." },
+    "callerRunsWhenRejected": { "kind": "attribute", "displayName": "Caller Runs When Rejected", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true" },
+    "rejectExecution": { "kind": "attribute", "displayName": "Reject Execution", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -17,8 +17,8 @@
 package org.apache.camel.util;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ModelHelper;
 import org.junit.Test;
 
 /**
@@ -28,7 +28,8 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -40,7 +41,8 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmAl() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("a"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("a"));
         assertNotNull(xml);
         log.info(xml);
 

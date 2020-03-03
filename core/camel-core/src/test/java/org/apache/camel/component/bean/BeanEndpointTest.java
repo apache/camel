@@ -44,7 +44,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(false, endpoint.isCache());
+        assertEquals(true, endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertNull(endpoint.getMethod());
         assertEquals("bean:foo", endpoint.getEndpointUri());
@@ -70,7 +70,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(false, endpoint.isCache());
+        assertEquals(true, endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertNull(endpoint.getMethod());
         assertEquals("bean:foo", endpoint.getEndpointUri());
@@ -98,7 +98,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(false, endpoint.isCache());
+        assertEquals(true, endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertNull(endpoint.getMethod());
         assertEquals("bean:foo", endpoint.getEndpointUri());
@@ -124,7 +124,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setMethod("hello");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(false, endpoint.isCache());
+        assertEquals(true, endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertEquals("hello", endpoint.getMethod());
         assertEquals("bean:foo?method=hello", endpoint.getEndpointUri());
@@ -151,7 +151,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setMethod("hello");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(true, endpoint.isCache());
+        assertEquals(true, endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertEquals("hello", endpoint.getMethod());
         assertEquals("bean:foo?method=hello", endpoint.getEndpointUri());
@@ -179,7 +179,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         BeanHolder holder = new RegistryBean(context, "foo");
         endpoint.setBeanHolder(holder);
 
-        assertEquals(false, endpoint.isCache());
+        assertEquals(true, endpoint.isSingleton());
         assertEquals(holder, endpoint.getBeanHolder());
 
         context.addRoutes(new RouteBuilder() {

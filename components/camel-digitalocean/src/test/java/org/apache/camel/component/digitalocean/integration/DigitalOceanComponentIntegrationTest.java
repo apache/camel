@@ -178,9 +178,9 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         mockResultEndpoint.expectedMinimumMessageCount(2);
 
         Exchange exchange = template.request("direct:getAccountInfo", null);
-        assertTrue(((Account) exchange.getOut().getBody()).isEmailVerified());
+        assertTrue(((Account) exchange.getMessage().getBody()).isEmailVerified());
         exchange = template.request("direct:getAccountInfo2", null);
-        assertTrue(((Account) exchange.getOut().getBody()).isEmailVerified());
+        assertTrue(((Account) exchange.getMessage().getBody()).isEmailVerified());
 
         assertMockEndpointsSatisfied();
 
@@ -193,7 +193,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getActions", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((List) exchange.getOut().getBody()).size(), 30);
+        assertEquals(((List) exchange.getMessage().getBody()).size(), 30);
     }
 
     @Test
@@ -203,7 +203,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getActionInfo", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((Action) exchange.getOut().getBody()).getId(), new Integer(133459716));
+        assertEquals(((Action) exchange.getMessage().getBody()).getId(), new Integer(133459716));
     }
 
 
@@ -213,12 +213,12 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
 
         Exchange exchange = template.request("direct:getDroplet", null);
 
-        assertEquals(((Droplet) exchange.getOut().getBody()).getId(), new Integer(5428878));
+        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), new Integer(5428878));
 
         exchange = template.request("direct:getDroplet2", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((Droplet) exchange.getOut().getBody()).getId(), new Integer(5428878));
+        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), new Integer(5428878));
 
     }
 
@@ -230,7 +230,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:createDroplet", null);
 
         assertMockEndpointsSatisfied();
-        Droplet droplet = (Droplet) exchange.getOut().getBody();
+        Droplet droplet = (Droplet) exchange.getMessage().getBody();
 
         assertNotNull(droplet.getId());
         assertEquals(droplet.getRegion().getSlug(), "fra1");
@@ -245,7 +245,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:createMultipleDroplets", null);
 
         assertMockEndpointsSatisfied();
-        List<Droplet> droplets = (List<Droplet>) exchange.getOut().getBody();
+        List<Droplet> droplets = (List<Droplet>) exchange.getMessage().getBody();
 
         assertCollectionSize(droplets, 2);
     }
@@ -258,7 +258,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getDroplets", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((List) exchange.getOut().getBody()).size(), 1);
+        assertEquals(((List) exchange.getMessage().getBody()).size(), 1);
     }
 
     @Test
@@ -268,7 +268,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getDropletBackups", null);
 
         assertMockEndpointsSatisfied();
-        assertCollectionSize((List) exchange.getOut().getBody(), 0);
+        assertCollectionSize((List) exchange.getMessage().getBody(), 0);
     }
 
     @Test
@@ -278,7 +278,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:createTag", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((Tag) exchange.getOut().getBody()).getName(), "tag1");
+        assertEquals(((Tag) exchange.getMessage().getBody()).getName(), "tag1");
     }
 
 
@@ -289,7 +289,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getTags", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((List<Tag>) exchange.getOut().getBody()).get(0).getName(), "tag1");
+        assertEquals(((List<Tag>) exchange.getMessage().getBody()).get(0).getName(), "tag1");
     }
 
     @Test
@@ -299,7 +299,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getImages", null);
 
         assertMockEndpointsSatisfied();
-        List<Image> images = (List<Image>) exchange.getOut().getBody();
+        List<Image> images = (List<Image>) exchange.getMessage().getBody();
         assertNotEquals(images.size(), 1);
     }
 
@@ -310,7 +310,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getImage", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals((exchange.getOut().getBody(Image.class)).getSlug(), "ubuntu-14-04-x64");
+        assertEquals((exchange.getMessage().getBody(Image.class)).getSlug(), "ubuntu-14-04-x64");
 
     }
 
@@ -321,7 +321,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getSizes", null);
 
         assertMockEndpointsSatisfied();
-        List<Size> sizes = (List<Size>) exchange.getOut().getBody();
+        List<Size> sizes = (List<Size>) exchange.getMessage().getBody();
         System.out.println(sizes);
         assertNotEquals(sizes.size(), 1);
     }
@@ -334,7 +334,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getRegions", null);
 
         assertMockEndpointsSatisfied();
-        List<Region> regions = (List<Region>) exchange.getOut().getBody();
+        List<Region> regions = (List<Region>) exchange.getMessage().getBody();
         System.out.println(regions);
         assertNotEquals(regions.size(), 1);
     }

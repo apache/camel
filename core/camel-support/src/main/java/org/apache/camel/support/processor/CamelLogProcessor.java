@@ -27,7 +27,10 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Processor} which just logs to a {@link CamelLogger} object which can be used
@@ -36,13 +39,16 @@ import org.apache.camel.support.AsyncProcessorSupport;
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
  */
-public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware {
+public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelLogProcessor.class);
 
     private String id;
+    private String routeId;
     private CamelLogger logger;
     private ExchangeFormatter formatter;
     private MaskingFormatter maskingFormatter;
-    private Set<LogListener> listeners;
+    private final Set<LogListener> listeners;
 
     public CamelLogProcessor() {
         this(new CamelLogger(CamelLogProcessor.class.getName()));
@@ -51,10 +57,12 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
     public CamelLogProcessor(CamelLogger logger) {
         this.formatter = new ToStringExchangeFormatter();
         this.logger = logger;
+        this.listeners = null;
     }
 
     public CamelLogProcessor(CamelLogger logger, ExchangeFormatter formatter, MaskingFormatter maskingFormatter, Set<LogListener> listeners) {
-        this(logger);
+        this.formatter = new ToStringExchangeFormatter();
+        this.logger = logger;
         this.formatter = formatter;
         this.maskingFormatter = maskingFormatter;
         this.listeners = listeners;
@@ -62,7 +70,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
 
     @Override
     public String toString() {
-        return "Logger[" + logger + "]";
+        return id;
     }
 
     @Override
@@ -73,6 +81,16 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override
@@ -112,7 +130,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
     }
 
     private String fireListeners(Exchange exchange, String message) {
-        if (listeners == null) {
+        if (listeners == null || listeners.isEmpty()) {
             return message;
         }
         for (LogListener listener : listeners) {
@@ -123,9 +141,9 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
             } catch (Throwable t) {
-                log.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
-                if (log.isDebugEnabled()) {
-                    log.debug("", t);
+                LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("", t);
                 }
             }
         }

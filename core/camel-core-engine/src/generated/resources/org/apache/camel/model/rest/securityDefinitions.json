@@ -1,0 +1,16 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "securityDefinitions",
+    "title": "Security Definitions",
+    "description": "To configure rest security definitions.",
+    "javaType": "org.apache.camel.model.rest.RestSecuritiesDefinition",
+    "label": "rest,security",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "securityDefinitions": { "kind": "element", "displayName": "Security Definitions", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestSecurityDefinition>", "oneOf": [ "apiKey", "basicAuth", "oauth2" ], "deprecated": false, "secret": false, "description": "Security definitions" }
+  }
+}

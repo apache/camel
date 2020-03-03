@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "ribbonLoadBalancer",
+    "title": "Ribbon Load Balancer",
+    "javaType": "org.apache.camel.model.cloud.RibbonServiceCallServiceLoadBalancerConfiguration",
+    "label": "routing,cloud,load-balancing",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "namespace": { "kind": "attribute", "displayName": "Namespace", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The namespace" },
+    "username": { "kind": "attribute", "displayName": "Username", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The username" },
+    "password": { "kind": "attribute", "displayName": "Password", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The password" },
+    "clientName": { "kind": "attribute", "displayName": "Client Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Ribbon client name" },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

@@ -23,7 +23,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public class NatsTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.2";
+    public static final String CONTAINER_IMAGE = "nats:2.1.4";
     public static final String CONTAINER_NAME = "nats";
     
     @Override

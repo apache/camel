@@ -38,11 +38,6 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     protected AbstractIgniteComponent igniteComponent() {
         if (component == null) {
             component = (AbstractIgniteComponent) getComponent();
@@ -57,8 +52,6 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
     /**
      * Gets whether to propagate the incoming body if the return type of the underlying 
      * Ignite operation is void.
-     * 
-     * @return
      */
     public boolean isPropagateIncomingBodyIfNoReturnValue() {
         return propagateIncomingBodyIfNoReturnValue;
@@ -67,8 +60,6 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
     /**
      * Sets whether to propagate the incoming body if the return type of the underlying 
      * Ignite operation is void.
-     * 
-     * @param propagateIncomingBodyIfNoReturnValue
      */
     public void setPropagateIncomingBodyIfNoReturnValue(boolean propagateIncomingBodyIfNoReturnValue) {
         this.propagateIncomingBodyIfNoReturnValue = propagateIncomingBodyIfNoReturnValue;
@@ -77,8 +68,6 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
     /**
      * Gets whether to treat Collections as cache objects or as Collections of items to 
      * insert/update/compute, etc.
-     * 
-     * @return
      */
     public boolean isTreatCollectionsAsCacheObjects() {
         return treatCollectionsAsCacheObjects;
@@ -87,8 +76,6 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
     /**
      * Sets whether to treat Collections as cache objects or as Collections of items to 
      * insert/update/compute, etc.
-     * 
-     * @param treatCollectionsAsCacheObjects
      */
     public void setTreatCollectionsAsCacheObjects(boolean treatCollectionsAsCacheObjects) {
         this.treatCollectionsAsCacheObjects = treatCollectionsAsCacheObjects;

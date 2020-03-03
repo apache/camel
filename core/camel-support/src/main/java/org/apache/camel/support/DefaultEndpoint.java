@@ -36,6 +36,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default endpoint useful for implementation inheritance.
@@ -50,9 +52,11 @@ import org.apache.camel.util.URISupport;
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
+
     private final String id = EndpointHelper.createEndpointId();
     private transient String endpointUriToString;
-    private String endpointUri;
+    private volatile String endpointUri;
     private CamelContext camelContext;
     private Component component;
     @UriParam(label = "producer",
@@ -204,6 +208,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return component;
     }
 
+    public void setComponent(Component component) {
+        this.component = component;
+    }
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -212,9 +220,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
-        if (log.isDebugEnabled()) {
-            log.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
-                    new Object[]{getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout()});
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
         }
         EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());
         consumer.setBlockWhenFull(isPollingConsumerBlockWhenFull());
@@ -224,7 +232,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public Exchange createExchange() {
-        return createExchange(getExchangePattern());
+        return new DefaultExchange(this, getExchangePattern());
     }
 
     @Override
@@ -390,7 +398,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        // noop
+        setProperties(this, options);
     }
 
     /**
@@ -401,7 +409,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param bean        the bean
      * @param parameters  properties to set
      */
-    public void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
+    public void setProperties(Object bean, Map<String, Object> parameters) {
         if (parameters == null || parameters.isEmpty()) {
             return;
         }
@@ -436,7 +444,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Sets the endpointUri if it has not been specified yet via some kind of
      * dependency injection mechanism. This allows dependency injection
-     * frameworks such as Spring or Guice to set the default endpoint URI in
+     * frameworks such as Spring to set the default endpoint URI in
      * cases where it has not been explicitly configured using the name/context
      * in which an Endpoint is created.
      */

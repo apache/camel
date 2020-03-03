@@ -16,25 +16,22 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
 
-    public AvroDataFormatReifier(DataFormatDefinition definition) {
-        super((AvroDataFormat)definition);
+    public AvroDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (AvroDataFormat)definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (definition.getInstanceClassName() != null) {
-            setProperty(camelContext, dataFormat, "instanceClassName", definition.getInstanceClassName());
-        }
-        if (definition.getSchema() != null) {
-            setProperty(camelContext, dataFormat, "schema", definition.getSchema());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("instanceClassName", definition.getInstanceClassName());
+        properties.put("schema", definition.getSchema());
     }
 
 }

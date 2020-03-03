@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "rests",
+    "title": "Rests",
+    "description": "A series of rest services defined using the rest-dsl",
+    "javaType": "org.apache.camel.model.rest.RestsDefinition",
+    "label": "rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "rests": { "kind": "element", "displayName": "Rests", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestDefinition>", "oneOf": [ "rest" ], "deprecated": false, "secret": false, "description": "Contains the rest services defined using the rest-dsl" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

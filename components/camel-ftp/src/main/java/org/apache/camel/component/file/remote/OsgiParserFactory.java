@@ -36,35 +36,36 @@ import org.apache.commons.net.ftp.parser.UnixFTPEntryParser;
 import org.apache.commons.net.ftp.parser.VMSVersioningFTPEntryParser;
 
 /**
- * OsgiParserFactory
- * 
- * commons-net DefaultFTPFileEntryParserFactory uses Class.forName, and fails
- * to load custom ParserFactories in OSGI. This class is an alternative ParserFactory
- * that can be used when Camel is used in an OSGI environment.
+ * OsgiParserFactory commons-net DefaultFTPFileEntryParserFactory uses
+ * Class.forName, and fails to load custom ParserFactories in OSGI. This class
+ * is an alternative ParserFactory that can be used when Camel is used in an
+ * OSGI environment.
  */
 public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
     // Match a plain Java Identifier
     private static final String JAVA_IDENTIFIER = "\\p{javaJavaIdentifierStart}(\\p{javaJavaIdentifierPart})*";
-    // Match a qualified name, e.g. a.b.c.Name - but don't allow the default package as that would allow "VMS"/"UNIX" etc.
+    // Match a qualified name, e.g. a.b.c.Name - but don't allow the default
+    // package as that would allow "VMS"/"UNIX" etc.
     private static final String JAVA_QUALIFIED_NAME = "(" + JAVA_IDENTIFIER + "\\.)+" + JAVA_IDENTIFIER;
     // Create the pattern, as it will be reused many times
     private static final Pattern JAVA_QUALIFIED_NAME_PATTERN = Pattern.compile(JAVA_QUALIFIED_NAME);
 
     private ClassResolver ocr;
-    
+
     public OsgiParserFactory(ClassResolver ocr) {
         this.ocr = ocr;
     }
-    
+
     /**
      * setClassResolver sets a class resolver which can be used instead of
      * Class.forName for class resolution.
+     * 
      * @param ocr Class Resolver
      */
     public void setClassResolver(ClassResolver ocr) {
         this.ocr = ocr;
     }
-    
+
     @Override
     public FTPFileEntryParser createFileEntryParser(String key) {
         if (key == null) {
@@ -74,24 +75,21 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
     }
 
     @Override
-    public FTPFileEntryParser createFileEntryParser(FTPClientConfig config)
-        throws ParserInitializationException {
+    public FTPFileEntryParser createFileEntryParser(FTPClientConfig config) throws ParserInitializationException {
         String key = config.getServerSystemKey();
         return createFileEntryParser(key, config);
     }
-    
+
     private FTPFileEntryParser createFileEntryParser(String key, FTPClientConfig config) {
         FTPFileEntryParser parser = null;
-    
+
         // Is the key a possible class name?
         if (JAVA_QUALIFIED_NAME_PATTERN.matcher(key).matches()) {
             Class<?> parserClass = ocr.resolveClass(key);
             try {
-                parser = (FTPFileEntryParser) parserClass.newInstance();
+                parser = (FTPFileEntryParser)parserClass.newInstance();
             } catch (ClassCastException e) {
-                throw new ParserInitializationException(parserClass.getName()
-                    + " does not implement the interface "
-                    + "org.apache.commons.net.ftp.FTPFileEntryParser.", e);
+                throw new ParserInitializationException(parserClass.getName() + " does not implement the interface " + "org.apache.commons.net.ftp.FTPFileEntryParser.", e);
             } catch (Exception | ExceptionInInitializerError e) {
                 throw new ParserInitializationException("Error initializing parser", e);
             }
@@ -128,45 +126,41 @@ public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {
         if (parser instanceof Configurable) {
             ((Configurable)parser).configure(config);
         }
-        
+
         return parser;
     }
 
     /**
      * Creates an NT FTP parser: if the config exists, and the system key equals
-     * {@link FTPClientConfig#SYST_NT} then a plain {@link NTFTPEntryParser} is used,
-     * otherwise a composite of {@link NTFTPEntryParser} and {@link UnixFTPEntryParser} is used.
+     * {@link FTPClientConfig#SYST_NT} then a plain {@link NTFTPEntryParser} is
+     * used, otherwise a composite of {@link NTFTPEntryParser} and
+     * {@link UnixFTPEntryParser} is used.
+     * 
      * @param config the config to use, may be {@code null}
      * @return the parser
      */
     private FTPFileEntryParser createNTFTPEntryParser(FTPClientConfig config) {
-        if (config != null && FTPClientConfig.SYST_NT.equals(
-                config.getServerSystemKey())) {
+        if (config != null && FTPClientConfig.SYST_NT.equals(config.getServerSystemKey())) {
             return new NTFTPEntryParser(config);
         } else {
-            return new CompositeFileEntryParser(new FTPFileEntryParser[] {
-                new NTFTPEntryParser(config),
-                new UnixFTPEntryParser(config)
-            });
+            return new CompositeFileEntryParser(new FTPFileEntryParser[] {new NTFTPEntryParser(config), new UnixFTPEntryParser(config)});
         }
     }
 
     /**
-     * Creates an OS400 FTP parser: if the config exists, and the system key equals
-     * {@link FTPClientConfig#SYST_OS400} then a plain {@link OS400FTPEntryParser} is used,
-     * otherwise a composite of {@link OS400FTPEntryParser} and {@link UnixFTPEntryParser} is used.
+     * Creates an OS400 FTP parser: if the config exists, and the system key
+     * equals {@link FTPClientConfig#SYST_OS400} then a plain
+     * {@link OS400FTPEntryParser} is used, otherwise a composite of
+     * {@link OS400FTPEntryParser} and {@link UnixFTPEntryParser} is used.
+     * 
      * @param config the config to use, may be {@code null}
      * @return the parser
      */
     private FTPFileEntryParser createOS400FTPEntryParser(FTPClientConfig config) {
-        if (config != null
-            && FTPClientConfig.SYST_OS400.equals(config.getServerSystemKey())) {
+        if (config != null && FTPClientConfig.SYST_OS400.equals(config.getServerSystemKey())) {
             return new OS400FTPEntryParser(config);
         } else {
-            return new CompositeFileEntryParser(new FTPFileEntryParser[] {
-                new OS400FTPEntryParser(config),
-                new UnixFTPEntryParser(config)
-            });
+            return new CompositeFileEntryParser(new FTPFileEntryParser[] {new OS400FTPEntryParser(config), new UnixFTPEntryParser(config)});
         }
     }
 }

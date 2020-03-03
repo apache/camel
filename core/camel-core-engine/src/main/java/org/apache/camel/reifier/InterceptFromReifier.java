@@ -26,13 +26,13 @@ import org.apache.camel.support.ExpressionAdapter;
 
 public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
 
-    public InterceptFromReifier(ProcessorDefinition<?> definition) {
-        super(definition);
+    public InterceptFromReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, definition);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // insert a set header definition so we can set the intercepted endpoint
         // uri as a header
         // this allows us to use the same header for both the interceptFrom and
@@ -52,7 +52,7 @@ public class InterceptFromReifier extends InterceptReifier<InterceptFromDefiniti
         });
         definition.getOutputs().add(0, headerDefinition);
 
-        return this.createChildProcessor(routeContext, true);
+        return this.createChildProcessor(true);
     }
 
 }

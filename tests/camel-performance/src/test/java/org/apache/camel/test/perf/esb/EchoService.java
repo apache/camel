@@ -45,7 +45,7 @@ public class EchoService extends HttpServlet {
             String soapAction = request.getHeader("SOAPAction");
             if (soapAction != null) {
                 if (soapAction.startsWith("\"")) {
-                    soapAction = soapAction.replaceAll("\"", "");
+                    soapAction = soapAction.replace("\"", "");
                 }
                 int dotPos = soapAction.indexOf(".");
                 int secondDotPos = dotPos == -1 ? -1 : soapAction.indexOf(".", dotPos + 1);

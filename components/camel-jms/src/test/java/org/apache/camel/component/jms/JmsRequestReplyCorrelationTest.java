@@ -24,7 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -50,20 +49,18 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-                in.setHeader("JMSCorrelationID", "a");
-            }
+        Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
+            in.setHeader("JMSCorrelationID", "a");
         });
 
         result.assertIsSatisfied();
 
         assertNotNull(out);
 
-        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
-        assertEquals("a", out.getOut().getHeader("JMSCorrelationID"));
+        assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
+        assertEquals("a", out.getMessage().getHeader("JMSCorrelationID"));
     }
     
     /**
@@ -77,23 +74,19 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenReceived(1).create();
 
         // just send out the request to fill the correlation id first
-        template.asyncSend("jms:queue:helloDelay", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setPattern(ExchangePattern.InOut);
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-                in.setHeader("JMSCorrelationID", "b");
-            }
+        template.asyncSend("jms:queue:helloDelay", exchange -> {
+            exchange.setPattern(ExchangePattern.InOut);
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
+            in.setHeader("JMSCorrelationID", "b");
         });
         // Added use the notify to make sure the message is processed, so we get the exception later
         notify.matches(1, TimeUnit.SECONDS);
         
-        Exchange out = template.send("jms:queue:helloDelay", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-                in.setHeader("JMSCorrelationID", "b");
-            }
+        Exchange out = template.send("jms:queue:helloDelay", ExchangePattern.InOut, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
+            in.setHeader("JMSCorrelationID", "b");
         });
 
         result.assertIsSatisfied();
@@ -116,19 +109,17 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-            }
+        Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
         });
 
         result.assertIsSatisfied();
 
         assertNotNull(out);
 
-        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
-        String correlationId = out.getOut().getHeader("JMSCorrelationID", String.class);
+        assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
+        String correlationId = out.getMessage().getHeader("JMSCorrelationID", String.class);
         assertNotNull(correlationId);
         // In ActiveMQ messageIds start with ID: (currently) so the ID should not be generated from AMQ
         assertFalse("CorrelationID should NOT start with ID, was: " + correlationId, correlationId.startsWith("ID:"));
@@ -144,19 +135,17 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-                in.setHeader("JMSCorrelationID", "");
-            }
+        Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
+            in.setHeader("JMSCorrelationID", "");
         });
 
         assertNotNull(out);
         result.assertIsSatisfied();
 
-        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
-        String correlationId = out.getOut().getHeader("JMSCorrelationID", String.class);
+        assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
+        String correlationId = out.getMessage().getHeader("JMSCorrelationID", String.class);
         assertNotNull(correlationId);
         // In ActiveMQ messageIds start with ID: (currently) so the ID should not be generated from AMQ
         assertFalse("CorrelationID should NOT start with ID, was: " + correlationId, correlationId.startsWith("ID:"));
@@ -172,19 +161,17 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms2:queue:hello", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-            }
+        Exchange out = template.send("jms2:queue:hello", ExchangePattern.InOut, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
         });
 
         result.assertIsSatisfied();
 
         assertNotNull(out);
 
-        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
-        String correlationId = (String) out.getOut().getHeader("JMSCorrelationID");
+        assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
+        String correlationId = (String) out.getMessage().getHeader("JMSCorrelationID");
 
         assertNotNull(correlationId);
         // In ActiveMQ messageIds start with ID: (currently)
@@ -203,20 +190,18 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms2:queue:hello2", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-                in.setHeader("JMSCorrelationID", "a");
-            }
+        Exchange out = template.send("jms2:queue:hello2", ExchangePattern.InOut, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
+            in.setHeader("JMSCorrelationID", "a");
         });
 
         result.assertIsSatisfied();
 
         assertNotNull(out);
 
-        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
-        assertEquals("a", out.getOut().getHeader("JMSCorrelationID"));
+        assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
+        assertEquals("a", out.getMessage().getHeader("JMSCorrelationID"));
     }
 
     /**
@@ -231,20 +216,18 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.send("jms2:queue:hello", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("Hello World");
-                in.setHeader("JMSCorrelationID", "a");
-            }
+        Exchange out = template.send("jms2:queue:hello", ExchangePattern.InOut, exchange -> {
+            Message in = exchange.getIn();
+            in.setBody("Hello World");
+            in.setHeader("JMSCorrelationID", "a");
         });
 
         result.assertIsSatisfied();
 
         assertNotNull(out);
 
-        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
-        assertEquals("a", out.getOut().getHeader("JMSCorrelationID"));
+        assertEquals(REPLY_BODY, out.getMessage().getBody(String.class));
+        assertEquals("a", out.getMessage().getHeader("JMSCorrelationID"));
     }
 
     @Override
@@ -253,11 +236,11 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jmsComponent = jmsComponentAutoAcknowledge(connectionFactory);
-        jmsComponent.setUseMessageIDAsCorrelationID(false);
+        jmsComponent.getConfiguration().setUseMessageIDAsCorrelationID(false);
         camelContext.addComponent("jms", jmsComponent);
 
         JmsComponent jmsComponent2 = jmsComponentAutoAcknowledge(connectionFactory);
-        jmsComponent2.setUseMessageIDAsCorrelationID(true);
+        jmsComponent2.getConfiguration().setUseMessageIDAsCorrelationID(true);
         camelContext.addComponent("jms2", jmsComponent2);
 
         return camelContext;
@@ -267,25 +250,19 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jms:queue:hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody(REPLY_BODY);
-                        assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                    }
+                from("jms:queue:hello").process(exchange -> {
+                    exchange.getIn().setBody(REPLY_BODY);
+                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                 }).to("mock:result");
 
-                from("jms2:queue:hello2").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody(REPLY_BODY);
-                        assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                    }
+                from("jms2:queue:hello2").process(exchange -> {
+                    exchange.getIn().setBody(REPLY_BODY);
+                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                 }).to("mock:result");
 
-                from("jms:queue:helloDelay").delay().constant(2000).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody(REPLY_BODY);
-                        assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                    }
+                from("jms:queue:helloDelay").delay().constant(2000).process(exchange -> {
+                    exchange.getIn().setBody(REPLY_BODY);
+                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                 }).to("mock:result");
             }
         };

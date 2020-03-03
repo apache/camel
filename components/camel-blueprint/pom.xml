@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-blueprint</artifactId>
@@ -49,6 +49,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-osgi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -180,7 +184,6 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>jaxb-list</id>
@@ -238,8 +241,8 @@
 
             <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>

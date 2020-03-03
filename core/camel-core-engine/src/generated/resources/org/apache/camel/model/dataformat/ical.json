@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "ical",
+    "title": "iCal",
+    "description": "The iCal dataformat is used for working with iCalendar messages.",
+    "firstVersion": "2.12.0",
+    "javaType": "org.apache.camel.model.dataformat.IcalDataFormat",
+    "label": "dataformat,transformation",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "validating": { "kind": "attribute", "displayName": "Validating", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to validate." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

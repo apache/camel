@@ -37,14 +37,12 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "error")
 @XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implements OutputNode {
+public class CatchDefinition extends OutputDefinition<CatchDefinition> {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
     @XmlElement(name = "onWhen")
     @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private List<Class<? extends Throwable>> exceptionClasses;
 
@@ -80,8 +78,10 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> implem
         return outputs;
     }
 
+    @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
+        super.setOutputs(outputs);
     }
 
     public List<Class<? extends Throwable>> getExceptionClasses() {

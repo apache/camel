@@ -32,6 +32,8 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
@@ -39,6 +41,8 @@ import org.apache.camel.util.ObjectHelper;
  * gather the list of JMX operations and attributes.
  */
 public class DefaultManagementMBeanAssembler extends ServiceSupport implements ManagementMBeanAssembler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementMBeanAssembler.class);
 
     protected final MBeanInfoAssembler assembler;
     protected final CamelContext camelContext;
@@ -59,7 +63,7 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
             // there may be a custom embedded instance which have additional methods
             custom = ((ManagedInstance) obj).getInstance();
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
-                log.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
+                LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info into different groups (mbi = both, standard = standard out of the box mbi)
                 mbi = assembler.getMBeanInfo(camelContext, obj, custom, name.toString());
                 standardMbi = assembler.getMBeanInfo(camelContext, obj, null, name.toString());
@@ -68,7 +72,7 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
 
         if (mbi == null) {
             // use the default provided mbean which has been annotated with JMX annotations
-            log.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
+            LOG.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
             mbi = assembler.getMBeanInfo(camelContext, obj, null, name.toString());
         }
 

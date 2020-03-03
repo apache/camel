@@ -21,14 +21,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;
 import org.apache.camel.parser.roaster.StatementFieldSource;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
@@ -190,32 +189,12 @@ public final class CamelJavaTreeParserHelper {
 
     private boolean hasOutput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelOutput(rows);
-    }
-
-    private static boolean isModelOutput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("output")) {
-                return "true".equals(row.get("output"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isOutput();
     }
 
     private boolean hasInput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelInput(rows);
-    }
-
-    private static boolean isModelInput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("input")) {
-                return "true".equals(row.get("input"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isInput();
     }
 
     private static CamelNodeDetails grandParent(CamelNodeDetails node, String parentName) {
@@ -455,9 +434,9 @@ public final class CamelJavaTreeParserHelper {
                 // if numeric then we plus the values, otherwise we string concat
                 boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand()) && isNumericOperator(clazz, block, ie.getRightOperand());
                 if (numeric) {
-                    Long num1 = val1 != null ? Long.valueOf(val1) : 0;
-                    Long num2 = val2 != null ? Long.valueOf(val2) : 0;
-                    answer = "" + (num1 + num2);
+                    long num1 = val1 != null ? Long.parseLong(val1) : 0;
+                    long num2 = val2 != null ? Long.parseLong(val2) : 0;
+                    answer = Long.toString(num1 + num2);
                 } else {
                     answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
                 }
@@ -469,9 +448,9 @@ public final class CamelJavaTreeParserHelper {
                         for (Object ext : extended) {
                             String val3 = getLiteralValue(clazz, block, (Expression) ext);
                             if (numeric) {
-                                Long num3 = val3 != null ? Long.valueOf(val3) : 0;
-                                Long num = Long.valueOf(answer);
-                                answer = "" + (num + num3);
+                                long num3 = val3 != null ? Long.parseLong(val3) : 0;
+                                long num = Long.parseLong(answer);
+                                answer = Long.toString(num + num3);
                             } else {
                                 answer += val3 != null ? val3 : "";
                             }

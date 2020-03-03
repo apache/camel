@@ -23,11 +23,11 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -54,7 +54,8 @@ public class RouteDefinitionsFromXmlTest {
     @Produces
     private RoutesDefinition routes(CamelContext context) throws Exception {
         try (InputStream routes = getClass().getResourceAsStream("/camel-context-routes.xml")) {
-            return ModelHelper.createModelFromXml(context, routes, RoutesDefinition.class);
+            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            return (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(context, routes);
         }
     }
 

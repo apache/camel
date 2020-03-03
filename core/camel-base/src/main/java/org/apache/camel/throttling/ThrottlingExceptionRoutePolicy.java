@@ -30,6 +30,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Modeled after the circuit breaker {@link ThrottlingInflightRoutePolicy}
@@ -48,6 +50,8 @@ import org.apache.camel.support.RoutePolicySupport;
  * to determine if the processes that cause the route to be open are now available
  */
 public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicy.class);
 
     private static final int STATE_CLOSED = 0;
     private static final int STATE_HALF_OPEN = 1;
@@ -99,7 +103,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     @Override
     public void onInit(Route route) {
-        log.debug("Initializing ThrottlingExceptionRoutePolicy route policy...");
+        LOG.debug("Initializing ThrottlingExceptionRoutePolicy route policy");
         logState();
     }
 
@@ -115,7 +119,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     public void onExchangeDone(Route route, Exchange exchange) {
         if (keepOpen.get()) {
             if (state.get() != STATE_OPEN) {
-                log.debug("opening circuit b/c keepOpen is on");
+                LOG.debug("opening circuit b/c keepOpen is on");
                 openCircuit(route);
             }
         } else {
@@ -158,9 +162,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             }
         }
 
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             String exceptionName = exchange.getException() == null ? "none" : exchange.getException().getClass().getSimpleName();
-            log.debug("hasFailed ({}) with Throttled Exception: {} for exchangeId: {}", answer, exceptionName, exchange.getExchangeId());
+            LOG.debug("hasFailed ({}) with Throttled Exception: {} for exchangeId: {}", answer, exceptionName, exchange.getExchangeId());
         }
         return answer;
     }
@@ -172,39 +176,39 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
         if (state.get() == STATE_CLOSED) {
             if (failureLimitReached) {
-                log.debug("Opening circuit...");
+                LOG.debug("Opening circuit...");
                 openCircuit(route);
             }
         } else if (state.get() == STATE_HALF_OPEN) {
             if (failureLimitReached) {
-                log.debug("Opening circuit...");
+                LOG.debug("Opening circuit...");
                 openCircuit(route);
             } else {
-                log.debug("Closing circuit...");
+                LOG.debug("Closing circuit...");
                 closeCircuit(route);
             }
         } else if (state.get() == STATE_OPEN) {
             if (!keepOpen.get()) {
                 long elapsedTimeSinceOpened = System.currentTimeMillis() - openedAt;
                 if (halfOpenAfter <= elapsedTimeSinceOpened) {
-                    log.debug("Checking an open circuit...");
+                    LOG.debug("Checking an open circuit...");
                     if (halfOpenHandler != null) {
                         if (halfOpenHandler.isReadyToBeClosed()) {
-                            log.debug("Closing circuit...");
+                            LOG.debug("Closing circuit...");
                             closeCircuit(route);
                         } else {
-                            log.debug("Opening circuit...");
+                            LOG.debug("Opening circuit...");
                             openCircuit(route);
                         }
                     } else {
-                        log.debug("Half opening circuit...");
+                        LOG.debug("Half opening circuit...");
                         halfOpenCircuit(route);
                     }
                 } else {
-                    log.debug("keeping circuit open (time not elapsed)...");
+                    LOG.debug("keeping circuit open (time not elapsed)...");
                 }
             } else {
-                log.debug("keeping circuit open (keepOpen is true)...");
+                LOG.debug("keeping circuit open (keepOpen is true)...");
                 this.addHalfOpenTimer(route);
             }
         }
@@ -273,8 +277,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     private void logState() {
-        if (log.isDebugEnabled()) {
-            log.debug(dumpState());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(dumpState());
         }
     }
 
@@ -325,7 +329,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     public void setKeepOpen(boolean keepOpen) {
-        log.debug("keep open: {}", keepOpen);
+        LOG.debug("keep open: {}", keepOpen);
         this.keepOpen.set(keepOpen);
     }
 

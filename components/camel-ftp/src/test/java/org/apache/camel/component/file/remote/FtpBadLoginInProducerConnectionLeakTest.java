@@ -34,16 +34,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSupport {
 
     /**
-     * Mapping of socket hashcode to two element tab ([connect() called, close() called])
+     * Mapping of socket hashcode to two element tab ([connect() called, close()
+     * called])
      */
     private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
     @BindToRegistry("sf")
     private SocketFactory sf = new AuditingSocketFactory();
-    
+
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
-            + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
+               + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 
     @Test
@@ -65,8 +66,9 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
     }
 
     /**
-     * {@link SocketFactory} which creates {@link Socket}s that expose statistics about {@link Socket#connect(SocketAddress)}/{@link Socket#close()}
-     * invocations
+     * {@link SocketFactory} which creates {@link Socket}s that expose
+     * statistics about
+     * {@link Socket#connect(SocketAddress)}/{@link Socket#close()} invocations
      */
     private class AuditingSocketFactory extends SocketFactory {
 

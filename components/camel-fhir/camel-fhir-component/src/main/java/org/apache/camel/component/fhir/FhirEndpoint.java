@@ -98,47 +98,47 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
     protected void afterConfigureProperties() {
         IGenericClient client = getClient();
         switch (apiName) {
-        case CAPABILITIES:
-            apiProxy = new FhirCapabilities(client);
-            break;
-        case CREATE:
-            apiProxy = new FhirCreate(client);
-            break;
-        case DELETE:
-            apiProxy = new FhirDelete(client);
-            break;
-        case HISTORY:
-            apiProxy = new FhirHistory(client);
-            break;
-        case LOAD_PAGE:
-            apiProxy = new FhirLoadPage(client);
-            break;
-        case META:
-            apiProxy = new FhirMeta(client);
-            break;
-        case OPERATION:
-            apiProxy = new FhirOperation(client);
-            break;
-        case PATCH:
-            apiProxy = new FhirPatch(client);
-            break;
-        case READ:
-            apiProxy = new FhirRead(client);
-            break;
-        case SEARCH:
-            apiProxy = new FhirSearch(client);
-            break;
-        case TRANSACTION:
-            apiProxy = new FhirTransaction(client);
-            break;
-        case UPDATE:
-            apiProxy = new FhirUpdate(client);
-            break;
-        case VALIDATE:
-            apiProxy = new FhirValidate(client);
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid API name " + apiName);
+            case CAPABILITIES:
+                apiProxy = new FhirCapabilities(client);
+                break;
+            case CREATE:
+                apiProxy = new FhirCreate(client);
+                break;
+            case DELETE:
+                apiProxy = new FhirDelete(client);
+                break;
+            case HISTORY:
+                apiProxy = new FhirHistory(client);
+                break;
+            case LOAD_PAGE:
+                apiProxy = new FhirLoadPage(client);
+                break;
+            case META:
+                apiProxy = new FhirMeta(client);
+                break;
+            case OPERATION:
+                apiProxy = new FhirOperation(client);
+                break;
+            case PATCH:
+                apiProxy = new FhirPatch(client);
+                break;
+            case READ:
+                apiProxy = new FhirRead(client);
+                break;
+            case SEARCH:
+                apiProxy = new FhirSearch(client);
+                break;
+            case TRANSACTION:
+                apiProxy = new FhirTransaction(client);
+                break;
+            case UPDATE:
+                apiProxy = new FhirUpdate(client);
+                break;
+            case VALIDATE:
+                apiProxy = new FhirValidate(client);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 

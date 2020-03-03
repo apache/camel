@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
@@ -314,7 +315,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
         }
 
         return Mono.<Exchange>create(
-            sink -> data.addOnCompletion(new Synchronization() {
+            sink -> data.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     sink.success(exchange);

@@ -41,8 +41,8 @@ import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.elements.tcp.TcpServerConnector;
-import org.eclipse.californium.elements.tcp.TlsServerConnector;
+import org.eclipse.californium.elements.tcp.netty.TcpServerConnector;
+import org.eclipse.californium.elements.tcp.netty.TlsServerConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,8 +91,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
                     } else if (endpoint.isClientAuthenticationWanted()) {
                         clientAuthMode = TlsServerConnector.ClientAuthMode.WANTED;
                     }
-                    tcpConnector =
-                        new TlsServerConnector(sslContext, clientAuthMode, address, tcpThreads, tlsHandshakeTimeout, tcpIdleTimeout);
+                    tcpConnector = new TlsServerConnector(sslContext, clientAuthMode, address, tcpThreads, tlsHandshakeTimeout, tcpIdleTimeout);
                 } else {
                     tcpConnector = new TcpServerConnector(address, tcpThreads, tcpIdleTimeout);
                 }
@@ -120,8 +119,9 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath,
-            String uriTemplate, String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes, String produces,
+                                   RestConfiguration configuration, Map<String, Object> parameters)
+        throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -136,7 +136,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = getCamelContext().getRestConfiguration("coap", true);
+            config = camelContext.getRestConfiguration("coap", true);
         }
 
         if (config.isEnableCORS()) {
@@ -187,7 +187,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         }
 
         CoAPEndpoint endpoint = camelContext.getEndpoint(url, CoAPEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);

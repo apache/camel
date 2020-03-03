@@ -35,7 +35,7 @@ public class ConsulTestSupport extends ContainerAwareTestSupport {
     @BindToRegistry("consul")
     public ConsulComponent getConsulComponent() {
         ConsulComponent component = new ConsulComponent();
-        component.setUrl(consulUrl());
+        component.getConfiguration().setUrl(consulUrl());
         return component;
     }
 

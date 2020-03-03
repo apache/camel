@@ -44,6 +44,7 @@ public class AbstractLocalCamelControllerTest {
     public AbstractLocalCamelControllerTest() throws Exception {
         context = new DefaultCamelContext();
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("context1"));
+        context.getInflightRepository().setInflightBrowseEnabled(true);
 
         context.addRoutes(new RouteBuilder() {
             @Override

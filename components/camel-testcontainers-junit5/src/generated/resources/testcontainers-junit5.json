@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "testcontainers-junit5",
+    "title": "Testcontainers JUnit5",
+    "description": "Camel support for testcontainers with JUnit 5",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "testing,java,docker",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-testcontainers-junit5",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

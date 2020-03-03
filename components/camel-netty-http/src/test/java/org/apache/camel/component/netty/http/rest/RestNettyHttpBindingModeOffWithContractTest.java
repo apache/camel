@@ -57,10 +57,10 @@ public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
             public void configure() throws Exception {
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.off);
 
-                JsonDataFormat jsondf = new JsonDataFormat();
-                jsondf.setLibrary(JsonLibrary.Jackson);
-                jsondf.setAllowUnmarshallType(true);
-                jsondf.setUnmarshalType(UserPojoEx.class);
+                JsonDataFormat jsondf = new JsonDataFormat()
+                        .library(JsonLibrary.Jackson)
+                        .allowUnmarshallType(true)
+                        .unmarshalType(UserPojoEx.class);
                 transformer()
                     .fromType("json")
                     .toType(UserPojoEx.class)

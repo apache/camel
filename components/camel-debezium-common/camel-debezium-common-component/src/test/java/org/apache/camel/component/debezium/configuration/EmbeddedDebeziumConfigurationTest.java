@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.debezium.configuration;
 
+import java.util.Collections;
+
 import io.debezium.config.Configuration;
 import io.debezium.embedded.EmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
@@ -58,6 +60,19 @@ public class EmbeddedDebeziumConfigurationTest {
         configuration.setTestField("test_field");
 
         assertTrue(configuration.validateConfiguration().isValid());
+    }
+
+    @Test
+    public void testIfCreatesAdditionalProperties() {
+        final TestEmbeddedDebeziumConfiguration configuration = new TestEmbeddedDebeziumConfiguration();
+        configuration.setName("test_config");
+        configuration.setAdditionalProperties(Collections.singletonMap("test.additional", "test_additional"));
+        configuration.setTestField("test_field");
+
+        final Configuration dbzEmbeddedConfiguration = configuration.createDebeziumConfiguration();
+
+        assertEquals("test_config", dbzEmbeddedConfiguration.getString("name"));
+        assertEquals("test_additional", dbzEmbeddedConfiguration.getString("test.additional"));
     }
 
 }

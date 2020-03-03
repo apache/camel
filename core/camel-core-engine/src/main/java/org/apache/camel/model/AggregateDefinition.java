@@ -50,7 +50,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements OutputNode, ExecutorServiceAwareDefinition<AggregateDefinition> {
+public class AggregateDefinition extends OutputDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
@@ -136,8 +136,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private AggregateController aggregateController;
     @XmlAttribute
     private String aggregateControllerRef;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public AggregateDefinition() {
     }
@@ -914,7 +912,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the custom aggregate repository to use
+     * Sets the custom aggregate repository to use.
      * <p/>
      * Will by default use
      * {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
@@ -1145,8 +1143,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return outputs;
     }
 
+    @XmlElementRef
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
+        super.setOutputs(outputs);
     }
 
 }

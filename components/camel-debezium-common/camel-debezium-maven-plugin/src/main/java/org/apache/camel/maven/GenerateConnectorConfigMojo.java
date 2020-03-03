@@ -17,7 +17,6 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.maven.config.ConnectorConfigGenerator;
+import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.apache.maven.plugin.AbstractMojo;
@@ -89,7 +89,7 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
                 connectorConfigClassFile.getParentFile().mkdirs();
                 connectorConfigClassFile.createNewFile();
             }
-            connectorConfigGenerator.printGeneratedClass(new FileOutputStream(connectorConfigClassFile));
+            FileUtil.updateFile(connectorConfigClassFile.toPath(), connectorConfigGenerator.printClassAsString());
         } catch (Exception e) {
             throw new MojoFailureException(e.getMessage(), e);
         }

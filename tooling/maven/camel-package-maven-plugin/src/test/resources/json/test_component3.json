@@ -1,0 +1,31 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "kafka",
+    "extendsScheme": "",
+    "syntax": "kafka:topic",
+    "title": "Kafka",
+    "description": "The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.",
+    "label": "messaging",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.kafka.KafkaComponent",
+    "firstVersion": "2.13.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kafka",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "sslTrustmanagerAlgorithm": { "kind": "property", "displayName": "Ssl Trustmanager Algorithm", "group": "security", "label": "common,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "PKIX", "configurationClass": "org.apache.camel.component.kafka.KafkaConfiguration", "configurationField": "configuration", "description": "The algorithm used by trust manager factory for SSL connections. Default value is the trust manager factory algorithm configured for the Java Virtual Machine." },
+    "sslTruststoreType": { "kind": "property", "displayName": "Ssl Truststore Type", "group": "security", "label": "common,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "JKS", "configurationClass": "org.apache.camel.component.kafka.KafkaConfiguration", "configurationField": "configuration", "description": "The file format of the trust store file. Default value is JKS." },
+    "schemaRegistryURL": { "kind": "property", "displayName": "Schema Registry URL", "group": "confluent", "label": "confluent", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.kafka.KafkaConfiguration", "configurationField": "configuration", "description": "URL of the Confluent Platform schema registry servers to use. The format is host1:port1,host2:port2. This is known as schema.registry.url in the Confluent Platform documentation. This option is only available in the Confluent Platform (not standard Apache Kafka)" },
+    "sslTruststoreLocation": { "kind": "property", "displayName": "Ssl Truststore Location", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "configurationClass": "org.apache.camel.component.kafka.KafkaConfiguration", "configurationField": "configuration", "description": "The location of the trust store file." },
+    "sslTruststorePassword": { "kind": "property", "displayName": "Ssl Truststore Password", "group": "security", "label": "producer,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "configurationClass": "org.apache.camel.component.kafka.KafkaConfiguration", "configurationField": "configuration", "description": "The password for the trust store file." },
+    "useGlobalSslContextParameters": { "kind": "property", "displayName": "Use Global Ssl Context Parameters", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Enable usage of global SSL context parameters." }
+  },
+  "properties": {
+  }
+}

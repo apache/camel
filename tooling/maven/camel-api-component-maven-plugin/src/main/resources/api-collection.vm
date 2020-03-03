@@ -45,7 +45,7 @@ import java.util.HashMap;
 #set( $componentConfig = "${componentName}Configuration" )
 import ${componentPackage}.${componentConfig};
 #foreach ( $api in $apis )
-import ${componentPackage}.${helper.getEndpointConfig($api.ProxyClass)};
+import ${componentPackage}.${helper.getEndpointConfig($api.ProxyClass, $api.ClassPrefix)};
 #end
 
 import org.apache.camel.support.component.ApiCollection;
@@ -71,7 +71,7 @@ public final class $collectionName extends ApiCollection<${apiNameEnum}, ${compo
 #foreach( $alias in $api.Aliases )
         aliases.put("$alias.MethodPattern", "$alias.MethodAlias");
 #end
-#set( $apiMethod = ${helper.getApiMethod($api.ProxyClass)} )
+#set( $apiMethod = ${helper.getApiMethod($api.ProxyClass, $api.ClassPrefix)} )
 #set( $apiName = "${apiNameEnum}.${helper.getEnumConstant($api.ApiName)}" )
         nullableArgs = Arrays.asList(${helper.getNullableOptionValues($api.NullableOptions)});
         apiHelpers.put($apiName, new ApiMethodHelper<$apiMethod>(${apiMethod}.class, aliases, nullableArgs));
@@ -86,9 +86,9 @@ public final class $collectionName extends ApiCollection<${apiNameEnum}, ${compo
         $componentConfig result = null;
         switch (apiName) {
 #foreach( $api in $apis )
-        case ${helper.getEnumConstant($api.ApiName)}:
-            result = new ${helper.getEndpointConfig($api.ProxyClass)}();
-            break;
+            case ${helper.getEnumConstant($api.ApiName)}:
+                result = new ${helper.getEndpointConfig($api.ProxyClass, $api.ClassPrefix)}();
+                break;
 #end
         }
         return result;

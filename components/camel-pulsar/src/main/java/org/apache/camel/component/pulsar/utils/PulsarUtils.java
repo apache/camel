@@ -36,7 +36,6 @@ public final class PulsarUtils {
             Consumer<byte[]> consumer = consumers.poll();
             if (consumer != null) {
                 try {
-                    consumer.unsubscribe();
                     consumer.close();
                 } catch (Exception e) {
                     // ignore during stopping

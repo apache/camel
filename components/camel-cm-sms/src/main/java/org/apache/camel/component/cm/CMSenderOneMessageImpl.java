@@ -205,47 +205,47 @@ public class CMSenderOneMessageImpl implements CMSender {
             // result of the request processing.
 
             // We obtaing the result text
-            final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-            final StringBuffer result = new StringBuffer();
-            String line = null;
-            while ((line = rd.readLine()) != null) {
-                result.append(line);
-            }
-
-            // ... and process it
-
-            line = result.toString();
-            if (!line.isEmpty()) {
-
-                // Line is not empty = error
-                LOG.debug("Result of the request processing: FAILED\n{}", line);
-
-                // The response text contains the error description. We will
-                // throw a custom exception for each.
-
-                if (line.contains(CMConstants.ERROR_UNKNOWN)) {
-                    throw new UnknownErrorException();
-                } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT)) {
-                    throw new NoAccountFoundForProductTokenException();
-                } else if (line.contains(CMConstants.ERROR_INSUFICIENT_BALANCE)) {
-                    throw new InsufficientBalanceException();
-                } else if (line.contains(CMConstants.ERROR_UNROUTABLE_MESSAGE)) {
-                    throw new UnroutableMessageException();
-                } else if (line.contains(CMConstants.ERROR_INVALID_PRODUCT_TOKEN)) {
-                    throw new InvalidProductTokenException();
-                } else {
-
-                    // SO FAR i would expect other kind of ERROR.
-
-                    // MSISDN correctness and message validity is client
-                    // responsibility
-                    throw new CMResponseException("CHECK ME. I am not expecting this. ");
+            try (BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
+                final StringBuffer result = new StringBuffer();
+                String line = null;
+                while ((line = rd.readLine()) != null) {
+                    result.append(line);
                 }
-            }
 
-            // Ok. Line is EMPTY - successfully submitted
-            LOG.debug("Result of the request processing: Successfully submited");
+                // ... and process it
+
+                line = result.toString();
+                if (!line.isEmpty()) {
+
+                    // Line is not empty = error
+                    LOG.debug("Result of the request processing: FAILED\n{}", line);
+
+                    // The response text contains the error description. We will
+                    // throw a custom exception for each.
+
+                    if (line.contains(CMConstants.ERROR_UNKNOWN)) {
+                        throw new UnknownErrorException();
+                    } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT)) {
+                        throw new NoAccountFoundForProductTokenException();
+                    } else if (line.contains(CMConstants.ERROR_INSUFICIENT_BALANCE)) {
+                        throw new InsufficientBalanceException();
+                    } else if (line.contains(CMConstants.ERROR_UNROUTABLE_MESSAGE)) {
+                        throw new UnroutableMessageException();
+                    } else if (line.contains(CMConstants.ERROR_INVALID_PRODUCT_TOKEN)) {
+                        throw new InvalidProductTokenException();
+                    } else {
+
+                        // SO FAR i would expect other kind of ERROR.
+
+                        // MSISDN correctness and message validity is client
+                        // responsibility
+                        throw new CMResponseException("CHECK ME. I am not expecting this. ");
+                    }
+                }
+
+                // Ok. Line is EMPTY - successfully submitted
+                LOG.debug("Result of the request processing: Successfully submited");
+            }
         } catch (final IOException io) {
             throw new CMDirectException(io);
         } catch (Throwable t) {

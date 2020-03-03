@@ -39,9 +39,13 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Dataformat("cbor")
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CBORDataFormat.class);
 
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
@@ -297,15 +301,15 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
                 Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
                 if (set.size() == 1) {
                     objectMapper = set.iterator().next();
-                    log.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
+                    LOG.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
                 } else if (set.size() > 1) {
-                    log.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
+                    LOG.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
                 }
             }
             if (objectMapper == null) {
                 CBORFactory factory = new CBORFactory();
                 objectMapper = new ObjectMapper(factory);
-                log.debug("Creating new ObjectMapper to use: {}", objectMapper);
+                LOG.debug("Creating new ObjectMapper to use: {}", objectMapper);
             }
         }
 
@@ -369,7 +373,6 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     protected void doStop() throws Exception {
-        // TODO Auto-generated method stub
-
+        // noop
     }
 }

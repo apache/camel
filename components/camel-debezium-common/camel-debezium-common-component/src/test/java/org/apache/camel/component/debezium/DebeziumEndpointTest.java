@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.debezium;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -205,7 +206,7 @@ public class DebeziumEndpointTest {
 
         after.put("id", (byte)1);
         source.put("lsn", 1234);
-        final Struct payload = envelope.create(after, source, System.nanoTime());
+        final Struct payload = envelope.create(after, source, Instant.now());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }
@@ -216,7 +217,7 @@ public class DebeziumEndpointTest {
                 .withSource(SchemaBuilder.struct().build()).build();
         final Struct before = new Struct(recordSchema);
         before.put("id", (byte)1);
-        final Struct payload = envelope.delete(before, null, System.nanoTime());
+        final Struct payload = envelope.delete(before, null, Instant.now());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }
@@ -243,7 +244,7 @@ public class DebeziumEndpointTest {
         before.put("id", (byte)1);
         after.put("id", (byte)2);
         source.put("lsn", 1234);
-        final Struct payload = envelope.update(before, after, source, System.nanoTime());
+        final Struct payload = envelope.update(before, after, source, Instant.now());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
                 createKeyRecord(), envelope.schema(), payload);
     }

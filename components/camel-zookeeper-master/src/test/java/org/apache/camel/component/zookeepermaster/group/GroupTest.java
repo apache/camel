@@ -16,30 +16,34 @@
  */
 package org.apache.camel.component.zookeepermaster.group;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.component.zookeepermaster.ZKContainer;
 import org.apache.camel.component.zookeepermaster.group.internal.ChildData;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
-import org.apache.zookeeper.server.NIOServerCnxnFactory;
-import org.apache.zookeeper.server.ServerConfig;
-import org.apache.zookeeper.server.ZooKeeperServer;
-import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.SelinuxContext;
+import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.util.AssertionErrors.assertNotEquals;
 
 public class GroupTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupTest.class);
 
     private GroupListener listener = new GroupListener<NodeState>() {
         @Override
@@ -48,27 +52,46 @@ public class GroupTest {
             boolean master = group.isMaster();
             if (connected) {
                 Collection<NodeState> members = group.members().values();
-                System.err.println("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members + ")");
+                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members + ")");
             } else {
-                System.err.println("GroupEvent: " + event + " (connected=" + connected + ", master=false)");
+                LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=false)");
             }
         }
     };
 
-    private NIOServerCnxnFactory startZooKeeper(int port) throws Exception {
-        ServerConfig cfg = new ServerConfig();
-        cfg.parse(new String[] {Integer.toString(port), "target/zk/data"});
+    private ZKContainer startZooKeeper(int port, Path root) throws Exception {
+        LOGGER.info("****************************************");
+        LOGGER.info("* Starting ZooKeeper container         *");
+        LOGGER.info("****************************************");
 
-        ZooKeeperServer zkServer = new ZooKeeperServer();
-        FileTxnSnapLog ftxn = new FileTxnSnapLog(new File(cfg.getDataLogDir()), new File(cfg.getDataDir()));
-        zkServer.setTxnLogFactory(ftxn);
-        zkServer.setTickTime(cfg.getTickTime());
-        zkServer.setMinSessionTimeout(6000);
-        zkServer.setMaxSessionTimeout(9000);
-        NIOServerCnxnFactory cnxnFactory = new NIOServerCnxnFactory();
-        cnxnFactory.configure(cfg.getClientPortAddress(), cfg.getMaxClientCnxns());
-        cnxnFactory.startup(zkServer);
-        return cnxnFactory;
+        ZKContainer container = new ZKContainer(port);
+        container.withNetworkAliases("zk-" + port);
+
+        if (root != null) {
+            Path data = root.resolve("data");
+            Path datalog = root.resolve("datalog");
+
+            if (!Files.exists(data)) {
+                Files.createDirectories(data);
+            }
+            if (!Files.exists(datalog)) {
+                Files.createDirectories(datalog);
+            }
+
+            LOGGER.debug("data: {}", data);
+            LOGGER.debug("datalog: {}", datalog);
+
+            container.addFileSystemBind(data.toAbsolutePath().toString(), "/data", BindMode.READ_WRITE, SelinuxContext.SHARED);
+            container.addFileSystemBind(datalog.toAbsolutePath().toString(), "/datalog", BindMode.READ_WRITE, SelinuxContext.SHARED);
+        }
+
+        container.start();
+
+        LOGGER.info("****************************************");
+        LOGGER.info("* ZooKeeper container started          *");
+        LOGGER.info("****************************************");
+
+        return container;
     }
 
 
@@ -77,9 +100,9 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
 
@@ -96,33 +119,42 @@ public class GroupTest {
             assertFalse(group.isMaster());
         }
 
-        NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
+        ZKContainer container = null;
+        Path dataDir = Files.createTempDirectory("zk-");
 
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+        try {
+            container = startZooKeeper(port, dataDir);
 
-        // first to start should be master if members are ordered...
-        int i = 0;
-        for (ZooKeeperGroup group : members) {
-            group.start();
-            group.update(new NodeState("foo" + i));
-            i++;
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
 
-            // wait for registration
-            while (group.getId() == null) {
-                TimeUnit.MILLISECONDS.sleep(100);
+            // first to start should be master if members are ordered...
+            int i = 0;
+            for (ZooKeeperGroup group : members) {
+                group.start();
+                group.update(new NodeState("foo" + i));
+                i++;
+
+                // wait for registration
+                while (group.getId() == null) {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                }
             }
+
+            boolean firsStartedIsMaster = members.get(0).isMaster();
+
+            for (ZooKeeperGroup group : members) {
+                group.close();
+            }
+            curator.close();
+
+            assertTrue("first started is master", firsStartedIsMaster);
+        } finally {
+            if (container != null) {
+                container.stop();
+            }
+
+            FileUtils.deleteDirectory(dataDir.toFile());
         }
-
-        boolean firsStartedIsMaster = members.get(0).isMaster();
-
-        for (ZooKeeperGroup group : members) {
-            group.close();
-        }
-        curator.close();
-        cnxnFactory.shutdown();
-        cnxnFactory.join();
-
-        assertTrue("first started is master", firsStartedIsMaster);
 
     }
 
@@ -131,9 +163,9 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
         final Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
@@ -146,21 +178,30 @@ public class GroupTest {
         GroupCondition groupCondition = new GroupCondition();
         group.add(groupCondition);
 
-        NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
+        ZKContainer container = null;
+        Path dataDir = Files.createTempDirectory("zk-");
 
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+        try {
+            container = startZooKeeper(port, dataDir);
 
-        assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
-        assertFalse(group.isMaster());
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
 
-        group.update(new NodeState("foo"));
-        assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
+            assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
+            assertFalse(group.isMaster());
+
+            group.update(new NodeState("foo"));
+            assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
 
 
-        group.close();
-        curator.close();
-        cnxnFactory.shutdown();
-        cnxnFactory.join();
+            group.close();
+            curator.close();
+        } finally {
+            if (container != null) {
+                container.stop();
+            }
+
+            FileUtils.deleteDirectory(dataDir.toFile());
+        }
     }
 
     @Test
@@ -168,9 +209,9 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
         Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
@@ -184,18 +225,26 @@ public class GroupTest {
         assertFalse(group.isMaster());
         group.update(new NodeState("foo"));
 
-        NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
+        ZKContainer container = null;
+        Path dataDir = Files.createTempDirectory("zk-");
 
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+        try {
+            container = startZooKeeper(port, dataDir);
 
-        assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
-        assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
 
+            assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
+            assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
 
-        group.close();
-        curator.close();
-        cnxnFactory.shutdown();
-        cnxnFactory.join();
+            group.close();
+            curator.close();
+        } finally {
+            if (container != null) {
+                container.stop();
+            }
+
+            FileUtils.deleteDirectory(dataDir.toFile());
+        }
     }
 
     @Test
@@ -203,48 +252,55 @@ public class GroupTest {
         int port = AvailablePortFinder.getNextAvailable();
 
         CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
+                .connectString("localhost:" + port)
+                .retryPolicy(new RetryNTimes(10, 100))
+                .build();
         curator.start();
 
-        NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
-        Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
-        group.add(listener);
-        group.update(new NodeState("foo"));
-        group.start();
+        ZKContainer container = null;
+        Path dataDir = Files.createTempDirectory("zk-");
 
-        GroupCondition groupCondition = new GroupCondition();
-        group.add(groupCondition);
+        try {
+            container = startZooKeeper(port, dataDir);
+            Group<NodeState> group = new ZooKeeperGroup<>(curator, "/singletons/test" + System.currentTimeMillis(), NodeState.class);
+            group.add(listener);
+            group.update(new NodeState("foo"));
+            group.start();
 
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-        assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
-        assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
+            GroupCondition groupCondition = new GroupCondition();
+            group.add(groupCondition);
 
-        cnxnFactory.shutdown();
-        cnxnFactory.join();
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+            assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
+            assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
 
-        groupCondition.waitForDisconnected(5, TimeUnit.SECONDS);
-        group.remove(groupCondition);
+            container.stop();
 
-        assertFalse(group.isConnected());
-        assertFalse(group.isMaster());
+            groupCondition.waitForDisconnected(5, TimeUnit.SECONDS);
+            group.remove(groupCondition);
 
-        groupCondition = new GroupCondition();
-        group.add(groupCondition);
+            assertFalse(group.isConnected());
+            assertFalse(group.isMaster());
 
-        cnxnFactory = startZooKeeper(port);
+            groupCondition = new GroupCondition();
+            group.add(groupCondition);
 
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-        assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
-        assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
+            container = startZooKeeper(port, dataDir);
 
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+            assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
+            assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
 
-        group.close();
-        curator.close();
-        cnxnFactory.shutdown();
-        cnxnFactory.join();
+            group.close();
+            curator.close();
+        } finally {
+            if (container != null) {
+                container.stop();
+            }
+
+            FileUtils.deleteDirectory(dataDir.toFile());
+        }
     }
 
     //Tests that if close() is executed right after start(), there are no left over entries.
@@ -252,95 +308,113 @@ public class GroupTest {
     @Test
     public void testGroupClose() throws Exception {
         int port = AvailablePortFinder.getNextAvailable();
-        NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
+        ZKContainer container = null;
+        Path dataDir = Files.createTempDirectory("zk-");
 
-        CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .connectionTimeoutMs(6000)
-            .sessionTimeoutMs(6000)
-            .retryPolicy(new RetryNTimes(10, 100));
-        CuratorFramework curator = builder.build();
-        curator.start();
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-        String groupNode = "/singletons/test" + System.currentTimeMillis();
-        curator.create().creatingParentsIfNeeded().forPath(groupNode);
+        try {
+            container = startZooKeeper(port, dataDir);
 
-        for (int i = 0; i < 100; i++) {
-            ZooKeeperGroup<NodeState> group = new ZooKeeperGroup<>(curator, groupNode, NodeState.class);
-            group.add(listener);
-            group.update(new NodeState("foo"));
-            group.start();
-            group.close();
-            List<String> entries = curator.getChildren().forPath(groupNode);
-            assertTrue(entries.isEmpty() || group.isUnstable());
-            if (group.isUnstable()) {
-                // let's wait for session timeout
-                curator.close();
-                curator = builder.build();
-                curator.start();
-                curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+            CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
+                .connectString("localhost:" + port)
+                .connectionTimeoutMs(6000)
+                .sessionTimeoutMs(6000)
+                .retryPolicy(new RetryNTimes(10, 100));
+            CuratorFramework curator = builder.build();
+            curator.start();
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+            String groupNode = "/singletons/test" + System.currentTimeMillis();
+            curator.create().creatingParentsIfNeeded().forPath(groupNode);
+
+            for (int i = 0; i < 100; i++) {
+                ZooKeeperGroup<NodeState> group = new ZooKeeperGroup<>(curator, groupNode, NodeState.class);
+                group.add(listener);
+                group.update(new NodeState("foo"));
+                group.start();
+                group.close();
+                List<String> entries = curator.getChildren().forPath(groupNode);
+                assertTrue(entries.isEmpty() || group.isUnstable());
+                if (group.isUnstable()) {
+                    // let's wait for session timeout
+                    curator.close();
+                    curator = builder.build();
+                    curator.start();
+                    curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+                }
             }
-        }
 
-        curator.close();
-        cnxnFactory.shutdown();
-        cnxnFactory.join();
+            curator.close();
+        } finally {
+            if (container != null) {
+                container.stop();
+            }
+
+            FileUtils.deleteDirectory(dataDir.toFile());
+        }
     }
 
     @Test
     public void testAddFieldIgnoredOnParse() throws Exception {
 
         int port = AvailablePortFinder.getNextAvailable();
-        NIOServerCnxnFactory cnxnFactory = startZooKeeper(port);
+        ZKContainer container = null;
+        Path dataDir = Files.createTempDirectory("zk-");
 
-        CuratorFramework curator = CuratorFrameworkFactory.builder()
-            .connectString("localhost:" + port)
-            .retryPolicy(new RetryNTimes(10, 100))
-            .build();
-        curator.start();
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
-        String groupNode = "/singletons/test" + System.currentTimeMillis();
-        curator.create().creatingParentsIfNeeded().forPath(groupNode);
+        try {
+            container = startZooKeeper(port, dataDir);
 
-        curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+            CuratorFramework curator = CuratorFrameworkFactory.builder()
+                    .connectString("localhost:" + port)
+                    .retryPolicy(new RetryNTimes(10, 100))
+                    .build();
+            curator.start();
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
+            String groupNode = "/singletons/test" + System.currentTimeMillis();
+            curator.create().creatingParentsIfNeeded().forPath(groupNode);
 
-        final ZooKeeperGroup<NodeState> group = new ZooKeeperGroup<>(curator, groupNode, NodeState.class);
-        group.add(listener);
-        group.start();
+            curator.getZookeeperClient().blockUntilConnectedOrTimedOut();
 
-        GroupCondition groupCondition = new GroupCondition();
-        group.add(groupCondition);
+            final ZooKeeperGroup<NodeState> group = new ZooKeeperGroup<>(curator, groupNode, NodeState.class);
+            group.add(listener);
+            group.start();
 
-        group.update(new NodeState("foo"));
+            GroupCondition groupCondition = new GroupCondition();
+            group.add(groupCondition);
 
-        assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
-        assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
+            group.update(new NodeState("foo"));
 
-        ChildData currentData = group.getCurrentData().get(0);
-        final int version = currentData.getStat().getVersion();
+            assertTrue(groupCondition.waitForConnected(5, TimeUnit.SECONDS));
+            assertTrue(groupCondition.waitForMaster(5, TimeUnit.SECONDS));
 
-        NodeState lastState = group.getLastState();
-        String json = lastState.toString();
-        System.err.println("JSON:" + json);
+            ChildData currentData = group.getCurrentData().get(0);
+            final int version = currentData.getStat().getVersion();
 
-        String newValWithNewField = json.substring(0, json.lastIndexOf('}')) + ",\"Rubbish\":\"Rubbish\"}";
-        curator.getZookeeperClient().getZooKeeper().setData(group.getId(), newValWithNewField.getBytes(), version);
+            NodeState lastState = group.getLastState();
+            String json = lastState.toString();
+            LOGGER.info("JSON:" + json);
 
-        assertTrue(group.isMaster());
+            String newValWithNewField = json.substring(0, json.lastIndexOf('}')) + ",\"Rubbish\":\"Rubbish\"}";
+            curator.getZookeeperClient().getZooKeeper().setData(group.getId(), newValWithNewField.getBytes(), version);
 
-        int attempts = 0;
-        while (attempts++ < 5 && version == group.getCurrentData().get(0).getStat().getVersion()) {
-            TimeUnit.SECONDS.sleep(1);
+            assertTrue(group.isMaster());
+
+            int attempts = 0;
+            while (attempts++ < 5 && version == group.getCurrentData().get(0).getStat().getVersion()) {
+                TimeUnit.SECONDS.sleep(1);
+            }
+
+            assertNotEquals("We see the updated version", version, group.getCurrentData().get(0).getStat().getVersion());
+
+            LOGGER.info("CurrentData:" + group.getCurrentData());
+
+            group.close();
+            curator.close();
+        } finally {
+            if (container != null) {
+                container.stop();
+            }
+
+            FileUtils.deleteDirectory(dataDir.toFile());
         }
-
-        assertNotEquals("We see the updated version", version, group.getCurrentData().get(0).getStat().getVersion());
-
-        System.err.println("CurrentData:" + group.getCurrentData());
-
-        group.close();
-        curator.close();
-        cnxnFactory.shutdown();
-        cnxnFactory.join();
     }
 
     private class GroupCondition implements GroupListener<NodeState> {
@@ -351,18 +425,18 @@ public class GroupTest {
         @Override
         public void groupEvent(Group<NodeState> group, GroupEvent event) {
             switch (event) {
-            case CONNECTED:
-            case CHANGED:
-                connected.countDown();
-                if (group.isMaster()) {
-                    master.countDown();
-                }
-                break;
-            case DISCONNECTED:
-                disconnected.countDown();
-                break;
-            default:
-                // noop
+                case CONNECTED:
+                case CHANGED:
+                    connected.countDown();
+                    if (group.isMaster()) {
+                        master.countDown();
+                    }
+                    break;
+                case DISCONNECTED:
+                    disconnected.countDown();
+                    break;
+                default:
+                    // noop
             }
         }
 

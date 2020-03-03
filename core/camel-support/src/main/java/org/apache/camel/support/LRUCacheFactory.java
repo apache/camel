@@ -30,10 +30,30 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class LRUCacheFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LRUCacheFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LRUCacheFactory.class);
 
     private static volatile LRUCacheFactory instance;
-    
+
+    /**
+     * Initializes and creates the cache factory if not explicit set.
+     */
+    public static void init() {
+        if (instance == null) {
+            instance = createLRUCacheFactory();
+        }
+    }
+
+    /**
+     * Use this to set a specific LRUCacheFactory instance, such as before starting Camel, that
+     * then avoids doing auto discovery of the cache factory via classpath.
+     */
+    public static void setLRUCacheFactory(LRUCacheFactory cacheFactory) {
+        instance = cacheFactory;
+    }
+
+    /**
+     * Gets (and creates if needed) the LRUCacheFactory to use.
+     */
     public static LRUCacheFactory getInstance() {
         if (instance == null) {
             synchronized (LRUCacheFactory.class) {
@@ -46,6 +66,7 @@ public abstract class LRUCacheFactory {
     }
 
     private static LRUCacheFactory createLRUCacheFactory() {
+        LOG.trace("createLRUCacheFactory");
         try {
             ClassLoader classLoader = LRUCacheFactory.class.getClassLoader();
             URL url = classLoader.getResource("META-INF/services/org/apache/camel/lru-cache-factory");
@@ -55,13 +76,21 @@ public abstract class LRUCacheFactory {
                     props.load(is);
                 }
                 String clazzName = props.getProperty("class");
-                Class<?> clazz = classLoader.loadClass(clazzName);
-                Object factory = clazz.getDeclaredConstructor().newInstance();
-                return (LRUCacheFactory) factory;
+                if (clazzName != null) {
+                    LOG.trace("Loading class: {}", clazzName);
+                    Class<?> clazz = classLoader.loadClass(clazzName);
+                    LOG.trace("Creating LURCacheFactory instance from class: {}", clazzName);
+                    Object factory = clazz.getDeclaredConstructor().newInstance();
+                    LOG.trace("Created LURCacheFactory instance: {}", factory);
+                    LOG.info("Detected and using LURCacheFactory: {}", factory);
+                    return (LRUCacheFactory) factory;
+                }
             }
         } catch (Throwable t) {
-            LOGGER.warn("Error creating LRUCacheFactory", t);
+            LOG.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
         }
+        // use default
+        LOG.debug("Creating DefaultLRUCacheFactory");
         return new DefaultLRUCacheFactory();
     }
     

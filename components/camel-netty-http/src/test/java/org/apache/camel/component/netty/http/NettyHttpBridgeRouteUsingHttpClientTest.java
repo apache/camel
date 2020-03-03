@@ -62,12 +62,10 @@ public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
 
                 errorHandler(noErrorHandler());
 
-                Processor serviceProc = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // get the request URL and copy it to the request body
-                        String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                        exchange.getOut().setBody(uri);
-                    }
+                Processor serviceProc = exchange -> {
+                    // get the request URL and copy it to the request body
+                    String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                    exchange.getMessage().setBody(uri);
                 };
                 from("netty-http:http://localhost:" + port2 + "/test/hello")
                         .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
@@ -76,15 +74,11 @@ public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
 
                 // check the from request
                 from("netty-http:http://localhost:" + port2 + "/form?bridgeEndpoint=true")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // just take out the message body and send it back
-                            Message in = exchange.getIn();
-                            String request = in.getBody(String.class);
-                            exchange.getOut().setBody(request);
-                        }
-
+                    .process(exchange -> {
+                        // just take out the message body and send it back
+                        Message in = exchange.getIn();
+                        String request = in.getBody(String.class);
+                        exchange.getMessage().setBody(request);
                     });
             }
         };

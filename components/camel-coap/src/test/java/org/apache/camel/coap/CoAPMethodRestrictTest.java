@@ -64,20 +64,15 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("coap://localhost:%d/test", PORT)
-                        .setBody(constant("GET: /test"));
+                fromF("coap://localhost:%d/test", PORT).setBody(constant("GET: /test"));
 
-                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT)
-                        .setBody(constant("GET: /test/a"));
+                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));
 
-                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT)
-                        .setBody(constant("DELETE: /test/a/b"));
+                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/a/b"));
 
-                fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT)
-                        .setBody(constant("DELETE & GET: /test/a/b/c"));
+                fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT).setBody(constant("DELETE & GET: /test/a/b/c"));
 
-                fromF("coap://localhost:%d/test/b?coapMethodRestrict=GET", PORT)
-                        .setBody(constant("GET: /test/b"));
+                fromF("coap://localhost:%d/test/b?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/b"));
             }
         };
     }

@@ -39,5 +39,5 @@ If you use maven2 then here you go:
 
 If you don't use maven:
 
-http://repo1.maven.org/maven2/org/apache/camel/camel-core/2.22.1/camel-core-2.22.1-tests.jar
-http://repo1.maven.org/maven2/org/apache/camel/camel-test-spring/2.22.1/camel-test-spring-2.22.1.jar
+https://repo1.maven.org/maven2/org/apache/camel/camel-core/2.22.1/camel-core-2.22.1-tests.jar
+https://repo1.maven.org/maven2/org/apache/camel/camel-test-spring/2.22.1/camel-test-spring-2.22.1.jar

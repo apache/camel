@@ -96,12 +96,12 @@ public class DdbStreamConsumerTest {
     String pad(String num, int to) {
         // lazy padding
         switch (num.length()) {
-        case 1:
-            return "00" + num;
-        case 2:
-            return "0" + num;
-        default:
-            return num;
+            case 1:
+                return "00" + num;
+            case 2:
+                return "0" + num;
+            default:
+                return num;
         }
     }
 

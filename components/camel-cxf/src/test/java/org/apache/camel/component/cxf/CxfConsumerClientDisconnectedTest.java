@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
@@ -54,7 +55,7 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
                     .process(exchange-> {
                         Thread.sleep(100);
 
-                        exchange.addOnCompletion(new Synchronization() {
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                             @Override
                             public void onComplete(Exchange exchange) {
                                 template.sendBody("mock:onComplete", "");

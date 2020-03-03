@@ -19,12 +19,16 @@ package org.apache.camel.management;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A JMX capable {@link org.apache.camel.spi.ManagementStrategy} that Camel by default uses if possible.
@@ -35,6 +39,8 @@ import org.apache.camel.spi.ManagementObjectStrategy;
  * @see org.apache.camel.spi.ManagementStrategy
  */
 public class JmxManagementStrategy extends DefaultManagementStrategy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmxManagementStrategy.class);
 
     public JmxManagementStrategy() {
     }
@@ -69,7 +75,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
                 return getManagementAgent().isRegistered(name);
             }
         } catch (Exception e) {
-            log.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
+            LOG.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
         }
         return false;
     }
@@ -81,7 +87,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
                 return getManagementAgent().isRegistered((ObjectName) name);
             }
         } catch (Exception e) {
-            log.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
+            LOG.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
         }
         return false;
     }
@@ -93,7 +99,13 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     @Override
     protected void doStart() throws Exception {
-        log.info("JMX is enabled");
+        LOG.info("JMX is enabled");
+
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+        if (!getEventNotifiers().isEmpty()) {
+            getCamelContext().adapt(ExtendedCamelContext.class).setEventNotificationApplicable(true);
+        }
+
         doStartManagementStrategy();
     }
 

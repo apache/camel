@@ -28,6 +28,9 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -36,6 +39,8 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * when using the {@link DefaultInterceptSendToEndpoint} functionality.
  */
 public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpointProcessor.class);
 
     private final DefaultInterceptSendToEndpoint endpoint;
     private final Endpoint delegate;
@@ -58,8 +63,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // process the detour so we do the detour routing
-        if (log.isDebugEnabled()) {
-            log.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(), endpoint.getBefore(), exchange);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(), endpoint.getBefore(), exchange);
         }
         // add header with the real endpoint uri
         exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
@@ -90,7 +95,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private boolean callback(Exchange exchange, AsyncCallback callback, boolean doneSync) {
         // Decide whether to continue or not; similar logic to the Pipeline
         // check for error if so we should break out
-        if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpoint(), log)) {
+        if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpoint(), LOG)) {
             callback.done(doneSync);
             return doneSync;
         }
@@ -117,8 +122,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
             });
             return doneSync && s;
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);
             }
             callback.done(doneSync);
             return doneSync;

@@ -1,0 +1,74 @@
+[[constant-language]]
+= Constant Language
+
+*Since Camel 1.5*
+
+The Constant Expression Language is really just a way to specify
+constant strings as a type of expression.
+
+[NOTE]
+====
+This is a fixed constant value that is only set once during starting up the route,
+do not use this if you want dynamic values during routing.
+====
+
+== Constant Options
+
+
+// language options: START
+The Constant language supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+
+== Example usage
+
+The setHeader element of the Spring DSL can utilize a constant
+expression like:
+
+[source,xml]
+----
+<route>
+  <from uri="seda:a"/>
+  <setHeader name="theHeader">
+    <constant>the value</constant>
+  </setHeader>
+  <to uri="mock:b"/>
+</route>
+----
+
+in this case, the Message coming from the seda:a
+Endpoint will have 'theHeader' header set to the
+constant value 'the value'.
+
+And the same example using Java DSL:
+
+[source,java]
+----
+from("seda:a")
+  .setHeader("theHeader", constant("the value"))
+  .to("mock:b");
+----
+
+== Loading constant from external resource
+
+You can externalize the constant and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`. +
+ This is done using the following syntax: `"resource:scheme:location"`,
+eg to refer to a file on the classpath you can do:
+
+[source,java]
+----
+.setHeader("myHeader").constant("resource:classpath:constant.txt")
+----
+
+== Dependencies
+
+The Constant language is part of *camel-core*.

@@ -39,7 +39,7 @@ public final class DnsRecordConverter {
     }
 
     /**
-     * @param ip, like "192.168.1.1"
+     * @param ip like "192.168.1.1"
      * @return the complete DNS record for that IP.
      */
     @Converter

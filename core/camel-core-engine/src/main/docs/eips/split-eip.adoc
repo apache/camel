@@ -136,11 +136,13 @@ There is a sample on this page (Split aggregate request/reply sample).
 Notice its the same strategy as the Aggregate EIP supports.
 This Splitter can be viewed as having a build in light weight Aggregate EIP.
 
-NOTE: The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
+[NOTE]
+====
+The Multicast, Recipient List, and Splitter EIPs have special support for using `AggregationStrategy` with
 access to the original input exchange. You may want to use this when you aggregate messages and
 there has been a failure in one of the messages, which you then want to enrich on the original
 input message and return as response; its the aggregate method with 3 exchange parameters.
-
+====
 
 == Parallel execution of distinct parts
 
@@ -158,13 +160,14 @@ from("activemq:my.queue")
 == Stream based
 
 [NOTE]
-.Splitting big XML payloads
-===
+====
+*Splitting big XML payloads*
+
 The XPath engine in Java and saxon will load the entire XML content into memory. And thus they are not well suited for very big
 XML payloads. Instead you can use a custom Expression which will iterate the XML payload in a streamed fashion.
 You can use the Tokenizer language which supports this when you supply the start and end tokens.
 You can use the XMLTokenizer language which is specifically provided for tokenizing XML documents.
-===
+====
 
 You can split streams by enabling the streaming mode using the streaming builder method.
 
@@ -192,10 +195,11 @@ There are two tokenizers that can be used to tokenize an XML payload. The first 
 If you have a big XML payload, from a file source, and want to split it in streaming mode, then you can use the Tokenizer language with start/end tokens to do this with low memory footprint.
 
 [NOTE]
-.StAX component
-===
+====
+*StAX component*
+
 The Camel StAX component can also be used to split big XML files in a streaming mode. See more details at StAX.
-===
+====
 
 For example you may have a XML payload structured as follows
 [source,xml]
@@ -691,7 +695,8 @@ Using this from XML DSL is just as easy as you just have to set the `shareUnitOf
 ----
 
 [NOTE]
-.Implementation of shared unit of work
-===
+====
+*Implementation of shared unit of work*
+
 So in reality the unit of work is not shared as a single object instance. Instead `SubUnitOfWork` is attached to their parent, and issues callback to the parent about their status (commit or rollback). This may be refactored in Camel 3.0 where larger API changes can be done.
-===
+====

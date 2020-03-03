@@ -29,8 +29,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReduceStacksNeededDuringRoutingSendProcessorTest.class);
 
     @Override
     protected boolean useJmx() {
@@ -100,8 +104,8 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
                 throw new IllegalArgumentException("Forced to dump stacktrace");
             } catch (Exception e) {
                 e.fillInStackTrace();
-                log.info("There are " + e.getStackTrace().length + " lines in the stacktrace");
-                log.error("Dump stacktrace to log", e);
+                LOG.info("There are " + e.getStackTrace().length + " lines in the stacktrace");
+                LOG.error("Dump stacktrace to log", e);
             }
             callback.done(true);
             return true;

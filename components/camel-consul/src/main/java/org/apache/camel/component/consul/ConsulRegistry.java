@@ -74,7 +74,7 @@ public class ConsulRegistry implements Registry {
     @Override
     public Object lookupByName(String key) {
         // Substitute $ character in key
-        key = key.replaceAll("\\$", "/");
+        key = key.replace('$', '/');
         kvClient = consul.keyValueClient();
 
         return kvClient.getValueAsString(key).map(result -> {
@@ -101,7 +101,7 @@ public class ConsulRegistry implements Registry {
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> result = new HashMap<>();
         // encode $ signs as they occur in subclass types
-        String keyPrefix = type.getName().replaceAll("\\$", "/");
+        String keyPrefix = type.getName().replace('$', '/');
         kvClient = consul.keyValueClient();
 
         List<String> keys;
@@ -117,7 +117,7 @@ public class ConsulRegistry implements Registry {
             for (String key : keys) {
                 // change bookmark back into actual key
                 key = key.substring(key.lastIndexOf('/') + 1);
-                obj = lookupByName(key.replaceAll("\\$", "/"));
+                obj = lookupByName(key.replace('$', '/'));
                 if (type.isInstance(obj)) {
                     result.put(key, type.cast(obj));
                 }
@@ -128,7 +128,7 @@ public class ConsulRegistry implements Registry {
 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
-        String keyPrefix = type.getName().replaceAll("\\$", "/");
+        String keyPrefix = type.getName().replace('$', '/');
         Set<T> result = new HashSet<>();
 
         List<String> keys;
@@ -144,7 +144,7 @@ public class ConsulRegistry implements Registry {
             for (String key : keys) {
                 // change bookmark back into actual key
                 key = key.substring(key.lastIndexOf('/') + 1);
-                obj = lookupByName(key.replaceAll("\\$", "/"));
+                obj = lookupByName(key.replace('$', '/'));
                 if (type.isInstance(obj)) {
                     result.add(type.cast(obj));
                 }
@@ -180,7 +180,7 @@ public class ConsulRegistry implements Registry {
 
     public void put(String key, Object object) {
         // Substitute $ character in key
-        key = key.replaceAll("\\$", "/");
+        key = key.replace('$', '/');
         // create session to avoid conflicts
         // (not sure if that is safe enough, again)
         SessionClient sessionClient = consul.sessionClient();
@@ -202,7 +202,7 @@ public class ConsulRegistry implements Registry {
         // store the actual class
         kvClient.putValue(key, value);
         // store just as a bookmark
-        kvClient.putValue(object.getClass().getName().replaceAll("\\$", "/") + "/" + key, "1");
+        kvClient.putValue(object.getClass().getName().replace('$', '/') + "/" + key, "1");
         kvClient.releaseLock(lockKey, sessionId);
     }
 

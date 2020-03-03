@@ -1,0 +1,13 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "lra",
+    "title": "LRA",
+    "description": "Camel saga binding for Long-Running-Action framework",
+    "deprecated": false,
+    "firstVersion": "2.21.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-lra",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -37,13 +35,10 @@ public class MinaInOutCloseSessionWhenCompleteTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                        exchange.getOut().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
-                    }
+                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())).process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Bye " + body);
+                    exchange.getMessage().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
                 });
             }
         };

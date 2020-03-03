@@ -58,6 +58,9 @@ A route must have been stopped prior to be shutdown.
 
 See more details about the xref:lifecycle.adoc[Lifecycle].
 
-NOTE: You can also use the xref:components::controlbus-component.adoc[ControlBus] component to let
+[NOTE]
+====
+You can also use the xref:components::controlbus-component.adoc[ControlBus] component to let
 it stop/start routes.
+====
 

@@ -1170,7 +1170,7 @@ public final class ObjectHelper {
     /**
      * Turns the input array to a list of objects.
      * 
-     * @param args an array of objects or null
+     * @param objects an array of objects or null
      * @return an object list
      */
     public static List<Object> asList(Object[] objects) {

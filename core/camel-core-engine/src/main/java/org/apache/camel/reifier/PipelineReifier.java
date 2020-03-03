@@ -23,12 +23,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class PipelineReifier extends ProcessorReifier<PipelineDefinition> {
 
-    public PipelineReifier(ProcessorDefinition<?> definition) {
-        super(PipelineDefinition.class.cast(definition));
+    public PipelineReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, PipelineDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, true);
+    public Processor createProcessor() throws Exception {
+        return this.createChildProcessor(true);
     }
 }

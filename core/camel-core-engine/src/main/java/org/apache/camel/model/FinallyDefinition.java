@@ -16,8 +16,11 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
@@ -45,4 +48,14 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
         return "doFinally";
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    @XmlElementRef
+    @Override
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        super.setOutputs(outputs);
+    }
 }

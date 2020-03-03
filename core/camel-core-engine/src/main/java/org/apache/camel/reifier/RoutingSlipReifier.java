@@ -30,21 +30,24 @@ import static org.apache.camel.model.RoutingSlipDefinition.DEFAULT_DELIMITER;
 
 public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<?>> {
 
-    public RoutingSlipReifier(ProcessorDefinition<?> definition) {
-        super((RoutingSlipDefinition)definition);
+    public RoutingSlipReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (RoutingSlipDefinition) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expression = definition.getExpression().createExpression(routeContext);
-        String delimiter = definition.getUriDelimiter() != null ? definition.getUriDelimiter() : DEFAULT_DELIMITER;
+    public Processor createProcessor() throws Exception {
+        Expression expression = createExpression(definition.getExpression());
+        String delimiter = parseString(definition.getUriDelimiter());
+        if (delimiter == null) {
+            delimiter = DEFAULT_DELIMITER;
+        }
 
-        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, delimiter);
+        RoutingSlip routingSlip = new RoutingSlip(camelContext, expression, delimiter);
         if (definition.getIgnoreInvalidEndpoints() != null) {
-            routingSlip.setIgnoreInvalidEndpoints(parseBoolean(routeContext, definition.getIgnoreInvalidEndpoints()));
+            routingSlip.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }
         if (definition.getCacheSize() != null) {
-            routingSlip.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
+            routingSlip.setCacheSize(parseInt(definition.getCacheSize()));
         }
 
         // and wrap this in an error handler
@@ -52,7 +55,7 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
         // create error handler (create error handler directly to keep it light
         // weight,
         // instead of using ProcessorDefinition.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor)ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, routingSlip.newRoutingSlipProcessorForErrorHandler());
+        AsyncProcessor errorHandler = (AsyncProcessor)ErrorHandlerReifier.reifier(routeContext, builder).createErrorHandler(routingSlip.newRoutingSlipProcessorForErrorHandler());
         routingSlip.setErrorHandler(errorHandler);
 
         return routingSlip;

@@ -49,12 +49,16 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Netty HTTP based component.
  */
 @Component("netty-http")
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
     // factories which is created by this component and therefore manage their lifecycles
     private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<>();
@@ -109,7 +113,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         NettySharedHttpServer shared = resolveAndRemoveReferenceParameter(parameters, "nettySharedHttpServer", NettySharedHttpServer.class);
         if (shared != null) {
             // use port number from the shared http server
-            log.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
+            LOG.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
             sharedPort = shared.getPort();
         }
 
@@ -130,7 +134,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
                 remaining = "https://" + remaining.substring(6);
             }
         }
-        log.debug("Netty http url: {}", remaining);
+        LOG.debug("Netty http url: {}", remaining);
 
         // set port on configuration which is either shared or using default values
         if (sharedPort != -1) {
@@ -171,7 +175,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // must use a copy of the binding on the endpoint to avoid sharing same
         // instance that can cause side-effects
         if (answer.getNettyHttpBinding() == null) {
-            Object binding = null;
+            Object binding;
             if (bindingFromUri != null) {
                 binding = bindingFromUri;
             } else {
@@ -389,7 +393,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         String url = RestComponentHelper.createRestConsumerUrl("netty-http", scheme, host, port, path, map);
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
@@ -445,15 +449,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             url = url + "?" + query;
         }
 
+        parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();
+
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        if (parameters != null && !parameters.isEmpty()) {
-            setProperties(camelContext, endpoint, parameters);
-        }
+        setProperties(endpoint, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
         endpoint.setHeaderFilterStrategy(new NettyHttpRestHeaderFilterStrategy(path, queryParameters));
 

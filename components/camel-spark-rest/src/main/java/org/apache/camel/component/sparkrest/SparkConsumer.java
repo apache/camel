@@ -19,9 +19,13 @@ package org.apache.camel.component.sparkrest;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Service;
 
 public class SparkConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SparkConsumer.class);
 
     private final CamelSparkRoute route;
     private boolean enableCors;
@@ -32,8 +36,8 @@ public class SparkConsumer extends DefaultConsumer {
     }
 
     @Override
-    public SparkEndpoint getEndpoint() {
-        return (SparkEndpoint) super.getEndpoint();
+    public SparkRestEndpoint getEndpoint() {
+        return (SparkRestEndpoint) super.getEndpoint();
     }
 
     public boolean isEnableCors() {
@@ -54,9 +58,9 @@ public class SparkConsumer extends DefaultConsumer {
         boolean matchOnUriPrefix = getEndpoint().getSparkConfiguration().isMatchOnUriPrefix();
 
         if (accept != null) {
-            log.debug("Spark-rest: {}({}) accepting: {}", verb, path, accept);
+            LOG.debug("Spark-rest: {}({}) accepting: {}", verb, path, accept);
         } else {
-            log.debug("Spark-rest: {}({})", verb, path);
+            LOG.debug("Spark-rest: {}({})", verb, path);
         }
         CamelSpark.spark(sparkInstance, verb, path, accept, route);
 

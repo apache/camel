@@ -1,0 +1,28 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "serviceCallConfiguration",
+    "title": "Service Call Configuration",
+    "description": "Remote service call configuration",
+    "javaType": "org.apache.camel.model.cloud.ServiceCallConfigurationDefinition",
+    "label": "routing,cloud",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression." },
+    "component": { "kind": "attribute", "displayName": "Component", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "http", "description": "The component to use." },
+    "pattern": { "kind": "attribute", "displayName": "Pattern", "required": false, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOptionalOut", "InOut" ], "deprecated": false, "secret": false, "description": "Sets the optional ExchangePattern used to invoke this endpoint" },
+    "serviceDiscoveryRef": { "kind": "attribute", "displayName": "Service Discovery Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a reference to a custom ServiceDiscovery to use." },
+    "serviceFilterRef": { "kind": "attribute", "displayName": "Service Filter Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a reference to a custom ServiceFilter to use." },
+    "serviceChooserRef": { "kind": "attribute", "displayName": "Service Chooser Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a reference to a custom ServiceChooser to use." },
+    "loadBalancerRef": { "kind": "attribute", "displayName": "Load Balancer Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a reference to a custom ServiceLoadBalancer to use." },
+    "expressionRef": { "kind": "attribute", "displayName": "Expression Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set a reference to a custom Expression to use." },
+    "serviceDiscoveryConfiguration": { "kind": "element", "displayName": "Service Discovery Configuration", "required": true, "type": "object", "javaType": "org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration", "oneOf": [ "cachingServiceDiscovery", "combinedServiceDiscovery", "consulServiceDiscovery", "dnsServiceDiscovery", "etcdServiceDiscovery", "kubernetesServiceDiscovery", "staticServiceDiscovery", "zookeeperServiceDiscovery" ], "deprecated": false, "secret": false, "description": "Configures the ServiceDiscovery using the given configuration." },
+    "serviceFilterConfiguration": { "kind": "element", "displayName": "Service Filter Configuration", "required": true, "type": "object", "javaType": "org.apache.camel.model.cloud.ServiceCallServiceFilterConfiguration", "oneOf": [ "blacklistServiceFilter", "combinedServiceFilter", "customServiceFilter", "healthyServiceFilter", "passThroughServiceFilter" ], "deprecated": false, "secret": false, "description": "Configures the ServiceFilter using the given configuration." },
+    "loadBalancerConfiguration": { "kind": "element", "displayName": "Load Balancer Configuration", "required": true, "type": "object", "javaType": "org.apache.camel.model.cloud.ServiceCallServiceLoadBalancerConfiguration", "oneOf": [ "defaultLoadBalancer", "ribbonLoadBalancer" ], "deprecated": false, "secret": false, "description": "Configures theL oadBalancer using the given configuration." },
+    "expressionConfiguration": { "kind": "element", "displayName": "Expression Configuration", "required": true, "type": "object", "javaType": "org.apache.camel.model.cloud.ServiceCallExpressionConfiguration", "oneOf": [ "expression" ], "deprecated": false, "secret": false, "description": "Configures the Expression using the given configuration." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

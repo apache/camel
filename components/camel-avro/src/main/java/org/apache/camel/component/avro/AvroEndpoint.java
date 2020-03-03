@@ -47,6 +47,11 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
         this.configuration = configuration;
     }
 
+    @Override
+    public boolean isSingletonProducer() {
+        return false;
+    }
+
     public Exchange createExchange(Protocol.Message message, Object request) {
         ExchangePattern pattern = ExchangePattern.InOut;
         if (message.getResponse().getType().equals(Schema.Type.NULL)) {
@@ -74,7 +79,6 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
         super.doStart();
 
         validateConfiguration(configuration);
-
     }
 
     /**

@@ -275,7 +275,7 @@ public class SignatureTest extends CamelTestSupport {
         template.send("direct:alias-sign", unsigned);
 
         Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
-        signed.getIn().copyFrom(unsigned.getOut());
+        signed.getIn().copyFrom(unsigned.getMessage());
         signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
         template.send("direct:alias-verify", signed);
         // START SNIPPET: alias-send
@@ -298,7 +298,7 @@ public class SignatureTest extends CamelTestSupport {
 
         // verify with the public key
         Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
-        signed.getIn().copyFrom(unsigned.getOut());
+        signed.getIn().copyFrom(unsigned.getMessage());
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, pair.getPublic());
         template.send("direct:headerkey-verify", signed);
 
@@ -322,7 +322,7 @@ public class SignatureTest extends CamelTestSupport {
 
         // verify with the public key
         Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
-        signed.getIn().copyFrom(unsigned.getOut());
+        signed.getIn().copyFrom(unsigned.getMessage());
         signed.getIn().setHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, certificate);
         template.send("direct:headerkey-verify", signed);
 

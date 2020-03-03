@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.webhook;
 
+import org.apache.camel.AfterPropertiesConfigured;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -25,14 +27,17 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The webhook component allows other Camel components that can receive push notifications to expose
  * webhook endpoints and automatically register them with their own webhook provider.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "webhook", title = "Webhook", syntax = "webhook:endpointUri", consumerOnly = true, label = "cloud", lenientProperties = true)
-public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint {
+public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint, AfterPropertiesConfigured {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WebhookEndpoint.class);
 
     private WebhookCapableEndpoint delegateEndpoint;
 
@@ -60,22 +65,26 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
         Processor handler = delegateEndpoint.createWebhookHandler(processor);
 
         return new MultiRestConsumer(getCamelContext(), factory, this, handler, delegateEndpoint.getWebhookMethods(), url, path,
-                configuration.getRestConfiguration(), this::configureConsumer);
+                configuration.retrieveRestConfiguration(), this::configureConsumer);
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
+    public void afterPropertiesConfigured(CamelContext camelContext) {
+        // setup delegate endpoint in constructor
         Endpoint delegate = getCamelContext().getEndpoint(configuration.getEndpointUri());
         if (!(delegate instanceof WebhookCapableEndpoint)) {
             throw new IllegalArgumentException("The provided endpoint is not capable of being used in webhook mode: " + configuration.getEndpointUri());
         }
         delegateEndpoint = (WebhookCapableEndpoint) delegate;
         delegateEndpoint.setWebhookConfiguration(configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
         if (configuration.isWebhookAutoRegister()) {
-            log.info("Registering webhook for endpoint {}", delegateEndpoint);
+            LOG.info("Registering webhook for endpoint: {}", delegateEndpoint);
             delegateEndpoint.registerWebhook();
         }
     }
@@ -85,7 +94,7 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
         super.doStop();
 
         if (configuration.isWebhookAutoRegister() && delegateEndpoint != null) {
-            log.info("Unregistering webhook for endpoint {}", delegateEndpoint);
+            LOG.info("Unregistering webhook for endpoint: {}", delegateEndpoint);
             delegateEndpoint.unregisterWebhook();
         }
     }

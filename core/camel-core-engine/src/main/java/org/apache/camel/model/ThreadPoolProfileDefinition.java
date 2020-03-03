@@ -35,21 +35,29 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<ThreadPoolProfileDefinition> {
     @XmlAttribute
-    private Boolean defaultProfile;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String defaultProfile;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String poolSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String maxPoolSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Long")
     private String keepAliveTime;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    private TimeUnit timeUnit;
+    @Metadata(javaType = "java.util.concurrent.TimeUnit",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+    private String timeUnit;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Integer")
     private String maxQueueSize;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
+    @Metadata(javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy")
     private String rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
@@ -93,6 +101,10 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     public ThreadPoolProfileDefinition timeUnit(TimeUnit timeUnit) {
+        return timeUnit(timeUnit.name());
+    }
+
+    public ThreadPoolProfileDefinition timeUnit(String timeUnit) {
         setTimeUnit(timeUnit);
         return this;
     }
@@ -117,23 +129,23 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     public ThreadPoolProfileDefinition allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
-        setAllowCoreThreadTimeOut("" + allowCoreThreadTimeOut);
+        return allowCoreThreadTimeOut(Boolean.toString(allowCoreThreadTimeOut));
+    }
+
+    public ThreadPoolProfileDefinition allowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
+        setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
         return this;
     }
 
-    public Boolean getDefaultProfile() {
+    public String getDefaultProfile() {
         return defaultProfile;
     }
 
     /**
      * Whether this profile is the default thread pool profile
      */
-    public void setDefaultProfile(Boolean defaultProfile) {
+    public void setDefaultProfile(String defaultProfile) {
         this.defaultProfile = defaultProfile;
-    }
-
-    public Boolean isDefaultProfile() {
-        return defaultProfile != null && defaultProfile;
     }
 
     public String getPoolSize() {
@@ -196,14 +208,14 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
 
-    public TimeUnit getTimeUnit() {
+    public String getTimeUnit() {
         return timeUnit;
     }
 
     /**
      * Sets the time unit to use for keep alive time By default SECONDS is used.
      */
-    public void setTimeUnit(TimeUnit timeUnit) {
+    public void setTimeUnit(String timeUnit) {
         this.timeUnit = timeUnit;
     }
 

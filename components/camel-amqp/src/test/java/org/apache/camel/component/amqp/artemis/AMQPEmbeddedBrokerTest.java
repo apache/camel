@@ -28,10 +28,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_SET_TOPIC_PREFIX;
@@ -48,7 +48,7 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
 
     String expectedBody = "Hello there!";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         Configuration config = new ConfigurationImpl();
         AddressSettings addressSettings = new AddressSettings();
@@ -73,7 +73,7 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         System.setProperty(AMQP_SET_TOPIC_PREFIX, "false");
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         server.stop();
     }
@@ -94,9 +94,9 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
     }
     
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:send-topic")
                     .to("amqp-customized:topic:topic.ping");
                 

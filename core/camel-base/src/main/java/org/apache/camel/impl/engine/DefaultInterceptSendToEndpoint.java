@@ -90,6 +90,11 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     }
 
     @Override
+    public String getEndpointBaseUri() {
+        return delegate.getEndpointBaseUri();
+    }
+
+    @Override
     public String getEndpointKey() {
         return delegate.getEndpointKey();
     }

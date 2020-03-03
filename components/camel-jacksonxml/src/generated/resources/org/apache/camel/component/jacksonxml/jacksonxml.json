@@ -1,0 +1,36 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "jacksonxml",
+    "modelName": "jacksonxml",
+    "title": "JacksonXML",
+    "description": "JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation,xml",
+    "firstVersion": "2.16.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.component.jacksonxml.JacksonXMLDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.JacksonXMLDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jacksonxml",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "xmlMapper": { "kind": "attribute", "displayName": "Xml Mapper", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Lookup and use the existing XmlMapper with the given id." },
+    "prettyPrint": { "kind": "attribute", "displayName": "Pretty Print", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. Is by default false." },
+    "unmarshalTypeName": { "kind": "attribute", "displayName": "Unmarshal Type Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" },
+    "jsonView": { "kind": "attribute", "displayName": "Json View", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>", "deprecated": false, "secret": false, "description": "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations" },
+    "include": { "kind": "attribute", "displayName": "Include", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL" },
+    "allowJmsType": { "kind": "attribute", "displayName": "Allow Jms Type", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to." },
+    "collectionTypeName": { "kind": "attribute", "displayName": "Collection Type Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default." },
+    "useList": { "kind": "attribute", "displayName": "Use List", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To unmarshal to a List of Map or a List of Pojo." },
+    "enableJaxbAnnotationModule": { "kind": "attribute", "displayName": "Enable Jaxb Annotation Module", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson." },
+    "moduleClassNames": { "kind": "attribute", "displayName": "Module Class Names", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma." },
+    "moduleRefs": { "kind": "attribute", "displayName": "Module Refs", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma." },
+    "enableFeatures": { "kind": "attribute", "displayName": "Enable Features", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma" },
+    "disableFeatures": { "kind": "attribute", "displayName": "Disable Features", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma" },
+    "allowUnmarshallType": { "kind": "attribute", "displayName": "Allow Unmarshall Type", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

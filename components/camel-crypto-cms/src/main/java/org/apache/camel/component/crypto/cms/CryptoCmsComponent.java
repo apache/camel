@@ -39,9 +39,13 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("crypto-cms")
 public class CryptoCmsComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CryptoCmsComponent.class);
 
     @Metadata(label = "advanced")
     private SignedDataVerifierConfiguration signedDataVerifierConfiguration;
@@ -108,7 +112,7 @@ public class CryptoCmsComponent extends DefaultComponent {
             processor = new EnvelopedDataDecryptor(config);
         } else {
             String error = "Endpoint uri " + uri + " is wrong configured. Operation " + scheme + " is not supported. Supported operations are: sign, verify, encrypt, decrypt";
-            log.error(error);
+            LOG.error(error);
             throw new IllegalStateException(error);
         }
         CryptoCmsEndpoint endpoint = new CryptoCmsEndpoint(uri, this, processor);
@@ -150,7 +154,7 @@ public class CryptoCmsComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception { // NOPMD
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            log.debug("Adding BouncyCastleProvider as security provider");
+            LOG.debug("Adding BouncyCastleProvider as security provider");
             Security.addProvider(new BouncyCastleProvider());
         }
         super.doStart();

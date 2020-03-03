@@ -38,15 +38,19 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("servlet")
 public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServletComponent.class);
 
     @Metadata(label = "consumer", defaultValue = "CamelServlet", description = "Default name of servlet to use. The default name is CamelServlet.")
     private String servletName = "CamelServlet";
     @Metadata(label = "consumer,advanced", description = "To use a custom org.apache.camel.component.servlet.HttpRegistry.")
     private HttpRegistry httpRegistry;
-    @Metadata(label = "consumer,advanced", description = "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange}."
+    @Metadata(label = "consumer,advanced", description = "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange."
         + " The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
         + " Remove disableStreamCache to use AttachmentMultipartBinding."
         + " This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.")
@@ -146,7 +150,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         if (endpoint.isAttachmentMultipartBinding()) {
             if (disableStreamCache == null) {
                 // disableStreamCache not explicit configured so we can automatic change it
-                log.info("Disabling stream caching as attachmentMultipartBinding is enabled");
+                LOG.info("Disabling stream caching as attachmentMultipartBinding is enabled");
                 endpoint.setDisableStreamCache(true);
             } else if (!disableStreamCache) {
                 throw new IllegalArgumentException("The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
@@ -295,7 +299,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String url = RestComponentHelper.createRestConsumerUrl("servlet", path, map);  
 
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
-        setProperties(camelContext, endpoint, parameters);
+        setProperties(endpoint, parameters);
 
         if (!map.containsKey("httpBinding")) {
             // use the rest binding, if not using a custom http binding

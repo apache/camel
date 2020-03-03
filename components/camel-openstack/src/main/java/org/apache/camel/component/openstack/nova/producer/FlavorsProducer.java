@@ -42,20 +42,20 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
     public void process(Exchange exchange) throws Exception {
         final String operation = getOperation(exchange);
         switch (operation) {
-        case OpenstackConstants.CREATE:
-            doCreate(exchange);
-            break;
-        case OpenstackConstants.GET:
-            doGet(exchange);
-            break;
-        case OpenstackConstants.GET_ALL:
-            doGetAll(exchange);
-            break;
-        case OpenstackConstants.DELETE:
-            doDelete(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            case OpenstackConstants.CREATE:
+                doCreate(exchange);
+                break;
+            case OpenstackConstants.GET:
+                doGet(exchange);
+                break;
+            case OpenstackConstants.GET_ALL:
+                doGetAll(exchange);
+                break;
+            case OpenstackConstants.DELETE:
+                doDelete(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,7 +47,7 @@ public class TransactionalClientDataSourceOnExceptionRedeliveryTest extends Tran
         assertEquals(true, out.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(3, out.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
         assertEquals(true, out.getProperty(Exchange.FAILURE_HANDLED));
-        assertEquals(false, out.getProperty(Exchange.ERRORHANDLER_HANDLED));
+        assertEquals(false, out.adapt(ExtendedExchange.class).isErrorHandlerHandled());
     }
 
     @Override

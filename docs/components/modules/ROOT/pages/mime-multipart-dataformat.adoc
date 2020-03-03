@@ -195,3 +195,5 @@ If you use Maven you can just add the following to your pom.xml:
   <version>x.x.x</version> <!-- use the same version as your Camel core version -->
 </dependency>
 -----------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$mail-starter.adoc[]

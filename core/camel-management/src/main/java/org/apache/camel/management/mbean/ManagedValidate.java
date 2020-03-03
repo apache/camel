@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedValidateMBean;
 import org.apache.camel.model.ValidateDefinition;
-import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
+import org.apache.camel.support.processor.PredicateValidatingProcessor;
 
 @ManagedResource(description = "Managed Validate")
 public class ManagedValidate extends ManagedProcessor implements ManagedValidateMBean {

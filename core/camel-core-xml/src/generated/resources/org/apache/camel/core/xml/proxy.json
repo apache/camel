@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "proxy",
+    "title": "Proxy",
+    "description": "To proxy a service call using a interface",
+    "javaType": "org.apache.camel.core.xml.CamelProxyFactoryDefinition",
+    "label": "spring,configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "serviceUrl": { "kind": "attribute", "displayName": "Service Url", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The camel endpoint uri used to send the message to when calling the service from the interface." },
+    "serviceInterface": { "kind": "attribute", "displayName": "Service Interface", "required": false, "type": "string", "javaType": "java.lang.Class<java.lang.Object>", "deprecated": false, "secret": false, "description": "Java interfaces to use as facade for the service to be proxied" },
+    "camelContextId": { "kind": "attribute", "displayName": "Camel Context Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of the CamelContext to use, if there is multiple CamelContext in the same JVM." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

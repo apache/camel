@@ -17,7 +17,6 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -25,9 +24,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.http.HttpMethods.GET;
+
 public class HttpPathTest extends BaseHttpTest {
 
     private HttpServer localServer;
+
+    private String endpointUrl;
 
     @Before
     @Override
@@ -38,11 +41,13 @@ public class HttpPathTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).
-                registerHandler("/test%20/path", new BasicValidationHandler("GET", null, null, getExpectedContent())).
-                registerHandler("/testWithQueryParams", new BasicValidationHandler("GET", "abc=123", null, getExpectedContent())).
+                registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
+                registerHandler("/test%20/path", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
+                registerHandler("/testWithQueryParams", new BasicValidationHandler(GET.name(), "abc=123", null, getExpectedContent())).
                 create();
         localServer.start();
+
+        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
 
         super.setUp();
     }
@@ -59,9 +64,7 @@ public class HttpPathTest extends BaseHttpTest {
 
     @Test
     public void httpPath() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(endpointUrl + "/search", exchange1 -> {
         });
 
         assertExchange(exchange);
@@ -69,22 +72,16 @@ public class HttpPathTest extends BaseHttpTest {
 
     @Test
     public void httpPathHeader() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_PATH, "search");
-            }
-        });
+        Exchange exchange = template.request(endpointUrl + "/", exchange1 ->
+                exchange1.getIn().setHeader(Exchange.HTTP_PATH, "search"));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpPathHeaderWithStaticQueryParams() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?abc=123", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_PATH, "testWithQueryParams");
-            }
-        });
+        Exchange exchange = template.request(endpointUrl + "?abc=123", exchange1 ->
+                exchange1.getIn().setHeader(Exchange.HTTP_PATH, "testWithQueryParams"));
 
         assertExchange(exchange);
     }
@@ -92,20 +89,15 @@ public class HttpPathTest extends BaseHttpTest {
 
     @Test
     public void httpPathHeaderWithBaseSlashesAndWithStaticQueryParams() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/" + "?abc=123", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_PATH, "/testWithQueryParams");
-            }
-        });
+        Exchange exchange = template.request(endpointUrl + "/" + "?abc=123", exchange1 ->
+                exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/testWithQueryParams"));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpEscapedCharacters() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test%20/path", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(endpointUrl + "/test%20/path", exchange1 -> {
         });
 
         assertExchange(exchange);

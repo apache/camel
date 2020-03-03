@@ -25,8 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientConsumer;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<AtomixQueueEndpoint> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AtomixQueueConsumer.class);
 
     private final List<Listener<DistributedQueue.ValueEvent<Object>>> listeners;
     private final String resourceName;
@@ -53,7 +57,7 @@ public final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<Atom
             .join();
 
 
-        log.debug("Subscribe to events for queue: {}", resourceName);
+        LOG.debug("Subscribe to events for queue: {}", resourceName);
         this.listeners.add(this.queue.onAdd(this::onEvent).join());
         this.listeners.add(this.queue.onRemove(this::onEvent).join());
     }

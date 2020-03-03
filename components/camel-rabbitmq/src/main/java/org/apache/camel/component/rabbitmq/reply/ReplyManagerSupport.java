@@ -39,8 +39,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
     private static final int CLOSE_TIMEOUT = 30 * 1000;
-    
-    protected final Logger log = LoggerFactory.getLogger(ReplyManagerSupport.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReplyManagerSupport.class);
+
     protected final CamelContext camelContext;
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
     protected final long replyToTimeout = 1000;
@@ -70,7 +71,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     @Override
     public void setReplyTo(String replyTo) {
-        log.debug("ReplyTo destination: {}", replyTo);
+        LOG.debug("ReplyTo destination: {}", replyTo);
         this.replyTo = replyTo;
         // trigger latch as the reply to has been resolved and set
         replyToLatch.countDown();
@@ -85,12 +86,12 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             // the reply to destination has to be resolved using a DestinationResolver using
             // the MessageListenerContainer which occurs asynchronously so we have to wait
             // for that to happen before we can retrieve the reply to destination to be used
-            log.trace("Waiting for replyTo to be set");
+            LOG.trace("Waiting for replyTo to be set");
             boolean done = replyToLatch.await(replyToTimeout, TimeUnit.MILLISECONDS);
             if (!done) {
-                log.warn("ReplyTo destination was not set and timeout occurred");
+                LOG.warn("ReplyTo destination was not set and timeout occurred");
             } else {
-                log.trace("Waiting for replyTo to be set done");
+                LOG.trace("Waiting for replyTo to be set done");
             }
         } catch (InterruptedException e) {
             // ignore
@@ -121,7 +122,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     public void cancelCorrelationId(String correlationId) {
         ReplyHandler handler = correlation.get(correlationId);
         if (handler != null) {
-            log.warn("Cancelling correlationID: {}", correlationId);
+            LOG.warn("Cancelling correlationID: {}", correlationId);
             correlation.remove(correlationId);
         }
     }
@@ -130,11 +131,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         String correlationID = properties.getCorrelationId();
 
         if (correlationID == null) {
-            log.warn("Ignoring message with no correlationID: {}", message);
+            LOG.warn("Ignoring message with no correlationID: {}", message);
             return;
         }
 
-        log.debug("Received reply message with correlationID [{}] -> {}", correlationID, message);
+        LOG.debug("Received reply message with correlationID [{}] -> {}", correlationID, message);
 
         // handle the reply message
         handleReplyMessage(correlationID, properties, message);
@@ -149,8 +150,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 boolean timeout = holder.isTimeout();
                 if (timeout) {
                     // timeout occurred do a WARN log so its easier to spot in the logs
-                    if (log.isWarnEnabled()) {
-                        log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
                                  holder.getRequestTimeout(), holder.getCorrelationId(), replyTo, ExchangeHelper.logIds(exchange));
                     }
@@ -194,8 +195,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // at first, which gets updated with the JMSMessageID after the message has been sent. And in the unlikely
         // event that the reply comes back really really fast, and the correlation map hasn't yet been updated
         // from the provisional id to the JMSMessageID. If so we have to wait a bit and lookup again.
-        if (log.isWarnEnabled()) {
-            log.warn("Early reply received with correlationID [{}] -> {}", correlationID, message);
+        if (LOG.isWarnEnabled()) {
+            LOG.warn("Early reply received with correlationID [{}] -> {}", correlationID, message);
         }
 
         ReplyHandler answer = null;
@@ -204,7 +205,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         boolean done = false;
         int counter = 0;
         while (!done && counter++ < 50) {
-            log.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
+            LOG.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -216,8 +217,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             done = answer != null;
 
             if (answer != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
                               correlationID, counter, answer);
                 }
             }
@@ -234,14 +235,14 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         messageConverter.setAllowNullHeaders(endpoint.isAllowNullHeaders());
         // timeout map to use for purging messages which have timed out, while waiting for an expected reply
         // when doing request/reply over JMS
-        log.debug("Using timeout checker interval with {} millis", endpoint.getRequestTimeoutCheckerInterval());
+        LOG.debug("Using timeout checker interval with {} millis", endpoint.getRequestTimeoutCheckerInterval());
         correlation = new CorrelationTimeoutMap(executorService, endpoint.getRequestTimeoutCheckerInterval());
         ServiceHelper.startService(correlation);
 
         // create listener and start it
         listenerContainer = createListenerContainer();
         
-        log.debug("Using executor {}", executorService);
+        LOG.debug("Using executor {}", executorService);
     }
 
     @Override
@@ -249,7 +250,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ServiceHelper.stopService(correlation);
 
         if (listenerContainer != null) {
-            log.debug("Closing connection: {} with timeout: {} ms.", listenerContainer, CLOSE_TIMEOUT);
+            LOG.debug("Closing connection: {} with timeout: {} ms.", listenerContainer, CLOSE_TIMEOUT);
             listenerContainer.close(CLOSE_TIMEOUT);
             listenerContainer = null;
         }

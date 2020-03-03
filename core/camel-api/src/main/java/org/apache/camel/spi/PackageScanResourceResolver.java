@@ -58,10 +58,20 @@ public interface PackageScanResourceResolver extends StaticService {
     /**
      * Finds the resources from the given location.
      *
-     * @param locations  the location (support ANT style patterns, eg routes/camel-*.xml)
+     * The location can be prefixed with either file: or classpath: to look in either file system or classpath.
+     * By default classpath is assumed if no prefix is specified.
+     *
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
+     * as if you specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * <b>Important:</b> Make sure to close the returned input streams after use.
+     *
+     * @param location  the location (support ANT style patterns, eg routes/camel-*.xml)
      * @return the found resources, or an empty set if no resources found
      * @throws Exception can be thrown during scanning for resources.
      */
-    Set<InputStream> findResources(String locations) throws Exception;
+    Set<InputStream> findResources(String location) throws Exception;
 
 }

@@ -108,7 +108,8 @@ public class ModelSanityCheckerTest extends Assert {
 
                 assertFalse("Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlAttribute annotation", attribute);
                 assertFalse("Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlElement annotation", element);
-                assertFalse("Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlElementRef annotation", elementRef);
+                assertFalse("Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlElementRef annotation",
+                        elementRef && !"setOutputs".equals(method.getName()));
             }
         }
 

@@ -108,38 +108,6 @@ public interface ProducerCache extends Service {
     int getCapacity();
 
     /**
-     * Gets the cache hits statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the hits
-     */
-    long getHits();
-
-    /**
-     * Gets the cache misses statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the misses
-     */
-    long getMisses();
-
-    /**
-     * Gets the cache evicted statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the evicted
-     */
-    long getEvicted();
-
-    /**
-     * Resets the cache statistics
-     */
-    void resetCacheStatistics();
-
-    /**
      * Purges this cache
      */
     void purge();
@@ -149,10 +117,13 @@ public interface ProducerCache extends Service {
      */
     void cleanUp();
 
+    /**
+     * Whether {@link org.apache.camel.spi.EventNotifier} is enabled
+     */
     boolean isEventNotifierEnabled();
 
     /**
-     * Whether {@link org.apache.camel.spi.EventNotifier} is enabled
+     * Sets whether {@link org.apache.camel.spi.EventNotifier} is enabled
      */
     void setEventNotifierEnabled(boolean eventNotifierEnabled);
 

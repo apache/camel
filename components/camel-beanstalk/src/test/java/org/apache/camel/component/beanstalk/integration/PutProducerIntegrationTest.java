@@ -40,7 +40,7 @@ public class PutProducerIntegrationTest extends BeanstalkCamelTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate direct;
 
-    private String testMessage = "Hello, world!";
+    private final String testMessage = "Hello, world!";
 
     @Test
     public void testPut() throws InterruptedException, IOException {
@@ -63,13 +63,9 @@ public class PutProducerIntegrationTest extends BeanstalkCamelTestSupport {
     @Test
     public void testOut() throws InterruptedException, IOException {
         final Endpoint endpoint = context.getEndpoint("beanstalk:" + tubeName);
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody(testMessage);
-            }
-        });
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOut, exchange1 -> exchange1.getIn().setBody(testMessage));
 
-        final Message out = exchange.getOut();
+        final Message out = exchange.getMessage();
         assertNotNull("Out message", out);
 
         final Long jobId = out.getHeader(Headers.JOB_ID, Long.class);

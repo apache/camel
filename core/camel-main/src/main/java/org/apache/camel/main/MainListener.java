@@ -22,6 +22,13 @@ import org.apache.camel.CamelContext;
  * A lifecycle listener to receive callbacks when the Main is started and stopped.
  */
 public interface MainListener {
+    /**
+     * Callback invoked after the the CamelContext has been created and before the
+     * auto-configured step starts.
+     *
+     * @param main the main instance
+     */
+    void beforeConfigure(BaseMainSupport main);
 
     /**
      * Callback to configure the created CamelContext.

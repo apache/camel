@@ -5,7 +5,7 @@ Camel supports the
 http://www.enterpriseintegrationpatterns.com/DeadLetterChannel.html[Dead
 Letter Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/DeadLetterChannel.html[DeadLetterChannel]
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/DeadLetterChannel.html[DeadLetterChannel]
 processor which is an xref:error-handler.adoc[Error Handler].
 
 image::eip/DeadLetterChannelSolution.gif[image]
@@ -47,7 +47,7 @@ wish to use some kind of redelivery policy to decide how many times to
 try redeliver a message and how long to wait before redelivery attempts.
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/RedeliveryPolicy.html[RedeliveryPolicy]
 defines how the message is to be redelivered. You can customize things
 like
 
@@ -137,7 +137,10 @@ transformOrder or after? So to be sure we want to move the original
 input message we received from `jms:queue:order:input`. So we can do
 this by enabling the *useOriginalMessage* option as shown below:
 
-NOTE: There is also a *useOriginalBody* option.
+[NOTE]
+====
+There is also a *useOriginalBody* option.
+====
 
 [source,java]
 ----
@@ -273,7 +276,7 @@ reduce that to 1 second.
 == Redelivery header
 
 When a message is redelivered the
-http://camel.apache.org/maven/camel-core/apidocs/org/apache/camel/processor/DeadLetterChannel.html[DeadLetterChannel]
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/DeadLetterChannel.html[DeadLetterChannel]
 will append a customizable header to the message to indicate how many
 times its been redelivered.  
 Before Camel 2.6: The header is *CamelRedeliveryCounter*, which is also
@@ -445,7 +448,7 @@ The following example shows how to configure the Dead Letter Channel
 configuration using the xref:dsl.adoc[DSL]
 
 You can also configure the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/RedeliveryPolicy.html[RedeliveryPolicy]
 as this example shows
 
 [[deadLetterChannel-HowcanImodifytheExchangebeforeredelivery]]

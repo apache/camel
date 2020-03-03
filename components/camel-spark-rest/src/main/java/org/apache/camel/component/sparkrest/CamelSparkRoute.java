@@ -27,10 +27,10 @@ import spark.Route;
 
 public class CamelSparkRoute implements Route {
 
-    private final SparkEndpoint endpoint;
+    private final SparkRestEndpoint endpoint;
     private final Processor processor;
 
-    public CamelSparkRoute(SparkEndpoint endpoint, Processor processor) {
+    public CamelSparkRoute(SparkRestEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
     }

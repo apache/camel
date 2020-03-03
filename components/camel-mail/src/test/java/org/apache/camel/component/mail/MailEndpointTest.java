@@ -31,7 +31,7 @@ public class MailEndpointTest extends CamelTestSupport {
 
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol("smtp");
+        cfg.configureProtocol("smtp");
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");
@@ -50,7 +50,7 @@ public class MailEndpointTest extends CamelTestSupport {
 
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol("smtp");
+        cfg.configureProtocol("smtp");
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");
@@ -63,7 +63,7 @@ public class MailEndpointTest extends CamelTestSupport {
     public void testMailEndpointCtrEndpointConfig() throws Exception {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol("smtp");
+        cfg.configureProtocol("smtp");
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");

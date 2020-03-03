@@ -79,7 +79,7 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
                     BindyDataFormat bindy = new BindyDataFormat();
                     bindy.setLocale("en");
                     bindy.setClassType(Order.class);
-                    bindy.setType(BindyType.Fixed);
+                    bindy.type(BindyType.Fixed);
 
                     from(URI_DIRECT_START)
                             .marshal(bindy)

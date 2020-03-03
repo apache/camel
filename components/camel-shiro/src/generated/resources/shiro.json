@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "shiro",
+    "title": "Shiro",
+    "description": "Security using Shiro",
+    "deprecated": false,
+    "firstVersion": "2.5.0",
+    "label": "security",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-shiro",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

@@ -1,0 +1,138 @@
+[[cron-component]]
+= Cron Component
+:page-source: components/camel-cron/src/main/docs/cron-component.adoc
+
+*Since Camel 3.1*
+
+// HEADER START
+*Only consumer is supported*
+// HEADER END
+
+The Cron component is a generic interface component that allows triggering events at specific time interval
+specified using the Unix cron syntax (e.g. `0/2 * * * * ?` to trigger an event every two seconds).
+
+Being an interface component, the Cron component does not contain a default implementation, instead it requires that the users plug
+the implementation of their choice.
+
+The following standard Camel components support the Cron endpoints:
+
+- Camel-quartz
+- Camel-spring
+
+The Cron component is also supported in **Camel K**, which can use the Kubernetes scheduler to trigger the routes when required by the cron expression.
+Camel K does not require additional libraries to be plugged when using cron expressions compatible with Kubernetes cron syntax.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-cron</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Additional libraries may be needed in order to plug a specific implementation.
+
+== Options
+
+
+// component options: START
+The Cron component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *cronService* (advanced) | The id of the CamelCronService to use when multiple implementations are provided |  | String
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Cron endpoint is configured using URI syntax:
+
+----
+cron:name
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* The name of the cron trigger |  | String
+|===
+
+
+=== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *schedule* (consumer) | *Required* A cron expression that will be used to generate events |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+== Usage
+
+The component can be used to trigger events at specified times, as in the following example:
+
+[source,java]
+---------------------------------------------------------
+from("cron:tab?schedule=0/1+*+*+*+*+?")
+.setBody().constant("event")
+.log("${body}");
+---------------------------------------------------------
+
+The schedule expression `0/3+10+*+*+*+?` can be also written as `0/3 10 * * * ?` and triggers an event every three seconds only in the tenth minute of each hour.
+
+Parts in the schedule expression means (in order):
+
+- Seconds (optional)
+- Minutes
+- Hours
+- Day of month
+- Month
+- Day of week
+- Year (optional)
+
+Schedule expressions can be made of 5 to 7 parts. When expressions are composed of 6 parts, the first items is the "seconds" part (and year is considered missing).
+
+Other valid examples of schedule expressions are:
+
+- `0/2 * * * ?` (5 parts, an event every two minutes)
+- `0 0/2 * * * MON-FRI 2030` (7 parts, an event every two minutes only in year 2030)
+
+Routes can also be written using the XML DSL.
+
+[source,xml]
+-------------
+<route>
+    <from uri="cron:tab?schedule=0/1+*+*+*+*+?"/>
+    <setBody>
+      <constant>event</constant>
+    </setBody>
+    <to uri="log:info"/>
+</route>
+-------------
+
+include::camel-spring-boot::page$cron-starter.adoc[]

@@ -44,7 +44,7 @@ final class CamelCoapResource extends CoapResource {
         super(name);
         this.possibles = possibles;
     }
-    
+
     void addConsumer(CoAPConsumer consumer) {
         CoAPEndpoint coapEndpoint = consumer.getCoapEndpoint();
         String coapMethodRestrict = CoAPHelper.getDefaultMethodRestrict(coapEndpoint.getCoapMethodRestrict());
@@ -52,11 +52,11 @@ final class CamelCoapResource extends CoapResource {
             consumers.put(method.trim(), consumer);
         }
     }
-    
+
     @Override
     public Resource getChild(String name) {
         if (possibles != null) {
-            //FIXME - find which might work...    
+            // FIXME - find which might work...
         }
         Resource child = super.getChild(name);
         if (child == null) {
@@ -75,6 +75,7 @@ final class CamelCoapResource extends CoapResource {
         }
         return child;
     }
+
     @Override
     public void handleRequest(Exchange exchange) {
         org.apache.camel.Exchange camelExchange = null;
@@ -92,7 +93,7 @@ final class CamelCoapResource extends CoapResource {
 
             camelExchange = consumer.getEndpoint().createExchange();
             consumer.createUoW(camelExchange);
-            
+
             OptionSet options = exchange.getRequest().getOptions();
             for (String s : options.getUriQuery()) {
                 int i = s.indexOf('=');
@@ -102,12 +103,12 @@ final class CamelCoapResource extends CoapResource {
                     camelExchange.getIn().setHeader(s.substring(0, i), s.substring(i + 1));
                 }
             }
-            
+
             if (options.hasContentFormat()) {
                 String mt = MediaTypeRegistry.toString(options.getContentFormat());
                 camelExchange.getIn().setHeader(org.apache.camel.Exchange.CONTENT_TYPE, mt);
             }
-            
+
             List<String> path = exchange.getRequest().getOptions().getUriPath();
             LinkedList<Resource> resources = new LinkedList<>();
             Resource r = this;
@@ -127,13 +128,13 @@ final class CamelCoapResource extends CoapResource {
                 }
                 res++;
             }
-            
+
             byte bytes[] = exchange.getCurrentRequest().getPayload();
             camelExchange.getIn().setBody(bytes);
 
             consumer.getProcessor().process(camelExchange);
             Message target = camelExchange.getMessage();
-            
+
             int format = MediaTypeRegistry.parse(target.getHeader(org.apache.camel.Exchange.CONTENT_TYPE, String.class));
             cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class), format);
 

@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "microprofile-config",
+    "title": "Microprofile Config",
+    "description": "Bridging Eclipse MicroProfile Config with Camel properties",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "microservice",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-microprofile-config",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

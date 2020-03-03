@@ -36,11 +36,15 @@ import org.apache.camel.component.file.watch.utils.PathUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The file-watch consumer.
  */
 public class FileWatchConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileWatchConsumer.class);
 
     private ExecutorService watchDirExecutorService;
     private ExecutorService pollExecutorService;
@@ -79,7 +83,7 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         DirectoryWatcher.Builder watcherBuilder = DirectoryWatcher.builder()
             .path(this.baseDirectory)
-            .logger(log)
+            .logger(LOG)
             .listener(new FileWatchDirectoryChangeListener());
 
         if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
@@ -172,7 +176,7 @@ public class FileWatchConsumer extends DefaultConsumer {
                     return false;
                 }
             } catch (IOException e) {
-                log.warn(String.format("Exception occurred during executing filter. Filtering file %s out.", fileEvent.getEventPath()), e);
+                LOG.warn(String.format("Exception occurred during executing filter. Filtering file %s out.", fileEvent.getEventPath()), e);
                 return false;
             }
         }
@@ -197,7 +201,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         @Override
         public void onEvent(DirectoryChangeEvent directoryChangeEvent) {
             if (directoryChangeEvent.eventType() == DirectoryChangeEvent.EventType.OVERFLOW) {
-                log.warn("OVERFLOW occurred, some events may be lost. Consider increasing of option 'pollThreads'");
+                LOG.warn("OVERFLOW occurred, some events may be lost. Consider increasing of option 'pollThreads'");
                 return;
             }
             FileEvent fileEvent = new FileEvent(directoryChangeEvent);

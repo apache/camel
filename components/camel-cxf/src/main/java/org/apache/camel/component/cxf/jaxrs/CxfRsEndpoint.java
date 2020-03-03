@@ -33,7 +33,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.NullFaultListener;
-import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
@@ -84,8 +84,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String address;
     @UriParam
     private List<Class<?>> resourceClasses;
-    @UriParam(label = "consumer,advanced")
-    private String serviceBeans;
+    @UriParam(label = "consumer,advanced", javaType = "java.lang.String")
+    private List<Object> serviceBeans = new LinkedList<>();
+    private String serviceBeansRef;
     @UriParam
     private String modelRef;
     @UriParam(label = "consumer", defaultValue = "Default")
@@ -248,10 +249,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
         }
-        if (serviceBeans != null) {
-            List<Object> beans = EndpointHelper.resolveReferenceListParameter(getCamelContext(), serviceBeans, Object.class);
-            sfb.setServiceBeans(beans);
+
+        List<Object> beans = new ArrayList<>(serviceBeans);
+        if (serviceBeansRef != null) {
+            beans.addAll(EndpointHelper.resolveReferenceListParameter(getCamelContext(), serviceBeansRef, Object.class));
         }
+        sfb.setServiceBeans(beans);
 
         // setup the resource providers for interfaces
         List<ClassResourceInfo> cris = sfb.getServiceFactory().getClassResourceInfo();
@@ -438,7 +441,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setResourceClasses(Arrays.asList(classes));
     }
 
-    public String getServiceBeans() {
+    public List<?> getServiceBeans() {
         return serviceBeans;
     }
 
@@ -447,7 +450,15 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      * Multiple beans can be separated by comma
      */
     public void setServiceBeans(String beans) {
-        this.serviceBeans = beans;
+        this.serviceBeansRef = beans;
+    }
+
+    public void setServiceBeans(List<?> beans) {
+        this.serviceBeans.addAll(beans);
+    }
+
+    public void setServiceBean(Object bean) {
+        this.serviceBeans.add(bean);
     }
 
     /**

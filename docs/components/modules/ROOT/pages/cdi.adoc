@@ -18,11 +18,6 @@ CDI events from / to Camel routes.
 More details on how to test Camel CDI applications are available in
 Camel CDI testing.
 
-[CAUTION]
-====
-camel-cdi is deprecated in OSGi and not supported. Use OSGi Blueprint if using Camel with OSGi.
-====
-
 == Auto-configured Camel context
 
 Camel CDI automatically deploys and configures a `CamelContext` bean.

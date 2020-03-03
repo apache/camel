@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-restdsl-openapi-plugin</artifactId>
@@ -129,6 +129,7 @@
         <profile>
             <id>fastinstall</id>
             <activation>
+            <activeByDefault>true</activeByDefault>
                 <property>
                     <name>skipTests</name>
                 </property>

@@ -27,8 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/dirnotmatched/?password=admin"
-                + "&recursive=true&include=^.*txt$";
+        return "ftp://admin@localhost:" + getPort() + "/dirnotmatched/?password=admin" + "&recursive=true&include=^.*txt$";
     }
 
     @Override
@@ -46,9 +45,10 @@ public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
         // test that we can pool and store as a local file
-        
+
         sendFile(getFtpUrl() + "/?password=admin", "This is a dot file", ".skipme");
         sendFile(getFtpUrl() + "/?password=admin", "This is a web file", "index.html");
         sendFile(getFtpUrl() + "/?password=admin", "This is a readme file", "readme.txt");

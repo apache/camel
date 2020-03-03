@@ -1,0 +1,175 @@
+[[aws2-kms-component]]
+= AWS 2 KMS Component
+:page-source: components/camel-aws2-kms/src/main/docs/aws2-kms-component.adoc
+
+*Since Camel 3.1*
+
+*Since Camel 3.1*
+
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The KMS component supports the ability to work with keys stored in
+https://aws.amazon.com/kms/[AWS KMS] instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon KMS. More information is available at
+https://aws.amazon.com/kms/[Amazon KMS].
+
+[NOTE]
+====
+The AWS2 KMS component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-kms://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 KMS component supports 11 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (producer) | Component configuration |  | KMS2Configuration
+| *kmsClient* (producer) | To use a existing configured AWS KMS as client |  | KmsClient
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: listKeys, createKey, disableKey, scheduleKeyDeletion, describeKey, enableKey |  | KMS2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the KMS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the KMS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the KMS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which EKS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS 2 KMS endpoint is configured using URI syntax:
+
+----
+aws2-kms:label
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+=== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *kmsClient* (producer) | To use a existing configured AWS KMS as client |  | KmsClient
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: listKeys, createKey, disableKey, scheduleKeyDeletion, describeKey, enableKey |  | KMS2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the KMS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the KMS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the KMS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which EKS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+
+Required KMS component options
+
+You have to provide the amazonKmsClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/kms/[Amazon KMS] service.
+
+== Usage
+
+=== Message headers evaluated by the KMS producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsKMSLimit` |`Integer` |The limit number of keys to return while performing a listKeys operation
+
+|`CamelAwsKMSOperation` |`String` |The operation we want to perform
+
+|`CamelAwsKMSDescription` |`String` |A key description to use while performing a createKey operation
+
+|`CamelAwsKMSKeyId` |`String` |The key Id 
+|=======================================================================
+
+=== KMS Producer operations
+
+Camel-AWS KMS component provides the following operation on the producer side:
+
+- listKeys
+- createKey
+- disableKey
+- scheduleKeyDeletion
+- describeKey
+- enableKey
+
+== Producer Examples
+
+- listKeys: this operation will list the available keys in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listKeys")
+      .to("aws2-kms://test?kmsClient=#amazonKmsClient&operation=listKeys")
+--------------------------------------------------------------------------------
+
+== Automatic detection of KmsClient client in registry
+
+The component is capable of detecting the presence of an KmsClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-kms</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$aws2-kms-starter.adoc[]

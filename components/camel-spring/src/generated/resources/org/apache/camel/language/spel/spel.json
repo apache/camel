@@ -1,0 +1,23 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "spel",
+    "modelName": "spel",
+    "title": "SpEL",
+    "description": "To use Spring Expression Language (SpEL) in Camel expressions or predicates.",
+    "deprecated": false,
+    "deprecationNote": "language,spring",
+    "firstVersion": "2.7.0",
+    "label": "language,spring",
+    "javaType": "org.apache.camel.language.spel.SpelLanguage",
+    "modelJavaType": "org.apache.camel.model.language.SpELExpression",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-spring",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

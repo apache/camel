@@ -56,7 +56,7 @@ public class ManagedDefaultReactiveExecutorTest extends ManagementTestSupport {
                             assertEquals(1, running.intValue());
 
                             // should be 0 pending
-                            Long pending = (Long) mbeanServer.getAttribute(on, "PendingTasks");
+                            Integer pending = (Integer) mbeanServer.getAttribute(on, "PendingTasks");
                             assertEquals(0, pending.intValue());
                         }
                     })

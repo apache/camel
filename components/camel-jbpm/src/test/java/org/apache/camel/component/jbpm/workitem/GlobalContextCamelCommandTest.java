@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jbpm.workitem;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jbpm.JBPMConstants;
@@ -49,7 +49,7 @@ public class GlobalContextCamelCommandTest {
     Message outMessage;
 
     @Mock
-    CamelContext camelContext;
+    ExtendedCamelContext camelContext;
 
     @Mock
     RuntimeManager runtimeManager;

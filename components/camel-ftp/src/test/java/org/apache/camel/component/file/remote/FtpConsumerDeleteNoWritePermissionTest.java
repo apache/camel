@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/deletenoperm?password=foo"
-                + "&delete=true&delay=5000";
+        return "ftp://dummy@localhost:" + getPort() + "/deletenoperm?password=foo" + "&delete=true&delay=5000";
     }
 
     @Override
@@ -58,7 +57,8 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/deletenoperm/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");

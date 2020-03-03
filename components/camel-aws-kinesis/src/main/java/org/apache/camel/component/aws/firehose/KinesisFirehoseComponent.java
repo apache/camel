@@ -31,14 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 @Component("aws-kinesis-firehose")
 public class KinesisFirehoseComponent extends DefaultComponent {
 
-    @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private KinesisFirehoseConfiguration configuration;
+    @Metadata 
+    private KinesisFirehoseConfiguration configuration = new KinesisFirehoseConfiguration();
     
     public KinesisFirehoseComponent() {
         this(null);
@@ -55,9 +49,6 @@ public class KinesisFirehoseComponent extends DefaultComponent {
         KinesisFirehoseConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KinesisFirehoseConfiguration();
         configuration.setStreamName(remaining);
         KinesisFirehoseEndpoint endpoint = new KinesisFirehoseEndpoint(uri, configuration, this);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonKinesisFirehoseClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -71,43 +62,10 @@ public class KinesisFirehoseComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS Kinesis Firehose default configuration
+     * The component configuration
      */
     public void setConfiguration(KinesisFirehoseConfiguration configuration) {
         this.configuration = configuration;
-    }
-    
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-    
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * Amazon AWS Region
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
     
     private void checkAndSetRegistryClient(KinesisFirehoseConfiguration configuration) {

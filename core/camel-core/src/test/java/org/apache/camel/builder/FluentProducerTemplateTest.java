@@ -85,6 +85,23 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
+    public void testToF() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World");
+
+        FluentProducerTemplate on = DefaultFluentProducerTemplate.on(context);
+        on.withBody("Hello World");
+        on.toF("direct:%s", "in");
+        Object result = on.request();
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Bye World", result);
+
+        assertSame(context, template.getCamelContext());
+    }
+
+    @Test
     public void testIn() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");

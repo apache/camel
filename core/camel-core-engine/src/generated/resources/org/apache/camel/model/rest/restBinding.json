@@ -1,0 +1,26 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "restBinding",
+    "title": "Rest Binding",
+    "description": "To configure rest binding",
+    "javaType": "org.apache.camel.model.rest.RestBindingDefinition",
+    "label": "rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "consumes": { "kind": "attribute", "displayName": "Consumes", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To define the content type what the REST service consumes (accept as input), such as application\/xml or application\/json" },
+    "produces": { "kind": "attribute", "displayName": "Produces", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To define the content type what the REST service produces (uses for output), such as application\/xml or application\/json" },
+    "bindingMode": { "kind": "attribute", "displayName": "Binding Mode", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "off", "description": "Sets the binding mode to use. The default value is off" },
+    "type": { "kind": "attribute", "displayName": "Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the class name to use for binding from input to POJO for the incoming data The canonical name of the class of the input data. Append a to the end of the canonical name if you want the input to be an array type." },
+    "outType": { "kind": "attribute", "displayName": "Out Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the class name to use for binding from POJO to output for the outgoing data The canonical name of the class of the input data. Append a to the end of the canonical name if you want the input to be an array type." },
+    "skipBindingOnErrorCode": { "kind": "attribute", "displayName": "Skip Binding On Error Code", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json \/ xml etc, as success messages otherwise will do." },
+    "clientRequestValidation": { "kind": "attribute", "displayName": "Client Request Validation", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes\/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false." },
+    "enableCORS": { "kind": "attribute", "displayName": "Enable CORS", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Whether to enable CORS headers in the HTTP response. The default value is false." },
+    "component": { "kind": "attribute", "displayName": "Component", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the component name that this definition will apply to" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

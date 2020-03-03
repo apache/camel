@@ -55,7 +55,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals(false, config.isBinary());
         assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
-    
+
     @Test
     public void testFtpsConfigurationDefaults() {
         FtpsEndpoint endpoint = context.getEndpoint("ftps://hostname", FtpsEndpoint.class);
@@ -112,7 +112,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
     }
-    
+
     @Test
     public void testFtpsExplicitConfiguration() {
         FtpsEndpoint endpoint = context.getEndpoint("ftps://user@hostname:1021/some/file?password=secret&binary=true&securityProtocol=SSL&implicit=true", FtpsEndpoint.class);
@@ -127,7 +127,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals(true, config.isImplicit());
         assertEquals("SSL", config.getSecurityProtocol());
     }
-    
+
     @Test
     public void testRemoteFileEndpointFiles() {
         assertRemoteFileEndpointFile("ftp://hostname/foo/bar", "foo/bar");
@@ -174,7 +174,8 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSftpKnownHostsFileConfiguration() {
-        SftpEndpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&knownHostsFile=/home/janstey/.ssh/known_hosts", SftpEndpoint.class);
+        SftpEndpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&knownHostsFile=/home/janstey/.ssh/known_hosts",
+                                                    SftpEndpoint.class);
         SftpConfiguration config = endpoint.getConfiguration();
 
         assertEquals("sftp", config.getProtocol());
@@ -190,14 +191,14 @@ public class UriConfigurationTest extends CamelTestSupport {
     public void testPasswordInContextPathConfiguration() {
         FtpEndpoint<?> endpoint = context.getEndpoint("ftp://user:secret@hostname:1021/some/file", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
-        
+
         assertEquals("ftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
         assertEquals(1021, config.getPort());
         assertEquals("user", config.getUsername());
         assertEquals("secret", config.getPassword());
     }
-    
+
     @Test
     public void testStartingDirectoryWithDot() throws Exception {
         FtpEndpoint<?> endpoint = context.getEndpoint("ftp://user@hostname?password=secret", FtpEndpoint.class);

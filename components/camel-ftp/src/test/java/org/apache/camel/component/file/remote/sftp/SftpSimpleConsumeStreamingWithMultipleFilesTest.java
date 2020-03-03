@@ -44,7 +44,7 @@ public class SftpSimpleConsumeStreamingWithMultipleFilesTest extends SftpServerT
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceivedInAnyOrder(expected, expected2);
-        
+
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
@@ -60,9 +60,8 @@ public class SftpSimpleConsumeStreamingWithMultipleFilesTest extends SftpServerT
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true")
-                    .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true").routeId("foo")
+                    .noAutoStartup().to("mock:result");
             }
         };
     }

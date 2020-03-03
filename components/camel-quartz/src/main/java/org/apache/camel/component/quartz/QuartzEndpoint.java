@@ -17,6 +17,7 @@
 package org.apache.camel.component.quartz;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,6 +47,8 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -55,6 +58,8 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/triggerName", consumerOnly = true, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
     private TriggerKey triggerKey;
 
@@ -337,7 +342,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (deleteJob) {
             boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
             if (!scheduler.isShutdown() && !isClustered) {
-                log.info("Deleting job {}", triggerKey);
+                LOG.info("Deleting job {}", triggerKey);
                 scheduler.unscheduleJob(triggerKey);
 
                 jobAdded.set(false);
@@ -390,8 +395,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
             }
         }
 
-        if (log.isInfoEnabled()) {
-            log.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
                     new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
                             jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime()});
         }
@@ -433,14 +438,17 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     private Trigger createTrigger(JobDetail jobDetail) throws Exception {
+        // use a defensive copy to keep the trigger parameters on the endpoint
+        Map<String, Object> copy = new HashMap<>(triggerParameters);
+
         Trigger result;
         Date startTime = new Date();
         if (getComponent().getScheduler().isStarted()) {
             startTime = new Date(System.currentTimeMillis() + triggerStartDelay);
         }
         if (cron != null) {
-            log.debug("Creating CronTrigger: {}", cron);
-            String timeZone = (String)triggerParameters.get("timeZone");
+            LOG.debug("Creating CronTrigger: {}", cron);
+            String timeZone = (String)copy.get("timeZone");
             if (timeZone != null) {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {
                     result = TriggerBuilder.newTrigger()
@@ -484,22 +492,22 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
         } else {
-            log.debug("Creating SimpleTrigger.");
+            LOG.debug("Creating SimpleTrigger.");
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
-            String repeatString = (String) triggerParameters.get("repeatCount");
+            String repeatString = (String) copy.get("repeatCount");
             if (repeatString != null) {
                 repeat = EndpointHelper.resolveParameter(getCamelContext(), repeatString, Integer.class);
                 // need to update the parameters
-                triggerParameters.put("repeatCount", repeat);
+                copy.put("repeatCount", repeat);
             }
 
             // default use 1 sec interval
             long interval = 1000;
-            String intervalString = (String) triggerParameters.get("repeatInterval");
+            String intervalString = (String) copy.get("repeatInterval");
             if (intervalString != null) {
                 interval = EndpointHelper.resolveParameter(getCamelContext(), intervalString, Long.class);
                 // need to update the parameters
-                triggerParameters.put("repeatInterval", interval);
+                copy.put("repeatInterval", interval);
             }
             TriggerBuilder<SimpleTrigger> triggerBuilder;
             if (ObjectHelper.isNotEmpty(customCalendar)) {
@@ -528,12 +536,12 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
         }
 
-        if (triggerParameters != null && triggerParameters.size() > 0) {
-            log.debug("Setting user extra triggerParameters {}", triggerParameters);
-            setProperties(result, triggerParameters);
+        if (copy.size() > 0) {
+            LOG.debug("Setting user extra triggerParameters {}", copy);
+            setProperties(result, copy);
         }
 
-        log.debug("Created trigger={}", result);
+        LOG.debug("Created trigger={}", result);
         return result;
     }
 
@@ -542,7 +550,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         String name = triggerKey.getName();
         String group = triggerKey.getGroup();
         Class<? extends Job> jobClass = stateful ? StatefulCamelJob.class : CamelJob.class;
-        log.debug("Creating new {}.", jobClass.getSimpleName());
+        LOG.debug("Creating new {}.", jobClass.getSimpleName());
 
         JobBuilder builder = JobBuilder.newJob(jobClass)
                 .withIdentity(name, group);
@@ -558,11 +566,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         // Let user parameters to further set JobDetail properties.
         if (jobParameters != null && jobParameters.size() > 0) {
-            log.debug("Setting user extra jobParameters {}", jobParameters);
-            setProperties(result, jobParameters);
+            // need to use a copy to keep the parameters on the endpoint
+            Map<String, Object> copy = new HashMap<>(jobParameters);
+            LOG.debug("Setting user extra jobParameters {}", copy);
+            setProperties(result, copy);
         }
 
-        log.debug("Created jobDetail={}", result);
+        LOG.debug("Created jobDetail={}", result);
         return result;
     }
 
@@ -581,7 +591,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         jobPaused.set(true);
         if (!scheduler.isShutdown()) {
-            log.info("Pausing trigger {}", triggerKey);
+            LOG.info("Pausing trigger {}", triggerKey);
             scheduler.pauseTrigger(triggerKey);
         }
     }
@@ -594,7 +604,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         Scheduler scheduler = getComponent().getScheduler();
         if (scheduler != null) {
-            log.info("Resuming trigger {}", triggerKey);
+            LOG.info("Resuming trigger {}", triggerKey);
             scheduler.resumeTrigger(triggerKey);
         }
     }

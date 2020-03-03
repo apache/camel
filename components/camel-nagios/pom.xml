@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-nagios</artifactId>
@@ -33,20 +33,6 @@
 
     <properties>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jboss.fs</id>
-            <name>JBoss FuseSource Public Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
 
     <dependencies>
 

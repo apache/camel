@@ -1,0 +1,27 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "streamCaching",
+    "title": "Stream Caching",
+    "description": "Stream caching configuration.",
+    "javaType": "org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition",
+    "label": "spring,configuration",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "enabled": { "kind": "attribute", "displayName": "Enabled", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether the stream caching is enabled. Notice: This cannot be changed at runtime." },
+    "spoolDirectory": { "kind": "attribute", "displayName": "Spool Directory", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the spool (temporary) directory to use for overflow and spooling to disk. If no spool directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory." },
+    "spoolCipher": { "kind": "attribute", "displayName": "Spool Cipher", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted." },
+    "spoolThreshold": { "kind": "attribute", "displayName": "Spool Threshold", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Threshold in bytes when overflow to disk is activated. The default threshold is org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD bytes (eg 128kb). Use -1 to disable overflow to disk." },
+    "spoolUsedHeapMemoryThreshold": { "kind": "attribute", "displayName": "Spool Used Heap Memory Threshold", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a percentage (1-99) of used heap memory threshold to activate spooling to disk." },
+    "spoolUsedHeapMemoryLimit": { "kind": "attribute", "displayName": "Spool Used Heap Memory Limit", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets what the upper bounds should be when spoolUsedHeapMemoryThreshold is in use." },
+    "spoolRules": { "kind": "attribute", "displayName": "Spool Rules", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Reference to one or more custom org.apache.camel.spi.StreamCachingStrategy.SpoolRule to use. Multiple rules can be separated by comma." },
+    "bufferSize": { "kind": "attribute", "displayName": "Buffer Size", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE" },
+    "removeSpoolDirectoryWhenStopping": { "kind": "attribute", "displayName": "Remove Spool Directory When Stopping", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "true", "description": "Whether to remove the temporary directory when stopping. This option is default true" },
+    "statisticsEnabled": { "kind": "attribute", "displayName": "Statistics Enabled", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets whether statistics is enabled." },
+    "anySpoolRules": { "kind": "attribute", "displayName": "Any Spool Rules", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "false", "description": "Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

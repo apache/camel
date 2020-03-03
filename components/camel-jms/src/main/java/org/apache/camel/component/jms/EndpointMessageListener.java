@@ -34,7 +34,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.listener.SessionAwareMessageListener;
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
@@ -384,17 +383,15 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
-        getTemplate().send(replyDestination, new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
-                final String correlationID = determineCorrelationId(message);
-                reply.setJMSCorrelationID(correlationID);
+        getTemplate().send(replyDestination, session -> {
+            Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
+            final String correlationID = determineCorrelationId(message);
+            reply.setJMSCorrelationID(correlationID);
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
-                }
-                return reply;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
             }
+            return reply;
         });
     }
 
@@ -404,17 +401,15 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
-        getTemplate().send(replyDestination, new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
-                final String correlationID = determineCorrelationId(message);
-                reply.setJMSCorrelationID(correlationID);
+        getTemplate().send(replyDestination, session -> {
+            Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
+            final String correlationID = determineCorrelationId(message);
+            reply.setJMSCorrelationID(correlationID);
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
-                }
-                return reply;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
             }
+            return reply;
         });
     }
 

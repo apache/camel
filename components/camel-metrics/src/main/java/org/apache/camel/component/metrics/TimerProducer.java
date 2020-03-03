@@ -20,10 +20,15 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractMetricsProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TimerProducer.class);
 
     public TimerProducer(MetricsEndpoint endpoint) {
         super(endpoint);
@@ -39,7 +44,7 @@ public class TimerProducer extends AbstractMetricsProducer {
         } else if (finalAction == MetricsTimerAction.stop) {
             handleStop(exchange, registry, metricsName);
         } else {
-            log.warn("No action provided for timer \"{}\"", metricsName);
+            LOG.warn("No action provided for timer \"{}\"", metricsName);
         }
     }
 
@@ -51,7 +56,7 @@ public class TimerProducer extends AbstractMetricsProducer {
             context = timer.time();
             exchange.setProperty(propertyName, context);
         } else {
-            log.warn("Timer \"{}\" already running", metricsName);
+            LOG.warn("Timer \"{}\" already running", metricsName);
         }
     }
 
@@ -62,7 +67,7 @@ public class TimerProducer extends AbstractMetricsProducer {
             context.stop();
             exchange.removeProperty(propertyName);
         } else {
-            log.warn("Timer \"{}\" not found", metricsName);
+            LOG.warn("Timer \"{}\" not found", metricsName);
         }
     }
 

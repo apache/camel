@@ -24,8 +24,10 @@ import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestReflectionImpl;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AvroProducerTestSupport extends AvroTestSupport {
 
@@ -44,7 +46,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -58,7 +60,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     }
 
     @Test
-    public void testInOnly() throws InterruptedException {
+    public void testInOnly() {
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
         Object[] request = {key, value};
@@ -79,7 +81,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     }
 
     @Test
-    public void testInOnlyReflection() throws InterruptedException {
+    public void testInOnlyReflection() {
         String name = "Chuck";
         Object[] request = {name};
         template.sendBody("direct:in-reflection", request);

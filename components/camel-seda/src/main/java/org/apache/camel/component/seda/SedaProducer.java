@@ -23,13 +23,17 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SedaProducer extends DefaultAsyncProducer {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(SedaProducer.class);
     private final SedaEndpoint endpoint;
     private final WaitForTaskToComplete waitForTaskToComplete;
     private final long timeout;
@@ -67,18 +71,18 @@ public class SedaProducer extends DefaultAsyncProducer {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // we should wait for the reply so install a on completion so we know when its complete
-            copy.addOnCompletion(new SynchronizationAdapter() {
+            copy.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange response) {
                     // check for timeout, which then already would have invoked the latch
                     if (latch.getCount() == 0) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
                         }
                         return;
                     } else {
-                        if (log.isTraceEnabled()) {
-                            log.trace("{} with response: {}", this, response.getMessage());
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("{} with response: {}", this, response.getMessage());
                         }
                         try {
                             ExchangeHelper.copyResults(exchange, response);
@@ -112,8 +116,8 @@ public class SedaProducer extends DefaultAsyncProducer {
             }
 
             if (timeout > 0) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout, endpoint.getEndpointUri());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout, endpoint.getEndpointUri());
                 }
                 // lets see if we can get the task done before the timeout
                 boolean done = false;
@@ -130,8 +134,8 @@ public class SedaProducer extends DefaultAsyncProducer {
                     latch.countDown();
                 }
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete (blocking) at [{}]", endpoint.getEndpointUri());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Waiting for task to complete (blocking) at [{}]", endpoint.getEndpointUri());
                 }
                 // no timeout then wait until its done
                 try {
@@ -165,7 +169,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true,
             synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
         // set a new from endpoint to be the seda queue
-        copy.setFromEndpoint(endpoint);
+        copy.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
         return copy;
     }
 
@@ -205,7 +209,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
             } else if (endpoint.isDiscardIfNoConsumers()) {
-                log.debug("Discard message as no active consumers on endpoint: {}", endpoint);
+                LOG.debug("Discard message as no active consumers on endpoint: {}", endpoint);
                 return;
             }
         }
@@ -217,23 +221,23 @@ public class SedaProducer extends DefaultAsyncProducer {
             target = prepareCopy(exchange, true);
         }
 
-        log.trace("Adding Exchange to queue: {}", target);
+        LOG.trace("Adding Exchange to queue: {}", target);
         if (discardWhenFull) {
             try {
                 boolean added = queue.offer(target, 0, TimeUnit.MILLISECONDS);
                 if (!added) {
-                    log.trace("Discarding Exchange as queue is full: {}", target);
+                    LOG.trace("Discarding Exchange as queue is full: {}", target);
                 }
             } catch (InterruptedException e) {
                 // ignore
-                log.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+                LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
             }
         } else if (blockWhenFull && offerTimeout == 0) {
             try {
                 queue.put(target);
             } catch (InterruptedException e) {
                 // ignore
-                log.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
+                LOG.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
             }
         } else if (blockWhenFull && offerTimeout > 0) {
             try {
@@ -244,7 +248,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                 }
             } catch (InterruptedException e) {
                 // ignore
-                log.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+                LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
             }
         } else {
             queue.add(target);

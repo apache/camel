@@ -19,16 +19,20 @@ package org.apache.camel.processor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // START SNIPPET: e1
 public class MyLoggingSentEventNotifer extends EventNotifierSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MyLoggingSentEventNotifer.class);
 
     @Override
     public void notify(CamelEvent event) throws Exception {
         // react only when its the sent event
         if (event instanceof ExchangeSentEvent) {
             ExchangeSentEvent sent = (ExchangeSentEvent)event;
-            log.info("Took {} millis to send to: {}", sent.getTimeTaken(), sent.getEndpoint());
+            LOG.info("Took {} millis to send to: {}", sent.getTimeTaken(), sent.getEndpoint());
         }
 
     }

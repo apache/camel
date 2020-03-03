@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "transacted",
+    "title": "Transacted",
+    "description": "Enables transaction on the route",
+    "javaType": "org.apache.camel.model.TransactedDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "ref": { "kind": "attribute", "displayName": "Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets a reference to use for lookup the policy in the registry." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

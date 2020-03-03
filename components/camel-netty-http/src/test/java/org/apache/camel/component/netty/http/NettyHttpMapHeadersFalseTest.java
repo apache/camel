@@ -46,22 +46,20 @@ public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty-http:http://localhost:{{port}}/myapp/mytest?mapHeaders=false").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // these headers is not mapped
-                        assertNull(exchange.getIn().getHeader("clientHeader"));
-                        assertNull(exchange.getIn().getHeader("OTHER"));
-                        assertNull(exchange.getIn().getHeader("beer"));
+                from("netty-http:http://localhost:{{port}}/myapp/mytest?mapHeaders=false").process(exchange -> {
+                    // these headers is not mapped
+                    assertNull(exchange.getIn().getHeader("clientHeader"));
+                    assertNull(exchange.getIn().getHeader("OTHER"));
+                    assertNull(exchange.getIn().getHeader("beer"));
 
-                        // but we can find them in the http request from netty
-                        assertEquals("fooBAR", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("clientHeader"));
-                        assertEquals("123", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("OTHER"));
-                        assertEquals("Carlsberg", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("beer"));
+                    // but we can find them in the http request from netty
+                    assertEquals("fooBAR", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("clientHeader"));
+                    assertEquals("123", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("OTHER"));
+                    assertEquals("Carlsberg", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("beer"));
 
-                        exchange.getOut().setBody("Bye World");
-                        exchange.getOut().setHeader("MyCaseHeader", "aBc123");
-                        exchange.getOut().setHeader("otherCaseHeader", "456DEf");
-                    }
+                    exchange.getMessage().setBody("Bye World");
+                    exchange.getMessage().setHeader("MyCaseHeader", "aBc123");
+                    exchange.getMessage().setHeader("otherCaseHeader", "456DEf");
                 });
             }
         };

@@ -72,7 +72,7 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     }
 
     @Override
-    public void reset() {
+    public synchronized void reset() {
         buffer.resetReaderIndex();
     }
 

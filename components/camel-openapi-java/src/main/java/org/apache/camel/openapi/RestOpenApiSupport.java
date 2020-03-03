@@ -16,7 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
@@ -30,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
@@ -51,10 +52,11 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Contact;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
 import io.apicurio.datamodels.openapi.v3.models.Oas30License;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
@@ -66,7 +68,6 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.apache.camel.openapi.OpenApiHelper.clearVendorExtensions;
 
@@ -161,6 +162,7 @@ public class RestOpenApiSupport {
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
+            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
@@ -187,6 +189,7 @@ public class RestOpenApiSupport {
             contact.url = contactUrl;
             contact.email = contactEmail;
             info.contact = contact;
+            contact._parent = info;
         }
         openApiConfig.setInfo(info);
     }
@@ -201,7 +204,8 @@ public class RestOpenApiSupport {
         // use a routes definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        String xml = ModelHelper.dumpModelAsXml(camelContext, def);
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, def);
 
         // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
         final AtomicBoolean changed = new AtomicBoolean();
@@ -224,7 +228,8 @@ public class RestOpenApiSupport {
         // okay there were some property placeholder replaced so re-create the model
         if (changed.get()) {
             xml = camelContext.getTypeConverter().mandatoryConvertTo(String.class, dom);
-            def = ModelHelper.createModelFromXml(camelContext, xml, RestsDefinition.class);
+            InputStream xmlis = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
+            def = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, xmlis);
             if (def != null) {
                 return def.getRests();
             }
@@ -233,7 +238,7 @@ public class RestOpenApiSupport {
         return rests;
     }
 
-    public List<RestDefinition> getRestDefinitions(String camelId) throws Exception {
+    public List<RestDefinition> getRestDefinitions(CamelContext camelContext, String camelId) throws Exception {
         ObjectName found = null;
         boolean supportResolvePlaceholder = false;
 
@@ -266,7 +271,9 @@ public class RestOpenApiSupport {
             }
             if (xml != null) {
                 LOG.debug("DumpRestAsXml:\n{}", xml);
-                RestsDefinition rests = ModelHelper.createModelFromXml(null, xml, RestsDefinition.class);
+                InputStream xmlis = camelContext.getTypeConverter().convertTo(InputStream.class, xml);
+                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(camelContext, xmlis);
                 if (rests != null) {
                     return rests.getRests();
                 }
@@ -316,11 +323,11 @@ public class RestOpenApiSupport {
             setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
-        List<RestDefinition> rests = null;
-        if (camelContext != null && camelContext.getName().equals(contextId)) {
+        List<RestDefinition> rests;
+        if (camelContext.getName().equals(contextId)) {
             rests = getRestDefinitions(camelContext);
         } else {
-            rests = getRestDefinitions(contextId);
+            rests = getRestDefinitions(camelContext, contextId);
         }
 
         if (rests != null) {
@@ -340,8 +347,8 @@ public class RestOpenApiSupport {
                     clearVendorExtensions(openApi);
                 }
 
-                byte[] bytes = mapper.writeValueAsBytes(openApi);
-
+                Object dump = io.apicurio.datamodels.Library.writeNode(openApi);
+                byte[] bytes = mapper.writeValueAsBytes(dump);
                 int len = bytes.length;
                 response.setHeader(Exchange.CONTENT_LENGTH, "" + len);
 
@@ -360,7 +367,8 @@ public class RestOpenApiSupport {
                     clearVendorExtensions(openApi);
                 }
 
-                byte[] jsonData = mapper.writeValueAsBytes(openApi);
+                Object dump = io.apicurio.datamodels.Library.writeNode(openApi);
+                byte[] jsonData = mapper.writeValueAsBytes(dump);
 
                 // json to yaml
                 JsonNode node = mapper.readTree(jsonData);
@@ -547,7 +555,7 @@ public class RestOpenApiSupport {
             if (((Oas30Document)openapi).getServers() != null 
                 && ((Oas30Document)openapi).getServers().get(0) != null) {
                 try {
-                    URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
+                    URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, (Oas30Server)((Oas30Document)openapi).getServers().get(0)));
                     host = serverUrl.getHost();
                 
                 } catch (MalformedURLException e) {
@@ -567,15 +575,22 @@ public class RestOpenApiSupport {
             if (((Oas30Document)openapi).getServers() != null 
                 && ((Oas30Document)openapi).getServers().get(0) != null) {
                 try {
-                    URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
-                    basePath = serverUrl.getPath();
-                    if (basePath.indexOf("//") == 0) {
-                        //strip off the first "/" if double "/" exists
-                        basePath = basePath.substring(1);
+                    Oas30Server server = (Oas30Server)((Oas30Document)openapi).getServers().get(0);
+                    if (server.variables != null && server.variables.get("basePath") != null) {
+                        basePath = server.variables.get("basePath").default_;
                     }
-                    if ("/".equals(basePath)) {
-                        basePath = "";
-                    }
+                    if (basePath == null) {
+                        // parse server url as fallback
+                        URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, (Oas30Server)((Oas30Document)openapi).getServers().get(0)));
+                        basePath = serverUrl.getPath();
+                        if (basePath.indexOf("//") == 0) {
+                            // strip off the first "/" if double "/" exists
+                            basePath = basePath.substring(1);
+                        }
+                        if ("/".equals(basePath)) {
+                            basePath = "";
+                        }
+                    } 
                                     
                 } catch (MalformedURLException e) {
                     //not a valid whole url, just the basePath
@@ -586,6 +601,20 @@ public class RestOpenApiSupport {
         }
         return basePath;
         
+    }
+    
+    public static String parseVariables(String url, Oas30Server server) {
+        Pattern p = Pattern.compile("\\{(.*?)\\}");
+        Matcher m = p.matcher(url);
+        while (m.find()) {
+           
+            String var = m.group(1);
+            if (server != null && server.variables != null && server.variables.get(var) != null) {
+                String varValue = server.variables.get(var).default_;
+                url = url.replace("{" + var + "}", varValue);
+            }
+        }
+        return url;
     }
 }
 

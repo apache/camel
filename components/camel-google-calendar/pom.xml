@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-calendar</artifactId>
@@ -64,14 +64,6 @@
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-calendar</artifactId>
             <version>${google-api-services-calendar-version}</version>
-        </dependency>
-
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Component API javadoc in provided scope to read API signatures -->

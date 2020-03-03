@@ -63,7 +63,7 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     @UriPath(name = "action", description = "The action to do.")
     @Metadata(required = true)
     private SoroushAction action;
-    @UriParam(label = "common,security", description = "The authorization token for using"
+    @UriParam(label = "security", description = "The authorization token for using"
             + " the bot. if uri path does not contain authorization token, this token will be used.", secret = true)
     private String authorizationToken;
     @UriParam(label = "common", description = "Connection timeout in ms when connecting to soroush API", defaultValue = "30000")
@@ -264,11 +264,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * create a {@link WebTarget} that could be used to download file from soroush based on {@link SoroushBotEndpoint#authorizationToken},
      * {@link SoroushBotEndpoint#connectionTimeout} and {@code fileUrl} (fileId)
@@ -279,7 +274,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     private WebTarget getDownloadFileTarget(String fileUrl) {
         return SoroushService.get().createDownloadFileTarget(authorizationToken, fileUrl, connectionTimeout);
     }
-
 
     /**
      * return the lazily created instance of {@link SoroushBotEndpoint#uploadFileTarget} to used for uploading file to soroush.

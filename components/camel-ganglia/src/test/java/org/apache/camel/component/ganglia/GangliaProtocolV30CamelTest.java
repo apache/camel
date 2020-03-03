@@ -34,9 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import static info.ganglia.gmetric4j.gmetric.GMetricSlope.NEGATIVE;
 import static info.ganglia.gmetric4j.gmetric.GMetricType.FLOAT;
@@ -53,6 +51,8 @@ import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_SLOPE;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_TMAX;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_TYPE;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_UNITS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * {@code GangliaProtocolV30CamelTest} is not shipped with an embedded gmond
@@ -61,9 +61,6 @@ import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_UNITS;
  * loose assertions are performed.
  */
 public class GangliaProtocolV30CamelTest extends CamelGangliaTestSupport {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @BindToRegistry("protocolV30Decoder")
     private ProtocolV30Decoder protocolV30Decoder = new ProtocolV30Decoder();
@@ -84,7 +81,7 @@ public class GangliaProtocolV30CamelTest extends CamelGangliaTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 Ganglia_message gangliaMessage = exchange.getIn().getBody(Ganglia_message.class);
-                assertNotNull("The gmond mock should only receive a non-null ganglia message", gangliaMessage);
+                assertNotNull(gangliaMessage, "The gmond mock should only receive a non-null ganglia message");
                 assertEquals(DEFAULT_METRIC_NAME, gangliaMessage.gmetric.name);
                 assertEquals(DEFAULT_TYPE.getGangliaType(), gangliaMessage.gmetric.type);
                 assertEquals(DEFAULT_SLOPE.getGangliaSlope(), gangliaMessage.gmetric.slope);
@@ -109,7 +106,7 @@ public class GangliaProtocolV30CamelTest extends CamelGangliaTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 Ganglia_message gangliaMessage = exchange.getIn().getBody(Ganglia_message.class);
-                assertNotNull("The gmond mock should only receive a non-null ganglia message", gangliaMessage);
+                assertNotNull(gangliaMessage, "The gmond mock should only receive a non-null ganglia message");
                 assertEquals("depth", gangliaMessage.gmetric.name);
                 assertEquals("float", gangliaMessage.gmetric.type);
                 assertEquals(2, gangliaMessage.gmetric.slope);

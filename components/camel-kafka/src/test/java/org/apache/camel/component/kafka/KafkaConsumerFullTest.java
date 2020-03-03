@@ -37,14 +37,13 @@ import org.junit.Test;
 public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
-    
+
     @BindToRegistry("myHeaderDeserializer")
     private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
 
-    @EndpointInject("kafka:" + TOPIC
-            + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-            + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-            + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+    @EndpointInject("kafka:" + TOPIC + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+                    + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -83,7 +82,8 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         String skippedHeaderKey = "CamelSkippedHeader";
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
-        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any exchange because autoCommitEnable=true
+        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
+        // exchange because autoCommitEnable=true
         to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
@@ -121,10 +121,10 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
 
-        //Restart endpoint,
+        // Restart endpoint,
         context.getRouteController().stopRoute("foo");
 
-        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
+        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint)from;
         kafkaEndpoint.getConfiguration().setSeekTo("beginning");
 
         context.getRouteController().startRoute("foo");
@@ -149,10 +149,10 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
         to.expectedMessageCount(0);
 
-        //Restart endpoint,
+        // Restart endpoint,
         context.getRouteController().stopRoute("foo");
 
-        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
+        KafkaEndpoint kafkaEndpoint = (KafkaEndpoint)from;
         kafkaEndpoint.getConfiguration().setSeekTo("end");
 
         context.getRouteController().startRoute("foo");
@@ -166,12 +166,10 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     @Test
     public void headerDeserializerCouldBeOverridden() {
-        KafkaEndpoint kafkaEndpoint = context.getEndpoint(
-                "kafka:random_topic?kafkaHeaderDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
+        KafkaEndpoint kafkaEndpoint = context.getEndpoint("kafka:random_topic?kafkaHeaderDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
         assertIsInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getKafkaHeaderDeserializer());
     }
 
     private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {
     }
 }
-

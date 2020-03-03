@@ -61,28 +61,28 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_SERVICE_ACCOUNTS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICE_ACCOUNTS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SERVICE_ACCOUNTS_BY_LABELS_OPERATION:
-            doListServiceAccountsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICE_ACCOUNTS_BY_LABELS_OPERATION:
+                doListServiceAccountsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_SECRET_OPERATION:
-            doGetServiceAccount(exchange, operation);
-            break;
+            case KubernetesOperations.GET_SECRET_OPERATION:
+                doGetServiceAccount(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_SERVICE_ACCOUNT_OPERATION:
-            doCreateServiceAccount(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_SERVICE_ACCOUNT_OPERATION:
+                doCreateServiceAccount(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_SERVICE_ACCOUNT_OPERATION:
-            doDeleteServiceAccount(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_SERVICE_ACCOUNT_OPERATION:
+                doDeleteServiceAccount(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 

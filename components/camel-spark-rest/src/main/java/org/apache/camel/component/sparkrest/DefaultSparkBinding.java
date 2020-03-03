@@ -66,7 +66,7 @@ public class DefaultSparkBinding implements SparkBinding {
     @Override
     public void populateCamelHeaders(Request request, Map<String, Object> headers, Exchange exchange, SparkConfiguration configuration) throws Exception {
         String path = request.raw().getPathInfo();
-        SparkEndpoint endpoint = (SparkEndpoint) exchange.getFromEndpoint();
+        SparkRestEndpoint endpoint = (SparkRestEndpoint) exchange.getFromEndpoint();
         if (endpoint.getPath() != null) {
             // need to match by lower case as we want to ignore case on context-path
             String endpointPath = endpoint.getPath();

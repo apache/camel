@@ -52,6 +52,16 @@ public class TestEndpoint extends DefaultEndpoint implements WebhookCapableEndpo
 
     private boolean singleton;
 
+    /**
+     * For query parameter testing 1
+     */
+    private String foo;
+
+    /**
+     * For query parameter testing 2
+     */
+    private String bar;
+
     public TestEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
@@ -133,5 +143,21 @@ public class TestEndpoint extends DefaultEndpoint implements WebhookCapableEndpo
 
     public void setConsumer(Function<Processor, Consumer> consumer) {
         this.consumer = consumer;
+    }
+
+    public String getFoo() {
+        return foo;
+    }
+
+    public void setFoo(String foo) {
+        this.foo = foo;
+    }
+
+    public String getBar() {
+        return bar;
+    }
+
+    public void setBar(String bar) {
+        this.bar = bar;
     }
 }

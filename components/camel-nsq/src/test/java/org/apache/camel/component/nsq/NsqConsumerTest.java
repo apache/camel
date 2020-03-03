@@ -92,7 +92,7 @@ public class NsqConsumerTest extends NsqTestSupport {
                         String messageText = exchange.getIn().getBody(String.class);
                         int attempts = exchange.getIn().getHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, Integer.class);
                         if (messageText.contains("Requeue") && attempts < 3) {
-                            throw new Exception();
+                            throw new Exception("Forced error");
                         }
                     }
                 }).to(mockResultEndpoint);

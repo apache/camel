@@ -27,13 +27,11 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.util.Version;
 
 @UriParams
 public class LuceneConfiguration {
-    private URI uri;
-    private String authority;
-    private Version luceneVersion = LuceneConstants.LUCENE_VERSION;
+    private transient URI uri;
+    private transient String authority;
 
     @UriPath @Metadata(required = true)
     private String host;
@@ -61,10 +59,10 @@ public class LuceneConfiguration {
         if (!protocol.equalsIgnoreCase("lucene")) {
             throw new IllegalArgumentException("Unrecognized Lucene protocol: " + protocol + " for uri: " + uri);
         }
-        setUri(uri);
-        setAuthority(uri.getAuthority());
+        this.uri = uri;
+        this.authority = uri.getAuthority();
         if (!isValidAuthority()) {
-            throw new URISyntaxException(uri.toASCIIString(), 
+            throw new URISyntaxException(uri.toASCIIString(),
                     "Incorrect URI syntax and/or Operation specified for the Lucene endpoint."
                     + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
         }
@@ -87,15 +85,15 @@ public class LuceneConfiguration {
     }
     
     private boolean isValidAuthority() throws URISyntaxException {
-        if ((!authority.contains(":")) 
-            || ((authority.split(":")[0]) == null)  
+        if ((!authority.contains(":"))
+            || ((authority.split(":")[0]) == null)
             || ((!authority.split(":")[1].equalsIgnoreCase("insert")) && (!authority.split(":")[1].equalsIgnoreCase("query")))) {
             return false;
         }
         return true;
-        
+
     }
-    
+
     private String retrieveTokenFromAuthority(String token) throws URISyntaxException {
         String retval;
         
@@ -105,14 +103,6 @@ public class LuceneConfiguration {
             retval = uri.getAuthority().split(":")[1];
         }
         return retval;
-    }
-
-    public URI getUri() {
-        return uri;
-    }
-
-    public void setUri(URI uri) {
-        this.uri = uri;
     }
 
     public String getHost() {
@@ -135,14 +125,6 @@ public class LuceneConfiguration {
      */
     public void setOperation(LuceneOperation operation) {
         this.operation = operation;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
     }
 
     public File getSrcDir() {
@@ -190,13 +172,5 @@ public class LuceneConfiguration {
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
     }
-    
-    public void setLuceneVersion(Version luceneVersion) {
-        this.luceneVersion = luceneVersion;
-    }
 
-    public Version getLuceneVersion() {
-        return luceneVersion;
-    }
-    
 }

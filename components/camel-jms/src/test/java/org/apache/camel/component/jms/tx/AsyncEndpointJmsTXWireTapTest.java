@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -56,28 +54,18 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
 
                 from("activemq:queue:inbox")
                     .transacted()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertTrue("Exchange should be transacted", exchange.isTransacted());
-                            }
-                        })
+                        .process(exchange -> assertTrue("Exchange should be transacted", exchange.isTransacted()))
                         .to("async:bye:camel")
                         .wireTap("direct:tap")
                         .to("mock:result");
 
                 from("direct:tap")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                                assertFalse("Exchange should NOT be transacted", exchange.isTransacted());
-                            }
+                        .process(exchange -> {
+                            beforeThreadName = Thread.currentThread().getName();
+                            assertFalse("Exchange should NOT be transacted", exchange.isTransacted());
                         })
                         .to("async:hi:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
+                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
                         .to("mock:tap");
             }
         };

@@ -22,9 +22,8 @@ import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.Producer;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.BeanProcessorFactoryResolver;
@@ -35,6 +34,7 @@ import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.engine.DefaultCamelContextNameStrategy;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
+import org.apache.camel.impl.engine.DefaultConfigurerResolver;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
 import org.apache.camel.impl.engine.DefaultEndpointRegistry;
 import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
@@ -58,11 +58,9 @@ import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
 import org.apache.camel.impl.engine.PropertiesComponentFactoryResolver;
 import org.apache.camel.impl.engine.ReactiveExecutorResolver;
 import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
-import org.apache.camel.impl.engine.ServicePool;
+import org.apache.camel.impl.engine.RuntimeCamelCatalogResolver;
 import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
-import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -72,6 +70,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -84,6 +83,7 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -99,12 +99,17 @@ import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.DefaultRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the context used to configure routes and the policies to use.
  */
 public class DefaultCamelContext extends AbstractModelCamelContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
     /**
      * Creates the {@link CamelContext} using {@link DefaultRegistry} as
@@ -171,6 +176,10 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     @Override
     protected TypeConverterRegistry createTypeConverterRegistry() {
         TypeConverter typeConverter = getTypeConverter();
+        // type converter is also registry so create type converter
+        if (typeConverter == null) {
+            typeConverter = createTypeConverter();
+        }
         if (typeConverter instanceof TypeConverterRegistry) {
             return (TypeConverterRegistry)typeConverter;
         }
@@ -273,7 +282,7 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         PackageScanClassResolver packageScanClassResolver;
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
-            log.info("Using WebSphere specific PackageScanClassResolver");
+            LOG.info("Using WebSphere specific PackageScanClassResolver");
             packageScanClassResolver = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
         } else {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
@@ -292,23 +301,13 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
-    protected ServicePool<Producer> createProducerServicePool() {
-        return new ServicePool<>(Endpoint::createProducer, Producer::getEndpoint, 100);
-    }
-
-    @Override
-    protected ServicePool<PollingConsumer> createPollingConsumerServicePool() {
-        return new ServicePool<>(Endpoint::createPollingConsumer, PollingConsumer::getEndpoint, 100);
-    }
-
-    @Override
     protected UnitOfWorkFactory createUnitOfWorkFactory() {
         return new DefaultUnitOfWorkFactory();
     }
 
     @Override
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
-        return new DefaultRuntimeCamelCatalog(this, true);
+        return new RuntimeCamelCatalogResolver().resolve(this);
     }
 
     @Override
@@ -342,6 +341,16 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
+    protected XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader() {
+        return new XMLRoutesDefinitionLoaderResolver().resolve(this);
+    }
+
+    @Override
+    protected ModelToXMLDumper createModelToXMLDumper() {
+        return new ModelToXMLDumperResolver().resolve(this);
+    }
+
+    @Override
     protected Tracer createTracer() {
         Tracer tracer = null;
         if (getRegistry() != null) {
@@ -367,6 +376,11 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
+    protected ConfigurerResolver createConfigurerResolver() {
+        return new DefaultConfigurerResolver();
+    }
+
+    @Override
     protected RestRegistryFactory createRestRegistryFactory() {
         return new RestRegistryFactoryResolver().resolve(this);
     }
@@ -385,4 +399,5 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     protected ReactiveExecutor createReactiveExecutor() {
         return new ReactiveExecutorResolver().resolve(this);
     }
+
 }

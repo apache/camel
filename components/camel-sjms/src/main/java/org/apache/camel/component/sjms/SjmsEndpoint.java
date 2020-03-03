@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
+import java.time.Duration;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
@@ -54,6 +56,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
+import org.apache.camel.util.backoff.BackOff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +95,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
                 + " If you need transaction against multiple JMS providers, use jms component to leverage XA transaction.")
     private boolean sharedJMSSession = true;
     @UriParam(label = "producer",
-            description = "Sets the reply to destination name used for InOut producer endpoints.")
+            description = "Sets the reply to destination name used for InOut producer endpoints. The type of the reply "
+                    + "to destination can be determined by the starting prefix (topic: or queue:) in its name.")
     private String namedReplyTo;
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
             description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
@@ -179,6 +183,10 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @UriParam(defaultValue = "true", label = "consumer,logging",
             description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     private boolean errorHandlerLogStackTrace = true;
+    @UriParam(label = "consumer", description = "Try to apply reconnection logic on consumer pool", defaultValue = "true")
+    private boolean reconnectOnError = true;
+    @UriParam(label = "consumer", description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
+    private long reconnectBackOff = 5000;
 
     private volatile boolean closeConnectionResource;
 
@@ -752,5 +760,27 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
      */
     public void setJmsObjectFactory(JmsObjectFactory jmsObjectFactory) {
         this.jmsObjectFactory = jmsObjectFactory;
+    }
+
+    public boolean isReconnectOnError() {
+        return reconnectOnError;
+    }
+
+    /**
+     * Try to apply reconnection logic on consumer pool
+     */
+    public void setReconnectOnError(boolean reconnectOnError) {
+        this.reconnectOnError = reconnectOnError;
+    }
+
+    public long getReconnectBackOff() {
+        return reconnectBackOff;
+    }
+
+    /**
+     * Backoff in millis on consumer pool reconnection attempts
+     */
+    public void setReconnectBackOff(long reconnectBackOff) {
+        this.reconnectBackOff = reconnectBackOff;
     }
 }

@@ -10,7 +10,7 @@ and Camel should auto-detect this on startup and log as follows:
 
 [source,text]
 ----
-Detected and using custom HeadersMapFactory: org.apache.camel.component.headersmap.FastHeadersMapFactory@71e9ebae
+Detected and using HeadersMapFactory: camel-headersmap
 ----
 
 == Manual enabling

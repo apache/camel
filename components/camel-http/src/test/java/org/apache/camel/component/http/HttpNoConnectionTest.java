@@ -20,7 +20,6 @@ import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -28,9 +27,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.http.common.HttpMethods.GET;
+
 public class HttpNoConnectionTest extends BaseHttpTest {
 
     private HttpServer localServer;
+
+    private String endpointUrl;
 
     @Before
     @Override
@@ -41,8 +44,10 @@ public class HttpNoConnectionTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+                registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
+
+        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
 
         super.setUp();
     }
@@ -59,9 +64,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
 
     @Test
     public void httpConnectionOk() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(endpointUrl + "/search", exchange1 -> {
         });
 
         assertExchange(exchange);
@@ -69,7 +72,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
 
     @Test
     public void httpConnectionNotOk() throws Exception {
-        String url = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search";
+        String url = endpointUrl + "/search";
         // stop server so there are no connection
         localServer.stop();
         localServer.awaitTermination(1000, TimeUnit.MILLISECONDS);

@@ -35,17 +35,14 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
 
     private static final AtomicBoolean INIT = new AtomicBoolean();
 
-    private static final boolean USE_SIMPLE_CACHE = false;
-
     static {
         boolean warmUp = "true".equalsIgnoreCase(System.getProperty("CamelWarmUpLRUCacheFactory", "true"));
         if (warmUp) {
-            // warm-up LRUCache which happens in a background test, which can speedup starting Camel
+            // warm-up LRUCache which happens in a background thread, which can speedup starting Camel
             // as the warm-up can run concurrently with starting up Camel and the runtime container Camel may be running inside
             warmUp();
         }
     }
-
 
     /**
      * Warm-up the LRUCache to startup Apache Camel faster.
@@ -209,4 +206,8 @@ public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
         return new CaffeineLRUWeakCache<>(initialCapacity, maximumCacheSize, stopOnEviction);
     }
 
+    @Override
+    public String toString() {
+        return "camel-caffeine-lrucache";
+    }
 }

@@ -27,11 +27,15 @@ import com.rabbitmq.client.Envelope;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ReplyManager} when using temporary queues.
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TemporaryQueueReplyManager.class);
 
     private RabbitConsumer consumer;
 
@@ -47,7 +51,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
-        log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
+        LOG.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
         if (handler != null) {
@@ -68,17 +72,17 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
             // log a warn and then ignore the message
-            log.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
+            LOG.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
         }
     }
 
     @Override
     protected Connection createListenerContainer() throws Exception {
 
-        log.trace("Creating connection");
+        LOG.trace("Creating connection");
         Connection conn = endpoint.connect(executorService);
 
-        log.trace("Creating channel");
+        LOG.trace("Creating channel");
         Channel channel = conn.createChannel();
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
@@ -88,7 +92,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         //Let the server pick a random name for us
         DeclareOk result = channel.queueDeclare();
-        log.debug("Using temporary queue name: {}", result.getQueue());
+        LOG.debug("Using temporary queue name: {}", result.getQueue());
         setReplyTo(result.getQueue());
 
         //TODO check for the RabbitMQConstants.EXCHANGE_NAME header

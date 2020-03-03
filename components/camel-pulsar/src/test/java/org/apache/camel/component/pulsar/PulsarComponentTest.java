@@ -80,7 +80,7 @@ public class PulsarComponentTest extends CamelTestSupport {
     @Test
     public void testPulsarEndpointAllowManualAcknowledgementDefaultTrue() throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
-        component.setAllowManualAcknowledgement(true);
+        component.getConfiguration().setAllowManualAcknowledgement(true);
 
         // allowManualAcknowledgement is absent as a query parameter.
         PulsarEndpoint endpoint = (PulsarEndpoint)component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");

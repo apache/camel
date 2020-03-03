@@ -36,19 +36,19 @@ public class OutgoingTextMessage extends OutgoingMessage {
     private Boolean disableWebPagePreview;
 
     @JsonProperty("reply_markup")
-    private ReplyKeyboardMarkup replyKeyboardMarkup;
+    private ReplyMarkup replyMarkup;
 
     public OutgoingTextMessage() {
 
     }
 
     public OutgoingTextMessage(String text, String parseMode, Boolean disableWebPagePreview,
-            ReplyKeyboardMarkup replyKeyboardMarkup) {
+            ReplyMarkup replyMarkup) {
 
         this.text = text;
         this.parseMode = parseMode;
         this.disableWebPagePreview = disableWebPagePreview;
-        this.replyKeyboardMarkup = replyKeyboardMarkup;
+        this.replyMarkup = replyMarkup;
     }
 
     public String getText() {
@@ -75,12 +75,12 @@ public class OutgoingTextMessage extends OutgoingMessage {
         this.disableWebPagePreview = disableWebPagePreview;
     }
 
-    public ReplyKeyboardMarkup getReplyKeyboardMarkup() {
-        return replyKeyboardMarkup;
+    public ReplyMarkup getReplyMarkup() {
+        return replyMarkup;
     }
 
-    public void setReplyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup) {
-        this.replyKeyboardMarkup = replyKeyboardMarkup;
+    public void setReplyMarkup(ReplyMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
     }
     
     public static Builder builder() {
@@ -93,7 +93,7 @@ public class OutgoingTextMessage extends OutgoingMessage {
         private String text;
         private String parseMode;
         private Boolean disableWebPagePreview;
-        private ReplyKeyboardMarkup replyKeyboardMarkup;
+        private ReplyMarkup replyMarkup;
 
         public Builder text(String text) {
 
@@ -113,15 +113,15 @@ public class OutgoingTextMessage extends OutgoingMessage {
             return this;
         }
 
-        public Builder replyKeyboardMarkup(ReplyKeyboardMarkup replyKeyboardMarkup) {
+        public Builder replyMarkup(ReplyMarkup replyMarkup) {
 
-            this.replyKeyboardMarkup = replyKeyboardMarkup;
+            this.replyMarkup = replyMarkup;
             return this;
         }
 
         public OutgoingTextMessage build() {
 
-            return new OutgoingTextMessage(text, parseMode, disableWebPagePreview, replyKeyboardMarkup);
+            return new OutgoingTextMessage(text, parseMode, disableWebPagePreview, replyMarkup);
         }
     }
 }

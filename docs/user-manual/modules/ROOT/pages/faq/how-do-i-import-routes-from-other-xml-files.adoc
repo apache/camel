@@ -13,12 +13,15 @@ you can simply import when needed.
 In *Camel 2.3* it is now possible to define routes outside
 `<camelContext/>` which you do in a new `<routeContext/>` tag.
 
-NOTE: When you use `<routeContext>` then they are separated, and
+[NOTE]
+====
+When you use `<routeContext>` then they are separated, and
 cannot reuse existing `<onException>`,
 `<intercept>`, `<dataFormats>` and similar cross cutting
 functionality defined in the `<camelContext>`. In other words
 the `<routeContext>` is currently isolated. This may change in Camel
 3.x.
+====
 
 For example we could have a file named `myCoolRoutes.xml` which
 contains a couple of routes as shown:

@@ -57,6 +57,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ExpressionResultTypeAware;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.DefaultExchange;
@@ -64,6 +65,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -96,7 +98,8 @@ import static org.apache.camel.support.builder.Namespaces.isMatchingNamespaceOrE
  *
  * @see XPathConstants#NODESET
  */
-public class XPathBuilder extends ServiceSupport implements CamelContextAware, Expression, Predicate, NamespaceAware, ExpressionResultTypeAware {
+public class XPathBuilder extends ServiceSupport implements CamelContextAware, Expression, Predicate,
+        NamespaceAware, ExpressionResultTypeAware, GeneratedPropertyConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
     private static final String SAXON_FACTORY_CLASS_NAME = "net.sf.saxon.xpath.XPathFactoryImpl";
@@ -165,6 +168,40 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             builder.setResultType(resultType);
         }
         return builder;
+    }
+
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "documenttype":
+            case "documentType":
+                setDocumentType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+            case "resulttype":
+            case "resultType":
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+            case "usesaxon":
+            case "useSaxon":
+                setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+            case "xpathfactory":
+            case "xPathFactory":
+                setXPathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value)); return true;
+            case "objectmodeluri":
+            case "objectModelUri":
+                setObjectModelUri(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            case "threadsafety":
+            case "threadSafety":
+                setThreadSafety(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+            case "lognamespaces":
+            case "logNamespaces":
+                setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value)); return true;
+            case "headername":
+            case "headerName":
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value)); return true;
+            default: return false;
+        }
     }
 
     @Override
@@ -1170,7 +1207,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                 }
                 if (answer == null) {
                     if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), IN_NAMESPACE)
-                        || isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
+                            || isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
                         String localPart = qName.getLocalPart();
                         if (localPart.equals("body") && argumentCount == 0) {
                             return getBodyFunction();
@@ -1372,7 +1409,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                     }
                 } catch (Throwable e) {
                     LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
-                             + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
+                            + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
                     LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
                 }
             }
@@ -1380,7 +1417,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             if (xpathFactory == null) {
                 LOG.debug("Creating XPathFactory from objectModelUri: {}", objectModelUri);
                 xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
-                    ? XPathFactory.newInstance(objectModelUri) : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+                        ? XPathFactory.newInstance(objectModelUri) : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
                 LOG.info("Created XPathFactory: {} from objectModelUri: {}", xpathFactory, objectModelUri);
             }
 

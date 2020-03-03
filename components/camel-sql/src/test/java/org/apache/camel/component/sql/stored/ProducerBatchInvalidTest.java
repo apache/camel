@@ -72,7 +72,7 @@ public class ProducerBatchInvalidTest extends CamelTestSupport {
             ResolveEndpointFailedException refe = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, refe.getCause());
             assertEquals("batch", pbe.getPropertyName());
-            TypeConversionException tce = assertIsInstanceOf(TypeConversionException.class, pbe.getCause());
+            assertIsInstanceOf(TypeConversionException.class, pbe.getCause());
             assertEquals("[true, true]", pbe.getValue().toString());
         }
     }

@@ -20,6 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -56,7 +57,7 @@ public class DisruptorWaitForTaskNeverOnCompletionTest extends CamelTestSupport 
                 from("direct:start").process(new Processor() {
                     @Override
                     public void process(final Exchange exchange) throws Exception {
-                        exchange.addOnCompletion(new SynchronizationAdapter() {
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(final Exchange exchange) {
                                 done = done + "A";

@@ -99,11 +99,6 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
         return messageChannel;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     /**
      * The exchange pattern that the Spring integration endpoint should use.
      * If inOut=true then a reply channel is expected, either from the Spring Integration Message header or configured on the endpoint.

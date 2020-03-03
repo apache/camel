@@ -32,8 +32,12 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KubernetesJobProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesJobProducer.class);
 
     public KubernetesJobProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -56,28 +60,28 @@ public class KubernetesJobProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_JOB:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_JOB:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_JOB_BY_LABELS_OPERATION:
-            doListJobByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_JOB_BY_LABELS_OPERATION:
+                doListJobByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_JOB_OPERATION:
-            doGetJob(exchange, operation);
-            break;
+            case KubernetesOperations.GET_JOB_OPERATION:
+                doGetJob(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_JOB_OPERATION:
-            doCreateJob(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_JOB_OPERATION:
+                doCreateJob(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_JOB_OPERATION:
-            doDeleteJob(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_JOB_OPERATION:
+                doDeleteJob(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -91,7 +95,7 @@ public class KubernetesJobProducer extends DefaultProducer {
     protected void doListJobByLabel(Exchange exchange, String operation) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
-            log.error("Get Job by labels require specify a labels set");
+            LOG.error("Get Job by labels require specify a labels set");
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
@@ -110,11 +114,11 @@ public class KubernetesJobProducer extends DefaultProducer {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(jobName)) {
-            log.error("Get a specific job require specify a job name");
+            LOG.error("Get a specific job require specify a job name");
             throw new IllegalArgumentException("Get a specific job require specify a job name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            log.error("Get a specific job require specify a namespace name");
+            LOG.error("Get a specific job require specify a namespace name");
             throw new IllegalArgumentException("Get a specific job require specify a namespace name");
         }
         job = getEndpoint().getKubernetesClient().batch().jobs().inNamespace(namespaceName).withName(jobName).get();
@@ -129,15 +133,15 @@ public class KubernetesJobProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
         if (ObjectHelper.isEmpty(jobName)) {
-            log.error("Create a specific job require specify a job name");
+            LOG.error("Create a specific job require specify a job name");
             throw new IllegalArgumentException("Create a specific job require specify a job name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            log.error("Create a specific job require specify a namespace name");
+            LOG.error("Create a specific job require specify a namespace name");
             throw new IllegalArgumentException("Create a specific job require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(jobSpec)) {
-            log.error("Create a specific job require specify a hpa spec bean");
+            LOG.error("Create a specific job require specify a hpa spec bean");
             throw new IllegalArgumentException("Create a specific job require specify a hpa spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
@@ -152,11 +156,11 @@ public class KubernetesJobProducer extends DefaultProducer {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(jobName)) {
-            log.error("Delete a specific job require specify a job name");
+            LOG.error("Delete a specific job require specify a job name");
             throw new IllegalArgumentException("Delete a specific job require specify a job name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            log.error("Delete a specific job require specify a namespace name");
+            LOG.error("Delete a specific job require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific job require specify a namespace name");
         }
 

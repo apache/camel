@@ -17,7 +17,6 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -25,26 +24,32 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.http.HttpMethods.GET;
+
 public class HttpQueryTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
+    private String baseUrl;
+
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+
         localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
                 setConnectionReuseStrategy(getConnectionReuseStrategy()).
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/", new BasicValidationHandler("GET", "hl=en&q=camel", null, getExpectedContent())).
-                registerHandler("/test/", new BasicValidationHandler("GET", "my=@+camel", null, getExpectedContent())).
-                registerHandler("/user/pass", new BasicValidationHandler("GET", "password=baa&username=foo", null, getExpectedContent())).
+                registerHandler("/", new BasicValidationHandler(GET.name(), "hl=en&q=camel", null, getExpectedContent())).
+                registerHandler("/test/", new BasicValidationHandler(GET.name(), "my=@+camel", null, getExpectedContent())).
+                registerHandler("/user/pass", new BasicValidationHandler(GET.name(), "password=baa&username=foo", null, getExpectedContent())).
                 create();
         localServer.start();
 
-        super.setUp();
+        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
     }
 
     @After
@@ -59,9 +64,7 @@ public class HttpQueryTest extends BaseHttpTest {
 
     @Test
     public void httpQuery() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?hl=en&q=camel", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(baseUrl + "/?hl=en&q=camel", exchange1 -> {
         });
 
         assertExchange(exchange);
@@ -69,20 +72,15 @@ public class HttpQueryTest extends BaseHttpTest {
 
     @Test
     public void httpQueryHeader() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_QUERY, "hl=en&q=camel");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/", exchange1 ->
+                exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "hl=en&q=camel"));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpQueryWithEscapedCharacter() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test/?my=%40%20camel", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(baseUrl + "/test/?my=%40%20camel", exchange1 -> {
         });
 
         assertExchange(exchange);
@@ -90,9 +88,7 @@ public class HttpQueryTest extends BaseHttpTest {
 
     @Test
     public void httpQueryWithUsernamePassword() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/user/pass?password=baa&username=foo", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(baseUrl + "/user/pass?password=baa&username=foo", exchange1 -> {
         });
 
         assertExchange(exchange);

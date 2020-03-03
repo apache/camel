@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "rollback",
+    "title": "Rollback",
+    "description": "Forces a rollback by stopping routing the message",
+    "javaType": "org.apache.camel.model.RollbackDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "markRollbackOnly": { "kind": "attribute", "displayName": "Mark Rollback Only", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Mark the transaction for rollback only (cannot be overruled to commit)" },
+    "markRollbackOnlyLast": { "kind": "attribute", "displayName": "Mark Rollback Only Last", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Mark only last sub transaction for rollback only. When using sub transactions (if the transaction manager support this)" },
+    "message": { "kind": "attribute", "displayName": "Message", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Message to use in rollback exception" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

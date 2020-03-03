@@ -19,6 +19,8 @@ package org.apache.camel;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * Template for working with Camel and sending {@link Message} instances in an
  * {@link Exchange} to an {@link Endpoint} using a <i>fluent</i> build style.
@@ -234,7 +236,7 @@ public interface FluentProducerTemplate extends Service {
      *     .request()}
      * </pre>
      *
-     * @param processor 
+     * @param processor
      */
     FluentProducerTemplate withProcessor(Processor processor);
 
@@ -251,7 +253,33 @@ public interface FluentProducerTemplate extends Service {
      *
      * @param endpointUri the endpoint URI to send to
      */
-    FluentProducerTemplate to(String endpointUri);
+    default FluentProducerTemplate to(String endpointUri) {
+        final CamelContext context = ObjectHelper.notNull(getCamelContext(), "camel context");
+
+        return to(context.getEndpoint(endpointUri));
+    }
+
+    /**
+     * Endpoint to send to.
+     *
+     * @param uri the String formatted endpoint uri to send to
+     * @param args arguments for the string formatting of the uri
+     */
+    default FluentProducerTemplate toF(String uri, Object... args) {
+        return to(String.format(uri, args));
+    }
+
+    /**
+     * Endpoint to send to
+     *
+     * @param resolver the {@link EndpointConsumerResolver} that supply the endpoint to send to.
+     */
+    default FluentProducerTemplate to(EndpointConsumerResolver resolver) {
+        final CamelContext context = ObjectHelper.notNull(getCamelContext(), "camel context");
+        final Endpoint endpoint = resolver.resolve(context);
+
+        return to(endpoint);
+    }
 
     /**
      * Endpoint to send to

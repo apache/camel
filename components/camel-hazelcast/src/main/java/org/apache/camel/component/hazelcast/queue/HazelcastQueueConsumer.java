@@ -91,10 +91,7 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                             getExceptionHandler().handleException("Error during processing", exchange, e);
                         }
                     } catch (InterruptedException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Hazelcast Queue Consumer Interrupted: {}", e, e);
-                            continue;
-                        }
+                        // ignore
                     }
                 }
             }

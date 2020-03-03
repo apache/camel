@@ -29,6 +29,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.apache.camel.component.http.HttpMethods.GET;
+
 @Ignore("We cannot run this test as default port 80 is not allows on most boxes")
 public class HttpDefaultPortNumberTest extends BaseHttpTest {
 
@@ -43,7 +45,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+                registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -63,7 +65,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     public void testHttpConnectionWithTwoRoutesAndOneWithDefaultPort() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("http://" + localServer.getInetAddress().getHostName() + "/search");
                 from("direct:dummy")
@@ -82,7 +84,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     public void testHttpConnectionWithTwoRoutesAndAllPortsSpecified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("http://" + localServer.getInetAddress().getHostName() + ":80/search");
                 from("direct:dummy")
@@ -101,7 +103,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     public void testHttpConnectionRefusedStoppedServer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("http://" + localServer.getInetAddress().getHostName() + "/search");
                 from("direct:dummy")
@@ -121,7 +123,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     public void testHttpConnectionRefusedRunningServer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .to("http://" + localServer.getInetAddress().getHostName() + "/search");
             }

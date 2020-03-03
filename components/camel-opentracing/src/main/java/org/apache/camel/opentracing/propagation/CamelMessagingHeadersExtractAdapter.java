@@ -49,8 +49,6 @@ public final class CamelMessagingHeadersExtractAdapter implements TextMap {
      * than specifically to JMS so that other Camel messaging endpoints can take
      * part in traces where the peer is using JMS.
      * 
-     * @param the source
-     * @return the result
      */
     private String decodeDash(String key) {
         if (jmsEncoding) {

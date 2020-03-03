@@ -35,30 +35,33 @@ import org.apache.camel.util.URISupport;
 
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
 
-    public ToDynamicReifier(ProcessorDefinition<?> definition) {
-        super((T)definition);
+    public ToDynamicReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, (T) definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         String uri;
         Expression exp;
         if (definition.getEndpointProducerBuilder() != null) {
             uri = definition.getEndpointProducerBuilder().getUri();
-            exp = definition.getEndpointProducerBuilder().expr(routeContext.getCamelContext());
+            exp = definition.getEndpointProducerBuilder().expr(camelContext);
         } else {
             uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
             exp = createExpression(routeContext, uri);
         }
 
         SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
-        processor.setCamelContext(routeContext.getCamelContext());
-        processor.setPattern(parse(routeContext, ExchangePattern.class, definition.getPattern()));
+        processor.setCamelContext(camelContext);
+        processor.setPattern(parse(ExchangePattern.class, definition.getPattern()));
         if (definition.getCacheSize() != null) {
-            processor.setCacheSize(parseInt(routeContext, definition.getCacheSize()));
+            processor.setCacheSize(parseInt(definition.getCacheSize()));
         }
         if (definition.getIgnoreInvalidEndpoint() != null) {
-            processor.setIgnoreInvalidEndpoint(parseBoolean(routeContext, definition.getIgnoreInvalidEndpoint()));
+            processor.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
+        }
+        if  (definition.getAllowOptimisedComponents() != null) {
+            processor.setAllowOptimisedComponents(parseBoolean(definition.getAllowOptimisedComponents(), true));
         }
         return processor;
     }
@@ -77,7 +80,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
                 if (before != null && after != null) {
                     // maybe its a language, must have language: as prefix
                     try {
-                        Language partLanguage = routeContext.getCamelContext().resolveLanguage(before);
+                        Language partLanguage = camelContext.resolveLanguage(before);
                         if (partLanguage != null) {
                             Expression exp = partLanguage.createExpression(after);
                             list.add(exp);
@@ -89,7 +92,7 @@ public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorRe
                 }
             }
             // fallback and use simple language
-            Language lan = routeContext.getCamelContext().resolveLanguage("simple");
+            Language lan = camelContext.resolveLanguage("simple");
             Expression exp = lan.createExpression(part);
             list.add(exp);
         }

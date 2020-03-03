@@ -28,8 +28,12 @@ import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CaffeineAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CaffeineAggregationRepository.class);
 
     private CamelContext camelContext;
     private Cache<String, DefaultExchangeHolder> cache;
@@ -123,7 +127,7 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
-        log.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+        LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
 
         final DefaultExchangeHolder oldHolder = cache.getIfPresent(key);
         final DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
@@ -140,13 +144,13 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        log.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
+        LOG.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
         cache.invalidate(key);
     }
 
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
-        log.trace("Confirming an exchange with ID {}.", exchangeId);
+        LOG.trace("Confirming an exchange with ID {}.", exchangeId);
         cache.invalidate(exchangeId);
     }
 
@@ -159,15 +163,15 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     public Set<String> scan(CamelContext camelContext) {
-        log.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
+        LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
         Set<String> scanned = Collections.unmodifiableSet(getKeys());
-        log.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
+        LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
         return scanned;
     }
 
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
-        log.trace("Recovering an Exchange with ID {}.", exchangeId);
+        LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
         return useRecovery ? unmarshallExchange(camelContext, cache.getIfPresent(exchangeId)) : null;
     }
 

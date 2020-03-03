@@ -20,8 +20,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -68,12 +66,9 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:udp://127.0.0.1:%1$s?sync=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String s = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Hello " + s);
-                    }
+                from(String.format("mina:udp://127.0.0.1:%1$s?sync=true", getPort())).process(exchange -> {
+                    String s = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Hello " + s);
                 });
             }
         };

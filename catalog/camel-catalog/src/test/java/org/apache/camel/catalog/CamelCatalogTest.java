@@ -29,12 +29,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.catalog.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 
 public class CamelCatalogTest {
 
@@ -1231,74 +1231,6 @@ public class CamelCatalogTest {
         params = catalog.endpointProperties(uri);
         resolved = catalog.asEndpointUri("netty-http", params, false);
         assertEquals("netty-http:http:a-b-c.hostname.tld:8080/anything", resolved);
-    }
-
-    @Test
-    public void testJSonSchemaHelper() throws Exception {
-        String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummy.json"));
-        assertNotNull(json);
-
-        // component
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-        assertEquals(12, rows.size());
-        assertTrue(JSonSchemaHelper.isComponentProducerOnly(rows));
-        assertFalse(JSonSchemaHelper.isComponentConsumerOnly(rows));
-        String desc = null;
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("description")) {
-                desc = row.get("description");
-                break;
-            }
-        }
-        assertEquals("The dummy component logs message exchanges to the underlying logging mechanism.", desc);
-
-        // componentProperties
-        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-        assertEquals(1, rows.size());
-        Map<String, String> row = JSonSchemaHelper.getRow(rows, "exchangeFormatter");
-        assertNotNull(row);
-        assertEquals("org.apache.camel.spi.ExchangeFormatter", row.get("javaType"));
-        assertEquals("Exchange Formatter", row.get("displayName"));
-
-        // properties
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(31, rows.size());
-        row = JSonSchemaHelper.getRow(rows, "level");
-        assertNotNull(row);
-        assertEquals("INFO", row.get("defaultValue"));
-        String enums = JSonSchemaHelper.getPropertyEnum(rows, "level");
-        assertEquals("ERROR,WARN,INFO,DEBUG,TRACE,OFF", enums);
-        assertEquals("Level", row.get("displayName"));
-
-        row = JSonSchemaHelper.getRow(rows, "amount");
-        assertNotNull(row);
-        assertEquals("1", row.get("defaultValue"));
-        assertEquals("Number of drinks in the order", row.get("description"));
-        assertEquals("Amount", row.get("displayName"));
-
-        row = JSonSchemaHelper.getRow(rows, "maxChars");
-        assertNotNull(row);
-        assertEquals("false", row.get("deprecated"));
-        assertEquals("10000", row.get("defaultValue"));
-        assertEquals("Max Chars", row.get("displayName"));
-
-        row = JSonSchemaHelper.getRow(rows, "repeatCount");
-        assertNotNull(row);
-        assertEquals("long", row.get("javaType"));
-        assertEquals("0", row.get("defaultValue"));
-        assertEquals("Repeat Count", row.get("displayName"));
-
-        row = JSonSchemaHelper.getRow(rows, "fontSize");
-        assertNotNull(row);
-        assertEquals("false", row.get("deprecated"));
-        assertEquals("14", row.get("defaultValue"));
-        assertEquals("Font Size", row.get("displayName"));
-
-        row = JSonSchemaHelper.getRow(rows, "kerberosRenewJitter");
-        assertNotNull(row);
-        assertEquals("java.lang.Double", row.get("javaType"));
-        assertEquals("0.05", row.get("defaultValue"));
-        assertEquals("Kerberos Renew Jitter", row.get("displayName"));
     }
 
     @Test

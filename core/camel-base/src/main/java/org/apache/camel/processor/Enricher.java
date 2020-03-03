@@ -27,10 +27,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.impl.engine.EmptyProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
@@ -38,6 +44,9 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
@@ -53,10 +62,13 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see PollEnricher
  */
-public class Enricher extends AsyncProcessorSupport implements IdAware, CamelContextAware {
+public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
 
     private CamelContext camelContext;
     private String id;
+    private String routeId;
     private ProducerCache producerCache;
     private final Expression expression;
     private AggregationStrategy aggregationStrategy;
@@ -87,6 +99,16 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public Expression getExpression() {
@@ -157,15 +179,24 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
 
         // use dynamic endpoint so calculate the endpoint to use
         Object recipient = null;
+        boolean prototype = cacheSize < 0;
         try {
             recipient = expression.evaluate(exchange, Object.class);
-            endpoint = resolveEndpoint(exchange, recipient);
-            // acquire the consumer from the cache
+            recipient = prepareRecipient(exchange, recipient);
+            Endpoint existing = getExistingEndpoint(exchange, recipient);
+            if (existing == null) {
+                endpoint = resolveEndpoint(exchange, recipient, prototype);
+            } else {
+                endpoint = existing;
+                // we have an existing endpoint then its not a prototype scope
+                prototype = false;
+            }
+            // acquire the producer from the cache
             producer = producerCache.acquireProducer(endpoint);
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                 }
             } else {
                 exchange.setException(e);
@@ -184,10 +215,11 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
         }
         // record timing for sending the exchange using the producer
         final StopWatch watch = sw;
+        final boolean prototypeEndpoint = prototype;
         AsyncProcessor ap = AsyncProcessorConverterHelper.convert(producer);
         boolean sync = ap.process(resourceExchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                // we only have to handle async completion of the routing slip
+                // we only have to handle async completion
                 if (doneSync) {
                     return;
                 }
@@ -230,19 +262,27 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
                 } catch (Exception e) {
                     // ignore
                 }
+                // and stop prototype endpoints
+                if (prototypeEndpoint) {
+                    ServiceHelper.stopAndShutdownService(endpoint);
+                }
 
                 callback.done(false);
             }
         });
 
         if (!sync) {
-            log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+            }
             // the remainder of the routing slip will be completed async
             // so we break out now, then the callback will be invoked which then continue routing from where we left here
             return false;
         }
 
-        log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+        }
 
         if (watch != null) {
             // emit event that the exchange was sent to the endpoint
@@ -283,17 +323,56 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
         } catch (Exception e) {
             // ignore
         }
+        // and stop prototype endpoints
+        if (prototypeEndpoint) {
+            ServiceHelper.stopAndShutdownService(endpoint);
+        }
 
         callback.done(true);
         return true;
     }
 
-    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            recipient = ((String)recipient).trim();
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
+        } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
+            recipient = ((String) recipient).trim();
         }
-        return ExchangeHelper.resolveEndpoint(exchange, recipient);
+        if (recipient != null) {
+            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            String uri;
+            if (recipient instanceof String) {
+                uri = (String) recipient;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint
+            return ecc.normalizeUri(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        }
+        if (recipient != null) {
+            if (recipient instanceof NormalizedEndpointUri) {
+                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+                return ecc.hasEndpoint(nu);
+            } else {
+                String uri = recipient.toString();
+                return exchange.getContext().hasEndpoint(uri);
+            }
+        }
+        return null;
+    }
+
+    protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {
+        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
     /**
@@ -314,7 +393,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
         if (isShareUnitOfWork()) {
             target.setProperty(Exchange.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
             // and then share the unit of work
-            target.setUnitOfWork(source.getUnitOfWork());
+            target.adapt(ExtendedExchange.class).setUnitOfWork(source.getUnitOfWork());
         }
         return target;
     }
@@ -331,7 +410,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
 
     @Override
     public String toString() {
-        return "Enrich[" + expression + "]";
+        return id;
     }
 
     @Override
@@ -344,8 +423,13 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
         }
 
         if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
-            log.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("Enricher {} is not using ProducerCache", this);
+            } else {
+                producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+                LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
 
         ServiceHelper.startService(producerCache, aggregationStrategy);

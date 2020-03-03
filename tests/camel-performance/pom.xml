@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tests</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-performance</artifactId>
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <version>${commons-io-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
-            <version>1.6.8</version>
+            <version>1.6.17</version>
             <scope>test</scope>
         </dependency>
         <dependency>

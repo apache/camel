@@ -32,6 +32,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
@@ -44,6 +46,8 @@ import org.apache.camel.support.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class DataSetTestEndpoint extends MockEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DataSetTestEndpoint.class);
 
     private Endpoint expectedMessageEndpoint;
 
@@ -68,7 +72,7 @@ public class DataSetTestEndpoint extends MockEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        log.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
+        LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
 
         final List<Object> expectedBodies = new ArrayList<>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
@@ -83,7 +87,7 @@ public class DataSetTestEndpoint extends MockEndpoint {
                     Iterator<?> it = ObjectHelper.createIterator(body, delimiter, false, true);
                     while (it.hasNext()) {
                         Object line = it.next();
-                        log.trace("Received message body {}", line);
+                        LOG.trace("Received message body {}", line);
                         expectedBodies.add(line);
                     }
                 } else {
@@ -92,7 +96,7 @@ public class DataSetTestEndpoint extends MockEndpoint {
             }
         }, timeout);
 
-        log.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
+        LOG.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
         if (anyOrder) {
             expectedBodiesReceivedInAnyOrder(expectedBodies);
         } else {

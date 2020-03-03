@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-fhir</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Fhir</name>
+    <name>Camel :: FHIR</name>
     <description>Camel FHIR HL7 support</description>
 
     <properties>
@@ -102,6 +102,12 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>

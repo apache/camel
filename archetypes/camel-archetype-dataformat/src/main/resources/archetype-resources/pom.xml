@@ -51,13 +51,6 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- support camel documentation -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>apt</artifactId>
-      <version>${camel-version}</version>
-    </dependency>
-
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -109,10 +102,9 @@
 
       <!-- to generate the MANIFEST-FILE of the bundle -->
       <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin-version}</version>
-        <extensions>true</extensions>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-bundle-plugin</artifactId>
+        <version>${camelVersion}</version>
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>

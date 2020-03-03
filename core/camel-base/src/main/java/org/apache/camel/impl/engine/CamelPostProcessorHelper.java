@@ -47,9 +47,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A helper class for Camel based injector or post processing hooks which can be
- * reused by both the <a href="http://camel.apache.org/spring.html">Spring</a>,
- * <a href="http://camel.apache.org/guice.html">Guice</a> and
- * <a href="http://camel.apache.org/blueprint.html">Blueprint</a> support.
+ * reused by both the <a href="http://camel.apache.org/spring.html">Spring</a> 
+ * and <a href="http://camel.apache.org/blueprint.html">Blueprint</a> support.
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
 
@@ -289,8 +288,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionBeanValue(Class<?> type, String name) {
         if (ObjectHelper.isEmpty(name)) {
             // is it camel context itself?
-            if (type.isAssignableFrom(camelContext.getClass())) {
-                return camelContext;
+            if (getCamelContext() != null && type.isAssignableFrom(getCamelContext().getClass())) {
+                return getCamelContext();
             }
             Set<?> found = getCamelContext().getRegistry().findByType(type);
             if (found == null || found.isEmpty()) {

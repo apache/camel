@@ -48,8 +48,6 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
 
     @Override
     protected ServerConnectionMultiplexor createConnection(final ConnectionId id, final ServerOptions options) {
-        log.debug("Create new server - id: {}", id);
-
         try {
             return new ServerConnectionMultiplexor(new ServerInstance(id.getHost(), id.getPort(), options));
         } catch (final UnknownHostException e) {

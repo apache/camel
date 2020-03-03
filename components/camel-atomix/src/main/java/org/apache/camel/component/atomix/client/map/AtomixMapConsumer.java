@@ -25,8 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientConsumer;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AtomixMapConsumer extends AbstractAtomixClientConsumer<AtomixMapEndpoint> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AtomixMapConsumer.class);
 
     private final List<Listener<DistributedMap.EntryEvent<Object, Object>>> listeners;
     private final String resourceName;
@@ -55,12 +59,12 @@ public final class AtomixMapConsumer extends AbstractAtomixClientConsumer<Atomix
 
         Object key = getAtomixEndpoint().getConfiguration().getKey();
         if (key == null) {
-            log.debug("Subscribe to events for map: {}", resourceName);
+            LOG.debug("Subscribe to events for map: {}", resourceName);
             this.listeners.add(this.map.onAdd(this::onEvent).join());
             this.listeners.add(this.map.onRemove(this::onEvent).join());
             this.listeners.add(this.map.onUpdate(this::onEvent).join());
         } else {
-            log.debug("Subscribe to events for map: {}, key: {}", resourceName, key);
+            LOG.debug("Subscribe to events for map: {}, key: {}", resourceName, key);
             this.listeners.add(this.map.onAdd(key, this::onEvent).join());
             this.listeners.add(this.map.onRemove(key, this::onEvent).join());
             this.listeners.add(this.map.onUpdate(key, this::onEvent).join());

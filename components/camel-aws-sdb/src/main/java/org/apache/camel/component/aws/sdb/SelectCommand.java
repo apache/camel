@@ -50,11 +50,6 @@ public class SelectCommand extends AbstractSdbCommand {
     }
     
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

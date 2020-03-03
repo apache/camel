@@ -272,12 +272,16 @@ public final class FileUtil {
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>,
+     * Compacts a file path by stacking it and reducing <tt>..</tt>,
      * and uses the given separator.
      */
     public static String compactPath(String path, String separator) {
         if (path == null) {
             return null;
+        }
+
+        if (path.startsWith("http:")) {
+            return path;
         }
         
         // only normalize if contains a path separator

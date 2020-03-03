@@ -32,14 +32,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-msk")
 public class MSKComponent extends DefaultComponent {
 
-    @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private MSKConfiguration configuration;
+    @Metadata    
+    private MSKConfiguration configuration = new MSKConfiguration();
     
     public MSKComponent() {
         this(null);
@@ -55,9 +49,6 @@ public class MSKComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MSKConfiguration configuration = this.configuration != null ? this.configuration.copy() : new MSKConfiguration();
         MSKEndpoint endpoint = new MSKEndpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getMskClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -71,43 +62,10 @@ public class MSKComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS MSK default configuration
+     * The component configuration
      */
     public void setConfiguration(MSKConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-    
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which MSK client needs to work
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(MSKConfiguration configuration) {

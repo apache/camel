@@ -19,6 +19,7 @@ package org.apache.camel.impl.engine;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
@@ -28,14 +29,18 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.
  */
 public class DefaultConsumerCache extends ServiceSupport implements ConsumerCache {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumerCache.class);
+
     private final CamelContext camelContext;
-    private final ServicePool<PollingConsumer> consumers;
+    private final PollingConsumerServicePool consumers;
     private final Object source;
 
     private EndpointUtilizationStatistics statistics;
@@ -45,14 +50,18 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     public DefaultConsumerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
         this.camelContext = camelContext;
-        this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.consumers = new ServicePool<>(Endpoint::createPollingConsumer, PollingConsumer::getEndpoint, maxCacheSize);
+        this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
+        this.consumers = createServicePool(camelContext, maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         } else {
             this.extendedStatistics = false;
         }
+    }
+
+    protected PollingConsumerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
+        return new PollingConsumerServicePool(Endpoint::createPollingConsumer, Consumer::getEndpoint, cacheSize);
     }
 
     public boolean isExtendedStatistics() {
@@ -103,7 +112,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             throw new RejectedExecutionException("CamelContext is stopped");
         }
 
-        log.debug("<<<< {}", endpoint);
+        LOG.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -121,7 +130,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             throw new RejectedExecutionException("CamelContext is stopped");
         }
 
-        log.debug("<<<< {}", endpoint);
+        LOG.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -139,7 +148,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             throw new RejectedExecutionException("CamelContext is stopped");
         }
 
-        log.debug("<<<< {}", endpoint);
+        LOG.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -166,6 +175,16 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     }
 
     /**
+     * Gets the maximum cache size (capacity).
+     *
+     * @return the capacity
+     */
+    @Override
+    public int getCapacity() {
+        return maxCacheSize;
+    }
+
+    /**
      * Returns the current size of the cache
      *
      * @return the current size
@@ -173,67 +192,8 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     @Override
     public int size() {
         int size = consumers.size();
-        log.trace("size = {}", size);
+        LOG.trace("size = {}", size);
         return size;
-    }
-
-    /**
-     * Gets the maximum cache size (capacity).
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the capacity
-     */
-    @Override
-    public int getCapacity() {
-        return consumers.getMaxCacheSize();
-    }
-
-    /**
-     * Gets the cache hits statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the hits
-     */
-    @Override
-    public long getHits() {
-        return consumers.getHits();
-    }
-
-    /**
-     * Gets the cache misses statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the misses
-     */
-    @Override
-    public long getMisses() {
-        return consumers.getMisses();
-    }
-
-    /**
-     * Gets the cache evicted statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the evicted
-     */
-    @Override
-    public long getEvicted() {
-        return consumers.getEvicted();
-    }
-
-    /**
-     * Resets the cache statistics
-     */
-    @Override
-    public void resetCacheStatistics() {
-        consumers.resetStatistics();
-        if (statistics != null) {
-            statistics.clear();
-        }
     }
 
     /**
@@ -245,16 +205,13 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
             consumers.stop();
             consumers.start();
         } catch (Exception e) {
-            log.debug("Error restarting consumer pool", e);
+            LOG.debug("Error restarting consumer pool", e);
         }
         if (statistics != null) {
             statistics.clear();
         }
     }
 
-    /**
-     * Cleanup the cache (purging stale entries)
-     */
     @Override
     public void cleanUp() {
         consumers.cleanUp();

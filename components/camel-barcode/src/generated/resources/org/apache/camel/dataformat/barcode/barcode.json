@@ -1,0 +1,26 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "barcode",
+    "modelName": "barcode",
+    "title": "Barcode",
+    "description": "The Barcode data format is used for creating barccode images (such as QR-Code)",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation",
+    "firstVersion": "2.14.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.dataformat.barcode.BarcodeDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.BarcodeDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-barcode",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "width": { "kind": "attribute", "displayName": "Width", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Width of the barcode" },
+    "height": { "kind": "attribute", "displayName": "Height", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "Height of the barcode" },
+    "imageType": { "kind": "attribute", "displayName": "Image Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Image type of the barcode such as png" },
+    "barcodeFormat": { "kind": "attribute", "displayName": "Barcode Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Barcode format such as QR-Code" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

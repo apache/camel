@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 

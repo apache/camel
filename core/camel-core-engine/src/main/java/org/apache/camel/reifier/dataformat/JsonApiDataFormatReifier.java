@@ -16,19 +16,21 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.JsonApiDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class JsonApiDataFormatReifier extends DataFormatReifier<JsonApiDataFormat> {
 
-    public JsonApiDataFormatReifier(DataFormatDefinition definition) {
-        super((JsonApiDataFormat)definition);
+    public JsonApiDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (JsonApiDataFormat)definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("mainFormatType", definition.getMainFormatType());
+        properties.put("dataFormatTypes", definition.getDataFormatTypes());
     }
-
 }

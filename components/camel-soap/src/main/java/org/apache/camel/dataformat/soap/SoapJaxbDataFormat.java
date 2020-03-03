@@ -35,6 +35,8 @@ import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Data format supporting SOAP 1.1 and 1.2.
@@ -44,9 +46,10 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
 
+    private static final Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
+
     private SoapDataFormatAdapter adapter;
-    private ElementNameStrategy elementNameStrategy;
-    private String elementNameStrategyRef;
+    private ElementNameStrategy elementNameStrategy = new TypeNameStrategy();
     private boolean ignoreUnmarshalledHeaders;
     private String version;
 
@@ -73,16 +76,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         this.elementNameStrategy = elementNameStrategy;
     }
 
-    /**
-     * Initialize the data format. The serviceInterface is necessary to
-     * determine the element name and namespace of the element inside the soap
-     * body when marshalling
-     */
-    public SoapJaxbDataFormat(String contextPath, String elementNameStrategyRef) {
-        this(contextPath);
-        this.elementNameStrategyRef = elementNameStrategyRef;
-    }
-
     @Override
     public String getDataFormatName() {
         return "soapjaxb";
@@ -91,30 +84,13 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     @Override
     protected void doStart() throws Exception {
         if ("1.2".equals(version)) {
-            log.debug("Using SOAP 1.2 adapter");
+            LOG.debug("Using SOAP 1.2 adapter");
             adapter = new Soap12DataFormatAdapter(this);
         } else {
-            log.debug("Using SOAP 1.1 adapter");
+            LOG.debug("Using SOAP 1.1 adapter");
             adapter = new Soap11DataFormatAdapter(this);
         }
         super.doStart();
-    }
-
-    protected void checkElementNameStrategy(Exchange exchange) {
-        if (elementNameStrategy == null) {
-            synchronized (this) {
-                if (elementNameStrategy != null) {
-                    return;
-                } else {
-                    if (elementNameStrategyRef != null) {
-                        elementNameStrategy = exchange.getContext().getRegistry().lookupByNameAndType(elementNameStrategyRef,
-                                ElementNameStrategy.class);
-                    } else {
-                        elementNameStrategy = new TypeNameStrategy();
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -127,8 +103,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      */
     @Override
     public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException {
-        checkElementNameStrategy(exchange);
-
         String soapAction = getSoapActionFromExchange(exchange);
         Object envelope = adapter.doMarshal(exchange, inputObject, stream, soapAction);
 
@@ -159,7 +133,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object bodyObj : bodyParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {
-                log.warn("Could not find QName for class {}", bodyObj.getClass().getName());
+                LOG.warn("Could not find QName for class {}", bodyObj.getClass().getName());
                 continue;
             } else {
                 bodyElements.add(getElement(bodyObj, name));
@@ -169,7 +143,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object headerObj : headerParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, headerObj.getClass());
             if (name == null) {
-                log.warn("Could not find QName for class {}", headerObj.getClass().getName());
+                LOG.warn("Could not find QName for class {}", headerObj.getClass().getName());
                 continue;
             } else {
                 JAXBElement<?> headerElem = getElement(headerObj, name);
@@ -208,8 +182,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      */
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
-        checkElementNameStrategy(exchange);
-        
         String soapAction = getSoapActionFromExchange(exchange);
         
         // Determine the method name for an eventual BeanProcessor in the route
@@ -264,22 +236,14 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     public void setElementNameStrategy(Object nameStrategy) {
-        if (nameStrategy == null) {
-            this.elementNameStrategy = null;
-        } else if (nameStrategy instanceof ElementNameStrategy) {
-            this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
-        } else {
-            throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
-                    + ElementNameStrategy.class.getName());
+        if (nameStrategy != null) {
+            if (nameStrategy instanceof ElementNameStrategy) {
+                this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
+            } else {
+                throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
+                        + ElementNameStrategy.class.getName());
+            }
         }
-    }
-
-    public String getElementNameStrategyRef() {
-        return elementNameStrategyRef;
-    }
-
-    public void setElementNameStrategyRef(String elementNameStrategyRef) {
-        this.elementNameStrategyRef = elementNameStrategyRef;
     }
 
     public boolean isIgnoreUnmarshalledHeaders() {

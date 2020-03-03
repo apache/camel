@@ -140,7 +140,7 @@ public class SignedDataTest {
         Exchange exchange = ExchangeUtil.getExchange();
         exchange.getIn().setBody(new ByteArrayInputStream(message.getBytes("UTF-8")));
         signer.process(exchange);
-        byte[] signed = (byte[])exchange.getOut().getBody();
+        byte[] signed = (byte[])exchange.getMessage().getBody();
         return signed;
     }
 
@@ -153,7 +153,7 @@ public class SignedDataTest {
         Exchange exchangeVeri = ExchangeUtil.getExchange();
         exchangeVeri.getIn().setBody(is);
         verifier.process(exchangeVeri);
-        byte[] result = (byte[])exchangeVeri.getOut().getBody();
+        byte[] result = (byte[])exchangeVeri.getMessage().getBody();
         return result;
     }
 
@@ -364,7 +364,7 @@ public class SignedDataTest {
         exchange.getIn().setBody(new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));
         signer.process(exchange);
 
-        byte[] signature = exchange.getOut().getHeader(CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA, byte[].class);
+        byte[] signature = exchange.getMessage().getHeader(CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA, byte[].class);
 
         DefaultSignedDataVerifierConfiguration verifierConf = getCryptoCmsSignedDataVerifierConf(keystoreName, Collections.singleton(alias), Boolean.FALSE);
         verifierConf.setSignedDataHeaderBase64(Boolean.TRUE);

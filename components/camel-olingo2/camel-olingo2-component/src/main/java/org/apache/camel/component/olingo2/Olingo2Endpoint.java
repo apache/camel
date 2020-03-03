@@ -112,10 +112,9 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     public void configureProperties(Map<String, Object> options) {
+        super.configureProperties(options);
         // handle individual query params
         parseQueryParams(options);
-
-        super.configureProperties(options);
     }
 
     @Override

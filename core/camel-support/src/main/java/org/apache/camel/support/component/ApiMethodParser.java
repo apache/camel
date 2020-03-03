@@ -149,7 +149,7 @@ public abstract class ApiMethodParser<T> {
                 argTypes.add(type);
                 String genericParameterUpperbound = argsMatcher.group(2);
                 String typeArgs = genericParameterUpperbound != null
-                    ? genericParameterUpperbound.substring(1, genericParameterUpperbound.length() - 1).replaceAll(" ", "") : null;
+                    ? genericParameterUpperbound.substring(1, genericParameterUpperbound.length() - 1).replace(" ", "") : null;
                 if (typeArgs != null && typeArgs.equals(genericTypeParameterName)) {
                     typeArgs = genericTypeParameterUpperBound;
                 }

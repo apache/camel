@@ -29,15 +29,15 @@ import org.apache.camel.spi.ThreadPoolProfile;
 
 public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> extends ErrorHandlerReifier<T> {
 
-    public DefaultErrorHandlerReifier(ErrorHandlerFactory definition) {
-        super((T)definition);
+    public DefaultErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
+        super(routeContext, (T)definition);
     }
 
     @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, definition.getLogger(), definition.getOnRedelivery(),
+    public Processor createErrorHandler(Processor processor) throws Exception {
+        DefaultErrorHandler answer = new DefaultErrorHandler(camelContext, processor, definition.getLogger(), definition.getOnRedelivery(),
                                                              definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(),
-                                                             definition.getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()),
+                                                             definition.getRetryWhilePolicy(camelContext), getExecutorService(camelContext),
                                                              definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);

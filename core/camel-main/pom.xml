@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-main</artifactId>
@@ -36,12 +36,43 @@
         <label>core</label>
     </properties>
 
+
     <dependencies>
 
-        <!-- lets be light and use the core-engine -->
+        <!-- lets keep mandatory dependencies on top level so dependency tree is nicer -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-base</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <!-- and use the caffeine lrucache which is the best LRU cache implementation -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-caffeine-lrucache</artifactId>
+        </dependency>
+        <!-- and the fast headersmap -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-headersmap</artifactId>
         </dependency>
 
         <!-- testing -->
@@ -102,25 +133,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-main-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>prepare-main</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-    </build>
 
 </project>

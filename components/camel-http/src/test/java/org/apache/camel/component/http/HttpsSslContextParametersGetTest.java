@@ -17,13 +17,14 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpsSslContextParametersGetTest extends HttpsGetTest {
 
@@ -38,7 +39,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/mail/", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+                registerHandler("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -59,9 +60,7 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     public void httpsGet() throws Exception {
 
         Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
-            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters", new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
+            + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters", exchange1 -> {
             });
 
         assertExchange(exchange);

@@ -40,11 +40,15 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.blueprint.container.BlueprintListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OSGi Blueprint based {@link org.apache.camel.CamelContext}.
  */
 public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener, BlueprintListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
 
     protected final AtomicBoolean routeDefinitionValid = new AtomicBoolean(true);
 
@@ -104,10 +108,10 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     public void setBundleStateService(BlueprintCamelStateService bundleStateService) {
         this.bundleStateService = bundleStateService;
     }
-   
+
     @Override
     public void doInit() throws Exception {
-        log.trace("init {}", this);
+        LOG.trace("init {}", this);
         // add service listener so we can be notified when blueprint container is done
         // and we would be ready to start CamelContext
         bundleContext.addServiceListener(this);
@@ -119,19 +123,19 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     public void destroy() throws Exception {
-        log.trace("destroy {}", this);
+        LOG.trace("destroy {}", this);
 
         // remove listener and stop this CamelContext
         try {
             bundleContext.removeServiceListener(this);
         } catch (Exception e) {
-            log.warn("Error removing ServiceListener: " + this + ". This exception is ignored.", e);
+            LOG.warn("Error removing ServiceListener: " + this + ". This exception is ignored.", e);
         }
         if (registration != null) {
             try {
                 registration.unregister();
             } catch (Exception e) {
-                log.warn("Error unregistering service registration: " + registration + ". This exception is ignored.", e);
+                LOG.warn("Error unregistering service registration: " + registration + ". This exception is ignored.", e);
             }
             registration = null;
         }
@@ -143,46 +147,46 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
     @Override
     public void blueprintEvent(BlueprintEvent event) {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             String eventTypeString;
 
             switch (event.getType()) {
-            case BlueprintEvent.CREATING:
-                eventTypeString = "CREATING";
-                break;
-            case BlueprintEvent.CREATED:
-                eventTypeString = "CREATED";
-                break;
-            case BlueprintEvent.DESTROYING:
-                eventTypeString = "DESTROYING";
-                break;
-            case BlueprintEvent.DESTROYED:
-                eventTypeString = "DESTROYED";
-                break;
-            case BlueprintEvent.GRACE_PERIOD:
-                eventTypeString = "GRACE_PERIOD";
-                break;
-            case BlueprintEvent.WAITING:
-                eventTypeString = "WAITING";
-                break;
-            case BlueprintEvent.FAILURE:
-                eventTypeString = "FAILURE";
-                break;
-            default:
-                eventTypeString = "UNKNOWN";
-                break;
+                case BlueprintEvent.CREATING:
+                    eventTypeString = "CREATING";
+                    break;
+                case BlueprintEvent.CREATED:
+                    eventTypeString = "CREATED";
+                    break;
+                case BlueprintEvent.DESTROYING:
+                    eventTypeString = "DESTROYING";
+                    break;
+                case BlueprintEvent.DESTROYED:
+                    eventTypeString = "DESTROYED";
+                    break;
+                case BlueprintEvent.GRACE_PERIOD:
+                    eventTypeString = "GRACE_PERIOD";
+                    break;
+                case BlueprintEvent.WAITING:
+                    eventTypeString = "WAITING";
+                    break;
+                case BlueprintEvent.FAILURE:
+                    eventTypeString = "FAILURE";
+                    break;
+                default:
+                    eventTypeString = "UNKNOWN";
+                    break;
             }
 
-            log.debug("Received BlueprintEvent[replay={} type={} bundle={}] {}", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
+            LOG.debug("Received BlueprintEvent[replay={} type={} bundle={}] {}", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
         }
 
         if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {
             if (event.getType() == BlueprintEvent.CREATED) {
                 try {
-                    log.info("Attempting to start CamelContext: {}", this.getName());
+                    LOG.info("Attempting to start CamelContext: {}", this.getName());
                     this.maybeStart();
                 } catch (Exception startEx) {
-                    log.error("Error occurred during starting CamelContext: {}", this.getName(), startEx);
+                    LOG.error("Error occurred during starting CamelContext: {}", this.getName(), startEx);
                 }
             }
         }
@@ -190,29 +194,29 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
     @Override
     public void serviceChanged(ServiceEvent event) {
-        if (log.isTraceEnabled()) {
+        if (LOG.isTraceEnabled()) {
             String eventTypeString;
 
             switch (event.getType()) {
-            case ServiceEvent.REGISTERED:
-                eventTypeString = "REGISTERED";
-                break;
-            case ServiceEvent.MODIFIED:
-                eventTypeString = "MODIFIED";
-                break;
-            case ServiceEvent.UNREGISTERING:
-                eventTypeString = "UNREGISTERING";
-                break;
-            case ServiceEvent.MODIFIED_ENDMATCH:
-                eventTypeString = "MODIFIED_ENDMATCH";
-                break;
-            default:
-                eventTypeString = "UNKNOWN";
-                break;
+                case ServiceEvent.REGISTERED:
+                    eventTypeString = "REGISTERED";
+                    break;
+                case ServiceEvent.MODIFIED:
+                    eventTypeString = "MODIFIED";
+                    break;
+                case ServiceEvent.UNREGISTERING:
+                    eventTypeString = "UNREGISTERING";
+                    break;
+                case ServiceEvent.MODIFIED_ENDMATCH:
+                    eventTypeString = "MODIFIED_ENDMATCH";
+                    break;
+                default:
+                    eventTypeString = "UNKNOWN";
+                    break;
             }
 
             // use trace logging as this is very noisy
-            log.trace("Service: {} changed to: {}", event, eventTypeString);
+            LOG.trace("Service: {} changed to: {}", event, eventTypeString);
         }
     }
 
@@ -246,10 +250,10 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     private void maybeStart() throws Exception {
-        log.trace("maybeStart: {}", this);
+        LOG.trace("maybeStart: {}", this);
 
         if (!routeDefinitionValid.get()) {
-            log.trace("maybeStart: {} is skipping since CamelRoute definition is not correct.", this);
+            LOG.trace("maybeStart: {} is skipping since CamelRoute definition is not correct.", this);
             return;
         }
 
@@ -270,16 +274,16 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         // when blueprint loading the bundle
         boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
         if (skip) {
-            log.trace("maybeStart: {} is skipping as System property skipStartingCamelContext is set", this);
+            LOG.trace("maybeStart: {} is skipping as System property skipStartingCamelContext is set", this);
             return;
         }
 
         if (!isStarted() && !isStarting()) {
-            log.debug("Starting {}", this);
+            LOG.debug("Starting {}", this);
             start();
         } else {
             // ignore as Camel is already started
-            log.trace("Ignoring maybeStart() as {} is already started", this);
+            LOG.trace("Ignoring maybeStart() as {} is already started", this);
         }
     }
 

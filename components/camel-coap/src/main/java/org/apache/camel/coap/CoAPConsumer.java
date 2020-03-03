@@ -33,17 +33,17 @@ public class CoAPConsumer extends DefaultConsumer {
 
     public CoAPConsumer(final CoAPEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;        
+        this.endpoint = endpoint;
     }
-    
+
     public CoAPEndpoint getCoapEndpoint() {
         return endpoint;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        
+
         String path = endpoint.getUri().getPath();
         if (path.startsWith("/")) {
             path = path.substring(1);

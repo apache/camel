@@ -1,0 +1,27 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "crypto",
+    "title": "Crypto (Java Cryptographic Extension)",
+    "description": "Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.",
+    "firstVersion": "2.3.0",
+    "javaType": "org.apache.camel.model.dataformat.CryptoDataFormat",
+    "label": "dataformat,transformation,security",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "algorithm": { "kind": "attribute", "displayName": "Algorithm", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The JCE algorithm name indicating the cryptographic algorithm that will be used." },
+    "cryptoProvider": { "kind": "attribute", "displayName": "Crypto Provider", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The name of the JCE Security Provider that should be used." },
+    "keyRef": { "kind": "attribute", "displayName": "Key Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to the secret key to lookup from the register to use." },
+    "initVectorRef": { "kind": "attribute", "displayName": "Init Vector Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher." },
+    "algorithmParameterRef": { "kind": "attribute", "displayName": "Algorithm Parameter Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type." },
+    "buffersize": { "kind": "attribute", "displayName": "Buffersize", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "description": "The size of the buffer used in the signature process." },
+    "macAlgorithm": { "kind": "attribute", "displayName": "Mac Algorithm", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "HmacSHA1", "description": "The JCE algorithm name indicating the Message Authentication algorithm." },
+    "shouldAppendHMAC": { "kind": "attribute", "displayName": "Should Append HMAC", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data." },
+    "inline": { "kind": "attribute", "displayName": "Inline", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

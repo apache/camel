@@ -18,60 +18,13 @@ package org.apache.camel.http.common;
 
 import java.util.Map;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
-
-public class HttpOperationFailedException extends CamelException {
-    private static final long serialVersionUID = -8721487434390572634L;
-    private final String uri;
-    private final String redirectLocation;
-    private final int statusCode;
-    private final String statusText;
-    private final Map<String, String> responseHeaders;
-    private final String responseBody;
+/**
+ * @deprecated use org.apache.camel.http.base.HttpOperationFailedException
+ */
+@Deprecated
+public class HttpOperationFailedException extends org.apache.camel.http.base.HttpOperationFailedException {
 
     public HttpOperationFailedException(String uri, int statusCode, String statusText, String location, Map<String, String> responseHeaders, String responseBody) {
-        // sanitize uri so we do not show sensitive information such as passwords
-        super("HTTP operation failed invoking " + URISupport.sanitizeUri(uri) + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
-        this.uri = URISupport.sanitizeUri(uri);
-        this.statusCode = statusCode;
-        this.statusText = statusText;
-        this.redirectLocation = location;
-        this.responseHeaders = responseHeaders;
-        this.responseBody = responseBody;
+        super(uri, statusCode, statusText, location, responseHeaders, responseBody);
     }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public boolean isRedirectError() {
-        return statusCode >= 300 && statusCode < 400;
-    }
-
-    public boolean hasRedirectLocation() {
-        return ObjectHelper.isNotEmpty(redirectLocation);
-    }
-
-    public String getRedirectLocation() {
-        return redirectLocation;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public String getStatusText() {
-        return statusText;
-    }
-
-    public Map<String, String> getResponseHeaders() {
-        return responseHeaders;
-    }
-
-    public String getResponseBody() {
-        return responseBody;
-    }
-
 }

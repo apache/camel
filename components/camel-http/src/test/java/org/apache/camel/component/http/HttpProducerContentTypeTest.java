@@ -17,7 +17,6 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
@@ -32,9 +31,13 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
+    private String endpointUrl;
+
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+
         localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
                 setConnectionReuseStrategy(getConnectionReuseStrategy()).
@@ -51,7 +54,7 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
                 }).create();
         localServer.start();
 
-        super.setUp();
+        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
     }
 
     @After
@@ -65,38 +68,28 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
     }
 
     @Test
-    public void testContentTypeWithBoundary() {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
-                exchange.getIn().setBody("This is content");
-            }
-
+    public void testContentTypeWithBoundary() throws Exception {
+        Exchange out = template.request(endpointUrl + "/content", exchange -> {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
+            exchange.getIn().setBody("This is content");
         });
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
-        assertEquals(CONTENT_TYPE, out.getOut().getBody(String.class));
+        assertEquals(CONTENT_TYPE, out.getMessage().getBody(String.class));
 
     }
 
     @Test
-    public void testContentTypeWithBoundaryWithIgnoreResponseBody() {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content?ignoreResponseBody=true", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
-                exchange.getIn().setBody("This is content");
-            }
-
+    public void testContentTypeWithBoundaryWithIgnoreResponseBody() throws Exception {
+        Exchange out = template.request(endpointUrl + "/content?ignoreResponseBody=true", exchange -> {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
+            exchange.getIn().setBody("This is content");
         });
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
-        assertNull(out.getOut().getBody());
+        assertNull(out.getMessage().getBody());
 
     }
 }

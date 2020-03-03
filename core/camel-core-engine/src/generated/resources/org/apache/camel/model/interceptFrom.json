@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "interceptFrom",
+    "title": "Intercept From",
+    "description": "Intercepts incoming messages",
+    "javaType": "org.apache.camel.model.InterceptFromDefinition",
+    "label": "configuration",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Intercept incoming messages from the uri or uri pattern. If this option is not configured, then all incoming messages is intercepted." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

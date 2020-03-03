@@ -123,11 +123,6 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         return answer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     public Exchange createExchange(Message message) {
         Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());

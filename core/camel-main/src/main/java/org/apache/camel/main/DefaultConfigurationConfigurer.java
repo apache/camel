@@ -86,17 +86,19 @@ public final class DefaultConfigurationConfigurer {
      * @param config       the configuration
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
-        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
+        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
         if (config.getBeanIntrospectionLoggingLevel() != null) {
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
+            ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
+        ecc.getBeanIntrospection().afterPropertiesConfigured(camelContext);
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }
 
         if (config.getName() != null) {
-            camelContext.adapt(ExtendedCamelContext.class).setName(config.getName());
+            ecc.setName(config.getName());
         }
 
         if (config.getShutdownTimeout() > 0) {
@@ -106,6 +108,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getShutdownStrategy().setShutdownNowOnTimeout(config.isShutdownNowOnTimeout());
         camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
         camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
+
+        camelContext.getInflightRepository().setInflightBrowseEnabled(config.isInflightRepositoryBrowseEnabled());
 
         if (config.getLogDebugMaxChars() != 0) {
             camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
@@ -143,11 +147,13 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
+        camelContext.setCaseInsensitiveHeaders(config.isCaseInsensitiveHeaders());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
+        ecc.setAllowAddingNewRoutes(config.isAllowAddingNewRoutes());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());

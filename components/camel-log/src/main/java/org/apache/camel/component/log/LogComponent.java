@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a>
@@ -34,6 +35,8 @@ import org.slf4j.Logger;
  */
 @org.apache.camel.spi.annotations.Component("log")
 public class LogComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
     @Metadata(label = "advanced")
     private ExchangeFormatter exchangeFormatter;
@@ -51,9 +54,9 @@ public class LogComponent extends DefaultComponent {
             Map<String, Logger> availableLoggers = getCamelContext().getRegistry().findByTypeWithName(Logger.class);
             if (availableLoggers.size() == 1) {
                 providedLogger = availableLoggers.values().iterator().next();
-                log.info("Using custom Logger: {}", providedLogger);
+                LOG.info("Using custom Logger: {}", providedLogger);
             } else if (availableLoggers.size() > 1) {
-                log.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
+                LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
             }
         }
 

@@ -49,7 +49,7 @@ public class NettyRfc5425Test extends CamelTestSupport {
     @BeforeClass
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
-        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
+        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder";
         uriClient = uri + "&useByteBuf=true";
     }
 

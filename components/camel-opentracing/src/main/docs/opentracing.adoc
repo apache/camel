@@ -68,33 +68,6 @@ the main class with `@CamelOpenTracing`.
 The `Tracer` will be implicitly obtained from the camel context's `Registry`, or the `ServiceLoader`, unless
 a `Tracer` bean has been defined by the application.
 
-// spring-boot-auto-configure options: START
-== Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel.springboot</groupId>
-  <artifactId>camel-opentracing-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-
-The component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.opentracing.encoding* | Activate or deactivate dash encoding in headers (required by JMS) for messaging |  | Boolean
-| *camel.opentracing.exclude-patterns* | Sets exclude pattern(s) that will disable tracing for Camel messages that matches the pattern. |  | Set
-|===
-// spring-boot-auto-configure options: END
 
 == Java Agent
 
@@ -118,9 +91,11 @@ compatible with OpenTracing Java API version 0.31 or higher.
 
 The `Tracer` used will be implicitly loaded from the camel context `Registry` or using the `ServiceLoader`.
 
-How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option.
+How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel-spring-boot/tree/master/examples/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option.
 
 == Example
 
 You can find an example demonstrating the three ways to configure OpenTracing here:
-https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing]
+https://github.com/apache/camel-spring-boot/tree/master/examples/camel-example-spring-boot-opentracing[camel-example-spring-boot-opentracing]
+
+include::camel-spring-boot::page$opentracing-starter.adoc[]

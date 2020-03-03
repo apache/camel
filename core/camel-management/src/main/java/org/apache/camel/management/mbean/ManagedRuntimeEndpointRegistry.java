@@ -103,8 +103,8 @@ public class ManagedRuntimeEndpointRegistry extends ManagedService implements Ma
                 CompositeType ct = CamelOpenMBeanTypes.listRuntimeEndpointsCompositeType();
 
                 String url = stat.getUri();
-                Boolean isStatic = staticRegistry.isStatic(url);
-                Boolean isDynamic = staticRegistry.isDynamic(url);
+                boolean isStatic = staticRegistry.isStatic(url);
+                boolean isDynamic = staticRegistry.isDynamic(url);
                 if (sanitize) {
                     url = URISupport.sanitizeUri(url);
                 }

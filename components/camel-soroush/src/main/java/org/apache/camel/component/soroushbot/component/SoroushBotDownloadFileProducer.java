@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * this producer is responsible for uri of type {@link SoroushAction#downloadFile}
@@ -32,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * {@link SoroushMessage#file} or {@link SoroushMessage#thumbnail}.
  */
 public class SoroushBotDownloadFileProducer extends DefaultProducer {
-    static Logger log = LoggerFactory.getLogger(SoroushBotDownloadFileProducer.class);
     SoroushBotEndpoint endpoint;
 
     public SoroushBotDownloadFileProducer(SoroushBotEndpoint endpoint) {

@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -107,7 +106,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
                     log.debug("Found XML route: {}", is);
-                    RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, is);
+                    ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                    RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
                     answer.add(routes);
                     IOHelper.close(is);
                 }
@@ -134,7 +134,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
                     log.debug("Found XML rest: {}", is);
-                    RestsDefinition rests = ModelHelper.loadRestsDefinition(camelContext, is);
+                    ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                    RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
                     answer.add(rests);
                     IOHelper.close(is);
                 }

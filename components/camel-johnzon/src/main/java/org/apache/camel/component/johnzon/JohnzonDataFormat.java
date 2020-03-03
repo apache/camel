@@ -65,9 +65,9 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     
     /**
      * Use the default Johnzon {@link Mapper} and with a custom
-     * unmarshal type
+     * parameterized type
      *
-     * @param unmarshalType the custom unmarshal type
+     * @param parameterizedType the custom parameterized type
      */
     public JohnzonDataFormat(JohnzonParameterizedType parameterizedType) {
         this(null, parameterizedType);

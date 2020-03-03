@@ -16,12 +16,21 @@
  */
 package org.apache.camel.tests.partialclasspath;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class RouteTest extends CamelTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // we use Camel 2.x style type converters
+        context.setLoadTypeConverters(true);
+        return context;
+    }
 
     @Test
     public void testRoute() throws Exception {

@@ -22,6 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -78,7 +80,8 @@ public class DefaultRouteContext implements RouteContext {
     private final Map<String, Object> properties = new HashMap<>();
     private ErrorHandlerFactory errorHandlerFactory;
     private Integer startupOrder;
-    private Map<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new HashMap<>();
+    // must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
+    private ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
 
     public DefaultRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
         this.camelContext = camelContext;
@@ -176,8 +179,8 @@ public class DefaultRouteContext implements RouteContext {
             Processor target = new Pipeline(getCamelContext(), eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            CamelInternalProcessor internal = new CamelInternalProcessor(target);
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this));
+            CamelInternalProcessor internal = new CamelInternalProcessor(getCamelContext(), target);
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this, getCamelContext()));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
@@ -208,10 +211,10 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
 
-            // wrap in REST binding
+            // add advices
             advices.forEach(internal::addAdvice);
 
-            // and create the route that wraps the UoW
+            // and create the route that wraps all of this
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().putAll(properties);
 
@@ -461,6 +464,18 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     @Override
+    public Boolean isCaseInsensitiveHeaders() {
+        // can only be configured on CamelContext
+        return getCamelContext().isCaseInsensitiveHeaders();
+    }
+
+    @Override
+    public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
+        // can only be configured on CamelContext
+        getCamelContext().setCaseInsensitiveHeaders(caseInsensitiveHeaders);
+    }
+
+    @Override
     public ShutdownRoute getShutdownRoute() {
         if (shutdownRoute != null) {
             return shutdownRoute;
@@ -555,12 +570,16 @@ public class DefaultRouteContext implements RouteContext {
         return errorHandlers.computeIfAbsent(factory, f -> new LinkedHashSet<>());
     }
 
+    public void removeErrorHandlers(ErrorHandlerFactory factory) {
+        errorHandlers.remove(factory);
+    }
+
     @Override
     public void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target) {
         Set<NamedNode> list = getErrorHandlers(source);
         Set<NamedNode> previous = errorHandlers.put(target, list);
         if (list != previous && ObjectHelper.isNotEmpty(previous) && ObjectHelper.isNotEmpty(list)) {
-            throw new IllegalStateException("multiple references with different handlers");
+            throw new IllegalStateException("Multiple references with different handlers");
         }
     }
 }

@@ -26,7 +26,6 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
@@ -56,18 +55,14 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/persistentvolumes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
             .andReturn(200, new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, labels);
-            }
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, labels);
         });
 
-        List<PersistentVolume> result = ex.getOut().getBody(List.class);
+        List<PersistentVolume> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }

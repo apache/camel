@@ -27,8 +27,12 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PahoConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PahoConsumer.class);
 
     private volatile MqttClient client;
     private volatile String clientId;
@@ -62,7 +66,7 @@ public class PahoConsumer extends DefaultConsumer {
             client = new MqttClient(getEndpoint().getConfiguration().getBrokerUrl(),
                     clientId,
                     PahoEndpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
-            log.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
             client.connect(connectOptions);
         }
 
@@ -74,19 +78,19 @@ public class PahoConsumer extends DefaultConsumer {
                     try {
                         client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
                     } catch (MqttException e) {
-                        log.error("MQTT resubscribe failed {}", e.getMessage(), e);
+                        LOG.error("MQTT resubscribe failed {}", e.getMessage(), e);
                     }
                 }
             }
 
             @Override
             public void connectionLost(Throwable cause) {
-                log.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
+                LOG.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                log.debug("Message arrived on topic: {} -> {}", topic, message);
+                LOG.debug("Message arrived on topic: {} -> {}", topic, message);
                 Exchange exchange = getEndpoint().createExchange(message, topic);
 
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
@@ -99,11 +103,11 @@ public class PahoConsumer extends DefaultConsumer {
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                log.debug("Delivery complete. Token: {}", token);
+                LOG.debug("Delivery complete. Token: {}", token);
             }
         });
 
-        log.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
+        LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
         client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
     }
 
@@ -115,12 +119,12 @@ public class PahoConsumer extends DefaultConsumer {
             String topic = getEndpoint().getTopic();
             // only unsubscribe if we are not durable
             if (getEndpoint().getConfiguration().isCleanSession()) {
-                log.debug("Unsubscribing client: {} from topic: {}", clientId, topic);
+                LOG.debug("Unsubscribing client: {} from topic: {}", clientId, topic);
                 client.unsubscribe(topic);
             } else {
-                log.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
+                LOG.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
             }
-            log.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
             client = null;
         }

@@ -1,0 +1,30 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "yaml",
+    "title": "YAML",
+    "description": "YAML is a data format to marshal and unmarshal Java objects to and from YAML.",
+    "firstVersion": "2.17.0",
+    "javaType": "org.apache.camel.model.dataformat.YAMLDataFormat",
+    "label": "dataformat,transformation,yaml",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "library": { "kind": "attribute", "displayName": "Library", "required": false, "type": "enum", "javaType": "org.apache.camel.model.dataformat.YAMLLibrary", "enum": [ "SnakeYAML" ], "deprecated": false, "secret": false, "defaultValue": "SnakeYAML", "description": "Which yaml library to use. By default it is SnakeYAML" },
+    "unmarshalTypeName": { "kind": "attribute", "displayName": "Unmarshal Type Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Class name of the java type to use when unmarshalling" },
+    "constructor": { "kind": "attribute", "displayName": "Constructor", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "BaseConstructor to construct incoming documents." },
+    "representer": { "kind": "attribute", "displayName": "Representer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Representer to emit outgoing objects." },
+    "dumperOptions": { "kind": "attribute", "displayName": "Dumper Options", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "DumperOptions to configure outgoing objects." },
+    "resolver": { "kind": "attribute", "displayName": "Resolver", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Resolver to detect implicit type" },
+    "useApplicationContextClassLoader": { "kind": "attribute", "displayName": "Use Application Context Class Loader", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Use ApplicationContextClassLoader as custom ClassLoader" },
+    "prettyFlow": { "kind": "attribute", "displayName": "Pretty Flow", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Force the emitter to produce a pretty YAML document when using the flow style." },
+    "allowAnyType": { "kind": "attribute", "displayName": "Allow Any Type", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Allow any class to be un-marshaled" },
+    "typeFilter": { "kind": "element", "displayName": "Type Filter", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.dataformat.YAMLTypeFilterDefinition>", "deprecated": false, "secret": false, "description": "Set the types SnakeYAML is allowed to un-marshall" },
+    "maxAliasesForCollections": { "kind": "attribute", "displayName": "Max Aliases For Collections", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "secret": false, "defaultValue": "50", "description": "Set the maximum amount of aliases allowed for collections." },
+    "allowRecursiveKeys": { "kind": "attribute", "displayName": "Allow Recursive Keys", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Set whether recursive keys are allowed." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
@@ -43,7 +44,7 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
         template.send("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.addOnCompletion(new MyRouteAware());
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new MyRouteAware());
                 exchange.getIn().setBody("Hello World");
             }
         });

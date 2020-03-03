@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -49,26 +50,47 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
 
     private static final AntPathMatcher PATH_MATCHER = AntPathMatcher.INSTANCE;
 
-    public Set<InputStream> findResources(String locations) throws Exception {
+    public Set<InputStream> findResources(String location) throws Exception {
         Set<InputStream> answer = new LinkedHashSet<>();
 
         // if its a pattern then we need to scan its root path and find
         // all matching resources using the sub pattern
-        if (PATH_MATCHER.isPattern(locations)) {
-            String root = PATH_MATCHER.determineRootDir(locations);
-            String subPattern = locations.substring(root.length());
-            // scan from root path and find all resources
-            find(root, answer, subPattern);
+        if (PATH_MATCHER.isPattern(location)) {
+            String root = PATH_MATCHER.determineRootDir(location);
+            String subPattern = location.substring(root.length());
+
+            String scheme = ResourceHelper.getScheme(location);
+            if ("file:".equals(scheme)) {
+                // file based scanning
+                root = root.substring(scheme.length());
+                findInFileSystem(new File(root), answer, subPattern);
+            } else {
+                if ("classpath:".equals(scheme)) {
+                    root = root.substring(scheme.length());
+                }
+                // assume classpath based scan from root path and find all resources
+                findInClasspath(root, answer, subPattern);
+            }
         } else {
             // its a single resource so load it directly
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), locations);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), location);
             answer.add(is);
         }
 
         return answer;
     }
 
-    protected void find(String packageName, Set<InputStream> resources, String subPattern) {
+    protected void findInFileSystem(File dir, Set<InputStream> resources, String subPattern) throws Exception {
+        ResourceHelper.findInFileSystem(dir.toPath(), subPattern).forEach(f -> {
+            try {
+                resources.add(Files.newInputStream(f));
+            } catch (IOException e) {
+                // ignore
+            }
+        });
+    }
+
+    protected void findInClasspath(String packageName, Set<InputStream> resources, String subPattern) {
         packageName = packageName.replace('.', '/');
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.
         // The trailing slash is harmless for other URLs

@@ -1,0 +1,27 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "bindy-kvp",
+    "modelName": "bindy",
+    "title": "Bindy Key Value Pair",
+    "description": "The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation,csv",
+    "firstVersion": "2.0.0",
+    "label": "dataformat,transformation,csv",
+    "javaType": "org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.BindyDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-bindy",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "type": { "kind": "attribute", "displayName": "Type", "required": true, "type": "enum", "javaType": "org.apache.camel.model.dataformat.BindyType", "enum": [ "Csv", "Fixed", "KeyValue" ], "deprecated": false, "secret": false, "defaultValue": "KeyValue", "description": "Whether to use Csv, Fixed, or KeyValue." },
+    "classType": { "kind": "attribute", "displayName": "Class Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of model class to use." },
+    "locale": { "kind": "attribute", "displayName": "Locale", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default" },
+    "unwrapSingleInstance": { "kind": "attribute", "displayName": "Unwrap Single Instance", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List." },
+    "allowEmptyStream": { "kind": "attribute", "displayName": "Allow Empty Stream", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

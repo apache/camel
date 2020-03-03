@@ -16,24 +16,22 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class UniVocityTsvDataFormatReifier extends UniVocityAbstractDataFormatReifier<UniVocityTsvDataFormat> {
 
-    public UniVocityTsvDataFormatReifier(DataFormatDefinition definition) {
-        super(definition);
+    public UniVocityTsvDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, definition);
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        super.configureDataFormat(dataFormat, camelContext);
-
-        if (definition.getEscapeChar() != null) {
-            setProperty(camelContext, dataFormat, "escapeChar", singleCharOf("escapeChar", definition.getEscapeChar()));
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        super.prepareDataFormatConfig(properties);
+        properties.put("escapeChar", definition.getEscapeChar());
     }
 
 }

@@ -262,10 +262,6 @@ JMX is disabled a|JMX is disabled
 Indicates if certain route builder classes should be excluded from discovery.  Initializes a `org.apache.camel.spi.PackageScanClassResolver` to exclude a set of given classes from being resolved. Typically this is used at test time to exclude certain routes, which might otherwise be just noisy, from being discovered and initialized. a|
 Not enabled and no routes are excluded a|No routes are excluded
 
-Indicates if the CamelContexts that are bootstrapped during the test through the use of Spring Test loaded application contexts should use lazy loading of type converters. a|
-Type converters are not lazy loaded a|
-Type converters are not lazy loaded
-
 |org.apache.camel.test.spring.MockEndpoints a|Class a|
 Triggers the auto-mocking of endpoints whose URIs match the provided filter.  The default filter is `"*"` which matches all endpoints.  See `org.apache.camel.impl.InterceptSendToMockEndpointStrategy` for more details on the registration of the mock endpoints. a|
 Not enabled a|All endpoints are sniffed and recorded in a mock endpoint.
@@ -297,7 +293,10 @@ a|Override properties
 
 The following example illustrates the use of the `@MockEndpoints` annotation in order to setup mock endpoints as interceptors on all endpoints using the Camel Log component and the `@DisableJmx` annotation to enable JMX which is disabled during tests by default.
 
-TIP: We still use the `@DirtiesContext` annotation to ensure that the CamelContext, routes, and mock endpoints are reinitialized between test methods.
+[TIP]
+====
+We still use the `@DirtiesContext` annotation to ensure that the CamelContext, routes, and mock endpoints are reinitialized between test methods.
+====
 
 [source,java]
 ----

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * The JCache consumer.
  */
 public class JCacheConsumer extends DefaultConsumer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JCacheConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JCacheConsumer.class);
 
     private CacheEntryListenerConfiguration<Object, Object> entryListenerConfiguration;
 
@@ -96,7 +96,7 @@ public class JCacheConsumer extends DefaultConsumer {
                                 try {
                                     getProcessor().process(exchange);
                                 } catch (Exception e) {
-                                    LOGGER.error("Error processing event ", e);
+                                    LOG.error("Error processing event ", e);
                                 }
                             }
                         }

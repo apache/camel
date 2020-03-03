@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
-    
+
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/done?password=admin&disconnect=true&delay=5000";
     }
@@ -58,8 +58,10 @@ public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         assertMockEndpointsSatisfied();
 
-        // give time for ftp consumer to disconnect, delay is 5000 ms which is long
-        // enough to avoid a second poll cycle before we are done with the asserts
+        // give time for ftp consumer to disconnect, delay is 5000 ms which is
+        // long
+        // enough to avoid a second poll cycle before we are done with the
+        // asserts
         // below inside the main thread
         Thread.sleep(2000);
 

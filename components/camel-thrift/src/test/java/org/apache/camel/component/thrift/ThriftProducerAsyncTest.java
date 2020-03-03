@@ -54,7 +54,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
 
             @Override
             public void onComplete(Exchange exchange) {
-                responseBody = exchange.getOut().getBody();
+                responseBody = exchange.getMessage().getBody();
                 latch.countDown();
             }
             
@@ -87,7 +87,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
 
             @Override
             public void onComplete(Exchange exchange) {
-                responseBody = exchange.getOut().getBody();
+                responseBody = exchange.getMessage().getBody();
                 latch.countDown();
             }
             
@@ -146,7 +146,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
 
             @Override
             public void onComplete(Exchange exchange) {
-                responseBody = exchange.getOut().getBody();
+                responseBody = exchange.getMessage().getBody();
                 latch.countDown();
             }
 
@@ -173,7 +173,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
 
             @Override
             public void onComplete(Exchange exchange) {
-                responseBody = exchange.getOut().getBody();
+                responseBody = exchange.getMessage().getBody();
                 latch.countDown();
             }
 
@@ -214,7 +214,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
 
             @Override
             public void onComplete(Exchange exchange) {
-                responseBody = exchange.getOut().getBody();
+                responseBody = exchange.getMessage().getBody();
                 latch.countDown();
             }
 
@@ -246,7 +246,7 @@ public class ThriftProducerAsyncTest extends ThriftProducerBaseTest {
 
             @Override
             public void onComplete(Exchange exchange) {
-                responseBody = exchange.getOut().getBody();
+                responseBody = exchange.getMessage().getBody();
                 latch.countDown();
             }
 

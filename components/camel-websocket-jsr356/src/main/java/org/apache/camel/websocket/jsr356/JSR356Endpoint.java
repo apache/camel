@@ -16,6 +16,8 @@
  */
 package org.apache.camel.websocket.jsr356;
 
+import java.net.URI;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,19 +26,17 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "2.23.0", scheme = "websocket-jsr356", title = "Javax Websocket", syntax = "websocket-jsr356:websocketPathOrUri", label = "jsr356")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "websocket-jsr356", title = "Javax Websocket", syntax = "websocket-jsr356:uri", label = "http")
 public class JSR356Endpoint extends DefaultEndpoint {
-    @UriPath(description = "If a path (/foo) it will deploy locally the endpoint, " + "if an uri it will connect to the corresponding server")
-    private String websocketPathOrUri;
+    @UriPath(description = "If a schemeless URI path is provided, a ServerEndpoint is deployed under that path. "
+            + "Else if the URI is prefixed with the 'ws://' scheme, then a connection is established to the corresponding server")
+    private URI uri;
 
-    @UriParam(description = "Used when the endpoint is in client mode to populate a pool of sessions")
+    @UriParam(description = "Used when the endpoint is in client mode to populate a pool of sessions", defaultValue = "1")
     private int sessionCount = 1;
-
-    private final JSR356WebSocketComponent component;
 
     public JSR356Endpoint(final JSR356WebSocketComponent component, final String uri) {
         super(uri, component);
-        this.component = component;
     }
 
     @Override
@@ -45,13 +45,23 @@ public class JSR356Endpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Consumer createConsumer(final Processor processor) {
-        return new JSR356Consumer(this, processor, sessionCount);
+    public Consumer createConsumer(final Processor processor) throws Exception {
+        Consumer consumer = new JSR356Consumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
     public Producer createProducer() {
-        return new JSR356Producer(this, sessionCount);
+        return new JSR356Producer(this);
+    }
+
+    public URI getUri() {
+        return uri;
+    }
+
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
 
     public int getSessionCount() {

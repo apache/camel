@@ -16,60 +16,28 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 public class FlatpackDataFormatReifier extends DataFormatReifier<FlatpackDataFormat> {
 
-    public FlatpackDataFormatReifier(DataFormatDefinition definition) {
-        super((FlatpackDataFormat)definition);
+    public FlatpackDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
+        super(camelContext, (FlatpackDataFormat)definition);
     }
 
     @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        DataFormat flatpack = super.doCreateDataFormat(camelContext);
-
-        if (ObjectHelper.isNotEmpty(definition.getParserFactoryRef())) {
-            Object parserFactory = CamelContextHelper.mandatoryLookup(camelContext, definition.getParserFactoryRef());
-            setProperty(camelContext, flatpack, "parserFactory", parserFactory);
-        }
-
-        return flatpack;
-    }
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        if (ObjectHelper.isNotEmpty(definition.getDefinition())) {
-            setProperty(camelContext, dataFormat, "definition", definition.getDefinition());
-        }
-        if (definition.getFixed() != null) {
-            setProperty(camelContext, dataFormat, "fixed", definition.getFixed());
-        }
-        if (definition.getIgnoreFirstRecord() != null) {
-            setProperty(camelContext, dataFormat, "ignoreFirstRecord", definition.getIgnoreFirstRecord());
-        }
-        if (ObjectHelper.isNotEmpty(definition.getTextQualifier())) {
-            if (definition.getTextQualifier().length() > 1) {
-                throw new IllegalArgumentException("Text qualifier must be one character long!");
-            }
-            setProperty(camelContext, dataFormat, "textQualifier", definition.getTextQualifier().charAt(0));
-        }
-        if (ObjectHelper.isNotEmpty(definition.getDelimiter())) {
-            if (definition.getDelimiter().length() > 1) {
-                throw new IllegalArgumentException("Delimiter must be one character long!");
-            }
-            setProperty(camelContext, dataFormat, "delimiter", definition.getDelimiter().charAt(0));
-        }
-        if (definition.getAllowShortLines() != null) {
-            setProperty(camelContext, dataFormat, "allowShortLines", definition.getAllowShortLines());
-        }
-        if (definition.getIgnoreExtraColumns() != null) {
-            setProperty(camelContext, dataFormat, "ignoreExtraColumns", definition.getIgnoreExtraColumns());
-        }
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {
+        properties.put("parserFactory", asRef(definition.getParserFactoryRef()));
+        properties.put("definition", definition.getDefinition());
+        properties.put("fixed", definition.getFixed());
+        properties.put("ignoreFirstRecord", definition.getIgnoreFirstRecord());
+        properties.put("textQualifier", definition.getTextQualifier());
+        properties.put("delimiter", definition.getDelimiter());
+        properties.put("allowShortLines", definition.getAllowShortLines());
+        properties.put("ignoreExtraColumns", definition.getIgnoreExtraColumns());
     }
 
 }

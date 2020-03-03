@@ -1,9 +1,7 @@
 [[GracefulShutdown-GracefulShutdown]]
 = Graceful Shutdown
 
-*Since Camel 2.2*
-
-Camel now supports a pluggable shutdown strategy using
+Camel supports a pluggable shutdown strategy using
 `org.apache.camel.spi.ShutdownStrategy`. Its responsible for shutting
 down routes in a graceful manner. The other resources will still be
 handled by xref:camelcontext.adoc[CamelContext] to shutdown. This leaves
@@ -19,12 +17,11 @@ doing that.
 
 The default strategy will gracefully shutdown routes:
 
-* *Camel 2.2:* in the same order they was started
-* *Camel 2.3:* in the reverse order they was started. The option
+* in the reverse order they was started. The option
 `shutdownRoutesInReverseOrder` can be used to use the old behavior.
 * let pending and current in flight exchanges run to completion before
 shutting down
-* using a timeout of 300 seconds which then forces a shutdown now
+* using a timeout of 45 seconds which then forces a shutdown now
 
 You can configure the timeout, and whether it should shutdown now
 remaining routes when the timeout occurred or ignore. See the setters on
@@ -63,9 +60,6 @@ processed before it can shutdown.
 [[GracefulShutdown-Suppressingloggingduetotimeoutnotallowingallinflightmessagestocomplete]]
 == Suppressing logging due to timeout not allowing all inflight messages to complete
 
-
-*Since Camel 2.12*
-
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
 forcing routes and thread pools etc to shutdown. And as well the routing
@@ -87,8 +81,6 @@ control.
 
 [[GracefulShutdown-Logginginflightexchangeinformationontimeout]]
 == Logging inflight exchange information on timeout
-
-*Since Camel 2.15*
 
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
@@ -162,7 +154,7 @@ we can mark both routes to `Defer` but since route 1 is a
 xref:components::seda-component.adoc[SEDA] based route its `Defer` by default (it uses
 `ShutdownAware`).
 
-A Java DSL based example to defer shutting down the 2nd
+A Java DSL based example to defer shutting down the 2nd:
 
 [source,java]
 ---------------------------------
@@ -378,8 +370,7 @@ JMX console. For example you can change the timeout value.
 [[GracefulShutdown-Shuttingdownindividualroutes]]
 == Shutting down individual routes
 
-*Since Camel 2.3* 
- Its now possible to gracefully shutdown an individual route using
+It is possible to gracefully shutdown an individual route using
 `shutdownRoute(routeId)` method on `CamelContext`. Its also possible to
 provide a specific timeout to use instead of the default timeout
 settings using `shutdownRoute(routeId, timeout, timeUnit)`.

@@ -23,10 +23,15 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractMicrometerProducer<Timer> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TimerProducer.class);
 
     public TimerProducer(MicrometerEndpoint endpoint) {
         super(endpoint);
@@ -56,7 +61,7 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
         } else if (finalAction == MicrometerTimerAction.stop) {
             handleStop(exchange, metricsName, tags);
         } else {
-            log.warn("No action provided for timer \"{}\"", metricsName);
+            LOG.warn("No action provided for timer \"{}\"", metricsName);
         }
     }
 
@@ -73,7 +78,7 @@ public class TimerProducer extends AbstractMicrometerProducer<Timer> {
             sample = Timer.start(registry);
             exchange.setProperty(propertyName, sample);
         } else {
-            log.warn("Timer \"{}\" already running", metricsName);
+            LOG.warn("Timer \"{}\" already running", metricsName);
         }
     }
 

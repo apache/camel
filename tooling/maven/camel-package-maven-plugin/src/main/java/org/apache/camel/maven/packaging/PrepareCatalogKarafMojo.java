@@ -19,14 +19,12 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -37,6 +35,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.tooling.util.FileUtil;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,16 +46,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.w3c.dom.Node.ELEMENT_NODE;
-
 /**
  * Prepares the Karaf provider camel catalog to include component it supports
  */
 @Mojo(name = "prepare-catalog-karaf", threadSafe = true)
 public class PrepareCatalogKarafMojo extends AbstractMojo {
-
-    public static final int BUFFER_SIZE = 128 * 1024;
 
     /**
      * The maven project.
@@ -121,8 +116,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -184,44 +179,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         getLog().info("Found " + componentFiles.size() + " component.properties files");
         getLog().info("Found " + jsonFiles.size() + " component json files");
 
-        // make sure to create out dir
-        componentsOutDir.mkdirs();
-
-        for (File file : jsonFiles) {
-            File to = new File(componentsOutDir, file.getName());
-            try {
-                copyFile(file, to);
-            } catch (IOException e) {
-                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
-            }
-        }
-
-        File all = new File(componentsOutDir, "../components.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = componentsOutDir.list();
-            List<String> components = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String componentName = name.substring(0, name.length() - 5);
-                    components.add(componentName);
-                }
-            }
-
-            Collections.sort(components);
-            for (String name : components) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        // copy json files
+        Path outDir = componentsOutDir.toPath();
+        copyFiles(outDir, jsonFiles);
+        generateJsonList(outDir, "../components.properties");
     }
 
     protected void executeDataFormats(Set<String> features) throws MojoExecutionException, MojoFailureException {
@@ -263,44 +224,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         getLog().info("Found " + dataFormatFiles.size() + " dataformat.properties files");
         getLog().info("Found " + jsonFiles.size() + " dataformat json files");
 
-        // make sure to create out dir
-        dataFormatsOutDir.mkdirs();
-
-        for (File file : jsonFiles) {
-            File to = new File(dataFormatsOutDir, file.getName());
-            try {
-                copyFile(file, to);
-            } catch (IOException e) {
-                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
-            }
-        }
-
-        File all = new File(dataFormatsOutDir, "../dataformats.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = dataFormatsOutDir.list();
-            List<String> dataFormats = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String dataFormatName = name.substring(0, name.length() - 5);
-                    dataFormats.add(dataFormatName);
-                }
-            }
-
-            Collections.sort(dataFormats);
-            for (String name : dataFormats) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        // copy json files
+        Path outDir = dataFormatsOutDir.toPath();
+        copyFiles(outDir, jsonFiles);
+        generateJsonList(outDir, "../dataformats.properties");
     }
 
     protected void executeLanguages(Set<String> features) throws MojoExecutionException, MojoFailureException {
@@ -315,10 +242,9 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             File[] languages = componentsDir.listFiles();
             if (languages != null) {
                 for (File dir : languages) {
-                    // the directory must be in the list of known features (or known languages)
-                    if (!features.contains(dir.getName())
-                            && !dir.getName().equals("camel-bean")
-                            && !dir.getName().equals("camel-xpath")) {
+                    // the directory must be in the list of known features (or
+                    // known languages)
+                    if (!features.contains(dir.getName()) && !dir.getName().equals("camel-bean") && !dir.getName().equals("camel-xpath")) {
                         continue;
                     }
 
@@ -339,52 +265,18 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         if (baseDir != null && baseDir.isDirectory()) {
             File target = new File(baseDir, "target/classes");
             findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
-            // also look in camel-jaxp
-            target = new File(baseDir, "../camel-jaxp/target/classes");
+            // also look in camel-xml-jaxp
+            target = new File(baseDir, "../camel-xml-jaxp/target/classes");
             findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
         }
 
         getLog().info("Found " + languageFiles.size() + " language.properties files");
         getLog().info("Found " + jsonFiles.size() + " language json files");
 
-        // make sure to create out dir
-        languagesOutDir.mkdirs();
-
-        for (File file : jsonFiles) {
-            File to = new File(languagesOutDir, file.getName());
-            try {
-                copyFile(file, to);
-            } catch (IOException e) {
-                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
-            }
-        }
-
-        File all = new File(languagesOutDir, "../languages.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = languagesOutDir.list();
-            List<String> languages = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String languageName = name.substring(0, name.length() - 5);
-                    languages.add(languageName);
-                }
-            }
-
-            Collections.sort(languages);
-            for (String name : languages) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        // copy json files
+        Path outDir = languagesOutDir.toPath();
+        copyFiles(outDir, jsonFiles);
+        generateJsonList(outDir, "../languages.properties");
     }
 
     protected void executeOthers(Set<String> features) throws MojoExecutionException, MojoFailureException {
@@ -405,16 +297,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     }
 
                     // skip these special cases
-                    boolean special = "camel-core-osgi".equals(dir.getName())
-                        || "camel-core-xml".equals(dir.getName())
-                        || "camel-http-common".equals(dir.getName())
-                        || "camel-jetty-common".equals(dir.getName());
-                    boolean special2 = "camel-as2".equals(dir.getName())
-                        || "camel-box".equals(dir.getName())
-                        || "camel-olingo2".equals(dir.getName())
-                        || "camel-olingo4".equals(dir.getName())
-                        || "camel-servicenow".equals(dir.getName())
-                        || "camel-salesforce".equals(dir.getName());
+                    boolean special = "camel-core-osgi".equals(dir.getName()) || "camel-core-xml".equals(dir.getName()) || "camel-http-base".equals(dir.getName())
+                                      || "camel-http-common".equals(dir.getName()) || "camel-jetty-common".equals(dir.getName());
+                    boolean special2 = "camel-as2".equals(dir.getName()) || "camel-box".equals(dir.getName()) || "camel-olingo2".equals(dir.getName())
+                                       || "camel-olingo4".equals(dir.getName()) || "camel-servicenow".equals(dir.getName()) || "camel-salesforce".equals(dir.getName());
                     boolean special3 = "camel-debezium-common".equals(dir.getName());
                     if (special || special2 || special3) {
                         continue;
@@ -437,53 +323,20 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         getLog().info("Found " + otherFiles.size() + " other.properties files");
         getLog().info("Found " + jsonFiles.size() + " other json files");
 
-        // make sure to create out dir
-        othersOutDir.mkdirs();
-
-        for (File file : jsonFiles) {
-            File to = new File(othersOutDir, file.getName());
-            try {
-                copyFile(file, to);
-            } catch (IOException e) {
-                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
-            }
-        }
-
-        File all = new File(othersOutDir, "../others.properties");
-        try {
-            FileOutputStream fos = new FileOutputStream(all, false);
-
-            String[] names = othersOutDir.list();
-            List<String> others = new ArrayList<>();
-            // sort the names
-            for (String name : names) {
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String otherName = name.substring(0, name.length() - 5);
-                    others.add(otherName);
-                }
-            }
-
-            Collections.sort(others);
-            for (String name : others) {
-                fos.write(name.getBytes());
-                fos.write("\n".getBytes());
-            }
-
-            fos.close();
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error writing to file " + all);
-        }
+        // copy json files
+        Path outDir = othersOutDir.toPath();
+        copyFiles(outDir, jsonFiles);
+        generateJsonList(outDir, "../others.properties");
     }
 
     private void findComponentFilesRecursive(File dir, Set<File> found, Set<File> components, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean componentFile = !rootDir && file.isFile() && file.getName().equals("component.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -500,9 +353,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean dataFormatFile = !rootDir && file.isFile() && file.getName().equals("dataformat.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -519,9 +373,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = !rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean languageFile = !rootDir && file.isFile() && file.getName().equals("language.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -538,9 +393,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         File[] files = dir.listFiles(filter);
         if (files != null) {
             for (File file : files) {
-                // skip files in root dirs as Camel does not store information there but others may do
+                // skip files in root dirs as Camel does not store information
+                // there but others may do
                 boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
-                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(PackageHelper.JSON_SUFIX);
                 boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
                 if (jsonFile) {
                     found.add(file);
@@ -553,19 +409,20 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         }
     }
 
-    private class CamelComponentsFileFilter implements FileFilter {
+    private static class CamelComponentsFileFilter implements FileFilter {
 
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a components json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
-                    return json != null && json.contains("\"kind\": \"component\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "component".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -574,19 +431,20 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         }
     }
 
-    private class CamelDataFormatsFileFilter implements FileFilter {
+    private static class CamelDataFormatsFileFilter implements FileFilter {
 
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a dataformat json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
-                    return json != null && json.contains("\"kind\": \"dataformat\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "dataformat".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -595,19 +453,20 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         }
     }
 
-    private class CamelLanguagesFileFilter implements FileFilter {
+    private static class CamelLanguagesFileFilter implements FileFilter {
 
         @Override
         public boolean accept(File pathname) {
             if (pathname.isDirectory() && pathname.getName().equals("model")) {
-                // do not check the camel-core model packages as there is no components there
+                // do not check the camel-core model packages as there is no
+                // components there
                 return false;
             }
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a language json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
-                    return json != null && json.contains("\"kind\": \"language\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "language".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -616,15 +475,15 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         }
     }
 
-    private class CamelOthersFileFilter implements FileFilter {
+    private static class CamelOthersFileFilter implements FileFilter {
 
         @Override
         public boolean accept(File pathname) {
-            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+            if (pathname.isFile() && pathname.getName().endsWith(PackageHelper.JSON_SUFIX)) {
                 // must be a language json file
                 try {
-                    String json = loadText(new FileInputStream(pathname));
-                    return json != null && json.contains("\"kind\": \"other\"");
+                    String json = PackageHelper.loadText(pathname);
+                    return "other".equals(PackageHelper.getSchemaKind(json));
                 } catch (IOException e) {
                     // ignore
                 }
@@ -633,38 +492,41 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
         }
     }
 
-    public static void copyFile(File from, File to) throws IOException {
-        FileChannel in = null;
-        FileChannel out = null;
-        try (FileInputStream fis = new FileInputStream(from); FileOutputStream fos = new FileOutputStream(to)) {
+    public static void copyFiles(Path outDir, Collection<File> files) throws MojoFailureException {
+        for (File file : files) {
+            Path to = outDir.resolve(file.getName());
             try {
-                in = fis.getChannel();
-                out = fos.getChannel();
-
-                long size = in.size();
-                long position = 0;
-                while (position < size) {
-                    position += in.transferTo(position, BUFFER_SIZE, out);
-                }
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
+                FileUtil.updateFile(file.toPath(), to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
         }
+    }
+
+    public static Set<String> generateJsonList(Path outDir, String outFile) throws MojoFailureException {
+        Path all = outDir.resolve(outFile);
+        try {
+            Set<String> answer = Files.list(outDir).filter(p -> p.getFileName().toString().endsWith(PackageHelper.JSON_SUFIX)).map(p -> p.getFileName().toString())
+                // strip out .json from the name
+                .map(n -> n.substring(0, n.length() - PackageHelper.JSON_SUFIX.length())).sorted().collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
+            String data = String.join("\n", answer) + "\n";
+            FileUtil.updateFile(all, data);
+            return answer;
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+    }
+
+    public static void copyFile(File from, File to) throws IOException {
+        FileUtil.updateFile(from.toPath(), to.toPath());
     }
 
     private Set<String> findKarafFeatures() throws MojoExecutionException, MojoFailureException {
         // load features.xml file and parse it
 
         Set<String> answer = new LinkedHashSet<>();
-        try {
-            File file = new File(featuresDir, "features.xml");
-            InputStream is = new FileInputStream(file);
-
+        File file = new File(featuresDir, "features.xml");
+        try (InputStream is = new FileInputStream(file)) {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             dbf.setIgnoringComments(true);
@@ -678,7 +540,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             NodeList children = dom.getElementsByTagName("features");
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
-                if (child.getNodeType() == ELEMENT_NODE) {
+                if (child.getNodeType() == Node.ELEMENT_NODE) {
                     NodeList children2 = child.getChildNodes();
                     for (int j = 0; j < children2.getLength(); j++) {
                         Node child2 = children2.item(j);

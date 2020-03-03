@@ -40,7 +40,7 @@ public class SftpSimpleIPV6ConsumeTest extends SftpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
-        
+
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
@@ -51,8 +51,7 @@ public class SftpSimpleIPV6ConsumeTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://[::1]:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true")
-                    .routeId("foo").noAutoStartup()
+                from("sftp://[::1]:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true").routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
         };

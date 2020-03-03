@@ -41,11 +41,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.protocol.HttpRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The AS2 consumer.
  */
 public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuration> implements HttpRequestHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AS2Consumer.class);
 
     private static final String HANDLER_PROPERTY = "handler";
     private static final String REQUEST_URI_PROPERTY = "requestUri";
@@ -127,7 +131,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
                 exception = exchange.getException();
             }
         } catch (Exception e) {
-            log.info("Failed to process AS2 message", e);
+            LOG.info("Failed to process AS2 message", e);
             exception = e;
         }
         

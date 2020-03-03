@@ -1,0 +1,22 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "rss",
+    "modelName": "rss",
+    "title": "RSS",
+    "description": "RSS data format is used for working with RSS sync feed Java Objects and transforming to XML and vice-versa.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation",
+    "firstVersion": "2.1.0",
+    "label": "dataformat,transformation",
+    "javaType": "org.apache.camel.dataformat.rss.RssDataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.RssDataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-rss",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

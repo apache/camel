@@ -17,7 +17,6 @@
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.StringHelper;
@@ -55,14 +54,11 @@ public final class ThreadHelper {
         // we support #longName# and #name# as name placeholders
         String longName = name;
         String shortName = name.contains("?") ? StringHelper.before(name, "?") : name;
-        // must quote the names to have it work as literal replacement
-        shortName = Matcher.quoteReplacement(shortName);
-        longName = Matcher.quoteReplacement(longName);
 
         // replace tokens
-        String answer = pattern.replaceFirst("#counter#", "" + nextThreadCounter());
-        answer = answer.replaceFirst("#longName#", longName);
-        answer = answer.replaceFirst("#name#", shortName);
+        String answer = StringHelper.replaceAll(pattern, "#counter#", "" + nextThreadCounter());
+        answer = StringHelper.replaceAll(answer, "#longName#", longName);
+        answer = StringHelper.replaceAll(answer, "#name#", shortName);
 
         // are there any #word# combos left, if so they should be considered invalid tokens
         if (INVALID_PATTERN.matcher(answer).matches()) {

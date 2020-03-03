@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NoSuchBeanException;
@@ -47,6 +49,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.IOHelper;
@@ -87,12 +90,45 @@ public final class ExchangeHelper {
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolveEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), nu);
         } else {
             String uri = value.toString().trim();
             endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
+        }
+        return endpoint;
+    }
+
+    /**
+     * Attempts to resolve the endpoint (prototype scope) for the given value
+     *
+     * @param exchange the message exchange being processed
+     * @param value    the value which can be an {@link Endpoint} or an object
+     *                 which provides a String representation of an endpoint via
+     *                 {@link #toString()}
+     * @return the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolvePrototypeEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
+        Endpoint endpoint;
+        if (value instanceof Endpoint) {
+            endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(exchange.getContext(), nu);
+        } else {
+            String uri = value.toString().trim();
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(exchange.getContext(), uri);
         }
         return endpoint;
     }
@@ -254,7 +290,9 @@ public final class ExchangeHelper {
             copy.getIn().setMessageId(null);
         }
         // do not share the unit of work
-        copy.setUnitOfWork(null);
+        ExtendedExchange ce = (ExtendedExchange) copy;
+        ce.setUnitOfWork(null);
+
         // do not reuse the message id
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
@@ -292,7 +330,7 @@ public final class ExchangeHelper {
      * @param source the source exchange which is not modified
      */
     public static void copyResults(Exchange target, Exchange source) {
-        doCopyResults(target, source, false);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, false);
     }
 
     /**
@@ -303,10 +341,10 @@ public final class ExchangeHelper {
      * @param source source exchange.
      */
     public static void copyResultsPreservePattern(Exchange target, Exchange source) {
-        doCopyResults(target, source, true);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, true);
     }
 
-    private static void doCopyResults(Exchange result, Exchange source, boolean preserverPattern) {
+    private static void doCopyResults(ExtendedExchange result, ExtendedExchange source, boolean preserverPattern) {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
@@ -353,6 +391,13 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
 
+        // copy over state
+        result.setRouteStop(source.isRouteStop());
+        result.setRollbackOnly(source.isRollbackOnly());
+        result.setRollbackOnlyLast(source.isRollbackOnlyLast());
+        result.setNotifyEvent(source.isNotifyEvent());
+        result.setRedeliveryExhausted(source.isRedeliveryExhausted());
+        result.setErrorHandlerHandled(source.getErrorHandlerHandled());
         result.setException(source.getException());
     }
 
@@ -582,16 +627,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Checks whether the exchange is redelivery exhausted
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if exhausted, <tt>false</tt> otherwise
-     */
-    public static boolean isRedeliveryExhausted(Exchange exchange) {
-        return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
-    }
-
-    /**
      * Checks whether the exchange {@link UnitOfWork} is redelivered
      *
      * @param exchange  the exchange
@@ -599,17 +634,6 @@ public final class ExchangeHelper {
      */
     public static boolean isRedelivered(Exchange exchange) {
         return exchange.getIn().hasHeaders() && exchange.getIn().getHeader(Exchange.REDELIVERED, false, Boolean.class);
-    }
-
-    /**
-     * Checks whether the exchange {@link UnitOfWork} has been interrupted during processing
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if interrupted, <tt>false</tt> otherwise
-     */
-    public static boolean isInterrupted(Exchange exchange) {
-        Object value = exchange.getProperty(Exchange.INTERRUPTED);
-        return value != null && Boolean.TRUE == value;
     }
 
     /**
@@ -670,16 +694,6 @@ public final class ExchangeHelper {
         }
 
         return answer;
-    }
-
-    /**
-     * Tests whether the exchange has already been handled by the error handler
-     *
-     * @param exchange the exchange
-     * @return <tt>true</tt> if handled already by error handler, <tt>false</tt> otherwise
-     */
-    public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
-        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
     /**
@@ -814,7 +828,7 @@ public final class ExchangeHelper {
         }
         if (handover) {
             // Need to hand over the completion for async invocation
-            exchange.handoverCompletions(answer);
+            exchange.adapt(ExtendedExchange.class).handoverCompletions(answer);
         }
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
@@ -895,7 +909,7 @@ public final class ExchangeHelper {
             return null;
         }
 
-        Map<String, Object> answer = new HashMap<>(properties);
+        Map<String, Object> answer = new ConcurrentHashMap<>(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);

@@ -31,19 +31,17 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
 
     @Test
     public void testFilterCamelHeaders() throws Exception {
-        Exchange out = template.request("netty-http:http://localhost:{{port}}/test/filter", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Claus");
-                exchange.getIn().setHeader("bar", 123);
-            }
+        Exchange out = template.request("netty-http:http://localhost:{{port}}/test/filter", exchange -> {
+            exchange.getIn().setBody("Claus");
+            exchange.getIn().setHeader("bar", 123);
         });
 
         assertNotNull(out);
-        assertEquals("Hi Claus", out.getOut().getBody(String.class));
+        assertEquals("Hi Claus", out.getMessage().getBody(String.class));
 
         // there should be no internal Camel headers
         // except for the response code and response text
-        Map<String, Object> headers = out.getOut().getHeaders();
+        Map<String, Object> headers = out.getMessage().getHeaders();
         for (String key : headers.keySet()) {
             if (!key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)) {
                 assertTrue("Should not contain any Camel internal headers", !key.toLowerCase().startsWith("camel"));

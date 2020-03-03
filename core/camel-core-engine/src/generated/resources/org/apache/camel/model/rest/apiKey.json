@@ -1,0 +1,20 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "apiKey",
+    "title": "Api Key",
+    "description": "Rest security basic auth definition",
+    "javaType": "org.apache.camel.model.rest.RestSecurityApiKey",
+    "label": "rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The name of the header or query parameter to be used." },
+    "inHeader": { "kind": "attribute", "displayName": "In Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To use header as the location of the API key." },
+    "inQuery": { "kind": "attribute", "displayName": "In Query", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "To use query parameter as the location of the API key." },
+    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A short description for security scheme." }
+  }
+}

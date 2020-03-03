@@ -1,0 +1,174 @@
+[[aws2-kinesis-firehose-component]]
+= AWS 2 Kinesis Firehose Component
+:page-source: components/camel-aws2-kinesis/src/main/docs/aws2-kinesis-firehose-component.adoc
+
+*Since Camel 3.2*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The Kinesis Firehose component supports sending messages to Amazon Kinesis Firehose service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Kinesis Firehose. More information are available
+at https://aws.amazon.com/kinesis/firehose/[AWS Kinesis Firehose]
+
+[NOTE]
+====
+The AWS2 Kinesis Firehose component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-----------------------------------
+aws2-kinesis-firehose://delivery-stream-name[?options]
+-----------------------------------
+
+The stream needs to be created prior to it being used. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 Kinesis Firehose component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
+| *configuration* (producer) | Component configuration |  | KinesisFirehose2Configuration
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *proxyHost* (producer) | To define a proxy host when instantiating the Kinesis Firehose client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the Kinesis Firehose client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Kinesis Firehose client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+
+
+
+// endpoint options: START
+The AWS 2 Kinesis Firehose endpoint is configured using URI syntax:
+
+----
+aws2-kinesis-firehose:streamName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *streamName* | *Required* Name of the stream |  | String
+|===
+
+
+=== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonKinesisFirehoseClient* (producer) | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | FirehoseClient
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *proxyHost* (producer) | To define a proxy host when instantiating the Kinesis Firehose client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the Kinesis Firehose client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Kinesis Firehose client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which Kinesis Firehose client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+
+
+
+
+Required Kinesis Firehose component options
+
+You have to provide the FirehoseClient in the
+Registry with proxies and relevant credentials
+configured.
+
+
+== Usage
+
+=== Amazon Kinesis Firehose configuration
+
+
+You then have to reference the FirehoseClient in the `amazonKinesisFirehoseClient` URI option.
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------
+from("aws2-kinesis-firehose://mykinesisdeliverystream?amazonKinesisFirehoseClient=#kinesisClient")
+  .to("log:out?showAll=true");
+--------------------------------------------------------------------------------------------------------------------
+
+=== Providing AWS Credentials
+
+It is recommended that the credentials are obtained by using the
+http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html[DefaultAWSCredentialsProviderChain]
+that is the default when creating a new ClientConfiguration instance,
+however, a
+different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
+can be specified when calling createClient(...).
+
+=== Message headers set by the Kinesis producer on successful storage of a Record
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsKinesisFirehoseRecordId` |`String` |The record ID, as defined in
+http://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntax[Response Syntax]
+
+
+|=======================================================================
+
+== Automatic detection of AmazonKinesisFirehose client in registry
+
+The component is capable of detecting the presence of an FirehoseClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-kinesis</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+
+include::camel-spring-boot::page$aws2-kinesis-starter.adoc[]

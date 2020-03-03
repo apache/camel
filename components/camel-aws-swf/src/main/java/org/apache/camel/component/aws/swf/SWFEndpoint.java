@@ -138,15 +138,11 @@ public class SWFEndpoint extends DefaultEndpoint {
     }
 
     public Object getResult(Exchange exchange) {
-        return ExchangeHelper.isOutCapable(exchange) ? exchange.getOut().getBody() : exchange.getIn().getBody();
+        return exchange.getMessage();
     }
 
     public void setResult(Exchange exchange, Object result) {
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            exchange.getOut().setBody(result);
-        } else {
-            exchange.getIn().setBody(result);
-        }
+        exchange.getMessage().setBody(result);
     }
 
     public void setConfiguration(SWFConfiguration configuration) {

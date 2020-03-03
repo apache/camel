@@ -24,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
@@ -45,11 +46,15 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Camel Producer that provides the InOut Exchange pattern.
  */
 public class InOutProducer extends SjmsProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InOutProducer.class);
 
     private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<>();
 
@@ -88,7 +93,7 @@ public class InOutProducer extends SjmsProducer {
                 }
 
                 Destination replyToDestination;
-                boolean isReplyToTopic = false;
+                boolean isReplyToTopic;
                 if (ObjectHelper.isEmpty(getNamedReplyTo())) {
                     isReplyToTopic = isTopic();
                     replyToDestination = getEndpoint().getDestinationCreationStrategy().createTemporaryDestination(session, isReplyToTopic);
@@ -101,8 +106,8 @@ public class InOutProducer extends SjmsProducer {
                 messageConsumer.setMessageListener(new MessageListener() {
                     @Override
                     public void onMessage(final Message message) {
-                        log.debug("Message Received in the Consumer Pool");
-                        log.debug("  Message : {}", message);
+                        LOG.debug("Message Received in the Consumer Pool");
+                        LOG.debug("  Message : {}", message);
                         try {
                             String correlationID = message.getJMSCorrelationID();
                             Exchanger<Object> exchanger = EXCHANGERS.get(correlationID);
@@ -112,22 +117,33 @@ public class InOutProducer extends SjmsProducer {
                                 // we could not correlate the received reply message to a matching request and therefore
                                 // we cannot continue routing the unknown message
                                 // log a warn and then ignore the message
-                                log.warn("Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
-                                        new Object[]{correlationID, replyToDestination, EXCHANGERS.size(), message});
+                                LOG.warn("Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
+                                    correlationID, replyToDestination, EXCHANGERS.size(), message);
                             }
                         } catch (Exception e) {
-                            log.warn("Unable to exchange message: {}. This exception is ignored.", message, e);
+                            LOG.warn("Unable to exchange message: {}. This exception is ignored.", message, e);
                         }
                     }
                 });
                 answer = new MessageConsumerResources(session, messageConsumer, replyToDestination);
             } catch (Exception e) {
-                log.error("Unable to create the MessageConsumerResource: {}", e.getLocalizedMessage());
+                LOG.error("Unable to create the MessageConsumerResource: {}", e.getLocalizedMessage());
                 throw new CamelException(e);
             } finally {
                 connectionResource.returnConnection(conn);
             }
             return answer;
+        }
+
+        @Override
+        public boolean validateObject(MessageConsumerResources obj) {
+            try {
+                obj.getSession().getAcknowledgeMode();
+                return true;
+            } catch (JMSException ex) {
+                LOG.error("Cannot validate session", ex);
+            }
+            return false;
         }
 
         @Override
@@ -157,9 +173,9 @@ public class InOutProducer extends SjmsProducer {
         }
 
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
-            log.debug("No reply to destination is defined. Using temporary destinations.");
+            LOG.debug("No reply to destination is defined. Using temporary destinations.");
         } else {
-            log.debug("Using {} as the reply to destination.", getNamedReplyTo());
+            LOG.debug("Using {} as the reply to destination.", getNamedReplyTo());
         }
         if (uuidGenerator == null) {
             // use the generator configured on the camel context
@@ -169,6 +185,7 @@ public class InOutProducer extends SjmsProducer {
             consumers = new GenericObjectPool<>(new MessageConsumerResourcesFactory());
             consumers.setMaxActive(getConsumerCount());
             consumers.setMaxIdle(getConsumerCount());
+            consumers.setTestOnBorrow(getEndpoint().getComponent().isConnectionTestOnBorrow());
             while (consumers.getNumIdle() < consumers.getMaxIdle()) {
                 consumers.addObject();
             }
@@ -222,10 +239,10 @@ public class InOutProducer extends SjmsProducer {
             responseObject = messageExchanger.exchange(null, getResponseTimeOut(), TimeUnit.MILLISECONDS);
             EXCHANGERS.remove(correlationId);
         } catch (InterruptedException e) {
-            log.debug("Exchanger was interrupted while waiting on response", e);
+            LOG.debug("Exchanger was interrupted while waiting on response", e);
             exchange.setException(e);
         } catch (TimeoutException e) {
-            log.debug("Exchanger timed out while waiting on response", e);
+            LOG.debug("Exchanger timed out while waiting on response", e);
             exchange.setException(e);
         }
 

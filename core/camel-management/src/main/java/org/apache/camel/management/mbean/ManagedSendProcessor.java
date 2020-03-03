@@ -91,7 +91,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
             // we only have 1 endpoint
             CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
             String url = getDestination();
-            Long hits = processor.getCounter();
+            long hits = processor.getCounter();
 
             CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
             answer.put(data);

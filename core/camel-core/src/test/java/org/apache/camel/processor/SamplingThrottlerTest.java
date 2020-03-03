@@ -146,8 +146,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
     private void validateDroppedExchanges(List<Exchange> sentExchanges, int expectedNotDroppedCount) {
         int notDropped = 0;
         for (Exchange e : sentExchanges) {
-            Boolean stopped = e.getProperty(Exchange.ROUTE_STOP, Boolean.class);
-            if (stopped == null) {
+            boolean stopped = e.isRouteStop();
+            if (!stopped) {
                 notDropped++;
             }
         }

@@ -16,7 +16,11 @@
  */
 package org.apache.camel;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -25,7 +29,6 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
@@ -34,7 +37,6 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -82,7 +84,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
      * <p/>
-     * For example to adapt to <tt>ModelCamelContext</tt>,
+     * For example to adapt to <tt>ExtendedCamelContext</tt>, <tt>ModelCamelContext</tt>,
      * or <tt>SpringCamelContext</tt>, or <tt>CdiCamelContext</tt>, etc.
      *
      * @param type the type to adapt to
@@ -268,6 +270,17 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @throws Exception can be thrown when starting the service
      */
     void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception;
+
+    /**
+     * Adds a service to this CamelContext (prototype scope).
+     * <p/>
+     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}.
+     * The service will be started, if its not already started.
+     *
+     * @param object the service
+     * @throws Exception can be thrown when starting the service
+     */
+    void addPrototypeService(Object object) throws Exception;
 
     /**
      * Removes a service from this CamelContext.
@@ -536,6 +549,11 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     List<Route> getRoutes();
 
     /**
+     * Returns the total number of routes in this CamelContext
+     */
+    int getRoutesSize();
+
+    /**
      * Gets the route with the given id
      *
      * @param id id of the route
@@ -670,7 +688,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     //-----------------------------------------------------------------------
 
     /**
-     * Returns the type converter used to coerce types from one type to another
+     * Returns the type converter used to coerce types from one type to another.
+     * <p/>
+     * Notice that this {@link CamelContext} should be at least initialized before you can get the type converter.
      *
      * @return the converter
      */
@@ -910,7 +930,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets the {@link org.apache.camel.spi.TransformerRegistry}
      * @return the TransformerRegistry
      */
-    TransformerRegistry<? extends ValueHolder<String>> getTransformerRegistry();
+    TransformerRegistry getTransformerRegistry();
 
     /**
      * Resolve a validator given from/to data type.
@@ -924,7 +944,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
      * @return the ValidatorRegistry
      */
-    ValidatorRegistry<? extends ValueHolder<String>> getValidatorRegistry();
+    ValidatorRegistry getValidatorRegistry();
 
     /**
      * Sets global options that can be referenced in the camel context
@@ -1266,22 +1286,5 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets the global SSL context parameters if configured.
      */
     SSLContextParameters getSSLContextParameters();
-
-    /**
-     * Gets the {@link HeadersMapFactory} to use.
-     */
-    HeadersMapFactory getHeadersMapFactory();
-
-    /**
-     * Sets a custom {@link HeadersMapFactory} to be used.
-     */
-    void setHeadersMapFactory(HeadersMapFactory factory);
-
-    ReactiveExecutor getReactiveExecutor();
-
-    /**
-     * Sets a custom {@link ReactiveExecutor} to be used.
-     */
-    void setReactiveExecutor(ReactiveExecutor reactiveExecutor);
 
 }

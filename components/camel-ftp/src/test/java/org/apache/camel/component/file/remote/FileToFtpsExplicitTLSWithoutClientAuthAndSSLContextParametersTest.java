@@ -27,20 +27,20 @@ public class FileToFtpsExplicitTLSWithoutClientAuthAndSSLContextParametersTest e
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("server.jks");
         ksp.setPassword("password");
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setSecureSocketProtocol("TLSv1.2");
         sslContextParameters.setTrustManagers(tmp);
-        
+
         return sslContextParameters;
     }
-    
+
     @Override
     protected String getFtpUrl() {
         return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-                + "&implicit=false&sslContextParameters=#sslContextParameters&delete=true";
+               + "&implicit=false&sslContextParameters=#sslContextParameters&delete=true";
     }
 }

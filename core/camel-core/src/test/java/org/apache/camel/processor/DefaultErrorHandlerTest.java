@@ -43,7 +43,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
 
         // there should be a default error handler in front of each processor in
         // this pipeline
-        for (Processor child : pipeline.getProcessors()) {
+        for (Processor child : pipeline.next()) {
             Channel channel = assertIsInstanceOf(Channel.class, child);
             assertNotNull("There should be an error handler", channel.getErrorHandler());
             assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());

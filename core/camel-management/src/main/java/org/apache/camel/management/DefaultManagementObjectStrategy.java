@@ -161,9 +161,9 @@ import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.processor.MarshalProcessor;
+import org.apache.camel.support.processor.PredicateValidatingProcessor;
 import org.apache.camel.support.processor.ThroughputLogger;
 import org.apache.camel.support.processor.UnmarshalProcessor;
-import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 
 /**
  * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.
@@ -305,7 +305,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         if (definition instanceof RecipientListDefinition) {
             // special for RecipientListDefinition, as the processor is wrapped in a pipeline as last
             Pipeline pipeline = (Pipeline) processor;
-            Iterator<Processor> it = pipeline.getProcessors().iterator();
+            Iterator<Processor> it = pipeline.next().iterator();
             while (it.hasNext()) {
                 processor = it.next();
             }

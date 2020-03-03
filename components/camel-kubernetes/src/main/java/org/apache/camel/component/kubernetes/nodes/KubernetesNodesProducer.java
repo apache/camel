@@ -32,8 +32,12 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KubernetesNodesProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesNodesProducer.class);
 
     public KubernetesNodesProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -56,28 +60,28 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_NODES:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NODES:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_NODES_BY_LABELS_OPERATION:
-            doListNodesByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_NODES_BY_LABELS_OPERATION:
+                doListNodesByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_NODE_OPERATION:
-            doGetNode(exchange, operation);
-            break;
+            case KubernetesOperations.GET_NODE_OPERATION:
+                doGetNode(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_NODE_OPERATION:
-            doCreateNode(exchange, operation);
-            break;
-            
-        case KubernetesOperations.DELETE_NODE_OPERATION:
-            doDeleteNode(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_NODE_OPERATION:
+                doCreateNode(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            case KubernetesOperations.DELETE_NODE_OPERATION:
+                doDeleteNode(exchange, operation);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -105,7 +109,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         Node node = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
-            log.error("Get a specific Node require specify a Node name");
+            LOG.error("Get a specific Node require specify a Node name");
             throw new IllegalArgumentException("Get a specific Node require specify a Node name");
         }
         node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();
@@ -119,11 +123,11 @@ public class KubernetesNodesProducer extends DefaultProducer {
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         NodeSpec nodeSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, NodeSpec.class);
         if (ObjectHelper.isEmpty(nodeName)) {
-            log.error("Create a specific node require specify a node name");
+            LOG.error("Create a specific node require specify a node name");
             throw new IllegalArgumentException("Create a specific node require specify a node name");
         }
         if (ObjectHelper.isEmpty(nodeSpec)) {
-            log.error("Create a specific node require specify a node spec bean");
+            LOG.error("Create a specific node require specify a node spec bean");
             throw new IllegalArgumentException("Create a specific node require specify a node spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
@@ -133,11 +137,11 @@ public class KubernetesNodesProducer extends DefaultProducer {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(node);
     }
-    
+
     protected void doDeleteNode(Exchange exchange, String operation) throws Exception {
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(nodeName)) {
-            log.error("Deleting a specific Node require specify a Node name");
+            LOG.error("Deleting a specific Node require specify a Node name");
             throw new IllegalArgumentException("Deleting a specific Node require specify a Node name");
         }
         boolean nodeDeleted = getEndpoint().getKubernetesClient().nodes().withName(nodeName).delete();

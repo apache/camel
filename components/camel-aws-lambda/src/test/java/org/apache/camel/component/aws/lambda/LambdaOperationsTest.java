@@ -24,7 +24,7 @@ public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(14, LambdaOperations.values().length);
+        assertEquals(18, LambdaOperations.values().length);
     }
 
     @Test
@@ -43,6 +43,10 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.untagResource, LambdaOperations.valueOf("untagResource"));
         assertEquals(LambdaOperations.publishVersion, LambdaOperations.valueOf("publishVersion"));
         assertEquals(LambdaOperations.listVersions, LambdaOperations.valueOf("listVersions"));
+        assertEquals(LambdaOperations.createAlias, LambdaOperations.valueOf("createAlias"));
+        assertEquals(LambdaOperations.deleteAlias, LambdaOperations.valueOf("deleteAlias"));
+        assertEquals(LambdaOperations.getAlias, LambdaOperations.valueOf("getAlias"));
+        assertEquals(LambdaOperations.listAliases, LambdaOperations.valueOf("listAliases"));
     }
 
     @Test
@@ -61,5 +65,9 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.untagResource.toString(), "untagResource");
         assertEquals(LambdaOperations.publishVersion.toString(), "publishVersion");
         assertEquals(LambdaOperations.listVersions.toString(), "listVersions");
+        assertEquals(LambdaOperations.createAlias.toString(), "createAlias");
+        assertEquals(LambdaOperations.deleteAlias.toString(), "deleteAlias");
+        assertEquals(LambdaOperations.getAlias.toString(), "getAlias");
+        assertEquals(LambdaOperations.listAliases.toString(), "listAliases");
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
@@ -38,7 +39,7 @@ public class BeanThisAdviceWithIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:mytest").id(ROUTE_ID).bean(this, "hello", false).to("log:out");
+                from("direct:mytest").id(ROUTE_ID).bean(this, "hello", BeanScope.Prototype).to("log:out");
             }
 
             public void hello(final Exchange exchange) {

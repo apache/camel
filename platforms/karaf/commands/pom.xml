@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>karaf</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.karaf</groupId>
@@ -77,9 +77,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
+                <version>${project.version}</version>
                 <configuration>
                     <instructions>
                         <Import-Package>
@@ -94,6 +94,15 @@
                         <Karaf-Commands>*</Karaf-Commands>
                     </instructions>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

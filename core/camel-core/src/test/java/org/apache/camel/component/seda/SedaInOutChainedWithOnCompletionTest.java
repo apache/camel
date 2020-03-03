@@ -18,6 +18,7 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -47,7 +48,7 @@ public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
                 from("seda:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // should come in last
-                        exchange.addOnCompletion(new SynchronizationAdapter() {
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(Exchange exchange) {
                                 template.sendBody("mock:c", "onCustomCompletion");

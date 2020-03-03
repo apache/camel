@@ -1,0 +1,258 @@
+[[weka-component]]
+= Weka Component
+
+*Since Camel 3.1*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The Weka component provides access to the https://www.cs.waikato.ac.nz/ml/weka[(Weka Data Mining)] toolset.
+
+Weka is tried and tested open source machine learning software that can be accessed through a graphical user interface, standard terminal applications, or a Java API. It is widely used for teaching, research, and industrial applications, contains a plethora of built-in tools for standard machine learning tasks, and additionally gives transparent access to well-known toolboxes such as scikit-learn, R, and Deeplearning4j. 
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-weka</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------
+weka://cmd
+---------------------------------
+
+== Options
+
+// component options: START
+The Weka component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Weka endpoint is configured using URI syntax:
+
+----
+weka:command
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *command* | *Required* The command to use. The value can be one of: filter, model, read, write, push, pop, version |  | Command
+|===
+
+
+=== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *apply* (filter) | The filter spec (i.e. Name Options) |  | String
+| *build* (model) | The classifier spec (i.e. Name Options) |  | String
+| *dsname* (model) | The named dataset to train the classifier with |  | String
+| *folds* (model) | Number of folds to use for cross-validation | 10 | int
+| *loadFrom* (model) | Path to load the model from |  | String
+| *saveTo* (model) | Path to save the model to |  | String
+| *seed* (model) | An optional seed for the randomizer | 1 | int
+| *xval* (model) | Flag on whether to use cross-validation with the current dataset | false | boolean
+| *path* (write) | An in/out path for the read/write commands |  | String
+|===
+// endpoint options: END
+
+== Karaf support
+
+This component is not supported in Karaf
+
+== Message Headers
+
+
+== Samples
+
+=== Read + Filter + Write
+
+This first example shows how to read a CSV file with the file component and then pass it on to Weka. In Weka we apply a few filters to the data set and then pass it on to the file component for writing. 
+
+[source,java]
+----
+    @Override
+    public void configure() throws Exception {
+        
+        // Use the file component to read the CSV file
+        from("file:src/test/resources/data?fileName=sfny.csv")
+        
+        // Convert the 'in_sf' attribute to nominal
+        .to("weka:filter?apply=NumericToNominal -R first")
+        
+        // Move the 'in_sf' attribute to the end
+        .to("weka:filter?apply=Reorder -R 2-last,1")
+        
+        // Rename the relation
+        .to("weka:filter?apply=RenameRelation -modify sfny")
+        
+        // Use the file component to write the Arff file
+        .to("file:target/data?fileName=sfny.arff")
+    }
+----
+
+Here we do the same as above without use of the file component.
+
+[source,java]
+----
+    @Override
+    public void configure() throws Exception {
+        
+        // Initiate the route from somewhere
+        .from("...")
+        
+        // Use Weka to read the CSV file
+        .to("weka:read?path=src/test/resources/data/sfny.csv")
+        
+        // Convert the 'in_sf' attribute to nominal
+        .to("weka:filter?apply=NumericToNominal -R first")
+        
+        // Move the 'in_sf' attribute to the end
+        .to("weka:filter?apply=Reorder -R 2-last,1")
+        
+        // Rename the relation
+        .to("weka:filter?apply=RenameRelation -modify sfny")
+        
+        // Use Weka to write the Arff file
+        .to("weka:write?path=target/data/sfny.arff");
+    }
+----
+
+In this example, would the client provide the input path or some other supported type.
+Have a look at the  `WekaTypeConverters` for the set of supported input types.
+
+[source,java]
+----
+    @Override
+    public void configure() throws Exception {
+        
+        // Initiate the route from somewhere
+        .from("...")
+        
+        // Convert the 'in_sf' attribute to nominal
+        .to("weka:filter?apply=NumericToNominal -R first")
+        
+        // Move the 'in_sf' attribute to the end
+        .to("weka:filter?apply=Reorder -R 2-last,1")
+        
+        // Rename the relation
+        .to("weka:filter?apply=RenameRelation -modify sfny")
+        
+        // Use Weka to write the Arff file
+        .to("weka:write?path=target/data/sfny.arff");
+    }
+----
+
+=== Building a Model
+
+When building a model, we first choose the classification algorithm to use and then train it with some data. The result is the trained model that we can later use to classify unseen data.
+
+Here we train J48 with 10 fold cross-validation.  
+
+[source,java]
+----
+try (CamelContext camelctx = new DefaultCamelContext()) {
+    
+    camelctx.addRoutes(new RouteBuilder() {
+        
+        @Override
+        public void configure() throws Exception {
+            
+            // Use the file component to read the training data
+            from("file:src/test/resources/data?fileName=sfny-train.arff")
+            
+            // Build a J48 classifier using cross-validation with 10 folds
+            .to("weka:model?build=J48&xval=true&folds=10&seed=1")
+                    
+            // Persist the J48 model
+            .to("weka:model?saveTo=src/test/resources/data/sfny-j48.model")
+        }
+    });
+    camelctx.start();
+}
+----
+
+=== Predicting a Class
+
+Here we use a `Processor` to access functionality that is not directly available from endpoint URIs.
+
+In case you come here directly and this syntax looks a bit overwhelming, you might want to have a brief look at the section about https://tdiesler.github.io/nessus-weka/#_nessus_api_concepts[Nessus API Concepts].  
+
+[source,java]
+----
+try (CamelContext camelctx = new DefaultCamelContext()) {
+    
+    camelctx.addRoutes(new RouteBuilder() {
+        
+        @Override
+        public void configure() throws Exception {
+            
+            // Use the file component to read the test data
+            from("file:src/test/resources/data?fileName=sfny-test.arff")
+            
+            // Remove the class attribute 
+            .to("weka:filter?apply=Remove -R last")
+            
+            // Add the 'prediction' placeholder attribute 
+            .to("weka:filter?apply=Add -N predicted -T NOM -L 0,1")
+            
+            // Rename the relation 
+            .to("weka:filter?apply=RenameRelation -modify sfny-predicted")
+            
+            // Load an already existing model
+            .to("weka:model?loadFrom=src/test/resources/data/sfny-j48.model")
+            
+            // Use a processor to do the prediction
+            .process(new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    Dataset dataset = exchange.getMessage().getBody(Dataset.class);
+                    dataset.applyToInstances(new NominalPredictor());
+                }
+            })
+                    
+            // Write the data file
+            .to("weka:write?path=src/test/resources/data/sfny-predicted.arff")
+        }
+    });
+    camelctx.start();
+}
+----
+
+== Resources
+
+* https://www.cs.waikato.ac.nz/ml/weka/book.html[Practical Machine Learning Tools and Techniques,window=_blank]
+* https://www.cs.waikato.ac.nz/ml/weka/courses.html[Machine Learning Courses,window=_blank]
+* https://waikato.github.io/weka-wiki/documentation/[Weka Documentation,window=_blank]
+* https://tdiesler.github.io/nessus-weka[Nessus-Weka,window=_blank]
+
+include::camel-spring-boot::page$weka-starter.adoc[]

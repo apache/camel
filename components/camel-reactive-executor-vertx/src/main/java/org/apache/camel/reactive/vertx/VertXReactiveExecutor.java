@@ -17,8 +17,8 @@
 package org.apache.camel.reactive.vertx;
 
 import io.vertx.core.Vertx;
+import org.apache.camel.Experimental;
 import org.apache.camel.StaticService;
-import org.apache.camel.meta.Experimental;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -49,29 +49,20 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
     }
 
     @Override
-    public void schedule(Runnable runnable, String description) {
+    public void schedule(Runnable runnable) {
         LOG.trace("schedule: {}", runnable);
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
         vertx.nettyEventLoopGroup().execute(runnable);
     }
 
     @Override
-    public void scheduleMain(Runnable runnable, String description) {
+    public void scheduleMain(Runnable runnable) {
         LOG.trace("scheduleMain: {}", runnable);
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
         vertx.nettyEventLoopGroup().execute(runnable);
     }
 
     @Override
-    public void scheduleSync(Runnable runnable, String description) {
+    public void scheduleSync(Runnable runnable) {
         LOG.trace("scheduleSync: {}", runnable);
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
         final Runnable task = runnable;
         vertx.executeBlocking(future -> {
             task.run();
@@ -83,19 +74,6 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
     public boolean executeFromQueue() {
         // not supported so return false
         return false;
-    }
-
-    private static Runnable describe(Runnable runnable, String description) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                runnable.run();
-            }
-            @Override
-            public String toString() {
-                return description;
-            }
-        };
     }
 
     @Override
@@ -113,5 +91,10 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
             LOG.debug("Stopping VertX");
             vertx.close();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "camel-reactive-executor-vertx";
     }
 }

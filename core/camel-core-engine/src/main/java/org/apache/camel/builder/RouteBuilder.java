@@ -29,6 +29,9 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.ValueHolder;
+import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -41,8 +44,15 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.reifier.transformer.TransformerReifier;
+import org.apache.camel.reifier.validator.ValidatorReifier;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.ThrowingConsumer;
@@ -61,6 +71,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
+    private final List<RouteBuilderLifecycleStrategy> lifecycleInterceptors = new ArrayList<>();
 
     public RouteBuilder() {
         this(null);
@@ -86,7 +97,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     /**
      * Add routes to a context using a lambda expression. It can be used as
      * following:
-     * 
+     *
      * <pre>
      * RouteBuilder.addRoutes(context, rb ->
      *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
@@ -199,7 +210,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Create a new {@code TransformerBuilder}.
-     * 
+     *
      * @return the builder
      */
     public TransformerBuilder transformer() {
@@ -210,7 +221,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Create a new {@code ValidatorBuilder}.
-     * 
+     *
      * @return the builder
      */
     public ValidatorBuilder validator() {
@@ -459,6 +470,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
     }
 
+    /**
+     * Adds the given {@link RouteBuilderLifecycleStrategy} to be used.
+     */
+    public void addLifecycleInterceptor(RouteBuilderLifecycleStrategy interceptor) {
+        lifecycleInterceptors.add(interceptor);
+    }
+
+    /**
+     * Adds the given {@link RouteBuilderLifecycleStrategy}.
+     */
+    public void removeLifecycleInterceptor(RouteBuilderLifecycleStrategy interceptor) {
+        lifecycleInterceptors.remove(interceptor);
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
     protected void checkInitialized() throws Exception {
@@ -468,11 +493,20 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
                 setErrorHandlerBuilder((ErrorHandlerBuilder)camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
             }
+
+            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+                interceptor.beforeConfigure(this);
+            }
+
             configure();
             // mark all route definitions as custom prepared because
             // a route builder prepares the route definitions correctly already
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
                 route.markPrepared();
+            }
+
+            for (RouteBuilderLifecycleStrategy interceptor : lifecycleInterceptors) {
+                interceptor.afterConfigure(this);
             }
         }
     }
@@ -543,6 +577,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (TransformerBuilder tdb : transformerBuilders) {
             tdb.configure(camelContext);
         }
+
+        // create and register transformers on transformer registry
+        for (TransformerDefinition def : camelContext.getExtension(Model.class).getTransformers()) {
+            Transformer transformer = TransformerReifier.reifier(camelContext, def).createTransformer();
+            camelContext.getTransformerRegistry().put(createTransformerKey(def), transformer);
+        }
+    }
+
+    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
+        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
     protected void populateValidators() {
@@ -553,6 +597,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (ValidatorBuilder vb : validatorBuilders) {
             vb.configure(camelContext);
         }
+
+        // create and register validators on validator registry
+        for (ValidatorDefinition def : camelContext.getExtension(Model.class).getValidators()) {
+            Validator validator = ValidatorReifier.reifier(camelContext, def).createValidator();
+            camelContext.getValidatorRegistry().put(createValidatorKey(def), validator);
+        }
+    }
+
+    private static ValidatorKey createValidatorKey(ValidatorDefinition def) {
+        return new ValidatorKey(new DataType(def.getType()));
     }
 
     public RestsDefinition getRestCollection() {

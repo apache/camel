@@ -43,32 +43,39 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private Boolean parallelProcessing;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String parallelProcessing;
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
-    private Boolean strategyMethodAllowNull;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String strategyMethodAllowNull;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
-    private Boolean streaming;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String streaming;
     @XmlAttribute
-    private Boolean stopOnException;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String stopOnException;
     @XmlAttribute
-    @Metadata(defaultValue = "0")
-    private Long timeout;
+    @Metadata(defaultValue = "0", javaType = "java.lang.Long")
+    private String timeout;
     @XmlAttribute
     private String onPrepareRef;
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
-    private Boolean shareUnitOfWork;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String shareUnitOfWork;
     @XmlAttribute
-    private Boolean parallelAggregate;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String parallelAggregate;
     @XmlAttribute
-    private Boolean stopOnAggregateException;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String stopOnAggregateException;
 
     public SplitDefinition() {
     }
@@ -154,7 +161,31 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition aggregationStrategyMethodAllowNull() {
-        setStrategyMethodAllowNull(true);
+        return aggregationStrategyMethodAllowNull(true);
+    }
+
+    /**
+     * If this option is false then the aggregate method is not used if there
+     * was no data to enrich. If this option is true then null values is used as
+     * the oldExchange (when no data to enrich), when using POJOs as the
+     * AggregationStrategy
+     *
+     * @return the builder
+     */
+    public SplitDefinition aggregationStrategyMethodAllowNull(boolean aggregationStrategyMethodAllowNull) {
+        return aggregationStrategyMethodAllowNull(Boolean.toString(aggregationStrategyMethodAllowNull));
+    }
+
+    /**
+     * If this option is false then the aggregate method is not used if there
+     * was no data to enrich. If this option is true then null values is used as
+     * the oldExchange (when no data to enrich), when using POJOs as the
+     * AggregationStrategy
+     *
+     * @return the builder
+     */
+    public SplitDefinition aggregationStrategyMethodAllowNull(String aggregationStrategyMethodAllowNull) {
+        setStrategyMethodAllowNull(aggregationStrategyMethodAllowNull);
         return this;
     }
 
@@ -167,8 +198,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition parallelProcessing() {
-        setParallelProcessing(true);
-        return this;
+        return parallelProcessing(true);
     }
 
     /**
@@ -180,6 +210,18 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition parallelProcessing(boolean parallelProcessing) {
+        return parallelProcessing(Boolean.toString(parallelProcessing));
+    }
+
+    /**
+     * If enabled then processing each splitted messages occurs concurrently.
+     * Note the caller thread will still wait until all messages has been fully
+     * processed, before it continues. Its only processing the sub messages from
+     * the splitter which happens concurrently.
+     *
+     * @return the builder
+     */
+    public SplitDefinition parallelProcessing(String parallelProcessing) {
         setParallelProcessing(parallelProcessing);
         return this;
     }
@@ -195,7 +237,35 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition parallelAggregate() {
-        setParallelAggregate(true);
+        return parallelAggregate(true);
+    }
+
+    /**
+     * If enabled then the aggregate method on AggregationStrategy can be called
+     * concurrently. Notice that this would require the implementation of
+     * AggregationStrategy to be implemented as thread-safe. By default this is
+     * false meaning that Camel synchronizes the call to the aggregate method.
+     * Though in some use-cases this can be used to archive higher performance
+     * when the AggregationStrategy is implemented as thread-safe.
+     *
+     * @return the builder
+     */
+    public SplitDefinition parallelAggregate(boolean parallelAggregate) {
+        return parallelAggregate(Boolean.toString(parallelAggregate));
+    }
+
+    /**
+     * If enabled then the aggregate method on AggregationStrategy can be called
+     * concurrently. Notice that this would require the implementation of
+     * AggregationStrategy to be implemented as thread-safe. By default this is
+     * false meaning that Camel synchronizes the call to the aggregate method.
+     * Though in some use-cases this can be used to archive higher performance
+     * when the AggregationStrategy is implemented as thread-safe.
+     *
+     * @return the builder
+     */
+    public SplitDefinition parallelAggregate(String parallelAggregate) {
+        setParallelAggregate(parallelAggregate);
         return this;
     }
 
@@ -210,7 +280,35 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition stopOnAggregateException() {
-        setStopOnAggregateException(true);
+        return stopOnAggregateException(true);
+    }
+
+    /**
+     * If enabled, unwind exceptions occurring at aggregation time to the error
+     * handler when parallelProcessing is used. Currently, aggregation time
+     * exceptions do not stop the route processing when parallelProcessing is
+     * used. Enabling this option allows to work around this behavior. The
+     * default value is <code>false</code> for the sake of backward
+     * compatibility.
+     *
+     * @return the builder
+     */
+    public SplitDefinition stopOnAggregateException(boolean stopOnAggregateException) {
+        return stopOnAggregateException(Boolean.toString(stopOnAggregateException));
+    }
+
+    /**
+     * If enabled, unwind exceptions occurring at aggregation time to the error
+     * handler when parallelProcessing is used. Currently, aggregation time
+     * exceptions do not stop the route processing when parallelProcessing is
+     * used. Enabling this option allows to work around this behavior. The
+     * default value is <code>false</code> for the sake of backward
+     * compatibility.
+     *
+     * @return the builder
+     */
+    public SplitDefinition stopOnAggregateException(String stopOnAggregateException) {
+        setStopOnAggregateException(stopOnAggregateException);
         return this;
     }
 
@@ -235,7 +333,55 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition streaming() {
-        setStreaming(true);
+        return streaming(true);
+    }
+
+    /**
+     * When in streaming mode, then the splitter splits the original message
+     * on-demand, and each splitted message is processed one by one. This
+     * reduces memory usage as the splitter do not split all the messages first,
+     * but then we do not know the total size, and therefore the
+     * {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
+     * <p/>
+     * In non-streaming mode (default) the splitter will split each message
+     * first, to know the total size, and then process each message one by one.
+     * This requires to keep all the splitted messages in memory and therefore
+     * requires more memory. The total size is provided in the
+     * {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
+     * <p/>
+     * The streaming mode also affects the aggregation behavior. If enabled then
+     * Camel will process replies out-of-order, eg in the order they come back.
+     * If disabled, Camel will process replies in the same order as the messages
+     * was splitted.
+     *
+     * @return the builder
+     */
+    public SplitDefinition streaming(boolean streaming) {
+        return streaming(Boolean.toString(streaming));
+    }
+
+    /**
+     * When in streaming mode, then the splitter splits the original message
+     * on-demand, and each splitted message is processed one by one. This
+     * reduces memory usage as the splitter do not split all the messages first,
+     * but then we do not know the total size, and therefore the
+     * {@link org.apache.camel.Exchange#SPLIT_SIZE} is empty.
+     * <p/>
+     * In non-streaming mode (default) the splitter will split each message
+     * first, to know the total size, and then process each message one by one.
+     * This requires to keep all the splitted messages in memory and therefore
+     * requires more memory. The total size is provided in the
+     * {@link org.apache.camel.Exchange#SPLIT_SIZE} header.
+     * <p/>
+     * The streaming mode also affects the aggregation behavior. If enabled then
+     * Camel will process replies out-of-order, eg in the order they come back.
+     * If disabled, Camel will process replies in the same order as the messages
+     * was splitted.
+     *
+     * @return the builder
+     */
+    public SplitDefinition streaming(String streaming) {
+        setStreaming(streaming);
         return this;
     }
 
@@ -256,7 +402,47 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition stopOnException() {
-        setStopOnException(true);
+        return stopOnException(true);
+    }
+
+    /**
+     * Will now stop further processing if an exception or failure occurred
+     * during processing of an {@link org.apache.camel.Exchange} and the caused
+     * exception will be thrown.
+     * <p/>
+     * Will also stop if processing the exchange failed (has a fault message) or
+     * an exception was thrown and handled by the error handler (such as using
+     * onException). In all situations the splitter will stop further
+     * processing. This is the same behavior as in pipeline, which is used by
+     * the routing engine.
+     * <p/>
+     * The default behavior is to <b>not</b> stop but continue processing till
+     * the end
+     *
+     * @return the builder
+     */
+    public SplitDefinition stopOnException(boolean stopOnException) {
+        return stopOnException(Boolean.toString(stopOnException));
+    }
+
+    /**
+     * Will now stop further processing if an exception or failure occurred
+     * during processing of an {@link org.apache.camel.Exchange} and the caused
+     * exception will be thrown.
+     * <p/>
+     * Will also stop if processing the exchange failed (has a fault message) or
+     * an exception was thrown and handled by the error handler (such as using
+     * onException). In all situations the splitter will stop further
+     * processing. This is the same behavior as in pipeline, which is used by
+     * the routing engine.
+     * <p/>
+     * The default behavior is to <b>not</b> stop but continue processing till
+     * the end
+     *
+     * @return the builder
+     */
+    public SplitDefinition stopOnException(String stopOnException) {
+        setStopOnException(stopOnException);
         return this;
     }
 
@@ -326,6 +512,24 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder
      */
     public SplitDefinition timeout(long timeout) {
+        return timeout(Long.toString(timeout));
+    }
+
+    /**
+     * Sets a total timeout specified in millis, when using parallel processing.
+     * If the Splitter hasn't been able to split and process all the sub
+     * messages within the given timeframe, then the timeout triggers and the
+     * Splitter breaks out and continues. Notice if you provide a
+     * TimeoutAwareAggregationStrategy then the timeout method is invoked before
+     * breaking out. If the timeout is reached with running tasks still
+     * remaining, certain tasks for which it is difficult for Camel to shut down
+     * in a graceful manner may continue to run. So use this option with a bit
+     * of care.
+     *
+     * @param timeout timeout in millis
+     * @return the builder
+     */
+    public SplitDefinition timeout(String timeout) {
         setTimeout(timeout);
         return this;
     }
@@ -339,7 +543,31 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * @return the builder.
      */
     public SplitDefinition shareUnitOfWork() {
-        setShareUnitOfWork(true);
+        return shareUnitOfWork(true);
+    }
+
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and
+     * each of the sub messages. Splitter will by default not share unit of work
+     * between the parent exchange and each splitted exchange. This means each
+     * splitted exchange has its own individual unit of work.
+     *
+     * @return the builder.
+     */
+    public SplitDefinition shareUnitOfWork(boolean shareUnitOfWork) {
+        return shareUnitOfWork(Boolean.toString(shareUnitOfWork));
+    }
+
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and
+     * each of the sub messages. Splitter will by default not share unit of work
+     * between the parent exchange and each splitted exchange. This means each
+     * splitted exchange has its own individual unit of work.
+     *
+     * @return the builder.
+     */
+    public SplitDefinition shareUnitOfWork(String shareUnitOfWork) {
+        setShareUnitOfWork(shareUnitOfWork);
         return this;
     }
 
@@ -370,48 +598,44 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public Boolean getParallelProcessing() {
+    public String getParallelProcessing() {
         return parallelProcessing;
     }
 
-    public void setParallelProcessing(Boolean parallelProcessing) {
+    public void setParallelProcessing(String parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 
-    public Boolean getStreaming() {
+    public String getStreaming() {
         return streaming;
     }
 
-    public void setStreaming(Boolean streaming) {
+    public void setStreaming(String streaming) {
         this.streaming = streaming;
     }
 
-    public Boolean getParallelAggregate() {
+    public String getParallelAggregate() {
         return parallelAggregate;
     }
 
-    public void setParallelAggregate(Boolean parallelAggregate) {
+    public void setParallelAggregate(String parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
     }
 
-    public Boolean getStopOnAggregateException() {
+    public String getStopOnAggregateException() {
         return this.stopOnAggregateException;
     }
 
-    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+    public void setStopOnAggregateException(String stopOnAggregateException) {
         this.stopOnAggregateException = stopOnAggregateException;
     }
 
-    public Boolean getStopOnException() {
+    public String getStopOnException() {
         return stopOnException;
     }
 
-    public void setStopOnException(Boolean stopOnException) {
+    public void setStopOnException(String stopOnException) {
         this.stopOnException = stopOnException;
-    }
-
-    public Boolean isStopOnException() {
-        return stopOnException != null && stopOnException;
     }
 
     @Override
@@ -451,7 +675,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.strategyMethodName = strategyMethodName;
     }
 
-    public Boolean getStrategyMethodAllowNull() {
+    public String getStrategyMethodAllowNull() {
         return strategyMethodAllowNull;
     }
 
@@ -461,7 +685,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * the oldExchange (when no data to enrich), when using POJOs as the
      * AggregationStrategy
      */
-    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+    public void setStrategyMethodAllowNull(String strategyMethodAllowNull) {
         this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
@@ -475,11 +699,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.executorServiceRef = executorServiceRef;
     }
 
-    public Long getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(Long timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -499,11 +723,11 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.onPrepare = onPrepare;
     }
 
-    public Boolean getShareUnitOfWork() {
+    public String getShareUnitOfWork() {
         return shareUnitOfWork;
     }
 
-    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+    public void setShareUnitOfWork(String shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
     }
 

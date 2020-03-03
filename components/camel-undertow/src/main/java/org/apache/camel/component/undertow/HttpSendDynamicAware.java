@@ -19,6 +19,6 @@ package org.apache.camel.component.undertow;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("undertow")
-public class HttpSendDynamicAware extends org.apache.camel.http.common.HttpSendDynamicAware {
+public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {
 
 }

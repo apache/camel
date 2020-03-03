@@ -29,16 +29,17 @@ public abstract class DefaultConfigurationProperties<T> {
     private int durationMaxSeconds;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
-    private int shutdownTimeout = 300;
+    private int shutdownTimeout = 45;
     private boolean shutdownSuppressLoggingOnTimeout;
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
+    private boolean inflightRepositoryBrowseEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
     private int producerTemplateCacheSize = 1000;
     private int consumerTemplateCacheSize = 1000;
-    private boolean loadTypeConverters = true;
+    private boolean loadTypeConverters;
     private int logDebugMaxChars;
     private boolean streamCachingEnabled;
     private String streamCachingSpoolDirectory;
@@ -53,17 +54,19 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean backlogTracing;
     private boolean tracing;
     private String tracingPattern;
-    private boolean messageHistory = true;
+    private boolean messageHistory;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
+    private boolean caseInsensitiveHeaders = true;
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
     private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
+    private boolean allowAddingNewRoutes = true;
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxCreateConnector;
@@ -190,9 +193,24 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether to log information about the inflight Exchanges which are still running
      * during a shutdown which didn't complete without the given timeout.
+     *
+     * This requires to enable the option inflightRepositoryBrowseEnabled.
      */
     public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
+    }
+
+    public boolean isInflightRepositoryBrowseEnabled() {
+        return inflightRepositoryBrowseEnabled;
+    }
+
+    /**
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
+     *
+     * This is by default disabled as there is a very slight performance overhead when enabled.
+     */
+    public void setInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
     }
 
     public String getFileConfigurations() {
@@ -446,7 +464,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message history is enabled or not.
      *
-     * Default is true.
+     * Default is false.
      */
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
@@ -509,6 +527,24 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public boolean isCaseInsensitiveHeaders() {
+        return caseInsensitiveHeaders;
+    }
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as content-type and Content-Type are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     *
+     * Default is true.
+     */
+    public void setCaseInsensitiveHeaders(boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
     }
 
     public boolean isEndpointRuntimeStatisticsEnabled() {
@@ -595,6 +631,30 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setUseBreadcrumb(boolean useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public boolean isAllowAddingNewRoutes() {
+        return allowAddingNewRoutes;
+    }
+
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
+        this.allowAddingNewRoutes = allowAddingNewRoutes;
     }
 
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
@@ -937,9 +997,21 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether to log information about the inflight Exchanges which are still running
      * during a shutdown which didn't complete without the given timeout.
+     *
+     * This requires to enable the option inflightRepositoryExchangeEnabled.
      */
     public T withShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether the inflight repository should allow browsing each inflight exchange.
+     *
+     * This is by default disabled as there is a very slight performance overhead when enabled.
+     */
+    public T withInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
+        this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
         return (T) this;
     }
 
@@ -1122,7 +1194,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether message history is enabled or not.
      *
-     * Default is true.
+     * Default is false.
      */
     public T withMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
@@ -1173,6 +1245,21 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+        return (T) this;
+    }
+
+    /**
+     * Whether to use case sensitive or insensitive headers.
+     *
+     * Important: When using case sensitive (this is set to false).
+     * Then the map is case sensitive which means headers such as content-type and Content-Type are
+     * two different keys which can be a problem for some protocols such as HTTP based, which rely on case insensitive headers.
+     * However case sensitive implementations can yield faster performance. Therefore use case sensitive implementation with care.
+     *
+     * Default is true.
+     */
+    public T withCaseInsensitiveHeaders(boolean caseInsensitiveHeaders) {
+        this.caseInsensitiveHeaders = caseInsensitiveHeaders;
         return (T) this;
     }
 
@@ -1232,6 +1319,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withUseDataType(boolean useDataType) {
         this.useDataType = useDataType;
+        return (T) this;
+    }
+
+    /**
+     * Whether its allowed to add new routes after Camel has been started.
+     * This is enabled by default.
+     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
+     * <p/>
+     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
+     * As this affects the entire JVM where Camel JARs are on the classpath.
+     */
+    public T withAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
+        this.allowAddingNewRoutes = allowAddingNewRoutes;
         return (T) this;
     }
 
@@ -1437,6 +1537,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * You can turn this off by setting the value to false.
      *
      * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * By default classpath is assumed if no prefix is specified.
+     *
      * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
      *
      * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
@@ -1455,6 +1557,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * You can turn this off by setting the value to false.
      *
      * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * By default classpath is assumed if no prefix is specified.
+     *
      * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
      *
      * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where

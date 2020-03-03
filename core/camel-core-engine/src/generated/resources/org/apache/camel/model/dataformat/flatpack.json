@@ -1,0 +1,26 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "flatpack",
+    "title": "Flatpack",
+    "description": "The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).",
+    "firstVersion": "2.1.0",
+    "javaType": "org.apache.camel.model.dataformat.FlatpackDataFormat",
+    "label": "dataformat,transformation,csv",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "definition": { "kind": "attribute", "displayName": "Definition", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap." },
+    "fixed": { "kind": "attribute", "displayName": "Fixed", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Delimited or fixed. Is by default false = delimited" },
+    "ignoreFirstRecord": { "kind": "attribute", "displayName": "Ignore First Record", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether the first line is ignored for delimited files (for the column headers). Is by default true." },
+    "textQualifier": { "kind": "attribute", "displayName": "Text Qualifier", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "If the text is qualified with a character. Uses quote character by default." },
+    "delimiter": { "kind": "attribute", "displayName": "Delimiter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": ",", "description": "The delimiter char (could be ; , or similar)" },
+    "allowShortLines": { "kind": "attribute", "displayName": "Allow Short Lines", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Allows for lines to be shorter than expected and ignores the extra characters" },
+    "ignoreExtraColumns": { "kind": "attribute", "displayName": "Ignore Extra Columns", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Allows for lines to be longer than expected and ignores the extra characters." },
+    "parserFactoryRef": { "kind": "attribute", "displayName": "Parser Factory Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "References to a custom parser factory to lookup in the registry" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

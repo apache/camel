@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "jasypt",
+    "title": "Jasypt",
+    "description": "Security using Jasypt",
+    "deprecated": false,
+    "firstVersion": "2.5.0",
+    "label": "security",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jasypt",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

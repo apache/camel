@@ -62,7 +62,6 @@ import org.apache.camel.management.mbean.ManagedInflightRepository;
 import org.apache.camel.management.mbean.ManagedProducerCache;
 import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
-import org.apache.camel.management.mbean.ManagedRuntimeCamelCatalog;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
@@ -82,7 +81,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ConsumerCache;
@@ -112,6 +110,8 @@ import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default JMX managed lifecycle strategy that registered objects using the configured
@@ -120,6 +120,8 @@ import org.apache.camel.util.ObjectHelper;
  * @see org.apache.camel.spi.ManagementStrategy
  */
 public class JmxManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmxManagementLifecycleStrategy.class);
 
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
@@ -198,7 +200,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                         throw new VetoCamelContextStartException("CamelContext (" + context.getName() + ") with ObjectName[" + on + "] is already registered."
                             + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.", context);
                     } else {
-                        log.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
+                        LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
                             + " due to clash with an existing name already registered in MBeanServer.");
                     }
                 }
@@ -241,7 +243,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
             manageObject(me);
         } catch (Exception e) {
-            log.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
+            LOG.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
         }
 
         try {
@@ -252,7 +254,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
             manageObject(me);
         } catch (Exception e) {
-            log.warn("Could not register RouteController MBean. This exception will be ignored.", e);
+            LOG.warn("Could not register RouteController MBean. This exception will be ignored.", e);
         }
     }
 
@@ -270,8 +272,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             newName = strategy.getNextName();
             ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManagedName(on);
-            if (log.isTraceEnabled()) {
-                log.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }
         }
         return newName;
@@ -291,7 +293,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return;
         }
 
-        log.debug("Registering {} pre registered services", preServices.size());
+        LOG.debug("Registering {} pre registered services", preServices.size());
         for (PreRegisterService pre : preServices) {
             if (pre.getComponent() != null) {
                 onComponentAdd(pre.getName(), pre.getComponent());
@@ -320,7 +322,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 unmanageObject(mc);
             }
         } catch (Exception e) {
-            log.warn("Could not unregister RouteController MBean", e);
+            LOG.warn("Could not unregister RouteController MBean", e);
         }
 
         try {
@@ -330,7 +332,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 unmanageObject(mc);
             }
         } catch (Exception e) {
-            log.warn("Could not unregister CamelHealth MBean", e);
+            LOG.warn("Could not unregister CamelHealth MBean", e);
         }
 
         try {
@@ -340,7 +342,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 unmanageObject(mc);
             }
         } catch (Exception e) {
-            log.warn("Could not unregister CamelContext MBean", e);
+            LOG.warn("Could not unregister CamelContext MBean", e);
         }
 
         camelContextMBean = null;
@@ -360,7 +362,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             manageObject(mc);
         } catch (Exception e) {
-            log.warn("Could not register Component MBean", e);
+            LOG.warn("Could not register Component MBean", e);
         }
     }
 
@@ -374,7 +376,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             unmanageObject(mc);
         } catch (Exception e) {
-            log.warn("Could not unregister Component MBean", e);
+            LOG.warn("Could not unregister Component MBean", e);
         }
     }
 
@@ -408,7 +410,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             }
             manageObject(me);
         } catch (Exception e) {
-            log.warn("Could not register Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            LOG.warn("Could not register Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -423,7 +425,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
             unmanageObject(me);
         } catch (Exception e) {
-            log.warn("Could not unregister Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            LOG.warn("Could not unregister Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -453,14 +455,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(managedObject)) {
-            log.trace("The service is already managed: {}", service);
+            LOG.trace("The service is already managed: {}", service);
             return;
         }
 
         try {
             manageObject(managedObject);
         } catch (Exception e) {
-            log.warn("Could not register service: " + service + " as Service MBean.", e);
+            LOG.warn("Could not register service: " + service + " as Service MBean.", e);
         }
     }
 
@@ -476,7 +478,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             try {
                 unmanageObject(managedObject);
             } catch (Exception e) {
-                log.warn("Could not unregister service: " + service + " as Service MBean.", e);
+                LOG.warn("Could not unregister service: " + service + " as Service MBean.", e);
             }
         }
     }
@@ -558,8 +560,6 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedTransformerRegistry(context, (TransformerRegistry)service);
         } else if (service instanceof ValidatorRegistry) {
             answer = new ManagedValidatorRegistry(context, (ValidatorRegistry)service);
-        } else if (service instanceof RuntimeCamelCatalog) {
-            answer = new ManagedRuntimeCamelCatalog(context, (RuntimeCamelCatalog) service);
         } else if (service instanceof CamelClusterService) {
             answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, (CamelClusterService)service);
         } else if (service != null) {
@@ -625,7 +625,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
             // skip already managed routes, for example if the route has been restarted
             if (getManagementStrategy().isManaged(mr)) {
-                log.trace("The route is already managed: {}", route);
+                LOG.trace("The route is already managed: {}", route);
                 continue;
             }
 
@@ -651,9 +651,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             try {
                 manageObject(mr);
             } catch (JMException e) {
-                log.warn("Could not register Route MBean", e);
+                LOG.warn("Could not register Route MBean", e);
             } catch (Exception e) {
-                log.warn("Could not create Route MBean", e);
+                LOG.warn("Could not create Route MBean", e);
             }
         }
     }
@@ -670,14 +670,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
             // skip unmanaged routes
             if (!getManagementStrategy().isManaged(mr)) {
-                log.trace("The route is not managed: {}", route);
+                LOG.trace("The route is not managed: {}", route);
                 continue;
             }
 
             try {
                 unmanageObject(mr);
             } catch (Exception e) {
-                log.warn("Could not unregister Route MBean", e);
+                LOG.warn("Could not unregister Route MBean", e);
             }
 
             // remove from known routes ids, as the route has been removed
@@ -700,14 +700,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(me)) {
-            log.trace("The error handler builder is already managed: {}", errorHandlerBuilder);
+            LOG.trace("The error handler builder is already managed: {}", errorHandlerBuilder);
             return;
         }
 
         try {
             manageObject(me);
         } catch (Exception e) {
-            log.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandler MBean.", e);
+            LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandler MBean.", e);
         }
     }
 
@@ -722,7 +722,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             try {
                 unmanageObject(me);
             } catch (Exception e) {
-                log.warn("Could not unregister error handler: " + me + " as ErrorHandler MBean.", e);
+                LOG.warn("Could not unregister error handler: " + me + " as ErrorHandler MBean.", e);
             }
         }
     }
@@ -740,7 +740,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(mtp)) {
-            log.trace("The thread pool is already managed: {}", threadPool);
+            LOG.trace("The thread pool is already managed: {}", threadPool);
             return;
         }
 
@@ -750,7 +750,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread pool
             managedThreadPools.put(threadPool, mtp);
         } catch (Exception e) {
-            log.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
+            LOG.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
         }
     }
 
@@ -765,14 +765,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         if (mtp != null) {
             // skip unmanaged routes
             if (!getManagementStrategy().isManaged(mtp)) {
-                log.trace("The thread pool is not managed: {}", threadPool);
+                LOG.trace("The thread pool is not managed: {}", threadPool);
                 return;
             }
 
             try {
                 unmanageObject(mtp);
             } catch (Exception e) {
-                log.warn("Could not unregister ThreadPool MBean", e);
+                LOG.warn("Could not unregister ThreadPool MBean", e);
             }
         }
     }
@@ -942,7 +942,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             return false;
         }
 
-        log.trace("Checking whether to register {} from route: {}", service, route);
+        LOG.trace("Checking whether to register {} from route: {}", service, route);
 
         ManagementAgent agent = getManagementStrategy().getManagementAgent();
         if (agent == null) {
@@ -997,7 +997,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                     && camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
             boolean disabled = !load || camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel() == ManagementStatisticsLevel.Off;
 
-            log.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
+            LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {
                 // must use 1 sec interval as the load statistics is based on 1 sec calculations
                 loadTimer.setInterval(1000);

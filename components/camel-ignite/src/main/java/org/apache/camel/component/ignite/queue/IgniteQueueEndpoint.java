@@ -82,8 +82,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the queue name.
-     * 
-     * @return
      */
     public String getName() {
         return name;
@@ -91,8 +89,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The queue name.
-     * 
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -100,8 +96,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the queue operation to perform.
-     * 
-     * @return
      */
     public IgniteQueueOperation getOperation() {
         return operation;
@@ -111,8 +105,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
      * The operation to invoke on the Ignite Queue.
      * Superseded by the IgniteConstants.IGNITE_QUEUE_OPERATION header in the IN message.
      * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY, DRAIN, ELEMENT, PEEK, OFFER, POLL, TAKE, PUT.
-     * 
-     * @param operation
      */
     public void setOperation(IgniteQueueOperation operation) {
         this.operation = operation;
@@ -120,8 +112,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the queue capacity. Default: non-bounded.
-     * 
-     * @return
      */
     public int getCapacity() {
         return capacity;
@@ -129,8 +119,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The queue capacity. Default: non-bounded.
-     * 
-     * @param capacity
      */
     public void setCapacity(int capacity) {
         this.capacity = capacity;
@@ -138,8 +126,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the collection configuration. Default: empty configuration.
-     * 
-     * @return
      */
     public CollectionConfiguration getConfiguration() {
         return configuration;
@@ -149,8 +135,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
      * The collection configuration. Default: empty configuration.
      * <p>
      * You can also conveniently set inner properties by using <tt>configuration.xyz=123</tt> options.
-     * 
-     * @param configuration
      */
     public void setConfiguration(CollectionConfiguration configuration) {
         this.configuration = configuration;
@@ -158,8 +142,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the queue timeout in milliseconds. Default: no timeout.
-     * 
-     * @return
      */
     public Long getTimeoutMillis() {
         return timeoutMillis;
@@ -167,8 +149,6 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The queue timeout in milliseconds. Default: no timeout.
-     * 
-     * @param timeoutMillis
      */
     public void setTimeoutMillis(Long timeoutMillis) {
         this.timeoutMillis = timeoutMillis;

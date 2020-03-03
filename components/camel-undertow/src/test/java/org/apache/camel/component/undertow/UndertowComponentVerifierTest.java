@@ -96,7 +96,7 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}")
-                    .process(e -> e.getOut().setBody("ok"));
+                    .process(e -> e.getMessage().setBody("ok"));
             }
         };
     }

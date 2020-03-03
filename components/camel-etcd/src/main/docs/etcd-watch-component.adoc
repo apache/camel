@@ -1,0 +1,89 @@
+[[etcd-watch-component]]
+= Etcd Watch Component
+
+*Since Camel 2.18*
+
+// HEADER START
+*Only consumer is supported*
+// HEADER END
+
+*Since Camel 2.18*
+
+
+The camel Etcd component allows you to work with Etcd, a distributed reliable key-value store.
+
+== URI Format
+
+[source,java]
+----------------------------
+etcd-watch:path[?options]
+----------------------------
+
+== URI Options
+
+// component options: START
+The Etcd Watch component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *configuration* (consumer) | Component configuration. |  | EtcdConfiguration
+| *recursive* (consumer) | To apply an action recursively. | false | boolean
+| *servicePath* (consumer) | The path to look for for service discovery | /services/ | String
+| *timeout* (consumer) | To set the maximum time an action could take to complete. |  | Long
+| *uris* (common) | To set the URIs the client connects. | http://localhost:2379,http://localhost:4001 | String
+| *sendEmptyExchangeOnTimeout* (consumer) | To send an empty message in case of timeout watching for a key. | false | boolean
+| *fromIndex* (consumer) | The index to watch from | 0 | long
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *password* (security) | The password to use for basic authentication. |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *userName* (security) | The user name to use for basic authentication. |  | String
+|===
+// component options: END
+
+// endpoint options: START
+The Etcd Watch endpoint is configured using URI syntax:
+
+----
+etcd-watch:path
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *path* | The path the endpoint refers to |  | String
+|===
+
+
+=== Query Parameters (14 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *recursive* (consumer) | To apply an action recursively. | false | boolean
+| *servicePath* (consumer) | The path to look for for service discovery | /services/ | String
+| *uris* (common) | To set the URIs the client connects. | http://localhost:2379,http://localhost:4001 | String
+| *sendEmptyExchangeOnTimeout* (consumer) | To send an empty message in case of timeout watching for a key. | false | boolean
+| *timeout* (consumer) | To set the maximum time an action could take to complete. |  | Long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *fromIndex* (consumer) | The index to watch from | 0 | long
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | The password to use for basic authentication. |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *userName* (security) | The user name to use for basic authentication. |  | String
+|===
+// endpoint options: END
+include::camel-spring-boot::page$etcd-starter.adoc[]

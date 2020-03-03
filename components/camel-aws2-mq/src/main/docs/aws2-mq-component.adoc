@@ -1,0 +1,184 @@
+[[aws2-mq-component]]
+= AWS 2 MQ Component
+
+*Since Camel 3.1*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The MQ component supports create, run, start, stop and terminate
+https://aws.amazon.com/amazon-mq/[AWS MQ] instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon MQ. More information is available at
+https://aws.amazon.com/amazon-mq/[Amazon MQ].
+
+[NOTE]
+====
+The AWS2 MQ component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-mq://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 MQ component supports 11 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonMqClient* (producer) | To use a existing configured AmazonMQClient as client |  | MqClient
+| *configuration* (producer) | Component configuration |  | MQ2Configuration
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. It can be listBrokers,createBroker,deleteBroker. The value can be one of: listBrokers, createBroker, deleteBroker, rebootBroker, updateBroker, describeBroker |  | MQ2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the MQ client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the MQ client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the MQ client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which MQ client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS 2 MQ endpoint is configured using URI syntax:
+
+----
+aws2-mq:label
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+=== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonMqClient* (producer) | To use a existing configured AmazonMQClient as client |  | MqClient
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. It can be listBrokers,createBroker,deleteBroker. The value can be one of: listBrokers, createBroker, deleteBroker, rebootBroker, updateBroker, describeBroker |  | MQ2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the MQ client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the MQ client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the MQ client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which MQ client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+
+
+Required MQ component options
+
+You have to provide the amazonMqClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/amazon-mq/[Amazon MQ] service.
+
+== Usage
+
+=== Message headers evaluated by the MQ producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsMQMaxResults` |`String` |The number of results that must be retrieved from listBrokers operation
+
+|`CamelAwsMQBrokerName` |`String` |The broker name
+
+|`CamelAwsMQOperation` |`String` |The operation we want to perform
+
+|`CamelAwsMQBrokerId` |`String` |The broker id
+
+|`CamelAwsMQBrokerDeploymentMode` |`String` |The deployment mode for the broker in the createBroker operation
+
+|`CamelAwsMQBrokerInstanceType` |`String` |The instance type for the MQ machine in the createBroker operation
+
+|`CamelAwsMQBrokerEngine` |`String` |The Broker Engine for MQ. Default is ACTIVEMQ
+
+|`CamelAwsMQBrokerEngineVersion` |`String` |The Broker Engine Version for MQ. Currently you can choose between 5.15.6 and 5.15.0 of ACTIVEMQ
+
+|`CamelAwsMQBrokerUsers` |`List<User>` |The list of users for MQ
+
+|`CamelAwsMQBrokerPubliclyAccessible` |`Boolean` |If the MQ instance must be publicly available or not. Default is false.
+|=======================================================================
+
+=== MQ Producer operations
+
+Camel-AWS MQ component provides the following operation on the producer side:
+
+- listBrokers
+- createBroker
+- deleteBroker
+- rebootBroker
+- updateBroker
+- describeBroker
+
+== Producer Examples
+
+- listBrokers: this operation will list the available MQ Brokers in AWS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listBrokers")
+    .to("aws2-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers")
+--------------------------------------------------------------------------------
+
+== Automatic detection of MqClient client in registry
+
+The component is capable of detecting the presence of an MqClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-mq</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$aws2-mq-starter.adoc[]

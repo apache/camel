@@ -19,8 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -87,16 +85,14 @@ public class JmsTransferExceptionTest extends CamelTestSupport {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
                 from(getUri())
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                counter++;
+                        .process(exchange -> {
+                            counter++;
 
-                                String body = exchange.getIn().getBody(String.class);
-                                if (body.equals("Kabom")) {
-                                    throw new IllegalArgumentException("Boom");
-                                }
-                                exchange.getOut().setBody("Bye World");
+                            String body = exchange.getIn().getBody(String.class);
+                            if (body.equals("Kabom")) {
+                                throw new IllegalArgumentException("Boom");
                             }
+                            exchange.getMessage().setBody("Bye World");
                         });
             }
         };

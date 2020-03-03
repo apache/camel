@@ -1,0 +1,23 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "responseHeader",
+    "title": "Response Header",
+    "description": "To specify the rest operation response headers using Swagger. This maps to the Swagger Response Header Object.",
+    "javaType": "org.apache.camel.model.rest.RestOperationResponseHeaderDefinition",
+    "label": "rest",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "kind": "attribute", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of the parameter. This option is mandatory." },
+    "collectionFormat": { "kind": "attribute", "displayName": "Collection Format", "required": false, "type": "enum", "javaType": "org.apache.camel.model.rest.CollectionFormat", "enum": [ "csv", "multi", "pipes", "ssv", "tsv" ], "deprecated": false, "secret": false, "defaultValue": "csv", "description": "Sets the Swagger Parameter collection format." },
+    "arrayType": { "kind": "attribute", "displayName": "Array Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "string", "description": "Sets the Swagger Parameter array type. Required if data type is array. Describes the type of items in the array." },
+    "dataType": { "kind": "attribute", "displayName": "Data Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "string", "description": "Sets the Swagger header data type." },
+    "dataFormat": { "kind": "attribute", "displayName": "Data Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter data format." },
+    "value": { "kind": "element", "displayName": "Value", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "Sets the Swagger Parameter list of allowable values." },
+    "example": { "kind": "attribute", "displayName": "Example", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the Swagger example" },
+    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Description of the parameter." }
+  }
+}

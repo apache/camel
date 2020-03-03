@@ -47,6 +47,7 @@ import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.GroupTokenIterator;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
 import org.apache.camel.util.StringHelper;
@@ -730,6 +731,22 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "threadName";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the local hostname
+     */
+    public static Expression hostnameExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return InetAddressUtil.getLocalHostNameSafe();
+            }
+
+            @Override
+            public String toString() {
+                return "hostname";
             }
         };
     }

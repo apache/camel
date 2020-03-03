@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
-    private Boolean quoteAllFields;
+    @Metadata(javaType = "java.lang.Boolean")
+    private String quoteAllFields;
     @XmlAttribute
     @Metadata(defaultValue = "\"")
     private String quote;
@@ -47,14 +48,14 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
         super("univocity-csv");
     }
 
-    public Boolean getQuoteAllFields() {
+    public String getQuoteAllFields() {
         return quoteAllFields;
     }
 
     /**
      * Whether or not all values must be quoted when writing them.
      */
-    public void setQuoteAllFields(Boolean quoteAllFields) {
+    public void setQuoteAllFields(String quoteAllFields) {
         this.quoteAllFields = quoteAllFields;
     }
 

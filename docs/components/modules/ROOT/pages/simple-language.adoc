@@ -1,6 +1,6 @@
 [[simple-language]]
 = Simple Language
-:page-source: core/camel-base/src/main/docs/simple-language.adoc
+:page-source: core/camel-core-languages/src/main/docs/simple-language.adoc
 
 *Since Camel 1.1*
 
@@ -25,10 +25,14 @@ The simple language uses `${body`} placeholders for complex expressions
 where the expression contains constant literals. The $\{ } placeholders
 can be omitted if the expression is only the token itself.
 
-TIP: *Alternative syntax* You can also use the alternative syntax which
+[TIP]
+====
+*Alternative syntax* 
+
+You can also use the alternative syntax which
 uses `$simple{ }` as placeholders. This can be used in situations to avoid clashes when using for example
 Spring property placeholder together with Camel.
-
+====
 
 == Simple Language options
 
@@ -171,14 +175,15 @@ Supported commands are: *now* for current timestamp, *in.header.xxx* or
 *file* for the last modified timestamp of the file (available with a File consumer).
 Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h30m-100*.
 
-|date:_command:pattern_ |String |Date formatting using `java.text.SimpleDataFormat` patterns.
+|date:_command:pattern_ |String |Date formatting using `java.text.SimpleDateFormat` patterns.
 
-|date-with-timezone:_command:timezone:pattern_ |String |Date formatting using `java.text.SimpleDataFormat` timezones and patterns.
+|date-with-timezone:_command:timezone:pattern_ |String |Date formatting using `java.text.SimpleDateFormat` timezones and patterns.
 
 |bean:_bean expression_ |Object |Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language.
 Specifying a method name you must use dot as separator. We also support
 the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean]
-component.
+component. Camel will by default lookup a bean by the given name. However if you need to refer
+to a bean class (such as calling a static method) then you can prefix with type, such as `bean:type:fqnClassName`.
 
 |`properties:key:default` |String |Lookup a property with the given key. If the key does
 not exists or has no value, then an optional default value can be
@@ -192,6 +197,8 @@ Exchange is being routed.
 
 |threadName |String |Returns the name of the current thread. Can be used for
 logging purpose.
+
+|hostname |String |Returns the local hostname (may be empty if not possible to resolve).
 
 |ref:xxx |Object |To lookup a bean from the Registry with
 the given id.

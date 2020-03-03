@@ -1,0 +1,17 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 219398823,
+            "inline_query": {
+                "id": 67,
+                "from": {
+                    "id": 1585844777,
+                    "first_name": "John",
+                    "last_name": "Doe"
+                },
+                "query": "test"
+            }
+        }
+    ]
+}

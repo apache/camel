@@ -1,0 +1,27 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "xstream",
+    "title": "XStream",
+    "description": "XStream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
+    "firstVersion": "1.3.0",
+    "javaType": "org.apache.camel.model.dataformat.XStreamDataFormat",
+    "label": "dataformat,transformation,xml,json",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "permissions": { "kind": "attribute", "displayName": "Permissions", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml\/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow, and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specify com.foo.. Multiple permissions can be configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The following default permission is always included: -,java.lang.,java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions." },
+    "encoding": { "kind": "attribute", "displayName": "Encoding", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the encoding to use" },
+    "driver": { "kind": "attribute", "displayName": "Driver", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use a custom XStream driver. The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver" },
+    "driverRef": { "kind": "attribute", "displayName": "Driver Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To refer to a custom XStream driver to lookup in the registry. The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver" },
+    "mode": { "kind": "attribute", "displayName": "Mode", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Mode for dealing with duplicate references The possible values are: NO_REFERENCES ID_REFERENCES XPATH_RELATIVE_REFERENCES XPATH_ABSOLUTE_REFERENCES SINGLE_NODE_XPATH_RELATIVE_REFERENCES SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES" },
+    "converters": { "kind": "element", "displayName": "Converters", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "List of class names for using custom XStream converters. The classes must be of type com.thoughtworks.xstream.converters.Converter" },
+    "aliases": { "kind": "element", "displayName": "Aliases", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String>", "deprecated": false, "secret": false, "description": "Alias a Class to a shorter name to be used in XML elements." },
+    "omitFields": { "kind": "element", "displayName": "Omit Fields", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String[]>", "deprecated": false, "secret": false, "description": "Prevents a field from being serialized. To omit a field you must always provide the declaring type and not necessarily the type that is converted." },
+    "implicitCollections": { "kind": "element", "displayName": "Implicit Collections", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String[]>", "deprecated": false, "secret": false, "description": "Adds a default implicit collection which is used for any unmapped XML tag." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

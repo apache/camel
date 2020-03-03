@@ -31,7 +31,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.reifier.ProcessorReifier;
@@ -46,19 +45,19 @@ import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
-    public ResilienceReifier(CircuitBreakerDefinition definition) {
-        super(definition);
+    public ResilienceReifier(RouteContext routeContext, CircuitBreakerDefinition definition) {
+        super(routeContext, definition);
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         // create the regular and fallback processors
-        Processor processor = createChildProcessor(routeContext, true);
+        Processor processor = createChildProcessor(true);
         Processor fallback = null;
         if (definition.getOnFallback() != null) {
-            fallback = ProcessorReifier.reifier(definition.getOnFallback()).createProcessor(routeContext);
+            fallback = ProcessorReifier.reifier(routeContext, definition.getOnFallback()).createProcessor();
         }
-        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(routeContext, definition.getOnFallback().getFallbackViaNetwork());
+        boolean fallbackViaNetwork = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
             throw new UnsupportedOperationException("camel-resilience4j does not support onFallbackViaNetwork");
         }
@@ -71,7 +70,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         configureTimeoutExecutorService(answer, routeContext, config);
         // using any existing circuit breakers?
         if (config.getCircuitBreakerRef() != null) {
-            CircuitBreaker cb = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), config.getCircuitBreakerRef(), CircuitBreaker.class);
+            CircuitBreaker cb = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), parseString(config.getCircuitBreakerRef()), CircuitBreaker.class);
             answer.setCircuitBreaker(cb);
         }
         return answer;
@@ -80,70 +79,70 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     private CircuitBreakerConfig configureCircuitBreaker(Resilience4jConfigurationCommon config) {
         CircuitBreakerConfig.Builder builder = CircuitBreakerConfig.custom();
         if (config.getAutomaticTransitionFromOpenToHalfOpenEnabled() != null) {
-            builder.automaticTransitionFromOpenToHalfOpenEnabled(config.getAutomaticTransitionFromOpenToHalfOpenEnabled());
+            builder.automaticTransitionFromOpenToHalfOpenEnabled(parseBoolean(config.getAutomaticTransitionFromOpenToHalfOpenEnabled()));
         }
         if (config.getFailureRateThreshold() != null) {
-            builder.failureRateThreshold(config.getFailureRateThreshold());
+            builder.failureRateThreshold(parseFloat(config.getFailureRateThreshold()));
         }
         if (config.getMinimumNumberOfCalls() != null) {
-            builder.minimumNumberOfCalls(config.getMinimumNumberOfCalls());
+            builder.minimumNumberOfCalls(parseInt(config.getMinimumNumberOfCalls()));
         }
         if (config.getPermittedNumberOfCallsInHalfOpenState() != null) {
-            builder.permittedNumberOfCallsInHalfOpenState(config.getPermittedNumberOfCallsInHalfOpenState());
+            builder.permittedNumberOfCallsInHalfOpenState(parseInt(config.getPermittedNumberOfCallsInHalfOpenState()));
         }
         if (config.getSlidingWindowSize() != null) {
-            builder.slidingWindowSize(config.getSlidingWindowSize());
+            builder.slidingWindowSize(parseInt(config.getSlidingWindowSize()));
         }
         if (config.getSlidingWindowType() != null) {
             builder.slidingWindowType(CircuitBreakerConfig.SlidingWindowType.valueOf(config.getSlidingWindowType()));
         }
         if (config.getSlowCallDurationThreshold() != null) {
-            builder.slowCallDurationThreshold(Duration.ofSeconds(config.getSlowCallDurationThreshold()));
+            builder.slowCallDurationThreshold(Duration.ofSeconds(parseLong(config.getSlowCallDurationThreshold())));
         }
         if (config.getSlowCallRateThreshold() != null) {
-            builder.slowCallRateThreshold(config.getSlowCallRateThreshold());
+            builder.slowCallRateThreshold(parseFloat(config.getSlowCallRateThreshold()));
         }
         if (config.getWaitDurationInOpenState() != null) {
-            builder.waitDurationInOpenState(Duration.ofSeconds(config.getWaitDurationInOpenState()));
+            builder.waitDurationInOpenState(Duration.ofSeconds(parseLong(config.getWaitDurationInOpenState())));
         }
         if (config.getWritableStackTraceEnabled() != null) {
-            builder.writableStackTraceEnabled(config.getWritableStackTraceEnabled());
+            builder.writableStackTraceEnabled(parseBoolean(config.getWritableStackTraceEnabled()));
         }
         return builder.build();
     }
 
     private BulkheadConfig configureBulkHead(Resilience4jConfigurationCommon config) {
-        if (config.getBulkheadEnabled() == null || !config.getBulkheadEnabled()) {
+        if (!parseBoolean(config.getBulkheadEnabled(), false)) {
             return null;
         }
 
         BulkheadConfig.Builder builder = BulkheadConfig.custom();
         if (config.getBulkheadMaxConcurrentCalls() != null) {
-            builder.maxConcurrentCalls(config.getBulkheadMaxConcurrentCalls());
+            builder.maxConcurrentCalls(parseInt(config.getBulkheadMaxConcurrentCalls()));
         }
         if (config.getBulkheadMaxWaitDuration() != null) {
-            builder.maxWaitDuration(Duration.ofMillis(config.getBulkheadMaxWaitDuration()));
+            builder.maxWaitDuration(Duration.ofMillis(parseLong(config.getBulkheadMaxWaitDuration())));
         }
         return builder.build();
     }
 
     private TimeLimiterConfig configureTimeLimiter(Resilience4jConfigurationCommon config) {
-        if (config.getTimeoutEnabled() == null || !config.getTimeoutEnabled()) {
+        if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return null;
         }
 
         TimeLimiterConfig.Builder builder = TimeLimiterConfig.custom();
         if (config.getTimeoutDuration() != null) {
-            builder.timeoutDuration(Duration.ofMillis(config.getTimeoutDuration()));
+            builder.timeoutDuration(Duration.ofMillis(parseLong(config.getTimeoutDuration())));
         }
         if (config.getTimeoutCancelRunningFuture() != null) {
-            builder.cancelRunningFuture(config.getTimeoutCancelRunningFuture());
+            builder.cancelRunningFuture(parseBoolean(config.getTimeoutCancelRunningFuture()));
         }
         return builder.build();
     }
 
     private void configureTimeoutExecutorService(ResilienceProcessor processor, RouteContext routeContext, Resilience4jConfigurationCommon config) {
-        if (config.getTimeoutEnabled() == null || !config.getTimeoutEnabled()) {
+        if (!parseBoolean(config.getTimeoutEnabled(), false)) {
             return;
         }
 
@@ -152,7 +151,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             boolean shutdownThreadPool = false;
             ExecutorService executorService = routeContext.lookup(ref, ExecutorService.class);
             if (executorService == null) {
-                executorService = ProcessorDefinitionHelper.lookupExecutorServiceRef(routeContext, "CircuitBreaker", definition, ref);
+                executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
             }
             processor.setExecutorService(executorService);
@@ -169,16 +168,18 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(camelContext, properties, Suppliers.firstNotNull(() -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
-        () -> lookup(camelContext, "Camel", Resilience4jConfigurationDefinition.class)));
+        loadProperties(camelContext, properties, Suppliers.firstNotNull(
+            () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
+            () -> lookup(camelContext, ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID, Resilience4jConfigurationDefinition.class)));
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfigurationRef() != null) {
             final String ref = definition.getConfigurationRef();
 
-            loadProperties(camelContext, properties, Suppliers.firstNotNull(() -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
-            () -> mandatoryLookup(camelContext, ref, Resilience4jConfigurationDefinition.class)));
+            loadProperties(camelContext, properties, Suppliers.firstNotNull(
+                () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
+                () -> mandatoryLookup(camelContext, ref, Resilience4jConfigurationDefinition.class)));
         }
 
         // Extract properties from local configuration

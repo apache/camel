@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 
 /**
  * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class
@@ -29,7 +30,7 @@ public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
     }
 
     @Override
-    public Object getBean() {
+    public Object getBean(Exchange exchange) {
         // we cannot create a bean as there is no default constructor
         return null;
     }

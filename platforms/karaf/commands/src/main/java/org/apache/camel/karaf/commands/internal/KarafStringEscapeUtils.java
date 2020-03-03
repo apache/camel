@@ -83,37 +83,37 @@ public final class KarafStringEscapeUtils {
                 // handle an escaped value
                 hadSlash = false;
                 switch (ch) {
-                case '\\':
-                    out.append('\\');
-                    break;
-                case '\'':
-                    out.append('\'');
-                    break;
-                case '\"':
-                    out.append('"');
-                    break;
-                case 'r':
-                    out.append('\r');
-                    break;
-                case 'f':
-                    out.append('\f');
-                    break;
-                case 't':
-                    out.append('\t');
-                    break;
-                case 'n':
-                    out.append('\n');
-                    break;
-                case 'b':
-                    out.append('\b');
-                    break;
-                case 'u':
-                    // uh-oh, we're in unicode country....
-                    inUnicode = true;
-                    break;
-                default:
-                    out.append(ch);
-                    break;
+                    case '\\':
+                        out.append('\\');
+                        break;
+                    case '\'':
+                        out.append('\'');
+                        break;
+                    case '\"':
+                        out.append('"');
+                        break;
+                    case 'r':
+                        out.append('\r');
+                        break;
+                    case 'f':
+                        out.append('\f');
+                        break;
+                    case 't':
+                        out.append('\t');
+                        break;
+                    case 'n':
+                        out.append('\n');
+                        break;
+                    case 'b':
+                        out.append('\b');
+                        break;
+                    case 'u':
+                        // uh-oh, we're in unicode country....
+                        inUnicode = true;
+                        break;
+                    default:
+                        out.append(ch);
+                        break;
                 }
                 continue;
             } else if (ch == '\\') {
@@ -169,47 +169,47 @@ public final class KarafStringEscapeUtils {
                 out.append("\\u00").append(hex(ch));
             } else if (ch < 32) {
                 switch (ch) {
-                case '\b':
-                    out.append('\\');
-                    out.append('b');
-                    break;
-                case '\n':
-                    out.append('\\');
-                    out.append('n');
-                    break;
-                case '\t':
-                    out.append('\\');
-                    out.append('t');
-                    break;
-                case '\f':
-                    out.append('\\');
-                    out.append('f');
-                    break;
-                case '\r':
-                    out.append('\\');
-                    out.append('r');
-                    break;
-                default:
-                    if (ch > 0xf) {
-                        out.append("\\u00").append(hex(ch));
-                    } else {
-                        out.append("\\u000").append(hex(ch));
-                    }
-                    break;
+                    case '\b':
+                        out.append('\\');
+                        out.append('b');
+                        break;
+                    case '\n':
+                        out.append('\\');
+                        out.append('n');
+                        break;
+                    case '\t':
+                        out.append('\\');
+                        out.append('t');
+                        break;
+                    case '\f':
+                        out.append('\\');
+                        out.append('f');
+                        break;
+                    case '\r':
+                        out.append('\\');
+                        out.append('r');
+                        break;
+                    default:
+                        if (ch > 0xf) {
+                            out.append("\\u00").append(hex(ch));
+                        } else {
+                            out.append("\\u000").append(hex(ch));
+                        }
+                        break;
                 }
             } else {
                 switch (ch) {
-                case '"':
-                    out.append('\\');
-                    out.append('"');
-                    break;
-                case '\\':
-                    out.append('\\');
-                    out.append('\\');
-                    break;
-                default:
-                    out.append(ch);
-                    break;
+                    case '"':
+                        out.append('\\');
+                        out.append('"');
+                        break;
+                    case '\\':
+                        out.append('\\');
+                        out.append('\\');
+                        break;
+                    default:
+                        out.append(ch);
+                        break;
                 }
             }
         }

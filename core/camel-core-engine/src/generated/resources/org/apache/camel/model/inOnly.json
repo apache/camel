@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "inOnly",
+    "title": "In Only",
+    "description": "Marks the exchange pattern for the route to one way",
+    "javaType": "org.apache.camel.model.InOnlyDefinition",
+    "label": "eip,endpoint,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the uri of the endpoint to send to." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

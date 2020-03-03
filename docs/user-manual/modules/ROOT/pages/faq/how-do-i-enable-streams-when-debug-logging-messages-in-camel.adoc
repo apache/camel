@@ -33,7 +33,7 @@ You add to the Camel properties the flag to log streams.
 
 [source,java]
 ----
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
 ----
 
 Notice default is `false`.

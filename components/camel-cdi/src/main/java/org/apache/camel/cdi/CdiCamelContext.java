@@ -16,6 +16,7 @@
  */
 package org.apache.camel.cdi;
 
+import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -35,4 +36,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 @Vetoed
 public class CdiCamelContext extends DefaultCamelContext {
 
+    @Override
+    protected boolean eagerCreateTypeConverter() {
+        // camel-cdi is complex so we cant optimize
+        return false;
+    }
+
+    @Override
+    public TypeConverter getTypeConverter() {
+        return getOrCreateTypeConverter();
+    }
 }

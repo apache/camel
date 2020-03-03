@@ -26,14 +26,20 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A processor which evaluates an {@link Expression} and logs it.
  */
-public class LogProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
+public class LogProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LogProcessor.class);
 
     private String id;
+    private String routeId;
     private final Expression expression;
     private final CamelLogger logger;
     private final MaskingFormatter formatter;
@@ -78,9 +84,9 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
             } catch (Throwable t) {
-                log.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
-                if (log.isDebugEnabled()) {
-                    log.debug("", t);
+                LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("", t);
                 }
             }
         }
@@ -89,7 +95,7 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
 
     @Override
     public String toString() {
-        return "Log(" + logger.getLog().getName() + ")[" + expression + "]";
+        return id;
     }
 
     @Override
@@ -105,6 +111,16 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public Expression getExpression() {

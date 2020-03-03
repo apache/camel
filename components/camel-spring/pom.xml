@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring</artifactId>
@@ -36,6 +36,14 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -52,6 +60,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cron</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -307,20 +320,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <id>jaxb-list</id>
-                        <goals>
-                            <goal>generate-jaxb-list</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -342,8 +341,8 @@
 
             <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>

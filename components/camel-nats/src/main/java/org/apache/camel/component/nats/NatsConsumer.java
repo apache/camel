@@ -28,8 +28,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NatsConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NatsConsumer.class);
 
     private final Processor processor;
     private ExecutorService executor;
@@ -50,10 +54,10 @@ public class NatsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        log.debug("Starting Nats Consumer");
+        LOG.debug("Starting Nats Consumer");
         executor = getEndpoint().createExecutor();
 
-        log.debug("Getting Nats Connection");
+        LOG.debug("Getting Nats Connection");
         connection = getEndpoint().getConfiguration().getConnection() != null
             ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
 
@@ -63,7 +67,7 @@ public class NatsConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (getEndpoint().getConfiguration().isFlushConnection()) {
-            log.debug("Flushing Messages before stopping");
+            LOG.debug("Flushing Messages before stopping");
             connection.flush(Duration.ofMillis(getEndpoint().getConfiguration().getFlushTimeout()));
         }
 
@@ -73,7 +77,7 @@ public class NatsConsumer extends DefaultConsumer {
             getExceptionHandler().handleException("Error during unsubscribing", e);
         }
 
-        log.debug("Stopping Nats Consumer");
+        LOG.debug("Stopping Nats Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
@@ -84,7 +88,7 @@ public class NatsConsumer extends DefaultConsumer {
         executor = null;
 
         if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getConnection())) {
-            log.debug("Closing Nats Connection");
+            LOG.debug("Closing Nats Connection");
             if (!connection.getStatus().equals(Status.CLOSED)) {
                 connection.close();
             }
@@ -141,7 +145,7 @@ public class NatsConsumer extends DefaultConsumer {
 
             @Override
             public void onMessage(Message msg) throws InterruptedException {
-                log.debug("Received Message: {}", msg);
+                LOG.debug("Received Message: {}", msg);
                 Exchange exchange = getEndpoint().createExchange();
                 exchange.getIn().setBody(msg.getData());
                 exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
@@ -161,7 +165,7 @@ public class NatsConsumer extends DefaultConsumer {
                     Connection con = msg.getConnection();
                     byte[] data = exchange.getMessage().getBody(byte[].class);
                     if (data != null) {
-                        log.debug("Publishing replyTo: {} message", msg.getReplyTo());
+                        LOG.debug("Publishing replyTo: {} message", msg.getReplyTo());
                         con.publish(msg.getReplyTo(), data);
                     }
                 }

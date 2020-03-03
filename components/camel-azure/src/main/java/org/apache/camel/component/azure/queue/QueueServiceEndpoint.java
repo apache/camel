@@ -49,7 +49,6 @@ public class QueueServiceEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        log.trace("Creating a consumer");
         QueueServiceConsumer consumer = new QueueServiceConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
@@ -57,7 +56,6 @@ public class QueueServiceEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        log.trace("Creating a producer");
         return new QueueServiceProducer(this);
     }
 

@@ -33,8 +33,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
     @Test
     public void testReceivedTimestamp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isNotNull();
-        mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isInstanceOf(Date.class);
+        mock.message(0).predicate(e -> e.getCreated() > 0);
         mock.message(0).exchangeProperty(Exchange.RECEIVED_TIMESTAMP).isNotNull();
         mock.message(0).exchangeProperty(Exchange.RECEIVED_TIMESTAMP).isInstanceOf(Date.class);
 

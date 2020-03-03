@@ -17,21 +17,21 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.camel.maven.packaging.model.ComponentModel;
-import org.apache.camel.maven.packaging.model.DataFormatModel;
-import org.apache.camel.maven.packaging.model.LanguageModel;
-import org.apache.camel.maven.packaging.model.OtherModel;
+import org.apache.camel.tooling.model.BaseModel;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -41,11 +41,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import static org.apache.camel.maven.packaging.PackageHelper.loadText;
-import static org.apache.camel.maven.packaging.PackageHelper.writeText;
-
 /**
- * Prepares the user guide to keep the table of content up to date with the components, data formats, and languages.
+ * Prepares the user guide to keep the table of content up to date with the
+ * components, data formats, and languages.
  */
 @Mojo(name = "prepare-user-guide", threadSafe = true)
 public class PrepareUserGuideMojo extends AbstractMojo {
@@ -96,8 +94,8 @@ public class PrepareUserGuideMojo extends AbstractMojo {
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws MojoFailureException   something bad happened...
+     *             threads it generated failed.
+     * @throws MojoFailureException something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -120,12 +118,12 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             List<ComponentModel> models = new ArrayList<>();
             for (File file : componentFiles) {
-                String json = loadText(new FileInputStream(file));
-                ComponentModel model = generateComponentModel(json);
+                String json = PackageHelper.loadText(file);
+                ComponentModel model = JsonMapper.generateComponentModel(json);
 
                 // filter out alternative schemas which reuses documentation
                 boolean add = true;
-                if (!model.getAlternativeSchemes().isEmpty()) {
+                if (!Strings.isNullOrEmpty(model.getAlternativeSchemes())) {
                     String first = model.getAlternativeSchemes().split(",")[0];
                     if (!model.getScheme().equals(first)) {
                         add = false;
@@ -137,7 +135,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
             }
 
             // sor the models
-            Collections.sort(models, new ComponentComparator());
+            models.sort(ComponentModel.compareTitle());
 
             // the summary file has the TOC
             File file = new File(userGuideDir, "SUMMARY.md");
@@ -185,37 +183,36 @@ public class PrepareUserGuideMojo extends AbstractMojo {
             }
         }
 
-        try {
-            List<OtherModel> models = new ArrayList<>();
-            for (File file : otherFiles) {
-                String json = loadText(new FileInputStream(file));
-                OtherModel model = generateOtherModel(json);
+        List<OtherModel> models = new ArrayList<>();
+        for (File file : otherFiles) {
+            try {
+                String json = PackageHelper.loadText(file);
+                OtherModel model = JsonMapper.generateOtherModel(json);
                 models.add(model);
+            } catch (Exception e) {
+                throw new MojoFailureException("Error reading file: " + file, e);
             }
+        }
 
-            // sor the models
-            Collections.sort(models, new OtherComparator());
+        // sort the models
+        models.sort(BaseModel.compareTitle());
 
-            // the summary file has the TOC
-            File file = new File(userGuideDir, "SUMMARY.md");
+        // the summary file has the TOC
+        File file = new File(userGuideDir, "SUMMARY.md");
 
-            // update core components
-            StringBuilder other = new StringBuilder();
-            other.append("* Miscellaneous Components\n");
-            for (OtherModel model : models) {
-                String line = "\t* " + link(model) + "\n";
-                other.append(line);
-            }
-            boolean updated = updateOthers(file, other.toString());
+        // update core components
+        StringBuilder other = new StringBuilder();
+        other.append("* Miscellaneous Components\n");
+        for (OtherModel model : models) {
+            String line = "\t* " + link(model) + "\n";
+            other.append(line);
+        }
+        boolean updated = updateOthers(file, other.toString());
 
-            if (updated) {
-                getLog().info("Updated user guide file: " + file);
-            } else {
-                getLog().debug("No changes to user guide file: " + file);
-            }
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        if (updated) {
+            getLog().info("Updated user guide file: " + file);
+        } else {
+            getLog().debug("No changes to user guide file: " + file);
         }
     }
 
@@ -232,13 +229,13 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             List<DataFormatModel> models = new ArrayList<>();
             for (File file : dataFormatFiles) {
-                String json = loadText(new FileInputStream(file));
-                DataFormatModel model = generateDataFormatModel(json);
+                String json = PackageHelper.loadText(file);
+                DataFormatModel model = JsonMapper.generateDataFormatModel(json);
                 models.add(model);
             }
 
-            // sor the models
-            Collections.sort(models, new DataFormatComparator());
+            // sort the models
+            models.sort(BaseModel.compareTitle());
 
             // the summary file has the TOC
             File file = new File(userGuideDir, "SUMMARY.md");
@@ -276,13 +273,13 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         try {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
-                String json = loadText(new FileInputStream(file));
-                LanguageModel model = generateLanguageModel(json);
+                String json = PackageHelper.loadText(file);
+                LanguageModel model = JsonMapper.generateLanguageModel(json);
                 models.add(model);
             }
 
-            // sor the models
-            Collections.sort(models, new LanguageComparator());
+            // sort the models
+            models.sort(BaseModel.compareTitle());
 
             // the summary file has the TOC
             File file = new File(userGuideDir, "SUMMARY.md");
@@ -313,9 +310,9 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "<!-- core components: START -->", "<!-- core components: END -->");
+            String existing = Strings.between(text, "<!-- core components: START -->", "<!-- core components: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -323,10 +320,10 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "<!-- core components: START -->");
-                    String after = StringHelper.after(text, "<!-- core components: END -->");
+                    String before = Strings.before(text, "<!-- core components: START -->");
+                    String after = Strings.after(text, "<!-- core components: END -->");
                     text = before + "<!-- core components: START -->\n" + changed + "\n<!-- core components: END -->" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -347,9 +344,9 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "<!-- components: START -->", "<!-- components: END -->");
+            String existing = Strings.between(text, "<!-- components: START -->", "<!-- components: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -357,10 +354,10 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "<!-- components: START -->");
-                    String after = StringHelper.after(text, "<!-- components: END -->");
+                    String before = Strings.before(text, "<!-- components: START -->");
+                    String after = Strings.after(text, "<!-- components: END -->");
                     text = before + "<!-- components: START -->\n" + changed + "\n<!-- components: END -->" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -381,9 +378,9 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "<!-- others: START -->", "<!-- others: END -->");
+            String existing = Strings.between(text, "<!-- others: START -->", "<!-- others: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -391,10 +388,10 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "<!-- others: START -->");
-                    String after = StringHelper.after(text, "<!-- others: END -->");
+                    String before = Strings.before(text, "<!-- others: START -->");
+                    String after = Strings.after(text, "<!-- others: END -->");
                     text = before + "<!-- others: START -->\n" + changed + "\n<!-- others: END -->" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -415,9 +412,9 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "<!-- dataformats: START -->", "<!-- dataformats: END -->");
+            String existing = Strings.between(text, "<!-- dataformats: START -->", "<!-- dataformats: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -425,10 +422,10 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "<!-- dataformats: START -->");
-                    String after = StringHelper.after(text, "<!-- dataformats: END -->");
+                    String before = Strings.before(text, "<!-- dataformats: START -->");
+                    String after = Strings.after(text, "<!-- dataformats: END -->");
                     text = before + "<!-- dataformats: START -->\n" + changed + "\n<!-- dataformats: END -->" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -449,9 +446,9 @@ public class PrepareUserGuideMojo extends AbstractMojo {
         }
 
         try {
-            String text = loadText(new FileInputStream(file));
+            String text = PackageHelper.loadText(file);
 
-            String existing = StringHelper.between(text, "<!-- languages: START -->", "<!-- languages: END -->");
+            String existing = Strings.between(text, "<!-- languages: START -->", "<!-- languages: END -->");
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
@@ -459,10 +456,10 @@ public class PrepareUserGuideMojo extends AbstractMojo {
                 if (existing.equals(changed)) {
                     return false;
                 } else {
-                    String before = StringHelper.before(text, "<!-- languages: START -->");
-                    String after = StringHelper.after(text, "<!-- languages: END -->");
+                    String before = Strings.before(text, "<!-- languages: START -->");
+                    String after = Strings.after(text, "<!-- languages: END -->");
                     text = before + "<!-- languages: START -->\n" + changed + "\n<!-- languages: END -->" + after;
-                    writeText(file, text);
+                    PackageHelper.writeText(file, text);
                     return true;
                 }
             } else {
@@ -503,123 +500,4 @@ public class PrepareUserGuideMojo extends AbstractMojo {
             return name;
         }
     }
-
-    private static class ComponentComparator implements Comparator<ComponentModel> {
-
-        @Override
-        public int compare(ComponentModel o1, ComponentModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private static class OtherComparator implements Comparator<OtherModel> {
-
-        @Override
-        public int compare(OtherModel o1, OtherModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private static class DataFormatComparator implements Comparator<DataFormatModel> {
-
-        @Override
-        public int compare(DataFormatModel o1, DataFormatModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private static class LanguageComparator implements Comparator<LanguageModel> {
-
-        @Override
-        public int compare(LanguageModel o1, LanguageModel o2) {
-            // lets sort by title
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-    }
-
-    private ComponentModel generateComponentModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-
-        ComponentModel component = new ComponentModel();
-        component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
-        component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
-        component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
-        component.setAlternativeSchemes(JSonSchemaHelper.getSafeValue("alternativeSchemes", rows));
-        component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        component.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
-        component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
-        component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        component.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        component.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return component;
-    }
-
-    private OtherModel generateOtherModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
-
-        OtherModel other = new OtherModel();
-        other.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        other.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        other.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        other.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        other.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        other.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        other.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        other.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        other.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        other.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return other;
-    }
-
-    private DataFormatModel generateDataFormatModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
-
-        DataFormatModel dataFormat = new DataFormatModel();
-        dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        dataFormat.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return dataFormat;
-    }
-
-    private LanguageModel generateLanguageModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
-
-        LanguageModel language = new LanguageModel();
-        language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        language.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        language.setDeprecationNote(JSonSchemaHelper.getSafeValue("deprecationNote", rows));
-        language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        language.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return language;
-    }
-
 }

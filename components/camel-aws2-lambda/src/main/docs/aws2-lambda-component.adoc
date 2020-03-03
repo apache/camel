@@ -1,0 +1,235 @@
+[[aws2-lambda-component]]
+= AWS Lambda Component
+
+*Since Camel 3.2*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The Lambda component supports create, get, list, delete and invoke
+https://aws.amazon.com/lambda/[AWS Lambda] functions.
+
+*Prerequisites*
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Lambda. More information is available at
+https://aws.amazon.com/lambda/[AWS Lambda].
+
+When creating a Lambda function, you need to specify a IAM role which has at least the AWSLambdaBasicExecuteRole policy attached.
+
+[NOTE]
+====
+The AWS2 Lambda component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-lambda://functionName[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS Lambda component supports 11 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (producer) | Component configuration |  | Lambda2Configuration
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction. The value can be one of: listFunctions, getFunction, createAlias, deleteAlias, getAlias, listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions | invokeFunction | Lambda2Operations
+| *region* (producer) | The region in which ECS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | LambdaClient
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String
+| *proxyPort* (proxy) | To define a proxy port when instantiating the Lambda client |  | Integer
+| *proxyProtocol* (proxy) | To define a proxy protocol when instantiating the Lambda client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS Lambda endpoint is configured using URI syntax:
+
+----
+aws2-lambda:function
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *function* | *Required* Name of the Lambda function. |  | String
+|===
+
+
+=== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction. The value can be one of: listFunctions, getFunction, createAlias, deleteAlias, getAlias, listAliases, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions | invokeFunction | Lambda2Operations
+| *region* (producer) | The region in which ECS client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
+| *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | LambdaClient
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *proxyHost* (proxy) | To define a proxy host when instantiating the Lambda client |  | String
+| *proxyPort* (proxy) | To define a proxy port when instantiating the Lambda client |  | Integer
+| *proxyProtocol* (proxy) | To define a proxy protocol when instantiating the Lambda client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+
+
+
+
+Required Lambda component options
+
+You have to provide the awsLambdaClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/lambda/[Amazon Lambda] service.
+
+== Usage
+
+=== Message headers evaluated by the Lambda producer
+
+[width="100%",cols="5%,5%,10%,75%,5%",options="header",]
+|=======================================================================
+|Operation |Header |Type |Description |Required
+
+|All |`CamelAwsLambdaOperation` |`String` |The operation we want to perform. Override operation passed as query parameter| Yes
+
+|createFunction |`CamelAwsLambdaS3Bucket` |`String` |Amazon S3 bucket name where the .zip file containing
+your deployment package is stored. This bucket must reside in the same AWS region where you are creating the Lambda function.| No
+
+|createFunction |`CamelAwsLambdaS3Key` |`String` |The Amazon S3 object (the deployment package) key name
+you want to upload.| No
+
+|createFunction |`CamelAwsLambdaS3ObjectVersion` |String |The Amazon S3 object (the deployment package) version
+you want to upload.| No
+
+|createFunction |`CamelAwsLambdaZipFile` |`String` |The local path of the zip file (the deployment package).
+ Content of zip file can also be put in Message body.| No
+
+|createFunction |`CamelAwsLambdaRole` |`String` |The Amazon Resource Name (ARN) of the IAM role that Lambda assumes
+ when it executes your function to access any other Amazon Web Services (AWS) resources. |Yes
+
+|createFunction |`CamelAwsLambdaRuntime` |String |The runtime environment for the Lambda function you are uploading.
+ (nodejs, nodejs4.3, nodejs6.10, java8, python2.7, python3.6, dotnetcore1.0, odejs4.3-edge) |Yes
+
+|createFunction |`CamelAwsLambdaHandler` |`String` |The function within your code that Lambda calls to begin execution.
+ For Node.js, it is the module-name.export value in your function.
+ For Java, it can be package.class-name::handler or package.class-name.|Yes
+
+|createFunction |`CamelAwsLambdaDescription` |`String` |The user-provided description.|No
+
+|createFunction |`CamelAwsLambdaTargetArn` |`String` |The parent object that contains the target ARN (Amazon Resource Name)
+of an Amazon SQS queue or Amazon SNS topic.|No
+
+|createFunction |`CamelAwsLambdaMemorySize` |`Integer` |The memory size, in MB, you configured for the function.
+Must be a multiple of 64 MB.|No
+
+|createFunction |`CamelAwsLambdaKMSKeyArn` |`String` |The Amazon Resource Name (ARN) of the KMS key used to encrypt your function's environment variables.
+If not provided, AWS Lambda will use a default service key.|No
+
+|createFunction |`CamelAwsLambdaPublish` |`Boolean` |This boolean parameter can be used to request AWS Lambda
+to create the Lambda function and publish a version as an atomic operation.|No
+
+|createFunction |`CamelAwsLambdaTimeout` |`Integer` |The function execution time at which Lambda should terminate the function.
+The default is 3 seconds.|No
+
+|createFunction |`CamelAwsLambdaTracingConfig` |`String` |Your function's tracing settings (Active or PassThrough).|No
+
+|createFunction |`CamelAwsLambdaEnvironmentVariables` |`Map<String, String>` |The key-value pairs that represent your environment's configuration settings.|No
+
+|createFunction |`CamelAwsLambdaEnvironmentTags` |`Map<String, String>` |The list of tags (key-value pairs) assigned to the new function.|No
+
+|createFunction |`CamelAwsLambdaSecurityGroupIds` |`List<String>` |If your Lambda function accesses resources in a VPC, a list of one or more security groups IDs in your VPC.|No
+
+|createFunction |`CamelAwsLambdaSubnetIds` |`List<String>` |If your Lambda function accesses resources in a VPC, a list of one or more subnet IDs in your VPC.|No
+
+|createAlias |`CamelAwsLambdaFunctionVersion` |`String` |The function version to set in the alias|Yes
+
+|createAlias |`CamelAwsLambdaAliasFunctionName` |`String` |The function name to set in the alias|Yes
+
+|createAlias |`CamelAwsLambdaAliasFunctionDescription` |`String` |The function description to set in the alias|No
+
+|deleteAlias |`CamelAwsLambdaAliasFunctionName` |`String` |The function name of the alias|Yes
+
+|getAlias |`CamelAwsLambdaAliasFunctionName` |`String` |The function name of the alias|Yes
+
+|listAliases |`CamelAwsLambdaFunctionVersion` |`String` |The function version to set in the alias|Yes
+
+|=======================================================================
+
+== List of Avalaible Operations
+
+- listFunctions
+- getFunction
+- createFunction
+- deleteFunction
+- invokeFunction
+- updateFunction
+- createEventSourceMapping
+- deleteEventSourceMapping
+- listEventSourceMapping
+- listTags
+- tagResource
+- untagResource
+- publishVersion
+- listVersions
+- createAlias
+- deleteAlias
+- getAlias
+- listAliases
+
+== Example
+
+To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/master/components/camel-aws/src/test/java/org/apache/camel/component/aws/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
+
+== Automatic detection of LambdaClient client in registry
+
+The component is capable of detecting the presence of an LambdaClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-lambda</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+
+include::camel-spring-boot::page$aws2-lambda-starter.adoc[]

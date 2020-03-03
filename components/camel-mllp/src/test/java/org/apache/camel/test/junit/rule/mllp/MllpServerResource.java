@@ -265,12 +265,12 @@ public class MllpServerResource extends ExternalResource {
 
     private boolean evaluateModulus(int messageCount, int modulus) {
         switch (modulus) {
-        case 0:
-            return false;
-        case 1:
-            return true;
-        default:
-            return (messageCount % modulus == 0) ? true : false;
+            case 0:
+                return false;
+            case 1:
+                return true;
+            default:
+                return (messageCount % modulus == 0) ? true : false;
         }
     }
 
@@ -548,9 +548,9 @@ public class MllpServerResource extends ExternalResource {
      */
     protected String generateAcknowledgement(String hl7Message, String acknowledgementCode) {
         final String defaulNackMessage =
-            "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
-                + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
-                + MllpProtocolConstants.MESSAGE_TERMINATOR;
+                "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
+                        + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
+                        + MllpProtocolConstants.MESSAGE_TERMINATOR;
 
         if (hl7Message == null) {
             log.error("Invalid HL7 message for parsing operation. Please check your inputs");
@@ -573,16 +573,16 @@ public class MllpServerResource extends ExternalResource {
                 StringBuilder ackBuilder = new StringBuilder(mshSegment.length() + 25);
                 // Build the MSH Segment
                 ackBuilder
-                    .append(mshFields[0]).append(fieldSeparator)
-                    .append(mshFields[1]).append(fieldSeparator)
-                    .append(mshFields[4]).append(fieldSeparator)
-                    .append(mshFields[5]).append(fieldSeparator)
-                    .append(mshFields[2]).append(fieldSeparator)
-                    .append(mshFields[3]).append(fieldSeparator)
-                    .append(mshFields[6]).append(fieldSeparator)
-                    .append(mshFields[7]).append(fieldSeparator)
-                    .append("ACK")
-                    .append(mshFields[8].substring(3));
+                        .append(mshFields[0]).append(fieldSeparator)
+                        .append(mshFields[1]).append(fieldSeparator)
+                        .append(mshFields[4]).append(fieldSeparator)
+                        .append(mshFields[5]).append(fieldSeparator)
+                        .append(mshFields[2]).append(fieldSeparator)
+                        .append(mshFields[3]).append(fieldSeparator)
+                        .append(mshFields[6]).append(fieldSeparator)
+                        .append(mshFields[7]).append(fieldSeparator)
+                        .append("ACK")
+                        .append(mshFields[8].substring(3));
                 for (int i = 9; i < mshFields.length; ++i) {
                     ackBuilder.append(fieldSeparator).append(mshFields[i]);
                 }
@@ -599,10 +599,10 @@ public class MllpServerResource extends ExternalResource {
 
                 // Build the MSA Segment
                 ackBuilder
-                    .append("MSA").append(fieldSeparator)
-                    .append(acknowledgementCode).append(fieldSeparator)
-                    .append(mshFields[9]).append(fieldSeparator)
-                    .append(MllpProtocolConstants.SEGMENT_DELIMITER);
+                        .append("MSA").append(fieldSeparator)
+                        .append(acknowledgementCode).append(fieldSeparator)
+                        .append(mshFields[9]).append(fieldSeparator)
+                        .append(MllpProtocolConstants.SEGMENT_DELIMITER);
 
                 // Terminate the message
                 ackBuilder.append(MllpProtocolConstants.MESSAGE_TERMINATOR);
@@ -941,13 +941,13 @@ public class MllpServerResource extends ExternalResource {
                 while (waitingForStartOfBlock) {
                     int potentialStartCharacter = anInputStream.read();
                     switch (potentialStartCharacter) {
-                    case MllpProtocolConstants.END_OF_STREAM:
-                        return null;
-                    case MllpProtocolConstants.START_OF_BLOCK:
-                        waitingForStartOfBlock = false;
-                        break;
-                    default:
-                        log.warn("START_OF_BLOCK character has not been received.  Out-of-band character received: {}", potentialStartCharacter);
+                        case MllpProtocolConstants.END_OF_STREAM:
+                            return null;
+                        case MllpProtocolConstants.START_OF_BLOCK:
+                            waitingForStartOfBlock = false;
+                            break;
+                        default:
+                            log.warn("START_OF_BLOCK character has not been received.  Out-of-band character received: {}", potentialStartCharacter);
                     }
                 }
             } catch (SocketException socketEx) {
@@ -971,23 +971,23 @@ public class MllpServerResource extends ExternalResource {
                 int characterReceived = anInputStream.read();
 
                 switch (characterReceived) {
-                case MllpProtocolConstants.START_OF_BLOCK:
-                    log.error("Received START_OF_BLOCK before END_OF_DATA.  Discarding data: {}", parsedMessage);
-                    return null;
-                case MllpProtocolConstants.END_OF_STREAM:
-                    log.error("Received END_OF_STREAM without END_OF_DATA.  Discarding data: {}", parsedMessage);
-                    return null;
-                case MllpProtocolConstants.END_OF_BLOCK:
-                    characterReceived = anInputStream.read();
-                    if (characterReceived != MllpProtocolConstants.END_OF_DATA) {
-                        log.error("Received {} when expecting END_OF_DATA after END_OF_BLOCK.  Discarding Hl7TestMessageGenerator: {}",
-                            characterReceived, parsedMessage.toString());
+                    case MllpProtocolConstants.START_OF_BLOCK:
+                        log.error("Received START_OF_BLOCK before END_OF_DATA.  Discarding data: {}", parsedMessage);
                         return null;
-                    }
-                    endOfMessage = true;
-                    break;
-                default:
-                    parsedMessage.append((char) characterReceived);
+                    case MllpProtocolConstants.END_OF_STREAM:
+                        log.error("Received END_OF_STREAM without END_OF_DATA.  Discarding data: {}", parsedMessage);
+                        return null;
+                    case MllpProtocolConstants.END_OF_BLOCK:
+                        characterReceived = anInputStream.read();
+                        if (characterReceived != MllpProtocolConstants.END_OF_DATA) {
+                            log.error("Received {} when expecting END_OF_DATA after END_OF_BLOCK.  Discarding Hl7TestMessageGenerator: {}",
+                                    characterReceived, parsedMessage.toString());
+                            return null;
+                        }
+                        endOfMessage = true;
+                        break;
+                    default:
+                        parsedMessage.append((char) characterReceived);
                 }
 
             }

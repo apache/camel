@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -36,6 +38,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -143,16 +146,13 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         DomFinder domFinder = new DomFinder(document, xPath);
         DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
 
-        // include schema files from camel-core, camel-corem-xml and from camel-spring
-        File rootDir = new File(camelCoreDir, pathToModelDir);
-        Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
-        File rootDir2 = new File(camelCoreXmlDir, pathToCoreXmlModelDir);
-        Map<String, File> jsonFiles2 = PackageHelper.findJsonFiles(rootDir2);
-        File rootDir3 = new File(camelSpringDir, pathToSpringModelDir);
-        Map<String, File> jsonFiles3 = PackageHelper.findJsonFiles(rootDir3);
-        // merge the json files together
-        jsonFiles.putAll(jsonFiles2);
-        jsonFiles.putAll(jsonFiles3);
+        // include schema files from camel-core, camel-core-xml and from camel-spring
+        Set<File> files = new HashSet<>();
+        PackageHelper.findJsonFiles(new File(camelCoreDir, pathToModelDir), files);
+        PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files);
+        PackageHelper.findJsonFiles(new File(camelSpringDir, pathToSpringModelDir), files);
+        Map<String, File> jsonFiles = new HashMap<>();
+        files.forEach(f -> jsonFiles.put(PackageHelper.asName(f.toPath()), f));
 
         NodeList elementsAndTypes = domFinder.findElementsAndTypes();
         documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
@@ -230,13 +230,15 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private String truncateTypeNamespace(String baseType) {
-        return baseType.replaceAll("tns:", "");
+        return baseType.replace("tns:", "");
     }
 
-    private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, TransformerException {
-        StreamResult result = new StreamResult(new FileOutputStream(outputFile));
-        DOMSource source = new DOMSource(document);
-        transformer.transform(source, result);
+    private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, IOException, TransformerException {
+        try (FileOutputStream os = new FileOutputStream(outputFile)) {
+            StreamResult result = new StreamResult(os);
+            DOMSource source = new DOMSource(document);
+            transformer.transform(source, result);
+        }
     }
 
     private void validateIsFile(File file, String name) throws MojoExecutionException {

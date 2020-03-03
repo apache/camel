@@ -55,4 +55,27 @@ public final class AvailablePortFinder {
             throw new IllegalStateException("Cannot find free port", e);
         }
     }
+
+
+    /**
+     * Gets the next available port in the given range.
+     *
+     * @throws IllegalStateException if there are no ports available
+     * @return the available port
+     */
+    public static int getNextAvailable(int fromPort, int toPort) {
+        for (int i = fromPort; i <= toPort; i++) {
+            try (ServerSocket ss = new ServerSocket()) {
+                ss.setReuseAddress(true);
+                ss.bind(new InetSocketAddress((InetAddress) null, i), 1);
+                int port = ss.getLocalPort();
+                LOG.info("getNextAvailable() -> {}", port);
+                return port;
+            } catch (IOException e) {
+                throw new IllegalStateException("Cannot find free port", e);
+            }
+        }
+
+        throw new IllegalStateException("Cannot find free port");
+    }
 }

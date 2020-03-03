@@ -24,6 +24,8 @@ public interface ElasticsearchConstants {
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "waitForActiveShards";
     String PARAM_SCROLL_KEEP_ALIVE_MS = "scrollKeepAliveMs";
     String PARAM_SCROLL = "useScroll";
+    String PARAM_SIZE = "size";
+    String PARAM_FROM = "from";
 
     String PROPERTY_SCROLL_ES_QUERY_COUNT = "CamelElasticsearchScrollQueryCount";
 

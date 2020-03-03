@@ -44,7 +44,7 @@ public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInvalidHostConfiguration() {
+    public void testInvalidHostConfiguration() throws Exception {
         // dummy
     }
 

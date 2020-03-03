@@ -28,8 +28,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebsocketProducer extends DefaultProducer implements WebsocketProducerConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WebsocketProducer.class);
 
     private WebsocketStore store;
     private final Boolean sendToAll;
@@ -59,7 +63,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
                     pathSpec = WebsocketComponent.createPathSpec(endpoint.getResourceUri());
                 }
                 DefaultWebsocket websocket = store.get(connectionKey + pathSpec);
-                log.debug("Sending to connection key {} -> {}", connectionKey, message);
+                LOG.debug("Sending to connection key {} -> {}", connectionKey, message);
                 Future<Void> future = sendMessage(websocket, message);
                 if (future != null) {
                     int timeout = endpoint.getSendTimeout();
@@ -98,7 +102,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
     }
 
     void sendToAll(WebsocketStore store, Object message, Exchange exchange) throws Exception {
-        log.debug("Sending to all {}", message);
+        LOG.debug("Sending to all {}", message);
         Collection<DefaultWebsocket> websockets = store.getAll();
         Exception exception = null;
 
@@ -133,7 +137,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             // if there are still more then we need to wait a little bit before checking again, to avoid burning cpu cycles in the while loop
             if (!futures.isEmpty()) {
                 long interval = Math.min(1000, timeout);
-                log.debug("Sleeping {} millis waiting for sendToAll to complete sending with timeout {} millis", interval, timeout);
+                LOG.debug("Sleeping {} millis waiting for sendToAll to complete sending with timeout {} millis", interval, timeout);
                 try {
                     Thread.sleep(interval);
                 } catch (InterruptedException e) {
@@ -154,7 +158,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         Future<Void> future = null;
         // in case there is web socket and socket connection is open - send message
         if (websocket != null && websocket.getSession().isOpen()) {
-            log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
+            LOG.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             if (message instanceof String) {
                 future = websocket.getSession().getRemote().sendStringByFuture((String) message);
             } else if (message instanceof byte[]) {
@@ -174,8 +178,8 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
      * Called when a sleep is interrupted; allows derived classes to handle this case differently
      */
     protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange) throws InterruptedException {
-        if (log.isDebugEnabled()) {
-            log.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
         }
         Thread.currentThread().interrupt();
         throw e;

@@ -30,13 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 public class CwComponent extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")    
-    private CwConfiguration configuration;
+    private CwConfiguration configuration = new CwConfiguration();
     
     public CwComponent() {
         this(null);
@@ -57,10 +51,6 @@ public class CwComponent extends DefaultComponent {
         configuration.setNamespace(remaining);
 
         CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
-        // set component level options before overriding from endpoint parameters
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
 
         checkAndSetRegistryClient(configuration);
@@ -76,45 +66,12 @@ public class CwComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS CW default configuration
+     * The component configuration
      */
     public void setConfiguration(CwConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which CW client needs to work
-     */
-    public void setRegion(String region) {
-        this.region = region;
-    }
-    
     private void checkAndSetRegistryClient(CwConfiguration configuration) {
         Set<AmazonCloudWatch> clients = getCamelContext().getRegistry().findByType(AmazonCloudWatch.class);
         if (clients.size() == 1) {

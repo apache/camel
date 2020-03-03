@@ -84,11 +84,6 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         this.configuration = endpointConfiguration;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * Returns generated helper that extends {@link ApiMethodPropertiesHelper} to work with API properties.
      * @return properties helper.
@@ -98,14 +93,11 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     @Override
     public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);
-
-        // set configuration properties first
-        try {
-            T configuration = getConfiguration();
-            setProperties(configuration, options);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        // TODO: this is not very clean as it does not leverage the endpoint
+        // TODO: configurer, but the generated configurer currently does not
+        // TODO: support configuration inheritance, so only basic options
+        // TODO: are supported.  This should be fixed.
+        setProperties(getConfiguration(), options);
 
         // validate and initialize state
         initState();

@@ -28,7 +28,6 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
@@ -57,18 +56,14 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/services?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
             .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
-            }
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
         });
 
-        List<Service> result = ex.getOut().getBody(List.class);
+        List<Service> result = ex.getMessage().getBody(List.class);
         assertEquals(3, result.size());
     }
 
@@ -77,16 +72,12 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
-        Exchange ex = template.request("direct:getServices", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
-            }
+        Exchange ex = template.request("direct:getServices", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
         });
 
-        Service result = ex.getOut().getBody(Service.class);
+        Service result = ex.getMessage().getBody(Service.class);
 
         assertNotNull(result);
     }
@@ -97,16 +88,12 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
 
         server.expect().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
 
-        Exchange ex = template.request("direct:deleteService", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
-            }
+        Exchange ex = template.request("direct:deleteService", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
         });
 
-        boolean servDeleted = ex.getOut().getBody(Boolean.class);
+        boolean servDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(servDeleted);
     }

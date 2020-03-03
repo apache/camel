@@ -31,6 +31,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -72,11 +73,6 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
-    public String toString() {
-        return "Splitter[on: " + expression + " to: " + getProcessors().iterator().next() + " aggregate: " + getAggregationStrategy() + "]";
-    }
-
-    @Override
     public String getTraceLabel() {
         return "split[" + expression + "]";
     }
@@ -84,7 +80,6 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         AggregationStrategy strategy = getAggregationStrategy();
-
 
         // set original exchange if not already pre-configured
         if (strategy instanceof UseOriginalAggregationStrategy) {
@@ -244,7 +239,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
         // do not share unit of work
-        exchange.setUnitOfWork(null);
+        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
 
         exchange.setProperty(Exchange.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {

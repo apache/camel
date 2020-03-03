@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "claimCheck",
+    "title": "Claim Check",
+    "description": "The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.",
+    "javaType": "org.apache.camel.model.ClaimCheckDefinition",
+    "label": "eip,routing",
+    "deprecated": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "operation": { "kind": "attribute", "displayName": "Operation", "required": false, "type": "enum", "javaType": "org.apache.camel.model.ClaimCheckOperation", "enum": [ "Get", "GetAndRemove", "Pop", "Push", "Set" ], "deprecated": false, "secret": false, "description": "The claim check operation to use. The following operations is supported: Get - Gets (does not remove) the claim check by the given key. GetAndRemove - Gets and remove the claim check by the given key. Set - Sets a new (will override if key already exists) claim check with the given key. Push - Sets a new claim check on the stack (does not use key). Pop - Gets the latest claim check from the stack (does not use key)." },
+    "key": { "kind": "attribute", "displayName": "Key", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use a specific key for claim check id (for dynamic keys use simple language syntax as the key)." },
+    "filter": { "kind": "attribute", "displayName": "Filter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Specified a filter to control what data gets merging data back from the claim check repository. The following syntax is supported: body - to aggregate the message body attachments - to aggregate all the message attachments headers - to aggregate all the message headers header:pattern - to aggregate all the message headers that matches the pattern. The pattern uses the following rules are applied in this order: exact match, returns true wildcard match (pattern ends with a and the name starts with the pattern), returns true regular expression match, returns true otherwise returns false You can specify multiple rules separated by comma. For example to include the message body and all headers starting with foo body,header:foo. The syntax supports the following prefixes which can be used to specify include,exclude, or remove - to include (which is the default mode) - - to exclude (exclude takes precedence over include) -- - to remove (remove takes precedence) For example to exclude a header name foo, and remove all headers starting with bar -header:foo,--headers:bar Note you cannot have both include and exclude header:pattern at the same time." },
+    "strategyRef": { "kind": "attribute", "displayName": "Strategy Ref", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "To use a custom AggregationStrategy instead of the default implementation. Notice you cannot use both custom aggregation strategy and configure data at the same time." },
+    "strategyMethodName": { "kind": "attribute", "displayName": "Strategy Method Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" },
+    "description": { "kind": "element", "displayName": "Description", "required": false, "type": "object", "javaType": "org.apache.camel.model.DescriptionDefinition", "deprecated": false, "secret": false, "description": "Sets the description of this node" }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "asn1",
+    "modelName": "asn1",
+    "title": "ASN.1 File",
+    "description": "The ASN.1 data format is used for file transfer with telecommunications protocols.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation,file",
+    "firstVersion": "2.20.0",
+    "label": "dataformat,transformation,file",
+    "javaType": "org.apache.camel.dataformat.asn1.ASN1DataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.ASN1DataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-asn1",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "usingIterator": { "kind": "attribute", "displayName": "Using Iterator", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "If the asn1 file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode." },
+    "clazzName": { "kind": "attribute", "displayName": "Clazz Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Name of class to use when unmarshalling" },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

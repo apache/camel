@@ -42,7 +42,6 @@ public class DropboxDelProducer extends DropboxProducer {
 
         exchange.getIn().setHeader(DropboxResultHeader.DELETED_PATH.name(), result.getEntry());
         exchange.getIn().setBody(result.getEntry());
-        log.debug("Deleted: {}", remotePath);
     }
 
 }

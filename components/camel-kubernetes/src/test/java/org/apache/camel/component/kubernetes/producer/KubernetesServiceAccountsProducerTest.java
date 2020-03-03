@@ -27,7 +27,6 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
@@ -56,18 +55,14 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/serviceaccounts?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
             .andReturn(200, new ServiceAccountListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
-            }
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, labels);
         });
 
-        List<ServiceAccount> result = ex.getOut().getBody(List.class);
+        List<ServiceAccount> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }
@@ -77,16 +72,12 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
         ServiceAccount pod1 = new ServiceAccountBuilder().withNewMetadata().withName("sa1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/serviceaccounts/sa1").andReturn(200, pod1).once();
-        Exchange ex = template.request("direct:delete", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "sa1");
-            }
+        Exchange ex = template.request("direct:delete", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT_NAME, "sa1");
         });
 
-        boolean secDeleted = ex.getOut().getBody(Boolean.class);
+        boolean secDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(secDeleted);
     }

@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
@@ -286,10 +287,10 @@ public class RouteBuilderTest extends TestSupport {
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, unwrap(consumer.getProcessor()));
-            assertEquals(3, line.getProcessors().size());
+            assertEquals(3, line.next().size());
             // last should be our seda
 
-            List<Processor> processors = new ArrayList<>(line.getProcessors());
+            List<Processor> processors = new ArrayList<>(line.next());
             Processor sendTo = assertIsInstanceOf(SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
             assertSendTo(sendTo, "direct://d");
         }
@@ -359,7 +360,7 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
-            Iterator<?> it = line.getProcessors().iterator();
+            Iterator<?> it = line.next().iterator();
 
             // EvaluateExpressionProcessor should be wrapped in error handler
             Object first = it.next();
@@ -468,7 +469,7 @@ public class RouteBuilderTest extends TestSupport {
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, unwrap(consumer.getProcessor()));
-            Iterator<Processor> it = line.getProcessors().iterator();
+            Iterator<Processor> it = line.next().iterator();
 
             assertIsInstanceOf(ThreadsProcessor.class, unwrapChannel(it.next()).getNextProcessor());
             assertIsInstanceOf(SendProcessor.class, unwrapChannel(it.next()).getNextProcessor());
@@ -541,5 +542,33 @@ public class RouteBuilderTest extends TestSupport {
         List<Route> routes = getRouteList(builder);
 
         assertEquals(2, routes.size());
+    }
+
+    @Test
+    public void testLifecycleInterceptor() throws Exception {
+        AtomicInteger before = new AtomicInteger();
+        AtomicInteger after = new AtomicInteger();
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() throws Exception {
+            }
+        };
+
+        builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
+            @Override
+            public void beforeConfigure(RouteBuilder builder) {
+                before.incrementAndGet();
+            }
+            @Override
+            public void afterConfigure(RouteBuilder builder) {
+                after.incrementAndGet();
+            }
+        });
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.addRoutes(builder);
+
+        assertEquals(1, before.get());
+        assertEquals(1, after.get());
     }
 }

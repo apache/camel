@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "endpoint",
+    "title": "Endpoint",
+    "description": "Camel endpoint configuration",
+    "javaType": "org.apache.camel.spring.CamelEndpointFactoryBean",
+    "label": "spring,configuration,endpoint",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "uri": { "kind": "attribute", "displayName": "Uri", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the URI to use to resolve the endpoint. Notice that additional options can be configured using a series of property." },
+    "camelContextId": { "kind": "attribute", "displayName": "Camel Context Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Id of CamelContext to use if there are multiple CamelContexts in the same JVM" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

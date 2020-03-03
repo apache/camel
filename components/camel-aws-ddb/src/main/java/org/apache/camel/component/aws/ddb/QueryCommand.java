@@ -69,8 +69,4 @@ public class QueryCommand extends AbstractDdbCommand {
     private Map determineKeyConditions() {
         return exchange.getIn().getHeader(DdbConstants.KEY_CONDITIONS, Map.class);
     }
-
-    private Integer determineLimit() {
-        return exchange.getIn().getHeader(DdbConstants.LIMIT, Integer.class);
-    }
 }

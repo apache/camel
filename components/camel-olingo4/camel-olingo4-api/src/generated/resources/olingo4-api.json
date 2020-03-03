@@ -1,0 +1,12 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "olingo4-api",
+    "title": "Olingo4 Api",
+    "description": "Camel Olingo4 API",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-olingo4-api",
+    "version": "3.2.0-SNAPSHOT"
+  }
+}

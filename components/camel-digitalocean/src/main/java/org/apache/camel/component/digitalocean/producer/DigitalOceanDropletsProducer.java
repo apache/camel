@@ -67,92 +67,92 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         }
 
         switch (op) {
-        case create:
-            createDroplet(exchange);
-            break;
-        case list:
-            getDroplets(exchange);
-            break;
-        case delete:
-            deleteDroplet(exchange);
-            break;
-        case get:
-            getDroplet(exchange);
-            break;
-        case listActions:
-            getDropletActions(exchange);
-            break;
-        case listSnapshots:
-            getDropletSnapshots(exchange);
-            break;
-        case listKernels:
-            getDropletKernels(exchange);
-            break;
-        case listBackups:
-            getDropletBackups(exchange);
-            break;
-        case listNeighbors:
-            getDropletNeighbors(exchange);
-            break;
-        case listAllNeighbors:
-            getAllDropletNeighbors(exchange);
-            break;
-        case enableBackups:
-            enableDropletBackups(exchange);
-            break;
-        case disableBackups:
-            disableDropletBackups(exchange);
-            break;
-        case reboot:
-            rebootDroplet(exchange);
-            break;
-        case powerCycle:
-            powerCycleDroplet(exchange);
-            break;
-        case shutdown:
-            shutdownDroplet(exchange);
-            break;
-        case powerOn:
-            powerOnDroplet(exchange);
-            break;
-        case powerOff:
-            powerOffDroplet(exchange);
-            break;
-        case restore:
-            restoreDroplet(exchange);
-            break;
-        case resetPassword:
-            resetDropletPassword(exchange);
-            break;
-        case resize:
-            resizeDroplet(exchange);
-            break;
-        case rebuild:
-            rebuildDroplet(exchange);
-            break;
-        case rename:
-            renameDroplet(exchange);
-            break;
-        case changeKernel:
-            changeDropletKernel(exchange);
-            break;
-        case enableIpv6:
-            enableDropletIpv6(exchange);
-            break;
-        case enablePrivateNetworking:
-            enableDropletPrivateNetworking(exchange);
-            break;
-        case takeSnapshot:
-            takeDropletSnapshot(exchange);
-            break;
-        case tag:
-            tagDroplet(exchange);
-            break;
-        case untag:
-            untagDroplet(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case create:
+                createDroplet(exchange);
+                break;
+            case list:
+                getDroplets(exchange);
+                break;
+            case delete:
+                deleteDroplet(exchange);
+                break;
+            case get:
+                getDroplet(exchange);
+                break;
+            case listActions:
+                getDropletActions(exchange);
+                break;
+            case listSnapshots:
+                getDropletSnapshots(exchange);
+                break;
+            case listKernels:
+                getDropletKernels(exchange);
+                break;
+            case listBackups:
+                getDropletBackups(exchange);
+                break;
+            case listNeighbors:
+                getDropletNeighbors(exchange);
+                break;
+            case listAllNeighbors:
+                getAllDropletNeighbors(exchange);
+                break;
+            case enableBackups:
+                enableDropletBackups(exchange);
+                break;
+            case disableBackups:
+                disableDropletBackups(exchange);
+                break;
+            case reboot:
+                rebootDroplet(exchange);
+                break;
+            case powerCycle:
+                powerCycleDroplet(exchange);
+                break;
+            case shutdown:
+                shutdownDroplet(exchange);
+                break;
+            case powerOn:
+                powerOnDroplet(exchange);
+                break;
+            case powerOff:
+                powerOffDroplet(exchange);
+                break;
+            case restore:
+                restoreDroplet(exchange);
+                break;
+            case resetPassword:
+                resetDropletPassword(exchange);
+                break;
+            case resize:
+                resizeDroplet(exchange);
+                break;
+            case rebuild:
+                rebuildDroplet(exchange);
+                break;
+            case rename:
+                renameDroplet(exchange);
+                break;
+            case changeKernel:
+                changeDropletKernel(exchange);
+                break;
+            case enableIpv6:
+                enableDropletIpv6(exchange);
+                break;
+            case enablePrivateNetworking:
+                enableDropletPrivateNetworking(exchange);
+                break;
+            case takeSnapshot:
+                takeDropletSnapshot(exchange);
+                break;
+            case tag:
+                tagDroplet(exchange);
+                break;
+            case untag:
+                untagDroplet(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

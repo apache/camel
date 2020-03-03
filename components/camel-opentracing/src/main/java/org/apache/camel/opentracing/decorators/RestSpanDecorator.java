@@ -78,7 +78,7 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
                 if (index != -1) {
                     path = path.substring(0, index);
                 }
-                path = path.replaceAll(":", "");
+                path = path.replace(":", "");
                 try {
                     path = URLDecoder.decode(path, "UTF-8");
                 } catch (UnsupportedEncodingException e) {

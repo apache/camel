@@ -1,0 +1,18 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "serviceExpression",
+    "title": "Service Expression",
+    "javaType": "org.apache.camel.model.cloud.ServiceCallExpressionConfiguration",
+    "label": "routing,cloud",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "hostHeader": { "kind": "attribute", "displayName": "Host Header", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "CamelServiceCallServiceHost", "description": "The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST" },
+    "portHeader": { "kind": "attribute", "displayName": "Port Header", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "CamelServiceCallServicePort", "description": "The header that holds the service port information, default ServiceCallConstants.SERVICE_PORT" },
+    "properties": { "kind": "element", "displayName": "Properties", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "secret": false, "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

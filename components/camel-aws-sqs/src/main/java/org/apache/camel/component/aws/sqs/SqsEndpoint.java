@@ -53,6 +53,8 @@ import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The aws-sqs component is used for sending and receiving messages to Amazon's
@@ -60,6 +62,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn", label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
 
     private AmazonSQS client;
     private String queueUrl;
@@ -157,7 +161,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
                 for (String url : listQueuesResult.getQueueUrls()) {
                     if (url.endsWith("/" + configuration.getQueueName())) {
                         queueUrl = url;
-                        log.trace("Queue available at '{}'.", queueUrl);
+                        LOG.trace("Queue available at '{}'.", queueUrl);
                         break;
                     }
                 }
@@ -167,13 +171,13 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (queueUrl == null && configuration.isAutoCreateQueue()) {
             createQueue(client);
         } else {
-            log.debug("Using Amazon SQS queue url: {}", queueUrl);
+            LOG.debug("Using Amazon SQS queue url: {}", queueUrl);
             updateQueueAttributes(client);
         }
     }
 
     protected void createQueue(AmazonSQS client) {
-        log.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
+        LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
@@ -211,12 +215,12 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
                 request.getAttributes().put(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
         }
-        log.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
+        LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
 
         CreateQueueResult queueResult = client.createQueue(request);
         queueUrl = queueResult.getQueueUrl();
 
-        log.trace("Queue created and available at: {}", queueUrl);
+        LOG.trace("Queue created and available at: {}", queueUrl);
     }
 
     private void updateQueueAttributes(AmazonSQS client) {
@@ -252,9 +256,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             }
         }
         if (!request.getAttributes().isEmpty()) {
-            log.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
+            LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
             client.setQueueAttributes(request);
-            log.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
+            LOG.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
         }
     }
 
@@ -339,7 +343,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         final String protocol = configuration.getProtocol(); 
 
         if (protocol.equals("http")) {
-            log.trace("Configuring AWS-SQS for HTTP protocol");
+            LOG.trace("Configuring AWS-SQS for HTTP protocol");
             if (isClientConfigFound) {
                 clientConfiguration = clientConfiguration.withProtocol(Protocol.HTTP);
             } else {
@@ -367,7 +371,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         final String host = getFullyQualifiedAWSHost();
         final String region = Regions.valueOf(configuration.getRegion()).getName();
 
-        log.debug("Creating endpoint for host {} on region {}", host, region);
+        LOG.debug("Creating endpoint for host {} on region {}", host, region);
         clientBuilder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(host, region));
 
         client = clientBuilder.build();

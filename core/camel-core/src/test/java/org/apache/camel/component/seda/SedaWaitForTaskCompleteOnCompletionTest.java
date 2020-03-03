@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -56,7 +57,7 @@ public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport 
                 from("direct:start").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        exchange.addOnCompletion(new SynchronizationAdapter() {
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(Exchange exchange) {
                                 done = done + "A";

@@ -58,26 +58,26 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
 
         try {
             switch (operationName) {
-            case GET_RECENT_REPORTS:
-                processGetRecentReports(exchange, callback);
-                break;
-            case GET_REPORT_DESCRIPTION:
-                processGetReportDescription(exchange, callback);
-                break;
-            case EXECUTE_SYNCREPORT:
-                processExecuteSyncReport(exchange, callback);
-                break;
-            case EXECUTE_ASYNCREPORT:
-                processExecuteAsyncReport(exchange, callback);
-                break;
-            case GET_REPORT_INSTANCES:
-                processGetReportInstances(exchange, callback);
-                break;
-            case GET_REPORT_RESULTS:
-                processGetReportResults(exchange, callback);
-                break;
-            default:
-                throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
+                case GET_RECENT_REPORTS:
+                    processGetRecentReports(exchange, callback);
+                    break;
+                case GET_REPORT_DESCRIPTION:
+                    processGetReportDescription(exchange, callback);
+                    break;
+                case EXECUTE_SYNCREPORT:
+                    processExecuteSyncReport(exchange, callback);
+                    break;
+                case EXECUTE_ASYNCREPORT:
+                    processExecuteAsyncReport(exchange, callback);
+                    break;
+                case GET_REPORT_INSTANCES:
+                    processGetReportInstances(exchange, callback);
+                    break;
+                case GET_REPORT_RESULTS:
+                    processGetReportResults(exchange, callback);
+                    break;
+                default:
+                    throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(String.format("Error processing %s: [%s] \"%s\"", operationName.value(), e.getStatusCode(), e.getMessage()), e));

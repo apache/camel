@@ -1,0 +1,8 @@
+{
+  "schema" : "http://schemas.schibsted.io/thing/pulse-simple.json#1.json",
+  "id" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
+  "published" : "2017-05-04T09:13:29+02:00",
+  "type" : "View",
+  "environmentId" : "urn:schibsted.com:environment:uuid",
+  "url" : "http://www.aftenposten.no/"
+}

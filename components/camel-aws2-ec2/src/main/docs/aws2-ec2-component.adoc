@@ -1,0 +1,192 @@
+[[aws2-ec2-component]]
+= AWS 2 EC2 Component
+
+*Since Camel 3.1*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The EC2 component supports the ability to create, run, start, stop and terminate
+https://aws.amazon.com/ec2/[AWS EC2] instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon EC2. More information is available at
+https://aws.amazon.com/ec2/[Amazon EC2].
+
+[NOTE]
+====
+The AWS2 EC2 component is not supported in OSGI
+====
+
+== URI Format
+
+[source,java]
+-------------------------
+aws2-ec2://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS 2 EC2 component supports 11 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | Ec2Client
+| *configuration* (producer) | The component configuration |  | AWS2EC2Configuration
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. The value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | AWS2EC2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which EC2 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS 2 EC2 endpoint is configured using URI syntax:
+
+----
+aws2-ec2:label
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+=== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *amazonEc2Client* (producer) | To use a existing configured AmazonEC2Client as client |  | Ec2Client
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags. The value can be one of: createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags |  | AWS2EC2Operations
+| *proxyHost* (producer) | To define a proxy host when instantiating the EC2 client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the EC2 client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EC2 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (producer) | The region in which EC2 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+
+
+
+Required EC2 component options
+
+You have to provide the amazonEc2Client in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/ec2/[Amazon EC2] service.
+
+== Usage
+
+=== Message headers evaluated by the EC2 producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsEC2ImageId` |`String` |An image ID of the AWS marketplace
+
+|`CamelAwsEC2InstanceType` |com.amazonaws.services.ec2.model.InstanceType |The instance type we want to create and run
+
+|`CamelAwsEC2Operation` |`String` |The operation we want to perform
+
+|`CamelAwsEC2InstanceMinCount` |`Int` |The mininum number of instances we want to run.
+
+|`CamelAwsEC2InstanceMaxCount` |`Int` |The maximum number of instances we want to run.
+
+|`CamelAwsEC2InstanceMonitoring` |Boolean |Define if we want the running instances to be monitored
+
+|`CamelAwsEC2InstanceEbsOptimized` |`Boolean` |Define if the creating instance is optimized for EBS I/O.
+
+|`CamelAwsEC2InstanceSecurityGroups` |Collection |The security groups to associate to the instances
+
+|`CamelAwsEC2InstancesIds` |`Collection` |A collection of instances IDS to execute start, stop, describe and
+terminate operations on.
+
+|`CamelAwsEC2InstancesTags` |`Collection` |A collection of tags to add or remove from EC2 resources
+|=======================================================================
+
+== Supported producer operations
+
+- createAndRunInstances
+- startInstances
+- stopInstances
+- terminateInstances
+- describeInstances
+- describeInstancesStatus
+- rebootInstances
+- monitorInstances
+- unmonitorInstances
+- createTags
+- deleteTags
+
+== Producer Examples
+
+- createAndRunInstances: this operation will create an EC2 instance and run it
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createAndRun")
+     .setHeader(EC2Constants.IMAGE_ID, constant("ami-fd65ba94"))
+     .setHeader(EC2Constants.INSTANCE_TYPE, constant(InstanceType.T2Micro))
+     .setHeader(EC2Constants.INSTANCE_MIN_COUNT, constant("1"))
+     .setHeader(EC2Constants.INSTANCE_MAX_COUNT, constant("1"))
+     .to("aws2-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
+--------------------------------------------------------------------------------
+
+== Automatic detection of Ec2Client client in registry
+
+The component is capable of detecting the presence of an Ec2Client bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-ec2</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$aws2-ec2-starter.adoc[]

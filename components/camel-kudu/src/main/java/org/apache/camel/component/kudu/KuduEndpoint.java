@@ -137,11 +137,6 @@ public class KuduEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("You cannot create consumers on this endpoint");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     public String getTableName() {
         return tableName;
     }

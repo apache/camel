@@ -34,12 +34,12 @@ import org.apache.camel.spi.RouteContext;
 
 public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
-    public ChoiceReifier(ProcessorDefinition<?> definition) {
-        super(ChoiceDefinition.class.cast(definition));
+    public ChoiceReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        super(routeContext, ChoiceDefinition.class.cast(definition));
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public Processor createProcessor() throws Exception {
         List<FilterProcessor> filters = new ArrayList<>();
         for (WhenDefinition whenClause : definition.getWhenClauses()) {
             ExpressionDefinition exp = whenClause.getExpression();
@@ -66,19 +66,12 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 exp = whenClause.getExpression();
             }
 
-            // also resolve properties and constant fields on embedded
-            // expressions in the when clauses
-            if (exp != null) {
-                // resolve properties before we create the processor
-                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), exp);
-            }
-
-            FilterProcessor filter = (FilterProcessor)createProcessor(routeContext, whenClause);
+            FilterProcessor filter = (FilterProcessor)createProcessor(whenClause);
             filters.add(filter);
         }
         Processor otherwiseProcessor = null;
         if (definition.getOtherwise() != null) {
-            otherwiseProcessor = createProcessor(routeContext, definition.getOtherwise());
+            otherwiseProcessor = createProcessor(definition.getOtherwise());
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }

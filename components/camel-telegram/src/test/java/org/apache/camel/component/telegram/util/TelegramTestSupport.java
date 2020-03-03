@@ -69,7 +69,7 @@ public class TelegramTestSupport extends CamelTestSupport {
                     .close()
                 .oneTimeKeyboard(true)
                 .build();
-        message.setReplyKeyboardMarkup(replyMarkup);
+        message.setReplyMarkup(replyMarkup);
 
         return message;
     }

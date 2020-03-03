@@ -1,0 +1,23 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "hl7",
+    "modelName": "hl7",
+    "title": "HL7",
+    "description": "The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.",
+    "deprecated": false,
+    "deprecationNote": "dataformat,transformation,hl7",
+    "firstVersion": "2.0.0",
+    "label": "dataformat,transformation,hl7",
+    "javaType": "org.apache.camel.component.hl7.HL7DataFormat",
+    "modelJavaType": "org.apache.camel.model.dataformat.HL7DataFormat",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-hl7",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "validate": { "kind": "attribute", "displayName": "Validate", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to validate the HL7 message Is by default true." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

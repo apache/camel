@@ -35,7 +35,7 @@ function deleteComponentImageSymlinks() {
 }
 
 function createComponentSymlinks() {
-    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-jaxp/src/main/docs/*.adoc', '../components/{*,*/*}/src/main/docs/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core-languages/src/main/docs/*.adoc', '../core/camel-xml-jaxp/src/main/docs/*.adoc', '../components/{*,*/*}/src/main/docs/*.adoc'])
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
             // instead of .../pages/camel-.../src/main/docs/....adoc
@@ -80,7 +80,7 @@ function deleteUserManualSymlinks() {
 }
 
 function createUserManualSymlinks() {
-    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-jaxp/src/main/docs/*.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core-languages/src/main/docs/*.adoc', '../core/camel-xml-jaxp/src/main/docs/*.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
         // Antora disabled symlinks, there is an issue open
         // https://gitlab.com/antora/antora/issues/188
         // to reinstate symlink support, until that's resolved
@@ -105,12 +105,12 @@ function titleFrom(file) {
 
 function insertGeneratedNotice() {
     return inject(src('./generated.txt'), {
-               name: 'generated',
-               removeTags: true,
-               transform: (filename, file) => {
-                   return file.contents.toString('utf8');
-               }
-           });
+        name: 'generated',
+        removeTags: true,
+        transform: (filename, file) => {
+            return file.contents.toString('utf8');
+        }
+    });
 }
 
 function insertSourceAttribute() {
@@ -122,7 +122,7 @@ function insertSourceAttribute() {
 function createComponentNav() {
     return src('component-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src(['../core/camel-base/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*.adoc']).pipe(sort()), {
+        .pipe(inject(src(['../core/camel-base/src/main/docs/*-component.adoc', '../core/camel-core-languages/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*.adoc']).pipe(sort()), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
@@ -195,9 +195,9 @@ function createComponentExamples() {
 }
 
 const symlinks = parallel(
-  series(deleteComponentSymlinks, createComponentSymlinks),
-  series(deleteComponentImageSymlinks, createComponentImageSymlinks),
-  series(deleteUserManualSymlinks, createUserManualSymlinks)
+    series(deleteComponentSymlinks, createComponentSymlinks),
+    series(deleteComponentImageSymlinks, createComponentImageSymlinks),
+    series(deleteUserManualSymlinks, createUserManualSymlinks)
 );
 const nav = parallel(createComponentNav, createUserManualNav);
 const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
@@ -206,4 +206,3 @@ exports.symlinks = symlinks;
 exports.nav = nav;
 exports.examples = examples;
 exports.default = series(symlinks, nav, examples);
-

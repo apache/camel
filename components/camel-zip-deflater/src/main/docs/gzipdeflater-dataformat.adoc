@@ -13,8 +13,11 @@ The compression capability is quite useful when you deal with large XML
 and Text based payloads or when you read messages previously comressed
 using `gzip` tool.
 
-NOTE: This dataformat is not for working with gzip files such as uncompressing and building gzip files.
+[NOTE]
+====
+This dataformat is not for working with gzip files such as uncompressing and building gzip files.
 Instead use the zipfile dataformat.
+====
 
 == Options
 
@@ -56,3 +59,5 @@ from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZipped
 
 This data format is provided in *camel-core* so no additional
 dependencies is needed.
+
+include::camel-spring-boot::page$zip-deflater-starter.adoc[]

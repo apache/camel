@@ -84,7 +84,6 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      */
     public void startConsumer(Consumer consumer) throws Exception {
         ServiceHelper.startService(consumer);
-        log.debug("Started consumer {}", consumer);
     }
 
     /**
@@ -96,7 +95,6 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     public void stopConsumer(Consumer consumer) throws Exception {
         // stop and shutdown
         ServiceHelper.stopAndShutdownServices(consumer);
-        log.debug("Stopped consumer {}", consumer);
     }
 
     /**
@@ -109,13 +107,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @return <tt>true</tt> if the consumer was suspended or stopped, <tt>false</tt> if the consumer was already suspend or stopped
      */
     public boolean suspendOrStopConsumer(Consumer consumer) throws Exception {
-        boolean suspended = ServiceHelper.suspendService(consumer);
-        if (suspended) {
-            log.debug("Suspended consumer {}", consumer);
-        } else {
-            log.trace("Consumer already suspended {}", consumer);
-        }
-        return suspended;
+        return ServiceHelper.suspendService(consumer);
     }
 
     /**
@@ -128,13 +120,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @return <tt>true</tt> if the consumer was resumed or started, <tt>false</tt> if the consumer was already resumed or started
      */
     public boolean resumeOrStartConsumer(Consumer consumer) throws Exception {
-        boolean resumed = ServiceHelper.resumeService(consumer);
-        if (resumed) {
-            log.debug("Resumed consumer {}", consumer);
-        } else {
-            log.trace("Consumer already resumed {}", consumer);
-        }
-        return resumed;
+        return ServiceHelper.resumeService(consumer);
     }
 
     public void startRoute(Route route) throws Exception {

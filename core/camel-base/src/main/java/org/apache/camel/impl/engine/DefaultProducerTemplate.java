@@ -199,11 +199,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Object sendBody(String endpointUri, ExchangePattern pattern, Object body) throws CamelExecutionException {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         Object result = sendBody(endpoint, pattern, body);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -224,11 +224,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                     final String header, final Object headerValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -237,11 +237,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                     final String header, final Object headerValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -264,11 +264,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                       final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -277,11 +277,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                                       final String property, final Object propertyValue) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -306,11 +306,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) throws CamelExecutionException {
         Exchange exchange = send(endpoint, pattern, createBodyAndHeaders(body, headers));
         Object result = extractResultBody(exchange, pattern);
-        if (pattern.isOutCapable()) {
-            return result;
-        } else {
+        if (pattern == ExchangePattern.InOnly) {
             // return null if not OUT capable
             return null;
+        } else {
+            return result;
         }
     }
 
@@ -757,11 +757,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 .thenApply(createCompletionFunction(onCompletion))
                 .thenApply(answer -> {
                     Object result = extractResultBody(answer, pattern);
-                    if (pattern.isOutCapable()) {
-                        return result;
-                    } else {
+                    if (pattern == ExchangePattern.InOnly) {
                         // return null if not OUT capable
                         return null;
+                    } else {
+                        return result;
                     }
                 });
     }

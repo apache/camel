@@ -36,10 +36,13 @@ import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The
@@ -58,13 +61,15 @@ import org.apache.camel.util.ObjectHelper;
  * Instances of this class poll for {@link Exchange}s from a given
  * <code>endpoint</code>. Resequencing work and the delivery of messages to
  * the next <code>processor</code> is done within the single polling thread.
- * 
  *
  * @see ResequencerEngine
  */
-public class StreamResequencer extends AsyncProcessorSupport implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware {
+public class StreamResequencer extends AsyncProcessorSupport implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
     private String id;
+    private String routeId;
     private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
     private final ResequencerEngine<Exchange> engine;
@@ -170,7 +175,7 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
 
     @Override
     public String toString() {
-        return "StreamResequencer[to: " + processor + "]";
+        return id;
     }
 
     @Override
@@ -186,6 +191,16 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override
@@ -232,7 +247,7 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
             delivery.request();
         } catch (Exception e) {
             if (isIgnoreInvalidExchanges()) {
-                log.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
+                LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
             } else {
                 exchange.setException(new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e));
             }

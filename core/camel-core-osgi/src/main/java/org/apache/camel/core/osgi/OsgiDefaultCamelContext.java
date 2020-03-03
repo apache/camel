@@ -29,6 +29,7 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     private final BundleContext bundleContext;
 
     public OsgiDefaultCamelContext(BundleContext bundleContext) {
+        super(false);
         this.bundleContext = bundleContext;
 
         // inject common osgi
@@ -41,6 +42,8 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
         addLifecycleStrategy(repo1);
         // setup the application context classloader with the bundle classloader
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
+
+        init();
     }
 
     @Override

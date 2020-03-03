@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,7 +67,7 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
                         cos.close();
                         exchange.getOut().setBody(cos.newStreamCache());
 
-                        exchange.addOnCompletion(new Synchronization() {
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                             @Override
                             public void onComplete(Exchange exchange) {
                                 template.sendBody("mock:onComplete", "");

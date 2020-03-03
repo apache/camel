@@ -125,7 +125,11 @@ You can also specify which Camel component this would apply, such as the JMS com
 <include>camel.component.jms.connection-factory</include>
 ----
 
-NOTE: If you use excludes then they take precedence over include.
+[NOTE]
+====
+If you use excludes then they take precedence over include.
+====
+
 
 === Mappings
 

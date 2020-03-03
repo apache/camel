@@ -40,7 +40,14 @@ public class OutgoingAudioMessage extends OutgoingMessage {
 
     private String title;
 
+    @JsonProperty("reply_markup")
+    private ReplyMarkup replyMarkup;
+
     public OutgoingAudioMessage() {
+    }
+
+    public String replyMarkupJson() {
+        return replyMarkup == null ? null : replyMarkup.toJson();
     }
 
     public byte[] getAudio() {
@@ -83,6 +90,14 @@ public class OutgoingAudioMessage extends OutgoingMessage {
         this.title = title;
     }
 
+    public ReplyMarkup getReplyMarkup() {
+        return replyMarkup;
+    }
+
+    public void setReplyMarkup(ReplyMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("OutgoingAudioMessage{");
@@ -91,6 +106,7 @@ public class OutgoingAudioMessage extends OutgoingMessage {
         sb.append(", durationSeconds=").append(durationSeconds);
         sb.append(", performer='").append(performer).append('\'');
         sb.append(", title='").append(title).append('\'');
+        sb.append(", replyMarkup='").append(replyMarkup).append('\'');
         sb.append('}');
         sb.append(' ');
         sb.append(super.toString());

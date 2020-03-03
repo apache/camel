@@ -89,14 +89,12 @@ public class NettyHttpSSLTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:https://localhost:{{port}}?ssl=true&passphrase=changeit&keyStoreResource=jsse/localhost.p12&trustStoreResource=jsse/localhost.p12")
                         .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
-                                if (session != null) {
-                                    exchange.getOut().setBody("Bye World");
-                                } else {
-                                    exchange.getOut().setBody("Cannot start conversion without SSLSession");
-                                }
+                        .process(exchange -> {
+                            SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                            if (session != null) {
+                                exchange.getMessage().setBody("Bye World");
+                            } else {
+                                exchange.getMessage().setBody("Cannot start conversion without SSLSession");
                             }
                         });
             }

@@ -50,9 +50,8 @@ public class SftpKeyUriConsumeFromClasspathTest extends SftpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                        + "?username=admin&knownHostsUri=known_hosts&privateKeyUri=id_rsa&privateKeyPassphrase=secret&delay=10s&disconnect=true")
-                    .routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                     + "?username=admin&knownHostsUri=known_hosts&privateKeyUri=id_rsa&privateKeyPassphrase=secret&delay=10s&disconnect=true").routeId("foo").noAutoStartup()
+                         .to("mock:result");
             }
         };
     }

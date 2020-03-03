@@ -42,8 +42,6 @@ These capabilites are offered by the following components
 
 * xref:components::secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
 Encryption support)
-* xref:components::xmlsecurity-component.adoc[XML Security component] (XML
-Signature support)
 * xref:components::crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
 * xref:components::crypto-component.adoc[Crypto component] (Signature
 support)

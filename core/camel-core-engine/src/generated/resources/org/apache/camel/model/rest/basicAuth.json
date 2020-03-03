@@ -1,0 +1,17 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "basicAuth",
+    "title": "Basic Auth",
+    "description": "Rest security basic auth definition",
+    "javaType": "org.apache.camel.model.rest.RestSecurityBasicAuth",
+    "label": "rest,security",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "key": { "kind": "attribute", "displayName": "Key", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Key used to refer to this security definition" },
+    "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "A short description for security scheme." }
+  }
+}

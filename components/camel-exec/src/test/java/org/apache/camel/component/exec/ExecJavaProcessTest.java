@@ -17,6 +17,7 @@
 package org.apache.camel.component.exec;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         ExecResult inBody = e.getIn().getBody(ExecResult.class);
 
         output.assertIsSatisfied();
-        assertEquals(PRINT_IN_STDOUT, IOUtils.toString(inBody.getStdout()));
+        assertEquals(PRINT_IN_STDOUT, IOUtils.toString(inBody.getStdout(), Charset.defaultCharset()));
     }
 
     @Test
@@ -199,7 +200,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         Exchange e = sendExchange(commandArgument, NO_TIMEOUT);
         output.assertIsSatisfied();
         InputStream out = e.getIn().getBody(InputStream.class);
-        assertEquals(PRINT_IN_STDOUT, IOUtils.toString(out));
+        assertEquals(PRINT_IN_STDOUT, IOUtils.toString(out, Charset.defaultCharset()));
     }
 
     @Test
@@ -213,7 +214,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.assertIsSatisfied();
         byte[] out = e.getIn().getBody(byte[].class);
         assertNotNull(out);
-        assertEquals(PRINT_IN_STDOUT, new String(out));
+        assertEquals(PRINT_IN_STDOUT, new String(out, Charset.defaultCharset()));
     }
 
     @Test
@@ -244,9 +245,9 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         output.setExpectedMessageCount(1);
         Exchange exchange = sendExchange(THREADS, NO_TIMEOUT);
 
-        String err = IOUtils.toString(exchange.getIn().getHeader(EXEC_STDERR, InputStream.class));
+        String err = IOUtils.toString(exchange.getIn().getHeader(EXEC_STDERR, InputStream.class), Charset.defaultCharset());
         ExecResult result = exchange.getIn().getBody(ExecResult.class);
-        String[] outs = IOUtils.toString(result.getStdout()).split(LINE_SEPARATOR);
+        String[] outs = IOUtils.toString(result.getStdout(), Charset.defaultCharset()).split(LINE_SEPARATOR);
         String[] errs = err.split(LINE_SEPARATOR);
 
         output.assertIsSatisfied();
@@ -389,7 +390,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
         Exchange e = sendExchange(READ_INPUT_LINES_AND_PRINT_THEM, 20000, whiteSpaceSeparatedLines, false);
         ExecResult inBody = e.getIn().getBody(ExecResult.class);
-        assertEquals(expected, IOUtils.toString(inBody.getStdout()));
+        assertEquals(expected, IOUtils.toString(inBody.getStdout(), Charset.defaultCharset()));
     }
 
     /**

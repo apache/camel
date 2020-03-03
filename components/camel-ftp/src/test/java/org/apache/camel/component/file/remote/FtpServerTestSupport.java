@@ -96,9 +96,12 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
                 ftpServer.stop();
                 ftpServer = null;
             } catch (Exception e) {
-                // ignore while shutting down as we could be polling during shutdown
-                // and get errors when the ftp server is stopping. This is only an issue
-                // since we host the ftp server embedded in the same jvm for unit testing
+                // ignore while shutting down as we could be polling during
+                // shutdown
+                // and get errors when the ftp server is stopping. This is only
+                // an issue
+                // since we host the ftp server embedded in the same jvm for
+                // unit testing
             }
         }
     }
@@ -131,9 +134,9 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
         return serverFactory;
     }
-    
+
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
     }
-    
+
 }

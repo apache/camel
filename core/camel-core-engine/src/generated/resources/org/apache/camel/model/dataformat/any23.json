@@ -1,0 +1,21 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "any23",
+    "title": "Any23",
+    "description": "Any23 data format is used for parsing data to RDF.",
+    "firstVersion": "3.0.0",
+    "javaType": "org.apache.camel.model.dataformat.Any23DataFormat",
+    "label": "dataformat,transformation",
+    "deprecated": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "outputFormat": { "kind": "attribute", "displayName": "Output Format", "required": false, "type": "enum", "javaType": "org.apache.camel.dataformat.any23.Any23OutputFormat", "enum": [ "JSONLD", "NQUADS", "NTRIPLES", "RDF4JMODEL", "RDFJSON", "RDFXML", "TURTLE" ], "deprecated": false, "secret": false, "defaultValue": "RDF4JMODEL", "description": "What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL." },
+    "extractors": { "kind": "element", "displayName": "Extractors", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "secret": false, "description": "List of Any23 extractors to be used in the unmarshal operation. A list of the available extractors can be found here here. If not provided, all the available extractors are used." },
+    "baseURI": { "kind": "attribute", "displayName": "Base URI", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The URI to use as base for building RDF entities if only relative paths are provided." },
+    "contentTypeHeader": { "kind": "attribute", "displayName": "Content Type Header", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application\/xml for data formats marshalling to XML, or application\/json for data formats marshalling to JSon etc." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The id of this node" }
+  }
+}

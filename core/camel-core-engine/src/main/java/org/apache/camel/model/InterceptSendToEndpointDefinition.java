@@ -16,9 +16,12 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
@@ -45,6 +48,17 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     public InterceptSendToEndpointDefinition(String uri) {
         this.uri = uri;
+    }
+
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    @XmlElementRef
+    @Override
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        super.setOutputs(outputs);
     }
 
     @Override
@@ -134,7 +148,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
             newWhen.setId(when.getId());
             newWhen.setInheritErrorHandler(when.isInheritErrorHandler());
             newWhen.setParent(when.getParent());
-            newWhen.setOtherAttributes(when.getOtherAttributes());
             newWhen.setDescription(when.getDescription());
 
             // move this outputs to the when, expect the first one

@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * The google-sheets component provides access to Google Sheets.
+ * The google-sheets-stream component provides access to Google Sheets.
  */
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-sheets-stream",
