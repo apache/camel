@@ -312,9 +312,8 @@ public interface ExtendedCamelContext extends CamelContext {
      *
      * @param path the META-INF path
      * @return the factory finder
-     * @throws NoFactoryAvailableException is thrown if a factory could not be found
      */
-    FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
+    FactoryFinder getFactoryFinder(String path);
 
     /**
      * Sets the factory finder resolver to use.

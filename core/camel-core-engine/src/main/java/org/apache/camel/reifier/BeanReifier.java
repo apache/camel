@@ -39,9 +39,6 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         Class<?> beanClass = definition.getBeanClass();
 
         BeanProcessorFactory fac = camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory();
-        if (fac == null) {
-            throw new IllegalStateException("Cannot find BeanProcessorFactory. Make sure camel-bean is on the classpath.");
-        }
         // use singleton as default scope
         BeanScope scope = BeanScope.Singleton;
         if (definition.getScope() != null) {

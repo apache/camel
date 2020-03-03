@@ -23,6 +23,8 @@ import java.util.Optional;
  */
 public interface FactoryFinder {
 
+    String DEFAULT_PATH = "META-INF/services/org/apache/camel/";
+
     /**
      * Gets the resource classpath.
      *

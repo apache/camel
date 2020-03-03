@@ -58,7 +58,6 @@ import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -264,7 +263,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile ProcessorFactory processorFactory;
     private volatile MessageHistoryFactory messageHistoryFactory;
     private volatile FactoryFinderResolver factoryFinderResolver;
-    private volatile FactoryFinder defaultFactoryFinder;
     private volatile StreamCachingStrategy streamCachingStrategy;
     private volatile InflightRepository inflightRepository;
     private volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
@@ -2727,12 +2725,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         forceLazyInitialization();
 
-        // if camel-bean is on classpath then we can load its bean proxy factory
-        BeanProxyFactory beanProxyFactory = new BeanProxyFactoryResolver().resolve(this);
-        if (beanProxyFactory != null) {
-            addService(beanProxyFactory);
-        }
-
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
         // and we needed to create endpoints up-front as it may be accessed before this context is started
         endpoints = doAddService(createEndpointRegistry(endpoints));
@@ -3528,7 +3520,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getAsyncProcessorAwaitManager();
         getShutdownStrategy();
         getPackageScanClassResolver();
-        getRestRegistryFactory();
+        try {
+            getRestRegistryFactory();
+        } catch (IllegalStateException e) {
+            // ignore in case camel-rest is not on the classpath
+        }
         getReactiveExecutor();
         getBeanIntrospection();
         getPropertiesComponent();
@@ -3557,8 +3553,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getUuidGenerator();
         getUnitOfWorkFactory();
         getRouteController();
-        getBeanProxyFactory();
-        getBeanProcessorFactory();
+        try {
+            addService(getBeanProxyFactory());
+            getBeanProcessorFactory();
+        } catch (Exception e) {
+            // ignore in case camel-bean is not on the classpath
+        }
         getBeanPostProcessor();
     }
 
@@ -3628,14 +3628,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public FactoryFinder getDefaultFactoryFinder() {
-        if (defaultFactoryFinder == null) {
-            synchronized (lock) {
-                if (defaultFactoryFinder == null) {
-                    defaultFactoryFinder = getFactoryFinderResolver().resolveDefaultFactoryFinder(getClassResolver());
-                }
-            }
-        }
-        return defaultFactoryFinder;
+        return getFactoryFinder(FactoryFinder.DEFAULT_PATH);
     }
 
     @Override
@@ -3656,7 +3649,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
-    public FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException {
+    public FactoryFinder getFactoryFinder(String path) {
         return factories.computeIfAbsent(path, this::createFactoryFinder);
     }
 
@@ -4207,9 +4200,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     protected RestRegistry createRestRegistry() {
         RestRegistryFactory factory = getRestRegistryFactory();
-        if (factory == null) {
-            throw new IllegalStateException("No RestRegistryFactory implementation found.  You need to add camel-rest to the classpath.");
-        }
         return factory.createRegistry();
     }
 
