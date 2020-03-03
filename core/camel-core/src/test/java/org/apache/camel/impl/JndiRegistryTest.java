@@ -26,6 +26,7 @@ import org.apache.camel.support.jndi.JndiTest;
 import org.junit.Assert;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class JndiRegistryTest extends Assert {
 
     @Test
