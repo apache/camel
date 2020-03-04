@@ -27,8 +27,8 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
 
