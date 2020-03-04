@@ -145,7 +145,7 @@ public class YammerConfiguration {
 
     /**
      * Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages.
-     * If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter "?newerThan=3516″
+     * If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter newerThan equals to 3516
      * to ensure that you do not get duplicate copies of messages already on your page.
      */
     public void setNewerThan(long newerThan) {
