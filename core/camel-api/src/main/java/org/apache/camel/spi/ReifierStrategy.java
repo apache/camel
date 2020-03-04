@@ -37,6 +37,7 @@ public abstract class ReifierStrategy {
      */
     public static void clearReifiers() {
         CLEARERS.forEach(Runnable::run);
+        CLEARERS.clear();
     }
 
 }
