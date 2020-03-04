@@ -16,9 +16,9 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.Route;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.ProcessDefinition;
-import org.apache.camel.Route;
 import org.junit.Test;
 
 import static junit.framework.TestCase.fail;

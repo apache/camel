@@ -33,7 +33,7 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
         return answer;
     }
 
-interface Route {
+    interface Route {
         @org.apache.camel.RecipientList
         String[] route(String body);
     }
