@@ -95,6 +95,7 @@
         <azure-storage-java-sdk-version>8.6.0</azure-storage-java-sdk-version>
         <azure-storage-java-sdk-bundle-version>8.6.0_1</azure-storage-java-sdk-bundle-version>
         <azure-guava-version>20.0</azure-guava-version>
+        <azure-storage-blob-java-sdk12-version>12.4.0</azure-storage-blob-java-sdk12-version>
         <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
         <bcel-bundle-version>5.2_4</bcel-bundle-version>
         <beanio-version>2.1.0</beanio-version>
@@ -1126,6 +1127,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-azure-storage-blob</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
