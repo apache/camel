@@ -88,7 +88,7 @@
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-bundle-version>1.11.714_1</aws-java-sdk-bundle-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.10.76</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.10.78</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -590,7 +590,7 @@
         <smallrye-config-version>1.6.1</smallrye-config-version>
         <smallrye-metrics-version>2.4.0</smallrye-metrics-version>
         <smallrye-health-version>2.2.0</smallrye-health-version>
-        <snakeyaml-version>1.25</snakeyaml-version>
+        <snakeyaml-version>1.26</snakeyaml-version>
         <snappy-version>1.1.7.3</snappy-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <solr-bundle-version>8.1.1_1</solr-bundle-version>
@@ -691,7 +691,7 @@
         <yetus-audience-annotations-version>0.11.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
         <zipkin-reporter-version>2.12.1</zipkin-reporter-version>
-        <zipkin-version>2.19.3</zipkin-version>
+        <zipkin-version>2.20.0</zipkin-version>
         <zipkin-libthrift-version>0.13.0</zipkin-libthrift-version>
         <zjsonpatch-version>0.3.0</zjsonpatch-version>
         <zookeeper-version>3.4.14</zookeeper-version>

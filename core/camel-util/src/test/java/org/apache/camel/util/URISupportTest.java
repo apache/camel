@@ -240,6 +240,17 @@ public class URISupportTest {
     }
 
     @Test
+    public void testNormalizeEndpointUriSort() throws Exception {
+        String out1 = URISupport.normalizeUri("smtp://localhost?to=foo&from=me");
+        assertEquals("smtp://localhost?from=me&to=foo", out1);
+
+        String out2 = URISupport.normalizeUri("smtp://localhost?from=me&to=foo");
+        assertEquals("smtp://localhost?from=me&to=foo", out2);
+
+        assertEquals(out1, out2);
+    }
+
+    @Test
     public void testSanitizeAccessToken() throws Exception {
         String out1 = URISupport.sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
         assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=foo&clientSecret=xxxxxx", out1);

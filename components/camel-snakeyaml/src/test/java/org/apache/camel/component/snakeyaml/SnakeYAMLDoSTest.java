@@ -24,9 +24,9 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.snakeyaml.custom.Yaml;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 public class SnakeYAMLDoSTest extends CamelTestSupport {
