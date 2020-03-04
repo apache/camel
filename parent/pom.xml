@@ -45,7 +45,7 @@
         <activemq-version>5.15.11</activemq-version>
         <activemq-artemis-version>2.11.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
-        <ahc-version>2.10.5</ahc-version>
+        <ahc-version>2.11.0</ahc-version>
         <animal-sniffer-version>1.17</animal-sniffer-version>
         <android-annotations-version>4.1.1.4</android-annotations-version>
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
