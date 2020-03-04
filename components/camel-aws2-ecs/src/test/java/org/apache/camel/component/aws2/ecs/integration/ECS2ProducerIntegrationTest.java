@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.ecs.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,8 +24,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("This test must be manually started, you need to specify AWS Credentials")
 public class ECS2ProducerIntegrationTest extends CamelTestSupport {

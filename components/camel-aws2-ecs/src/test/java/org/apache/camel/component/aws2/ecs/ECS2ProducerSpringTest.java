@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.ecs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +27,8 @@ import software.amazon.awssdk.services.ecs.model.CreateClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
