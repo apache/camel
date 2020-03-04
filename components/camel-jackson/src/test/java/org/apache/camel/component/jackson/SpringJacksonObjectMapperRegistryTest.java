@@ -54,7 +54,7 @@ public class SpringJacksonObjectMapperRegistryTest extends CamelSpringTestSuppor
         MyJsonObjectMapper mapper = (MyJsonObjectMapper)context.getRegistry().lookupByName("myJsonObjectMapper");
         assertNotNull(mapper);
 
-        JacksonDataFormat df = (JacksonDataFormat)DataFormatReifier.getDataFormat(context, null, "jack");
+        JacksonDataFormat df = (JacksonDataFormat)DataFormatReifier.getDataFormat(context, "jack");
         assertNotNull(df);
         assertSame(mapper, df.getObjectMapper());
     }

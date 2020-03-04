@@ -32,7 +32,7 @@ public class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
 
     @Override
     public Processor createProcessor() {
-        DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType(), null);
+        DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
         return new MarshalProcessor(dataFormat);
     }
 
