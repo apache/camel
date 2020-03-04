@@ -24,10 +24,10 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetItemCommandTest {
