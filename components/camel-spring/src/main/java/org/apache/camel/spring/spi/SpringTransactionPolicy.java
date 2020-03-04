@@ -18,12 +18,12 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
-import org.apache.camel.Route;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;

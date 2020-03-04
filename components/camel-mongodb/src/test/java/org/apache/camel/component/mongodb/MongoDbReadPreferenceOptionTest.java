@@ -18,7 +18,6 @@ package org.apache.camel.component.mongodb;
 
 import com.mongodb.ReadPreference;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;

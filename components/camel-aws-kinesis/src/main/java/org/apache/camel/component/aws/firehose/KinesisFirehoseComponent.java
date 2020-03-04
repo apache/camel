@@ -22,11 +22,9 @@ import java.util.Set;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.aws.kinesis.KinesisConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-kinesis-firehose")
 public class KinesisFirehoseComponent extends DefaultComponent {

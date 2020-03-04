@@ -17,12 +17,12 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.Route;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;

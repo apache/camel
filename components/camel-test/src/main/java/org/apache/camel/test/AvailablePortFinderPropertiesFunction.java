@@ -23,7 +23,6 @@ import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
-
 /**
  * A {@link PropertiesFunction} that reserves network ports and place them in a cache for reuse.
  * <p/>

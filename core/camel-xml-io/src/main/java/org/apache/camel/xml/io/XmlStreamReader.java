@@ -31,8 +31,9 @@
  * limitations under the License.
  *
  */
-package org.apache.camel.xml.io;
+
 // CHECKSTYLE:OFF
+package org.apache.camel.xml.io;
 
 import java.io.BufferedInputStream;
 import java.io.File;

@@ -33,7 +33,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.PropertiesHelper;
 
-
 import static org.apache.camel.util.StreamUtils.stream;
 
 public class DefaultComponentVerifierExtension implements ComponentVerifierExtension, CamelContextAware, ComponentAware {

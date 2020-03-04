@@ -39,9 +39,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.ObjectHelper;
 
-
-
-
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
     private boolean blueprint;

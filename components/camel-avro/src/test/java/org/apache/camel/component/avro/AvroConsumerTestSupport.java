@@ -28,7 +28,6 @@ import org.apache.camel.avro.test.TestPojo;
 import org.apache.camel.avro.test.TestReflection;
 import org.apache.camel.avro.test.TestReflectionImpl;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

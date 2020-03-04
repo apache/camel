@@ -24,8 +24,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
-
-
 /**
  * Test using query expressions
  */

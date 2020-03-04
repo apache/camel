@@ -32,8 +32,6 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**

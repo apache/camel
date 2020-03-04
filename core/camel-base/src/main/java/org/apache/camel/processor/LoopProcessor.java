@@ -33,7 +33,6 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**

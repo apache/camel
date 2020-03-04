@@ -33,6 +33,7 @@ import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
+
 /**
  * Unit test for DefaultProducerTemplate
  */

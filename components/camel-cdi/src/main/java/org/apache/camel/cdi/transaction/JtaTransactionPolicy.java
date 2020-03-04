@@ -21,13 +21,13 @@ import javax.transaction.TransactionManager;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
-import org.apache.camel.Route;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

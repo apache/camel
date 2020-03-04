@@ -17,7 +17,6 @@
 package org.apache.camel.component.telegram;
 
 import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -33,7 +32,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 
 /**
  *

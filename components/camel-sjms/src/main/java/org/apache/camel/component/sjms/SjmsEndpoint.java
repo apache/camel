@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.sjms;
 
-import java.time.Duration;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
@@ -56,7 +54,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.LoggingExceptionHandler;
-import org.apache.camel.util.backoff.BackOff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

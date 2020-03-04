@@ -17,7 +17,6 @@
 package org.apache.camel.component.sjms.tx;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.CamelJmsTestHelper;

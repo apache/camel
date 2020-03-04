@@ -23,8 +23,6 @@ import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLValidateContext;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

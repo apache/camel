@@ -36,8 +36,6 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslGeneratorV3Test {
