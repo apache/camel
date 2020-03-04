@@ -34,6 +34,8 @@
     <description>The Base Camel Framework</description>
 
     <properties>
+        <firstVersion>3.2.0</firstVersion>
+        <label>core</label>
         <camel-prepare-component>true</camel-prepare-component>
     </properties>
 
