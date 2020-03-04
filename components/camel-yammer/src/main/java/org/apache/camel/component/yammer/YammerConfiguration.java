@@ -133,7 +133,7 @@ public class YammerConfiguration implements Cloneable {
     }
 
     /**
-     * Return only the specified number of messages. Works for threaded=true and threaded=extended.
+     * Return only the specified number of messages. Works for threaded set to true and threaded set to extended.
      */
     public void setLimit(int limit) {
         this.limit = limit;
@@ -170,9 +170,9 @@ public class YammerConfiguration implements Cloneable {
     }
 
     /**
-     * threaded=true will only return the first message in each thread.
+     * threaded equals to true will only return the first message in each thread.
      * This parameter is intended for apps which display message threads collapsed.
-     * threaded=extended will return the thread starter messages in order of most recently active as well as the
+     * threaded equals to extended will return the thread starter messages in order of most recently active as well as the
      * two most recent messages, as they are viewed in the default view on the Yammer web interface.
      */
     public void setThreaded(String threaded) {
