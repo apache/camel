@@ -52,6 +52,8 @@ import org.apache.maven.project.MavenProjectHelper;
 @Mojo(name = "prepare-catalog-karaf", threadSafe = true)
 public class PrepareCatalogKarafMojo extends AbstractMojo {
 
+    // TODO: move to camel-karaf and rework this catalog maven plugin
+
     /**
      * The maven project.
      */
