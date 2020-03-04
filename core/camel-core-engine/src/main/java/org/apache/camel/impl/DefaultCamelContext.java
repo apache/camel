@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public abstract class DefaultCamelContext extends SimpleCamelContext implements ModelCamelContext {
+public class DefaultCamelContext extends SimpleCamelContext implements ModelCamelContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
