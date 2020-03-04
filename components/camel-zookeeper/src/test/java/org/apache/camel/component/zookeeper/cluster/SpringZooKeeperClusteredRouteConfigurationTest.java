@@ -17,7 +17,7 @@
 package org.apache.camel.component.zookeeper.cluster;
 
 import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
+import org.apache.camel.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;

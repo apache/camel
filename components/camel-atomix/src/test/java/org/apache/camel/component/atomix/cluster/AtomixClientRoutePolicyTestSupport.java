@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.atomix.client.AtomixFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
+import org.apache.camel.cluster.ClusteredRoutePolicy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;

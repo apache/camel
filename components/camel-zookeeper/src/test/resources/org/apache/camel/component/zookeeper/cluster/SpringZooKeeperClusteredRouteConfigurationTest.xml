@@ -43,7 +43,7 @@
     <property name="nodes" ref="zkConnectString"/>
   </bean>
 
-  <bean id="cluster-policy" class="org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory" factory-method="forNamespace">
+  <bean id="cluster-policy" class="org.apache.camel.cluster.ClusteredRoutePolicyFactory" factory-method="forNamespace">
     <constructor-arg value="my-ns"/>
   </bean>
 

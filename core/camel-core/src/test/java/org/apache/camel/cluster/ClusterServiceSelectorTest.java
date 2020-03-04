@@ -14,16 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.cluster;
+package org.apache.camel.cluster;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cluster.CamelClusterMember;
-import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.cluster;
+package org.apache.camel.cluster;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,9 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.cluster.CamelClusterEventListener;
-import org.apache.camel.cluster.CamelClusterMember;
-import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.Assert;
