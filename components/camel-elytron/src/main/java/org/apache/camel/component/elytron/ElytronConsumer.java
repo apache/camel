@@ -28,8 +28,6 @@ import org.apache.camel.component.undertow.UndertowEndpoint;
 import org.wildfly.security.auth.server.SecurityIdentity;
 import org.wildfly.security.authz.Roles;
 
-
-
 /**
  * Consumer contains decides if request contains required roles (which are defined for endpoint)
  *

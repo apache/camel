@@ -31,7 +31,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
 
-
 public class SqsComponentSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("direct:start")

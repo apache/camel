@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.sns;
 
-
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import software.amazon.awssdk.core.Protocol;

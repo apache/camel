@@ -37,7 +37,6 @@ import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegis
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
-import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;

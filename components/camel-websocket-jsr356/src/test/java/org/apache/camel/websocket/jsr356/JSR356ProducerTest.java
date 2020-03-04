@@ -33,7 +33,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-
 public class JSR356ProducerTest extends CamelTestSupport {
 
     private static LinkedBlockingQueue<String> messages = new LinkedBlockingQueue<>();

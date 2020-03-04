@@ -20,7 +20,6 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 
-
 public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDefinitionGenerator> {
 
     RestDslDefinitionGenerator(final OasDocument openapi) {

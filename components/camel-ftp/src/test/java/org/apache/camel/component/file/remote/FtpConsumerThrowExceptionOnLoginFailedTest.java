@@ -28,9 +28,9 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 /**
  * Unit test for login failure due bad password and no re connect attempts

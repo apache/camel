@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 /**
  * Tests a chain made of a consumer and a producer to create a direct chat-bot.
  */

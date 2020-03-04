@@ -20,9 +20,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

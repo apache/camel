@@ -32,6 +32,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
+
 /*
 
 > ipfs config Addresses.Gateway /ip4/127.0.0.1/tcp/8088

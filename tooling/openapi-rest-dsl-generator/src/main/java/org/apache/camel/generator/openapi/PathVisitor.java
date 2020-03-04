@@ -16,15 +16,12 @@
  */
 package org.apache.camel.generator.openapi;
 
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasPathItem;
 import org.apache.camel.util.ObjectHelper;
-
-
 
 class PathVisitor<T> {
 

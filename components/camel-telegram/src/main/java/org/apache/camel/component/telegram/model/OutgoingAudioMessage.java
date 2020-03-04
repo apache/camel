@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import java.util.Arrays;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

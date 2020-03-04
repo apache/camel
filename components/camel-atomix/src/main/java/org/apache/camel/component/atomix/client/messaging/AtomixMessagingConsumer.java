@@ -32,7 +32,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.CHANNEL_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.MEMBER_NAME;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;

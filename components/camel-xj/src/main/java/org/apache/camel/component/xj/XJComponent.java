@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xj;
 
-import org.apache.camel.component.xslt.XsltComponent;
-import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
 import org.apache.camel.spi.annotations.Component;
 

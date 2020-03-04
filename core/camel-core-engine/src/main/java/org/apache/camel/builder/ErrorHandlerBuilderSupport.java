@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.util.ObjectHelper;
 

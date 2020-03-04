@@ -28,7 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class RestOpenApiProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiProcessor.class);

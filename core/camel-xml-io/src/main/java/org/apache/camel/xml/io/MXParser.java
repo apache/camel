@@ -24,15 +24,14 @@
  * $Id: MXParser.java,v 1.52 2006/11/09 18:29:37 aslom Exp $
  */
 
-package org.apache.camel.xml.io;
 // CHECKSTYLE:OFF
+package org.apache.camel.xml.io;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
 //TODO best handling of interning issues
 //   have isAllNewStringInterned ???
@@ -537,7 +536,7 @@ public class MXParser implements XmlPullParser {
         reader = in;
     }
 
-    public void setInput(java.io.InputStream inputStream, String inputEncoding) throws XmlPullParserException {
+    public void setInput(InputStream inputStream, String inputEncoding) throws XmlPullParserException {
         if (inputStream == null) {
             throw new IllegalArgumentException("input stream can not be null");
         }

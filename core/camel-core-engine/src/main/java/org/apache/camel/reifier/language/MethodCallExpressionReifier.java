@@ -19,9 +19,7 @@ package org.apache.camel.reifier.language;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.MethodCallExpression;

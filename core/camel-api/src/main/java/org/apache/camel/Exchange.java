@@ -16,10 +16,8 @@
  */
 package org.apache.camel;
 
-import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.annotations.ConstantProvider;
 

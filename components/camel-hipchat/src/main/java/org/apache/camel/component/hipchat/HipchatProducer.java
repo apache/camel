@@ -34,7 +34,6 @@ import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
 
 /**

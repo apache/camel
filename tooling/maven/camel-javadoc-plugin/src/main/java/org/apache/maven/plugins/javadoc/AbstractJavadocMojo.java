@@ -131,10 +131,10 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-import static org.apache.maven.plugins.javadoc.JavadocUtil.toRelative;
-import static org.apache.maven.plugins.javadoc.JavadocUtil.toList;
 import static org.apache.maven.plugins.javadoc.JavadocUtil.isEmpty;
 import static org.apache.maven.plugins.javadoc.JavadocUtil.isNotEmpty;
+import static org.apache.maven.plugins.javadoc.JavadocUtil.toList;
+import static org.apache.maven.plugins.javadoc.JavadocUtil.toRelative;
 
 /**
  * Base class with majority of Javadoc functionalities.

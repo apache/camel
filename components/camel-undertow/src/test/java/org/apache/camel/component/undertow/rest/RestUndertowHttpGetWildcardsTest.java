@@ -17,8 +17,6 @@
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.DefaultUndertowHttpBinding;

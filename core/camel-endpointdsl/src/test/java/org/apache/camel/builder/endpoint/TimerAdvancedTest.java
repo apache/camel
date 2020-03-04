@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.support.LoggingExceptionHandler;
 import org.junit.Test;
 
 public class TimerAdvancedTest extends ContextTestSupport {

@@ -17,7 +17,6 @@
 package org.apache.camel.processor.interceptor;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 

@@ -28,7 +28,6 @@ import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GroupedExchangeRoundtripTest extends PubsubTestSupport {

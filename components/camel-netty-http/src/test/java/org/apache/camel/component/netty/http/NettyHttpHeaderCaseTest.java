@@ -19,8 +19,6 @@ package org.apache.camel.component.netty.http;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;

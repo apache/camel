@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Route;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
