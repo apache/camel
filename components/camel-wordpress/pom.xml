@@ -107,6 +107,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <version>${guava-eventbus-version}</version>
         </dependency>
     </dependencies>
 
