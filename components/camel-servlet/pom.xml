@@ -39,7 +39,7 @@
         </camel.osgi.import.before.defaults>
 
         <!-- used for testing -->
-        <tomcat.version>8.5.0</tomcat.version>
+        <tomcat.version>9.0.31</tomcat.version>
     </properties>
 
     <dependencyManagement>
@@ -160,55 +160,16 @@
             <version>${arquillian-version}</version>
             <scope>test</scope>
         </dependency>
-        <!--jetty-->
-        <!--https://github.com/GoogleCloudPlatform/appengine-java-vm-runtime/issues/23-->
-        <!--Still not fixed in 9.3.8.v20160314 and 9.3.9.M1, produce 404 NOT FOUND or a 500 if we remove the async-supported flag :-(-->
-        <!--<dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-jetty-embedded-9</artifactId>
-          <version>1.0.0.CR3</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-webapp</artifactId>
-          <version>${jetty-version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-deploy</artifactId>
-          <version>${jetty-version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-annotations</artifactId>
-          <version>${jetty-version}</version>
-          <scope>test</scope>
-        </dependency>-->
         <!--tomcat-->
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-tomcat-embedded-8</artifactId>
-            <version>1.0.0.CR7</version>
+            <artifactId>arquillian-tomcat-embedded-9</artifactId>
+            <version>1.1.0.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
-            <version>${tomcat.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <version>${tomcat.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-logging-juli</artifactId>
             <version>${tomcat.version}</version>
             <scope>test</scope>
         </dependency>
