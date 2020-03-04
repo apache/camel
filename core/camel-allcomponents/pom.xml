@@ -1184,6 +1184,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-xml-jaxp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xmlsecurity</artifactId>
 		</dependency>
 		<dependency>
