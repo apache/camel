@@ -30,6 +30,11 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class LRUCacheFactory {
 
+    /**
+     * Factory key
+     */
+    public static final String FACTORY = "lru-cache-factory";
+
     private static final Logger LOG = LoggerFactory.getLogger(LRUCacheFactory.class);
 
     private static volatile LRUCacheFactory instance;
@@ -69,7 +74,7 @@ public abstract class LRUCacheFactory {
         LOG.trace("createLRUCacheFactory");
         try {
             ClassLoader classLoader = LRUCacheFactory.class.getClassLoader();
-            URL url = classLoader.getResource("META-INF/services/org/apache/camel/lru-cache-factory");
+            URL url = classLoader.getResource("META-INF/services/org/apache/camel/" + FACTORY);
             if (url != null) {
                 Properties props = new Properties();
                 try (InputStream is = url.openStream()) {
