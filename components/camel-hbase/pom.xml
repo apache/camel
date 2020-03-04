@@ -320,11 +320,10 @@
             </exclusions>
         </dependency>
 
-        <!-- Using a low version of guava could let the server shutdown quickly -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>14.0.1</version>
+            <version>28.2-jre</version>
             <scope>test</scope>
         </dependency>
         <!-- need to use zookeeper 3.4.x for testing -->
