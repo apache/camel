@@ -133,7 +133,7 @@ public class YammerConfiguration {
     /**
      * Returns messages older than the message ID specified as a numeric string.
      * This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912,
-     * you could append "?olderThan=2912″ to your request to get the 20 messages prior to those you're seeing.
+     * you could append olderThan equals to 2912 to your request to get the 20 messages prior to those you're seeing.
      */
     public void setOlderThan(long olderThan) {
         this.olderThan = olderThan;
