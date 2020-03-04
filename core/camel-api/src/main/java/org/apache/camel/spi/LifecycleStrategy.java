@@ -112,16 +112,16 @@ public interface LifecycleStrategy {
     void onRoutesRemove(Collection<Route> routes);
 
     /**
-     * Notification on adding {@link Route}(s).
+     * Notification on creating {@link Route}(s).
      *
-     * @param route the added route context
+     * @param route the created route context
      */
     void onRouteContextCreate(Route route);
 
     /**
      * Notification on adding error handler.
      *
-     * @param route        the added route context
+     * @param route               the added route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
@@ -130,7 +130,7 @@ public interface LifecycleStrategy {
     /**
      * Notification on removing error handler.
      *
-     * @param route        the removed route context
+     * @param route               the removed route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
