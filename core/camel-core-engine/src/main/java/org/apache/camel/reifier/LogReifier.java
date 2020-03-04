@@ -44,11 +44,12 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         StringHelper.notEmpty(definition.getMessage(), "message", this);
+        String msg = parseString(definition.getMessage());
 
         // use simple language for the message string to give it more power
-        Expression exp = camelContext.resolveLanguage("simple").createExpression(definition.getMessage());
+        Expression exp = camelContext.resolveLanguage("simple").createExpression(msg);
 
-        // get logger explicitely set in the definition
+        // get logger explicitly set in the definition
         Logger logger = definition.getLogger();
 
         // get logger which may be set in XML definition
