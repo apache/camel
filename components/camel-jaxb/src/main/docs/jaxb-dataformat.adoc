@@ -38,7 +38,7 @@ The JAXB dataformat supports 18 options, which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
-ND
+
 
 == Using the Java DSL
 
@@ -119,7 +119,7 @@ false.
 
 == Ignoring the NonXML Character
 
- JaxbDataFromat supports to ignore the
+ JaxbDataFormat supports to ignore the
 http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char[NonXML Character],
 you just need to set the filterNonXmlChars property to be true,
 JaxbDataFormat will replace the NonXML character with " " when it is

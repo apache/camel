@@ -521,7 +521,22 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
+        // try to parse using the simpler and faster Camel URI parser
+        String[] parts = CamelURIParser.parseUri(uri);
+        if (parts != null) {
+            // use the faster and more simple normalizer
+            return doFastNormalizeUri(parts);
+        } else {
+            // use the legacy normalizer as the uri is complex and may have unsafe URL characters
+            return doComplexNormalizeUri(uri);
+        }
+    }
 
+    /**
+     * The complex (and Camel 2.x) compatible URI normalizer when the URI is more complex
+     * such as having percent encoded values, or other unsafe URL characters, or have authority user/password, etc.
+     */
+    private static String doComplexNormalizeUri(String uri) throws URISyntaxException {
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
         String scheme = u.getScheme();
         String path = u.getSchemeSpecificPart();
@@ -586,6 +601,55 @@ public final class URISupport {
 
                 // build uri object with sorted parameters
                 query = URISupport.createQueryString(keys, parameters);
+                return buildUri(scheme, path, query);
+            }
+        }
+    }
+
+    /**
+     * The fast parser for normalizing Camel endpoint URIs when the URI is not complex and
+     * can be parsed in a much more efficient way.
+     */
+    private static String doFastNormalizeUri(String[] parts) throws URISyntaxException {
+        String scheme = parts[0];
+        String path = parts[1];
+        String query = parts[2];
+
+        // in case there are parameters we should reorder them
+        if (query == null) {
+            // no parameters then just return
+            return buildUri(scheme, path, null);
+        } else {
+            Map<String, Object> parameters = null;
+            if (query.indexOf('&') != -1) {
+                // only parse if there is parameters
+                parameters = URISupport.parseQuery(query, false, false);
+            }
+            if (parameters == null || parameters.size() == 1) {
+                return buildUri(scheme, path, query);
+            } else {
+                // reorder parameters a..z
+                // optimize and only build new query if the keys was resorted
+                boolean sort = false;
+                String prev = null;
+                for (String key : parameters.keySet()) {
+                    if (prev == null) {
+                        prev = key;
+                    } else {
+                        int comp = key.compareTo(prev);
+                        if (comp < 0) {
+                            sort = true;
+                            break;
+                        }
+                    }
+                }
+                if (sort) {
+                    List<String> keys = new ArrayList<>(parameters.keySet());
+                    keys.sort(null);
+                    // rebuild query with sorted parameters
+                    query = URISupport.createQueryString(keys, parameters);
+                }
+
                 return buildUri(scheme, path, query);
             }
         }

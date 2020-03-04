@@ -25,13 +25,34 @@ import java.util.List;
  * A good source for details is <a href="http://en.wikipedia.org/wiki/Url_encode">wikipedia url encode</a> article.
  */
 public final class UnsafeUriCharactersEncoder {
+    private static BitSet unsafeCharactersFastParser;
     private static BitSet unsafeCharactersRfc1738;
     private static BitSet unsafeCharactersHttp;
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
                                               'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     static {
-        unsafeCharactersRfc1738 = new BitSet(256);
+        unsafeCharactersFastParser = new BitSet(14);
+        unsafeCharactersFastParser.set(' ');
+        unsafeCharactersFastParser.set('"');
+        unsafeCharactersFastParser.set('<');
+        unsafeCharactersFastParser.set('>');
+        unsafeCharactersFastParser.set('%');
+        unsafeCharactersFastParser.set('{');
+        unsafeCharactersFastParser.set('}');
+        unsafeCharactersFastParser.set('|');
+        unsafeCharactersFastParser.set('\\');
+        unsafeCharactersFastParser.set('^');
+        unsafeCharactersFastParser.set('~');
+        unsafeCharactersFastParser.set('[');
+        unsafeCharactersFastParser.set(']');
+        unsafeCharactersFastParser.set('`');
+        // we allow # as a safe when using the fast parser as its used for
+        // looking up beans in the registry (foo=#myBar)
+    }
+
+    static {
+        unsafeCharactersRfc1738 = new BitSet(15);
         unsafeCharactersRfc1738.set(' ');
         unsafeCharactersRfc1738.set('"');
         unsafeCharactersRfc1738.set('<');
@@ -48,9 +69,9 @@ public final class UnsafeUriCharactersEncoder {
         unsafeCharactersRfc1738.set(']');
         unsafeCharactersRfc1738.set('`');
     }
-    
+
     static {
-        unsafeCharactersHttp = new BitSet(256);
+        unsafeCharactersHttp = new BitSet(13);
         unsafeCharactersHttp.set(' ');
         unsafeCharactersHttp.set('"');
         unsafeCharactersHttp.set('<');
@@ -68,6 +89,10 @@ public final class UnsafeUriCharactersEncoder {
 
     private UnsafeUriCharactersEncoder() {
         // util class
+    }
+
+    public static boolean isSafeFastParser(char ch) {
+        return !unsafeCharactersFastParser.get(ch);
     }
 
     public static String encode(String s) {

@@ -1823,7 +1823,7 @@ public interface KafkaEndpointBuilderFactory {
          * occurs only under load when records arrive faster than they can be
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
-         * accomplishes this by adding a small amount of artificial delaythat
+         * accomplishes this by adding a small amount of artificial delay that
          * is, rather than immediately sending out a record the producer will
          * wait for up to the given delay to allow other records to be sent so
          * that the sends can be batched together. This can be thought of as
@@ -1852,7 +1852,7 @@ public interface KafkaEndpointBuilderFactory {
          * occurs only under load when records arrive faster than they can be
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
-         * accomplishes this by adding a small amount of artificial delaythat
+         * accomplishes this by adding a small amount of artificial delay that
          * is, rather than immediately sending out a record the producer will
          * wait for up to the given delay to allow other records to be sent so
          * that the sends can be batched together. This can be thought of as
