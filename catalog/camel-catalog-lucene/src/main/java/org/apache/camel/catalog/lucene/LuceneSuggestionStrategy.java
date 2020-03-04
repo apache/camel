@@ -25,7 +25,6 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.spell.PlainTextDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.ByteBuffersDirectory;
-import org.apache.lucene.store.RAMDirectory;
 
 /**
  * Apache Lucene based {@link SuggestionStrategy}.
