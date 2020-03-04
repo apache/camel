@@ -150,6 +150,14 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         DATAFORMATS.clear();
     }
 
+    public static DataFormat getDataFormat(CamelContext camelContext, DataFormatDefinition type) {
+        return getDataFormat(camelContext, ObjectHelper.notNull(type, "type"), null);
+    }
+
+    public static DataFormat getDataFormat(CamelContext camelContext, String ref) {
+        return getDataFormat(camelContext, null, ObjectHelper.notNull(ref, "ref"));
+    }
+
     /**
      * Factory method to create the data format
      *

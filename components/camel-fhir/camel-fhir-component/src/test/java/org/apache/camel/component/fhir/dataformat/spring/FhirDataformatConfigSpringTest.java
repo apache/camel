@@ -83,7 +83,7 @@ public class FhirDataformatConfigSpringTest extends CamelSpringTestSupport {
 
     private FhirDataFormat getDataformat(String name) {
         CamelContext camelContext = context();
-        return (FhirDataFormat) DataFormatReifier.getDataFormat(camelContext, null, name);
+        return (FhirDataFormat) DataFormatReifier.getDataFormat(camelContext, name);
     }
 
     @Override
