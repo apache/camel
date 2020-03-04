@@ -55,6 +55,15 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
+    private static final String[] RESERVED_PROPERTIES = new String[] {
+    Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
+    Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
+    Route.REST_PROPERTY};
+
+    public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
+        super(camelContext, (RouteDefinition) definition);
+    }
+
     /**
      * Advices this route with the route builder.
      * <p/>
@@ -96,15 +105,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             throw new IllegalArgumentException("RouteDefinition has no input");
         }
         return new RouteReifier(camelContext, definition).adviceWith(builder);
-    }
-
-    private static final String[] reservedProperties = new String[] {
-            Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
-            Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY,
-            Route.REST_PROPERTY};
-
-    public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
-        super(camelContext, (RouteDefinition) definition);
     }
 
     @Override
@@ -517,7 +517,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 try {
                     final String key = parseString(prop.getKey());
                     final String val = parseString(prop.getValue());
-                    for (String property : reservedProperties) {
+                    for (String property : RESERVED_PROPERTIES) {
                         if (property.equalsIgnoreCase(key)) {
                             throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
                         }
