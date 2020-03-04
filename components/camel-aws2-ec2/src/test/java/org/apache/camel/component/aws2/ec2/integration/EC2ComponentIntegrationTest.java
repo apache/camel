@@ -27,7 +27,6 @@ import org.apache.camel.component.aws2.ec2.AWS2EC2Operations;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
