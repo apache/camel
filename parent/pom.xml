@@ -299,6 +299,7 @@
         <ical4j-version>1.0.7</ical4j-version>
         <icu4j-version>65.1</icu4j-version>
         <ignite-version>2.7.6</ignite-version>
+        <impsort-maven-plugin-version>1.3.2</impsort-maven-plugin-version>
         <infinispan-version>10.1.3.Final</infinispan-version>
         <influx-java-driver-version>2.17</influx-java-driver-version>
         <influx-java-driver-bundle-version>2.17_1</influx-java-driver-bundle-version>
@@ -4497,6 +4498,34 @@
                 <fastinstall>true</fastinstall>
                 <noassembly>true</noassembly>
             </properties>
+        </profile>
+
+        <profile>
+            <id>impsort</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.revelc.code</groupId>
+                        <artifactId>impsort-maven-plugin</artifactId>
+                        <version>${impsort-maven-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <id>sort-imports</id>
+                                <goals>
+                                    <goal>sort</goal>
+                                </goals>
+                                <phase>process-sources</phase>
+                                <configuration>
+                                    <groups>java.,javax.,org.w3c.,org.xml.,junit.,*</groups>
+                                    <excludes>**/package-info.java</excludes>
+                                    <staticAfter>true</staticAfter>
+                                    <removeUnused>true</removeUnused>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>
