@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws2.ec2;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EC2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,12 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalEC2ClientMisconfiguration() throws Exception {
 
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain");
+        assertThrows(IllegalArgumentException.class, () -> {
+            AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain");
+        });
     }
 }
