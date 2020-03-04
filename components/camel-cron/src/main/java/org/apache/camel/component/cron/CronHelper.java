@@ -52,12 +52,8 @@ public final class CronHelper {
         }
 
         // Fallback to factory finder
-        try {
-            FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-            return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
-        } catch (NoFactoryAvailableException e) {
-            throw new RuntimeCamelException("Cannot find any CamelCronService implementation", e);
-        }
+        FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
     }
 
 }
