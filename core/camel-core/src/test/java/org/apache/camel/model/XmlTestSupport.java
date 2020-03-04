@@ -23,8 +23,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.TestSupport;
-import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.rest.RestContainer;
+import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

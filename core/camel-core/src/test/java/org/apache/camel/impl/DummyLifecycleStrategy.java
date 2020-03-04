@@ -26,9 +26,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.Route;
 import org.apache.camel.support.LifecycleStrategySupport;
 
 public class DummyLifecycleStrategy extends LifecycleStrategySupport {

@@ -51,7 +51,7 @@ public class BeanImplicitMethodTest extends ContextTestSupport {
         return answer;
     }
 
-public static class MyBean {
+    public static class MyBean {
 
         public Integer intRequest(Integer request) {
             return request;

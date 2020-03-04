@@ -22,10 +22,10 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
-import org.apache.camel.Route;
 import org.junit.Test;
 
 public class ErrorHandlerSupportTest extends ContextTestSupport {

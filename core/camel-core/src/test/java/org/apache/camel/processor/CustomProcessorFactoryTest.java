@@ -23,13 +23,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.Route;
 import org.junit.Test;
 
 public class CustomProcessorFactoryTest extends ContextTestSupport {
