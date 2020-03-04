@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class BaseServiceResolver<T> {
 
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected final String factoryKey;
     protected final Class<T> factoryClass;
@@ -47,12 +47,12 @@ public class BaseServiceResolver<T> {
         }
 
         if (type != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Found {}: {} via: {}{}", factoryClass.getSimpleName(), type.getName(), FactoryFinder.DEFAULT_PATH, factoryKey);
+            if (log.isDebugEnabled()) {
+                log.debug("Found {}: {} via: {}{}", factoryClass.getSimpleName(), type.getName(), FactoryFinder.DEFAULT_PATH, factoryKey);
             }
             if (factoryClass.isAssignableFrom(type)) {
                 T answer = factoryClass.cast(context.getInjector().newInstance(type, false));
-                LOG.debug("Detected and using {}: {}", factoryClass.getSimpleName(), answer);
+                log.debug("Detected and using {}: {}", factoryClass.getSimpleName(), answer);
                 return Optional.of(answer);
             } else {
                 throw new IllegalArgumentException("Type is not a " + factoryClass.getSimpleName() + " implementation. Found: " + type.getName());
