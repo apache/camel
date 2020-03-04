@@ -35,6 +35,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultModelRoute;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
@@ -44,7 +45,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -257,13 +257,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // create route
         String id = definition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-        DefaultRoute route = new DefaultRoute(camelContext, definition, id, endpoint) {
-            @Override
-            public Processor createErrorHandler(Processor processor) throws Exception {
-                return ErrorHandlerReifier.reifier(this, getErrorHandlerFactory())
-                        .createErrorHandler(processor);
-            }
-        };
+        DefaultRoute route = new DefaultModelRoute(camelContext, definition, id, endpoint);
 
         // configure error handler
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
