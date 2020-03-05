@@ -208,6 +208,10 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         return matchOnUriPrefix;
     }
 
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix != null && matchOnUriPrefix;
+    }
+
     /**
      * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
      */

@@ -46,7 +46,7 @@ public class RestUndertowHttpGetWildcardsTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 // configure to use undertow on localhost with the given port
-                restConfiguration().component("undertow").host("localhost").port(getPort()).endpointProperty("undertowHttpBinding", "#mybinding");
+                restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/{query}").route().to("log:query").process(exchange -> {
