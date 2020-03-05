@@ -29,6 +29,7 @@ import io.undertow.server.HttpHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.undertow.HttpHandlerRegistrationInfo;
 import org.apache.camel.component.undertow.UndertowComponent;
+import org.apache.camel.component.undertow.UndertowConsumer;
 import org.apache.camel.component.undertow.UndertowEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -48,7 +49,7 @@ import org.wildfly.security.http.util.FilterServerMechanismFactory;
 import org.wildfly.security.http.util.SecurityProviderServerMechanismFactory;
 
 /**
- * Elytron component brings elytron security over came-undertow component.
+ * Elytron component brings elytron security over camel-undertow component.
  *
  * Component work either as producer and as consumer.
  *
@@ -91,9 +92,9 @@ public class ElytronComponent extends UndertowComponent {
     }
 
     @Override
-    public HttpHandler registerEndpoint(HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
+    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
         //injecting elytron
-        return super.registerEndpoint(registrationInfo, sslContext, wrap(handler, getSecurityDomain()));
+        return super.registerEndpoint(consumer, registrationInfo, sslContext, wrap(handler, getSecurityDomain()));
     }
 
     /**
