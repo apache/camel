@@ -45,7 +45,9 @@ public class OnExceptionHandledThrowsExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(IOException.class)
-                        .handled(e -> { throw new IllegalArgumentException("Another Forced");}).to("log:foo?showAll=true").to("mock:handled");
+                        .handled(e -> { 
+                            throw new IllegalArgumentException("Another Forced");
+                        }).to("log:foo?showAll=true").to("mock:handled");
 
                 from("direct:start").throwException(new IOException("Forced"));
             }
