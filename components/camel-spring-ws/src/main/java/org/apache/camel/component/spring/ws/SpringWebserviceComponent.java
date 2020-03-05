@@ -52,13 +52,6 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     private boolean useGlobalSslContextParameters;
 
     @Override
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        String[] u = uri.split("\\?");
-        return u[0].replace("%7B", "(").replace("%7D", ")") + (u.length > 1 ? "?" + u[1] : "");
-    }
-
-    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringWebserviceConfiguration configuration = new SpringWebserviceConfiguration();
         // need to do this first
