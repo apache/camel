@@ -1141,6 +1141,26 @@
     "artifactId": "camel-azure",
     "version": "3.2.0-SNAPSHOT"
   },
+  "AzureStorageBlobComponentBuilderFactory": {
+    "kind": "component",
+    "scheme": "azure-storage-blob",
+    "extendsScheme": "",
+    "syntax": "azure-storage-blob:containerName",
+    "title": "Azure Storage Blob Service",
+    "description": "The azure-storage-blob component is used for storing and retrieving blobs from Azure Storage Blob Service using SDK v12.",
+    "label": "cloud,file",
+    "deprecated": false,
+    "deprecationNote": "cloud,file",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.azure.storage.blob.BlobComponent",
+    "firstVersion": "3.2.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-storage-blob",
+    "version": "3.2.0-SNAPSHOT"
+  },
   "BeanComponentBuilderFactory": {
     "kind": "component",
     "scheme": "bean",

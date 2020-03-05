@@ -681,6 +681,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AzureQueueComponentBuilderFactory.azureQueue();
     }
     /**
+     * Azure Storage Blob Service (camel-azure-storage-blob)
+     * The azure-storage-blob component is used for storing and retrieving blobs
+     * from Azure Storage Blob Service using SDK v12.
+     * 
+     * Category: cloud,file
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-azure-storage-blob
+     */
+    static org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.AzureStorageBlobComponentBuilder azureStorageBlob() {
+        return org.apache.camel.builder.component.dsl.AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
+    }
+    /**
      * Bean (camel-bean)
      * The bean component is for invoking Java beans from Camel.
      * 
