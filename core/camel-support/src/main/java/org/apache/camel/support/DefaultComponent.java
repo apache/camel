@@ -92,7 +92,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     public Endpoint createEndpoint(String uri, Map<String, Object> properties) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
         // need to encode before its safe to parse with java.net.Uri
-        String encodedUri = UnsafeUriCharactersEncoder.encode(uri);;
+        String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
         URI u = new URI(encodedUri);
         String path;
         if (u.getScheme() != null) {
@@ -178,7 +178,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     public Endpoint createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
         // need to encode before its safe to parse with java.net.Uri
-        String encodedUri = UnsafeUriCharactersEncoder.encode(uri);;
+        String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
         URI u = new URI(encodedUri);
         String path;
         if (u.getScheme() != null) {
