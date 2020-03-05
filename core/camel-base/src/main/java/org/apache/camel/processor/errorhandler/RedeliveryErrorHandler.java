@@ -612,6 +612,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return;
             }
 
+            try {
+                doRun();
+            } catch (Throwable e) {
+                // unexpected exception during running so break out
+                exchange.setException(e);
+                callback.done(false);
+            }
+        }
+
+        private void doRun() throws Exception {
             // did previous processing cause an exception?
             if (exchange.getException() != null) {
                 handleException();
