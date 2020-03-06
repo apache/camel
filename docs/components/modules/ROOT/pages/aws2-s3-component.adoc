@@ -1,6 +1,6 @@
 [[aws2-s3-component]]
 = AWS2 S3 Storage Service Component
-:page-source: components/camel-aws2-s3/bin/src/main/docs/aws2-s3-component.adoc
+:page-source: components/camel-aws2-s3/src/main/docs/aws2-s3-component.adoc
 
 *Since Camel 3.2*
 
@@ -59,7 +59,7 @@ The AWS2 S3 Storage Service component supports 37 options, which are listed belo
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the S3 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
 | *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | Encryption
 | *useEncryption* (common) | Define if encryption must be used or not | false | boolean
@@ -133,7 +133,7 @@ with the following path and query parameters:
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the S3 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
-| *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() |  | String
 | *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
 | *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | Encryption
 | *useEncryption* (common) | Define if encryption must be used or not | false | boolean
@@ -526,4 +526,4 @@ Maven users will need to add the following dependency to their pom.xml.
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
 
-include::camel-spring-boot::page$aws-s3-starter.adoc[]
+include::camel-spring-boot::page$aws2-s3-starter.adoc[]
