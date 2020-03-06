@@ -627,8 +627,27 @@ The google-pubnub component has been improved to use a new Java library and beco
 
 Support for Apache Karaf has been removed.
 
+=== Endpoint URIs without context path
+
+Previously Camel components may work by referring to their name only without a colon and context path (eg `log`)
+that for a few components would allow them to create an endpoint anyway.
+
+Now this is not allowed and Camel will throw an `NoSuchEndpointException`.
+
+An endpoint by its logical id can still be referred by the id only, eg
+[source,java]
+----
+Endpoint endpoint = camelContext.getEndpoint("myCoolEndpoint");
+----
+
 === API changes
 
 ==== DefaultComponent
 
 The deprecated method `preProcessUri` has been removed.
+
+==== CamelContext
+
+The method `getEndpoint` now throws `NoSuchEndpointException` directly instead of being wrapped
+within an `FailedToResolveEndpoint`.
+
