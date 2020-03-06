@@ -230,8 +230,8 @@ public abstract class AbstractCamelContext extends ServiceSupport
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
-    private final Map<String, BaseRouteService> routeServices = new LinkedHashMap<>();
-    private final Map<String, BaseRouteService> suspendedRouteServices = new LinkedHashMap<>();
+    private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
+    private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
 
     private final Object lock = new Object();
     private volatile String version;
@@ -1231,7 +1231,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     }
 
     public ServiceStatus getRouteStatus(String key) {
-        BaseRouteService routeService = routeServices.get(key);
+        RouteService routeService = routeServices.get(key);
         if (routeService != null) {
             return routeService.getStatus();
         }
@@ -1264,7 +1264,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     public synchronized void startRoute(String routeId) throws Exception {
         DefaultRouteError.reset(this, routeId);
 
-        BaseRouteService routeService = routeServices.get(routeId);
+        RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
                 startRouteService(routeService, false);
@@ -1285,7 +1285,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
                 return;
             }
 
-            BaseRouteService routeService = routeServices.get(routeId);
+            RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
                 resumeRouteService(routeService);
                 // must resume the route as well
@@ -1301,7 +1301,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     public synchronized boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
         DefaultRouteError.reset(this, routeId);
 
-        BaseRouteService routeService = routeServices.get(routeId);
+        RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
                 RouteStartupOrder route = new DefaultRouteStartupOrder(1, routeService.getRoute(), routeService);
@@ -1336,7 +1336,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     protected synchronized void doShutdownRoute(String routeId, long timeout, TimeUnit timeUnit, boolean removingRoutes) throws Exception {
         DefaultRouteError.reset(this, routeId);
 
-        BaseRouteService routeService = routeServices.get(routeId);
+        RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             try {
                 List<RouteStartupOrder> routes = new ArrayList<>(1);
@@ -1362,11 +1362,11 @@ public abstract class AbstractCamelContext extends ServiceSupport
         // known if a given endpoints is in use
         // by one or more routes, when we remove the route
         Map<String, Set<Endpoint>> endpointsInUse = new HashMap<>();
-        for (Map.Entry<String, BaseRouteService> entry : routeServices.entrySet()) {
+        for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
             endpointsInUse.put(entry.getKey(), entry.getValue().gatherEndpoints());
         }
 
-        BaseRouteService routeService = routeServices.get(routeId);
+        RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             if (getRouteStatus(routeId).isStopped()) {
                 try {
@@ -1425,7 +1425,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
                 return;
             }
 
-            BaseRouteService routeService = routeServices.get(routeId);
+            RouteService routeService = routeServices.get(routeId);
             if (routeService != null) {
                 List<RouteStartupOrder> routes = new ArrayList<>(1);
                 Route route = routeService.getRoute();
@@ -2395,7 +2395,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         // because we only want to suspend started routes
         // (so when we resume we only resume the routes which actually was
         // suspended)
-        for (Map.Entry<String, BaseRouteService> entry : getRouteServices().entrySet()) {
+        for (Map.Entry<String, RouteService> entry : getRouteServices().entrySet()) {
             if (entry.getValue().getStatus().isStarted()) {
                 suspendedRouteServices.put(entry.getKey(), entry.getValue());
             }
@@ -2404,9 +2404,9 @@ public abstract class AbstractCamelContext extends ServiceSupport
         // assemble list of startup ordering so routes can be shutdown
         // accordingly
         List<RouteStartupOrder> orders = new ArrayList<>();
-        for (Map.Entry<String, BaseRouteService> entry : suspendedRouteServices.entrySet()) {
+        for (Map.Entry<String, RouteService> entry : suspendedRouteServices.entrySet()) {
             Route route = entry.getValue().getRoute();
-            Integer order = entry.getValue().getStartupOrder();
+            Integer order = route.getStartupOrder();
             if (order == null) {
                 order = defaultRouteStartupOrder++;
             }
@@ -2419,7 +2419,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         getShutdownStrategy().suspend(this, orders);
 
         // mark the route services as suspended or stopped
-        for (BaseRouteService service : suspendedRouteServices.values()) {
+        for (RouteService service : suspendedRouteServices.values()) {
             if (routeSupportsSuspension(service.getId())) {
                 service.suspend();
             } else {
@@ -2449,7 +2449,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
 
             // mark the route services as resumed (will be marked as started) as
             // well
-            for (BaseRouteService service : suspendedRouteServices.values()) {
+            for (RouteService service : suspendedRouteServices.values()) {
                 if (routeSupportsSuspension(service.getId())) {
                     service.resume();
                 } else {
@@ -2856,7 +2856,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         shutdownServices(asyncProcessorAwaitManager);
 
         // we need also to include routes which failed to start to ensure all resources get stopped when stopping Camel
-        for (BaseRouteService routeService : routeServices.values()) {
+        for (RouteService routeService : routeServices.values()) {
             boolean found = routeStartupOrder.stream().anyMatch(o -> o.getRoute().getId().equals(routeService.getId()));
             if (!found) {
                 LOG.debug("Route: {} which failed to startup will be stopped", routeService.getId());
@@ -2865,10 +2865,10 @@ public abstract class AbstractCamelContext extends ServiceSupport
         }
 
         routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder).reversed());
-        List<BaseRouteService> list = new ArrayList<>();
+        List<RouteService> list = new ArrayList<>();
         for (RouteStartupOrder startupOrder : routeStartupOrder) {
             DefaultRouteStartupOrder order = (DefaultRouteStartupOrder)startupOrder;
-            BaseRouteService routeService = order.getRouteService();
+            RouteService routeService = order.getRouteService();
             list.add(routeService);
         }
         shutdownServices(list, false);
@@ -2973,13 +2973,13 @@ public abstract class AbstractCamelContext extends ServiceSupport
      * @param addingRoutes whether we are adding new routes
      * @throws Exception is thrown if error starting routes
      */
-    protected void doStartOrResumeRoutes(Map<String, BaseRouteService> routeServices, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes)
+    protected void doStartOrResumeRoutes(Map<String, RouteService> routeServices, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes)
         throws Exception {
         setStartingRoutes(true);
         try {
             // filter out already started routes
-            Map<String, BaseRouteService> filtered = new LinkedHashMap<>();
-            for (Map.Entry<String, BaseRouteService> entry : routeServices.entrySet()) {
+            Map<String, RouteService> filtered = new LinkedHashMap<>();
+            for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
                 boolean startable = false;
 
                 Consumer consumer = entry.getValue().getRoute().getConsumer();
@@ -3012,7 +3012,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     }
 
     protected boolean routeSupportsSuspension(String routeId) {
-        BaseRouteService routeService = routeServices.get(routeId);
+        RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
             return routeService.getRoute().supportsSuspension();
         }
@@ -3094,7 +3094,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     /**
      * Starts the given route service
      */
-    public synchronized void startRouteService(BaseRouteService routeService, boolean addingRoutes) throws Exception {
+    public synchronized void startRouteService(RouteService routeService, boolean addingRoutes) throws Exception {
         // we may already be starting routes so remember this, so we can unset
         // accordingly in finally block
         boolean alreadyStartingRoutes = isStartingRoutes();
@@ -3133,7 +3133,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     /**
      * Resumes the given route service
      */
-    protected synchronized void resumeRouteService(BaseRouteService routeService) throws Exception {
+    protected synchronized void resumeRouteService(RouteService routeService) throws Exception {
         // the route service could have been stopped, and if so then start it
         // instead
         if (!routeService.getStatus().isSuspended()) {
@@ -3149,7 +3149,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         }
     }
 
-    protected synchronized void stopRouteService(BaseRouteService routeService, boolean removingRoutes) throws Exception {
+    protected synchronized void stopRouteService(RouteService routeService, boolean removingRoutes) throws Exception {
         routeService.setRemovingRoutes(removingRoutes);
         stopRouteService(routeService);
     }
@@ -3167,17 +3167,17 @@ public abstract class AbstractCamelContext extends ServiceSupport
         }
     }
 
-    protected synchronized void stopRouteService(BaseRouteService routeService) throws Exception {
+    protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
         logRouteState(routeService.getRoute(), "stopped");
     }
 
-    protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
+    protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
         routeService.shutdown();
         logRouteState(routeService.getRoute(), "shutdown and removed");
     }
 
-    protected synchronized void suspendRouteService(BaseRouteService routeService) throws Exception {
+    protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
         routeService.setRemovingRoutes(false);
         routeService.suspend();
         logRouteState(routeService.getRoute(), "suspended");
@@ -3199,7 +3199,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
      * @throws Exception is thrown if error starting the routes
      */
     protected synchronized void safelyStartRouteServices(boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
-                                                         Collection<BaseRouteService> routeServices)
+                                                         Collection<RouteService> routeServices)
         throws Exception {
         // list of inputs to start when all the routes have been prepared for
         // starting
@@ -3208,7 +3208,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<>();
 
         // figure out the order in which the routes should be started
-        for (BaseRouteService routeService : routeServices) {
+        for (RouteService routeService : routeServices) {
             DefaultRouteStartupOrder order = doPrepareRouteToBeStarted(routeService);
             // check for clash before we add it as input
             if (checkClash) {
@@ -3266,16 +3266,16 @@ public abstract class AbstractCamelContext extends ServiceSupport
      * @see #safelyStartRouteServices(boolean,boolean,boolean,boolean,Collection)
      */
     protected synchronized void safelyStartRouteServices(boolean forceAutoStart, boolean checkClash, boolean startConsumer, boolean resumeConsumer, boolean addingRoutes,
-                                                         BaseRouteService... routeServices)
+                                                         RouteService... routeServices)
         throws Exception {
         safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, Arrays.asList(routeServices));
     }
 
-    private DefaultRouteStartupOrder doPrepareRouteToBeStarted(BaseRouteService routeService) {
+    private DefaultRouteStartupOrder doPrepareRouteToBeStarted(RouteService routeService) {
         // add the inputs from this route service to the list to start
         // afterwards
         // should be ordered according to the startup number
-        Integer startupOrder = routeService.getStartupOrder();
+        Integer startupOrder = routeService.getRoute().getStartupOrder();
         if (startupOrder == null) {
             // auto assign a default startup order
             startupOrder = defaultRouteStartupOrder++;
@@ -3321,7 +3321,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
             // routes as all routes
             // will then be prepared in time before we start inputs which will
             // consume messages to be routed
-            BaseRouteService routeService = entry.getValue().getRouteService();
+            RouteService routeService = entry.getValue().getRouteService();
             try {
                 LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
                 setupRoute.set(routeService.getRoute());
@@ -3346,7 +3346,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
             Integer order = entry.getKey();
             Route route = entry.getValue().getRoute();
-            BaseRouteService routeService = entry.getValue().getRouteService();
+            RouteService routeService = entry.getValue().getRouteService();
 
             // if we are starting camel, then skip routes which are configured
             // to not be auto started
@@ -4410,7 +4410,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         this.beanProcessorFactory = doAddService(beanProcessorFactory);
     }
 
-    protected Map<String, BaseRouteService> getRouteServices() {
+    protected Map<String, RouteService> getRouteServices() {
         return routeServices;
     }
 

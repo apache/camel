@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -221,6 +222,11 @@ public interface Route extends RuntimeConfiguration {
     String getRouteId();
 
     /**
+     * Gets the route description
+     */
+    String getRouteDescription();
+
+    /**
      * Get the route type
      *
      * @return the route type
@@ -273,11 +279,15 @@ public interface Route extends RuntimeConfiguration {
 
     Processor createErrorHandler(Processor processor) throws Exception;
 
+    Collection<Processor> getOnCompletions();
+
     // called at runtime
     Processor getOnCompletion(String onCompletionId);
 
     // called at completion time
     void setOnCompletion(String onCompletionId, Processor processor);
+
+    Collection<Processor> getOnExceptions();
 
     Processor getOnException(String onExceptionId);
 

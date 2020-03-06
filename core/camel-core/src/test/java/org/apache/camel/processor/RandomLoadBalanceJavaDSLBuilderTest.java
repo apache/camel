@@ -25,9 +25,8 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.processor.channel.DefaultChannel;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.junit.Test;
 
 /**
@@ -99,8 +98,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
             sb.append(".loadBalance()");
 
             LoadBalanceDefinition lbd = (LoadBalanceDefinition)defn;
-            LoadBalancer balancer = lbd.getLoadBalancerType().getLoadBalancer();
-            if (balancer instanceof RandomLoadBalancer) {
+            if (lbd.getLoadBalancerType() instanceof RandomLoadBalancerDefinition) {
                 sb.append(".random()");
             }
         }

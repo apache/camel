@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,15 +32,9 @@ import org.apache.camel.spi.Metadata;
 @SuppressWarnings("rawtypes")
 public class LoadBalancerDefinition extends IdentifiedType {
     @XmlTransient
-    private LoadBalancer loadBalancer;
-    @XmlTransient
     private String loadBalancerTypeName;
 
     public LoadBalancerDefinition() {
-    }
-
-    public LoadBalancerDefinition(LoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
     }
 
     protected LoadBalancerDefinition(String loadBalancerTypeName) {
@@ -56,30 +49,12 @@ public class LoadBalancerDefinition extends IdentifiedType {
         return Integer.MAX_VALUE;
     }
 
-    /**
-     * Allows derived classes to customize the load balancer
-     */
-    public void configureLoadBalancer(LoadBalancer loadBalancer) {
-    }
-
-    public LoadBalancer getLoadBalancer() {
-        return loadBalancer;
-    }
-
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
-    }
-
     public String getLoadBalancerTypeName() {
         return loadBalancerTypeName;
     }
 
     @Override
     public String toString() {
-        if (loadBalancer != null) {
-            return loadBalancer.toString();
-        } else {
-            return loadBalancerTypeName;
-        }
+        return loadBalancerTypeName;
     }
 }

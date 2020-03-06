@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -63,6 +64,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     private NamedNode route;
     private String routeId;
+    private String routeDescription;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
@@ -96,10 +98,12 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private Processor processor;
     private Consumer consumer;
 
-    public DefaultRoute(CamelContext camelContext, NamedNode route, String routeId, Endpoint endpoint) {
+    public DefaultRoute(CamelContext camelContext, NamedNode route, String routeId,
+                        String routeDescription, Endpoint endpoint) {
         this.camelContext = camelContext;
         this.route = route;
         this.routeId = routeId;
+        this.routeDescription = routeDescription;
         this.endpoint = endpoint;
     }
 
@@ -110,7 +114,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     public String getId() {
-        return (String) properties.get(Route.ID_PROPERTY);
+        return routeId;
     }
 
     @Override
@@ -258,6 +262,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public String getRouteId() {
         return routeId;
+    }
+
+    @Override
+    public String getRouteDescription() {
+        return routeDescription;
     }
 
     public List<Processor> getEventDrivenProcessors() {
@@ -481,6 +490,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public Collection<Processor> getOnCompletions() {
+        return onCompletions.values();
+    }
+
+    @Override
     public Processor getOnCompletion(String onCompletionId) {
         return onCompletions.get(onCompletionId);
     }
@@ -488,6 +502,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public void setOnCompletion(String onCompletionId, Processor processor) {
         onCompletions.put(onCompletionId, processor);
+    }
+
+    @Override
+    public Collection<Processor> getOnExceptions() {
+        return onExceptions.values();
     }
 
     @Override
@@ -553,6 +572,16 @@ public class DefaultRoute extends ServiceSupport implements Route {
         if (processor instanceof Service) {
             services.add((Service)processor);
         }
+        for (Processor p : onCompletions.values()) {
+            if (processor instanceof Service) {
+                services.add((Service)p);
+            }
+        }
+        for (Processor p : onExceptions.values()) {
+            if (processor instanceof Service) {
+                services.add((Service)p);
+            }
+        }
     }
 
     @Override
@@ -613,6 +642,9 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     public void initialized() {
+    }
 
+    public void cleanRouteReference() {
+        route = null;
     }
 }

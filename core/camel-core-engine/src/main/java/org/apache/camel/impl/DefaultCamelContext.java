@@ -23,7 +23,7 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.engine.BaseRouteService;
+import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -286,9 +286,10 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
-        if (routeService instanceof RouteService) {
-            model.getRouteDefinitions().remove(((RouteService)routeService).getRouteDefinition());
+    protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
+        RouteDefinition rd = model.getRouteDefinition(routeService.getId());
+        if (rd != null) {
+            model.getRouteDefinitions().remove(rd);
         }
         super.shutdownRouteService(routeService);
     }

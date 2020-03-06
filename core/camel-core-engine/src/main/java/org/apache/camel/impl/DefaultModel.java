@@ -31,6 +31,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Route;
 import org.apache.camel.impl.engine.AbstractCamelContext;
+import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;

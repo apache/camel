@@ -84,7 +84,6 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
                 throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }
             answer = (LoadBalancer) camelContext.getInjector().newInstance(type, false);
-            definition.configureLoadBalancer(answer);
         }
 
         return answer;

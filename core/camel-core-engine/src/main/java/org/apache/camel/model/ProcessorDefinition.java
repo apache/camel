@@ -2270,7 +2270,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
-        answer.setRouteScoped(true);
         addOutput(answer);
         return answer;
     }
@@ -2284,7 +2283,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
-        answer.setRouteScoped(true);
         addOutput(answer);
         return answer;
     }
