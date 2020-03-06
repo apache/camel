@@ -121,16 +121,16 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
             if (objectMetadata.containsKey(Exchange.CONTENT_LENGTH)) {
-            if (objectMetadata.get("Content-Length").equals("0") && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
-                baos = determineLengthInputStream(is);
-                objectMetadata.put("Content-Length", String.valueOf(baos.size()));
-                is = new ByteArrayInputStream(baos.toByteArray());
-            } else {
-                if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-                    objectMetadata.put("Content-Length", exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
+                if (objectMetadata.get("Content-Length").equals("0") && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                    LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
+                    baos = determineLengthInputStream(is);
+                    objectMetadata.put("Content-Length", String.valueOf(baos.size()));
+                    is = new ByteArrayInputStream(baos.toByteArray());
+                } else {
+                    if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+                        objectMetadata.put("Content-Length", exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
+                    }
                 }
-            }
             }
         }
 
