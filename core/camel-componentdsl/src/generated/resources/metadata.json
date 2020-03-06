@@ -627,7 +627,7 @@
     "extendsScheme": "",
     "syntax": "aws2-s3:\/\/bucketNameOrArn",
     "title": "AWS2 S3 Storage Service",
-    "description": "The aws-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.",
+    "description": "The aws2-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.",
     "label": "cloud,file",
     "deprecated": false,
     "deprecationNote": "cloud,file",
