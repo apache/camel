@@ -51,7 +51,7 @@ public class InfinispanConsumerEntryUpdatedTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_MODIFIED")
+                from("infinispan:default?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_MODIFIED")
                         .to("mock:result");
             }
         };

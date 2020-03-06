@@ -71,9 +71,9 @@ public class InfinispanLocalConsumerTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan:default?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_CREATED")
                         .to("mock:result");
-                from("infinispan?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_EXPIRED")
+                from("infinispan:default?cacheContainer=#cacheContainer&eventTypes=CACHE_ENTRY_EXPIRED")
                         .to("mock:result2");
             }
         };

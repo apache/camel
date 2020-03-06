@@ -51,7 +51,7 @@ public class InfinispanConsumerEntryVisitedTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_VISITED")
+                from("infinispan:default?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_VISITED")
                         .to("mock:result");
             }
         };
