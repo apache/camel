@@ -74,18 +74,18 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AS2MessageTest {
 
@@ -147,7 +147,7 @@ public class AS2MessageTest {
 
     private AS2SignedDataGenerator gen;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpOnce() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
 
@@ -194,12 +194,12 @@ public class AS2MessageTest {
         });
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownOnce() throws Exception {
         testServer.close();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
 
@@ -249,36 +249,29 @@ public class AS2MessageTest {
                 null, null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof ApplicationEDIFACTEntity);
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationEDIFACTEntity, "Unexpected request entity type");
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) entity;
-        assertTrue("Unexpected content type for entity",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertTrue("Entity not set as main body of request", ediEntity.isMainBody());
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for entity");
+        assertTrue(ediEntity.isMainBody(), "Entity not set as main body of request");
     }
 
     @Test
@@ -293,51 +286,41 @@ public class AS2MessageTest {
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.MULTIPART_SIGNED));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.MULTIPART_SIGNED), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof MultipartSignedEntity);
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof MultipartSignedEntity, "Unexpected request entity type");
         MultipartSignedEntity signedEntity = (MultipartSignedEntity) entity;
-        assertTrue("Entity not set as main body of request", signedEntity.isMainBody());
-        assertTrue("Request contains invalid number of mime parts", signedEntity.getPartCount() == 2);
+        assertTrue(signedEntity.isMainBody(), "Entity not set as main body of request");
+        assertTrue(signedEntity.getPartCount() == 2, "Request contains invalid number of mime parts");
 
         // Validated first mime part.
-        assertTrue("First mime part incorrect type ", signedEntity.getPart(0) instanceof ApplicationEDIFACTEntity);
+        assertTrue(signedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) signedEntity.getPart(0);
-        assertTrue("Unexpected content type for first mime part",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("First mime type set as main body of request", ediEntity.isMainBody());
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for first mime part");
+        assertFalse(ediEntity.isMainBody(), "First mime type set as main body of request");
 
         // Validate second mime part.
-        assertTrue("Second mime part incorrect type ",
-                signedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity);
+        assertTrue(signedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity, "Second mime part incorrect type ");
         ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) signedEntity.getPart(1);
-        assertTrue("Unexpected content type for second mime part",
-                signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE));
-        assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
-
+        assertTrue(signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE), "Unexpected content type for second mime part");
+        assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
     }
 
     @Test
@@ -455,52 +438,43 @@ public class AS2MessageTest {
                 certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity);
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity, "Unexpected request entity type");
         ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity) entity;
-        assertTrue("Entity not set as main body of request", envelopedEntity.isMainBody());
+        assertTrue(envelopedEntity.isMainBody(), "Entity not set as main body of request");
 
         // Validated enveloped part.
         MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
-        assertTrue("Enveloped mime part incorrect type ", encryptedEntity instanceof ApplicationEDIFACTEntity);
+        assertTrue(encryptedEntity instanceof ApplicationEDIFACTEntity, "Enveloped mime part incorrect type ");
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) encryptedEntity;
-        assertTrue("Unexpected content type for enveloped mime part",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("Enveloped mime type set as main body of request", ediEntity.isMainBody());
-        assertEquals("Unexpected content for enveloped mime part", EDI_MESSAGE.replaceAll("[\n\r]", ""),
-                ediEntity.getEdiMessage().replaceAll("[\n\r]", ""));
-
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for enveloped mime part");
+        assertFalse(ediEntity.isMainBody(), "Enveloped mime type set as main body of request");
+        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediEntity.getEdiMessage().replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
     }
 
     @Test
     public void aes128CbcEnvelopedAndSignedMessageTest() throws Exception {
         envelopedAndSignedMessageTest(AS2EncryptionAlgorithm.AES128_CBC);
     }
-    
+
     public void envelopedAndSignedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
                 TARGET_HOST, TARGET_PORT);
@@ -516,58 +490,50 @@ public class AS2MessageTest {
                 certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT,
+                request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT,
+                request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity);
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity, "Unexpected request entity type");
         ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity) entity;
-        assertTrue("Entity not set as main body of request", envelopedEntity.isMainBody());
+        assertTrue(envelopedEntity.isMainBody(), "Entity not set as main body of request");
 
         // Validated enveloped part.
         MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
-        assertTrue("Enveloped mime part incorrect type ", encryptedEntity instanceof MultipartSignedEntity);
+        assertTrue(encryptedEntity instanceof MultipartSignedEntity, "Enveloped mime part incorrect type ");
         MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) encryptedEntity;
-        assertTrue("Unexpected content type for enveloped mime part",
-                multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED));
-        assertFalse("Enveloped mime type set as main body of request", multipartSignedEntity.isMainBody());
-        assertTrue("Request contains invalid number of mime parts", multipartSignedEntity.getPartCount() == 2);
+        assertTrue(multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED), "Unexpected content type for enveloped mime part");
+        assertFalse(multipartSignedEntity.isMainBody(), "Enveloped mime type set as main body of request");
+        assertTrue(multipartSignedEntity.getPartCount() == 2, "Request contains invalid number of mime parts");
 
         // Validated first mime part.
-        assertTrue("First mime part incorrect type ", multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity);
+        assertTrue(multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) multipartSignedEntity.getPart(0);
-        assertTrue("Unexpected content type for first mime part",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("First mime type set as main body of request", ediEntity.isMainBody());
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for first mime part");
+        assertFalse(ediEntity.isMainBody(), "First mime type set as main body of request");
 
         // Validate second mime part.
-        assertTrue("Second mime part incorrect type ",
-                multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity);
+        assertTrue(multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity, "Second mime part incorrect type ");
         ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) multipartSignedEntity.getPart(1);
-        assertTrue("Unexpected content type for second mime part",
-                signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE));
-        assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
+        assertTrue(signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE), "Unexpected content type for second mime part");
+        assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
 
     }
 
@@ -583,20 +549,20 @@ public class AS2MessageTest {
                 null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpRequest request = httpContext.getRequest();
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof MultipartSignedEntity);
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof MultipartSignedEntity, "Unexpected request entity type");
         MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
         MimeEntity signedEntity = multipartSignedEntity.getSignedDataEntity();
-        assertTrue("Signed entity wrong type", signedEntity instanceof ApplicationEDIEntity);
+        assertTrue(signedEntity instanceof ApplicationEDIEntity, "Signed entity wrong type");
         ApplicationEDIEntity ediMessageEntity = (ApplicationEDIEntity) signedEntity;
-        assertNotNull("Multipart signed entity does not contain EDI message entity", ediMessageEntity);
+        assertNotNull(ediMessageEntity, "Multipart signed entity does not contain EDI message entity");
         ApplicationPkcs7SignatureEntity signatureEntity = multipartSignedEntity.getSignatureEntity();
-        assertNotNull("Multipart signed entity does not contain signature entity", signatureEntity);
+        assertNotNull(signatureEntity, "Multipart signed entity does not contain signature entity");
 
         // Validate Signature
-        assertTrue("Signature is invalid", multipartSignedEntity.isValid());
+        assertTrue(multipartSignedEntity.isValid(), "Signature is invalid");
 
     }
 
@@ -611,33 +577,29 @@ public class AS2MessageTest {
                 null, null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpResponse response = httpContext.getResponse();
-        assertEquals("Unexpected method value", HttpVersion.HTTP_1_1, response.getStatusLine().getProtocolVersion());
-        assertEquals("Unexpected method value", HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
-        assertEquals("Unexpected method value", EnglishReasonPhraseCatalog.INSTANCE.getReason(200, null),
-                response.getStatusLine().getReasonPhrase());
+        assertEquals(HttpVersion.HTTP_1_1, response.getStatusLine().getProtocolVersion(), "Unexpected method value");
+        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode(), "Unexpected method value");
+        assertEquals(EnglishReasonPhraseCatalog.INSTANCE.getReason(200, null), response.getStatusLine().getReasonPhrase(), "Unexpected method value");
 
         HttpEntity responseEntity = response.getEntity();
-        assertNotNull("Response entity", responseEntity);
-        assertTrue("Unexpected response entity type", responseEntity instanceof MultipartSignedEntity);
-        MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
+        assertNotNull(responseEntity, "Response entity");
+        assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
+        MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity)responseEntity;
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
-        assertTrue("Signed entity wrong type",
-                responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity);
-        DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity) responseSignedDataEntity;
-        assertEquals("Unexpected number of body parts in report", 2, reportEntity.getPartCount());
+        assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity, "Signed entity wrong type");
+        DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity)responseSignedDataEntity;
+        assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
         MimeEntity firstPart = reportEntity.getPart(0);
-        assertEquals("Unexpected content type in first body part of report",
-                ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(),
-                firstPart.getContentTypeValue());
+        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(), firstPart.getContentTypeValue(),
+                     "Unexpected content type in first body part of report");
         MimeEntity secondPart = reportEntity.getPart(1);
-        assertEquals("Unexpected content type in second body part of report",
-                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
-                secondPart.getContentTypeValue());
+        assertEquals(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(), secondPart.getContentTypeValue(),
+                     "Unexpected content type in second body part of report");
         ApplicationPkcs7SignatureEntity signatureEntity = responseSignedEntity.getSignatureEntity();
-        assertNotNull("Signature Entity", signatureEntity);
+        assertNotNull(signatureEntity, "Signature Entity");
 
         // Validate Signature
-        assertTrue("Signature is invalid", responseSignedEntity.isValid());
+        assertTrue(responseSignedEntity.isValid(), "Signature is invalid");
     }
 
     @Test
@@ -682,32 +644,25 @@ public class AS2MessageTest {
         // Send MDN
         HttpCoreContext httpContext = mdnManager.send(mdn, RECIPIENT_DELIVERY_ADDRESS);
         HttpRequest mndRequest = httpContext.getRequest();
-        DispositionNotificationMultipartReportEntity reportEntity = HttpMessageUtils.getEntity(mndRequest,
-                DispositionNotificationMultipartReportEntity.class);
-        assertNotNull("Request does not contain resport", reportEntity);
-        assertEquals("Report entity contains invalid number of parts", 2, reportEntity.getPartCount());
-        assertTrue("Report first part is not text entity", reportEntity.getPart(0) instanceof TextPlainEntity);
-        assertTrue("Report second part is not MDN entity",
-                reportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity);
-        AS2MessageDispositionNotificationEntity mdnEntity = (AS2MessageDispositionNotificationEntity) reportEntity
-                .getPart(1);
-        assertEquals("Unexpected value for Reporting UA", REPORTING_UA, mdnEntity.getReportingUA());
-        assertEquals("Unexpected value for Final Recipient", AS2_NAME, mdnEntity.getFinalRecipient());
-        assertEquals("Unexpected value for Original Message ID", originalMessageId, mdnEntity.getOriginalMessageId());
-        assertEquals("Unexpected value for Disposition Mode", DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                mdnEntity.getDispositionMode());
-        assertEquals("Unexpected value for Disposition Type", AS2DispositionType.PROCESSED,
-                mdnEntity.getDispositionType());
-        assertEquals("Unexpected value for Disposition Modifier", dispositionModifier,
-                mdnEntity.getDispositionModifier());
-        assertArrayEquals("Unexpected value for Failure Fields", failureFields, mdnEntity.getFailureFields());
-        assertArrayEquals("Unexpected value for Error Fields", errorFields, mdnEntity.getErrorFields());
-        assertArrayEquals("Unexpected value for Warning Fields", warningFields, mdnEntity.getWarningFields());
-        assertEquals("Unexpected value for Extension Fields", extensionFields, mdnEntity.getExtensionFields());
+        DispositionNotificationMultipartReportEntity reportEntity = HttpMessageUtils.getEntity(mndRequest, DispositionNotificationMultipartReportEntity.class);
+        assertNotNull(reportEntity, "Request does not contain resport");
+        assertEquals(2, reportEntity.getPartCount(), "Report entity contains invalid number of parts");
+        assertTrue(reportEntity.getPart(0) instanceof TextPlainEntity, "Report first part is not text entity");
+        assertTrue(reportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity, "Report second part is not MDN entity");
+        AS2MessageDispositionNotificationEntity mdnEntity = (AS2MessageDispositionNotificationEntity)reportEntity.getPart(1);
+        assertEquals(REPORTING_UA, mdnEntity.getReportingUA(), "Unexpected value for Reporting UA");
+        assertEquals(AS2_NAME, mdnEntity.getFinalRecipient(), "Unexpected value for Final Recipient");
+        assertEquals(originalMessageId, mdnEntity.getOriginalMessageId(), "Unexpected value for Original Message ID");
+        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, mdnEntity.getDispositionMode(), "Unexpected value for Disposition Mode");
+        assertEquals(AS2DispositionType.PROCESSED, mdnEntity.getDispositionType(), "Unexpected value for Disposition Type");
+        assertEquals(dispositionModifier, mdnEntity.getDispositionModifier(), "Unexpected value for Disposition Modifier");
+        assertArrayEquals(failureFields, mdnEntity.getFailureFields(), "Unexpected value for Failure Fields");
+        assertArrayEquals(errorFields, mdnEntity.getErrorFields(), "Unexpected value for Error Fields");
+        assertArrayEquals(warningFields, mdnEntity.getWarningFields(), "Unexpected value for Warning Fields");
+        assertEquals(extensionFields, mdnEntity.getExtensionFields(), "Unexpected value for Extension Fields");
         ReceivedContentMic expectedMic = MicUtils.createReceivedContentMic(request, null);
         ReceivedContentMic mdnMic = mdnEntity.getReceivedContentMic();
-        assertEquals("Unexpected value for Recieved Content Mic", expectedMic.getEncodedMessageDigest(),
-                mdnMic.getEncodedMessageDigest());
+        assertEquals(expectedMic.getEncodedMessageDigest(), mdnMic.getEncodedMessageDigest(), "Unexpected value for Recieved Content Mic");
         LOG.debug("\r\n" + AS2Utils.printMessage(mndRequest));
     }
     
@@ -727,42 +682,35 @@ public class AS2MessageTest {
                 null);
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
-        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeCompressedDataEntity);
-        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity) entity;
-        assertTrue("Entity not set as main body of request", compressedDataEntity.isMainBody());
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationPkcs7MimeCompressedDataEntity, "Unexpected request entity type");
+        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity)entity;
+        assertTrue(compressedDataEntity.isMainBody(), "Entity not set as main body of request");
 
         // Validated compessed part.
         MimeEntity compressedEntity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
-        assertTrue("Enveloped mime part incorrect type ", compressedEntity instanceof ApplicationEDIFACTEntity);
-        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) compressedEntity;
-        assertTrue("Unexpected content type for compressed entity",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("Compressed entity set as main body of request", ediEntity.isMainBody());
+        assertTrue(compressedEntity instanceof ApplicationEDIFACTEntity, "Enveloped mime part incorrect type ");
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity)compressedEntity;
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for compressed entity");
+        assertFalse(ediEntity.isMainBody(), "Compressed entity set as main body of request");
 
     }
 
@@ -783,59 +731,48 @@ public class AS2MessageTest {
                 null);
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
-        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeCompressedDataEntity);
-        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity) entity;
-        assertTrue("Entity not set as main body of request", compressedDataEntity.isMainBody());
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationPkcs7MimeCompressedDataEntity, "Unexpected request entity type");
+        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity)entity;
+        assertTrue(compressedDataEntity.isMainBody(), "Entity not set as main body of request");
 
         // Validated compressed part.
         MimeEntity compressedEntity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
-        assertTrue("Enveloped mime part incorrect type ", compressedEntity instanceof MultipartSignedEntity);
-        MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) compressedEntity;
-        assertTrue("Unexpected content type for compressed entity",
-                multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED));
-        assertFalse("Multipart signed entity set as main body of request", multipartSignedEntity.isMainBody());
-        assertTrue("Multipart signed entity contains invalid number of mime parts",
-                multipartSignedEntity.getPartCount() == 2);
+        assertTrue(compressedEntity instanceof MultipartSignedEntity, "Enveloped mime part incorrect type ");
+        MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity)compressedEntity;
+        assertTrue(multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED), "Unexpected content type for compressed entity");
+        assertFalse(multipartSignedEntity.isMainBody(), "Multipart signed entity set as main body of request");
+        assertTrue(multipartSignedEntity.getPartCount() == 2, "Multipart signed entity contains invalid number of mime parts");
 
         // Validated first mime part.
-        assertTrue("First mime part incorrect type ", multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity);
-        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) multipartSignedEntity.getPart(0);
-        assertTrue("Unexpected content type for first mime part",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("First mime type set as main body of request", ediEntity.isMainBody());
-        
+        assertTrue(multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity)multipartSignedEntity.getPart(0);
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for first mime part");
+        assertFalse(ediEntity.isMainBody(), "First mime type set as main body of request");
+
         // Validate second mime part.
-        assertTrue("Second mime part incorrect type ",
-                multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity);
-        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) multipartSignedEntity.getPart(1);
-        assertTrue("Unexpected content type for second mime part",
-                signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE));
-        assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
+        assertTrue(multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity, "Second mime part incorrect type ");
+        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity)multipartSignedEntity.getPart(1);
+        assertTrue(signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE), "Unexpected content type for second mime part");
+        assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
     }
 
     @Test
@@ -846,60 +783,49 @@ public class AS2MessageTest {
         
         LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
 
-        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
-                AS2MessageStructure.ENCRYPTED_COMPRESSED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), "base64",
-                null, null, null, AS2CompressionAlgorithm.ZLIB,
-                DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, AS2EncryptionAlgorithm.AES128_CBC,
-                certList.toArray(new Certificate[0]));
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.ENCRYPTED_COMPRESSED,
+                                                         ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), "base64", null, null, null,
+                                                         AS2CompressionAlgorithm.ZLIB, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS,
+                                                         AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
-        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity);
-        ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity) entity;
-        assertTrue("Entity not set as main body of request", envelopedEntity.isMainBody());
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity, "Unexpected request entity type");
+        ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity)entity;
+        assertTrue(envelopedEntity.isMainBody(), "Entity not set as main body of request");
 
         // Validated enveloped part.
         MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
-        assertTrue("Enveloped mime part incorrect type ", encryptedEntity instanceof ApplicationPkcs7MimeCompressedDataEntity);
-        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity) encryptedEntity;
-        assertTrue("Unexpected content type for compressed mime part",
-                compressedDataEntity.getContentType().getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
-        assertFalse("Enveloped mime type set as main body of request", compressedDataEntity.isMainBody());
+        assertTrue(encryptedEntity instanceof ApplicationPkcs7MimeCompressedDataEntity, "Enveloped mime part incorrect type ");
+        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity)encryptedEntity;
+        assertTrue(compressedDataEntity.getContentType().getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for compressed mime part");
+        assertFalse(compressedDataEntity.isMainBody(), "Enveloped mime type set as main body of request");
 
         // Validated compressed part.
         MimeEntity compressedEntity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
-        assertTrue("Enveloped mime part incorrect type ", compressedEntity instanceof ApplicationEDIFACTEntity);
-        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) compressedEntity;
-        assertTrue("Unexpected content type for compressed entity",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("Compressed entity set as main body of request", ediEntity.isMainBody());
-        assertEquals("Unexpected content for enveloped mime part", EDI_MESSAGE.replaceAll("[\n\r]", ""),
-                ediEntity.getEdiMessage().replaceAll("[\n\r]", ""));
+        assertTrue(compressedEntity instanceof ApplicationEDIFACTEntity, "Enveloped mime part incorrect type ");
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity)compressedEntity;
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for compressed entity");
+        assertFalse(ediEntity.isMainBody(), "Compressed entity set as main body of request");
+        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediEntity.getEdiMessage().replaceAll("[\n\r]", ""), "Unexpected content for enveloped mime part");
     }
 
     @Test
@@ -918,68 +844,55 @@ public class AS2MessageTest {
                 AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
-        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
-        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
-        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
-                request.getRequestLine().getProtocolVersion());
+        assertEquals(METHOD, request.getRequestLine().getMethod(), "Unexpected method value");
+        assertEquals(REQUEST_URI, request.getRequestLine().getUri(), "Unexpected request URI value");
+        assertEquals(HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion(), "Unexpected HTTP version value");
 
-        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
-        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
-        assertEquals("Unexpected AS2 version value", AS2_VERSION,
-                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
-        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
-        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
-        assertTrue("Unexpected message id value",
-                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
-        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
-                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
-        assertEquals("Unexpected user agent value", USER_AGENT,
-                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
-        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
-        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
-        assertTrue("Unexpected content type for message",
-                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+        assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
+        assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
+        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
+        assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
+        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"), "Unexpected message id value");
+        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(), "Unexpected target host value");
+        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
+        assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
+        assertTrue(request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for message");
 
-        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
-        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
-        assertNotNull("Request does not contain entity", entity);
-        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity);
-        ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity) entity;
-        assertTrue("Entity not set as main body of request", envelopedEntity.isMainBody());
+        assertTrue(request instanceof BasicHttpEntityEnclosingRequest, "Request does not contain entity");
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
+        assertNotNull(entity, "Request does not contain entity");
+        assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity, "Unexpected request entity type");
+        ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity)entity;
+        assertTrue(envelopedEntity.isMainBody(), "Entity not set as main body of request");
 
         // Validated enveloped part.
         MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
-        assertTrue("Enveloped mime part incorrect type ", encryptedEntity instanceof ApplicationPkcs7MimeCompressedDataEntity);
-        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity) encryptedEntity;
-        assertTrue("Unexpected content type for compressed mime part",
-                compressedDataEntity.getContentType().getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
-        assertFalse("Enveloped mime type set as main body of request", compressedDataEntity.isMainBody());
+        assertTrue(encryptedEntity instanceof ApplicationPkcs7MimeCompressedDataEntity, "Enveloped mime part incorrect type ");
+        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity)encryptedEntity;
+        assertTrue(compressedDataEntity.getContentType().getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME), "Unexpected content type for compressed mime part");
+        assertFalse(compressedDataEntity.isMainBody(), "Enveloped mime type set as main body of request");
 
         // Validated compressed part.
         MimeEntity compressedEntity = compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider());
-        assertTrue("Enveloped mime part incorrect type ", compressedEntity instanceof MultipartSignedEntity);
-        MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) compressedEntity;
-        assertTrue("Unexpected content type for compressed entity",
-                multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED));
-        assertFalse("Multipart signed entity set as main body of request", multipartSignedEntity.isMainBody());
-        assertTrue("Multipart signed entity contains invalid number of mime parts",
-                multipartSignedEntity.getPartCount() == 2);
+        assertTrue(compressedEntity instanceof MultipartSignedEntity, "Enveloped mime part incorrect type ");
+        MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity)compressedEntity;
+        assertTrue(multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED), "Unexpected content type for compressed entity");
+        assertFalse(multipartSignedEntity.isMainBody(), "Multipart signed entity set as main body of request");
+        assertTrue(multipartSignedEntity.getPartCount() == 2, "Multipart signed entity contains invalid number of mime parts");
 
         // Validated first mime part.
-        assertTrue("First mime part incorrect type ", multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity);
-        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) multipartSignedEntity.getPart(0);
-        assertTrue("Unexpected content type for first mime part",
-                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
-        assertFalse("First mime type set as main body of request", ediEntity.isMainBody());
-        
-        // Validate second mime part.
-        assertTrue("Second mime part incorrect type ",
-                multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity);
-        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) multipartSignedEntity.getPart(1);
-        assertTrue("Unexpected content type for second mime part",
-                signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE));
-        assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
+        assertTrue(multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity)multipartSignedEntity.getPart(0);
+        assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT), "Unexpected content type for first mime part");
+        assertFalse(ediEntity.isMainBody(), "First mime type set as main body of request");
 
+        // Validate second mime part.
+        assertTrue(multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity, "Second mime part incorrect type ");
+        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity)multipartSignedEntity.getPart(1);
+        assertTrue(signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE), "Unexpected content type for second mime part");
+        assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
     }
 
 }

@@ -61,14 +61,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.OutputEncryptor;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EntityParserTest {
     
@@ -185,11 +185,11 @@ public class EntityParserTest {
     //
     int  serialNo = 1;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
@@ -206,8 +206,8 @@ public class EntityParserTest {
 
         EntityParser.parseAS2MessageEntity(response);
         HttpEntity parsedEntity = EntityUtils.getMessageEntity(response);
-        assertNotNull("Unexpected Null message disposition notification report entity", parsedEntity);
-        assertTrue("Unexpected type for message disposition notification report entity", parsedEntity instanceof DispositionNotificationMultipartReportEntity);
+        assertNotNull(parsedEntity, "Unexpected Null message disposition notification report entity");
+        assertTrue(parsedEntity instanceof DispositionNotificationMultipartReportEntity, "Unexpected type for message disposition notification report entity");
     }
 
     @Test
@@ -222,11 +222,11 @@ public class EntityParserTest {
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_CHARSET_NAME,
                         DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING);
 
-        assertNotNull("Unexpected Null disposition notification multipart entity", dispositionNotificationMultipartReportEntity);
-        assertEquals("Unexpected number of body parts", 2, dispositionNotificationMultipartReportEntity.getPartCount());
+        assertNotNull(dispositionNotificationMultipartReportEntity, "Unexpected Null disposition notification multipart entity");
+        assertEquals(2, dispositionNotificationMultipartReportEntity.getPartCount(), "Unexpected number of body parts");
 
-        assertTrue("Unexpected type for first body part", dispositionNotificationMultipartReportEntity.getPart(0) instanceof TextPlainEntity);
-        assertTrue("Unexpected type for second body part", dispositionNotificationMultipartReportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity);
+        assertTrue(dispositionNotificationMultipartReportEntity.getPart(0) instanceof TextPlainEntity, "Unexpected type for first body part");
+        assertTrue(dispositionNotificationMultipartReportEntity.getPart(1) instanceof AS2MessageDispositionNotificationEntity, "Unexpected type for second body part");
     }
 
     @Test
@@ -240,7 +240,7 @@ public class EntityParserTest {
 
         String text = textPlainEntity.getText();
 
-        assertEquals("Unexpected text", EXPECTED_TEXT_PLAIN_CONTENT, text);
+        assertEquals(EXPECTED_TEXT_PLAIN_CONTENT, text, "Unexpected text");
     }
 
     @Test
@@ -255,21 +255,21 @@ public class EntityParserTest {
                         DISPOSITION_NOTIFICATION_CONTENT_CHARSET_NAME,
                         DISPOSITION_NOTIFICATION_CONTENT_TRANSFER_ENCODING);
 
-        assertEquals("Unexpected Reporting UA value", EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA());
-        assertEquals("Unexpected MTN Name", EXPECTED_MTN_NAME, messageDispositionNotificationEntity.getMtnName());
-        assertEquals("Unexpected Original Recipient", EXPECTED_ORIGINAL_RECIPIENT, messageDispositionNotificationEntity.getExtensionFields().get("Original-Recipient"));
-        assertEquals("Unexpected Final Reciptient", EXPECTED_FINAL_RECIPIENT, messageDispositionNotificationEntity.getFinalRecipient());
-        assertEquals("Unexpected Original Message ID", EXPECTED_ORIGINAL_MESSAGE_ID, messageDispositionNotificationEntity.getOriginalMessageId());
-        assertEquals("Unexpected Disposition Mode", EXPECTED_DISPOSITION_MODE, messageDispositionNotificationEntity.getDispositionMode());
-        assertNotNull("Unexpected Null Disposition Modifier", messageDispositionNotificationEntity.getDispositionModifier());
-        assertEquals("Unexpected Disposition Modifier", EXPECTED_DISPOSITION_MODIFIER, messageDispositionNotificationEntity.getDispositionModifier().getModifier());
-        assertEquals("Unexpected Disposition Type", EXPECTED_DISPOSITION_TYPE, messageDispositionNotificationEntity.getDispositionType());
-        assertArrayEquals("Unexpected Failure Array value", EXPECTED_FAILURE, messageDispositionNotificationEntity.getFailureFields());
-        assertArrayEquals("Unexpected Error Array value", EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields());
-        assertArrayEquals("Unexpected Warning Array value", EXPECTED_WARNING, messageDispositionNotificationEntity.getWarningFields());
-        assertNotNull("Unexpected Null Received Content MIC", messageDispositionNotificationEntity.getReceivedContentMic());
-        assertEquals("Unexpected Encoded Message Digest", EXPECTED_ENCODED_MESSAGE_DIGEST, messageDispositionNotificationEntity.getReceivedContentMic().getEncodedMessageDigest());
-        assertEquals("Unexpected Digest Algorithm ID", EXPECTED_DIGEST_ALGORITHM_ID, messageDispositionNotificationEntity.getReceivedContentMic().getDigestAlgorithmId());
+        assertEquals(EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA(), "Unexpected Reporting UA value");
+        assertEquals(EXPECTED_MTN_NAME, messageDispositionNotificationEntity.getMtnName(), "Unexpected MTN Name");
+        assertEquals(EXPECTED_ORIGINAL_RECIPIENT, messageDispositionNotificationEntity.getExtensionFields().get("Original-Recipient"), "Unexpected Original Recipient");
+        assertEquals(EXPECTED_FINAL_RECIPIENT, messageDispositionNotificationEntity.getFinalRecipient(), "Unexpected Final Reciptient");
+        assertEquals(EXPECTED_ORIGINAL_MESSAGE_ID, messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected Original Message ID");
+        assertEquals(EXPECTED_DISPOSITION_MODE, messageDispositionNotificationEntity.getDispositionMode(), "Unexpected Disposition Mode");
+        assertNotNull(messageDispositionNotificationEntity.getDispositionModifier(), "Unexpected Null Disposition Modifier");
+        assertEquals(EXPECTED_DISPOSITION_MODIFIER, messageDispositionNotificationEntity.getDispositionModifier().getModifier(), "Unexpected Disposition Modifier");
+        assertEquals(EXPECTED_DISPOSITION_TYPE, messageDispositionNotificationEntity.getDispositionType(), "Unexpected Disposition Type");
+        assertArrayEquals(EXPECTED_FAILURE, messageDispositionNotificationEntity.getFailureFields(), "Unexpected Failure Array value");
+        assertArrayEquals(EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields(), "Unexpected Error Array value");
+        assertArrayEquals(EXPECTED_WARNING, messageDispositionNotificationEntity.getWarningFields(), "Unexpected Warning Array value");
+        assertNotNull(messageDispositionNotificationEntity.getReceivedContentMic(), "Unexpected Null Received Content MIC");
+        assertEquals(EXPECTED_ENCODED_MESSAGE_DIGEST, messageDispositionNotificationEntity.getReceivedContentMic().getEncodedMessageDigest(), "Unexpected Encoded Message Digest");
+        assertEquals(EXPECTED_DIGEST_ALGORITHM_ID, messageDispositionNotificationEntity.getReceivedContentMic().getDigestAlgorithmId(), "Unexpected Digest Algorithm ID");
     }
 
     @Test
@@ -320,8 +320,8 @@ public class EntityParserTest {
         ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEnvelopedDataEntity(textEntity, cmsEnvelopeDataGenerator, contentEncryptor, "binary", true);
         
         MimeEntity decryptedMimeEntity = applicationPkcs7MimeEntity.getEncryptedEntity(encryptKP.getPrivate());
-        assertEquals("Decrypted entity has unexpected content type", "text/plain; charset=US-ASCII", decryptedMimeEntity.getContentTypeValue());
-        assertEquals("Decrypted entity has unexpected content", "This is a super secret messatge!", ((TextPlainEntity)decryptedMimeEntity).getText());
+        assertEquals("text/plain; charset=US-ASCII", decryptedMimeEntity.getContentTypeValue(), "Decrypted entity has unexpected content type");
+        assertEquals("This is a super secret messatge!", ((TextPlainEntity)decryptedMimeEntity).getText(), "Decrypted entity has unexpected content");
     }
 
     /**
