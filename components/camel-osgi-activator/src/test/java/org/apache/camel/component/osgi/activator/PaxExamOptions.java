@@ -63,6 +63,7 @@ public enum PaxExamOptions {
         ),
         CAMEL_CORE_OSGI(
                 createStreamBundleOption("camel-core-engine.jar"),
+                createStreamBundleOption("camel-core-languages.jar"),
                 createStreamBundleOption("camel-api.jar"),
                 createStreamBundleOption("camel-base.jar"),
                 createStreamBundleOption("camel-management-api.jar"),

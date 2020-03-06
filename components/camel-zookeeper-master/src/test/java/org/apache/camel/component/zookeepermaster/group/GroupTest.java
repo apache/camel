@@ -31,6 +31,8 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,8 @@ import static org.springframework.test.util.AssertionErrors.assertNotEquals;
 
 public class GroupTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupTest.class);
+
+    private static String beforeTmpdir;
 
     private GroupListener listener = new GroupListener<NodeState>() {
         @Override
@@ -94,6 +98,18 @@ public class GroupTest {
         return container;
     }
 
+    @BeforeClass
+    public static void before() {
+        // workaround macos issue with docker/testcontainers expecting to use /tmp/ folder
+        beforeTmpdir = System.setProperty("java.io.tmpdir", "/tmp/");
+    }
+
+    @AfterClass
+    public static void after() {
+        if (beforeTmpdir != null) {
+            System.setProperty("java.io.tmpdir", beforeTmpdir);
+        }
+    }
 
     @Test
     public void testOrder() throws Exception {

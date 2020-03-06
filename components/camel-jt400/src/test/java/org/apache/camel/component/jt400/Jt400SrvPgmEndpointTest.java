@@ -61,12 +61,4 @@ public class Jt400SrvPgmEndpointTest extends Jt400TestSupport {
         assertEquals(true, endpoint.isFieldIdxForOuput(2));
     }
 
-    @Test
-    public void testToString() {
-        assertEquals(
-                "jt400://USER:xxxxxx@host/qsys.lib/library.lib/prog.srvpgm?connectionPool=%23mockPool&"
-                        + "fieldsLength=10%2C512%2C255&format=binary&guiAvailable=true"
-                        + "&outputFieldsIdx=1%2C2&procedureName=someProcedure",
-                endpoint.toString());
-    }
 }

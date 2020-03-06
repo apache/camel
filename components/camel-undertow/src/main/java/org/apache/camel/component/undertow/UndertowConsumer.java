@@ -62,9 +62,18 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
     private CamelWebSocketHandler webSocketHandler;
+    private boolean rest;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    public boolean isRest() {
+        return rest;
+    }
+
+    public void setRest(boolean rest) {
+        this.rest = rest;
     }
 
     @Override
@@ -81,7 +90,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
              * note that the new CamelWebSocketHandler() we pass to registerEndpoint() does not necessarily have to be
              * the same instance that is returned from there
              */
-            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
             this.webSocketHandler.setConsumer(this);
         } else {
             // allow for HTTP 1.1 continue
@@ -101,7 +110,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             if (endpoint.getHandlers() != null) {
                 httpHandler = this.wrapHandler(httpHandler, endpoint);
             }
-            endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
+            endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
                     // wrap with EagerFormParsingHandler to enable undertow form parsers
                     httpHandler));
         }
@@ -114,7 +123,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             this.webSocketHandler.setConsumer(null);
         }
         UndertowEndpoint endpoint = getEndpoint();
-        endpoint.getComponent().unregisterEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
+        endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
     }
 
     @Override

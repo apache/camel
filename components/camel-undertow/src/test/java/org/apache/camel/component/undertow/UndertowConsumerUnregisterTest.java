@@ -34,8 +34,8 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
         UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
         UndertowConsumer consumerBar = (UndertowConsumer) context.getRoute("route-bar").getConsumer();
 
-        component.unregisterEndpoint(consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(), consumerFoo.getEndpoint().getSslContext());
-        component.unregisterEndpoint(consumerBar.getEndpoint().getHttpHandlerRegistrationInfo(), consumerBar.getEndpoint().getSslContext());
+        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(), consumerFoo.getEndpoint().getSslContext());
+        component.unregisterEndpoint(consumerBar, consumerBar.getEndpoint().getHttpHandlerRegistrationInfo(), consumerBar.getEndpoint().getSslContext());
 
         try {
             template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
@@ -68,7 +68,7 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
 
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
         UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
-        component.unregisterEndpoint(consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(), consumerFoo.getEndpoint().getSslContext());
+        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(), consumerFoo.getEndpoint().getSslContext());
 
         ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
         Assert.assertEquals(404, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));

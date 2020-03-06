@@ -151,9 +151,10 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
                 LOG.debug("truststorefile is null");
             }
-            if (configuration.getPassphrase().toCharArray() == null) {
+            if (configuration.getPassphrase() == null) {
                 LOG.debug("passphrase is null");
             }
+            char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
 
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
@@ -163,7 +164,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
                         configuration.getSecurityProvider(),
                         "file:" + configuration.getKeyStoreFile().getPath(),
                         "file:" + configuration.getTrustStoreFile().getPath(),
-                        configuration.getPassphrase().toCharArray());
+                        pw);
             } else {
                 sslEngineFactory = new SSLEngineFactory();
                 answer = sslEngineFactory.createSSLContext(camelContext,
@@ -171,7 +172,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),
                         configuration.getTrustStoreResource(),
-                        configuration.getPassphrase().toCharArray());
+                        pw);
             }
         }
 

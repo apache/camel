@@ -109,15 +109,15 @@ public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
     @Test
     public void setUsingCreateModeFromHeader() throws Exception {
         client.createPersistent("/modes-test", "parent for modes");
-        for (CreateMode mode : CreateMode.values()) {
-            Exchange exchange = createExchangeWithBody(testPayload);
-            exchange.getIn().setHeader(ZOOKEEPER_CREATE_MODE, mode);
-            exchange.getIn().setHeader(ZOOKEEPER_NODE, "/modes-test/" + mode);
-            exchange.setPattern(ExchangePattern.InOut);
-            template.send("direct:node-from-header", exchange);
-        }
+
+        Exchange exchange = createExchangeWithBody(testPayload);
+        exchange.getIn().setHeader(ZOOKEEPER_CREATE_MODE, CreateMode.EPHEMERAL.name());
+        exchange.getIn().setHeader(ZOOKEEPER_NODE, "/modes-test/" + CreateMode.EPHEMERAL.name());
+        exchange.setPattern(ExchangePattern.InOut);
+        template.send("direct:node-from-header", exchange);
+
         GetChildrenOperation listing = new GetChildrenOperation(getConnection(), "/modes-test");
-        assertEquals(CreateMode.values().length, listing.get().getResult().size());
+        assertEquals(1, listing.get().getResult().size());
     }
 
     @Test

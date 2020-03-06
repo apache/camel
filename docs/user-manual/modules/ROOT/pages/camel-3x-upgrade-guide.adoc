@@ -627,3 +627,8 @@ The google-pubnub component has been improved to use a new Java library and beco
 
 Support for Apache Karaf has been removed.
 
+=== API changes
+
+==== DefaultComponent
+
+The deprecated method `preProcessUri` has been removed.

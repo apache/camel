@@ -61,10 +61,10 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "advanced", description = "To use a custom QueueBrowseStrategy when browsing queues")
     private QueueBrowseStrategy queueBrowseStrategy;
     @Metadata(label = "advanced", description = "Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured."
-            + " If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.")
+            + " If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.", defaultValue = "true")
     private boolean allowAutoWiredConnectionFactory = true;
     @Metadata(label = "advanced", description = "Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured."
-            + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.")
+            + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.", defaultValue = "true")
     private boolean allowAutoWiredDestinationResolver = true;
 
     public JmsComponent() {

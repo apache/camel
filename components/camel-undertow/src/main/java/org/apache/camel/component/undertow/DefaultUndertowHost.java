@@ -23,6 +23,7 @@ import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import org.apache.camel.component.undertow.handlers.CamelRootHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
+import org.apache.camel.component.undertow.handlers.RestRootHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ public class DefaultUndertowHost implements UndertowHost {
     private final UndertowHostKey key;
     private final UndertowHostOptions options;
     private final CamelRootHandler rootHandler;
+    private final RestRootHandler restHandler;
     private Undertow undertow;
     private String hostString;
 
@@ -45,7 +47,9 @@ public class DefaultUndertowHost implements UndertowHost {
     public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options) {
         this.key = key;
         this.options = options;
-        rootHandler = new CamelRootHandler(new NotFoundHandler());
+        this.rootHandler = new CamelRootHandler(new NotFoundHandler());
+        this.restHandler = new RestRootHandler();
+        this.restHandler.init(key.getPort());
     }
 
     @Override
@@ -54,7 +58,7 @@ public class DefaultUndertowHost implements UndertowHost {
     }
 
     @Override
-    public synchronized HttpHandler registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler) {
+    public synchronized HttpHandler registerHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler) {
         if (undertow == null) {
             Undertow.Builder builder = Undertow.builder();
             if (key.getSslContext() != null) {
@@ -81,7 +85,12 @@ public class DefaultUndertowHost implements UndertowHost {
                 }
             }
 
-            undertow = builder.setHandler(rootHandler).build();
+            if (consumer != null && consumer.isRest()) {
+                // use the rest handler as its a rest consumer
+                undertow = builder.setHandler(restHandler).build();
+            } else {
+                undertow = builder.setHandler(rootHandler).build();
+            }
             LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
 
             try {
@@ -102,18 +111,30 @@ public class DefaultUndertowHost implements UndertowHost {
                 throw e;
             }
         }
-        return rootHandler.add(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(), registrationInfo.isMatchOnUriPrefix(), handler);
+        if (consumer != null && consumer.isRest()) {
+            restHandler.addConsumer(consumer);
+            return restHandler;
+        } else {
+            return rootHandler.add(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(), registrationInfo.isMatchOnUriPrefix(), handler);
+        }
     }
 
     @Override
-    public synchronized void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo) {
+    public synchronized void unregisterHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo) {
         if (undertow == null) {
             return;
         }
 
-        rootHandler.remove(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(), registrationInfo.isMatchOnUriPrefix());
+        boolean stop;
+        if (consumer != null && consumer.isRest()) {
+            restHandler.removeConsumer(consumer);
+            stop = restHandler.consumers() <= 0;
+        } else {
+            rootHandler.remove(registrationInfo.getUri().getPath(), registrationInfo.getMethodRestrict(), registrationInfo.isMatchOnUriPrefix());
+            stop = rootHandler.isEmpty();
+        }
 
-        if (rootHandler.isEmpty()) {
+        if (stop) {
             LOG.info("Stopping Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
             undertow.stop();
             undertow = null;
