@@ -45,6 +45,7 @@ import software.amazon.awssdk.services.s3.model.BucketCannedACL;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CopyObjectResponse;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -233,7 +234,10 @@ public class AWS2S3Producer extends DefaultProducer {
         final String bucketName = determineBucketName(exchange);
 
         DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
-        s3Client.deleteBucket(deleteBucketRequest.build());
+        DeleteBucketResponse resp = s3Client.deleteBucket(deleteBucketRequest.build());
+        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(resp);
     }
 
     private void getObject(S3Client s3Client, Exchange exchange) {
