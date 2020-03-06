@@ -1,6 +1,8 @@
+[[aws2-s3-component]]
 = AWS2 S3 Storage Service Component
 
-*Since Camel 2.8*
+*Since Camel 3.2*
+
 *Since Camel 3.2*
 
 
