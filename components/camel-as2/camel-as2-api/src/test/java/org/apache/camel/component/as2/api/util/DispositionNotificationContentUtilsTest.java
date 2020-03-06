@@ -29,13 +29,13 @@ import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
 import org.apache.http.message.BasicLineParser;
 import org.apache.http.util.CharArrayBuffer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DispositionNotificationContentUtilsTest {
 
@@ -67,11 +67,11 @@ public class DispositionNotificationContentUtilsTest {
     public static final String EXPECTED_DIGEST_ALGORITHM_ID = "sha1";
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
@@ -86,21 +86,21 @@ public class DispositionNotificationContentUtilsTest {
         List<CharArrayBuffer> dispositionNotificationFields = EntityParser.parseBodyPartFields(inbuffer, null, BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =  DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
 
-        assertEquals("Unexpected Reporting UA value", EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA());
-        assertEquals("Unexpected MTN Name", EXPECTED_MTN_NAME, messageDispositionNotificationEntity.getMtnName());
-        assertEquals("Unexpected Original Recipient", EXPECTED_ORIGINAL_RECIPIENT, messageDispositionNotificationEntity.getExtensionFields().get("Original-Recipient"));
-        assertEquals("Unexpected Final Reciptient", EXPECTED_FINAL_RECIPIENT, messageDispositionNotificationEntity.getFinalRecipient());
-        assertEquals("Unexpected Original Message ID", EXPECTED_ORIGINAL_MESSAGE_ID, messageDispositionNotificationEntity.getOriginalMessageId());
-        assertEquals("Unexpected Disposition Mode", EXPECTED_DISPOSITION_MODE, messageDispositionNotificationEntity.getDispositionMode());
-        assertNotNull("Unexpected Null Disposition Modifier", messageDispositionNotificationEntity.getDispositionModifier());
-        assertEquals("Unexpected Disposition Modifier", EXPECTED_DISPOSITION_MODIFIER, messageDispositionNotificationEntity.getDispositionModifier().getModifier());
-        assertEquals("Unexpected Disposition Type", EXPECTED_DISPOSITION_TYPE, messageDispositionNotificationEntity.getDispositionType());
-        assertArrayEquals("Unexpected Failure Array value", EXPECTED_FAILURE, messageDispositionNotificationEntity.getFailureFields());
-        assertArrayEquals("Unexpected Error Array value", EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields());
-        assertArrayEquals("Unexpected Warning Array value", EXPECTED_WARNING, messageDispositionNotificationEntity.getWarningFields());
-        assertNotNull("Unexpected Null Received Content MIC", messageDispositionNotificationEntity.getReceivedContentMic());
-        assertEquals("Unexpected Encoded Message Digest", EXPECTED_ENCODED_MESSAGE_DIGEST, messageDispositionNotificationEntity.getReceivedContentMic().getEncodedMessageDigest());
-        assertEquals("Unexpected Digest Algorithm ID", EXPECTED_DIGEST_ALGORITHM_ID, messageDispositionNotificationEntity.getReceivedContentMic().getDigestAlgorithmId());
+        assertEquals(EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA(), "Unexpected Reporting UA value");
+        assertEquals(EXPECTED_MTN_NAME, messageDispositionNotificationEntity.getMtnName(), "Unexpected MTN Name");
+        assertEquals(EXPECTED_ORIGINAL_RECIPIENT, messageDispositionNotificationEntity.getExtensionFields().get("Original-Recipient"), "Unexpected Original Recipient");
+        assertEquals(EXPECTED_FINAL_RECIPIENT, messageDispositionNotificationEntity.getFinalRecipient(), "Unexpected Final Reciptient");
+        assertEquals(EXPECTED_ORIGINAL_MESSAGE_ID, messageDispositionNotificationEntity.getOriginalMessageId(), "Unexpected Original Message ID");
+        assertEquals(EXPECTED_DISPOSITION_MODE, messageDispositionNotificationEntity.getDispositionMode(), "Unexpected Disposition Mode");
+        assertNotNull(messageDispositionNotificationEntity.getDispositionModifier(), "Unexpected Null Disposition Modifier");
+        assertEquals(EXPECTED_DISPOSITION_MODIFIER, messageDispositionNotificationEntity.getDispositionModifier().getModifier(), "Unexpected Disposition Modifier");
+        assertEquals(EXPECTED_DISPOSITION_TYPE, messageDispositionNotificationEntity.getDispositionType(), "Unexpected Disposition Type");
+        assertArrayEquals(EXPECTED_FAILURE, messageDispositionNotificationEntity.getFailureFields(), "Unexpected Failure Array value");
+        assertArrayEquals(EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields(), "Unexpected Error Array value");
+        assertArrayEquals(EXPECTED_WARNING, messageDispositionNotificationEntity.getWarningFields(), "Unexpected Warning Array value");
+        assertNotNull(messageDispositionNotificationEntity.getReceivedContentMic(), "Unexpected Null Received Content MIC");
+        assertEquals(EXPECTED_ENCODED_MESSAGE_DIGEST, messageDispositionNotificationEntity.getReceivedContentMic().getEncodedMessageDigest(), "Unexpected Encoded Message Digest");
+        assertEquals(EXPECTED_DIGEST_ALGORITHM_ID, messageDispositionNotificationEntity.getReceivedContentMic().getDigestAlgorithmId(), "Unexpected Digest Algorithm ID");
     }
 
 }
