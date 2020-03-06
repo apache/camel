@@ -49,10 +49,9 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
-import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
- * The aws-s3 component is used for storing and retrieving object from Amazon S3
+ * The aws2-s3 component is used for storing and retrieving object from Amazon S3
  * Storage Service.
  */
 @UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-s3", title = "AWS2 S3 Storage Service", syntax = "aws2-s3://bucketNameOrArn", label = "cloud,file")

@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.s3;
 
 /**
- * Constants used in Camel AWS S3 module
+ * Constants used in Camel AWS2 S3 module
  */
 public interface AWS2S3Constants {
 
