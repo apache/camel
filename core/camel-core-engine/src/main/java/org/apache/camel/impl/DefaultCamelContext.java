@@ -329,7 +329,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     protected void clearModelReferences() {
-        model = (Model) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{ Model.class }, new InvocationHandler() {
+        model = (Model) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Model.class }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 throw new UnsupportedOperationException("Model invocations are not supported at runtime");
