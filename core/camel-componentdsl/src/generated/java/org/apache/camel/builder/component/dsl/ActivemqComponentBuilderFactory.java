@@ -1025,7 +1025,7 @@ public interface ActivemqComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default ActivemqComponentBuilder allowAutoWiredConnectionFactory(
@@ -1041,7 +1041,7 @@ public interface ActivemqComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default ActivemqComponentBuilder allowAutoWiredDestinationResolver(
