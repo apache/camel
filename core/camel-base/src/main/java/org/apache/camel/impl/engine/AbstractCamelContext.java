@@ -890,6 +890,15 @@ public abstract class AbstractCamelContext extends ServiceSupport
 
     @Override
     public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
+        return doGetEndpoint(uri, parameters, false);
+    }
+
+    @Override
+    public Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters) {
+        return doGetEndpoint(uri.getUri(), parameters, true);
+    }
+
+    protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized) {
         // ensure CamelContext are initialized before we can get an endpoint
         init();
 
@@ -899,17 +908,21 @@ public abstract class AbstractCamelContext extends ServiceSupport
 
         // in case path has property placeholders then try to let property
         // component resolve those
-        try {
-            uri = resolvePropertyPlaceholders(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
+        if (!normalized) {
+            try {
+                uri = resolvePropertyPlaceholders(uri);
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
         }
 
         final String rawUri = uri;
 
         // normalize uri so we can do endpoint hits with minor mistakes and
         // parameters is not in the same order
-        uri = normalizeEndpointUri(uri);
+        if (!normalized) {
+            uri = normalizeEndpointUri(uri);
+        }
 
         LOG.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 

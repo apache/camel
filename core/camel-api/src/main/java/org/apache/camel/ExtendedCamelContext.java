@@ -168,6 +168,19 @@ public interface ExtendedCamelContext extends CamelContext {
     Endpoint getEndpoint(NormalizedEndpointUri uri);
 
     /**
+     * Resolves the given name to an {@link Endpoint} of the specified type.
+     * If the name has a singleton endpoint registered, then the singleton is returned.
+     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
+     *
+     * @param uri the URI of the endpoint
+     * @param parameters the parameters to customize the endpoint
+     * @return the endpoint
+     *
+     * @see #getPrototypeEndpoint(String)
+     */
+    Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters);
+
+    /**
      * Normalizes the given uri.
      *
      * @param uri  the uri
