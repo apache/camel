@@ -125,8 +125,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         return definition;
     }
 
-    public void setDefinition(NamedNode definition) {
-        this.definition = definition;
+    public void clearModelReferences() {
+        this.definition = null;
     }
 
     @Override

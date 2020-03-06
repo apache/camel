@@ -641,10 +641,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 
-    public void initialized() {
-    }
-
-    public void cleanRouteReference() {
+    public void clearModelReferences() {
         route = null;
     }
 }

@@ -226,6 +226,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private boolean allowAddingNewRoutes = true;
+    private boolean clearModelReferences = false;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -1975,6 +1976,14 @@ public abstract class AbstractCamelContext extends ServiceSupport
         this.allowAddingNewRoutes = allowAddingNewRoutes;
     }
 
+    public boolean isClearModelReferences() {
+        return clearModelReferences;
+    }
+
+    public void setClearModelReferences(boolean clearModelReferences) {
+        this.clearModelReferences = clearModelReferences;
+    }
+
     @Override
     public Registry getRegistry() {
         if (registry == null) {
@@ -2527,6 +2536,16 @@ public abstract class AbstractCamelContext extends ServiceSupport
                 }
             }
 
+            if (!isAllowAddingNewRoutes()) {
+                LOG.info("Adding new routes after CamelContext has started is not allowed");
+                disallowAddingNewRoutes();
+            }
+
+            if (isClearModelReferences()) {
+                LOG.info("Clearing model references");
+                clearModelReferences();
+            }
+
             if (LOG.isInfoEnabled()) {
                 // count how many routes are actually started
                 int started = 0;
@@ -2535,11 +2554,6 @@ public abstract class AbstractCamelContext extends ServiceSupport
                     if (status != null && status.isStarted()) {
                         started++;
                     }
-                }
-
-                if (!isAllowAddingNewRoutes()) {
-                    LOG.info("Adding new routes after CamelContext has started is not allowed");
-                    disallowAddingNewRoutes();
                 }
 
                 final Collection<Route> controlledRoutes = getRouteController().getControlledRoutes();
@@ -2575,6 +2589,9 @@ public abstract class AbstractCamelContext extends ServiceSupport
      */
     protected void disallowAddingNewRoutes() {
         ReifierStrategy.clearReifiers();
+    }
+
+    protected void clearModelReferences() {
     }
 
     @Override
