@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.aws2.eks;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EKS2ComponentConfigurationTest extends CamelTestSupport {
 

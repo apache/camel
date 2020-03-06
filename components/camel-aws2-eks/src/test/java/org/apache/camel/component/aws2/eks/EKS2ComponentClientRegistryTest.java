@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws2.eks;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EKS2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,12 @@ public class EKS2ComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getEksClient());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
         EKS2Component component = context.getComponent("aws2-eks", EKS2Component.class);
-        EKS2Endpoint endpoint = (EKS2Endpoint)component.createEndpoint("aws-eks://TestDomain");
+        assertThrows(IllegalArgumentException.class, () -> {
+            EKS2Endpoint endpoint = (EKS2Endpoint)component.createEndpoint("aws-eks://TestDomain");
+        });
     }
 }
