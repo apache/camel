@@ -19,7 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
@@ -79,7 +79,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
             });
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
         }
     }
 

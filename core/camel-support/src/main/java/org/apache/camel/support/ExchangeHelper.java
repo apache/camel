@@ -892,15 +892,7 @@ public final class ExchangeHelper {
      * @return     the component scheme (name), or <tt>null</tt> if not possible to resolve
      */
     public static String resolveScheme(String uri) {
-        String scheme = null;
-        if (uri != null) {
-            // Use the URI prefix to find the component.
-            String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-            if (splitURI[1] != null) {
-                scheme = splitURI[0];
-            }
-        }
-        return scheme;
+        return StringHelper.before(uri, ":");
     }
 
     @SuppressWarnings("unchecked")

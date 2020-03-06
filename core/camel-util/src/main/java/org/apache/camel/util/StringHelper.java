@@ -466,10 +466,11 @@ public final class StringHelper {
      * @return the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String after(String text, String after) {
-        if (!text.contains(after)) {
+        int pos = text.indexOf(after);
+        if (pos == -1) {
             return null;
         }
-        return text.substring(text.indexOf(after) + after.length());
+        return text.substring(pos + after.length());
     }
 
     /**
@@ -498,10 +499,8 @@ public final class StringHelper {
      *         contain the token
      */
     public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
+        int pos = text.indexOf(before);
+        return pos == -1 ? null : text.substring(0, pos);
     }
 
     /**
