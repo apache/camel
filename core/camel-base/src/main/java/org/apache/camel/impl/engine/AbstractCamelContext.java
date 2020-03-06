@@ -226,7 +226,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private boolean allowAddingNewRoutes = true;
-    private boolean clearModelReferences = false;
+    private boolean clearModelReferences;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
