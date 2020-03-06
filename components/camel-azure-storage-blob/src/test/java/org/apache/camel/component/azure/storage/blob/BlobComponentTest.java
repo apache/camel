@@ -88,7 +88,7 @@ class BlobComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final String uri = "azure-storage-blob://cameldev/test?accessKey=RAW(3T7sqN/v3vzyzYfNnAGpu/j3zExYDAJaxzRHWKnyH4cllcCMSUUuU/YYVp/X8qIin2++UQ6NGEEY0HgipEx8Ig==)";
+                final String uri = "azure-storage-blob://cameldev/test?accessKey=RAW(---)";
 
                 from("direct:listBuckets").to(uri + "&operation=listBlobs").to("mock:result");
             }
