@@ -25,9 +25,6 @@ import org.junit.Test;
 
 public class RestUndertowHttpGetTest extends BaseUndertowTest {
     
-    @BindToRegistry("mybinding")
-    private UndertowHttpBinding binding = new DefaultUndertowHttpBinding();
-    
     @Test
     public void testProducerGet() throws Exception {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/123/basic", null, String.class);
@@ -40,7 +37,7 @@ public class RestUndertowHttpGetTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 // configure to use undertow on localhost with the given port
-                restConfiguration().component("undertow").host("localhost").port(getPort()).endpointProperty("undertowHttpBinding", "#mybinding");
+                restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
                 rest("/users/")

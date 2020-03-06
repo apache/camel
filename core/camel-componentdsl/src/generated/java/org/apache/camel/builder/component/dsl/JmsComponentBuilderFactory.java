@@ -941,7 +941,7 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default JmsComponentBuilder allowAutoWiredConnectionFactory(
@@ -957,7 +957,7 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default JmsComponentBuilder allowAutoWiredDestinationResolver(

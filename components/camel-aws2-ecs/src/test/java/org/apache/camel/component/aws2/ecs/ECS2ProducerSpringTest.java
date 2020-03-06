@@ -20,13 +20,15 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.ecs.model.CreateClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 

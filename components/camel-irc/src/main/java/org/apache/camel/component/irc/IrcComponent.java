@@ -151,12 +151,6 @@ public class IrcComponent extends DefaultComponent implements SSLContextParamete
     }
 
     @Override
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        return IrcConfiguration.sanitize(uri);
-    }
-
-    @Override
     public boolean isUseGlobalSslContextParameters() {
         return this.useGlobalSslContextParameters;
     }

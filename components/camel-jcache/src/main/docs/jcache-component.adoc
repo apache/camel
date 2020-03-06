@@ -162,7 +162,7 @@ from("direct:get-orders")
 
 If the _cache_ is not set, the policy will try to lookup or create the cache automatically.
  If the _cacheManager_ is set on the policy, it will try to get cache with the set _cacheName_ (routeId by default) from the CacheManager.
- Is the cache does not exist it will create a new one using the _cacheConfiguration_ (new MutableConfiguration by default).
+ If the cache does not exist it will create a new one using the _cacheConfiguration_ (new MutableConfiguration by default).
 
 [source,java]
 ----------------------------
@@ -298,7 +298,7 @@ It's more convenient to create a JCachePolicy in Java especially within a RouteB
 
 == Create Cache from XML
 
-It's not strictly speaking related to Camel XML DLS, but JCache providers usually have a way to configure the cache in an XML file.
+It's not strictly speaking related to Camel XML DSL, but JCache providers usually have a way to configure the cache in an XML file.
  For example with Hazelcast you can add a _hazelcast.xml_ to classpath to configure the cache "spring" used in the example above.
 
 [source,xml]

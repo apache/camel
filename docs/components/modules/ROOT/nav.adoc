@@ -56,6 +56,7 @@
 * xref:aws2-lambda-component.adoc[AWS Lambda Component]
 * xref:aws2-mq-component.adoc[AWS 2 MQ Component]
 * xref:aws2-msk-component.adoc[AWS 2 MSK Component]
+* xref:aws2-s3-component.adoc[AWS2 S3 Storage Service Component]
 * xref:aws2-ses-component.adoc[AWS 2 Simple Email Service Component]
 * xref:aws2-sns-component.adoc[AWS 2 Simple Notification System Component]
 * xref:aws2-sqs-component.adoc[AWS 2 Simple Queue Service Component]

@@ -45,8 +45,4 @@ public class Jt400EndpointTest extends Jt400TestSupport {
         assertTrue(endpoint.getSystem().isGuiAvailable());
     }
 
-    @Test
-    public void testToString() {
-        assertEquals("jt400://user:xxxxxx@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&connectionPool=%23mockPool&format=binary&guiAvailable=true", endpoint.toString());
-    }
 }

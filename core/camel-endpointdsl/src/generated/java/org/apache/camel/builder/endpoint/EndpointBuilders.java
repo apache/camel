@@ -28,6 +28,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.AMQPEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AWS2EC2EndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.AWS2S3EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AhcEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ApnsEndpointBuilderFactory,
