@@ -645,6 +645,24 @@ An endpoint by its logical id can still be referred by the id only, eg
 Endpoint endpoint = camelContext.getEndpoint("myCoolEndpoint");
 ----
 
+=== Error handling
+
+The context scope error handling has been modified a bit.  The processors in those `onException` and
+`onCompletion` are not shared between routes anymore.  This should have little effect in most cases.
+If there is a need to have a single set of processors involved (such as when using a loadbalancer or
+other stateful patterns), then an intermediary route needs to be used. The following exerpt:
+```
+onException(Exception.class).handled(true)
+    .loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+```
+needs to be rewritten as:
+```
+onException(Exception.class).handled(true).to("direct:error");
+from("direct:error").loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+```
+
 === API changes
 
 ==== DefaultComponent
