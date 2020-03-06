@@ -67,12 +67,16 @@ class BlobComponentTest extends CamelTestSupport {
         });
     }
 
-    @Disabled
+    //@Disabled
     @Test
     public void sendIn() throws Exception {
         template.sendBody("direct:listBuckets", ExchangePattern.InOnly, "");
 
+        //result.expectedMessageCount(10);
+
         final List<BlobItem> containerItems = result.getExchanges().get(0).getIn().getBody(List.class);
+
+        //result.assertIsSatisfied(1000000);
 
         containerItems.forEach(blobContainerItem -> {
             System.out.println(blobContainerItem.getName());
@@ -84,7 +88,7 @@ class BlobComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final String uri = "azure-storage-blob://cameldev/test?accessKey=RAW(----)";
+                final String uri = "azure-storage-blob://cameldev/test?accessKey=RAW(3T7sqN/v3vzyzYfNnAGpu/j3zExYDAJaxzRHWKnyH4cllcCMSUUuU/YYVp/X8qIin2++UQ6NGEEY0HgipEx8Ig==)";
 
                 from("direct:listBuckets").to(uri + "&operation=listBlobs").to("mock:result");
             }

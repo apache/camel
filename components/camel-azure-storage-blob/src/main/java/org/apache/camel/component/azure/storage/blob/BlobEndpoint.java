@@ -2,6 +2,7 @@ package org.apache.camel.component.azure.storage.blob;
 
 import java.util.Locale;
 
+import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.BlobServiceClient;
@@ -11,6 +12,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -31,10 +33,6 @@ public class BlobEndpoint extends DefaultEndpoint {
     private BlobServiceClient blobServiceClient;
     private BlobContainerClient blobContainerClient;
 
-    /*@UriPath(description = "Container name or ARN")
-    @Metadata(required = true)
-    private String containerName; // to support component docs
-     */
 
     @UriParam
     private BlobConfiguration configuration;
@@ -57,43 +55,20 @@ public class BlobEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-
-        String endpoint = String.format(Locale.ROOT, "https://%s.blob.core.windows.net", configuration.getAccountName());
-
-        blobServiceClient = new BlobServiceClientBuilder()
-                .endpoint(endpoint)
-                .credential(new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey()))
-                .buildClient();
-
-        if (!ObjectHelper.isEmpty(configuration.getContainerName())) {
-            blobContainerClient = blobServiceClient.getBlobContainerClient(configuration.getContainerName());
-
-            // if container doesnt not exist, then we create it
-            if (!blobContainerClient.exists()) {
-                blobContainerClient.create();
-            }
-        }
-    }
-
-    @Override
-    public void doStop() throws Exception {
-        super.doStop();
     }
 
     public BlobServiceClient getBlobServiceClient() {
+        if (blobServiceClient == null) {
+            blobServiceClient = BlobClientFactory.createBlobServiceClient(configuration);
+        }
         return blobServiceClient;
     }
 
-    public void setBlobServiceClient(BlobServiceClient blobServiceClient) {
-        this.blobServiceClient = blobServiceClient;
-    }
-
     public BlobContainerClient getBlobContainerClient() {
+        if (blobContainerClient == null) {
+            blobContainerClient = BlobClientFactory.createBlobContainerClient(configuration);
+        }
         return blobContainerClient;
-    }
-
-    public void setBlobContainerClient(BlobContainerClient blobContainerClient) {
-        this.blobContainerClient = blobContainerClient;
     }
 
     public BlobConfiguration getConfiguration() {
