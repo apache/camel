@@ -40,7 +40,7 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
     public void testHystrix() throws Exception {
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
         final Route route = new DefaultRoute(context, routeDefinition,
-                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()), null);
+                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()), null, null);
         CircuitBreakerDefinition hystrixDefinition = findCircuitBreakerDefinition(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);
