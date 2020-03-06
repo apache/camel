@@ -813,7 +813,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
 
         LOG.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
 
-        String scheme = null;
+        String scheme;
         Endpoint answer = null;
         if (!prototype) {
             // use optimized method to get the endpoint uri
@@ -823,27 +823,32 @@ public abstract class AbstractCamelContext extends ServiceSupport
         }
         if (answer == null) {
             try {
-                // Use the URI prefix to find the component.
-                String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-                if (splitURI[1] != null) {
-                    scheme = splitURI[0];
-                    LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
-                    Component component = getComponent(scheme);
+                scheme = StringHelper.before(uri, ":");
+                if (scheme == null) {
+                    // it may refer to a logical endpoint
+                    answer = getRegistry().lookupByNameAndType(uri, Endpoint.class);
+                    if (answer != null) {
+                        return answer;
+                    } else {
+                        throw new NoSuchEndpointException(uri);
+                    }
+                }
+                LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
+                Component component = getComponent(scheme);
 
-                    // Ask the component to resolve the endpoint.
-                    if (component != null) {
-                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+                // Ask the component to resolve the endpoint.
+                if (component != null) {
+                    LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
-                        // Have the component create the endpoint if it can.
-                        if (component.useRawUri()) {
-                            answer = component.createEndpoint(rawUri);
-                        } else {
-                            answer = component.createEndpoint(uri);
-                        }
+                    // Have the component create the endpoint if it can.
+                    if (component.useRawUri()) {
+                        answer = component.createEndpoint(rawUri);
+                    } else {
+                        answer = component.createEndpoint(uri);
+                    }
 
-                        if (answer != null && LOG.isDebugEnabled()) {
-                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
-                        }
+                    if (answer != null && LOG.isDebugEnabled()) {
+                        LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                     }
                 }
 
@@ -851,34 +856,6 @@ public abstract class AbstractCamelContext extends ServiceSupport
                     // no component then try in registry and elsewhere
                     answer = createEndpoint(uri);
                     LOG.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
-                }
-
-                if (answer == null && splitURI[1] == null) {
-                    // the uri has no context-path which is rare and it was not
-                    // referring to an endpoint in the registry
-                    // so try to see if it can be created by a component
-
-                    int pos = uri.indexOf('?');
-                    String componentName = pos > 0 ? uri.substring(0, pos) : uri;
-
-                    Component component = getComponent(componentName);
-
-                    // Ask the component to resolve the endpoint.
-                    if (component != null) {
-                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
-
-                        // Have the component create the endpoint if it can.
-                        if (component.useRawUri()) {
-                            answer = component.createEndpoint(rawUri);
-                        } else {
-                            answer = component.createEndpoint(uri);
-                        }
-
-                        if (answer != null && LOG.isDebugEnabled()) {
-                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
-                        }
-                    }
-
                 }
 
                 if (answer != null) {
@@ -895,14 +872,17 @@ public abstract class AbstractCamelContext extends ServiceSupport
                         }
                     }
                 }
+            } catch (NoSuchEndpointException e) {
+                // throw as-is
+                throw e;
             } catch (Exception e) {
                 throw new ResolveEndpointFailedException(uri, e);
             }
         }
 
         // unknown scheme
-        if (answer == null && scheme != null) {
-            throw new ResolveEndpointFailedException(uri, "No component found with scheme: " + scheme);
+        if (answer == null) {
+            throw new NoSuchEndpointException(uri);
         }
 
         return answer;
@@ -940,27 +920,32 @@ public abstract class AbstractCamelContext extends ServiceSupport
         answer = endpoints.get(key);
         if (answer == null) {
             try {
-                // Use the URI prefix to find the component.
-                String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-                if (splitURI[1] != null) {
-                    scheme = splitURI[0];
-                    LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
-                    Component component = getComponent(scheme);
+                scheme = StringHelper.before(uri, ":");
+                if (scheme == null) {
+                    // it may refer to a logical endpoint
+                    answer = getRegistry().lookupByNameAndType(uri, Endpoint.class);
+                    if (answer != null) {
+                        return answer;
+                    } else {
+                        throw new NoSuchEndpointException(uri);
+                    }
+                }
+                LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
+                Component component = getComponent(scheme);
 
-                    // Ask the component to resolve the endpoint.
-                    if (component != null) {
-                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+                // Ask the component to resolve the endpoint.
+                if (component != null) {
+                    LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
-                        // Have the component create the endpoint if it can.
-                        if (component.useRawUri()) {
-                            answer = component.createEndpoint(rawUri, parameters);
-                        } else {
-                            answer = component.createEndpoint(uri, parameters);
-                        }
+                    // Have the component create the endpoint if it can.
+                    if (component.useRawUri()) {
+                        answer = component.createEndpoint(rawUri, parameters);
+                    } else {
+                        answer = component.createEndpoint(uri, parameters);
+                    }
 
-                        if (answer != null && LOG.isDebugEnabled()) {
-                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
-                        }
+                    if (answer != null && LOG.isDebugEnabled()) {
+                        LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                     }
                 }
 
@@ -968,34 +953,6 @@ public abstract class AbstractCamelContext extends ServiceSupport
                     // no component then try in registry and elsewhere
                     answer = createEndpoint(uri);
                     LOG.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
-                }
-
-                if (answer == null && splitURI[1] == null) {
-                    // the uri has no context-path which is rare and it was not
-                    // referring to an endpoint in the registry
-                    // so try to see if it can be created by a component
-
-                    int pos = uri.indexOf('?');
-                    String componentName = pos > 0 ? uri.substring(0, pos) : uri;
-
-                    Component component = getComponent(componentName);
-
-                    // Ask the component to resolve the endpoint.
-                    if (component != null) {
-                        LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
-
-                        // Have the component create the endpoint if it can.
-                        if (component.useRawUri()) {
-                            answer = component.createEndpoint(rawUri, parameters);
-                        } else {
-                            answer = component.createEndpoint(uri, parameters);
-                        }
-
-                        if (answer != null && LOG.isDebugEnabled()) {
-                            LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
-                        }
-                    }
-
                 }
 
                 if (answer != null) {
@@ -1008,7 +965,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
         }
 
         // unknown scheme
-        if (answer == null && scheme != null) {
+        if (answer == null) {
             throw new ResolveEndpointFailedException(uri, "No component found with scheme: " + scheme);
         }
 

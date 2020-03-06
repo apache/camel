@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,8 +42,8 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
                     endpoint("mistyped:hello");
                 }
             });
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
+            fail("Should have thrown a NoSuchEndpointException");
+        } catch (NoSuchEndpointException e) {
             // expected
         }
     }
@@ -60,8 +61,8 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
                     endpoint("mistyped:hello", Endpoint.class);
                 }
             });
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
+            fail("Should have thrown a NoSuchEndpointException");
+        } catch (NoSuchEndpointException e) {
             // expected
         }
     }

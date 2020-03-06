@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
@@ -343,8 +344,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         try {
             helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             fail("Should throw exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
+        } catch (NoSuchEndpointException e) {
+            // expected
         }
     }
 
