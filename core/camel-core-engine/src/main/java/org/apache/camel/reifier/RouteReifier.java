@@ -489,8 +489,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             }
         }
 
-        route.initialized();
-
         return route;
     }
 
