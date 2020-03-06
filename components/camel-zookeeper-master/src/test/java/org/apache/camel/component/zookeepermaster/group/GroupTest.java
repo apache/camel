@@ -47,20 +47,7 @@ import static org.springframework.test.util.AssertionErrors.assertNotEquals;
 public class GroupTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupTest.class);
 
-    private static String BEFORE_TMPDIR;
-
-    @BeforeClass
-    public static void before() {
-        // workaround macos issue with docker/testcontainers expecting to use /tmp/ folder
-        BEFORE_TMPDIR = System.setProperty("java.io.tmpdir", "/tmp/");
-    }
-
-    @AfterClass
-    public static void after() {
-        if (BEFORE_TMPDIR != null) {
-            System.setProperty("java.io.tmpdir", BEFORE_TMPDIR);
-        }
-    }
+    private static String beforeTmpdir;
 
     private GroupListener listener = new GroupListener<NodeState>() {
         @Override
@@ -111,6 +98,18 @@ public class GroupTest {
         return container;
     }
 
+    @BeforeClass
+    public static void before() {
+        // workaround macos issue with docker/testcontainers expecting to use /tmp/ folder
+        beforeTmpdir = System.setProperty("java.io.tmpdir", "/tmp/");
+    }
+
+    @AfterClass
+    public static void after() {
+        if (beforeTmpdir != null) {
+            System.setProperty("java.io.tmpdir", beforeTmpdir);
+        }
+    }
 
     @Test
     public void testOrder() throws Exception {
