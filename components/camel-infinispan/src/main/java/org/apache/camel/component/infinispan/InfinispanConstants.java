@@ -18,6 +18,8 @@ package org.apache.camel.component.infinispan;
 
 public interface InfinispanConstants {
 
+    String CACHE_MANAGER_CURRENT = "current";
+
     String EVENT_TYPE = "CamelInfinispanEventType";
     String IS_PRE = "CamelInfinispanIsPre";
     String CACHE_NAME = "CamelInfinispanCacheName";
