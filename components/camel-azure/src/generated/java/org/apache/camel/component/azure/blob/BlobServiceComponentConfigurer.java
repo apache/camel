@@ -42,6 +42,10 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         case "closeStreamAfterWrite": getOrCreateConfiguration(target).setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.blob.BlobServiceConfiguration.class, value)); return true;
         case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": getOrCreateConfiguration(target).setCredentialsAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "credentialsaccountname":
+        case "credentialsAccountName": getOrCreateConfiguration(target).setCredentialsAccountName(property(camelContext, java.lang.String.class, value)); return true;
         case "datalength":
         case "dataLength": getOrCreateConfiguration(target).setDataLength(property(camelContext, java.lang.Long.class, value)); return true;
         case "filedir":

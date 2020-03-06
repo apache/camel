@@ -39,7 +39,7 @@ to("file://blobdirectory");
 
 
 // component options: START
-The Azure Storage Blob Service component supports 19 options, which are listed below.
+The Azure Storage Blob Service component supports 21 options, which are listed below.
 
 
 
@@ -65,6 +65,8 @@ The Azure Storage Blob Service component supports 19 options, which are listed b
 | *useFlatListing* (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | The Blob Service configuration |  | BlobServiceConfiguration
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
 |===
 // component options: END
 
@@ -97,7 +99,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -124,6 +126,8 @@ with the following path and query parameters:
 | *useFlatListing* (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
 |===
 // endpoint options: END
 

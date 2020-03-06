@@ -133,6 +133,30 @@ public interface QueueServiceEndpointBuilderFactory {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default QueueServiceEndpointConsumerBuilder credentialsAccountKey(
+                String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default QueueServiceEndpointConsumerBuilder credentialsAccountName(
+                String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
+            return this;
+        }
     }
 
     /**
@@ -451,6 +475,30 @@ public interface QueueServiceEndpointBuilderFactory {
             doSetProperty("queuePrefix", queuePrefix);
             return this;
         }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default QueueServiceEndpointProducerBuilder credentialsAccountKey(
+                String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default QueueServiceEndpointProducerBuilder credentialsAccountName(
+                String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
+            return this;
+        }
     }
 
     /**
@@ -579,6 +627,30 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default QueueServiceEndpointBuilder credentialsAccountKey(
+                String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default QueueServiceEndpointBuilder credentialsAccountName(
+                String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
             return this;
         }
     }
