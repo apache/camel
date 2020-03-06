@@ -54,7 +54,7 @@ import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
  * Represents the runtime objects for a given route so that it can be stopped independently
  * of other routes
  */
-public abstract class BaseRouteService extends ChildServiceSupport {
+public class RouteService extends ChildServiceSupport {
 
     private final AbstractCamelContext camelContext;
     private final Route route;
@@ -63,7 +63,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
     private final AtomicBoolean endpointDone = new AtomicBoolean(false);
 
-    public BaseRouteService(Route route) {
+    public RouteService(Route route) {
         this.route = route;
         this.camelContext = this.route.getCamelContext().adapt(AbstractCamelContext.class);
     }
@@ -79,8 +79,6 @@ public abstract class BaseRouteService extends ChildServiceSupport {
     public Route getRoute() {
         return route;
     }
-
-    public abstract Integer getStartupOrder();
 
     /**
      * Gather all the endpoints this route service uses
@@ -123,13 +121,16 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToStartRouteException(getId(), getRouteDescription(), e);
+            throw new FailedToStartRouteException(getId(), route.getDescription(), e);
         }
     }
 
-    protected abstract String getRouteDescription();
-
-    public abstract boolean isAutoStartup() throws Exception;
+    public boolean isAutoStartup() {
+        if (!getCamelContext().isAutoStartup()) {
+            return false;
+        }
+        return getRoute().isAutoStartup();
+    }
 
     protected synchronized void doWarmUp() throws Exception {
         if (endpointDone.compareAndSet(false, true)) {
@@ -363,30 +364,27 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         // gather list of services to stop as we need to start child services as well
         List<Service> services = new ArrayList<>(route.getServices());
         // also get route scoped services
-        doGetRouteScopedServices(services);
+        doGetRouteServices(services);
         Set<Service> list = new LinkedHashSet<>();
         for (Service service : services) {
             list.addAll(ServiceHelper.getChildServices(service));
         }
         // also get route scoped error handler (which must be done last)
-        doGetRouteScopedErrorHandler(list);
+        doGetErrorHandler(list);
         return list;
     }
 
     /**
      * Gather the route scoped error handler from the given route
      */
-    private void doGetRouteScopedErrorHandler(Set<Service> services) {
+    private void doGetErrorHandler(Set<Service> services) {
         // only include error handlers if they are route scoped
-        boolean includeErrorHandler = !isContextScopedErrorHandler();
         List<Service> extra = new ArrayList<>();
-        if (includeErrorHandler) {
-            for (Service service : services) {
-                if (service instanceof Channel) {
-                    Processor eh = ((Channel) service).getErrorHandler();
-                    if (eh instanceof Service) {
-                        extra.add((Service) eh);
-                    }
+        for (Service service : services) {
+            if (service instanceof Channel) {
+                Processor eh = ((Channel) service).getErrorHandler();
+                if (eh instanceof Service) {
+                    extra.add((Service) eh);
                 }
             }
         }
@@ -395,12 +393,23 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
     }
 
-    public abstract boolean isContextScopedErrorHandler();
-
     /**
-     * Gather all other kind of route scoped services from the given route, except error handler
+     * Gather all other kind of route services from the given route,
+     * except error handler
      */
-    protected abstract void doGetRouteScopedServices(List<Service> services);
+    protected void doGetRouteServices(List<Service> services) {
+        for (Processor proc : getRoute().getOnExceptions()) {
+            if (proc instanceof Service) {
+                services.add((Service) proc);
+            }
+        }
+        for (Processor proc : getRoute().getOnCompletions()) {
+            if (proc instanceof Service) {
+                services.add((Service) proc);
+            }
+        }
+    }
+
 
     class MDCHelper implements AutoCloseable {
         final Map<String, String> originalContextMap;

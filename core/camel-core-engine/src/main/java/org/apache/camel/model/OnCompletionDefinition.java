@@ -60,18 +60,24 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @XmlTransient
     private ExecutorService executorService;
     @XmlTransient
-    private Boolean routeScoped;
+    private boolean routeScoped = true;
 
     public OnCompletionDefinition() {
     }
 
-    public boolean isRouteScoped() {
-        // is context scoped by default
-        return routeScoped != null ? routeScoped : false;
+    public void setRouteScoped(boolean routeScoped) {
+        this.routeScoped = routeScoped;
     }
 
-    public Boolean getRouteScoped() {
+    public boolean isRouteScoped() {
         return routeScoped;
+    }
+
+    @Override
+    public void setParent(ProcessorDefinition<?> parent) {
+        if (routeScoped) {
+            super.setParent(parent);
+        }
     }
 
     @Override

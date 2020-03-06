@@ -25,8 +25,9 @@ import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 
 public class DefaultModelRoute extends DefaultRoute {
 
-    public DefaultModelRoute(CamelContext camelContext, RouteDefinition definition, String id, Endpoint endpoint) {
-        super(camelContext, definition, id, endpoint);
+    public DefaultModelRoute(CamelContext camelContext, RouteDefinition definition, String id,
+                             String description, Endpoint endpoint) {
+        super(camelContext, definition, id, description, endpoint);
     }
 
     @Override

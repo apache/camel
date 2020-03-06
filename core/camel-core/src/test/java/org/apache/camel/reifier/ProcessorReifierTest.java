@@ -26,7 +26,7 @@ import static junit.framework.TestCase.fail;
 public class ProcessorReifierTest {
     @Test
     public void testHandleCustomProcessorDefinition() {
-        Route ctx = new DefaultRoute(null, null, null, null);
+        Route ctx = new DefaultRoute(null, null, null, null, null);
         try {
             ProcessorReifier.reifier(ctx, new MyProcessor());
 

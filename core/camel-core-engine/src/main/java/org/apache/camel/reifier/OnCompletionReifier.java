@@ -35,20 +35,6 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
 
     @Override
     public Processor createProcessor() throws Exception {
-        // assign whether this was a route scoped onCompletion or not
-        // we need to know this later when setting the parent, as only route
-        // scoped should have parent
-        // Note: this logic can possible be removed when the Camel routing
-        // engine decides at runtime
-        // to apply onCompletion in a more dynamic fashion than current code
-        // base
-        // and therefore is in a better position to decide among context/route
-        // scoped OnCompletion at runtime
-        Boolean routeScoped = definition.getRouteScoped();
-        if (routeScoped == null) {
-            routeScoped = definition.getParent() != null;
-        }
-
         boolean isOnCompleteOnly = parseBoolean(definition.getOnCompleteOnly(), false);
         boolean isOnFailureOnly = parseBoolean(definition.getOnFailureOnly(), false);
         boolean isParallelProcessing = parseBoolean(definition.getParallelProcessing(), false);
