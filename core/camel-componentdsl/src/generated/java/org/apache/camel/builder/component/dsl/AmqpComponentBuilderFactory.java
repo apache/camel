@@ -955,7 +955,7 @@ public interface AmqpComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AmqpComponentBuilder allowAutoWiredConnectionFactory(
@@ -971,7 +971,7 @@ public interface AmqpComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AmqpComponentBuilder allowAutoWiredDestinationResolver(
