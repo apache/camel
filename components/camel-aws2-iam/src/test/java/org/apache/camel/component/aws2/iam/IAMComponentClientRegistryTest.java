@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws2.iam;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class IAMComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,12 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getIamClient());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalECSClientMisconfiguration() throws Exception {
 
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
-        IAM2Endpoint endpoint = (IAM2Endpoint)component.createEndpoint("aws2-iam://TestDomain");
+        assertThrows(IllegalArgumentException.class, () -> {
+            IAM2Endpoint endpoint = (IAM2Endpoint)component.createEndpoint("aws2-iam://TestDomain");
+        });
     }
 }
