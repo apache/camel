@@ -23,13 +23,6 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -43,10 +36,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);
 
     @BindToRegistry("amazonS3Client")
@@ -86,8 +85,8 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                    	ResponseInputStream<GetObjectResponse> s3 = exchange.getIn().getBody(ResponseInputStream.class);
-                    	LOG.info(readInputStream(s3));
+                        ResponseInputStream<GetObjectResponse> s3 = exchange.getIn().getBody(ResponseInputStream.class);
+                        LOG.info(readInputStream(s3));
 
                     }
                 }).to("mock:result");
@@ -98,11 +97,10 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
     private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader
-          (s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
+        try (Reader reader = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
             int c = 0;
             while ((c = reader.read()) != -1) {
-                textBuilder.append((char) c);
+                textBuilder.append((char)c);
             }
         }
         return textBuilder.toString();

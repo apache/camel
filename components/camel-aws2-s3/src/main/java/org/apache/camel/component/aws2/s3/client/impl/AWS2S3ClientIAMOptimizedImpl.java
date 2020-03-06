@@ -23,10 +23,7 @@ import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
@@ -41,15 +38,13 @@ import software.amazon.awssdk.services.s3.S3ClientBuilder;
 public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3ClientIAMOptimizedImpl.class);
     private AWS2S3Configuration configuration;
-    private int maxConnections;
 
     /**
      * Constructor that uses the config file.
      */
-    public AWS2S3ClientIAMOptimizedImpl(AWS2S3Configuration configuration, int maxConnections) {
+    public AWS2S3ClientIAMOptimizedImpl(AWS2S3Configuration configuration) {
         LOG.trace("Creating an AWS S3 client for an ec2 instance with IAM temporary credentials (normal for ec2s).");
         this.configuration = configuration;
-        this.maxConnections = maxConnections;
     }
 
     /**
@@ -59,8 +54,8 @@ public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
      */
     @Override
     public S3Client getS3Client() {
-    	S3Client client = null;
-    	S3ClientBuilder clientBuilder = S3Client.builder();
+        S3Client client = null;
+        S3ClientBuilder clientBuilder = S3Client.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;

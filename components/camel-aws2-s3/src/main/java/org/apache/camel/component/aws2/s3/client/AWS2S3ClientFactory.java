@@ -36,7 +36,7 @@ public final class AWS2S3ClientFactory {
      * @param maxConnections max connections
      * @return AWSS3Client
      */
-    public static AWS2CamelS3InternalClient getAWSS3Client(AWS2S3Configuration configuration, int maxConnections) {
-        return configuration.isUseIAMCredentials() ? new AWS2S3ClientIAMOptimizedImpl(configuration, maxConnections) : new AWS2S3ClientStandardImpl(configuration, maxConnections);
+    public static AWS2CamelS3InternalClient getAWSS3Client(AWS2S3Configuration configuration) {
+        return configuration.isUseIAMCredentials() ? new AWS2S3ClientIAMOptimizedImpl(configuration) : new AWS2S3ClientStandardImpl(configuration);
     }
 }

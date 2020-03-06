@@ -22,11 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -34,27 +30,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.AccessControlPolicy;
-import software.amazon.awssdk.services.s3.model.Bucket;
 import software.amazon.awssdk.services.s3.model.BucketCannedACL;
-import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CopyObjectResponse;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
-import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -65,10 +54,6 @@ import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.model.StorageClass;
-import software.amazon.awssdk.services.s3.model.UploadPartRequest;
-
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Storage
  * Service <a href="http://aws.amazon.com/s3/">AWS S3</a>
@@ -87,7 +72,7 @@ public class AWS2S3Producer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         AWS2S3Operations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
-                processSingleOp(exchange);
+            processSingleOp(exchange);
         } else {
             switch (operation) {
                 case copyObject:
@@ -135,7 +120,7 @@ public class AWS2S3Producer extends DefaultProducer {
             is = new FileInputStream(filePayload);
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
-            if (objectMetadata.get("Content-Length") == "0" && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
+            if (objectMetadata.get("Content-Length").equals("0") && ObjectHelper.isEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
                 LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
                 baos = determineLengthInputStream(is);
                 objectMetadata.put("Content-Length", String.valueOf(baos.size()));
@@ -208,12 +193,12 @@ public class AWS2S3Producer extends DefaultProducer {
             throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
         }
         CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder();
-            copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination).destinationKey(destinationKey).copySource(bucketName + "/" + sourceKey);
+        copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination).destinationKey(destinationKey).copySource(bucketName + "/" + sourceKey);
 
         if (getConfiguration().isUseAwsKMS()) {
             if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
                 copyObjectRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
-            } 
+            }
         }
 
         CopyObjectResponse copyObjectResult = s3Client.copyObject(copyObjectRequest.build());
@@ -295,7 +280,7 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private Map<String, String> determineMetadata(final Exchange exchange) {
-    	Map<String, String> objectMetadata = new HashMap<String, String>();
+        Map<String, String> objectMetadata = new HashMap<String, String>();
 
         Long contentLength = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_LENGTH, Long.class);
         if (contentLength != null) {
@@ -304,27 +289,27 @@ public class AWS2S3Producer extends DefaultProducer {
 
         String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
         if (contentType != null) {
-        	objectMetadata.put("Content-Type", String.valueOf(contentType));
+            objectMetadata.put("Content-Type", String.valueOf(contentType));
         }
 
         String cacheControl = exchange.getIn().getHeader(AWS2S3Constants.CACHE_CONTROL, String.class);
         if (cacheControl != null) {
-        	objectMetadata.put("Cache-Control", String.valueOf(cacheControl));
+            objectMetadata.put("Cache-Control", String.valueOf(cacheControl));
         }
 
         String contentDisposition = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_DISPOSITION, String.class);
         if (contentDisposition != null) {
-        	objectMetadata.put("Content-Disposition", String.valueOf(contentDisposition));
+            objectMetadata.put("Content-Disposition", String.valueOf(contentDisposition));
         }
 
         String contentEncoding = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING, String.class);
         if (contentEncoding != null) {
-        	objectMetadata.put("Content-Encoding", String.valueOf(contentEncoding));
+            objectMetadata.put("Content-Encoding", String.valueOf(contentEncoding));
         }
 
         String contentMD5 = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_MD5, String.class);
         if (contentMD5 != null) {
-        	objectMetadata.put("Content-Md5", String.valueOf(contentMD5));
+            objectMetadata.put("Content-Md5", String.valueOf(contentMD5));
         }
 
         return objectMetadata;
@@ -341,7 +326,7 @@ public class AWS2S3Producer extends DefaultProducer {
     private String determineBucketName(final Exchange exchange) {
         String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
 
-        if (ObjectHelper.isEmpty(bucketName)) { 
+        if (ObjectHelper.isEmpty(bucketName)) {
             bucketName = getConfiguration().getBucketName();
             LOG.trace("AWS S3 Bucket name header is missing, using default one [{}]", bucketName);
         }

@@ -16,28 +16,11 @@
  */
 package org.apache.camel.component.aws2.s3;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.core.sync.ResponseTransformer;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
-import software.amazon.awssdk.services.s3.model.S3Object;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -52,6 +35,16 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Storage Service
@@ -135,7 +128,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> answer = new LinkedList<>();
         try {
             for (S3Object s3ObjectSummary : s3ObjectSummaries) {
-                ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client().getObject(GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(s3ObjectSummary.key()).build(), ResponseTransformer.toInputStream());
+                ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client()
+                    .getObject(GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(s3ObjectSummary.key()).build(), ResponseTransformer.toInputStream());
                 s3Objects.add(s3Object);
 
                 Exchange exchange = getEndpoint().createExchange(s3Object, s3ObjectSummary.key());
