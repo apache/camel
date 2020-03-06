@@ -20,6 +20,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
+
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Encryption;
@@ -207,9 +208,10 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The region in which S3 client needs to work. When using this parameter,
-     * the configuration will expect the capitalized name of the region (for
-     * example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which S3 client needs to work. When using this
+     * parameter, the configuration will expect the lowercase name of the
+     * region (for example ap-east-1) You'll need to use the name
+     * Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
