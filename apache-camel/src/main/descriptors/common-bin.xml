@@ -97,6 +97,7 @@
         <include>org.apache.camel:camel-aws2-lambda</include>
         <include>org.apache.camel:camel-aws2-mq</include>
         <include>org.apache.camel:camel-aws2-msk</include>
+        <include>org.apache.camel:camel-aws2-s3</include>
         <include>org.apache.camel:camel-aws2-ses</include>
         <include>org.apache.camel:camel-aws2-sns</include>
         <include>org.apache.camel:camel-aws2-sqs</include>
