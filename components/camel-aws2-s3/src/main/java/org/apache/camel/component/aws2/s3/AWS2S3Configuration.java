@@ -20,7 +20,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Encryption;
@@ -245,8 +244,8 @@ public class AWS2S3Configuration implements Cloneable {
      * If this option is false, then the same objects will be retrieve over and
      * over again on the polls. Therefore you need to use the Idempotent
      * Consumer EIP in the route to filter out duplicates. You can filter using
-     * the {@link AWS2S3Constants#BUCKET_NAME} and {@link AWS2S3Constants#KEY} headers,
-     * or only the {@link AWS2S3Constants#KEY} header.
+     * the {@link AWS2S3Constants#BUCKET_NAME} and {@link AWS2S3Constants#KEY}
+     * headers, or only the {@link AWS2S3Constants#KEY} header.
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;

@@ -89,10 +89,10 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
         assertEquals("mycamelbucket", resultExchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME));
         assertTrue(resultExchange.getIn().getHeader(AWS2S3Constants.KEY, String.class).startsWith("CamelUnitTest"));
         assertNull(resultExchange.getIn().getHeader(AWS2S3Constants.VERSION_ID)); // not
-                                                                              // enabled
-                                                                              // on
-                                                                              // this
-                                                                              // bucket
+        // enabled
+        // on
+        // this
+        // bucket
         assertNotNull(resultExchange.getIn().getHeader(AWS2S3Constants.LAST_MODIFIED));
         assertEquals("application/octet-stream", resultExchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE));
         assertNull(resultExchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING));
