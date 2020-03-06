@@ -28,25 +28,22 @@
 	<!-- ============================== -->
 
 	<camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
-
-
-
 		<route>
 			<from
 				uri="spring-ws:to:http://sender-default.com?endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<to uri="bean:okResponse" />
 		</route>
 
 		<route>
 			<from
 				uri="spring-ws:to:http://sender-custom.com?messageSender=#customMessageSender&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<to uri="bean:okResponse" />
 		</route>
 
 		<route>
 			<from
 				uri="spring-ws:to:http://sender-camel.com?messageSender=#camelDirectMessageSender&amp;endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<to uri="bean:okResponse" />
 		</route>
 
 		<route>
@@ -58,12 +55,12 @@
 		<route>
 			<from
 				uri="spring-ws:to:http://messageIdStrategy-default.com?endpointMapping=#wsaEndpointMapping" />
-			<to uri="okResponse" />
+			<to uri="bean:okResponse" />
 		</route>
 		<route>
 			<from
 				uri="spring-ws:to:http://messageIdStrategy-custom.com?endpointMapping=#wsaEndpointMapping&amp;messageIdStrategy=#staticId" />
-			<to uri="okResponse" />
+			<to uri="bean:okResponse" />
 		</route>
 
 	</camelContext>

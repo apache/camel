@@ -64,7 +64,7 @@
         <!-- consumer route (providing the actual web service) -->
         <route>
             <from uri="spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping"/>
-            <to uri="responseProcessor"/>
+            <to uri="bean:responseProcessor"/>
         </route>
     </camelContext>
 
