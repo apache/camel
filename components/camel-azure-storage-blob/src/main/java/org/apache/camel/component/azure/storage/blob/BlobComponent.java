@@ -67,6 +67,17 @@ public class BlobComponent extends DefaultComponent {
         return endpoint;
     }
 
+    /**
+     * Config
+     */
+    public BlobConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(BlobConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     private void validateConfigurations(final BlobConfiguration configuration) {
 
         // TODO: Add client
