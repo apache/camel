@@ -18,18 +18,19 @@ package org.apache.camel.component.azure.queue;
 
 import java.net.URI;
 
-import com.microsoft.azure.storage.StorageCredentials;
-import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
-import com.microsoft.azure.storage.core.Base64;
 import com.microsoft.azure.storage.queue.CloudQueue;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.newAccountKeyCredentials;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
+
 
 public class QueueServiceUtilTest extends CamelTestSupport {
 
     @Test
     public void testPrepareUri() throws Exception {
-        registerCredentials();
+        registerCredentials(context);
 
         QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context.getEndpoint("azure-queue://camelazure/testqueue?credentials=#creds");
         URI uri = QueueServiceUtil.prepareStorageQueueUri(endpoint.getConfiguration());
@@ -61,11 +62,4 @@ public class QueueServiceUtilTest extends CamelTestSupport {
         }
     }
 
-    private void registerCredentials() {
-        context.getRegistry().bind("creds", newAccountKeyCredentials());
-    }
-
-    private StorageCredentials newAccountKeyCredentials() {
-        return new StorageCredentialsAccountAndKey("camelazure", Base64.encode("key".getBytes()));
-    }
 }

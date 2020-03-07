@@ -34,6 +34,10 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         case "closestreamafterwrite":
         case "closeStreamAfterWrite": target.getConfiguration().setCloseStreamAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": target.getConfiguration().setCredentialsAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "credentialsaccountname":
+        case "credentialsAccountName": target.getConfiguration().setCredentialsAccountName(property(camelContext, java.lang.String.class, value)); return true;
         case "datalength":
         case "dataLength": target.getConfiguration().setDataLength(property(camelContext, java.lang.Long.class, value)); return true;
         case "exceptionhandler":

@@ -297,6 +297,30 @@ public interface BlobServiceEndpointBuilderFactory {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BlobServiceEndpointConsumerBuilder credentialsAccountKey(
+                String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BlobServiceEndpointConsumerBuilder credentialsAccountName(
+                String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
+            return this;
+        }
     }
 
     /**
@@ -832,6 +856,30 @@ public interface BlobServiceEndpointBuilderFactory {
             doSetProperty("useFlatListing", useFlatListing);
             return this;
         }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BlobServiceEndpointProducerBuilder credentialsAccountKey(
+                String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BlobServiceEndpointProducerBuilder credentialsAccountName(
+                String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
+            return this;
+        }
     }
 
     /**
@@ -1119,6 +1167,30 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointBuilder streamReadSize(String streamReadSize) {
             doSetProperty("streamReadSize", streamReadSize);
+            return this;
+        }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BlobServiceEndpointBuilder credentialsAccountKey(
+                String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BlobServiceEndpointBuilder credentialsAccountName(
+                String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
             return this;
         }
     }
