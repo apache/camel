@@ -33,7 +33,6 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A number of helper methods
@@ -150,7 +149,6 @@ public final class CamelContextHelper {
      * Converts the given value to the requested type
      */
     public static <T> T convertTo(CamelContext context, Class<T> type, Object value) {
-        notNull(context, "camelContext");
         return context.getTypeConverter().convertTo(type, value);
     }
 
@@ -158,7 +156,6 @@ public final class CamelContextHelper {
      * Tried to convert the given value to the requested type
      */
     public static <T> T tryConvertTo(CamelContext context, Class<T> type, Object value) {
-        notNull(context, "camelContext");
         return context.getTypeConverter().tryConvertTo(type, value);
     }
 

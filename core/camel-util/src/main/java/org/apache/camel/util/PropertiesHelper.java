@@ -30,8 +30,6 @@ public final class PropertiesHelper {
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
-        ObjectHelper.notNull(properties, "properties");
-
         Map<String, Object> rc = new LinkedHashMap<>(properties.size());
 
         for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
@@ -53,8 +51,6 @@ public final class PropertiesHelper {
 
     @Deprecated
     public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
-        ObjectHelper.notNull(properties, "properties");
-
         Map<String, String> rc = new LinkedHashMap<>(properties.size());
 
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
