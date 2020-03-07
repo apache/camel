@@ -28,6 +28,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+import static org.apache.camel.component.azure.queue.QueueServiceComponent.MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE;
+
 public class QueueServiceComponentClientConfigurationTest extends CamelTestSupport {
     
     @Test
@@ -103,16 +105,7 @@ public class QueueServiceComponentClientConfigurationTest extends CamelTestSuppo
         
         createConsumer(endpoint);
     }
-    
-    @Test
-    public void testNoCredentials() throws Exception {
-        try {
-            context.getEndpoint("azure-queue://camelazure/testqueue");
-            fail();
-        } catch (Exception ex) {
-            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
-        }
-    }
+
     
     @Test
     public void testTooManyPathSegments() throws Exception {
@@ -130,7 +123,7 @@ public class QueueServiceComponentClientConfigurationTest extends CamelTestSuppo
             context.getEndpoint("azure-queue://camelazure?operation=addMessage");
             fail();
         } catch (Exception ex) {
-            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
+            assertEquals(MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE, ex.getCause().getMessage());
         }
     }
     

@@ -22,6 +22,10 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": target.getConfiguration().setCredentialsAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "credentialsaccountname":
+        case "credentialsAccountName": target.getConfiguration().setCredentialsAccountName(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":

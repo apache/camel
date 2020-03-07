@@ -28,8 +28,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+
 @Component("azure-blob")
 public class BlobServiceComponent extends DefaultComponent {
+
+    public static final String MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE =
+            "One of azureBlobClient, credentials or both credentialsAccountName and credentialsAccountKey must be specified";
 
     @Metadata(label = "advanced")
     private BlobServiceConfiguration configuration;
@@ -91,9 +95,12 @@ public class BlobServiceComponent extends DefaultComponent {
 
     private void checkCredentials(BlobServiceConfiguration cfg) {
         CloudBlob client = cfg.getAzureBlobClient();
-        StorageCredentials creds = client == null ? cfg.getCredentials() : client.getServiceClient().getCredentials();
+
+        //if no azureBlobClient is provided fallback to credentials
+        StorageCredentials creds = client == null ? cfg.getAccountCredentials()
+                : client.getServiceClient().getCredentials();
         if ((creds == null || creds instanceof StorageCredentialsAnonymous) && !cfg.isPublicForRead()) {
-            throw new IllegalArgumentException("Credentials must be specified.");
+            throw new IllegalArgumentException(MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE);
         }
     }
 
