@@ -212,14 +212,8 @@ public final class ExchangeHelper {
      * @throws TypeConversionException is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException} if no type converters exists to convert to the given type
      */
-    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
-        throws TypeConversionException, NoTypeConversionAvailableException {
-        CamelContext camelContext = exchange.getContext();
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.mandatoryConvertTo(type, exchange, value);
-        }
-        throw new NoTypeConversionAvailableException(value, type);
+    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+        return exchange.getContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
     }
 
     /**
@@ -229,12 +223,7 @@ public final class ExchangeHelper {
      * @throws org.apache.camel.TypeConversionException is thrown if error during type conversion
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException {
-        CamelContext camelContext = exchange.getContext();
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.convertTo(type, exchange, value);
-        }
-        return null;
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
     }
 
     /**
@@ -556,7 +545,10 @@ public final class ExchangeHelper {
      * @param exchanges  the exchanges
      * @param exchangeId the exchangeId to find
      * @return matching exchange, or <tt>null</tt> if none found
+     *
+     * @deprecated not in use, to be removed in a future Camel release
      */
+    @Deprecated
     public static Exchange getExchangeById(Iterable<Exchange> exchanges, String exchangeId) {
         for (Exchange exchange : exchanges) {
             String id = exchange.getExchangeId();
