@@ -175,7 +175,7 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
-        if (uri == null || ObjectHelper.isEmpty(uri)) {
+        if (uri == null || uri.isEmpty()) {
             // return an empty map
             return new LinkedHashMap<>(0);
         }

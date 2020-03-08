@@ -37,25 +37,21 @@ class URIScanner {
     // TODO: when upgrading to JDK11 as minimum then use java.nio.Charset
     private static final String CHARSET = "UTF-8";
 
-    private enum Mode {
-        KEY, VALUE
-    }
-
     private static final char END = '\u0000';
 
     private final StringBuilder key;
     private final StringBuilder value;
-    private Mode mode;
+    private boolean keyMode = true;
     private boolean isRaw;
     private char rawTokenEnd;
 
-    public URIScanner() {
+    URIScanner() {
         this.key = new StringBuilder();
         this.value = new StringBuilder();
     }
 
     private void initState() {
-        this.mode = Mode.KEY;
+        this.keyMode = true;
         this.key.setLength(0);
         this.value.setLength(0);
         this.isRaw = false;
@@ -68,8 +64,6 @@ class URIScanner {
         try {
             // use a linked map so the parameters is in the same order
             Map<String, Object> answer = new LinkedHashMap<>();
-
-            initState();
 
             // parse the uri parameters char by char
             int len = uri.length();
@@ -84,44 +78,39 @@ class URIScanner {
                     next = END;
                 }
 
-                switch (mode) {
-                    case KEY:
-                        // if there is a = sign then the key ends and we are in value mode
-                        if (ch == '=') {
-                            mode = Mode.VALUE;
-                            continue;
-                        }
+                if (keyMode) {
+                    // if there is a = sign then the key ends and we are in value mode
+                    if (ch == '=') {
+                        keyMode = false;
+                        continue;
+                    }
 
-                        if (ch != '&') {
-                            // regular char so add it to the key
-                            key.append(ch);
-                        }
-                        break;
-                    case VALUE:
-                        // are we a raw value
-                        isRaw = checkRaw();
+                    if (ch != '&') {
+                        // regular char so add it to the key
+                        key.append(ch);
+                    }
+                } else {
+                    // are we a raw value
+                    isRaw = checkRaw();
 
-                        // if we are in raw mode, then we keep adding until we hit the end marker
-                        if (isRaw) {
-                            value.append(ch);
+                    // if we are in raw mode, then we keep adding until we hit the end marker
+                    if (isRaw) {
+                        value.append(ch);
 
-                            if (isAtEnd(ch, next)) {
-                                // raw value end, so add that as a parameter, and reset flags
-                                addParameter(answer, useRaw || isRaw);
-                                initState();
-                                // skip to next as we are in raw mode and have already added the value
-                                i++;
-                            }
-                            continue;
+                        if (isAtEnd(ch, next)) {
+                            // raw value end, so add that as a parameter, and reset flags
+                            addParameter(answer, useRaw || isRaw);
+                            initState();
+                            // skip to next as we are in raw mode and have already added the value
+                            i++;
                         }
+                        continue;
+                    }
 
-                        if (ch != '&') {
-                            // regular char so add it to the value
-                            value.append(ch);
-                        }
-                        break;
-                    default:
-                        throw new IllegalStateException("Unknown mode: " + mode);
+                    if (ch != '&') {
+                        // regular char so add it to the value
+                        value.append(ch);
+                    }
                 }
 
                 // the & denote parameter is ended
