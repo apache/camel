@@ -163,7 +163,7 @@ public class BeanInfo {
         ParameterMappingStrategy answer = registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
         if (answer == null) {
             // no then use the default one
-            answer = new DefaultParameterMappingStrategy();
+            answer = DefaultParameterMappingStrategy.INSTANCE;
         }
 
         return answer;
