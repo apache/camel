@@ -21,8 +21,8 @@ choose a more expressive and powerful language such as:
 * xref:components::mvel-component.adoc[MVEL]
 * xref:components::ognl-language.adoc[OGNL]
 
-The simple language uses `${body`} placeholders for complex expressions
-where the expression contains constant literals. The $\{ } placeholders
+The simple language uses `${body}` placeholders for complex expressions
+where the expression contains constant literals. The ${ } placeholders
 can be omitted if the expression is only the token itself.
 
 [TIP]
@@ -369,7 +369,7 @@ simple("${body.address.zip} > 1000")
 
 The parser is limited to only support a single operator.
 
-To enable it the left value must be enclosed in $\{ }. The syntax is:
+To enable it the left value must be enclosed in ${ }. The syntax is:
 
 [source]
 --------------------------
@@ -377,7 +377,7 @@ ${leftValue} OP rightValue
 --------------------------
 
 Where the `rightValue` can be a String literal enclosed in `' '`,
-`null`, a constant value or another expression enclosed in $\{ }.
+`null`, a constant value or another expression enclosed in ${ }.
 
 IMPORTANT: There *must* be spaces around the operator.
 
@@ -711,7 +711,7 @@ from("direct:hello")
     .to("mock:reply");
 ----
 
-Notice that we must use $\{ } placeholders in the expression now to
+Notice that we must use ${ } placeholders in the expression now to
 allow Camel to parse it correctly.
 
 And this sample uses the date command to output current date.

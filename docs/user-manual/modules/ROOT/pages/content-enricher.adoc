@@ -311,7 +311,7 @@ used as part of the content-path of the HTTP url:
 [source,java]
 ----
 from("direct:start")
-    .enrich().simple("http:myserver/$\{header.orderId}/order")
+    .enrich().simple("http:myserver/${header.orderId}/order")
     .to("direct:result");
 ----
 
@@ -322,7 +322,7 @@ And in XML DSL
 <route>
     <from uri="direct:start"/>
     <enrich>
-        <simple>http:myserver/$\{header.orderId}/order</simple>
+        <simple>http:myserver/${header.orderId}/order</simple>
     </enrich>
     <to uri="direct:result"/>
 </route>
@@ -499,7 +499,7 @@ name:
 ----
 from("direct:start")
     .pollEnrich()
-    .simple("seda:$\{header.name}")
+    .simple("seda:${header.name}")
     .to("direct:result");
 ----
 
@@ -510,7 +510,7 @@ And in XML DSL
 <route>
     <from uri="direct:start"/>
     <pollEnrich>
-        <simple>seda:$\{header.name}</simple>
+        <simple>seda:${header.name}</simple>
     </pollEnrich>
     <to uri="direct:result"/>
 </route>

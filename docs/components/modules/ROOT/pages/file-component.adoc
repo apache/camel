@@ -272,9 +272,9 @@ of the directory and name pattern. +
  Camel will, in fact, internally convert the directory name you enter
 into a xref:manual::file-language.adoc[File Language] expression. So when we
 enter `move=.done` Camel will convert this into:
-`\${file:parent}/.done/${file:onlyname}`. This is only done if
-Camel detects that you have not provided a $\{ } in the option value
-yourself. So when you enter a $\{ } Camel will *not* convert it and thus
+`${file:parent}/.done/${file:onlyname}`. This is only done if
+Camel detects that you have not provided a ${ } in the option value
+yourself. So when you enter a ${ } Camel will *not* convert it and thus
 you have the full power.
 
 So if we want to move the file into a backup folder with today's date as
@@ -558,7 +558,7 @@ However it is more common to have one _done file_ per target file. This
 means there is a 1:1 correlation. To do this you must use dynamic
 placeholders in the `doneFileName` option. Currently Camel supports the
 following two dynamic tokens: `file:name` and `file:name.noext` which
-must be enclosed in $\{ }. The consumer only supports the static part of
+must be enclosed in ${ }. The consumer only supports the static part of
 the _done file_ name as either prefix or suffix (not both).
 
 [source,java]
@@ -603,7 +603,7 @@ However it is more common to have one done file per target file. This
 means there is a 1:1 correlation. To do this you must use dynamic
 placeholders in the `doneFileName` option. Currently Camel supports the
 following two dynamic tokens: `file:name` and `file:name.noext` which
-must be enclosed in $\{ }.
+must be enclosed in ${ }.
 
 [source,java]
 ----

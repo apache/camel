@@ -151,7 +151,7 @@ part of the queue name:
 
 [source,java]
 ----
-    from("direct:start") .wireTap("jms:queue:backup-$\{header.id}")
+    from("direct:start") .wireTap("jms:queue:backup-${header.id}")
         .to("bean:doSomething");
 ----
 
