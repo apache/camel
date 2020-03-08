@@ -397,7 +397,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (localConnectionsPerRoute > 0) {
             answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
-        LOG.debug("Created ClientConnectionManager {}", answer);
+        LOG.info("Created ClientConnectionManager {}", answer);
 
         return answer;
     }
