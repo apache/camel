@@ -33,7 +33,6 @@ import org.junit.Test;
 public class BeanInfoTest extends Assert {
     protected DefaultCamelContext camelContext = new DefaultCamelContext();
     protected Exchange exchange = new DefaultExchange(camelContext);
-    protected DefaultParameterMappingStrategy strategy = new DefaultParameterMappingStrategy();
     protected ExampleBean bean = new ExampleBean();
     protected BeanInfo info;
 
@@ -64,6 +63,6 @@ public class BeanInfoTest extends Assert {
     public void setUp() throws Exception {
 
         exchange.getIn().setBody("James");
-        info = new BeanInfo(camelContext, bean.getClass(), strategy);
+        info = new BeanInfo(camelContext, bean.getClass(), DefaultParameterMappingStrategy.INSTANCE);
     }
 }
