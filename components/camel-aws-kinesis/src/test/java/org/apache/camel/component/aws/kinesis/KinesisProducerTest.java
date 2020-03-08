@@ -57,10 +57,11 @@ public class KinesisProducerTest {
     private Message inMessage;
     @Mock
     private PutRecordResult putRecordResult;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
     private Exchange exchange;
 
     private KinesisProducer kinesisProducer;
+
     @Before
     public void setup() throws Exception {
         when(kinesisEndpoint.getClient()).thenReturn(kinesisClient);

@@ -52,7 +52,7 @@ public class KinesisFirehoseProducerTest {
     private Message inMessage;
     @Mock
     private PutRecordResult putRecordResult;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
     private Exchange exchange;
 
     private KinesisFirehoseProducer kinesisFirehoseProducer;
