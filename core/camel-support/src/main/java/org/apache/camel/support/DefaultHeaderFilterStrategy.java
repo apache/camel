@@ -39,6 +39,11 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
+    /**
+     * A filter pattern that only accepts keys starting with <tt>Camel</tt> or <tt>org.apache.camel.</tt>
+     */
+    public static final Pattern CAMEL_FILTER_PATTERN = Pattern.compile("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+
     private Set<String> inFilter;
     private Pattern inFilterPattern;
 
@@ -113,6 +118,18 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
+     * Sets the "out" direction filter regular expression {@link Pattern}. The
+     * "out" direction is referred to copying headers from Camel message to
+     * an external message. If the pattern matches a header, the header will
+     * be filtered out.
+     *
+     * @param pattern regular expression filter pattern
+     */
+    public void setOutFilterPattern(Pattern pattern) {
+        outFilterPattern = pattern;
+    }
+
+    /**
      * Gets the "in" direction filter set. The "in" direction is referred to
      * copying headers from an external message to a Camel message.
      *
@@ -161,6 +178,18 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         } else {
             inFilterPattern = Pattern.compile(value);
         }
+    }
+
+    /**
+     * Sets the "in" direction filter regular expression {@link Pattern}. The
+     * "in" direction is referred to copying headers from an external message
+     * to a Camel message. If the pattern matches a header, the header will
+     * be filtered out.
+     *
+     * @param pattern regular expression filter pattern
+     */
+    public void setInFilterPattern(Pattern pattern) {
+        inFilterPattern = pattern;
     }
 
     /**
