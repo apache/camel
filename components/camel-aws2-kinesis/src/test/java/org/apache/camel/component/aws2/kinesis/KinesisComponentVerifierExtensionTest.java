@@ -19,10 +19,10 @@ package org.apache.camel.component.aws2.kinesis;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

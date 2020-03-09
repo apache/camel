@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.model.Record;
 
