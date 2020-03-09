@@ -2445,7 +2445,6 @@ public interface AWS2S3EndpointBuilderFactory {
         deleteObject,
         deleteBucket,
         listBuckets,
-        downloadLink,
         getObject,
         getObjectRange;
     }
