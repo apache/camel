@@ -9,9 +9,9 @@ languages (DSL) as listed below.
 * xref:java-dsl.adoc[Java DSL] - A Java based DSL using the fluent
 builder style.
 * xref:components::spring.adoc[Spring XML] - A XML based DSL in Spring XML files
-* Blueprint XML - A XML based
+* xref:using-osgi-blueprint-with-camel.adoc[Blueprint XML] - A XML based
 DSL in OSGi Blueprint XML files
-* Rest DSL - A DSL to define REST services using a
+* xref:rest-dsl.adoc[Rest DSL] - A DSL to define REST services using a
 REST style in either Java or XML.
 * xref:bean-integration.adoc[Annotation DSL] - Use annotations in Java
 beans.
