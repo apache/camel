@@ -2,6 +2,8 @@ package org.apache.camel.component.azure.storage.blob.client;
 
 import java.util.Locale;
 
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.blob.BlobServiceClient;
@@ -25,6 +27,15 @@ public final class BlobClientFactory {
                 .endpoint(buildAzureEndpointUri(configuration))
                 .credential(getCredentialForClient(configuration))
                 .containerName(configuration.getContainerName())
+                .buildClient();
+    }
+
+    public static BlobClient createBlobClient(final BlobConfiguration configuration) {
+        return new BlobClientBuilder()
+                .endpoint(buildAzureEndpointUri(configuration))
+                .credential(getCredentialForClient(configuration))
+                .containerName(configuration.getContainerName())
+                .blobName(configuration.getBlobName())
                 .buildClient();
     }
 

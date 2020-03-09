@@ -23,10 +23,12 @@ public class BlobProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(BlobProducer.class);
 
     private final BlobConfiguration configuration;
+    private final BlobOperationsHandler handler;
 
     public BlobProducer(final Endpoint endpoint) {
         super(endpoint);
         this.configuration = getEndpoint().getConfiguration();
+        this.handler = new BlobOperationsHandler(configuration);
     }
 
     @Override
@@ -49,12 +51,7 @@ public class BlobProducer extends DefaultProducer {
     }
 
     private void listBlobContainers(final Exchange exchange) {
-        final BlobServiceClient client = getEndpoint().getBlobServiceClient();
-
-        final List<BlobContainerItem> containers = client.listBlobContainers().stream()
-                .collect(Collectors.toList());
-
-        getMessageForResponse(exchange).setBody(containers);
+        getMessageForResponse(exchange).setBody(handler.handleListBlobContainers(getEndpoint().getBlobServiceClient()));
     }
 
     private void listBlobs(final Exchange exchange) {
@@ -64,6 +61,10 @@ public class BlobProducer extends DefaultProducer {
                 .collect(Collectors.toList());
 
         getMessageForResponse(exchange).setBody(blobs);
+    }
+
+    private void getBlob(final Exchange exchange) {
+
     }
 
     @Override

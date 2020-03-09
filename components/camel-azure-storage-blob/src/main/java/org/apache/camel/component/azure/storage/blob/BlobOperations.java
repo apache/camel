@@ -17,5 +17,13 @@ public enum BlobOperations {
     /**
      * Returns a list of blobs in this container, with folder structures flattened.
      */
-    listBlobs
+    listBlobs,
+    /**
+     * Get the content of the blob, can be restricted to a blob range.
+     */
+    getBlob,
+    /**
+     * Delete a blob
+     */
+    deleteBlob
 }

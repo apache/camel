@@ -16,6 +16,12 @@ public class BlobConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "producer", enums = "listContainers")
     private BlobOperations operation;
+    @UriParam(label = "common")
+    private String blobName;
+    @UriParam(label = "common", enums = "blockblob,appendblob,pageblob", defaultValue = "blockblob")
+    private BlobType blobType = BlobType.blockblob;
+    @UriParam(label = "common")
+    private String fileDir;
 
 
     /**
@@ -66,6 +72,29 @@ public class BlobConfiguration implements Cloneable {
         this.operation = operation;
     }
 
+    public String getBlobName() {
+        return blobName;
+    }
+
+    public void setBlobName(String blobName) {
+        this.blobName = blobName;
+    }
+
+    public BlobType getBlobType() {
+        return blobType;
+    }
+
+    public void setBlobType(BlobType blobType) {
+        this.blobType = blobType;
+    }
+
+    public String getFileDir() {
+        return fileDir;
+    }
+
+    public void setFileDir(String fileDir) {
+        this.fileDir = fileDir;
+    }
 
     public BlobConfiguration copy() {
         try {
