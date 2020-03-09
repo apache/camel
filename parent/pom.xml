@@ -500,7 +500,7 @@
         <netty-version>4.1.46.Final</netty-version>
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
-        <networknt-json-schema-validator-version>1.0.31</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>1.0.32</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
         <nitrite-version>3.3.0</nitrite-version>
         <noggit-bundle-version>0.5_1</noggit-bundle-version>
