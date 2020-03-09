@@ -34,15 +34,15 @@ public final class DefaultParameterMappingStrategy implements ParameterMappingSt
 
     public static final DefaultParameterMappingStrategy INSTANCE = new DefaultParameterMappingStrategy();
 
-    private static final Map<Class<?>, Expression> map = new HashMap<>(6);
+    private static final Map<Class<?>, Expression> MAP = new HashMap<>(6);
 
     static {
-        map.put(Exchange.class, ExpressionBuilder.exchangeExpression());
-        map.put(Message.class, ExpressionBuilder.inMessageExpression());
-        map.put(Exception.class, ExpressionBuilder.exchangeExceptionExpression());
-        map.put(TypeConverter.class, ExpressionBuilder.typeConverterExpression());
-        map.put(Registry.class, ExpressionBuilder.registryExpression());
-        map.put(CamelContext.class, ExpressionBuilder.camelContextExpression());
+        MAP.put(Exchange.class, ExpressionBuilder.exchangeExpression());
+        MAP.put(Message.class, ExpressionBuilder.inMessageExpression());
+        MAP.put(Exception.class, ExpressionBuilder.exchangeExceptionExpression());
+        MAP.put(TypeConverter.class, ExpressionBuilder.typeConverterExpression());
+        MAP.put(Registry.class, ExpressionBuilder.registryExpression());
+        MAP.put(CamelContext.class, ExpressionBuilder.camelContextExpression());
     };
 
     private DefaultParameterMappingStrategy() {
@@ -50,7 +50,7 @@ public final class DefaultParameterMappingStrategy implements ParameterMappingSt
 
     @Override
     public Expression getDefaultParameterTypeExpression(Class<?> parameterType) {
-        return map.get(parameterType);
+        return MAP.get(parameterType);
     }
 
 }
