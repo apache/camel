@@ -3339,7 +3339,7 @@ public abstract class AbstractCamelContext extends ServiceSupport
             // to not be auto started
             boolean autoStartup = routeService.isAutoStartup();
             if (addingRoute && !autoStartup) {
-                LOG.info("Skipping starting of route {} as its configured with autoStartup=false", routeService.getId());
+                LOG.info("Skipping starting of route {} as it's configured with autoStartup=false", routeService.getId());
                 continue;
             }
 

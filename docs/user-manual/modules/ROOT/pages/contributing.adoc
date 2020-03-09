@@ -66,8 +66,8 @@ Stay engaged, follow and respond to comments or questions you might be asked.
 [#improving-the-documentation]
 == Improving the documentation
 
-Documentation is massively important to help users make the most of Apache Camel and its probably the area that needs the most help!
-So if you are interested in helping the documentation effort; whether its just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
+Documentation is massively important to help users make the most of Apache Camel and it's probably the area that needs the most help!
+So if you are interested in helping the documentation effort; whether it's just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
 We moved the documentation into the code (AsciiDoc). We are not using the wiki system anymore.
 
 To edit the documentation:
@@ -87,7 +87,7 @@ For more information see https://camel.apache.org/manual/latest/faq/how-does-the
 Please raise a new issue in our https://issues.apache.org/jira/browse/CAMEL[issue tracker]
 If you can create a JUnit test case then your issue is more likely to be resolved quicker.
 e.g. take a look at some of the existing https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/[unit tests cases]
-Then we can add your issue to Subversion and then we'll know when its really fixed and we can ensure that the problem stays fixed in future releases.
+Then we can add your issue to Subversion and then we'll know when it's really fixed and we can ensure that the problem stays fixed in future releases.
 
 [#working-on-the-code]
 == Working on the code
