@@ -19,17 +19,15 @@ package org.apache.camel.component.aws2.kinesis;
 import java.time.Instant;
 import java.util.ArrayList;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
@@ -79,10 +77,12 @@ public class KinesisConsumerClosedShardWithSilentTest {
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build());;
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).
+             thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build());
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
             .thenReturn(DescribeStreamResponse.builder().streamDescription(StreamDescription.builder().shards(shardList).build()).build());
-        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class))).thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
+        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+            .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
     }
 
     @Test
