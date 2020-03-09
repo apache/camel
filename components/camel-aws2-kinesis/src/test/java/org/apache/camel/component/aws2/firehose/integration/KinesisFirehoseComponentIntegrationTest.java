@@ -22,12 +22,14 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 
-@Ignore("Must be manually tested.")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("Must be manually tested.")
 public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("FirehoseClient")
