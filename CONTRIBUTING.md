@@ -37,7 +37,7 @@ There are various ways of communicating with the Camel community.
 
 ## Improving the documentation
 
-Documentation is massively important to help users make the most of Apache Camel and it's probably the area that needs the most help!
+Documentation is massively important to help users make the most of Apache Camel and its probably the area that needs the most help!
 So if you are interested in helping the documentation effort; whether its just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
 We moved the documentation into the code (AsciiDoc). We are not using the wiki system anymore.
 
