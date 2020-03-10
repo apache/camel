@@ -39,7 +39,7 @@ public final class CommonCreationStrategyImpl {
             .subscriptionInitialPosition(endpointConfiguration.getSubscriptionInitialPosition().toPulsarSubscriptionInitialPosition())
             .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
             .negativeAckRedeliveryDelay(endpointConfiguration.getNegativeAckRedeliveryDelayMicros(), TimeUnit.MICROSECONDS)
-            .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer.getExceptionHandler(), pulsarConsumer.getProcessor()));
+            .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer));
 
         if (endpointConfiguration.getMaxRedeliverCount() != null) {
             DeadLetterPolicyBuilder policy = DeadLetterPolicy.builder()
