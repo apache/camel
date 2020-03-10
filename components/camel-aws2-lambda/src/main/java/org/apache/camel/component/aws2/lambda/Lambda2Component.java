@@ -27,7 +27,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
 /**
@@ -35,7 +34,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
  */
 @Component("aws2-lambda")
 public class Lambda2Component extends DefaultComponent {
-	
+
     private static final Logger LOG = LoggerFactory.getLogger(Lambda2Component.class);
 
     @Metadata
