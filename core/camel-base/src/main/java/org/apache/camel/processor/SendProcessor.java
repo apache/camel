@@ -16,17 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.spi.IdAware;
@@ -71,18 +67,14 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         this.destination = destination;
         this.camelContext = (ExtendedCamelContext) destination.getCamelContext();
         this.pattern = pattern;
-        try {
-            this.destinationExchangePattern = null;
-            this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
-        } catch (URISyntaxException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
+        this.destinationExchangePattern = null;
+        this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
         ObjectHelper.notNull(this.camelContext, "camelContext");
     }
 
     @Override
     public String toString() {
-        return id;
+        return destination != null ? destination.toString() : id;
     }
 
     @Override

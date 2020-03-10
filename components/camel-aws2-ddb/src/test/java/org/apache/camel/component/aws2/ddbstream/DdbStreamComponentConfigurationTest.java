@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.aws2.ddbstream;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
 
@@ -36,8 +38,8 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         Ddb2StreamComponent component = context.getComponent("aws2-ddbstream", Ddb2StreamComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint)component.createEndpoint("aws2-ddbstreams://myTable");
 
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
@@ -48,9 +50,9 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Ddb2StreamComponent component = context.getComponent("aws2-ddbstream", Ddb2StreamComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint)component.createEndpoint("aws2-ddbstreams://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
@@ -62,9 +64,9 @@ public class DdbStreamComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         Ddb2StreamComponent component = context.getComponent("aws2-ddbstream", Ddb2StreamComponent.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Ddb2StreamEndpoint endpoint = (Ddb2StreamEndpoint)component
             .createEndpoint("aws2-ddbstreams://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 

@@ -18,15 +18,15 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.processor.SetBodyProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class SetBodyReifier extends ExpressionReifier<SetBodyDefinition> {
 
-    public SetBodyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SetBodyDefinition)definition);
+    public SetBodyReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SetBodyDefinition)definition);
     }
 
     @Override

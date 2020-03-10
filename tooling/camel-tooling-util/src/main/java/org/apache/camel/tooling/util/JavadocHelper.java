@@ -65,31 +65,13 @@ public final class JavadocHelper {
                 continue;
             }
 
-            // remove all XML tags
-            line = line.replaceAll("<.*?>", "");
-
-            // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
-            // use #? to remove leading # in case its a local reference
-            line = line.replaceAll("\\{\\@\\w+\\s#?([\\w.#(\\d,)]+)\\}", "$1");
-
             // we are starting from a new line, so add a whitespace
             if (!first) {
                 sb.append(' ');
             }
 
-            // create a new line
-            StringBuilder cb = new StringBuilder();
-            for (char c : line.toCharArray()) {
-                if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
-                    cb.append(c);
-                } else if (Character.isWhitespace(c)) {
-                    // always use space as whitespace, also for line feeds etc
-                    cb.append(' ');
-                }
-            }
-
             // append data
-            String s = cb.toString().trim();
+            String s = line.trim();
             sb.append(s);
 
             boolean empty = isNullOrEmpty(s);
@@ -105,6 +87,24 @@ public final class JavadocHelper {
         }
 
         String s = sb.toString();
+        // remove all XML tags
+        s = s.replaceAll("<.*?>", "");
+        // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
+        // use #? to remove leading # in case its a local reference
+        s = s.replaceAll("\\{\\@\\w+\\s#?([\\w.#(\\d,)]+)\\}", "$1");
+
+        // create a new line
+        StringBuilder cb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (Character.isJavaIdentifierPart(c) || VALID_CHARS.indexOf(c) != -1) {
+                cb.append(c);
+            } else if (Character.isWhitespace(c)) {
+                // always use space as whitespace, also for line feeds etc
+                cb.append(' ');
+            }
+        }
+        s = cb.toString();
+
         // remove double whitespaces, and trim
         s = s.replaceAll("\\s+", " ");
         // unescape http links

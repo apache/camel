@@ -15,20 +15,20 @@ public class QuickfixjEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QuickfixjEndpoint target = (QuickfixjEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazycreateengine":
-        case "lazyCreateEngine": target.setLazyCreateEngine(property(camelContext, boolean.class, value)); return true;
-        case "sessionid":
-        case "sessionID": target.setSessionID(property(camelContext, quickfix.SessionID.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "lazycreateengine":
+        case "lazyCreateEngine": target.setLazyCreateEngine(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "sessionid":
+        case "sessionID": target.setSessionID(property(camelContext, quickfix.SessionID.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

@@ -338,14 +338,14 @@ public interface MiloServerComponentBuilderFactory {
             case "bindPort": ((MiloServerComponent) component).setBindPort((int) value); return true;
             case "buildInfo": ((MiloServerComponent) component).setBuildInfo((org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo) value); return true;
             case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.security.CertificateManager) value); return true;
-            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.security.CertificateValidator>) value); return true;
+            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((java.util.function.Supplier) value); return true;
             case "defaultCertificateValidator": ((MiloServerComponent) component).setDefaultCertificateValidator((java.io.File) value); return true;
             case "enableAnonymousAuthentication": ((MiloServerComponent) component).setEnableAnonymousAuthentication((boolean) value); return true;
             case "namespaceUri": ((MiloServerComponent) component).setNamespaceUri((java.lang.String) value); return true;
             case "path": ((MiloServerComponent) component).setPath((java.lang.String) value); return true;
             case "productUri": ((MiloServerComponent) component).setProductUri((java.lang.String) value); return true;
-            case "securityPolicies": ((MiloServerComponent) component).setSecurityPolicies((java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy>) value); return true;
-            case "securityPoliciesById": ((MiloServerComponent) component).setSecurityPoliciesById((java.util.Collection<java.lang.String>) value); return true;
+            case "securityPolicies": ((MiloServerComponent) component).setSecurityPolicies((java.util.Set) value); return true;
+            case "securityPoliciesById": ((MiloServerComponent) component).setSecurityPoliciesById((java.util.Collection) value); return true;
             case "serverCertificate": ((MiloServerComponent) component).setServerCertificate((org.apache.camel.component.milo.KeyStoreLoader.Result) value); return true;
             case "userAuthenticationCredentials": ((MiloServerComponent) component).setUserAuthenticationCredentials((java.lang.String) value); return true;
             case "usernameSecurityPolicyUri": ((MiloServerComponent) component).setUsernameSecurityPolicyUri((org.eclipse.milo.opcua.stack.core.security.SecurityPolicy) value); return true;

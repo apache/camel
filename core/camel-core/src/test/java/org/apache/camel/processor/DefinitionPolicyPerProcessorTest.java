@@ -20,13 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
@@ -46,8 +46,8 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyPolicy("foo"));
         return jndi;
     }
@@ -80,13 +80,13 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             SetBodyDefinition bodyDef = (SetBodyDefinition)((ProcessorDefinition<?>)definition).getOutputs().get(0);
             bodyDef.setExpression(new ConstantExpression("body was altered"));
         }
 
         @Override
-        public Processor wrap(final RouteContext routeContext, final Processor processor) {
+        public Processor wrap(final Route route, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;

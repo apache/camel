@@ -22,6 +22,7 @@ import java.util.Map;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.slf4j.Logger;
@@ -35,11 +36,12 @@ public class MiloClientComponent extends DefaultComponent {
     private final Map<String, MiloClientConnection> cache = new HashMap<>();
     private final Multimap<String, MiloClientEndpoint> connectionMap = HashMultimap.create();
 
-    private MiloClientConfiguration defaultConfiguration = new MiloClientConfiguration();
+    @Metadata
+    private MiloClientConfiguration configuration = new MiloClientConfiguration();
 
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        final MiloClientConfiguration configuration = new MiloClientConfiguration(this.defaultConfiguration);
+        final MiloClientConfiguration configuration = new MiloClientConfiguration(this.configuration);
         configuration.setEndpointUri(remaining);
 
         Endpoint endpoint = doCreateEndpoint(uri, configuration, parameters);
@@ -65,39 +67,43 @@ public class MiloClientComponent extends DefaultComponent {
         return endpoint;
     }
 
+    public MiloClientConfiguration getConfiguration() {
+        return configuration;
+    }
+
     /**
-     * All default options for client
+     * All default options for client configurations
      */
-    public void setDefaultConfiguration(final MiloClientConfiguration defaultConfiguration) {
-        this.defaultConfiguration = defaultConfiguration;
+    public void setConfiguration(final MiloClientConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     /**
      * Default application name
      */
     public void setApplicationName(final String applicationName) {
-        this.defaultConfiguration.setApplicationName(applicationName);
+        this.configuration.setApplicationName(applicationName);
     }
 
     /**
      * Default application URI
      */
     public void setApplicationUri(final String applicationUri) {
-        this.defaultConfiguration.setApplicationUri(applicationUri);
+        this.configuration.setApplicationUri(applicationUri);
     }
 
     /**
      * Default product URI
      */
     public void setProductUri(final String productUri) {
-        this.defaultConfiguration.setProductUri(productUri);
+        this.configuration.setProductUri(productUri);
     }
 
     /**
      * Default reconnect timeout
      */
     public void setReconnectTimeout(final Long reconnectTimeout) {
-        this.defaultConfiguration.setRequestTimeout(reconnectTimeout);
+        this.configuration.setRequestTimeout(reconnectTimeout);
     }
 
     public synchronized void disposed(final MiloClientEndpoint endpoint) {

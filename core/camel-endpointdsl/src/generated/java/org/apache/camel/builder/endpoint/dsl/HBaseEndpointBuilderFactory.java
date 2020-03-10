@@ -121,7 +121,7 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow . The following keys
+         * To map the key/values from the Map to a HBaseRow. The following keys
          * is supported: rowId - The id of the row. This has limited use as the
          * row usually changes per Exchange. rowType - The type to covert row id
          * to. Supported operations: CamelHBaseScan. family - The column family.
@@ -143,7 +143,7 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow . The following keys
+         * To map the key/values from the Map to a HBaseRow. The following keys
          * is supported: rowId - The id of the row. This has limited use as the
          * row usually changes per Exchange. rowType - The type to covert row id
          * to. Supported operations: CamelHBaseScan. family - The column family.
@@ -560,7 +560,7 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow . The following keys
+         * To map the key/values from the Map to a HBaseRow. The following keys
          * is supported: rowId - The id of the row. This has limited use as the
          * row usually changes per Exchange. rowType - The type to covert row id
          * to. Supported operations: CamelHBaseScan. family - The column family.
@@ -582,7 +582,7 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow . The following keys
+         * To map the key/values from the Map to a HBaseRow. The following keys
          * is supported: rowId - The id of the row. This has limited use as the
          * row usually changes per Exchange. rowType - The type to covert row id
          * to. Supported operations: CamelHBaseScan. family - The column family.
@@ -878,7 +878,7 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow . The following keys
+         * To map the key/values from the Map to a HBaseRow. The following keys
          * is supported: rowId - The id of the row. This has limited use as the
          * row usually changes per Exchange. rowType - The type to covert row id
          * to. Supported operations: CamelHBaseScan. family - The column family.
@@ -899,7 +899,7 @@ public interface HBaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * To map the key/values from the Map to a HBaseRow . The following keys
+         * To map the key/values from the Map to a HBaseRow. The following keys
          * is supported: rowId - The id of the row. This has limited use as the
          * row usually changes per Exchange. rowType - The type to covert row id
          * to. Supported operations: CamelHBaseScan. family - The column family.

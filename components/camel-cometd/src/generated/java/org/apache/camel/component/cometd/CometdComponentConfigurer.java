@@ -15,13 +15,13 @@ public class CometdComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CometdComponent target = (CometdComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "extensions": target.setExtensions(property(camelContext, java.util.List.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "extensions": target.setExtensions(property(camelContext, java.util.List.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "securitypolicy":
         case "securityPolicy": target.setSecurityPolicy(property(camelContext, org.cometd.bayeux.server.SecurityPolicy.class, value)); return true;
         case "sslcontextparameters":

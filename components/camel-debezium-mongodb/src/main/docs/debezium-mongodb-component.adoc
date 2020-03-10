@@ -42,16 +42,55 @@ debezium-mongodb:name[?options]
 
 
 // component options: START
-The Debezium MongoDB Connector component supports 3 options, which are listed below.
+The Debezium MongoDB Connector component supports 42 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *additionalProperties* (common) | Additional properties for debezium components in case they can't be set directly on the camel configurations (e.g: setting Kafka Connect properties needed by Debezium engine, for example setting KafkaOffsetBackingStore), the properties have to be prefixed with additionalProperties.. E.g: additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=\http://localhost:8811/avro |  | Map
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | MongoDbConnectorEmbeddedDebeziumConfiguration
+| *internalKeyConverter* (consumer) | The Converter class that should be used to serialize and deserialize key data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *internalValueConverter* (consumer) | The Converter class that should be used to serialize and deserialize value data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *offsetCommitPolicy* (consumer) | The name of the Java class of the commit policy. It defines when offsets commit has to be triggered based on the number of events processed and the time elapsed since the last commit. This class must implement the interface 'OffsetCommitPolicy'. The default is a periodic commit policy based upon time intervals. | io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy | String
+| *offsetCommitTimeoutMs* (consumer) | Maximum number of milliseconds to wait for records to flush and partition offset data to be committed to offset storage before cancelling the process and restoring the offset data to be committed in a future attempt. The default is 5 seconds. | 5000 | long
+| *offsetFlushIntervalMs* (consumer) | Interval at which to try committing offsets. The default is 1 minute. | 60000 | long
+| *offsetStorage* (consumer) | The name of the Java class that is responsible for persistence of connector offsets. | org.apache.kafka.connect.storage.FileOffsetBackingStore | String
+| *offsetStorageFileName* (consumer) | Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore. |  | String
+| *offsetStoragePartitions* (consumer) | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | int
+| *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
+| *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *collectionBlacklist* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'collection.blacklist' description. |  | String
+| *collectionWhitelist* (mongodb) | The collections for which changes are to be captured |  | String
+| *connectBackoffInitialDelayMs* (mongodb) | The initial delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 1 second (1000 ms). | 1000 | long
+| *connectBackoffMaxDelayMs* (mongodb) | The maximum delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 120 second (120,000 ms). | 120000 | long
+| *connectMaxAttempts* (mongodb) | Maximum number of failed connection attempts to a replica set primary before an exception occurs and task is aborted. Defaults to 16, which with the defaults for 'connect.backoff.initial.delay.ms' and 'connect.backoff.max.delay.ms' results in just over 20 minutes of attempts before failing. | 16 | int
+| *databaseBlacklist* (mongodb) | The databases for which changes are to be excluded |  | String
+| *databaseHistoryFileFilename* (mongodb) | The path to the file that will be used to record the database history |  | String
+| *databaseWhitelist* (mongodb) | The databases for which changes are to be captured |  | String
+| *fieldBlacklist* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.blacklist' description. |  | String
+| *fieldRenames* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.renames' description. |  | String
+| *heartbeatIntervalMs* (mongodb) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0 | int
+| *heartbeatTopicsPrefix* (mongodb) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
+| *initialSyncMaxThreads* (mongodb) | Maximum number of threads used to perform an intial sync of the collections in a replica set. Defaults to 1. | 1 | int
+| *maxBatchSize* (mongodb) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
+| *maxQueueSize* (mongodb) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
+| *mongodbHosts* (mongodb) | The hostname and port pairs (in the form 'host' or 'host:port') of the MongoDB server(s) in the replica set. |  | String
+| *mongodbMembersAutoDiscover* (mongodb) | Specifies whether the addresses in 'hosts' are seeds that should be used to discover all members of the cluster or replica set ('true'), or whether the address(es) in 'hosts' should be used as is ('false'). The default is 'true'. | true | boolean
+| *mongodbName* (mongodb) | *Required* Unique name that identifies the MongoDB replica set or cluster and all recorded offsets, andthat is used as a prefix for all schemas and topics. Each distinct MongoDB installation should have a separate namespace and monitored by at most one Debezium connector. |  | String
+| *mongodbPassword* (mongodb) | *Required* Password to be used when connecting to MongoDB, if necessary. |  | String
+| *mongodbSslEnabled* (mongodb) | Should connector use SSL to connect to MongoDB instances | false | boolean
+| *mongodbSslInvalidHostname Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
+| *mongodbUser* (mongodb) | Database user for connecting to MongoDB, if necessary. |  | String
+| *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500 | long
+| *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0 | long
+| *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
+| *snapshotMode* (mongodb) | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should always perform an initial sync when required; 'never' to specify the connector should never perform an initial sync | initial | String
+| *sourceStructVersion* (mongodb) | A version of the format of the publicly visible source part in the message | v2 | String
+| *tombstonesOnDelete* (mongodb) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
 |===
 // component options: END
 

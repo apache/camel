@@ -19,6 +19,8 @@ public class SdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsdbclient":
         case "amazonSDBClient": target.getConfiguration().setAmazonSDBClient(property(camelContext, com.amazonaws.services.simpledb.AmazonSimpleDB.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "consistentread":
         case "consistentRead": target.getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -35,8 +37,6 @@ public class SdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

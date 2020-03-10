@@ -19,12 +19,12 @@ package org.apache.camel.component.aws2.kinesis;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.model.Record;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RecordStringConverterTest {
 

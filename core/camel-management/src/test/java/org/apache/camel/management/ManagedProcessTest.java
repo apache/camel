@@ -22,16 +22,16 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class ManagedProcessTest extends ManagementTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("foo", new MyDummyProcessor());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", new MyDummyProcessor());
+        return answer;
     }
 
     @Test

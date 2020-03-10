@@ -15,15 +15,15 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanValidatorEndpoint target = (BeanValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "constraintvalidatorfactory":
+        case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
         case "group": target.setGroup(property(camelContext, java.lang.String.class, value)); return true;
         case "ignorexmlconfiguration":
         case "ignoreXmlConfiguration": target.setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "constraintvalidatorfactory":
-        case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
         case "messageinterpolator":
         case "messageInterpolator": target.setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;

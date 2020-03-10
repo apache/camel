@@ -15,6 +15,8 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "font": target.getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
         case "fontsize":
         case "fontSize": target.getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
@@ -30,11 +32,9 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "marginTop": target.getPdfConfiguration().setMarginTop(property(camelContext, int.class, value)); return true;
         case "pagesize":
         case "pageSize": target.getPdfConfiguration().setPageSize(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "textprocessingfactory":
         case "textProcessingFactory": target.getPdfConfiguration().setTextProcessingFactory(property(camelContext, org.apache.camel.component.pdf.TextProcessingFactory.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

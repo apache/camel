@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
 import org.junit.After;
@@ -103,7 +103,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
 
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
             assertNotNull(processor);
 

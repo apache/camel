@@ -17,25 +17,25 @@ public class WordpressEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "criteria": target.getConfiguration().setCriteria(property(camelContext, java.util.Map.class, value)); return true;
-        case "force": target.getConfiguration().setForce(property(camelContext, boolean.class, value)); return true;
-        case "id": target.getConfiguration().setId(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "searchcriteria":
-        case "searchCriteria": target.getConfiguration().setSearchCriteria(property(camelContext, org.apache.camel.component.wordpress.api.model.SearchCriteria.class, value)); return true;
-        case "url": target.getConfiguration().setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "criteria": target.getConfiguration().setCriteria(property(camelContext, java.util.Map.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "force": target.getConfiguration().setForce(property(camelContext, boolean.class, value)); return true;
+        case "id": target.getConfiguration().setId(property(camelContext, java.lang.Integer.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "searchcriteria":
+        case "searchCriteria": target.getConfiguration().setSearchCriteria(property(camelContext, org.apache.camel.component.wordpress.api.model.SearchCriteria.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "url": target.getConfiguration().setUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

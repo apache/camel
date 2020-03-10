@@ -11,15 +11,52 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.crypto.DigitalSignatureConfiguration getOrCreateConfiguration(DigitalSignatureComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.crypto.DigitalSignatureConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DigitalSignatureComponent target = (DigitalSignatureComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "algorithm": getOrCreateConfiguration(target).setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "alias": getOrCreateConfiguration(target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "buffersize":
+        case "bufferSize": getOrCreateConfiguration(target).setBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "certificate": getOrCreateConfiguration(target).setCertificate(property(camelContext, java.security.cert.Certificate.class, value)); return true;
+        case "certificatename":
+        case "certificateName": getOrCreateConfiguration(target).setCertificateName(property(camelContext, java.lang.String.class, value)); return true;
+        case "clearheaders":
+        case "clearHeaders": getOrCreateConfiguration(target).setClearHeaders(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.crypto.DigitalSignatureConfiguration.class, value)); return true;
+        case "keystoreparameters":
+        case "keyStoreParameters": getOrCreateConfiguration(target).setKeyStoreParameters(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
+        case "keystore": getOrCreateConfiguration(target).setKeystore(property(camelContext, java.security.KeyStore.class, value)); return true;
+        case "keystorename":
+        case "keystoreName": getOrCreateConfiguration(target).setKeystoreName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekey":
+        case "privateKey": getOrCreateConfiguration(target).setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "privatekeyname":
+        case "privateKeyName": getOrCreateConfiguration(target).setPrivateKeyName(property(camelContext, java.lang.String.class, value)); return true;
+        case "provider": getOrCreateConfiguration(target).setProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "publickey":
+        case "publicKey": getOrCreateConfiguration(target).setPublicKey(property(camelContext, java.security.PublicKey.class, value)); return true;
+        case "publickeyname":
+        case "publicKeyName": getOrCreateConfiguration(target).setPublicKeyName(property(camelContext, java.lang.String.class, value)); return true;
+        case "securerandom":
+        case "secureRandom": getOrCreateConfiguration(target).setSecureRandom(property(camelContext, java.security.SecureRandom.class, value)); return true;
+        case "securerandomname":
+        case "secureRandomName": getOrCreateConfiguration(target).setSecureRandomName(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatureheadername":
+        case "signatureHeaderName": getOrCreateConfiguration(target).setSignatureHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

@@ -28,7 +28,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_GET;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;

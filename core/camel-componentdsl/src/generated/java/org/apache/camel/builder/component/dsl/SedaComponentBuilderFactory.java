@@ -214,7 +214,7 @@ public interface SedaComponentBuilderFactory {
             case "defaultOfferTimeout": ((SedaComponent) component).setDefaultOfferTimeout((long) value); return true;
             case "lazyStartProducer": ((SedaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((SedaComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "defaultQueueFactory": ((SedaComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>) value); return true;
+            case "defaultQueueFactory": ((SedaComponent) component).setDefaultQueueFactory((org.apache.camel.component.seda.BlockingQueueFactory) value); return true;
             case "queueSize": ((SedaComponent) component).setQueueSize((int) value); return true;
             default: return false;
             }

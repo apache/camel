@@ -15,8 +15,12 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringWebserviceEndpoint target = (SpringWebserviceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "messagefilter":
-        case "messageFilter": target.getConfiguration().setMessageFilter(property(camelContext, org.apache.camel.component.spring.ws.filter.MessageFilter.class, value)); return true;
+        case "allowresponseattachmentoverride":
+        case "allowResponseAttachmentOverride": target.getConfiguration().setAllowResponseAttachmentOverride(property(camelContext, boolean.class, value)); return true;
+        case "allowresponseheaderoverride":
+        case "allowResponseHeaderOverride": target.getConfiguration().setAllowResponseHeaderOverride(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpointdispatcher":
@@ -27,10 +31,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "allowresponseattachmentoverride":
-        case "allowResponseAttachmentOverride": target.getConfiguration().setAllowResponseAttachmentOverride(property(camelContext, boolean.class, value)); return true;
-        case "allowresponseheaderoverride":
-        case "allowResponseHeaderOverride": target.getConfiguration().setAllowResponseHeaderOverride(property(camelContext, boolean.class, value)); return true;
         case "faultaction":
         case "faultAction": target.getConfiguration().setFaultAction(property(camelContext, java.net.URI.class, value)); return true;
         case "faultto":
@@ -39,6 +39,8 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagefactory":
         case "messageFactory": target.getConfiguration().setMessageFactory(property(camelContext, org.springframework.ws.WebServiceMessageFactory.class, value)); return true;
+        case "messagefilter":
+        case "messageFilter": target.getConfiguration().setMessageFilter(property(camelContext, org.apache.camel.component.spring.ws.filter.MessageFilter.class, value)); return true;
         case "messageidstrategy":
         case "messageIdStrategy": target.getConfiguration().setMessageIdStrategy(property(camelContext, org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class, value)); return true;
         case "messagesender":
@@ -49,16 +51,14 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "replyTo": target.getConfiguration().setReplyTo(property(camelContext, java.net.URI.class, value)); return true;
         case "soapaction":
         case "soapAction": target.getConfiguration().setSoapAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, int.class, value)); return true;
         case "webservicetemplate":
         case "webServiceTemplate": target.getConfiguration().setWebServiceTemplate(property(camelContext, org.springframework.ws.client.core.WebServiceTemplate.class, value)); return true;
         case "wsaddressingaction":
         case "wsAddressingAction": target.getConfiguration().setWsAddressingAction(property(camelContext, java.net.URI.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         default: return false;
         }
     }

@@ -136,8 +136,8 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Return only the specified number of messages. Works for threaded=true
-         * and threaded=extended.
+         * Return only the specified number of messages. Works for threaded set
+         * to true and threaded set to extended.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -149,8 +149,8 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Return only the specified number of messages. Works for threaded=true
-         * and threaded=extended.
+         * Return only the specified number of messages. Works for threaded set
+         * to true and threaded set to extended.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -165,9 +165,9 @@ public interface YammerEndpointBuilderFactory {
          * Returns messages newer than the message ID specified as a numeric
          * string. This should be used when polling for new messages. If you're
          * looking at messages, and the most recent message returned is 3516,
-         * you can make a request with the parameter newerThan=3516 to ensure
-         * that you do not get duplicate copies of messages already on your
-         * page.
+         * you can make a request with the parameter newerThan equals to 3516 to
+         * ensure that you do not get duplicate copies of messages already on
+         * your page.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -182,9 +182,9 @@ public interface YammerEndpointBuilderFactory {
          * Returns messages newer than the message ID specified as a numeric
          * string. This should be used when polling for new messages. If you're
          * looking at messages, and the most recent message returned is 3516,
-         * you can make a request with the parameter newerThan=3516 to ensure
-         * that you do not get duplicate copies of messages already on your
-         * page.
+         * you can make a request with the parameter newerThan equals to 3516 to
+         * ensure that you do not get duplicate copies of messages already on
+         * your page.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -199,8 +199,8 @@ public interface YammerEndpointBuilderFactory {
          * Returns messages older than the message ID specified as a numeric
          * string. This is useful for paginating messages. For example, if
          * you're currently viewing 20 messages and the oldest is number 2912,
-         * you could append olderThan=2912 to your request to get the 20
-         * messages prior to those you're seeing.
+         * you could append olderThan equals to 2912 to your request to get the
+         * 20 messages prior to those you're seeing.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -215,8 +215,8 @@ public interface YammerEndpointBuilderFactory {
          * Returns messages older than the message ID specified as a numeric
          * string. This is useful for paginating messages. For example, if
          * you're currently viewing 20 messages and the oldest is number 2912,
-         * you could append olderThan=2912 to your request to get the 20
-         * messages prior to those you're seeing.
+         * you could append olderThan equals to 2912 to your request to get the
+         * 20 messages prior to those you're seeing.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -256,12 +256,12 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
         /**
-         * threaded=true will only return the first message in each thread. This
-         * parameter is intended for apps which display message threads
-         * collapsed. threaded=extended will return the thread starter messages
-         * in order of most recently active as well as the two most recent
-         * messages, as they are viewed in the default view on the Yammer web
-         * interface.
+         * threaded equals to true will only return the first message in each
+         * thread. This parameter is intended for apps which display message
+         * threads collapsed. threaded equals to extended will return the thread
+         * starter messages in order of most recently active as well as the two
+         * most recent messages, as they are viewed in the default view on the
+         * Yammer web interface.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -795,6 +795,30 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointConsumerBuilder requestor(Object requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointConsumerBuilder requestor(String requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -978,6 +1002,30 @@ public interface YammerEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointProducerBuilder requestor(Object requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointProducerBuilder requestor(String requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1117,6 +1165,30 @@ public interface YammerEndpointBuilderFactory {
         default AdvancedYammerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointBuilder requestor(Object requestor) {
+            doSetProperty("requestor", requestor);
+            return this;
+        }
+        /**
+         * To use a specific requester to communicate with Yammer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedYammerEndpointBuilder requestor(String requestor) {
+            doSetProperty("requestor", requestor);
             return this;
         }
         /**

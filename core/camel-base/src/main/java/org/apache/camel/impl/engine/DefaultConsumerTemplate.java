@@ -32,7 +32,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**

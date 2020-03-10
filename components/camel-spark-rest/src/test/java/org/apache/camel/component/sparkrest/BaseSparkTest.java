@@ -41,7 +41,7 @@ public abstract class BaseSparkTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        SparkComponent spark = context.getComponent("spark-rest", SparkComponent.class);
+        SparkRestComponent spark = context.getComponent("spark-rest", SparkRestComponent.class);
         spark.setPort(port);
 
         return context;

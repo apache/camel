@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.sparkrest.SparkComponent;
+import org.apache.camel.component.sparkrest.SparkRestComponent;
 
 /**
  * The spark-rest component is used for hosting REST services which has been
@@ -49,7 +49,7 @@ public interface SparkRestComponentBuilderFactory {
      */
     interface SparkRestComponentBuilder
             extends
-                ComponentBuilder<SparkComponent> {
+                ComponentBuilder<SparkRestComponent> {
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -70,6 +70,29 @@ public interface SparkRestComponentBuilderFactory {
             return this;
         }
         /**
+         * Determines whether or not the raw input stream from Spark
+         * HttpRequest#getContent() is cached or not (Camel will read the stream
+         * into a in light-weight memory based Stream caching) cache. By default
+         * Camel will cache the Netty input stream to support reading it
+         * multiple times to ensure Camel can retrieve all data from the stream.
+         * However you can set this option to true when you for example need to
+         * access the raw stream, such as streaming it directly to a file or
+         * other persistent store. Mind that if you enable this option, then you
+         * cannot read the Netty stream multiple times out of the box, and you
+         * would need manually to reset the reader index on the Spark raw
+         * stream.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default SparkRestComponentBuilder disableStreamCache(
+                boolean disableStreamCache) {
+            doSetProperty("disableStreamCache", disableStreamCache);
+            return this;
+        }
+        /**
          * Set the IP address that Spark should listen on. If not called the
          * default address is '0.0.0.0'.
          * 
@@ -80,6 +103,23 @@ public interface SparkRestComponentBuilderFactory {
          */
         default SparkRestComponentBuilder ipAddress(java.lang.String ipAddress) {
             doSetProperty("ipAddress", ipAddress);
+            return this;
+        }
+        /**
+         * If this option is enabled, then during binding from Spark to Camel
+         * Message then the headers will be mapped as well (eg added as header
+         * to the Camel Message as well). You can turn off this option to
+         * disable this. The headers can still be accessed from the
+         * org.apache.camel.component.sparkrest.SparkMessage message with the
+         * method getRequest() that returns the Spark HTTP request instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default SparkRestComponentBuilder mapHeaders(boolean mapHeaders) {
+            doSetProperty("mapHeaders", mapHeaders);
             return this;
         }
         /**
@@ -95,6 +135,39 @@ public interface SparkRestComponentBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and if the caused Exception was send back serialized in the response
+         * as a application/x-java-serialized-object content type. This is by
+         * default turned off. If you enable this then be aware that Java will
+         * deserialize the incoming data from the request to Java and that can
+         * be a potential security risk.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default SparkRestComponentBuilder transferException(
+                boolean transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * If this option is enabled, then during binding from Spark to Camel
+         * Message then the header values will be URL decoded (eg %20 will be a
+         * space character.).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default SparkRestComponentBuilder urlDecodeHeaders(
+                boolean urlDecodeHeaders) {
+            doSetProperty("urlDecodeHeaders", urlDecodeHeaders);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -106,6 +179,20 @@ public interface SparkRestComponentBuilderFactory {
         default SparkRestComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether or not the consumer should try to find a target consumer by
+         * matching the URI prefix if no exact match is found.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default SparkRestComponentBuilder matchOnUriPrefix(
+                boolean matchOnUriPrefix) {
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
         }
         /**
@@ -221,12 +308,19 @@ public interface SparkRestComponentBuilderFactory {
 
     class SparkRestComponentBuilderImpl
             extends
-                AbstractComponentBuilder<SparkComponent>
+                AbstractComponentBuilder<SparkRestComponent>
             implements
                 SparkRestComponentBuilder {
         @Override
-        protected SparkComponent buildConcreteComponent() {
-            return new SparkComponent();
+        protected SparkRestComponent buildConcreteComponent() {
+            return new SparkRestComponent();
+        }
+        private org.apache.camel.component.sparkrest.SparkConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.sparkrest.SparkRestComponent component) {
+            if (component.getSparkConfiguration() == null) {
+                component.setSparkConfiguration(new org.apache.camel.component.sparkrest.SparkConfiguration());
+            }
+            return component.getSparkConfiguration();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -234,19 +328,24 @@ public interface SparkRestComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((SparkComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "ipAddress": ((SparkComponent) component).setIpAddress((java.lang.String) value); return true;
-            case "port": ((SparkComponent) component).setPort((int) value); return true;
-            case "basicPropertyBinding": ((SparkComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "maxThreads": ((SparkComponent) component).setMaxThreads((int) value); return true;
-            case "minThreads": ((SparkComponent) component).setMinThreads((int) value); return true;
-            case "sparkBinding": ((SparkComponent) component).setSparkBinding((org.apache.camel.component.sparkrest.SparkBinding) value); return true;
-            case "sparkConfiguration": ((SparkComponent) component).setSparkConfiguration((org.apache.camel.component.sparkrest.SparkConfiguration) value); return true;
-            case "timeOutMillis": ((SparkComponent) component).setTimeOutMillis((int) value); return true;
-            case "keystoreFile": ((SparkComponent) component).setKeystoreFile((java.lang.String) value); return true;
-            case "keystorePassword": ((SparkComponent) component).setKeystorePassword((java.lang.String) value); return true;
-            case "truststoreFile": ((SparkComponent) component).setTruststoreFile((java.lang.String) value); return true;
-            case "truststorePassword": ((SparkComponent) component).setTruststorePassword((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((SparkRestComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "disableStreamCache": getOrCreateConfiguration((SparkRestComponent) component).setDisableStreamCache((boolean) value); return true;
+            case "ipAddress": ((SparkRestComponent) component).setIpAddress((java.lang.String) value); return true;
+            case "mapHeaders": getOrCreateConfiguration((SparkRestComponent) component).setMapHeaders((boolean) value); return true;
+            case "port": ((SparkRestComponent) component).setPort((int) value); return true;
+            case "transferException": getOrCreateConfiguration((SparkRestComponent) component).setTransferException((boolean) value); return true;
+            case "urlDecodeHeaders": getOrCreateConfiguration((SparkRestComponent) component).setUrlDecodeHeaders((boolean) value); return true;
+            case "basicPropertyBinding": ((SparkRestComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "matchOnUriPrefix": getOrCreateConfiguration((SparkRestComponent) component).setMatchOnUriPrefix((boolean) value); return true;
+            case "maxThreads": ((SparkRestComponent) component).setMaxThreads((int) value); return true;
+            case "minThreads": ((SparkRestComponent) component).setMinThreads((int) value); return true;
+            case "sparkBinding": ((SparkRestComponent) component).setSparkBinding((org.apache.camel.component.sparkrest.SparkBinding) value); return true;
+            case "sparkConfiguration": ((SparkRestComponent) component).setSparkConfiguration((org.apache.camel.component.sparkrest.SparkConfiguration) value); return true;
+            case "timeOutMillis": ((SparkRestComponent) component).setTimeOutMillis((int) value); return true;
+            case "keystoreFile": ((SparkRestComponent) component).setKeystoreFile((java.lang.String) value); return true;
+            case "keystorePassword": ((SparkRestComponent) component).setKeystorePassword((java.lang.String) value); return true;
+            case "truststoreFile": ((SparkRestComponent) component).setTruststoreFile((java.lang.String) value); return true;
+            case "truststorePassword": ((SparkRestComponent) component).setTruststorePassword((java.lang.String) value); return true;
             default: return false;
             }
         }

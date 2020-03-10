@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.reifier.dataformat.CustomDataFormatReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
@@ -27,17 +28,18 @@ import static junit.framework.TestCase.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DataFormatReifierTest {
+
     @Test
     public void testHandleCustomDataFormat() {
+        DefaultCamelContext context = new DefaultCamelContext();
         try {
-            DataFormatReifier.reifier(null, new MyDataFormat());
-
+            DataFormatReifier.reifier(context, new MyDataFormat());
             fail("Should throw IllegalStateException instead");
         } catch (IllegalStateException e) {
         }
 
         DataFormatReifier.registerReifier(MyDataFormat.class, CustomDataFormatReifier::new);
-        DataFormatReifier.reifier(null, new MyDataFormat());
+        DataFormatReifier.reifier(context, new MyDataFormat());
     }
 
     public static class MyDataFormat extends CustomDataFormat {

@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 /**
@@ -32,10 +33,10 @@ public class LanguageCamelContextAwareTest extends ContextTestSupport {
     private MyLanguage my = new MyLanguage();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("my", my);
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("my", my);
+        return registry;
     }
 
     @Test

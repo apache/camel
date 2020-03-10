@@ -60,7 +60,7 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("foo", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                                assertEquals("foo", exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:foo")
@@ -68,7 +68,7 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("foo", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                                assertEquals("foo", exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:result");
@@ -78,7 +78,7 @@ public class SimpleMockTwoRoutesTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("bar", exchange.getUnitOfWork().getRouteContext().getRouteId());
+                                assertEquals("bar", exchange.getUnitOfWork().getRoute().getRouteId());
                             }
                         })
                         .to("mock:bar");

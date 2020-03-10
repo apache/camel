@@ -15,26 +15,24 @@ public class DisruptorComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DisruptorComponent target = (DisruptorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "buffersize":
-        case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
-        case "queuesize":
-        case "queueSize": target.setQueueSize(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "buffersize":
+        case "bufferSize": target.setBufferSize(property(camelContext, int.class, value)); return true;
+        case "defaultblockwhenfull":
+        case "defaultBlockWhenFull": target.setDefaultBlockWhenFull(property(camelContext, boolean.class, value)); return true;
         case "defaultconcurrentconsumers":
         case "defaultConcurrentConsumers": target.setDefaultConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "defaultmultipleconsumers":
         case "defaultMultipleConsumers": target.setDefaultMultipleConsumers(property(camelContext, boolean.class, value)); return true;
-        case "defaultwaitstrategy":
-        case "defaultWaitStrategy": target.setDefaultWaitStrategy(property(camelContext, org.apache.camel.component.disruptor.DisruptorWaitStrategy.class, value)); return true;
-        case "defaultblockwhenfull":
-        case "defaultBlockWhenFull": target.setDefaultBlockWhenFull(property(camelContext, boolean.class, value)); return true;
         case "defaultproducertype":
         case "defaultProducerType": target.setDefaultProducerType(property(camelContext, org.apache.camel.component.disruptor.DisruptorProducerType.class, value)); return true;
+        case "defaultwaitstrategy":
+        case "defaultWaitStrategy": target.setDefaultWaitStrategy(property(camelContext, org.apache.camel.component.disruptor.DisruptorWaitStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

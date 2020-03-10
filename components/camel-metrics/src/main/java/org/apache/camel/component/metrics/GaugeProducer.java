@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_GAUGE_SUBJECT;
 
 public class GaugeProducer extends AbstractMetricsProducer {

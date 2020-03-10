@@ -18,19 +18,18 @@ package org.apache.camel.component.azure.blob;
 
 import java.net.URI;
 
-import com.microsoft.azure.storage.StorageCredentials;
-import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
 import com.microsoft.azure.storage.blob.CloudAppendBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
-import com.microsoft.azure.storage.core.Base64;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
 
 public class BlobServiceUtilTest extends CamelTestSupport {
 
     @Test
     public void testPrepareUri() throws Exception {
-        registerCredentials();
+        registerCredentials(context);
         
         BlobServiceEndpoint endpoint =
             (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?credentials=#creds");
@@ -84,11 +83,4 @@ public class BlobServiceUtilTest extends CamelTestSupport {
             assertEquals("Invalid Client URI", ex.getMessage());
         }
     }
-
-    private void registerCredentials() {
-        StorageCredentials creds = new StorageCredentialsAccountAndKey("camelazure",
-                                                                       Base64.encode("key".getBytes()));
-        context.getRegistry().bind("creds", creds);
-    }
-
 }

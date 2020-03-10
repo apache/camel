@@ -17,13 +17,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "brokers": target.getConfiguration().setBrokers(property(camelContext, java.lang.String.class, value)); return true;
-        case "clientid":
-        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
-        case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "reconnectbackoffmaxms":
-        case "reconnectBackoffMaxMs": target.getConfiguration().setReconnectBackoffMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "allowmanualcommit":
         case "allowManualCommit": target.getConfiguration().setAllowManualCommit(property(camelContext, boolean.class, value)); return true;
         case "autocommitenable":
@@ -34,18 +27,35 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoCommitOnStop": target.getConfiguration().setAutoCommitOnStop(property(camelContext, java.lang.String.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": target.getConfiguration().setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "breakonfirsterror":
         case "breakOnFirstError": target.getConfiguration().setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "brokers": target.getConfiguration().setBrokers(property(camelContext, java.lang.String.class, value)); return true;
+        case "buffermemorysize":
+        case "bufferMemorySize": target.getConfiguration().setBufferMemorySize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "checkcrcs":
         case "checkCrcs": target.getConfiguration().setCheckCrcs(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "clientid":
+        case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "compressioncodec":
+        case "compressionCodec": target.getConfiguration().setCompressionCodec(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectionmaxidlems":
+        case "connectionMaxIdleMs": target.getConfiguration().setConnectionMaxIdleMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "consumerrequesttimeoutms":
         case "consumerRequestTimeoutMs": target.getConfiguration().setConsumerRequestTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "consumerscount":
-        case "consumersCount": target.getConfiguration().setConsumersCount(property(camelContext, int.class, value)); return true;
         case "consumerstreams":
         case "consumerStreams": target.getConfiguration().setConsumerStreams(property(camelContext, int.class, value)); return true;
+        case "consumerscount":
+        case "consumersCount": target.getConfiguration().setConsumersCount(property(camelContext, int.class, value)); return true;
+        case "enableidempotence":
+        case "enableIdempotence": target.getConfiguration().setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fetchmaxbytes":
         case "fetchMaxBytes": target.getConfiguration().setFetchMaxBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "fetchminbytes":
@@ -54,49 +64,29 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "fetchWaitMaxMs": target.getConfiguration().setFetchWaitMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "groupid":
         case "groupId": target.getConfiguration().setGroupId(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "interceptorclasses":
+        case "interceptorClasses": target.getConfiguration().setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "kafkaheaderdeserializer":
         case "kafkaHeaderDeserializer": target.getConfiguration().setKafkaHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
-        case "keydeserializer":
-        case "keyDeserializer": target.getConfiguration().setKeyDeserializer(property(camelContext, java.lang.String.class, value)); return true;
-        case "maxpartitionfetchbytes":
-        case "maxPartitionFetchBytes": target.getConfiguration().setMaxPartitionFetchBytes(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "maxpollintervalms":
-        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Long.class, value)); return true;
-        case "maxpollrecords":
-        case "maxPollRecords": target.getConfiguration().setMaxPollRecords(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "offsetrepository":
-        case "offsetRepository": target.getConfiguration().setOffsetRepository(property(camelContext, org.apache.camel.spi.StateRepository.class, value)); return true;
-        case "partitionassignor":
-        case "partitionAssignor": target.getConfiguration().setPartitionAssignor(property(camelContext, java.lang.String.class, value)); return true;
-        case "polltimeoutms":
-        case "pollTimeoutMs": target.getConfiguration().setPollTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
-        case "seekto":
-        case "seekTo": target.getConfiguration().setSeekTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "sessiontimeoutms":
-        case "sessionTimeoutMs": target.getConfiguration().setSessionTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "specificavroreader":
-        case "specificAvroReader": target.getConfiguration().setSpecificAvroReader(property(camelContext, boolean.class, value)); return true;
-        case "topicispattern":
-        case "topicIsPattern": target.getConfiguration().setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
-        case "valuedeserializer":
-        case "valueDeserializer": target.getConfiguration().setValueDeserializer(property(camelContext, java.lang.String.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "buffermemorysize":
-        case "bufferMemorySize": target.getConfiguration().setBufferMemorySize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "compressioncodec":
-        case "compressionCodec": target.getConfiguration().setCompressionCodec(property(camelContext, java.lang.String.class, value)); return true;
-        case "connectionmaxidlems":
-        case "connectionMaxIdleMs": target.getConfiguration().setConnectionMaxIdleMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "enableidempotence":
-        case "enableIdempotence": target.getConfiguration().setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
         case "kafkaheaderserializer":
         case "kafkaHeaderSerializer": target.getConfiguration().setKafkaHeaderSerializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderSerializer.class, value)); return true;
+        case "kerberosbeforereloginmintime":
+        case "kerberosBeforeReloginMinTime": target.getConfiguration().setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "kerberosinitcmd":
+        case "kerberosInitCmd": target.getConfiguration().setKerberosInitCmd(property(camelContext, java.lang.String.class, value)); return true;
+        case "kerberosprincipaltolocalrules":
+        case "kerberosPrincipalToLocalRules": target.getConfiguration().setKerberosPrincipalToLocalRules(property(camelContext, java.lang.String.class, value)); return true;
+        case "kerberosrenewjitter":
+        case "kerberosRenewJitter": target.getConfiguration().setKerberosRenewJitter(property(camelContext, java.lang.Double.class, value)); return true;
+        case "kerberosrenewwindowfactor":
+        case "kerberosRenewWindowFactor": target.getConfiguration().setKerberosRenewWindowFactor(property(camelContext, java.lang.Double.class, value)); return true;
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "keydeserializer":
+        case "keyDeserializer": target.getConfiguration().setKeyDeserializer(property(camelContext, java.lang.String.class, value)); return true;
         case "keyserializerclass":
         case "keySerializerClass": target.getConfiguration().setKeySerializerClass(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -107,6 +97,12 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "maxBlockMs": target.getConfiguration().setMaxBlockMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxinflightrequest":
         case "maxInFlightRequest": target.getConfiguration().setMaxInFlightRequest(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxpartitionfetchbytes":
+        case "maxPartitionFetchBytes": target.getConfiguration().setMaxPartitionFetchBytes(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxpollintervalms":
+        case "maxPollIntervalMs": target.getConfiguration().setMaxPollIntervalMs(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxpollrecords":
+        case "maxPollRecords": target.getConfiguration().setMaxPollRecords(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxrequestsize":
         case "maxRequestSize": target.getConfiguration().setMaxRequestSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "metadatamaxagems":
@@ -117,15 +113,23 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "metricsSampleWindowMs": target.getConfiguration().setMetricsSampleWindowMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "noofmetricssample":
         case "noOfMetricsSample": target.getConfiguration().setNoOfMetricsSample(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "partitioner": target.getConfiguration().setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetrepository":
+        case "offsetRepository": target.getConfiguration().setOffsetRepository(property(camelContext, org.apache.camel.spi.StateRepository.class, value)); return true;
+        case "partitionassignor":
+        case "partitionAssignor": target.getConfiguration().setPartitionAssignor(property(camelContext, java.lang.String.class, value)); return true;
         case "partitionkey":
         case "partitionKey": target.getConfiguration().setPartitionKey(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "partitioner": target.getConfiguration().setPartitioner(property(camelContext, java.lang.String.class, value)); return true;
+        case "polltimeoutms":
+        case "pollTimeoutMs": target.getConfiguration().setPollTimeoutMs(property(camelContext, java.lang.Long.class, value)); return true;
         case "producerbatchsize":
         case "producerBatchSize": target.getConfiguration().setProducerBatchSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "queuebufferingmaxmessages":
         case "queueBufferingMaxMessages": target.getConfiguration().setQueueBufferingMaxMessages(property(camelContext, java.lang.Integer.class, value)); return true;
         case "receivebufferbytes":
         case "receiveBufferBytes": target.getConfiguration().setReceiveBufferBytes(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "reconnectbackoffmaxms":
+        case "reconnectBackoffMaxMs": target.getConfiguration().setReconnectBackoffMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "reconnectbackoffms":
         case "reconnectBackoffMs": target.getConfiguration().setReconnectBackoffMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "recordmetadata":
@@ -137,39 +141,26 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "retries": target.getConfiguration().setRetries(property(camelContext, java.lang.Integer.class, value)); return true;
         case "retrybackoffms":
         case "retryBackoffMs": target.getConfiguration().setRetryBackoffMs(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sendbufferbytes":
-        case "sendBufferBytes": target.getConfiguration().setSendBufferBytes(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "serializerclass":
-        case "serializerClass": target.getConfiguration().setSerializerClass(property(camelContext, java.lang.String.class, value)); return true;
-        case "workerpool":
-        case "workerPool": target.getConfiguration().setWorkerPool(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
-        case "workerpoolcoresize":
-        case "workerPoolCoreSize": target.getConfiguration().setWorkerPoolCoreSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "workerpoolmaxsize":
-        case "workerPoolMaxSize": target.getConfiguration().setWorkerPoolMaxSize(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "interceptorclasses":
-        case "interceptorClasses": target.getConfiguration().setInterceptorClasses(property(camelContext, java.lang.String.class, value)); return true;
-        case "kerberosbeforereloginmintime":
-        case "kerberosBeforeReloginMinTime": target.getConfiguration().setKerberosBeforeReloginMinTime(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "kerberosinitcmd":
-        case "kerberosInitCmd": target.getConfiguration().setKerberosInitCmd(property(camelContext, java.lang.String.class, value)); return true;
-        case "kerberosprincipaltolocalrules":
-        case "kerberosPrincipalToLocalRules": target.getConfiguration().setKerberosPrincipalToLocalRules(property(camelContext, java.lang.String.class, value)); return true;
-        case "kerberosrenewjitter":
-        case "kerberosRenewJitter": target.getConfiguration().setKerberosRenewJitter(property(camelContext, java.lang.Double.class, value)); return true;
-        case "kerberosrenewwindowfactor":
-        case "kerberosRenewWindowFactor": target.getConfiguration().setKerberosRenewWindowFactor(property(camelContext, java.lang.Double.class, value)); return true;
         case "sasljaasconfig":
         case "saslJaasConfig": target.getConfiguration().setSaslJaasConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "saslkerberosservicename":
         case "saslKerberosServiceName": target.getConfiguration().setSaslKerberosServiceName(property(camelContext, java.lang.String.class, value)); return true;
         case "saslmechanism":
         case "saslMechanism": target.getConfiguration().setSaslMechanism(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaregistryurl":
+        case "schemaRegistryURL": target.getConfiguration().setSchemaRegistryURL(property(camelContext, java.lang.String.class, value)); return true;
         case "securityprotocol":
         case "securityProtocol": target.getConfiguration().setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "seekto":
+        case "seekTo": target.getConfiguration().setSeekTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendbufferbytes":
+        case "sendBufferBytes": target.getConfiguration().setSendBufferBytes(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "serializerclass":
+        case "serializerClass": target.getConfiguration().setSerializerClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontimeoutms":
+        case "sessionTimeoutMs": target.getConfiguration().setSessionTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "specificavroreader":
+        case "specificAvroReader": target.getConfiguration().setSpecificAvroReader(property(camelContext, boolean.class, value)); return true;
         case "sslciphersuites":
         case "sslCipherSuites": target.getConfiguration().setSslCipherSuites(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
@@ -178,10 +169,10 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sslEnabledProtocols": target.getConfiguration().setSslEnabledProtocols(property(camelContext, java.lang.String.class, value)); return true;
         case "sslendpointalgorithm":
         case "sslEndpointAlgorithm": target.getConfiguration().setSslEndpointAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
-        case "sslkeymanageralgorithm":
-        case "sslKeymanagerAlgorithm": target.getConfiguration().setSslKeymanagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "sslkeypassword":
         case "sslKeyPassword": target.getConfiguration().setSslKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeymanageralgorithm":
+        case "sslKeymanagerAlgorithm": target.getConfiguration().setSslKeymanagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "sslkeystorelocation":
         case "sslKeystoreLocation": target.getConfiguration().setSslKeystoreLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "sslkeystorepassword":
@@ -200,8 +191,17 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "sslTruststorePassword": target.getConfiguration().setSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "ssltruststoretype":
         case "sslTruststoreType": target.getConfiguration().setSslTruststoreType(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemaregistryurl":
-        case "schemaRegistryURL": target.getConfiguration().setSchemaRegistryURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "topicispattern":
+        case "topicIsPattern": target.getConfiguration().setTopicIsPattern(property(camelContext, boolean.class, value)); return true;
+        case "valuedeserializer":
+        case "valueDeserializer": target.getConfiguration().setValueDeserializer(property(camelContext, java.lang.String.class, value)); return true;
+        case "workerpool":
+        case "workerPool": target.getConfiguration().setWorkerPool(property(camelContext, java.util.concurrent.ExecutorService.class, value)); return true;
+        case "workerpoolcoresize":
+        case "workerPoolCoreSize": target.getConfiguration().setWorkerPoolCoreSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "workerpoolmaxsize":
+        case "workerPoolMaxSize": target.getConfiguration().setWorkerPoolMaxSize(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
     }

@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
-import org.apache.camel.impl.engine.EventDrivenConsumerRoute;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
@@ -67,7 +67,7 @@ public class ErrorHandlerTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
@@ -121,7 +121,7 @@ public class ErrorHandlerTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
             assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
@@ -150,7 +150,7 @@ public class ErrorHandlerTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
             Channel channel = unwrapChannel(processor);
 
@@ -178,7 +178,7 @@ public class ErrorHandlerTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            DefaultRoute consumerRoute = assertIsInstanceOf(DefaultRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());

@@ -15,22 +15,22 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WekaEndpoint target = (WekaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "apply": target.getConfiguration().setApply(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "apply": target.getConfiguration().setApply(property(camelContext, java.lang.String.class, value)); return true;
         case "build": target.getConfiguration().setBuild(property(camelContext, java.lang.String.class, value)); return true;
         case "dsname": target.getConfiguration().setDsname(property(camelContext, java.lang.String.class, value)); return true;
         case "folds": target.getConfiguration().setFolds(property(camelContext, int.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "loadfrom":
         case "loadFrom": target.getConfiguration().setLoadFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "path": target.getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "saveto":
         case "saveTo": target.getConfiguration().setSaveTo(property(camelContext, java.lang.String.class, value)); return true;
         case "seed": target.getConfiguration().setSeed(property(camelContext, int.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "xval": target.getConfiguration().setXval(property(camelContext, boolean.class, value)); return true;
-        case "path": target.getConfiguration().setPath(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

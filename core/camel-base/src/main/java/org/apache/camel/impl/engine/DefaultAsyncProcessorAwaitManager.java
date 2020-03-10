@@ -33,8 +33,7 @@ import org.apache.camel.StaticService;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceSupport;
@@ -308,13 +307,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String getRouteId() {
-            // compute route id
-            UnitOfWork uow = exchange.getUnitOfWork();
-            RouteContext rc = uow != null ? uow.getRouteContext() : null;
-            if (rc != null) {
-                return rc.getRouteId();
-            }
-            return null;
+            return ExchangeHelper.getAtRouteId(exchange);
         }
 
         @Override

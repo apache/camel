@@ -15,16 +15,16 @@ public class GuavaEventBusComponentConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GuavaEventBusComponent target = (GuavaEventBusComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "eventbus":
-        case "eventBus": target.setEventBus(property(camelContext, com.google.common.eventbus.EventBus.class, value)); return true;
-        case "listenerinterface":
-        case "listenerInterface": target.setListenerInterface(property(camelContext, java.lang.Class.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "eventbus":
+        case "eventBus": target.setEventBus(property(camelContext, com.google.common.eventbus.EventBus.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "listenerinterface":
+        case "listenerInterface": target.setListenerInterface(property(camelContext, java.lang.Class.class, value)); return true;
         default: return false;
         }
     }

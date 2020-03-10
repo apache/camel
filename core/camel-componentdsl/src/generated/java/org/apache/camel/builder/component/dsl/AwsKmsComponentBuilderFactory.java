@@ -58,6 +58,32 @@ public interface AwsKmsComponentBuilderFactory {
             return this;
         }
         /**
+         * The Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder configuration(
+                org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS KMS as client.
+         * 
+         * The option is a: <code>com.amazonaws.services.kms.AWSKMS</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder kmsClient(
+                com.amazonaws.services.kms.AWSKMS kmsClient) {
+            doSetProperty("kmsClient", kmsClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -79,7 +105,58 @@ public interface AwsKmsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which KMS client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.kms.KMSOperations</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder operation(
+                org.apache.camel.component.aws.kms.KMSOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the KMS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the KMS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the KMS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsKmsComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which KMS client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -114,20 +191,6 @@ public interface AwsKmsComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS KMS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsKmsComponentBuilder configuration(
-                org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsKmsComponentBuilderImpl
@@ -139,18 +202,30 @@ public interface AwsKmsComponentBuilderFactory {
         protected KMSComponent buildConcreteComponent() {
             return new KMSComponent();
         }
+        private org.apache.camel.component.aws.kms.KMSConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.kms.KMSComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.kms.KMSConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((KMSComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((KMSComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((KMSComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((KMSComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((KMSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((KMSComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((KMSComponent) component).setConfiguration((org.apache.camel.component.aws.kms.KMSConfiguration) value); return true;
+            case "kmsClient": getOrCreateConfiguration((KMSComponent) component).setKmsClient((com.amazonaws.services.kms.AWSKMS) value); return true;
+            case "lazyStartProducer": ((KMSComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((KMSComponent) component).setOperation((org.apache.camel.component.aws.kms.KMSOperations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((KMSComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((KMSComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((KMSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((KMSComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((KMSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((KMSComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

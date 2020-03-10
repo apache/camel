@@ -32,19 +32,26 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS DynamoDB Streams component supports 6 options, which are listed below.
+The AWS DynamoDB Streams component supports 13 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (consumer) | Amazon AWS Access Key |  | String
+| *amazonDynamoDbStreamsClient* (consumer) | Amazon DynamoDB client to use for all requests for this endpoint |  | AmazonDynamoDBStreams
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *region* (consumer) | Amazon AWS Region |  | String
-| *secretKey* (consumer) | Amazon AWS Secret Key |  | String
+| *configuration* (consumer) | The component configuration |  | DdbStreamConfiguration
+| *iteratorType* (consumer) | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. The value can be one of: TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER | LATEST | ShardIteratorType
+| *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll |  | int
+| *proxyHost* (consumer) | To define a proxy host when instantiating the DDBStreams client |  | String
+| *proxyPort* (consumer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
+| *proxyProtocol* (consumer) | To define a proxy protocol when instantiating the DDBStreams client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (consumer) | The region in which DDBStreams client needs to work |  | String
+| *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | The AWS DDB stream default configuration |  | DdbStreamConfiguration
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
 

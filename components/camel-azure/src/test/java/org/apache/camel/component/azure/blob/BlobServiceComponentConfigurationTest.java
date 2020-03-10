@@ -119,38 +119,7 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         assertTrue(endpoint.getConfiguration().isPublicForRead());
         assertFalse(endpoint.getConfiguration().isUseFlatListing());
     }
-    
-    @Test
-    public void testNoClientAndCredentials() throws Exception {
-        try {
-            context.getEndpoint("azure-blob://camelazure/container/blob");
-            fail();
-        } catch (Exception ex) {
-            assertEquals("Credentials must be specified.", ex.getCause().getMessage());
-        }
-    }
-    @Test
-    public void testNoClientAndCredentialsPublicForRead() throws Exception {
-        BlobServiceEndpoint endpoint =
-            (BlobServiceEndpoint) context.getEndpoint("azure-blob://camelazure/container/blob?publicForRead=true");
-        assertTrue(endpoint.getConfiguration().isPublicForRead());
-    }
-    
-    @Test
-    public void testClientWithoutCredentials() throws Exception {
-        CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
-        
-        doTestClientWithoutCredentials(client);
-    }
-    @Test
-    public void testClientWithoutAnonymousCredentials() throws Exception {
-        CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"),
-                               StorageCredentialsAnonymous.ANONYMOUS);
-        
-        doTestClientWithoutCredentials(client);
-    }
+
     @Test
     public void testClientWithoutCredentialsPublicRead() throws Exception {
         CloudBlockBlob client = 

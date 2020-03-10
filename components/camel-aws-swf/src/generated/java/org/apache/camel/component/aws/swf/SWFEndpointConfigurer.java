@@ -15,33 +15,8 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SWFEndpoint target = (SWFEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "amazonswclient":
-        case "amazonSWClient": target.getConfiguration().setAmazonSWClient(property(camelContext, com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class, value)); return true;
-        case "dataconverter":
-        case "dataConverter": target.getConfiguration().setDataConverter(property(camelContext, com.amazonaws.services.simpleworkflow.flow.DataConverter.class, value)); return true;
-        case "domainname":
-        case "domainName": target.getConfiguration().setDomainName(property(camelContext, java.lang.String.class, value)); return true;
-        case "eventname":
-        case "eventName": target.getConfiguration().setEventName(property(camelContext, java.lang.String.class, value)); return true;
-        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "version": target.getConfiguration().setVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "clientconfigurationparameters":
-        case "clientConfigurationParameters": target.getConfiguration().setClientConfigurationParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "startworkflowoptionsparameters":
-        case "startWorkflowOptionsParameters": target.getConfiguration().setStartWorkflowOptionsParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "swclientparameters":
-        case "sWClientParameters": target.getConfiguration().setSWClientParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "activitylist":
         case "activityList": target.getConfiguration().setActivityList(property(camelContext, java.lang.String.class, value)); return true;
         case "activityschedulingoptions":
@@ -52,29 +27,54 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "activityTypeExecutionOptions": target.getConfiguration().setActivityTypeExecutionOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions.class, value)); return true;
         case "activitytyperegistrationoptions":
         case "activityTypeRegistrationOptions": target.getConfiguration().setActivityTypeRegistrationOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class, value)); return true;
+        case "amazonswclient":
+        case "amazonSWClient": target.getConfiguration().setAmazonSWClient(property(camelContext, com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "childpolicy":
         case "childPolicy": target.getConfiguration().setChildPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientconfigurationparameters":
+        case "clientConfigurationParameters": target.getConfiguration().setClientConfigurationParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "dataconverter":
+        case "dataConverter": target.getConfiguration().setDataConverter(property(camelContext, com.amazonaws.services.simpleworkflow.flow.DataConverter.class, value)); return true;
+        case "domainname":
+        case "domainName": target.getConfiguration().setDomainName(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventname":
+        case "eventName": target.getConfiguration().setEventName(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "executionstarttoclosetimeout":
         case "executionStartToCloseTimeout": target.getConfiguration().setExecutionStartToCloseTimeout(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "swclientparameters":
+        case "sWClientParameters": target.getConfiguration().setSWClientParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "secretkey":
+        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "signalname":
         case "signalName": target.getConfiguration().setSignalName(property(camelContext, java.lang.String.class, value)); return true;
+        case "startworkflowoptionsparameters":
+        case "startWorkflowOptionsParameters": target.getConfiguration().setStartWorkflowOptionsParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "stateresulttype":
         case "stateResultType": target.getConfiguration().setStateResultType(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "taskstarttoclosetimeout":
         case "taskStartToCloseTimeout": target.getConfiguration().setTaskStartToCloseTimeout(property(camelContext, java.lang.String.class, value)); return true;
         case "terminationdetails":
         case "terminationDetails": target.getConfiguration().setTerminationDetails(property(camelContext, java.lang.String.class, value)); return true;
         case "terminationreason":
         case "terminationReason": target.getConfiguration().setTerminationReason(property(camelContext, java.lang.String.class, value)); return true;
+        case "version": target.getConfiguration().setVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "workflowlist":
         case "workflowList": target.getConfiguration().setWorkflowList(property(camelContext, java.lang.String.class, value)); return true;
         case "workflowtyperegistrationoptions":
         case "workflowTypeRegistrationOptions": target.getConfiguration().setWorkflowTypeRegistrationOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class, value)); return true;
-        case "accesskey":
-        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "secretkey":
-        case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

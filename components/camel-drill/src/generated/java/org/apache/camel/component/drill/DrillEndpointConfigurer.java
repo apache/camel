@@ -15,6 +15,8 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DrillEndpoint target = (DrillEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clusterid":
         case "clusterId": target.setClusterId(property(camelContext, java.lang.String.class, value)); return true;
         case "directory": target.setDirectory(property(camelContext, java.lang.String.class, value)); return true;
@@ -22,8 +24,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mode": target.setMode(property(camelContext, org.apache.camel.component.drill.DrillConnectionMode.class, value)); return true;
         case "port": target.setPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

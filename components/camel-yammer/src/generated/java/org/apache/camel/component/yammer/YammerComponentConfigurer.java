@@ -11,24 +11,42 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class YammerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.yammer.YammerConfiguration getOrCreateConfiguration(YammerComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.yammer.YammerConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         YammerComponent target = (YammerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "config": target.setConfig(property(camelContext, org.apache.camel.component.yammer.YammerConfiguration.class, value)); return true;
-        case "requestor": target.setRequestor(property(camelContext, org.apache.camel.component.yammer.ApiRequestor.class, value)); return true;
-        case "accesstoken":
-        case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.yammer.YammerConfiguration.class, value)); return true;
         case "consumerkey":
-        case "consumerKey": target.setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerKey": getOrCreateConfiguration(target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
         case "consumersecret":
-        case "consumerSecret": target.setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "consumerSecret": getOrCreateConfiguration(target).setConsumerSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "delay": getOrCreateConfiguration(target).setDelay(property(camelContext, long.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "limit": getOrCreateConfiguration(target).setLimit(property(camelContext, int.class, value)); return true;
+        case "newerthan":
+        case "newerThan": getOrCreateConfiguration(target).setNewerThan(property(camelContext, long.class, value)); return true;
+        case "olderthan":
+        case "olderThan": getOrCreateConfiguration(target).setOlderThan(property(camelContext, long.class, value)); return true;
+        case "requestor": getOrCreateConfiguration(target).setRequestor(property(camelContext, org.apache.camel.component.yammer.ApiRequestor.class, value)); return true;
+        case "threaded": getOrCreateConfiguration(target).setThreaded(property(camelContext, java.lang.String.class, value)); return true;
+        case "usejson":
+        case "useJson": getOrCreateConfiguration(target).setUseJson(property(camelContext, boolean.class, value)); return true;
+        case "userid":
+        case "userId": getOrCreateConfiguration(target).setUserId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

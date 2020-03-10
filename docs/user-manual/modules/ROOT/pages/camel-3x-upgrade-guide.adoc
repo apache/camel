@@ -426,6 +426,11 @@ Should now be:
 The class `org.apache.camel.model.ModelHelper` has been removed. Instead you can use its functionality from `ExtendedCamelContext` by
 the `getModelToXMLDumper` and `getXMLRoutesDefinitionLoader` methods which has APIs similar to `ModelHelper`.
 
+==== JsonSchemaHelper removed
+
+The class `org.apache.camel.tooling.util.JSonSchemaHelper` has been removed. Instead you can use utils coming from camel-util-json
+and the class `org.apache.camel.tooling.util.PackageHelper`
+
 ==== camel-xml-jaxp
 
 The class `org.apache.camel.processor.validation.PredicateValidatingProcessor` has moved from `camel-xml-jaxp` JAR
@@ -518,3 +523,154 @@ setting the value to -1. One of the optimizations is that new endpoints will not
 but discarded after use. This avoids storing additional endpoints in the cache (memory) as the cache should be disabled (cacheSize=-1).
 
 See more details in the documentation for the `cacheSize` option on the EIPs.
+
+=== Configuring components via Java setters
+
+Configuring Camel components from plain Java code has changed in some components where they were using
+delegate setters for a nested configuration class. These delegates has been removed, to ensure configuration
+is more consistent and aligned with how endpoints is configured as well, and by using source code generated configurer classes.
+
+The following Camel components has been affected and changed on the component level:
+
+- camel-aws
+- camel-aws2
+- camel-consul
+- camel-etcd
+- camel-infinispan
+- camel-kafka
+- camel-servicenow
+- camel-ssh
+- camel-stomp
+- camel-xmlsecurity
+- camel-yammer
+
+This only affects if you are configuring these components using Java code or XML `<bean>` style.
+
+For example
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.setBrokers("mybroker1:1234,mybroker2:1234");
+----
+
+Should now be:
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.getConfiguration().setBrokers("mybroker1:1234,mybroker2:1234");
+----
+
+And in XML:
+
+[source,xml]
+----
+<bean id="kafka" class="org.apache.camel.component.kafka.KafkaComponent">
+  <property name="brokers" value="mybroker1:1234,mybroker2:1234"/>
+</bean>
+----
+
+Should now be:
+
+[source,xml]
+----
+<bean id="kafka" class="org.apache.camel.component.kafka.KafkaComponent">
+  <property name="configuration">
+    <property name="brokers" value="mybroker1:1234,mybroker2:1234"/>
+  </property>
+</bean>
+----
+
+=== Configuring components via Spring Boot auto configuration
+
+Configuring Camel spring boot components has changed its option keys to be flattened and have the `.configuration` prefix
+removed now.
+
+Before in application.properties
+
+[source,properties]
+----
+camel.component.kafka.configuration.brokers=mybroker1:1234,mybroker2:1234
+----
+
+Should now be
+[source,properties]
+----
+camel.component.kafka.brokers=mybroker1:1234,mybroker2:1234
+----
+
+This applies to all the Camel spring boot _starter_ JARs where basically `.configuration` should be removed.
+
+=== Configuring camel-activemq, camel-amqp and camel-stomp via Spring Boot auto configuration
+
+When configuring these components from spring boot auto-configuration then the URL for the broker was named `broker-u-r-l`
+in the spring boot auto configuration support. This has been renamed to `broker-url` and a few other options too.
+
+Before:
+
+[source,properties]
+----
+camel.component.activemq.broker-u-r-l=tcp://localhost:61616
+----
+
+After:
+
+[source,properties]
+----
+camel.component.activemq.broker-url=tcp://localhost:61616
+----
+
+=== camel-infinispan
+
+Camel now requires endpoint URIs to include context-path which means
+the endpoint URI `infinispan` should be changed to `infinispan:current`.
+
+=== google-pubnub
+
+The google-pubnub component has been improved to use a new Java library and become faster.
+
+Support for Apache Karaf has been removed.
+
+=== Endpoint URIs without context path
+
+Previously Camel components may work by referring to their name only without a colon and context path (eg `log`)
+that for a few components would allow them to create an endpoint anyway.
+
+Now this is not allowed and Camel will throw an `NoSuchEndpointException`.
+
+An endpoint by its logical id can still be referred by the id only, eg
+[source,java]
+----
+Endpoint endpoint = camelContext.getEndpoint("myCoolEndpoint");
+----
+
+=== Error handling
+
+The context scope error handling has been modified a bit.  The processors in those `onException` and
+`onCompletion` are not shared between routes anymore.  This should have little effect in most cases.
+If there is a need to have a single set of processors involved (such as when using a loadbalancer or
+other stateful patterns), then an intermediary route needs to be used. The following exerpt:
+```
+onException(Exception.class).handled(true)
+    .loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+```
+needs to be rewritten as:
+```
+onException(Exception.class).handled(true).to("direct:error");
+from("direct:error").loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+```
+
+=== API changes
+
+==== DefaultComponent
+
+The deprecated method `preProcessUri` has been removed.
+
+==== CamelContext
+
+The method `getEndpoint` now throws `NoSuchEndpointException` directly instead of being wrapped
+within an `FailedToResolveEndpoint`.
+

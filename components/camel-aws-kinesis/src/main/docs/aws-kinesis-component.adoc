@@ -31,20 +31,29 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS Kinesis component supports 7 options, which are listed below.
+The AWS Kinesis component supports 16 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (common) | Amazon AWS Access Key |  | String
-| *region* (common) | Amazon AWS Region |  | String
-| *secretKey* (common) | Amazon AWS Secret Key |  | String
+| *amazonKinesisClient* (common) | Amazon Kinesis client to use for all requests for this endpoint |  | AmazonKinesis
+| *configuration* (common) | The component configuration |  | KinesisConfiguration
+| *proxyHost* (common) | To define a proxy host when instantiating the Kinesis client |  | String
+| *proxyPort* (common) | To define a proxy port when instantiating the Kinesis client |  | Integer
+| *proxyProtocol* (common) | To define a proxy protocol when instantiating the Kinesis client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (common) | The region in which Kinesis client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *iteratorType* (consumer) | Defines where in the Kinesis stream to start getting records. The value can be one of: AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, TRIM_HORIZON, LATEST, AT_TIMESTAMP | TRIM_HORIZON | ShardIteratorType
+| *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll | 1 | int
+| *sequenceNumber* (consumer) | The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER |  | String
+| *shardClosed* (consumer) | Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail. In case of ignore a message will be logged and the consumer will restart from the beginning,in case of silent there will be no logging and the consumer will start from the beginning,in case of fail a ReachedClosedStateException will be raised. The value can be one of: ignore, fail, silent | ignore | KinesisShardClosedStrategyEnum
+| *shardId* (consumer) | Defines which shardId in the Kinesis stream to get records from |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | The AWS S3 default configuration |  | KinesisConfiguration
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
 

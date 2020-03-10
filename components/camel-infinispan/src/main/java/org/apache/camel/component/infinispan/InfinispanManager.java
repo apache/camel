@@ -36,6 +36,9 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
+
 public class InfinispanManager extends ServiceSupport {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanManager.class);
 
@@ -154,7 +157,7 @@ public class InfinispanManager extends ServiceSupport {
 
     public <K, V> BasicCache<K, V> getCache(String cacheName) {
         BasicCache<K, V> cache;
-        if (ObjectHelper.isEmpty(cacheName)) {
+        if (ObjectHelper.isEmpty(cacheName) || CACHE_MANAGER_CURRENT.equals(cacheName)) {
             cache = cacheContainer.getCache();
             cacheName = cache.getName();
         } else {

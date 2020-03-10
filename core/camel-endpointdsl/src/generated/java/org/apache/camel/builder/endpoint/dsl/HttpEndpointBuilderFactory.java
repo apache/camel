@@ -265,9 +265,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Defines a custom host header which will be sent when producing http
-         * request. When not set in query will be ignored. When set will
-         * override host header derived from url. Default: null.
+         * To use custom host header for producer. When not set in query will be
+         * ignored. When set will override host header derived from url.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -728,7 +727,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or org.apache.http.conn.ssl.NoopHostnameVerifier .
+         * or NoopHostnameVerifier.
          * 
          * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
          * 
@@ -741,7 +740,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
-         * or org.apache.http.conn.ssl.NoopHostnameVerifier .
+         * or NoopHostnameVerifier.
          * 
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.

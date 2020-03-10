@@ -17,6 +17,10 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "beanrowmapper":
+        case "beanRowMapper": target.setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outputclass":
@@ -24,10 +28,13 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "outputtype":
         case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.jdbc.JdbcOutputType.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "preparestatementstrategy":
+        case "prepareStatementStrategy": target.setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class, value)); return true;
         case "readsize":
         case "readSize": target.setReadSize(property(camelContext, int.class, value)); return true;
         case "resetautocommit":
         case "resetAutoCommit": target.setResetAutoCommit(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
         case "usegetbytesforblob":
         case "useGetBytesForBlob": target.setUseGetBytesForBlob(property(camelContext, boolean.class, value)); return true;
@@ -35,13 +42,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "useHeadersAsParameters": target.setUseHeadersAsParameters(property(camelContext, boolean.class, value)); return true;
         case "usejdbc4columnnameandlabelsemantics":
         case "useJDBC4ColumnNameAndLabelSemantics": target.setUseJDBC4ColumnNameAndLabelSemantics(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "beanrowmapper":
-        case "beanRowMapper": target.setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
-        case "preparestatementstrategy":
-        case "prepareStatementStrategy": target.setPrepareStatementStrategy(property(camelContext, org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

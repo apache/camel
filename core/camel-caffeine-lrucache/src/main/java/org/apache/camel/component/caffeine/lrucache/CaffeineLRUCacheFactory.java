@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.ThreadHelper;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Factory to create {@link CaffeineLRUCache} instances.
  */
+@JdkService(LRUCacheFactory.FACTORY)
 public final class CaffeineLRUCacheFactory extends LRUCacheFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(CaffeineLRUCacheFactory.class);

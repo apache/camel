@@ -598,6 +598,146 @@ public interface SqsEndpointBuilderFactory {
             return this;
         }
         /**
+         * To define a proxy host when instantiating the SQS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default SqsEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SQS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default SqsEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SQS client.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default SqsEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The maximumMessageSize (in bytes) an SQS message can contain for this
+         * queue.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder maximumMessageSize(
+                Integer maximumMessageSize) {
+            doSetProperty("maximumMessageSize", maximumMessageSize);
+            return this;
+        }
+        /**
+         * The maximumMessageSize (in bytes) an SQS message can contain for this
+         * queue.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder maximumMessageSize(
+                String maximumMessageSize) {
+            doSetProperty("maximumMessageSize", maximumMessageSize);
+            return this;
+        }
+        /**
+         * The messageRetentionPeriod (in seconds) a message will be retained by
+         * SQS for this queue.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder messageRetentionPeriod(
+                Integer messageRetentionPeriod) {
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
+            return this;
+        }
+        /**
+         * The messageRetentionPeriod (in seconds) a message will be retained by
+         * SQS for this queue.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder messageRetentionPeriod(
+                String messageRetentionPeriod) {
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
+            return this;
+        }
+        /**
+         * The policy for this queue.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder policy(String policy) {
+            doSetProperty("policy", policy);
+            return this;
+        }
+        /**
+         * If you do not specify WaitTimeSeconds in the request, the queue
+         * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
+         * to wait.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
+                Integer receiveMessageWaitTimeSeconds) {
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            return this;
+        }
+        /**
+         * If you do not specify WaitTimeSeconds in the request, the queue
+         * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
+         * to wait.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
+                String receiveMessageWaitTimeSeconds) {
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            return this;
+        }
+        /**
+         * Specify the policy that send message to DeadLetter queue. See detail
+         * at Amazon docs.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: queue
+         */
+        default SqsEndpointConsumerBuilder redrivePolicy(String redrivePolicy) {
+            doSetProperty("redrivePolicy", redrivePolicy);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -967,146 +1107,6 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
-            return this;
-        }
-        /**
-         * To define a proxy host when instantiating the SQS client.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: proxy
-         */
-        default SqsEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the SQS client.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: proxy
-         */
-        default SqsEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * To define a proxy port when instantiating the SQS client.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: proxy
-         */
-        default SqsEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
-            return this;
-        }
-        /**
-         * The maximumMessageSize (in bytes) an SQS message can contain for this
-         * queue.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder maximumMessageSize(
-                Integer maximumMessageSize) {
-            doSetProperty("maximumMessageSize", maximumMessageSize);
-            return this;
-        }
-        /**
-         * The maximumMessageSize (in bytes) an SQS message can contain for this
-         * queue.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder maximumMessageSize(
-                String maximumMessageSize) {
-            doSetProperty("maximumMessageSize", maximumMessageSize);
-            return this;
-        }
-        /**
-         * The messageRetentionPeriod (in seconds) a message will be retained by
-         * SQS for this queue.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder messageRetentionPeriod(
-                Integer messageRetentionPeriod) {
-            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
-            return this;
-        }
-        /**
-         * The messageRetentionPeriod (in seconds) a message will be retained by
-         * SQS for this queue.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder messageRetentionPeriod(
-                String messageRetentionPeriod) {
-            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
-            return this;
-        }
-        /**
-         * The policy for this queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder policy(String policy) {
-            doSetProperty("policy", policy);
-            return this;
-        }
-        /**
-         * If you do not specify WaitTimeSeconds in the request, the queue
-         * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
-         * to wait.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
-                Integer receiveMessageWaitTimeSeconds) {
-            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
-            return this;
-        }
-        /**
-         * If you do not specify WaitTimeSeconds in the request, the queue
-         * attribute ReceiveMessageWaitTimeSeconds is used to determine how long
-         * to wait.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
-                String receiveMessageWaitTimeSeconds) {
-            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
-            return this;
-        }
-        /**
-         * Specify the policy that send message to DeadLetter queue. See detail
-         * at Amazon docs.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: queue
-         */
-        default SqsEndpointConsumerBuilder redrivePolicy(String redrivePolicy) {
-            doSetProperty("redrivePolicy", redrivePolicy);
             return this;
         }
         /**
@@ -2357,8 +2357,8 @@ public interface SqsEndpointBuilderFactory {
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     /**

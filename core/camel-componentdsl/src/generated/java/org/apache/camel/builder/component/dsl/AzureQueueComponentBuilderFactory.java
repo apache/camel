@@ -51,6 +51,32 @@ public interface AzureQueueComponentBuilderFactory {
             extends
                 ComponentBuilder<QueueServiceComponent> {
         /**
+         * The queue service client.
+         * 
+         * The option is a:
+         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * 
+         * Group: common
+         */
+        default AzureQueueComponentBuilder azureQueueClient(
+                com.microsoft.azure.storage.queue.CloudQueue azureQueueClient) {
+            doSetProperty("azureQueueClient", azureQueueClient);
+            return this;
+        }
+        /**
+         * Set the storage credentials, required in most cases.
+         * 
+         * The option is a:
+         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * 
+         * Group: common
+         */
+        default AzureQueueComponentBuilder credentials(
+                com.microsoft.azure.storage.StorageCredentials credentials) {
+            doSetProperty("credentials", credentials);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -91,6 +117,56 @@ public interface AzureQueueComponentBuilderFactory {
             return this;
         }
         /**
+         * Message Time To Live in seconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureQueueComponentBuilder messageTimeToLive(
+                int messageTimeToLive) {
+            doSetProperty("messageTimeToLive", messageTimeToLive);
+            return this;
+        }
+        /**
+         * Message Visibility Delay in seconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureQueueComponentBuilder messageVisibilityDelay(
+                int messageVisibilityDelay) {
+            doSetProperty("messageVisibilityDelay", messageVisibilityDelay);
+            return this;
+        }
+        /**
+         * Queue service operation hint to the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
+         * 
+         * Default: listQueues
+         * Group: producer
+         */
+        default AzureQueueComponentBuilder operation(
+                org.apache.camel.component.azure.queue.QueueServiceOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set a prefix which can be used for listing the queues.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AzureQueueComponentBuilder queuePrefix(
+                java.lang.String queuePrefix) {
+            doSetProperty("queuePrefix", queuePrefix);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -117,6 +193,30 @@ public interface AzureQueueComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureQueueComponentBuilder credentialsAccountKey(
+                java.lang.String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureQueueComponentBuilder credentialsAccountName(
+                java.lang.String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
+            return this;
+        }
     }
 
     class AzureQueueComponentBuilderImpl
@@ -128,16 +228,31 @@ public interface AzureQueueComponentBuilderFactory {
         protected QueueServiceComponent buildConcreteComponent() {
             return new QueueServiceComponent();
         }
+        private org.apache.camel.component.azure.queue.QueueServiceConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.azure.queue.QueueServiceComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.azure.queue.QueueServiceConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "azureQueueClient": getOrCreateConfiguration((QueueServiceComponent) component).setAzureQueueClient((com.microsoft.azure.storage.queue.CloudQueue) value); return true;
+            case "credentials": getOrCreateConfiguration((QueueServiceComponent) component).setCredentials((com.microsoft.azure.storage.StorageCredentials) value); return true;
             case "bridgeErrorHandler": ((QueueServiceComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((QueueServiceComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "messageTimeToLive": getOrCreateConfiguration((QueueServiceComponent) component).setMessageTimeToLive((int) value); return true;
+            case "messageVisibilityDelay": getOrCreateConfiguration((QueueServiceComponent) component).setMessageVisibilityDelay((int) value); return true;
+            case "operation": getOrCreateConfiguration((QueueServiceComponent) component).setOperation((org.apache.camel.component.azure.queue.QueueServiceOperations) value); return true;
+            case "queuePrefix": getOrCreateConfiguration((QueueServiceComponent) component).setQueuePrefix((java.lang.String) value); return true;
             case "basicPropertyBinding": ((QueueServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((QueueServiceComponent) component).setConfiguration((org.apache.camel.component.azure.queue.QueueServiceConfiguration) value); return true;
+            case "credentialsAccountKey": getOrCreateConfiguration((QueueServiceComponent) component).setCredentialsAccountKey((java.lang.String) value); return true;
+            case "credentialsAccountName": getOrCreateConfiguration((QueueServiceComponent) component).setCredentialsAccountName((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -22,6 +22,11 @@ package org.apache.camel.spi;
 public interface ReactiveExecutor {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "reactive-executor";
+
+    /**
      * Schedules the task to be run
      *
      * @param runnable    the task

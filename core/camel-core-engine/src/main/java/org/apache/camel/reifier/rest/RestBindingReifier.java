@@ -22,21 +22,21 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.PropertyBindingSupport;
 
 public class RestBindingReifier extends AbstractReifier {
 
     private final RestBindingDefinition definition;
 
-    public RestBindingReifier(RouteContext routeContext, RestBindingDefinition definition) {
-        super(routeContext);
+    public RestBindingReifier(Route route, RestBindingDefinition definition) {
+        super(route);
         this.definition = definition;
     }
 
@@ -79,7 +79,7 @@ public class RestBindingReifier extends AbstractReifier {
             String name = config.getJsonDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
-                Object instance = camelContext.getRegistry().lookupByName(name);
+                Object instance = lookupByName(name);
                 if (instance != null) {
                     throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
                 }
@@ -103,7 +103,7 @@ public class RestBindingReifier extends AbstractReifier {
             String name = config.getXmlDataFormat();
             if (name != null) {
                 // must only be a name, not refer to an existing instance
-                Object instance = camelContext.getRegistry().lookupByName(name);
+                Object instance = lookupByName(name);
                 if (instance != null) {
                     throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
                 }

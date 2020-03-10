@@ -11,17 +11,45 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.olingo2.Olingo2Configuration getOrCreateConfiguration(Olingo2Component target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.olingo2.Olingo2Configuration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Olingo2Component target = (Olingo2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.olingo2.Olingo2Configuration.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.olingo2.Olingo2Configuration.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": getOrCreateConfiguration(target).setConnectTimeout(property(camelContext, int.class, value)); return true;
+        case "contenttype":
+        case "contentType": getOrCreateConfiguration(target).setContentType(property(camelContext, java.lang.String.class, value)); return true;
+        case "filteralreadyseen":
+        case "filterAlreadySeen": getOrCreateConfiguration(target).setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
+        case "httpasyncclientbuilder":
+        case "httpAsyncClientBuilder": getOrCreateConfiguration(target).setHttpAsyncClientBuilder(property(camelContext, org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class, value)); return true;
+        case "httpclientbuilder":
+        case "httpClientBuilder": getOrCreateConfiguration(target).setHttpClientBuilder(property(camelContext, org.apache.http.impl.client.HttpClientBuilder.class, value)); return true;
+        case "httpheaders":
+        case "httpHeaders": getOrCreateConfiguration(target).setHttpHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "proxy": getOrCreateConfiguration(target).setProxy(property(camelContext, org.apache.http.HttpHost.class, value)); return true;
+        case "serviceuri":
+        case "serviceUri": getOrCreateConfiguration(target).setServiceUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "sockettimeout":
+        case "socketTimeout": getOrCreateConfiguration(target).setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "splitresult":
+        case "splitResult": getOrCreateConfiguration(target).setSplitResult(property(camelContext, boolean.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;

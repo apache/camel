@@ -72,15 +72,52 @@ public class NormalizeUriTest {
     }
 
     @Benchmark
-    public void benchmark(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
+    public void benchmarkMixed(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
+        // fast
+        bh.consume(URISupport.normalizeUri("log:foo?level=INFO&logMask=false&exchangeFormatter=#myFormatter"));
+        // slow
+        bh.consume(URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen"));
+        // fast
+        bh.consume(URISupport.normalizeUri("file:target/inbox?recursive=true"));
+        // slow
+        bh.consume(URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen"));
+        // fast
+        bh.consume(URISupport.normalizeUri("seda:foo?concurrentConsumer=2"));
+        // slow
+        bh.consume(URISupport.normalizeUri("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us@r"));
+        // fast
+        bh.consume(URISupport.normalizeUri("http:www.google.com?q=Camel"));
+        // slow
+        bh.consume(URISupport.normalizeUri("ftp://us@r:t%25st@localhost:21000/tmp3/camel?foo=us@r"));
+    }
+
+    @Benchmark
+    public void benchmarkFast(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
         bh.consume(URISupport.normalizeUri("log:foo"));
         bh.consume(URISupport.normalizeUri("log:foo?level=INFO&logMask=false&exchangeFormatter=#myFormatter"));
+        bh.consume(URISupport.normalizeUri("file:target/inbox?recursive=true"));
         bh.consume(URISupport.normalizeUri("smtp://localhost?password=secret&username=davsclaus"));
         bh.consume(URISupport.normalizeUri("seda:foo?concurrentConsumer=2"));
         bh.consume(URISupport.normalizeUri("irc:someserver/#camel?user=davsclaus"));
         bh.consume(URISupport.normalizeUri("http:www.google.com?q=Camel"));
-        bh.consume(URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen"));
         bh.consume(URISupport.normalizeUri("smtp://localhost?to=foo&to=bar&from=me&from=you"));
+    }
+
+    @Benchmark
+    public void benchmarkFastSorted(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
+        bh.consume(URISupport.normalizeUri("log:foo"));
+        bh.consume(URISupport.normalizeUri("log:foo?exchangeFormatter=#myFormatter&level=INFO&logMask=false"));
+        bh.consume(URISupport.normalizeUri("file:target/inbox?recursive=true"));
+        bh.consume(URISupport.normalizeUri("smtp://localhost?username=davsclaus&password=secret"));
+        bh.consume(URISupport.normalizeUri("seda:foo?concurrentConsumer=2"));
+        bh.consume(URISupport.normalizeUri("irc:someserver/#camel?user=davsclaus"));
+        bh.consume(URISupport.normalizeUri("http:www.google.com?q=Camel"));
+        bh.consume(URISupport.normalizeUri("smtp://localhost?&from=me&from=you&to=foo&to=bar"));
+    }
+
+    @Benchmark
+    public void benchmarkSlow(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
+        bh.consume(URISupport.normalizeUri("http://www.google.com?q=S%C3%B8ren%20Hansen"));
         bh.consume(URISupport.normalizeUri("ftp://us%40r:t%st@localhost:21000/tmp3/camel?foo=us@r"));
         bh.consume(URISupport.normalizeUri("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us@r"));
         bh.consume(URISupport.normalizeUri("ftp://us@r:t%st@localhost:21000/tmp3/camel?foo=us@r"));
@@ -88,12 +125,10 @@ public class NormalizeUriTest {
         bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat"));
         bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat"));
         bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat"));
-        bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat"));
-        bh.consume(URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat"));
     }
 
     @Benchmark
-    public void sorted(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
+    public void sorting(ContainsIgnoreCaseTest.BenchmarkState state, Blackhole bh) throws Exception {
         bh.consume(URISupport.normalizeUri("log:foo?zzz=123&xxx=222&hhh=444&aaa=tru&d=yes&cc=no&Camel=awesome&foo.hey=bar&foo.bar=blah"));
     }
 

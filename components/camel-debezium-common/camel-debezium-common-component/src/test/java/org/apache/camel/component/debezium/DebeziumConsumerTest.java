@@ -151,7 +151,7 @@ public class DebeziumConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("debezium")
+                from("debezium:dummy")
                         .to(to);
             }
         };

@@ -63,8 +63,8 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = JmsComponent.jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setErrorHandlerLogStackTrace(false);
-        jms.setErrorHandlerLoggingLevel(LoggingLevel.ERROR);
+        jms.getConfiguration().setErrorHandlerLogStackTrace(false);
+        jms.getConfiguration().setErrorHandlerLoggingLevel(LoggingLevel.ERROR);
         camelContext.addComponent("jms", jms);
 
         return camelContext;

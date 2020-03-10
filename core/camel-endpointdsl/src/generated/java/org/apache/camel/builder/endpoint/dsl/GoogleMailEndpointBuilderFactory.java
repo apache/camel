@@ -47,18 +47,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return (AdvancedGoogleMailEndpointConsumerBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointConsumerBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -82,18 +70,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the mail application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointConsumerBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -102,20 +78,6 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointConsumerBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -561,6 +523,44 @@ public interface GoogleMailEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointConsumerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the mail application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointConsumerBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointConsumerBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     /**
@@ -729,18 +729,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return (AdvancedGoogleMailEndpointProducerBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointProducerBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -764,18 +752,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the mail application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointProducerBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -784,20 +760,6 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointProducerBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -840,6 +802,44 @@ public interface GoogleMailEndpointBuilderFactory {
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointProducerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the mail application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointProducerBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointProducerBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }
@@ -922,18 +922,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return (AdvancedGoogleMailEndpointBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -956,17 +944,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the mail application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -978,13 +955,36 @@ public interface GoogleMailEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the mail application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailEndpointBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          */
         default GoogleMailEndpointBuilder refreshToken(String refreshToken) {
             doSetProperty("refreshToken", refreshToken);

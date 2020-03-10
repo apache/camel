@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
@@ -39,8 +40,9 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.FooBar;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Test;
@@ -53,8 +55,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = new DefaultRegistry();
         jndi.bind("myProp", myProp);
         jndi.bind("foo", new FooBar());
         return jndi;
@@ -342,8 +344,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         try {
             helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             fail("Should throw exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
+        } catch (NoSuchEndpointException e) {
+            // expected
         }
     }
 

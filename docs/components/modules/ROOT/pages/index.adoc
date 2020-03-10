@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 331 in 264 JAR artifacts (1 deprecated)
+Number of Components: 332 in 265 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -60,9 +60,9 @@ Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 
 | xref:aws2-iam-component.adoc[AWS 2 IAM] (camel-aws2-iam) | 3.1 | The aws2-iam is used for managing Amazon IAM
 
-| xref:aws2-kinesis-component.adoc[AWS 2 Kinesis] (camel-aws2-kinesis) | 3.2 | The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
+| xref:aws2-kinesis-component.adoc[AWS 2 Kinesis] (camel-aws2-kinesis) | 3.2 | The aws2-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
 
-| xref:aws2-kinesis-firehose-component.adoc[AWS 2 Kinesis Firehose] (camel-aws2-kinesis) | 3.2 | The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+| xref:aws2-kinesis-firehose-component.adoc[AWS 2 Kinesis Firehose] (camel-aws2-kinesis) | 3.2 | The aws2-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
 
 | xref:aws2-kms-component.adoc[AWS 2 KMS] (camel-aws2-kms) | 3.1 | The aws2-kms is used for managing Amazon KMS
 
@@ -119,6 +119,8 @@ Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 | xref:aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
 | xref:aws-translate-component.adoc[AWS Translate] (camel-aws-translate) | 3.0 | The aws-translate component is used for managing Amazon Translate
+
+| xref:aws2-s3-component.adoc[AWS2 S3 Storage Service] (camel-aws2-s3) | 3.2 | The aws2-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.
 
 | xref:azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
@@ -268,7 +270,7 @@ Number of Components: 331 in 264 JAR artifacts (1 deprecated)
 
 | xref:google-mail-stream-component.adoc[Google Mail Stream] (camel-google-mail) | 2.22 | The google-mail component provides access to Google Mail.
 
-| xref:google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) | 2.19 | Messaging client for Google Cloud Platform PubSub Service
+| xref:google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) | 2.19 | Messaging client for Google Cloud Platform PubSub Service Built on top of the Google Cloud Pub/Sub libraries.
 
 | xref:google-sheets-component.adoc[Google Sheets] (camel-google-sheets) | 2.23 | The google-sheets component provides access to Google Sheets.
 
@@ -789,15 +791,15 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 | xref:bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
-| xref:constant-language.adoc[Constant] (camel-base) | 1.5 | To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.
+| xref:constant-language.adoc[Constant] (camel-core-languages) | 1.5 | To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.
 
-| xref:exchangeProperty-language.adoc[ExchangeProperty] (camel-base) | 2.0 | To use a Camel Exchange property in expressions or predicates.
+| xref:exchangeProperty-language.adoc[ExchangeProperty] (camel-core-languages) | 2.0 | To use a Camel Exchange property in expressions or predicates.
 
-| xref:file-language.adoc[File] (camel-base) | 1.1 | For expressions and predicates using the file/simple language.
+| xref:file-language.adoc[File] (camel-core-languages) | 1.1 | For expressions and predicates using the file/simple language.
 
 | xref:groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | To use Groovy scripts in Camel expressions or predicates.
 
-| xref:header-language.adoc[Header] (camel-base) | 1.5 | To use a Camel Message header in expressions or predicates.
+| xref:header-language.adoc[Header] (camel-core-languages) | 1.5 | To use a Camel Message header in expressions or predicates.
 
 | xref:hl7terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
 
@@ -807,13 +809,13 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 | xref:ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
 
-| xref:ref-language.adoc[Ref] (camel-base) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
+| xref:ref-language.adoc[Ref] (camel-core-languages) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
 
-| xref:simple-language.adoc[Simple] (camel-base) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+| xref:simple-language.adoc[Simple] (camel-core-languages) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
 
 | xref:spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
 
-| xref:tokenize-language.adoc[Tokenize] (camel-base) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
+| xref:tokenize-language.adoc[Tokenize] (camel-core-languages) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
 | xref:xtokenize-language.adoc[XML Tokenize] (camel-xml-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
 

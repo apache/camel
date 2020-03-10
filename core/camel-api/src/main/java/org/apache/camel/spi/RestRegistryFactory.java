@@ -22,6 +22,11 @@ package org.apache.camel.spi;
 public interface RestRegistryFactory {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "rest-registry-factory";
+
+    /**
      * Create a new {@link RestRegistry}.
      */
     RestRegistry createRegistry();

@@ -44,7 +44,6 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PREFIX;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PROPERTY;

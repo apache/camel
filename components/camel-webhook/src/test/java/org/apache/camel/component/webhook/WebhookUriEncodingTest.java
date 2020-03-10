@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.webhook;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;

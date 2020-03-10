@@ -54,14 +54,14 @@ public class DefaultRouteError implements RouteError {
     public static void set(CamelContext context, String routeId, RouteError.Phase phase, Throwable throwable) {
         Route route = context.getRoute(routeId);
         if (route != null) {
-            route.getRouteContext().setLastError(new DefaultRouteError(phase, throwable));
+            route.setLastError(new DefaultRouteError(phase, throwable));
         }
     }
 
     public static void reset(CamelContext context, String routeId) {
         Route route = context.getRoute(routeId);
         if (route != null) {
-            route.getRouteContext().setLastError(null);
+            route.setLastError(null);
         }
     }
 }

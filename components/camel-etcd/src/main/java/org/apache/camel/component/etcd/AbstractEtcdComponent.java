@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.jsse.SSLContextParameters;
 
 public abstract class AbstractEtcdComponent extends DefaultComponent implements SSLContextParametersAware {
 
@@ -43,56 +42,13 @@ public abstract class AbstractEtcdComponent extends DefaultComponent implements 
     // Options
     // ************************************
 
-    public String getUris() {
-        return configuration.getUris();
-    }
-
-    /**
-     * To set the URIs the client connects.
-     */
-    public void setUris(String uris) {
-        configuration.setUris(uris);
-    }
-
-    public SSLContextParameters getSslContextParameters() {
-        return configuration.getSslContextParameters();
-    }
-
-    /**
-     * To configure security using SSLContextParameters.
-     */
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        configuration.setSslContextParameters(sslContextParameters);
-    }
-
-    public String getUserName() {
-        return configuration.getUserName();
-    }
-
-    /**
-     * The user name to use for basic authentication.
-     */
-    public void setUserName(String userName) {
-        configuration.setUserName(userName);
-    }
-
-    public String getPassword() {
-        return configuration.getPassword();
-    }
-
-    /**
-     * The password to use for basic authentication.
-     */
-    public void setPassword(String password) {
-        configuration.setPassword(password);
-    }
 
     public EtcdConfiguration getConfiguration() {
         return configuration;
     }
 
     /**
-     * Sets the common configuration shared among endpoints
+     * Component configuration.
      */
     public void setConfiguration(EtcdConfiguration configuration) {
         this.configuration = configuration;

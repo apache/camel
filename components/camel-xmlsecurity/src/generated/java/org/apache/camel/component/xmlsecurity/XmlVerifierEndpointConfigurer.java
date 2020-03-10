@@ -17,6 +17,8 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clearheaders":
         case "clearHeaders": target.getConfiguration().setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "cryptocontextproperties":
@@ -25,10 +27,10 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         case "disallowDoctypeDecl": target.getConfiguration().setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "keyselector":
         case "keySelector": target.getConfiguration().setKeySelector(property(camelContext, javax.xml.crypto.KeySelector.class, value)); return true;
-        case "omitxmldeclaration":
-        case "omitXmlDeclaration": target.getConfiguration().setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "omitxmldeclaration":
+        case "omitXmlDeclaration": target.getConfiguration().setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "outputnodesearch":
         case "outputNodeSearch": target.getConfiguration().setOutputNodeSearch(property(camelContext, java.lang.Object.class, value)); return true;
         case "outputnodesearchtype":
@@ -41,17 +43,15 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         case "schemaResourceUri": target.getConfiguration().setSchemaResourceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "securevalidation":
         case "secureValidation": target.getConfiguration().setSecureValidation(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "uridereferencer":
+        case "uriDereferencer": target.getConfiguration().setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
         case "validationfailedhandler":
         case "validationFailedHandler": target.getConfiguration().setValidationFailedHandler(property(camelContext, org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class, value)); return true;
         case "xmlsignature2message":
         case "xmlSignature2Message": target.getConfiguration().setXmlSignature2Message(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class, value)); return true;
         case "xmlsignaturechecker":
         case "xmlSignatureChecker": target.getConfiguration().setXmlSignatureChecker(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "uridereferencer":
-        case "uriDereferencer": target.getConfiguration().setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
         default: return false;
         }
     }

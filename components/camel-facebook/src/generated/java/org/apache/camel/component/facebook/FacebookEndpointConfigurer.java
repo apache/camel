@@ -23,6 +23,10 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "albumUpdate": target.getConfiguration().setAlbumUpdate(property(camelContext, facebook4j.AlbumUpdate.class, value)); return true;
         case "appid":
         case "appId": target.getConfiguration().setAppId(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "center": target.getConfiguration().setCenter(property(camelContext, facebook4j.GeoLocation.class, value)); return true;
         case "checkinid":
         case "checkinId": target.getConfiguration().setCheckinId(property(camelContext, java.lang.String.class, value)); return true;
@@ -50,14 +54,18 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "eventId": target.getConfiguration().setEventId(property(camelContext, java.lang.String.class, value)); return true;
         case "eventupdate":
         case "eventUpdate": target.getConfiguration().setEventUpdate(property(camelContext, facebook4j.EventUpdate.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "friendid":
         case "friendId": target.getConfiguration().setFriendId(property(camelContext, java.lang.String.class, value)); return true;
+        case "frienduserid":
+        case "friendUserId": target.getConfiguration().setFriendUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "friendlistid":
         case "friendlistId": target.getConfiguration().setFriendlistId(property(camelContext, java.lang.String.class, value)); return true;
         case "friendlistname":
         case "friendlistName": target.getConfiguration().setFriendlistName(property(camelContext, java.lang.String.class, value)); return true;
-        case "frienduserid":
-        case "friendUserId": target.getConfiguration().setFriendUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "groupid":
         case "groupId": target.getConfiguration().setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "gzipenabled":
@@ -68,6 +76,14 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "httpDefaultMaxPerRoute": target.getConfiguration().setHttpDefaultMaxPerRoute(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpmaxtotalconnections":
         case "httpMaxTotalConnections": target.getConfiguration().setHttpMaxTotalConnections(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpproxyhost":
+        case "httpProxyHost": target.getConfiguration().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxypassword":
+        case "httpProxyPassword": target.getConfiguration().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpproxyport":
+        case "httpProxyPort": target.getConfiguration().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpproxyuser":
+        case "httpProxyUser": target.getConfiguration().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
         case "httpreadtimeout":
         case "httpReadTimeout": target.getConfiguration().setHttpReadTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpretrycount":
@@ -85,6 +101,8 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "isHidden": target.getConfiguration().setIsHidden(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "jsonstoreenabled":
         case "jsonStoreEnabled": target.getConfiguration().setJsonStoreEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "link": target.getConfiguration().setLink(property(camelContext, java.net.URL.class, value)); return true;
         case "linkid":
         case "linkId": target.getConfiguration().setLinkId(property(camelContext, java.lang.String.class, value)); return true;
@@ -102,6 +120,18 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "noteId": target.getConfiguration().setNoteId(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationid":
         case "notificationId": target.getConfiguration().setNotificationId(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthaccesstoken":
+        case "oAuthAccessToken": target.getConfiguration().setOAuthAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthaccesstokenurl":
+        case "oAuthAccessTokenURL": target.getConfiguration().setOAuthAccessTokenURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthappid":
+        case "oAuthAppId": target.getConfiguration().setOAuthAppId(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthappsecret":
+        case "oAuthAppSecret": target.getConfiguration().setOAuthAppSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthauthorizationurl":
+        case "oAuthAuthorizationURL": target.getConfiguration().setOAuthAuthorizationURL(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthpermissions":
+        case "oAuthPermissions": target.getConfiguration().setOAuthPermissions(property(camelContext, java.lang.String.class, value)); return true;
         case "objectid":
         case "objectId": target.getConfiguration().setObjectId(property(camelContext, java.lang.String.class, value)); return true;
         case "offerid":
@@ -143,6 +173,7 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "size": target.getConfiguration().setSize(property(camelContext, facebook4j.PictureSize.class, value)); return true;
         case "source": target.getConfiguration().setSource(property(camelContext, facebook4j.Media.class, value)); return true;
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tabid":
         case "tabId": target.getConfiguration().setTabId(property(camelContext, java.lang.String.class, value)); return true;
         case "tagupdate":
@@ -158,6 +189,8 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "toUserId": target.getConfiguration().setToUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "touserids":
         case "toUserIds": target.getConfiguration().setToUserIds(property(camelContext, java.util.List.class, value)); return true;
+        case "usessl":
+        case "useSSL": target.getConfiguration().setUseSSL(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "userid":
         case "userId": target.getConfiguration().setUserId(property(camelContext, java.lang.String.class, value)); return true;
         case "userid1":
@@ -168,43 +201,10 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "userIds": target.getConfiguration().setUserIds(property(camelContext, java.util.List.class, value)); return true;
         case "userlocale":
         case "userLocale": target.getConfiguration().setUserLocale(property(camelContext, java.lang.String.class, value)); return true;
-        case "usessl":
-        case "useSSL": target.getConfiguration().setUseSSL(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "videobaseurl":
         case "videoBaseURL": target.getConfiguration().setVideoBaseURL(property(camelContext, java.lang.String.class, value)); return true;
         case "videoid":
         case "videoId": target.getConfiguration().setVideoId(property(camelContext, java.lang.String.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "httpproxyhost":
-        case "httpProxyHost": target.getConfiguration().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxypassword":
-        case "httpProxyPassword": target.getConfiguration().setHttpProxyPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpproxyport":
-        case "httpProxyPort": target.getConfiguration().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "httpproxyuser":
-        case "httpProxyUser": target.getConfiguration().setHttpProxyUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthaccesstoken":
-        case "oAuthAccessToken": target.getConfiguration().setOAuthAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthaccesstokenurl":
-        case "oAuthAccessTokenURL": target.getConfiguration().setOAuthAccessTokenURL(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthappid":
-        case "oAuthAppId": target.getConfiguration().setOAuthAppId(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthappsecret":
-        case "oAuthAppSecret": target.getConfiguration().setOAuthAppSecret(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthauthorizationurl":
-        case "oAuthAuthorizationURL": target.getConfiguration().setOAuthAuthorizationURL(property(camelContext, java.lang.String.class, value)); return true;
-        case "oauthpermissions":
-        case "oAuthPermissions": target.getConfiguration().setOAuthPermissions(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

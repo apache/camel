@@ -26,9 +26,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static com.mongodb.client.model.Filters.eq;
 
 public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
 

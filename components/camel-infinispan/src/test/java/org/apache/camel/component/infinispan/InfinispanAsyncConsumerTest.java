@@ -37,7 +37,7 @@ public class InfinispanAsyncConsumerTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan:default?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
                     .delayer(500)
                     .to("mock:result");
             }

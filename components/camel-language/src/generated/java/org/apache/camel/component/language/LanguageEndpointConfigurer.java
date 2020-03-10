@@ -15,6 +15,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LanguageEndpoint target = (LanguageEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binary": target.setBinary(property(camelContext, boolean.class, value)); return true;
         case "cachescript":
         case "cacheScript": target.setCacheScript(property(camelContext, boolean.class, value)); return true;
@@ -23,10 +25,8 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "script": target.setScript(property(camelContext, java.lang.String.class, value)); return true;
-        case "transform": target.setTransform(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "transform": target.setTransform(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

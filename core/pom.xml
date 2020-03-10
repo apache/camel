@@ -45,6 +45,7 @@
         <module>camel-base</module>
         <module>camel-xml-jaxp</module>
         <module>camel-core-engine</module>
+        <module>camel-core-languages</module>
         <module>camel-xml-io</module>
         <module>camel-xml-jaxb</module>
         <module>camel-core</module>
@@ -71,6 +72,18 @@
                         <id>generate</id>
                         <goals>
                             <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>recompile</id>
+                        <goals>
+                            <goal>compile</goal>
                         </goals>
                         <phase>process-classes</phase>
                     </execution>

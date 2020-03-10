@@ -186,27 +186,27 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public Boolean getTracing() {
-        return route.getRouteContext().isTracing();
+        return route.isTracing();
     }
 
     @Override
     public void setTracing(Boolean tracing) {
-        route.getRouteContext().setTracing(tracing);
+        route.setTracing(tracing);
     }
 
     @Override
     public Boolean getMessageHistory() {
-        return route.getRouteContext().isMessageHistory();
+        return route.isMessageHistory();
     }
 
     @Override
     public Boolean getLogMask() {
-        return route.getRouteContext().isLogMask();
+        return route.isLogMask();
     }
 
     @Override
     public String getRoutePolicyList() {
-        List<RoutePolicy> policyList = route.getRouteContext().getRoutePolicyList();
+        List<RoutePolicy> policyList = route.getRoutePolicyList();
 
         if (policyList == null || policyList.isEmpty()) {
             // return an empty string to have it displayed nicely in JMX consoles
@@ -594,12 +594,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public Boolean getHasRouteController() {
-        return route.getRouteContext().getRouteController() != null;
+        return route.getRouteController() != null;
     }
 
     @Override
     public RouteError getLastError() {
-        org.apache.camel.spi.RouteError error = route.getRouteContext().getLastError();
+        org.apache.camel.spi.RouteError error = route.getLastError();
         if (error == null) {
             return null;
         } else {

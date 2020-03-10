@@ -18,15 +18,15 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSendToEndpointDefinition> {
 
-    public WhenSkipSendToEndpointReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (WhenSkipSendToEndpointDefinition) definition);
+    public WhenSkipSendToEndpointReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (WhenSkipSendToEndpointDefinition) definition);
     }
 
     @Override

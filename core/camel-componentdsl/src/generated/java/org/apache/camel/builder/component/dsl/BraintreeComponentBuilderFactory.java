@@ -51,19 +51,6 @@ public interface BraintreeComponentBuilderFactory {
             extends
                 ComponentBuilder<BraintreeComponent> {
         /**
-         * To use the shared configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.braintree.BraintreeConfiguration</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeComponentBuilder configuration(
-                org.apache.camel.component.braintree.BraintreeConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -118,18 +105,16 @@ public interface BraintreeComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to false where an existing JUL - SLF4J logger bridge is
-         * on the classpath.
+         * Component configuration.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.braintree.BraintreeConfiguration</code> type.
          * 
-         * Default: true
-         * Group: logging
+         * Group: advanced
          */
-        default BraintreeComponentBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+        default BraintreeComponentBuilder configuration(
+                org.apache.camel.component.braintree.BraintreeConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
     }
@@ -149,11 +134,10 @@ public interface BraintreeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((BraintreeComponent) component).setConfiguration((org.apache.camel.component.braintree.BraintreeConfiguration) value); return true;
             case "bridgeErrorHandler": ((BraintreeComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BraintreeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((BraintreeComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "logHandlerEnabled": ((BraintreeComponent) component).setLogHandlerEnabled((boolean) value); return true;
+            case "configuration": ((BraintreeComponent) component).setConfiguration((org.apache.camel.component.braintree.BraintreeConfiguration) value); return true;
             default: return false;
             }
         }

@@ -525,13 +525,13 @@ public interface JettyComponentBuilderFactory {
             case "proxyHost": ((JettyHttpComponent9) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": ((JettyHttpComponent9) component).setProxyPort((java.lang.Integer) value); return true;
             case "keystore": ((JettyHttpComponent9) component).setKeystore((java.lang.String) value); return true;
-            case "socketConnectorProperties": ((JettyHttpComponent9) component).setSocketConnectorProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
-            case "socketConnectors": ((JettyHttpComponent9) component).setSocketConnectors((java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector>) value); return true;
+            case "socketConnectorProperties": ((JettyHttpComponent9) component).setSocketConnectorProperties((java.util.Map) value); return true;
+            case "socketConnectors": ((JettyHttpComponent9) component).setSocketConnectors((java.util.Map) value); return true;
             case "sslContextParameters": ((JettyHttpComponent9) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "sslKeyPassword": ((JettyHttpComponent9) component).setSslKeyPassword((java.lang.String) value); return true;
             case "sslPassword": ((JettyHttpComponent9) component).setSslPassword((java.lang.String) value); return true;
-            case "sslSocketConnectorProperties": ((JettyHttpComponent9) component).setSslSocketConnectorProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
-            case "sslSocketConnectors": ((JettyHttpComponent9) component).setSslSocketConnectors((java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector>) value); return true;
+            case "sslSocketConnectorProperties": ((JettyHttpComponent9) component).setSslSocketConnectorProperties((java.util.Map) value); return true;
+            case "sslSocketConnectors": ((JettyHttpComponent9) component).setSslSocketConnectors((java.util.Map) value); return true;
             case "useGlobalSslContextParameters": ((JettyHttpComponent9) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }

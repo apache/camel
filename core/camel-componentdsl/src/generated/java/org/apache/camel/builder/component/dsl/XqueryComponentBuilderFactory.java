@@ -161,7 +161,7 @@ public interface XqueryComponentBuilderFactory {
             case "lazyStartProducer": ((XQueryComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((XQueryComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((XQueryComponent) component).setConfiguration((net.sf.saxon.Configuration) value); return true;
-            case "configurationProperties": ((XQueryComponent) component).setConfigurationProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
+            case "configurationProperties": ((XQueryComponent) component).setConfigurationProperties((java.util.Map) value); return true;
             case "moduleURIResolver": ((XQueryComponent) component).setModuleURIResolver((net.sf.saxon.lib.ModuleURIResolver) value); return true;
             default: return false;
             }

@@ -242,11 +242,6 @@ public final class PropertyBindingSupport {
             Object obj = target != null ? target : this.target;
             Map<String, Object> prop = properties != null ? properties : this.properties;
 
-            // mandatory parameters
-            org.apache.camel.util.ObjectHelper.notNull(context, "camelContext");
-            org.apache.camel.util.ObjectHelper.notNull(obj, "target");
-            org.apache.camel.util.ObjectHelper.notNull(prop, "properties");
-
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
                     optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
@@ -262,11 +257,6 @@ public final class PropertyBindingSupport {
          * @return true if the property was bound
          */
         public boolean bind(CamelContext camelContext, Object target, String key, Object value) {
-            org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
-            org.apache.camel.util.ObjectHelper.notNull(target, "target");
-            org.apache.camel.util.ObjectHelper.notNull(key, "key");
-            org.apache.camel.util.ObjectHelper.notNull(value, "value");
-
             Map<String, Object> properties = new HashMap<>(1);
             properties.put(key, value);
 
@@ -470,9 +460,6 @@ public final class PropertyBindingSupport {
                                             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
                                             boolean reference, boolean placeholder,
                                             PropertyConfigurer configurer) {
-        org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
-        org.apache.camel.util.ObjectHelper.notNull(target, "target");
-        org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
         final String uOptionPrefix = ignoreCase && isNotEmpty(optionPrefix) ? optionPrefix.toUpperCase(Locale.US) : "";
         final int size = properties.size();

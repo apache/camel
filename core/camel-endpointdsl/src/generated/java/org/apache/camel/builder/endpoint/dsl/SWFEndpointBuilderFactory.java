@@ -271,6 +271,28 @@ public interface SWFEndpointBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SWFEndpointConsumerBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SWFEndpointConsumerBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
          * The list name to consume workflows from.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -305,28 +327,6 @@ public interface SWFEndpointBuilderFactory {
         default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
                 String workflowTypeRegistrationOptions) {
             doSetProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SWFEndpointConsumerBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SWFEndpointConsumerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -721,6 +721,28 @@ public interface SWFEndpointBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SWFEndpointProducerBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SWFEndpointProducerBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
+            return this;
+        }
+        /**
          * The policy to use on child workflows when terminating a workflow.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -814,28 +836,6 @@ public interface SWFEndpointBuilderFactory {
         default SWFEndpointProducerBuilder terminationReason(
                 String terminationReason) {
             doSetProperty("terminationReason", terminationReason);
-            return this;
-        }
-        /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SWFEndpointProducerBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SWFEndpointProducerBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
     }

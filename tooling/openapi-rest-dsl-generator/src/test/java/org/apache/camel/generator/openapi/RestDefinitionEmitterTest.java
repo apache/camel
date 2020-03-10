@@ -18,7 +18,6 @@ package org.apache.camel.generator.openapi;
 
 import java.util.List;
 
-
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestOperationParamDefinition;

@@ -49,6 +49,102 @@ public interface WordpressComponentBuilderFactory {
             extends
                 ComponentBuilder<WordpressComponent> {
         /**
+         * The Wordpress REST API version.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: 2
+         * Group: common
+         */
+        default WordpressComponentBuilder apiVersion(java.lang.String apiVersion) {
+            doSetProperty("apiVersion", apiVersion);
+            return this;
+        }
+        /**
+         * The criteria to use with complex searches.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: common
+         */
+        default WordpressComponentBuilder criteria(
+                java.util.Map<java.lang.String, java.lang.Object> criteria) {
+            doSetProperty("criteria", criteria);
+            return this;
+        }
+        /**
+         * Whether to bypass trash and force deletion.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default WordpressComponentBuilder force(boolean force) {
+            doSetProperty("force", force);
+            return this;
+        }
+        /**
+         * The entity ID. Should be passed when the operation performed requires
+         * a specific entity, e.g. deleting a post.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default WordpressComponentBuilder id(java.lang.Integer id) {
+            doSetProperty("id", id);
+            return this;
+        }
+        /**
+         * Password from authorized user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default WordpressComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Search criteria.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * 
+         * Group: common
+         */
+        default WordpressComponentBuilder searchCriteria(
+                org.apache.camel.component.wordpress.api.model.SearchCriteria searchCriteria) {
+            doSetProperty("searchCriteria", searchCriteria);
+            return this;
+        }
+        /**
+         * The Wordpress API URL from your site, e.g.
+         * http://myblog.com/wp-json/.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default WordpressComponentBuilder url(java.lang.String url) {
+            doSetProperty("url", url);
+            return this;
+        }
+        /**
+         * Authorized user to perform writing operations.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default WordpressComponentBuilder user(java.lang.String user) {
+            doSetProperty("user", user);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -126,12 +222,27 @@ public interface WordpressComponentBuilderFactory {
         protected WordpressComponent buildConcreteComponent() {
             return new WordpressComponent();
         }
+        private org.apache.camel.component.wordpress.WordpressComponentConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.wordpress.WordpressComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.wordpress.WordpressComponentConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "apiVersion": getOrCreateConfiguration((WordpressComponent) component).setApiVersion((java.lang.String) value); return true;
+            case "criteria": getOrCreateConfiguration((WordpressComponent) component).setCriteria((java.util.Map) value); return true;
+            case "force": getOrCreateConfiguration((WordpressComponent) component).setForce((boolean) value); return true;
+            case "id": getOrCreateConfiguration((WordpressComponent) component).setId((java.lang.Integer) value); return true;
+            case "password": getOrCreateConfiguration((WordpressComponent) component).setPassword((java.lang.String) value); return true;
+            case "searchCriteria": getOrCreateConfiguration((WordpressComponent) component).setSearchCriteria((org.apache.camel.component.wordpress.api.model.SearchCriteria) value); return true;
+            case "url": getOrCreateConfiguration((WordpressComponent) component).setUrl((java.lang.String) value); return true;
+            case "user": getOrCreateConfiguration((WordpressComponent) component).setUser((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((WordpressComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((WordpressComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((WordpressComponent) component).setBasicPropertyBinding((boolean) value); return true;

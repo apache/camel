@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.Registry;
 
 /**
  *
@@ -24,10 +25,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class RoutePolicyRefCallbackTest extends RoutePolicyCallbackTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myPolicy", policy);
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("myPolicy", policy);
+        return registry;
     }
 
     @Override

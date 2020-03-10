@@ -19,16 +19,16 @@ package org.apache.camel.reifier;
 import java.util.stream.Stream;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemovePropertiesDefinition;
 import org.apache.camel.processor.RemovePropertiesProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class RemovePropertiesReifier extends ProcessorReifier<RemovePropertiesDefinition> {
 
-    public RemovePropertiesReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (RemovePropertiesDefinition) definition);
+    public RemovePropertiesReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (RemovePropertiesDefinition) definition);
     }
 
     @Override

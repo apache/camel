@@ -360,11 +360,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             // set the route to shutdown as fast as possible by stopping after
             // it has completed its current task
-            ShutdownRunningTask current = order.getRoute().getRouteContext().getShutdownRunningTask();
+            ShutdownRunningTask current = order.getRoute().getShutdownRunningTask();
             if (current != ShutdownRunningTask.CompleteCurrentTaskOnly) {
                 LOG.debug("Changing shutdownRunningTask from {} to " +  ShutdownRunningTask.CompleteCurrentTaskOnly
                     + " on route {} to shutdown faster", current, order.getRoute().getId());
-                order.getRoute().getRouteContext().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
+                order.getRoute().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
             }
 
             for (Consumer consumer : order.getInputs()) {
@@ -555,8 +555,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             List<ShutdownDeferredConsumer> deferredConsumers = new ArrayList<>();
             for (RouteStartupOrder order : routes) {
 
-                ShutdownRoute shutdownRoute = order.getRoute().getRouteContext().getShutdownRoute();
-                ShutdownRunningTask shutdownRunningTask = order.getRoute().getRouteContext().getShutdownRunningTask();
+                ShutdownRoute shutdownRoute = order.getRoute().getShutdownRoute();
+                ShutdownRunningTask shutdownRunningTask = order.getRoute().getShutdownRunningTask();
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("{}{} with options [{},{}]",

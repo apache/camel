@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty.handlers;
 
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.camel.AsyncCallback;

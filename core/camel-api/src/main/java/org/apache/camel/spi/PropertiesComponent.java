@@ -30,6 +30,11 @@ import org.apache.camel.StaticService;
 public interface PropertiesComponent extends StaticService {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "properties-component-factory";
+
+    /**
      * The prefix token.
      */
     String PREFIX_TOKEN = "{{";

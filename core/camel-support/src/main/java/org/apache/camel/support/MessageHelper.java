@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,8 +34,6 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -586,10 +582,9 @@ public final class MessageHelper {
             id = exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
             if (id != null) {
                 // compute route id
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
-                if (rc != null) {
-                    routeId = rc.getRouteId();
+                String rid = ExchangeHelper.getAtRouteId(exchange);
+                if (rid != null) {
+                    routeId = rid;
                 }
                 label = exchange.adapt(ExtendedExchange.class).getHistoryNodeLabel();
                 // we need to avoid leak the sensible information here

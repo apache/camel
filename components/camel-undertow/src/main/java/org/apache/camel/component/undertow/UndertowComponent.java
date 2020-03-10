@@ -233,6 +233,10 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
+        if (consumer instanceof UndertowConsumer) {
+            // mark the consumer as a rest consumer
+            ((UndertowConsumer) consumer).setRest(true);
+        }
 
         return consumer;
     }
@@ -307,7 +311,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         }
     }
 
-    public HttpHandler registerEndpoint(HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
+    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.computeIfAbsent(key, k -> createUndertowHost(k));
@@ -315,10 +319,10 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         host.validateEndpointURI(uri);
         handlers.add(registrationInfo);
 
-        return host.registerHandler(registrationInfo, handler);
+        return host.registerHandler(consumer, registrationInfo, handler);
     }
 
-    public void unregisterEndpoint(HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
+    public void unregisterEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.get(key);
@@ -329,7 +333,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         // may not have any instance of UndertowHost associated to the given
         // registrationInfo
         if (host != null) {
-            host.unregisterHandler(registrationInfo);
+            host.unregisterHandler(consumer, registrationInfo);
         }
     }
 

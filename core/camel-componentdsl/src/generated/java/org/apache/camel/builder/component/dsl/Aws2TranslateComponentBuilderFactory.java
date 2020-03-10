@@ -49,15 +49,29 @@ public interface Aws2TranslateComponentBuilderFactory {
             extends
                 ComponentBuilder<Translate2Component> {
         /**
-         * Amazon AWS Access Key.
+         * Being able to autodetect the source language.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder autodetectSourceLanguage(
+                boolean autodetectSourceLanguage) {
+            doSetProperty("autodetectSourceLanguage", autodetectSourceLanguage);
+            return this;
+        }
+        /**
+         * Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.translate.Translate2Configuration</code> type.
          * 
          * Group: producer
          */
-        default Aws2TranslateComponentBuilder accessKey(
-                java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2TranslateComponentBuilder configuration(
+                org.apache.camel.component.aws2.translate.Translate2Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -82,7 +96,62 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which Translate client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.translate.Translate2Operations</code> type.
+         * 
+         * Default: translateText
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder operation(
+                org.apache.camel.component.aws2.translate.Translate2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Translate client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder proxyHost(
+                java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Translate client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Translate client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which Translate client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -93,15 +162,40 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
+         * Source language to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
-        default Aws2TranslateComponentBuilder secretKey(
-                java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
+        default Aws2TranslateComponentBuilder sourceLanguage(
+                java.lang.String sourceLanguage) {
+            doSetProperty("sourceLanguage", sourceLanguage);
+            return this;
+        }
+        /**
+         * Target language to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder targetLanguage(
+                java.lang.String targetLanguage) {
+            doSetProperty("targetLanguage", targetLanguage);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS Translate as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.translate.TranslateClient</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2TranslateComponentBuilder translateClient(
+                software.amazon.awssdk.services.translate.TranslateClient translateClient) {
+            doSetProperty("translateClient", translateClient);
             return this;
         }
         /**
@@ -119,16 +213,27 @@ public interface Aws2TranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS Translate default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.translate.Translate2Configuration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2TranslateComponentBuilder configuration(
-                org.apache.camel.component.aws2.translate.Translate2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2TranslateComponentBuilder accessKey(
+                java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2TranslateComponentBuilder secretKey(
+                java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -142,18 +247,33 @@ public interface Aws2TranslateComponentBuilderFactory {
         protected Translate2Component buildConcreteComponent() {
             return new Translate2Component();
         }
+        private org.apache.camel.component.aws2.translate.Translate2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.translate.Translate2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.translate.Translate2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((Translate2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((Translate2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((Translate2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((Translate2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((Translate2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autodetectSourceLanguage": getOrCreateConfiguration((Translate2Component) component).setAutodetectSourceLanguage((boolean) value); return true;
             case "configuration": ((Translate2Component) component).setConfiguration((org.apache.camel.component.aws2.translate.Translate2Configuration) value); return true;
+            case "lazyStartProducer": ((Translate2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((Translate2Component) component).setOperation((org.apache.camel.component.aws2.translate.Translate2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Translate2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Translate2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Translate2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((Translate2Component) component).setRegion((java.lang.String) value); return true;
+            case "sourceLanguage": getOrCreateConfiguration((Translate2Component) component).setSourceLanguage((java.lang.String) value); return true;
+            case "targetLanguage": getOrCreateConfiguration((Translate2Component) component).setTargetLanguage((java.lang.String) value); return true;
+            case "translateClient": getOrCreateConfiguration((Translate2Component) component).setTranslateClient((software.amazon.awssdk.services.translate.TranslateClient) value); return true;
+            case "basicPropertyBinding": ((Translate2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((Translate2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Translate2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

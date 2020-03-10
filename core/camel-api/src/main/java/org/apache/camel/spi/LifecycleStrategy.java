@@ -50,7 +50,7 @@ public interface LifecycleStrategy {
     void onContextStop(CamelContext context);
 
     /**
-     * Notification on adding an {@link org.apache.camel.Component}.
+     * Notification on adding an {@link Component}.
      *
      * @param name      the unique name of this component
      * @param component the added component
@@ -58,7 +58,7 @@ public interface LifecycleStrategy {
     void onComponentAdd(String name, Component component);
 
     /**
-     * Notification on removing an {@link org.apache.camel.Component}.
+     * Notification on removing an {@link Component}.
      *
      * @param name      the unique name of this component
      * @param component the removed component
@@ -112,29 +112,29 @@ public interface LifecycleStrategy {
     void onRoutesRemove(Collection<Route> routes);
 
     /**
-     * Notification on adding {@link RouteContext}(s).
+     * Notification on creating {@link Route}(s).
      *
-     * @param routeContext the added route context
+     * @param route the created route context
      */
-    void onRouteContextCreate(RouteContext routeContext);
+    void onRouteContextCreate(Route route);
 
     /**
      * Notification on adding error handler.
      *
-     * @param routeContext        the added route context
+     * @param route               the added route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
-    void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+    void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Notification on removing error handler.
      *
-     * @param routeContext        the removed route context
+     * @param route               the removed route context
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
-    void onErrorHandlerRemove(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
+    void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Notification on adding a thread pool.

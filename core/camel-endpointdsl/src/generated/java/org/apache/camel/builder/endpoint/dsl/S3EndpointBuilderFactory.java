@@ -1054,61 +1054,6 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointConsumerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointConsumerBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * Define if Accelerate Mode enabled is true or false.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1236,6 +1181,61 @@ public interface S3EndpointBuilderFactory {
         default AdvancedS3EndpointConsumerBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {
             doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointConsumerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointConsumerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1745,61 +1745,6 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointProducerBuilder synchronous(
-                boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointProducerBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * Define if Accelerate Mode enabled is true or false.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1927,6 +1872,61 @@ public interface S3EndpointBuilderFactory {
         default AdvancedS3EndpointProducerBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {
             doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointProducerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointProducerBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2213,60 +2213,6 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used, or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedS3EndpointBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
          * Define if Accelerate Mode enabled is true or false.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2396,14 +2342,68 @@ public interface S3EndpointBuilderFactory {
             doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointBuilder basicPropertyBinding(
+                boolean basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Whether the endpoint should use basic property binding (Camel 2.x) or
+         * the newer property binding with additional capabilities.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointBuilder basicPropertyBinding(
+                String basicPropertyBinding) {
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedS3EndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
     }
 
     /**
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     /**

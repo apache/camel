@@ -118,13 +118,6 @@
             <version>${commons-text-version}</version>
         </dependency>
 
-        <!-- guava for some word wrap helper -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${google-guava-version}</version>
-        </dependency>
-
         <!-- roaster to create java source for Spring Boot auto configuration support -->
         <dependency>
             <groupId>org.jboss.forge.roaster</groupId>

@@ -19,6 +19,10 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "aggregationStrategy": target.setAggregationStrategy(property(camelContext, org.apache.camel.AggregationStrategy.class, value)); return true;
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
+        case "asyncstartlistener":
+        case "asyncStartListener": target.setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "completioninterval":
@@ -33,32 +37,28 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "consumerCount": target.setConsumerCount(property(camelContext, int.class, value)); return true;
         case "eagercheckcompletion":
         case "eagerCheckCompletion": target.setEagerCheckCompletion(property(camelContext, boolean.class, value)); return true;
-        case "includealljmsxproperties":
-        case "includeAllJMSXProperties": target.setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
-        case "mapjmsmessage":
-        case "mapJmsMessage": target.setMapJmsMessage(property(camelContext, boolean.class, value)); return true;
-        case "pollduration":
-        case "pollDuration": target.setPollDuration(property(camelContext, int.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "asyncstartlistener":
-        case "asyncStartListener": target.setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "includealljmsxproperties":
+        case "includeAllJMSXProperties": target.setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": target.setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class, value)); return true;
         case "keepalivedelay":
         case "keepAliveDelay": target.setKeepAliveDelay(property(camelContext, int.class, value)); return true;
+        case "mapjmsmessage":
+        case "mapJmsMessage": target.setMapJmsMessage(property(camelContext, boolean.class, value)); return true;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
+        case "pollduration":
+        case "pollDuration": target.setPollDuration(property(camelContext, int.class, value)); return true;
         case "recoveryinterval":
         case "recoveryInterval": target.setRecoveryInterval(property(camelContext, int.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeoutcheckerexecutorservice":
         case "timeoutCheckerExecutorService": target.setTimeoutCheckerExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;

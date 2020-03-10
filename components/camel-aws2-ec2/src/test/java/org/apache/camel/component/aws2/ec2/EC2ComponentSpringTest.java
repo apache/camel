@@ -21,8 +21,8 @@ import java.util.Collection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusResponse;
@@ -36,6 +36,8 @@ import software.amazon.awssdk.services.ec2.model.StartInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.StopInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EC2ComponentSpringTest extends CamelSpringTestSupport {
 

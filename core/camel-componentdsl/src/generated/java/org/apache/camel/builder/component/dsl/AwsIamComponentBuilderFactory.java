@@ -58,6 +58,33 @@ public interface AwsIamComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.iam.IAMConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder configuration(
+                org.apache.camel.component.aws.iam.IAMConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS IAM as client.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.identitymanagement.AmazonIdentityManagement</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder iamClient(
+                com.amazonaws.services.identitymanagement.AmazonIdentityManagement iamClient) {
+            doSetProperty("iamClient", iamClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -79,7 +106,58 @@ public interface AwsIamComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which IAM client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.iam.IAMOperations</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder operation(
+                org.apache.camel.component.aws.iam.IAMOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the IAM client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the IAM client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsIamComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the IAM client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsIamComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which IAM client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -114,20 +192,6 @@ public interface AwsIamComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS IAM default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.iam.IAMConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsIamComponentBuilder configuration(
-                org.apache.camel.component.aws.iam.IAMConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsIamComponentBuilderImpl
@@ -139,18 +203,30 @@ public interface AwsIamComponentBuilderFactory {
         protected IAMComponent buildConcreteComponent() {
             return new IAMComponent();
         }
+        private org.apache.camel.component.aws.iam.IAMConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.iam.IAMComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.iam.IAMConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((IAMComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((IAMComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((IAMComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((IAMComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((IAMComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((IAMComponent) component).setConfiguration((org.apache.camel.component.aws.iam.IAMConfiguration) value); return true;
+            case "iamClient": getOrCreateConfiguration((IAMComponent) component).setIamClient((com.amazonaws.services.identitymanagement.AmazonIdentityManagement) value); return true;
+            case "lazyStartProducer": ((IAMComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((IAMComponent) component).setOperation((org.apache.camel.component.aws.iam.IAMOperations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((IAMComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((IAMComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((IAMComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((IAMComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((IAMComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((IAMComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

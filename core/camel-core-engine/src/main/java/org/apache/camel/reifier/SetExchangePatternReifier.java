@@ -18,15 +18,15 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetExchangePatternDefinition;
 import org.apache.camel.processor.ExchangePatternProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatternDefinition> {
 
-    SetExchangePatternReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SetExchangePatternDefinition)definition);
+    public SetExchangePatternReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SetExchangePatternDefinition)definition);
     }
 
     @Override

@@ -15,19 +15,19 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IOTAEndpoint target = (IOTAEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "depth": target.setDepth(property(camelContext, java.lang.Integer.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "minweightmagnitude":
         case "minWeightMagnitude": target.setMinWeightMagnitude(property(camelContext, java.lang.Integer.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
-        case "tag": target.setTag(property(camelContext, java.lang.String.class, value)); return true;
-        case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "securitylevel":
         case "securityLevel": target.setSecurityLevel(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "tag": target.setTag(property(camelContext, java.lang.String.class, value)); return true;
+        case "url": target.setUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

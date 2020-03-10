@@ -19,16 +19,16 @@ package org.apache.camel.reifier;
 import java.util.stream.Stream;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RemoveHeadersDefinition;
 import org.apache.camel.processor.RemoveHeadersProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class RemoveHeadersReifier extends ProcessorReifier<RemoveHeadersDefinition> {
 
-    public RemoveHeadersReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (RemoveHeadersDefinition) definition);
+    public RemoveHeadersReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (RemoveHeadersDefinition) definition);
     }
 
     @Override

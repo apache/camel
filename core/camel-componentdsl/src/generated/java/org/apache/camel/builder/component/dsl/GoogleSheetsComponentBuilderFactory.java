@@ -49,6 +49,30 @@ public interface GoogleSheetsComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleSheetsComponent> {
         /**
+         * Google Sheets application name. Example would be
+         * camel-google-sheets/1.0.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleSheetsComponentBuilder applicationName(
+                java.lang.String applicationName) {
+            doSetProperty("applicationName", applicationName);
+            return this;
+        }
+        /**
+         * Client ID of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleSheetsComponentBuilder clientId(java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -129,6 +153,45 @@ public interface GoogleSheetsComponentBuilderFactory {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Sheets component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     class GoogleSheetsComponentBuilderImpl
@@ -140,17 +203,29 @@ public interface GoogleSheetsComponentBuilderFactory {
         protected GoogleSheetsComponent buildConcreteComponent() {
             return new GoogleSheetsComponent();
         }
+        private org.apache.camel.component.google.sheets.GoogleSheetsConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.google.sheets.GoogleSheetsComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.google.sheets.GoogleSheetsConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "applicationName": getOrCreateConfiguration((GoogleSheetsComponent) component).setApplicationName((java.lang.String) value); return true;
+            case "clientId": getOrCreateConfiguration((GoogleSheetsComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleSheetsComponent) component).setConfiguration((org.apache.camel.component.google.sheets.GoogleSheetsConfiguration) value); return true;
             case "bridgeErrorHandler": ((GoogleSheetsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleSheetsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GoogleSheetsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
+            case "accessToken": getOrCreateConfiguration((GoogleSheetsComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleSheetsComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleSheetsComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
         }

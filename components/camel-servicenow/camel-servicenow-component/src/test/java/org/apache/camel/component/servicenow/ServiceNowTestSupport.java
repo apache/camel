@@ -68,12 +68,12 @@ class ServiceNowTestSupport extends CamelTestSupport {
 
         if (ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password)) {
             ServiceNowComponent component = new ServiceNowComponent();
-            component.setUserName(userName);
-            component.setPassword(password);
+            component.getConfiguration().setUserName(userName);
+            component.getConfiguration().setPassword(password);
 
             if (ObjectHelper.isNotEmpty(oauthClientId) && ObjectHelper.isNotEmpty(oauthClientSecret)) {
-                component.setOauthClientId(oauthClientId);
-                component.setOauthClientSecret(oauthClientSecret);
+                component.getConfiguration().setOauthClientId(oauthClientId);
+                component.getConfiguration().setOauthClientSecret(oauthClientSecret);
             }
 
             camelContext.addComponent("servicenow", component);

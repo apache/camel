@@ -45,14 +45,13 @@ for this component:
 
 
 // component options: START
-The MLLP component supports 7 options, which are listed below.
+The MLLP component supports 6 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (common) | Sets the default configuration to use when creating MLLP endpoints. |  | MllpConfiguration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -107,23 +106,23 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used (this component only supports synchronous operations). | true | boolean
+| *charsetName* (codec) | Set the CamelCharsetName property on the exchange |  | String
 | *backlog* (tcp) | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused. | 5 | Integer
+| *keepAlive* (tcp) | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
 | *lenientBind* (tcp) | TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound. In some environments, it may be desirable to allow the endpoint to start before the TCP ServerSocket is bound. | false | boolean
 | *maxConcurrentConsumers* (tcp) | The maximum number of concurrent MLLP Consumer connections that will be allowed. If a new connection is received and the maximum is number are already established, the new connection will be reset immediately. | 5 | int
+| *receiveBufferSize* (tcp) | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
 | *reuseAddress* (tcp) | Enable/disable the SO_REUSEADDR socket option. | false | Boolean
+| *sendBufferSize* (tcp) | Sets the SO_SNDBUF option to the specified value (in bytes) | 8192 | Integer
+| *tcpNoDelay* (tcp) | Enable/disable the TCP_NODELAY socket option. | true | Boolean
 | *acceptTimeout* (timeout) | Timeout (in milliseconds) while waiting for a TCP connection TCP Server Only | 60000 | int
 | *bindRetryInterval* (timeout) | TCP Server Only - The number of milliseconds to wait between bind attempts | 5000 | int
 | *bindTimeout* (timeout) | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | int
-| *keepAlive* (tcp) | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
-| *sendBufferSize* (tcp) | Sets the SO_SNDBUF option to the specified value (in bytes) | 8192 | Integer
-| *tcpNoDelay* (tcp) | Enable/disable the TCP_NODELAY socket option. | true | Boolean
 | *connectTimeout* (timeout) | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | int
 | *idleTimeout* (timeout) | The approximate idle time allowed before the Client TCP Connection will be reset. A null value or a value less than or equal to zero will disable the idle timeout. |  | Integer
 | *maxReceiveTimeouts* (timeout) | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
-| *receiveBufferSize* (tcp) | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
 | *readTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 5000 | int
 | *receiveTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 15000 | int
-| *charsetName* (codec) | Set the CamelCharsetName property on the exchange |  | String
 |===
 // endpoint options: END
 

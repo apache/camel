@@ -18,11 +18,10 @@ package org.apache.camel.spring.spi;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -36,8 +35,8 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerReifier.class);
 
-    public TransactionErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, definition);
+    public TransactionErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, definition);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
             // lookup in context if no transaction template has been configured
             LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
-            Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
+            Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 TransactedPolicy policy = mapPolicy.values().iterator().next();
                 if (policy instanceof SpringTransactionPolicy) {
@@ -56,14 +55,14 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
             }
 
             if (transactionTemplate == null) {
-                TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
+                TransactedPolicy policy = lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
                 if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
             }
 
             if (transactionTemplate == null) {
-                Map<String, TransactionTemplate> mapTemplate = routeContext.lookupByType(TransactionTemplate.class);
+                Map<String, TransactionTemplate> mapTemplate = findByTypeWithName(TransactionTemplate.class);
                 if (mapTemplate == null || mapTemplate.isEmpty()) {
                     LOG.trace("No TransactionTemplate found in registry.");
                 } else if (mapTemplate.size() == 1) {
@@ -75,7 +74,7 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
             }
 
             if (transactionTemplate == null) {
-                Map<String, PlatformTransactionManager> mapManager = routeContext.lookupByType(PlatformTransactionManager.class);
+                Map<String, PlatformTransactionManager> mapManager = findByTypeWithName(PlatformTransactionManager.class);
                 if (mapManager == null || mapManager.isEmpty()) {
                     LOG.trace("No PlatformTransactionManager found in registry.");
                 } else if (mapManager.size() == 1) {
@@ -93,14 +92,14 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
 
         ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
 
-        TransactionErrorHandler answer = new TransactionErrorHandler(routeContext.getCamelContext(), processor,
+        TransactionErrorHandler answer = new TransactionErrorHandler(camelContext, processor,
                 definition.getLogger(), definition.getOnRedelivery(),
                 definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(), transactionTemplate,
-                definition.getRetryWhilePolicy(routeContext.getCamelContext()),
-                getExecutorService(routeContext.getCamelContext()),
+                definition.getRetryWhilePolicy(camelContext),
+                getExecutorService(camelContext),
                 definition.getRollbackLoggingLevel(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
-        configure(routeContext, answer);
+        configure(answer);
         return answer;
     }
 

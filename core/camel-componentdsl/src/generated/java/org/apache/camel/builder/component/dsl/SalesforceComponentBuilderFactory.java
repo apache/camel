@@ -51,6 +51,131 @@ public interface SalesforceComponentBuilderFactory {
             extends
                 ComponentBuilder<SalesforceComponent> {
         /**
+         * APEX method name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder apexMethod(
+                java.lang.String apexMethod) {
+            doSetProperty("apexMethod", apexMethod);
+            return this;
+        }
+        /**
+         * Query params for APEX method.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder apexQueryParams(
+                java.util.Map<java.lang.String, java.lang.Object> apexQueryParams) {
+            doSetProperty("apexQueryParams", apexQueryParams);
+            return this;
+        }
+        /**
+         * APEX method URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder apexUrl(java.lang.String apexUrl) {
+            doSetProperty("apexUrl", apexUrl);
+            return this;
+        }
+        /**
+         * Salesforce API version, defaults to
+         * SalesforceEndpointConfig.DEFAULT_VERSION.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder apiVersion(
+                java.lang.String apiVersion) {
+            doSetProperty("apiVersion", apiVersion);
+            return this;
+        }
+        /**
+         * Backoff interval increment for Streaming connection restart attempts
+         * for failures beyond CometD auto-reconnect.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder backoffIncrement(
+                long backoffIncrement) {
+            doSetProperty("backoffIncrement", backoffIncrement);
+            return this;
+        }
+        /**
+         * Bulk API Batch ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder batchId(java.lang.String batchId) {
+            doSetProperty("batchId", batchId);
+            return this;
+        }
+        /**
+         * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder contentType(
+                org.apache.camel.component.salesforce.api.dto.bulk.ContentType contentType) {
+            doSetProperty("contentType", contentType);
+            return this;
+        }
+        /**
+         * Default replayId setting if no value is found in initialReplayIdMap.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder defaultReplayId(
+                java.lang.Long defaultReplayId) {
+            doSetProperty("defaultReplayId", defaultReplayId);
+            return this;
+        }
+        /**
+         * Payload format to use for Salesforce API calls, either JSON or XML,
+         * defaults to JSON.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder format(
+                org.apache.camel.component.salesforce.internal.PayloadFormat format) {
+            doSetProperty("format", format);
+            return this;
+        }
+        /**
+         * Custom Jetty Http Client to use to connect to Salesforce.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder httpClient(
+                org.apache.camel.component.salesforce.SalesforceHttpClient httpClient) {
+            doSetProperty("httpClient", httpClient);
+            return this;
+        }
+        /**
          * Connection timeout used by the HttpClient when connecting to the
          * Salesforce server.
          * 
@@ -91,6 +216,185 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Include details in Salesforce1 Analytics report, defaults to false.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder includeDetails(
+                java.lang.Boolean includeDetails) {
+            doSetProperty("includeDetails", includeDetails);
+            return this;
+        }
+        /**
+         * Replay IDs to start from per channel name.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Long></code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder initialReplayIdMap(
+                java.util.Map<java.lang.String, java.lang.Long> initialReplayIdMap) {
+            doSetProperty("initialReplayIdMap", initialReplayIdMap);
+            return this;
+        }
+        /**
+         * Salesforce1 Analytics report execution instance ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder instanceId(
+                java.lang.String instanceId) {
+            doSetProperty("instanceId", instanceId);
+            return this;
+        }
+        /**
+         * Bulk API Job ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder jobId(java.lang.String jobId) {
+            doSetProperty("jobId", jobId);
+            return this;
+        }
+        /**
+         * Limit on number of returned records. Applicable to some of the API,
+         * check the Salesforce documentation.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder limit(java.lang.Integer limit) {
+            doSetProperty("limit", limit);
+            return this;
+        }
+        /**
+         * Maximum backoff interval for Streaming connection restart attempts
+         * for failures beyond CometD auto-reconnect.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder maxBackoff(long maxBackoff) {
+            doSetProperty("maxBackoff", maxBackoff);
+            return this;
+        }
+        /**
+         * Sets the behaviour of 404 not found status received from Salesforce
+         * API. Should the body be set to NULL NotFoundBehaviour#NULL or should
+         * a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION -
+         * the default.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder notFoundBehaviour(
+                org.apache.camel.component.salesforce.NotFoundBehaviour notFoundBehaviour) {
+            doSetProperty("notFoundBehaviour", notFoundBehaviour);
+            return this;
+        }
+        /**
+         * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder notifyForFields(
+                org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum notifyForFields) {
+            doSetProperty("notifyForFields", notifyForFields);
+            return this;
+        }
+        /**
+         * Notify for create operation, defaults to false (API version = 29.0).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder notifyForOperationCreate(
+                java.lang.Boolean notifyForOperationCreate) {
+            doSetProperty("notifyForOperationCreate", notifyForOperationCreate);
+            return this;
+        }
+        /**
+         * Notify for delete operation, defaults to false (API version = 29.0).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder notifyForOperationDelete(
+                java.lang.Boolean notifyForOperationDelete) {
+            doSetProperty("notifyForOperationDelete", notifyForOperationDelete);
+            return this;
+        }
+        /**
+         * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
+         * version 29.0).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder notifyForOperations(
+                org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum notifyForOperations) {
+            doSetProperty("notifyForOperations", notifyForOperations);
+            return this;
+        }
+        /**
+         * Notify for un-delete operation, defaults to false (API version =
+         * 29.0).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder notifyForOperationUndelete(
+                java.lang.Boolean notifyForOperationUndelete) {
+            doSetProperty("notifyForOperationUndelete", notifyForOperationUndelete);
+            return this;
+        }
+        /**
+         * Notify for update operation, defaults to false (API version = 29.0).
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder notifyForOperationUpdate(
+                java.lang.Boolean notifyForOperationUpdate) {
+            doSetProperty("notifyForOperationUpdate", notifyForOperationUpdate);
+            return this;
+        }
+        /**
+         * Custom Jackson ObjectMapper to use when serializing/deserializing
+         * Salesforce objects.
+         * 
+         * The option is a:
+         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder objectMapper(
+                com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+            doSetProperty("objectMapper", objectMapper);
+            return this;
+        }
+        /**
          * In what packages are the generated DTO classes. Typically the classes
          * would be generated using camel-salesforce-maven-plugin. Set it if
          * using the generated DTOs to gain the benefit of using short SObject
@@ -102,6 +406,175 @@ public interface SalesforceComponentBuilderFactory {
          */
         default SalesforceComponentBuilder packages(java.lang.String[] packages) {
             doSetProperty("packages", packages);
+            return this;
+        }
+        /**
+         * Use raw payload String for request and response (either JSON or XML
+         * depending on format), instead of DTOs, false by default.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SalesforceComponentBuilder rawPayload(boolean rawPayload) {
+            doSetProperty("rawPayload", rawPayload);
+            return this;
+        }
+        /**
+         * Salesforce1 Analytics report Id.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder reportId(java.lang.String reportId) {
+            doSetProperty("reportId", reportId);
+            return this;
+        }
+        /**
+         * Salesforce1 Analytics report metadata for filtering.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder reportMetadata(
+                org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata reportMetadata) {
+            doSetProperty("reportMetadata", reportMetadata);
+            return this;
+        }
+        /**
+         * Bulk API Result ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder resultId(java.lang.String resultId) {
+            doSetProperty("resultId", resultId);
+            return this;
+        }
+        /**
+         * SObject blob field name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectBlobFieldName(
+                java.lang.String sObjectBlobFieldName) {
+            doSetProperty("sObjectBlobFieldName", sObjectBlobFieldName);
+            return this;
+        }
+        /**
+         * Fully qualified SObject class name, usually generated using
+         * camel-salesforce-maven-plugin.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectClass(
+                java.lang.String sObjectClass) {
+            doSetProperty("sObjectClass", sObjectClass);
+            return this;
+        }
+        /**
+         * SObject fields to retrieve.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectFields(
+                java.lang.String sObjectFields) {
+            doSetProperty("sObjectFields", sObjectFields);
+            return this;
+        }
+        /**
+         * SObject ID if required by API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectId(java.lang.String sObjectId) {
+            doSetProperty("sObjectId", sObjectId);
+            return this;
+        }
+        /**
+         * SObject external ID field name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectIdName(
+                java.lang.String sObjectIdName) {
+            doSetProperty("sObjectIdName", sObjectIdName);
+            return this;
+        }
+        /**
+         * SObject external ID field value.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectIdValue(
+                java.lang.String sObjectIdValue) {
+            doSetProperty("sObjectIdValue", sObjectIdValue);
+            return this;
+        }
+        /**
+         * SObject name if required or supported by API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectName(
+                java.lang.String sObjectName) {
+            doSetProperty("sObjectName", sObjectName);
+            return this;
+        }
+        /**
+         * Salesforce SOQL query string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectQuery(
+                java.lang.String sObjectQuery) {
+            doSetProperty("sObjectQuery", sObjectQuery);
+            return this;
+        }
+        /**
+         * Salesforce SOSL search string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder sObjectSearch(
+                java.lang.String sObjectSearch) {
+            doSetProperty("sObjectSearch", sObjectSearch);
+            return this;
+        }
+        /**
+         * Whether to update an existing Push Topic when using the Streaming
+         * API, defaults to false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default SalesforceComponentBuilder updateTopic(boolean updateTopic) {
+            doSetProperty("updateTopic", updateTopic);
             return this;
         }
         /**
@@ -542,25 +1015,70 @@ public interface SalesforceComponentBuilderFactory {
         protected SalesforceComponent buildConcreteComponent() {
             return new SalesforceComponent();
         }
+        private org.apache.camel.component.salesforce.SalesforceEndpointConfig getOrCreateConfiguration(
+                org.apache.camel.component.salesforce.SalesforceComponent component) {
+            if (component.getConfig() == null) {
+                component.setConfig(new org.apache.camel.component.salesforce.SalesforceEndpointConfig());
+            }
+            return component.getConfig();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "apexMethod": getOrCreateConfiguration((SalesforceComponent) component).setApexMethod((java.lang.String) value); return true;
+            case "apexQueryParams": getOrCreateConfiguration((SalesforceComponent) component).setApexQueryParams((java.util.Map) value); return true;
+            case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
+            case "apiVersion": getOrCreateConfiguration((SalesforceComponent) component).setApiVersion((java.lang.String) value); return true;
+            case "backoffIncrement": getOrCreateConfiguration((SalesforceComponent) component).setBackoffIncrement((long) value); return true;
+            case "batchId": getOrCreateConfiguration((SalesforceComponent) component).setBatchId((java.lang.String) value); return true;
+            case "contentType": getOrCreateConfiguration((SalesforceComponent) component).setContentType((org.apache.camel.component.salesforce.api.dto.bulk.ContentType) value); return true;
+            case "defaultReplayId": getOrCreateConfiguration((SalesforceComponent) component).setDefaultReplayId((java.lang.Long) value); return true;
+            case "format": getOrCreateConfiguration((SalesforceComponent) component).setFormat((org.apache.camel.component.salesforce.internal.PayloadFormat) value); return true;
+            case "httpClient": getOrCreateConfiguration((SalesforceComponent) component).setHttpClient((org.apache.camel.component.salesforce.SalesforceHttpClient) value); return true;
             case "httpClientConnectionTimeout": ((SalesforceComponent) component).setHttpClientConnectionTimeout((long) value); return true;
             case "httpClientIdleTimeout": ((SalesforceComponent) component).setHttpClientIdleTimeout((long) value); return true;
             case "httpMaxContentLength": ((SalesforceComponent) component).setHttpMaxContentLength((java.lang.Integer) value); return true;
+            case "includeDetails": getOrCreateConfiguration((SalesforceComponent) component).setIncludeDetails((java.lang.Boolean) value); return true;
+            case "initialReplayIdMap": getOrCreateConfiguration((SalesforceComponent) component).setInitialReplayIdMap((java.util.Map) value); return true;
+            case "instanceId": getOrCreateConfiguration((SalesforceComponent) component).setInstanceId((java.lang.String) value); return true;
+            case "jobId": getOrCreateConfiguration((SalesforceComponent) component).setJobId((java.lang.String) value); return true;
+            case "limit": getOrCreateConfiguration((SalesforceComponent) component).setLimit((java.lang.Integer) value); return true;
+            case "maxBackoff": getOrCreateConfiguration((SalesforceComponent) component).setMaxBackoff((long) value); return true;
+            case "notFoundBehaviour": getOrCreateConfiguration((SalesforceComponent) component).setNotFoundBehaviour((org.apache.camel.component.salesforce.NotFoundBehaviour) value); return true;
+            case "notifyForFields": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForFields((org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum) value); return true;
+            case "notifyForOperationCreate": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationCreate((java.lang.Boolean) value); return true;
+            case "notifyForOperationDelete": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationDelete((java.lang.Boolean) value); return true;
+            case "notifyForOperations": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperations((org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum) value); return true;
+            case "notifyForOperationUndelete": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUndelete((java.lang.Boolean) value); return true;
+            case "notifyForOperationUpdate": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUpdate((java.lang.Boolean) value); return true;
+            case "objectMapper": getOrCreateConfiguration((SalesforceComponent) component).setObjectMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
             case "packages": ((SalesforceComponent) component).setPackages((java.lang.String[]) value); return true;
+            case "rawPayload": getOrCreateConfiguration((SalesforceComponent) component).setRawPayload((boolean) value); return true;
+            case "reportId": getOrCreateConfiguration((SalesforceComponent) component).setReportId((java.lang.String) value); return true;
+            case "reportMetadata": getOrCreateConfiguration((SalesforceComponent) component).setReportMetadata((org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata) value); return true;
+            case "resultId": getOrCreateConfiguration((SalesforceComponent) component).setResultId((java.lang.String) value); return true;
+            case "sObjectBlobFieldName": getOrCreateConfiguration((SalesforceComponent) component).setSObjectBlobFieldName((java.lang.String) value); return true;
+            case "sObjectClass": getOrCreateConfiguration((SalesforceComponent) component).setSObjectClass((java.lang.String) value); return true;
+            case "sObjectFields": getOrCreateConfiguration((SalesforceComponent) component).setSObjectFields((java.lang.String) value); return true;
+            case "sObjectId": getOrCreateConfiguration((SalesforceComponent) component).setSObjectId((java.lang.String) value); return true;
+            case "sObjectIdName": getOrCreateConfiguration((SalesforceComponent) component).setSObjectIdName((java.lang.String) value); return true;
+            case "sObjectIdValue": getOrCreateConfiguration((SalesforceComponent) component).setSObjectIdValue((java.lang.String) value); return true;
+            case "sObjectName": getOrCreateConfiguration((SalesforceComponent) component).setSObjectName((java.lang.String) value); return true;
+            case "sObjectQuery": getOrCreateConfiguration((SalesforceComponent) component).setSObjectQuery((java.lang.String) value); return true;
+            case "sObjectSearch": getOrCreateConfiguration((SalesforceComponent) component).setSObjectSearch((java.lang.String) value); return true;
+            case "updateTopic": getOrCreateConfiguration((SalesforceComponent) component).setUpdateTopic((boolean) value); return true;
             case "config": ((SalesforceComponent) component).setConfig((org.apache.camel.component.salesforce.SalesforceEndpointConfig) value); return true;
-            case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
-            case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map<java.lang.String, java.lang.Object>) value); return true;
+            case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map) value); return true;
+            case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((SalesforceComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "httpProxyExcludedAddresses": ((SalesforceComponent) component).setHttpProxyExcludedAddresses((java.util.Set<java.lang.String>) value); return true;
+            case "httpProxyExcludedAddresses": ((SalesforceComponent) component).setHttpProxyExcludedAddresses((java.util.Set) value); return true;
             case "httpProxyHost": ((SalesforceComponent) component).setHttpProxyHost((java.lang.String) value); return true;
-            case "httpProxyIncludedAddresses": ((SalesforceComponent) component).setHttpProxyIncludedAddresses((java.util.Set<java.lang.String>) value); return true;
+            case "httpProxyIncludedAddresses": ((SalesforceComponent) component).setHttpProxyIncludedAddresses((java.util.Set) value); return true;
             case "httpProxyPort": ((SalesforceComponent) component).setHttpProxyPort((java.lang.Integer) value); return true;
             case "isHttpProxySocks4": ((SalesforceComponent) component).setIsHttpProxySocks4((boolean) value); return true;
             case "authenticationType": ((SalesforceComponent) component).setAuthenticationType((org.apache.camel.component.salesforce.AuthenticationType) value); return true;

@@ -59,7 +59,7 @@ public class JmsRouteTimeoutCheckerIntervalTest extends CamelTestSupport {
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent activmq = jmsComponentAutoAcknowledge(connectionFactory);
         // check 4 times per second
-        activmq.setRequestTimeoutCheckerInterval(250);
+        activmq.getConfiguration().setRequestTimeoutCheckerInterval(250);
         camelContext.addComponent("activemq", activmq);
 
         return camelContext;

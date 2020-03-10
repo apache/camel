@@ -189,7 +189,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. May be either SIZE_1 or SIZE_2 .
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
@@ -203,7 +203,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. May be either SIZE_1 or SIZE_2 .
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
@@ -217,7 +217,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. May be either SIZE_1 or SIZE_2 .
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
@@ -230,7 +230,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. May be either SIZE_1 or SIZE_2 .
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
@@ -243,8 +243,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. May be either SIZE_1 , SIZE_2 or SIZE_3
-         * .
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
@@ -257,8 +256,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. May be either SIZE_1 , SIZE_2 or SIZE_3
-         * .
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
@@ -793,7 +791,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. May be either SIZE_1 or SIZE_2 .
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
@@ -807,7 +805,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. May be either SIZE_1 or SIZE_2 .
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
@@ -821,7 +819,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. May be either SIZE_1 or SIZE_2 .
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
@@ -834,7 +832,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. May be either SIZE_1 or SIZE_2 .
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
@@ -847,8 +845,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. May be either SIZE_1 , SIZE_2 or SIZE_3
-         * .
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
@@ -861,8 +858,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. May be either SIZE_1 , SIZE_2 or SIZE_3
-         * .
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
@@ -1291,7 +1287,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. May be either SIZE_1 or SIZE_2 .
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
@@ -1305,7 +1301,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The common ASDU address size. May be either SIZE_1 or SIZE_2 .
+         * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
@@ -1318,7 +1314,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. May be either SIZE_1 or SIZE_2 .
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
@@ -1331,7 +1327,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The cause of transmission type. May be either SIZE_1 or SIZE_2 .
+         * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
@@ -1344,8 +1340,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. May be either SIZE_1 , SIZE_2 or SIZE_3
-         * .
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
@@ -1358,8 +1353,7 @@ public interface ServerEndpointBuilderFactory {
             return this;
         }
         /**
-         * The information address size. May be either SIZE_1 , SIZE_2 or SIZE_3
-         * .
+         * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.

@@ -23,8 +23,6 @@ import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
@@ -75,6 +73,7 @@ import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.spi.ReifierStrategy;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -151,6 +150,14 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         DATAFORMATS.clear();
     }
 
+    public static DataFormat getDataFormat(CamelContext camelContext, DataFormatDefinition type) {
+        return getDataFormat(camelContext, ObjectHelper.notNull(type, "type"), null);
+    }
+
+    public static DataFormat getDataFormat(CamelContext camelContext, String ref) {
+        return getDataFormat(camelContext, null, ObjectHelper.notNull(ref, "ref"));
+    }
+
     /**
      * Factory method to create the data format
      *
@@ -163,7 +170,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (type == null) {
             ObjectHelper.notNull(ref, "ref or type");
 
-            DataFormat dataFormat = camelContext.getRegistry().lookupByNameAndType(ref, DataFormat.class);
+            DataFormat dataFormat = CamelContextHelper.lookup(camelContext, ref, DataFormat.class);
             if (dataFormat != null) {
                 return dataFormat;
             }
@@ -206,7 +213,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                     ((DataFormatContentTypeHeader) dataFormat).setContentTypeHeader(contentTypeHeader);
                 }
                 // configure the rest of the options
-                configureDataFormat(dataFormat, camelContext);
+                configureDataFormat(dataFormat);
             } else {
                 throw new IllegalArgumentException("Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
                                                    + "' could not be created. "
@@ -235,12 +242,12 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     /**
      * Allows derived classes to customize the data format
      */
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+    protected void configureDataFormat(DataFormat dataFormat) {
         Map<String, Object> properties = new LinkedHashMap<>();
         prepareDataFormatConfig(properties);
         properties.entrySet().removeIf(e -> e.getValue() == null);
 
-        PropertyConfigurer configurer = findPropertyConfigurer(dataFormat, camelContext);
+        PropertyConfigurer configurer = findPropertyConfigurer(dataFormat);
 
         PropertyBindingSupport.build()
                 .withCamelContext(camelContext)
@@ -252,7 +259,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                 .bind();
     }
 
-    private PropertyConfigurer findPropertyConfigurer(DataFormat dataFormat, CamelContext camelContext) {
+    private PropertyConfigurer findPropertyConfigurer(DataFormat dataFormat) {
         PropertyConfigurer configurer = null;
         String name = getDataFormatName();
         LOG.trace("Discovering optional dataformat property configurer class for dataformat: {}", name);
@@ -264,24 +271,20 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         if (configurer == null) {
             final String configurerName = name + "-dataformat-configurer";
-            configurer = camelContext.getRegistry().lookupByNameAndType(configurerName, PropertyConfigurer.class);
+            configurer = lookup(configurerName, PropertyConfigurer.class);
             if (LOG.isDebugEnabled() && configurer != null) {
                 LOG.debug("Discovered dataformat property configurer using the Camel registry: {} -> {}", configurerName, configurer);
             }
         }
         if (configurer == null) {
-            try {
-                Class<?> clazz = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
-                        .findOptionalClass(name + "-dataformat-configurer", null)
-                        .orElse(null);
-                if (clazz != null) {
-                    configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, PropertyConfigurer.class);
-                    if (LOG.isDebugEnabled() && configurer != null) {
-                        LOG.debug("Discovered dataformat property configurer using the FactoryFinder: {} -> {}", name, configurer);
-                    }
+            Class<?> clazz = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
+                    .findOptionalClass(name + "-dataformat-configurer", null)
+                    .orElse(null);
+            if (clazz != null) {
+                configurer = org.apache.camel.support.ObjectHelper.newInstance(clazz, PropertyConfigurer.class);
+                if (LOG.isDebugEnabled() && configurer != null) {
+                    LOG.debug("Discovered dataformat property configurer using the FactoryFinder: {} -> {}", name, configurer);
                 }
-            } catch (NoFactoryAvailableException e) {
-                throw new RuntimeCamelException("Unable to retrieve dataformat property configurer factory finder", e);
             }
         }
         return configurer;

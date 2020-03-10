@@ -19,6 +19,8 @@ package org.apache.camel.component.bean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class BeanLookupUsingJndiRegistryIssueTest extends Assert {
         JndiContext jndi = new JndiContext();
         jndi.bind("foo", new MyOtherDummyBean());
 
-        CamelContext camel = new DefaultCamelContext(jndi);
+        CamelContext camel = new DefaultCamelContext(new DefaultRegistry(new JndiBeanRepository(jndi)));
         camel.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

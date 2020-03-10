@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.OptimisticLockRetryPolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -33,13 +34,12 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
-    public AggregateReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, AggregateDefinition.class.cast(definition));
+    public AggregateReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, AggregateDefinition.class.cast(definition));
     }
 
     @Override
@@ -52,10 +52,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         // wrap the aggregate route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, childProcessor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         Expression correlation = createExpression(definition.getExpression());
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
 
         boolean parallel = parseBoolean(definition.getParallelProcessing(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
@@ -70,13 +70,13 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         AggregateProcessor answer = new AggregateProcessor(camelContext, internal, correlation, strategy, threadPool, shutdownThreadPool);
 
-        AggregationRepository repository = createAggregationRepository(routeContext);
+        AggregationRepository repository = createAggregationRepository();
         if (repository != null) {
             answer.setAggregationRepository(repository);
         }
 
         if (definition.getAggregateController() == null && definition.getAggregateControllerRef() != null) {
-            definition.setAggregateController(routeContext.mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
+            definition.setAggregateController(mandatoryLookup(definition.getAggregateControllerRef(), AggregateController.class));
         }
 
         // this EIP supports using a shared timeout checker thread pool or
@@ -85,7 +85,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         ScheduledExecutorService timeoutThreadPool = definition.getTimeoutCheckerExecutorService();
         if (timeoutThreadPool == null && definition.getTimeoutCheckerExecutorServiceRef() != null) {
             // lookup existing thread pool
-            timeoutThreadPool = routeContext.lookup(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
+            timeoutThreadPool = lookup(definition.getTimeoutCheckerExecutorServiceRef(), ScheduledExecutorService.class);
             if (timeoutThreadPool == null) {
                 // then create a thread pool assuming the ref is a thread pool
                 // profile id
@@ -214,10 +214,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return policy;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(definition.getStrategyRef(), Object.class);
+            Object aggStrategy = lookup(definition.getStrategyRef(), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {
@@ -243,10 +243,10 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return strategy;
     }
 
-    private AggregationRepository createAggregationRepository(RouteContext routeContext) {
+    private AggregationRepository createAggregationRepository() {
         AggregationRepository repository = definition.getAggregationRepository();
         if (repository == null && definition.getAggregationRepositoryRef() != null) {
-            repository = routeContext.mandatoryLookup(definition.getAggregationRepositoryRef(), AggregationRepository.class);
+            repository = mandatoryLookup(definition.getAggregationRepositoryRef(), AggregationRepository.class);
         }
         return repository;
     }

@@ -15,67 +15,28 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmppEndpoint target = (SmppEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "initialreconnectdelay":
-        case "initialReconnectDelay": target.getConfiguration().setInitialReconnectDelay(property(camelContext, long.class, value)); return true;
-        case "maxreconnect":
-        case "maxReconnect": target.getConfiguration().setMaxReconnect(property(camelContext, int.class, value)); return true;
-        case "reconnectdelay":
-        case "reconnectDelay": target.getConfiguration().setReconnectDelay(property(camelContext, long.class, value)); return true;
-        case "splittingpolicy":
-        case "splittingPolicy": target.getConfiguration().setSplittingPolicy(property(camelContext, org.apache.camel.component.smpp.SmppSplittingPolicy.class, value)); return true;
-        case "systemtype":
-        case "systemType": target.getConfiguration().setSystemType(property(camelContext, java.lang.String.class, value)); return true;
         case "addressrange":
         case "addressRange": target.getConfiguration().setAddressRange(property(camelContext, java.lang.String.class, value)); return true;
+        case "alphabet": target.getConfiguration().setAlphabet(property(camelContext, byte.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "datacoding":
+        case "dataCoding": target.getConfiguration().setDataCoding(property(camelContext, byte.class, value)); return true;
         case "destaddr":
         case "destAddr": target.getConfiguration().setDestAddr(property(camelContext, java.lang.String.class, value)); return true;
         case "destaddrnpi":
         case "destAddrNpi": target.getConfiguration().setDestAddrNpi(property(camelContext, byte.class, value)); return true;
         case "destaddrton":
         case "destAddrTon": target.getConfiguration().setDestAddrTon(property(camelContext, byte.class, value)); return true;
-        case "lazysessioncreation":
-        case "lazySessionCreation": target.getConfiguration().setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "numberingplanindicator":
-        case "numberingPlanIndicator": target.getConfiguration().setNumberingPlanIndicator(property(camelContext, byte.class, value)); return true;
-        case "priorityflag":
-        case "priorityFlag": target.getConfiguration().setPriorityFlag(property(camelContext, byte.class, value)); return true;
-        case "protocolid":
-        case "protocolId": target.getConfiguration().setProtocolId(property(camelContext, byte.class, value)); return true;
-        case "registereddelivery":
-        case "registeredDelivery": target.getConfiguration().setRegisteredDelivery(property(camelContext, byte.class, value)); return true;
-        case "replaceifpresentflag":
-        case "replaceIfPresentFlag": target.getConfiguration().setReplaceIfPresentFlag(property(camelContext, byte.class, value)); return true;
-        case "servicetype":
-        case "serviceType": target.getConfiguration().setServiceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourceaddr":
-        case "sourceAddr": target.getConfiguration().setSourceAddr(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourceaddrnpi":
-        case "sourceAddrNpi": target.getConfiguration().setSourceAddrNpi(property(camelContext, byte.class, value)); return true;
-        case "sourceaddrton":
-        case "sourceAddrTon": target.getConfiguration().setSourceAddrTon(property(camelContext, byte.class, value)); return true;
-        case "typeofnumber":
-        case "typeOfNumber": target.getConfiguration().setTypeOfNumber(property(camelContext, byte.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "encoding": target.getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "enquirelinktimer":
         case "enquireLinkTimer": target.getConfiguration().setEnquireLinkTimer(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "sessionstatelistener":
-        case "sessionStateListener": target.getConfiguration().setSessionStateListener(property(camelContext, org.jsmpp.session.SessionStateListener.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "transactiontimer":
-        case "transactionTimer": target.getConfiguration().setTransactionTimer(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "alphabet": target.getConfiguration().setAlphabet(property(camelContext, byte.class, value)); return true;
-        case "datacoding":
-        case "dataCoding": target.getConfiguration().setDataCoding(property(camelContext, byte.class, value)); return true;
-        case "encoding": target.getConfiguration().setEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "httpproxyhost":
         case "httpProxyHost": target.getConfiguration().setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "httpproxypassword":
@@ -84,11 +45,50 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "httpProxyPort": target.getConfiguration().setHttpProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpproxyusername":
         case "httpProxyUsername": target.getConfiguration().setHttpProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "initialreconnectdelay":
+        case "initialReconnectDelay": target.getConfiguration().setInitialReconnectDelay(property(camelContext, long.class, value)); return true;
+        case "lazysessioncreation":
+        case "lazySessionCreation": target.getConfiguration().setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxreconnect":
+        case "maxReconnect": target.getConfiguration().setMaxReconnect(property(camelContext, int.class, value)); return true;
+        case "numberingplanindicator":
+        case "numberingPlanIndicator": target.getConfiguration().setNumberingPlanIndicator(property(camelContext, byte.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "priorityflag":
+        case "priorityFlag": target.getConfiguration().setPriorityFlag(property(camelContext, byte.class, value)); return true;
+        case "protocolid":
+        case "protocolId": target.getConfiguration().setProtocolId(property(camelContext, byte.class, value)); return true;
         case "proxyheaders":
         case "proxyHeaders": target.getConfiguration().setProxyHeaders(property(camelContext, java.util.Map.class, value)); return true;
-        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnectdelay":
+        case "reconnectDelay": target.getConfiguration().setReconnectDelay(property(camelContext, long.class, value)); return true;
+        case "registereddelivery":
+        case "registeredDelivery": target.getConfiguration().setRegisteredDelivery(property(camelContext, byte.class, value)); return true;
+        case "replaceifpresentflag":
+        case "replaceIfPresentFlag": target.getConfiguration().setReplaceIfPresentFlag(property(camelContext, byte.class, value)); return true;
+        case "servicetype":
+        case "serviceType": target.getConfiguration().setServiceType(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessionstatelistener":
+        case "sessionStateListener": target.getConfiguration().setSessionStateListener(property(camelContext, org.jsmpp.session.SessionStateListener.class, value)); return true;
+        case "sourceaddr":
+        case "sourceAddr": target.getConfiguration().setSourceAddr(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourceaddrnpi":
+        case "sourceAddrNpi": target.getConfiguration().setSourceAddrNpi(property(camelContext, byte.class, value)); return true;
+        case "sourceaddrton":
+        case "sourceAddrTon": target.getConfiguration().setSourceAddrTon(property(camelContext, byte.class, value)); return true;
+        case "splittingpolicy":
+        case "splittingPolicy": target.getConfiguration().setSplittingPolicy(property(camelContext, org.apache.camel.component.smpp.SmppSplittingPolicy.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "systemid":
         case "systemId": target.getConfiguration().setSystemId(property(camelContext, java.lang.String.class, value)); return true;
+        case "systemtype":
+        case "systemType": target.getConfiguration().setSystemType(property(camelContext, java.lang.String.class, value)); return true;
+        case "transactiontimer":
+        case "transactionTimer": target.getConfiguration().setTransactionTimer(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "typeofnumber":
+        case "typeOfNumber": target.getConfiguration().setTypeOfNumber(property(camelContext, byte.class, value)); return true;
         case "usingssl":
         case "usingSSL": target.getConfiguration().setUsingSSL(property(camelContext, boolean.class, value)); return true;
         default: return false;

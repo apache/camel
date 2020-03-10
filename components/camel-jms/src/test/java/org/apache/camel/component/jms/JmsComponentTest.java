@@ -65,25 +65,25 @@ public class JmsComponentTest extends CamelTestSupport {
         JmsComponent comp = jmsComponentAutoAcknowledge(connectionFactory);
 
         comp.setAcceptMessagesWhileStopping(true);
-        comp.setAllowReplyManagerQuickStop(true);
-        comp.setAlwaysCopyMessage(true);
-        comp.setAcknowledgementMode(1);
-        comp.setAutoStartup(true);
-        comp.setCacheLevel(1);
-        comp.setClientId("foo");
-        comp.setConcurrentConsumers(2);
-        comp.setDeliveryPersistent(true);
-        comp.setExplicitQosEnabled(true);
-        comp.setIdleTaskExecutionLimit(20);
-        comp.setIdleConsumerLimit(21);
-        comp.setMaxConcurrentConsumers(5);
-        comp.setMaxMessagesPerTask(90);
-        comp.setPriority(3);
-        comp.setReceiveTimeout(5000);
-        comp.setRecoveryInterval(9000);
-        comp.setTimeToLive(3000);
-        comp.setTransacted(true);
-        comp.setTransactionTimeout(15000);
+        comp.getConfiguration().setAllowReplyManagerQuickStop(true);
+        comp.getConfiguration().setAlwaysCopyMessage(true);
+        comp.getConfiguration().setAcknowledgementMode(1);
+        comp.getConfiguration().setAutoStartup(true);
+        comp.getConfiguration().setCacheLevel(1);
+        comp.getConfiguration().setClientId("foo");
+        comp.getConfiguration().setConcurrentConsumers(2);
+        comp.getConfiguration().setDeliveryPersistent(true);
+        comp.getConfiguration().setExplicitQosEnabled(true);
+        comp.getConfiguration().setIdleTaskExecutionLimit(20);
+        comp.getConfiguration().setIdleConsumerLimit(21);
+        comp.getConfiguration().setMaxConcurrentConsumers(5);
+        comp.getConfiguration().setMaxMessagesPerTask(90);
+        comp.getConfiguration().setPriority(3);
+        comp.getConfiguration().setReceiveTimeout(5000);
+        comp.getConfiguration().setRecoveryInterval(9000);
+        comp.getConfiguration().setTimeToLive(3000);
+        comp.getConfiguration().setTransacted(true);
+        comp.getConfiguration().setTransactionTimeout(15000);
 
         camelContext.addComponent(componentName, comp);
 

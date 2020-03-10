@@ -36,15 +36,14 @@ import org.apache.camel.Message;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.CamelContextHelper;
@@ -486,8 +485,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // and put failure endpoint back as well
             ee.setProperty(Exchange.FAILURE_ENDPOINT, ee.getProperty(Exchange.TO_ENDPOINT));
             // and store the route id so we know in which route we failed
-            UnitOfWork uow = ee.getUnitOfWork();
-            RouteContext rc = uow != null ? uow.getRouteContext() : null;
+            Route rc = ExchangeHelper.getRoute(ee);
             if (rc != null) {
                 ee.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
             }
@@ -614,6 +612,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return;
             }
 
+            try {
+                doRun();
+            } catch (Throwable e) {
+                // unexpected exception during running so break out
+                exchange.setException(e);
+                callback.done(false);
+            }
+        }
+
+        private void doRun() throws Exception {
             // did previous processing cause an exception?
             if (exchange.getException() != null) {
                 handleException();
@@ -873,8 +881,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
                 // route specific failure handler?
                 Processor processor = null;
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                Route rc = ExchangeHelper.getRoute(exchange);
                 if (rc != null) {
                     processor = rc.getOnException(exceptionPolicy.getId());
                 } else {
@@ -1032,8 +1039,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // store the last to endpoint as the failure endpoint
                 exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
                 // and store the route id so we know in which route we failed
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                Route rc = ExchangeHelper.getRoute(exchange);
                 if (rc != null) {
                     exchange.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
                 }
@@ -1171,10 +1177,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // and put failure endpoint back as well
             ee.setProperty(Exchange.FAILURE_ENDPOINT, ee.getProperty(Exchange.TO_ENDPOINT));
             // and store the route id so we know in which route we failed
-            UnitOfWork uow = ee.getUnitOfWork();
-            RouteContext rc = uow != null ? uow.getRouteContext() : null;
-            if (rc != null) {
-                ee.setProperty(Exchange.FAILURE_ROUTE_ID, rc.getRouteId());
+            String routeId = ExchangeHelper.getAtRouteId(ee);
+            if (routeId != null) {
+                ee.setProperty(Exchange.FAILURE_ROUTE_ID, routeId);
             }
         }
 

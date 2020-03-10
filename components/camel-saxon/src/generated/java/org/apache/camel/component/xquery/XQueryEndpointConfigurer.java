@@ -17,52 +17,45 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstax":
         case "allowStAX": target.setAllowStAX(property(camelContext, boolean.class, value)); return true;
-        case "headername":
-        case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
-        case "namespaceprefixes":
-        case "namespacePrefixes": target.setNamespacePrefixes(property(camelContext, java.util.Map.class, value)); return true;
-        case "resultsformat":
-        case "resultsFormat": target.setResultsFormat(property(camelContext, org.apache.camel.component.xquery.ResultFormat.class, value)); return true;
-        case "resulttype":
-        case "resultType": target.setResultType(property(camelContext, java.lang.Class.class, value)); return true;
-        case "stripsallwhitespace":
-        case "stripsAllWhiteSpace": target.setStripsAllWhiteSpace(property(camelContext, boolean.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "pollstrategy":
-        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
-        case "configurationproperties":
-        case "configurationProperties": target.setConfigurationProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "moduleuriresolver":
-        case "moduleURIResolver": target.setModuleURIResolver(property(camelContext, net.sf.saxon.lib.ModuleURIResolver.class, value)); return true;
-        case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
-        case "properties": target.setProperties(property(camelContext, java.util.Properties.class, value)); return true;
-        case "staticquerycontext":
-        case "staticQueryContext": target.setStaticQueryContext(property(camelContext, net.sf.saxon.query.StaticQueryContext.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, net.sf.saxon.Configuration.class, value)); return true;
+        case "configurationproperties":
+        case "configurationProperties": target.setConfigurationProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "headername":
+        case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "moduleuriresolver":
+        case "moduleURIResolver": target.setModuleURIResolver(property(camelContext, net.sf.saxon.lib.ModuleURIResolver.class, value)); return true;
+        case "namespaceprefixes":
+        case "namespacePrefixes": target.setNamespacePrefixes(property(camelContext, java.util.Map.class, value)); return true;
+        case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "pollstrategy":
+        case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
+        case "properties": target.setProperties(property(camelContext, java.util.Properties.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "resulttype":
+        case "resultType": target.setResultType(property(camelContext, java.lang.Class.class, value)); return true;
+        case "resultsformat":
+        case "resultsFormat": target.setResultsFormat(property(camelContext, org.apache.camel.component.xquery.ResultFormat.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -70,8 +63,15 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
+        case "staticquerycontext":
+        case "staticQueryContext": target.setStaticQueryContext(property(camelContext, net.sf.saxon.query.StaticQueryContext.class, value)); return true;
+        case "stripsallwhitespace":
+        case "stripsAllWhiteSpace": target.setStripsAllWhiteSpace(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":

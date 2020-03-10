@@ -30,20 +30,43 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Workflow component supports 7 options, which are listed below.
+The AWS Simple Workflow component supports 30 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (common) | Amazon AWS Access Key. |  | String
-| *region* (common) | Amazon AWS Region. |  | String
-| *secretKey* (common) | Amazon AWS Secret Key. |  | String
+| *amazonSWClient* (common) | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow
+| *configuration* (common) | The component configuration |  | SWFConfiguration
+| *dataConverter* (common) | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
+| *domainName* (common) | The workflow domain to use. |  | String
+| *eventName* (common) | The workflow or activity event name to use. |  | String
+| *region* (common) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *version* (common) | The workflow or activity event version to use. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *activityList* (activity) | The list name to consume activities from. |  | String
+| *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivitySchedulingOptions
+| *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
+| *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
+| *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | The AWS SWF default configuration |  | SWFConfiguration
+| *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
+| *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
+| *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
+| *accessKey* (security) | Amazon AWS Access Key. |  | String
+| *secretKey* (security) | Amazon AWS Secret Key. |  | String
+| *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String
+| *executionStartToCloseTimeout* (workflow) | Set the execution start to close timeout. | 3600 | String
+| *operation* (workflow) | Workflow operation. The value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
+| *signalName* (workflow) | The name of the signal to send to the workflow. |  | String
+| *stateResultType* (workflow) | The type of the result when a workflow state is queried. |  | String
+| *taskStartToCloseTimeout* (workflow) | Set the task start to close timeout. | 600 | String
+| *terminationDetails* (workflow) | Details for terminating a workflow. |  | String
+| *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
+| *workflowList* (workflow) | The list name to consume workflows from. |  | String
+| *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
 |===
 // component options: END
 
@@ -85,16 +108,18 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
-| *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
-| *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *activityList* (activity) | The list name to consume activities from. |  | String
 | *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivitySchedulingOptions
 | *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
 | *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
 | *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
+| *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
+| *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key. |  | String
+| *secretKey* (security) | Amazon AWS Secret Key. |  | String
 | *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String
 | *executionStartToCloseTimeout* (workflow) | Set the execution start to close timeout. | 3600 | String
 | *operation* (workflow) | Workflow operation. The value can be one of: SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY | START | String
@@ -105,8 +130,6 @@ with the following path and query parameters:
 | *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
 | *workflowList* (workflow) | The list name to consume workflows from. |  | String
 | *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
-| *accessKey* (security) | Amazon AWS Access Key. |  | String
-| *secretKey* (security) | Amazon AWS Secret Key. |  | String
 |===
 // endpoint options: END
 

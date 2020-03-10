@@ -19,10 +19,14 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bindaddresses":
         case "bindAddresses": target.setBindAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "bindport":
         case "bindPort": target.setBindPort(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buildinfo":
         case "buildInfo": target.setBuildInfo(property(camelContext, org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class, value)); return true;
         case "certificatemanager":
@@ -33,6 +37,8 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "defaultCertificateValidator": target.setDefaultCertificateValidator(property(camelContext, java.io.File.class, value)); return true;
         case "enableanonymousauthentication":
         case "enableAnonymousAuthentication": target.setEnableAnonymousAuthentication(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "namespaceuri":
         case "namespaceUri": target.setNamespaceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
@@ -48,12 +54,6 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "userAuthenticationCredentials": target.setUserAuthenticationCredentials(property(camelContext, java.lang.String.class, value)); return true;
         case "usernamesecuritypolicyuri":
         case "usernameSecurityPolicyUri": target.setUsernameSecurityPolicyUri(property(camelContext, org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

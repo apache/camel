@@ -11,17 +11,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JooqComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.jooq.JooqConfiguration getOrCreateConfiguration(JooqComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.jooq.JooqConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JooqComponent target = (JooqComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jooq.JooqConfiguration.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jooq.JooqConfiguration.class, value)); return true;
+        case "consumedelete":
+        case "consumeDelete": getOrCreateConfiguration(target).setConsumeDelete(property(camelContext, boolean.class, value)); return true;
+        case "databaseconfiguration":
+        case "databaseConfiguration": getOrCreateConfiguration(target).setDatabaseConfiguration(property(camelContext, org.jooq.Configuration.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.jooq.JooqOperation.class, value)); return true;
+        case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

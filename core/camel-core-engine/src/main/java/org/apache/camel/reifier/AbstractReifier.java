@@ -16,28 +16,35 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.reifier.language.ExpressionReifier;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
-public abstract class AbstractReifier {
+public abstract class AbstractReifier implements BeanRepository {
 
-    protected final RouteContext routeContext;
+    protected final org.apache.camel.Route route;
     protected final CamelContext camelContext;
 
-    public AbstractReifier(RouteContext routeContext) {
-        this.routeContext = routeContext;
-        this.camelContext = routeContext.getCamelContext();
+    public AbstractReifier(Route route) {
+        this.route = ObjectHelper.notNull(route, "Route");
+        this.camelContext = route.getCamelContext();
     }
 
     public AbstractReifier(CamelContext camelContext) {
-        this.routeContext = null;
-        this.camelContext = camelContext;
+        this.route = null;
+        this.camelContext = ObjectHelper.notNull(camelContext, "CamelContext");
     }
 
     protected String parseString(String text) {
@@ -113,6 +120,50 @@ public abstract class AbstractReifier {
 
     protected Object asRef(String s) {
         return s != null ? s.startsWith("#") ? s : "#" + s : null;
+    }
+
+    protected BeanRepository getRegistry() {
+        return camelContext.getRegistry();
+    }
+
+    public <T> T mandatoryLookup(String name, Class<T> beanType) {
+        return CamelContextHelper.mandatoryLookup(camelContext, name, beanType);
+    }
+
+    public <T> T findSingleByType(Class<T> type) {
+        return CamelContextHelper.findByType(camelContext, type);
+    }
+
+    @Override
+    public Object lookupByName(String name) {
+        return getRegistry().lookupByName(name);
+    }
+
+    public <T> T lookup(String name, Class<T> type) {
+        return lookupByNameAndType(name, type);
+    }
+
+    public <T> T lookupByNameAndType(String name, Class<T> type) {
+        return getRegistry().lookupByNameAndType(name, type);
+    }
+
+    @Override
+    public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+        return getRegistry().findByTypeWithName(type);
+    }
+
+    @Override
+    public <T> Set<T> findByType(Class<T> type) {
+        return getRegistry().findByType(type);
+    }
+
+    @Override
+    public Object unwrap(Object value) {
+        return getRegistry().unwrap(value);
+    }
+
+    public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
 }

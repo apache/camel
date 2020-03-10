@@ -53,50 +53,74 @@ public interface ConsulComponentBuilderFactory {
             extends
                 ComponentBuilder<ConsulComponent> {
         /**
-         * Sets the ACL token to be used with Consul.
+         * Connect timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulComponentBuilder connectTimeoutMillis(
+                java.lang.Long connectTimeoutMillis) {
+            doSetProperty("connectTimeoutMillis", connectTimeoutMillis);
+            return this;
+        }
+        /**
+         * Reference to a com.orbitz.consul.Consul in the registry.
+         * 
+         * The option is a: <code>com.orbitz.consul.Consul</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulComponentBuilder consulClient(
+                com.orbitz.consul.Consul consulClient) {
+            doSetProperty("consulClient", consulClient);
+            return this;
+        }
+        /**
+         * The default key. Can be overridden by CamelConsulKey.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default ConsulComponentBuilder aclToken(java.lang.String aclToken) {
-            doSetProperty("aclToken", aclToken);
+        default ConsulComponentBuilder key(java.lang.String key) {
+            doSetProperty("key", key);
             return this;
         }
         /**
-         * The data center.
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default ConsulComponentBuilder pingInstance(boolean pingInstance) {
+            doSetProperty("pingInstance", pingInstance);
+            return this;
+        }
+        /**
+         * Read timeout for OkHttpClient.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: common
+         */
+        default ConsulComponentBuilder readTimeoutMillis(
+                java.lang.Long readTimeoutMillis) {
+            doSetProperty("readTimeoutMillis", readTimeoutMillis);
+            return this;
+        }
+        /**
+         * Set tags. You can separate multiple tags by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default ConsulComponentBuilder datacenter(java.lang.String datacenter) {
-            doSetProperty("datacenter", datacenter);
-            return this;
-        }
-        /**
-         * Sets the password to be used for basic authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ConsulComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * SSL configuration using an
-         * org.apache.camel.support.jsse.SSLContextParameters instance.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: common
-         */
-        default ConsulComponentBuilder sslContextParameters(
-                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
+        default ConsulComponentBuilder tags(java.lang.String tags) {
+            doSetProperty("tags", tags);
             return this;
         }
         /**
@@ -111,14 +135,15 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the username to be used for basic authentication.
+         * Write timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: common
          */
-        default ConsulComponentBuilder userName(java.lang.String userName) {
-            doSetProperty("userName", userName);
+        default ConsulComponentBuilder writeTimeoutMillis(
+                java.lang.Long writeTimeoutMillis) {
+            doSetProperty("writeTimeoutMillis", writeTimeoutMillis);
             return this;
         }
         /**
@@ -138,6 +163,17 @@ public interface ConsulComponentBuilderFactory {
         default ConsulComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The default action. Can be overridden by CamelConsulAction.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default ConsulComponentBuilder action(java.lang.String action) {
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -162,6 +198,19 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default ConsulComponentBuilder valueAsString(boolean valueAsString) {
+            doSetProperty("valueAsString", valueAsString);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -176,7 +225,7 @@ public interface ConsulComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the common configuration shared among endpoints.
+         * Consul configuration.
          * 
          * The option is a:
          * <code>org.apache.camel.component.consul.ConsulConfiguration</code>
@@ -187,6 +236,91 @@ public interface ConsulComponentBuilderFactory {
         default ConsulComponentBuilder configuration(
                 org.apache.camel.component.consul.ConsulConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The consistencyMode used for queries, default
+         * ConsistencyMode.DEFAULT.
+         * 
+         * The option is a:
+         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * 
+         * Default: DEFAULT
+         * Group: advanced
+         */
+        default ConsulComponentBuilder consistencyMode(
+                com.orbitz.consul.option.ConsistencyMode consistencyMode) {
+            doSetProperty("consistencyMode", consistencyMode);
+            return this;
+        }
+        /**
+         * The data center.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default ConsulComponentBuilder datacenter(java.lang.String datacenter) {
+            doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * The near node to use for queries.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default ConsulComponentBuilder nearNode(java.lang.String nearNode) {
+            doSetProperty("nearNode", nearNode);
+            return this;
+        }
+        /**
+         * The note meta-data to use for queries.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: advanced
+         */
+        default ConsulComponentBuilder nodeMeta(
+                java.util.List<java.lang.String> nodeMeta) {
+            doSetProperty("nodeMeta", nodeMeta);
+            return this;
+        }
+        /**
+         * Sets the ACL token to be used with Consul.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulComponentBuilder aclToken(java.lang.String aclToken) {
+            doSetProperty("aclToken", aclToken);
+            return this;
+        }
+        /**
+         * Sets the password to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -202,6 +336,55 @@ public interface ConsulComponentBuilderFactory {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
             return this;
         }
+        /**
+         * Sets the username to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulComponentBuilder userName(java.lang.String userName) {
+            doSetProperty("userName", userName);
+            return this;
+        }
+        /**
+         * The second to wait for a watch event, default 10 seconds.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 10
+         * Group: watch
+         */
+        default ConsulComponentBuilder blockSeconds(
+                java.lang.Integer blockSeconds) {
+            doSetProperty("blockSeconds", blockSeconds);
+            return this;
+        }
+        /**
+         * The first index for watch for, default 0.
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Default: 0
+         * Group: watch
+         */
+        default ConsulComponentBuilder firstIndex(
+                java.math.BigInteger firstIndex) {
+            doSetProperty("firstIndex", firstIndex);
+            return this;
+        }
+        /**
+         * Recursively watch, default false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: watch
+         */
+        default ConsulComponentBuilder recursive(boolean recursive) {
+            doSetProperty("recursive", recursive);
+            return this;
+        }
     }
 
     class ConsulComponentBuilderImpl
@@ -213,23 +396,45 @@ public interface ConsulComponentBuilderFactory {
         protected ConsulComponent buildConcreteComponent() {
             return new ConsulComponent();
         }
+        private org.apache.camel.component.consul.ConsulConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.consul.ConsulComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.consul.ConsulConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "aclToken": ((ConsulComponent) component).setAclToken((java.lang.String) value); return true;
-            case "datacenter": ((ConsulComponent) component).setDatacenter((java.lang.String) value); return true;
-            case "password": ((ConsulComponent) component).setPassword((java.lang.String) value); return true;
-            case "sslContextParameters": ((ConsulComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "url": ((ConsulComponent) component).setUrl((java.lang.String) value); return true;
-            case "userName": ((ConsulComponent) component).setUserName((java.lang.String) value); return true;
+            case "connectTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setConnectTimeoutMillis((java.lang.Long) value); return true;
+            case "consulClient": getOrCreateConfiguration((ConsulComponent) component).setConsulClient((com.orbitz.consul.Consul) value); return true;
+            case "key": getOrCreateConfiguration((ConsulComponent) component).setKey((java.lang.String) value); return true;
+            case "pingInstance": getOrCreateConfiguration((ConsulComponent) component).setPingInstance((boolean) value); return true;
+            case "readTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setReadTimeoutMillis((java.lang.Long) value); return true;
+            case "tags": getOrCreateConfiguration((ConsulComponent) component).setTags((java.lang.String) value); return true;
+            case "url": getOrCreateConfiguration((ConsulComponent) component).setUrl((java.lang.String) value); return true;
+            case "writeTimeoutMillis": getOrCreateConfiguration((ConsulComponent) component).setWriteTimeoutMillis((java.lang.Long) value); return true;
             case "bridgeErrorHandler": ((ConsulComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "action": getOrCreateConfiguration((ConsulComponent) component).setAction((java.lang.String) value); return true;
             case "lazyStartProducer": ((ConsulComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "valueAsString": getOrCreateConfiguration((ConsulComponent) component).setValueAsString((boolean) value); return true;
             case "basicPropertyBinding": ((ConsulComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((ConsulComponent) component).setConfiguration((org.apache.camel.component.consul.ConsulConfiguration) value); return true;
+            case "consistencyMode": getOrCreateConfiguration((ConsulComponent) component).setConsistencyMode((com.orbitz.consul.option.ConsistencyMode) value); return true;
+            case "datacenter": getOrCreateConfiguration((ConsulComponent) component).setDatacenter((java.lang.String) value); return true;
+            case "nearNode": getOrCreateConfiguration((ConsulComponent) component).setNearNode((java.lang.String) value); return true;
+            case "nodeMeta": getOrCreateConfiguration((ConsulComponent) component).setNodeMeta((java.util.List) value); return true;
+            case "aclToken": getOrCreateConfiguration((ConsulComponent) component).setAclToken((java.lang.String) value); return true;
+            case "password": getOrCreateConfiguration((ConsulComponent) component).setPassword((java.lang.String) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((ConsulComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ConsulComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "userName": getOrCreateConfiguration((ConsulComponent) component).setUserName((java.lang.String) value); return true;
+            case "blockSeconds": getOrCreateConfiguration((ConsulComponent) component).setBlockSeconds((java.lang.Integer) value); return true;
+            case "firstIndex": getOrCreateConfiguration((ConsulComponent) component).setFirstIndex((java.math.BigInteger) value); return true;
+            case "recursive": getOrCreateConfiguration((ConsulComponent) component).setRecursive((boolean) value); return true;
             default: return false;
             }
         }

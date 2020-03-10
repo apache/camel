@@ -124,7 +124,7 @@ public final class BlobServiceUtil {
     public static CloudBlobContainer createBlobContainerClient(BlobServiceConfiguration cfg)
             throws Exception {
         URI uri = prepareStorageBlobUri(cfg, false);
-        StorageCredentials creds = getAccountCredentials(cfg);
+        StorageCredentials creds = cfg.getAccountCredentials();
         return new CloudBlobContainer(uri, creds);
     }
 
@@ -133,7 +133,7 @@ public final class BlobServiceUtil {
         CloudBlockBlob client = (CloudBlockBlob) getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
-            StorageCredentials creds = getAccountCredentials(cfg);
+            StorageCredentials creds = cfg.getAccountCredentials();
             client = new CloudBlockBlob(uri, creds);
         }
         return client;
@@ -144,7 +144,7 @@ public final class BlobServiceUtil {
         CloudAppendBlob client = (CloudAppendBlob) getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
-            StorageCredentials creds = getAccountCredentials(cfg);
+            StorageCredentials creds = cfg.getAccountCredentials();
             client = new CloudAppendBlob(uri, creds);
         }
         return client;
@@ -155,7 +155,7 @@ public final class BlobServiceUtil {
         CloudPageBlob client = (CloudPageBlob) getConfiguredClient(cfg);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
-            StorageCredentials creds = getAccountCredentials(cfg);
+            StorageCredentials creds = cfg.getAccountCredentials();
             client = new CloudPageBlob(uri, creds);
         }
         return client;
@@ -180,10 +180,6 @@ public final class BlobServiceUtil {
             }
         }
         return client;
-    }
-
-    public static StorageCredentials getAccountCredentials(BlobServiceConfiguration cfg) {
-        return cfg.getCredentials();
     }
 
     public static void configureCloudBlobForRead(CloudBlob client, BlobServiceConfiguration cfg) {

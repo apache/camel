@@ -19,42 +19,30 @@ package org.apache.camel.reifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.Route;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.RouteContext;
 
 public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
 
-    public OnExceptionReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (OnExceptionDefinition)definition);
+    public OnExceptionReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (OnExceptionDefinition)definition);
     }
 
     @Override
     public void addRoutes() throws Exception {
-        // assign whether this was a route scoped onException or not
-        // we need to know this later when setting the parent, as only route
-        // scoped should have parent
-        // Note: this logic can possible be removed when the Camel routing
-        // engine decides at runtime
-        // to apply onException in a more dynamic fashion than current code base
-        // and therefore is in a better position to decide among context/route
-        // scoped OnException at runtime
-        if (definition.getRouteScoped() == null) {
-            definition.setRouteScoped(definition.getParent() != null);
-        }
-
         // must validate configuration before creating processor
         definition.validateConfiguration();
 
         if (parseBoolean(definition.getUseOriginalMessage(), false)) {
             // ensure allow original is turned on
-            routeContext.setAllowUseOriginalMessage(true);
+            route.setAllowUseOriginalMessage(true);
         }
 
         // lets attach this on exception to the route error handler
@@ -62,14 +50,14 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         if (child != null) {
             // wrap in our special safe fallback error handler if OnException
             // have child output
-            Processor errorHandler = new FatalFallbackErrorHandler(child);
-            String id = getId(definition, routeContext);
-            routeContext.setOnException(id, errorHandler);
+            Processor errorHandler = new FatalFallbackErrorHandler(child, false);
+            String id = getId(definition);
+            route.setOnException(id, errorHandler);
         }
         // lookup the error handler builder
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder)routeContext.getErrorHandlerFactory();
+        ErrorHandlerFactory builder = route.getErrorHandlerFactory();
         // and add this as error handlers
-        routeContext.addErrorHandler(builder, definition);
+        route.addErrorHandler(builder, definition);
     }
 
     @Override
@@ -82,7 +70,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
 
         if (parseBoolean(definition.getUseOriginalMessage(), false)) {
             // ensure allow original is turned on
-            routeContext.setAllowUseOriginalMessage(true);
+            route.setAllowUseOriginalMessage(true);
         }
 
         // must validate configuration before creating processor

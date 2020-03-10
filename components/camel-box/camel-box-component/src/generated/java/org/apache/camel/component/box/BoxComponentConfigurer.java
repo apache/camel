@@ -11,17 +11,54 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BoxComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.box.BoxConfiguration getOrCreateConfiguration(BoxComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.box.BoxConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BoxComponent target = (BoxComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.box.BoxConfiguration.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "accesstokencache":
+        case "accessTokenCache": getOrCreateConfiguration(target).setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
+        case "authenticationtype":
+        case "authenticationType": getOrCreateConfiguration(target).setAuthenticationType(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clientid":
+        case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "clientsecret":
+        case "clientSecret": getOrCreateConfiguration(target).setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.box.BoxConfiguration.class, value)); return true;
+        case "encryptionalgorithm":
+        case "encryptionAlgorithm": getOrCreateConfiguration(target).setEncryptionAlgorithm(property(camelContext, com.box.sdk.EncryptionAlgorithm.class, value)); return true;
+        case "enterpriseid":
+        case "enterpriseId": getOrCreateConfiguration(target).setEnterpriseId(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpparams":
+        case "httpParams": getOrCreateConfiguration(target).setHttpParams(property(camelContext, java.util.Map.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxcacheentries":
+        case "maxCacheEntries": getOrCreateConfiguration(target).setMaxCacheEntries(property(camelContext, int.class, value)); return true;
+        case "privatekeyfile":
+        case "privateKeyFile": getOrCreateConfiguration(target).setPrivateKeyFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekeypassword":
+        case "privateKeyPassword": getOrCreateConfiguration(target).setPrivateKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "publickeyid":
+        case "publicKeyId": getOrCreateConfiguration(target).setPublicKeyId(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "userid":
+        case "userId": getOrCreateConfiguration(target).setUserId(property(camelContext, java.lang.String.class, value)); return true;
+        case "username":
+        case "userName": getOrCreateConfiguration(target).setUserName(property(camelContext, java.lang.String.class, value)); return true;
+        case "userpassword":
+        case "userPassword": getOrCreateConfiguration(target).setUserPassword(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

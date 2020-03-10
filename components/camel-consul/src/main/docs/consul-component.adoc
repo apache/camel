@@ -40,24 +40,39 @@ You can append query options to the URI in the following format:
 
 
 // component options: START
-The Consul component supports 11 options, which are listed below.
+The Consul component supports 26 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *aclToken* (common) | Sets the ACL token to be used with Consul |  | String
-| *datacenter* (common) | The data center |  | String
-| *password* (common) | Sets the password to be used for basic authentication |  | String
-| *sslContextParameters* (common) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| *connectTimeoutMillis* (common) | Connect timeout for OkHttpClient |  | Long
+| *consulClient* (common) | Reference to a com.orbitz.consul.Consul in the registry. |  | Consul
+| *key* (common) | The default key. Can be overridden by CamelConsulKey |  | String
+| *pingInstance* (common) | Configure if the AgentClient should attempt a ping before returning the Consul instance | true | boolean
+| *readTimeoutMillis* (common) | Read timeout for OkHttpClient |  | Long
+| *tags* (common) | Set tags. You can separate multiple tags by comma. |  | String
 | *url* (common) | The Consul agent URL |  | String
-| *userName* (common) | Sets the username to be used for basic authentication |  | String
+| *writeTimeoutMillis* (common) | Write timeout for OkHttpClient |  | Long
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *action* (producer) | The default action. Can be overridden by CamelConsulAction |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *valueAsString* (producer) | Default to transform values retrieved from Consul i.e. on KV endpoint to string. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | Sets the common configuration shared among endpoints |  | ConsulConfiguration
+| *configuration* (advanced) | Consul configuration |  | ConsulConfiguration
+| *consistencyMode* (advanced) | The consistencyMode used for queries, default ConsistencyMode.DEFAULT. The value can be one of: DEFAULT, STALE, CONSISTENT | DEFAULT | ConsistencyMode
+| *datacenter* (advanced) | The data center |  | String
+| *nearNode* (advanced) | The near node to use for queries. |  | String
+| *nodeMeta* (advanced) | The note meta-data to use for queries. |  | List
+| *aclToken* (security) | Sets the ACL token to be used with Consul |  | String
+| *password* (security) | Sets the password to be used for basic authentication |  | String
+| *sslContextParameters* (security) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
 | *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *userName* (security) | Sets the username to be used for basic authentication |  | String
+| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
+| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
+| *recursive* (watch) | Recursively watch, default false | false | boolean
 |===
 // component options: END
 
@@ -111,13 +126,13 @@ with the following path and query parameters:
 | *nearNode* (advanced) | The near node to use for queries. |  | String
 | *nodeMeta* (advanced) | The note meta-data to use for queries. |  | List
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
-| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
-| *recursive* (watch) | Recursively watch, default false | false | boolean
 | *aclToken* (security) | Sets the ACL token to be used with Consul |  | String
 | *password* (security) | Sets the password to be used for basic authentication |  | String
 | *sslContextParameters* (security) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
 | *userName* (security) | Sets the username to be used for basic authentication |  | String
+| *blockSeconds* (watch) | The second to wait for a watch event, default 10 seconds | 10 | Integer
+| *firstIndex* (watch) | The first index for watch for, default 0 | 0 | BigInteger
+| *recursive* (watch) | Recursively watch, default false | false | boolean
 |===
 // endpoint options: END
 

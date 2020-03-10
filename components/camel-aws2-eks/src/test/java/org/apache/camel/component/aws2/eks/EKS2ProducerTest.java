@@ -22,13 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eks.model.CreateClusterResponse;
 import software.amazon.awssdk.services.eks.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.eks.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eks.model.VpcConfigRequest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EKS2ProducerTest extends CamelTestSupport {
 

@@ -32,9 +32,9 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
 
     private final int startupOrder;
     private final Route route;
-    private final BaseRouteService routeService;
+    private final RouteService routeService;
 
-    public DefaultRouteStartupOrder(int startupOrder, Route route, BaseRouteService routeService) {
+    public DefaultRouteStartupOrder(int startupOrder, Route route, RouteService routeService) {
         this.startupOrder = startupOrder;
         this.route = route;
         this.routeService = routeService;
@@ -62,7 +62,7 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
         return new ArrayList<>(services);
     }
 
-    public BaseRouteService getRouteService() {
+    public RouteService getRouteService() {
         return routeService;
     }
 

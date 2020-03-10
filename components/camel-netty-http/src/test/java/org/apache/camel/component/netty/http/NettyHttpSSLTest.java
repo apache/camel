@@ -21,8 +21,6 @@ import java.util.Properties;
 
 import javax.net.ssl.SSLSession;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;

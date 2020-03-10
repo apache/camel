@@ -30,13 +30,13 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * The properties component allows you to use property placeholders in Camel.
  */
 @ManagedResource(description = "Managed PropertiesComponent")
+@JdkService(org.apache.camel.spi.PropertiesComponent.FACTORY)
 public class PropertiesComponent extends ServiceSupport implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 
     /**
@@ -546,8 +547,6 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
                         LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
                     }
                 }
-            } catch (NoFactoryAvailableException e) {
-                // ignore
             } catch (Exception e) {
                 LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
             }

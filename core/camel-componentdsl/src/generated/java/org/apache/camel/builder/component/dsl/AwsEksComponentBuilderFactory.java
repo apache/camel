@@ -58,6 +58,33 @@ public interface AwsEksComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.eks.EKSConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder configuration(
+                org.apache.camel.component.aws.eks.EKSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS EKS as client.
+         * 
+         * The option is a: <code>com.amazonaws.services.eks.AmazonEKS</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder eksClient(
+                com.amazonaws.services.eks.AmazonEKS eksClient) {
+            doSetProperty("eksClient", eksClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -79,7 +106,58 @@ public interface AwsEksComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which EKS client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.eks.EKSOperations</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder operation(
+                org.apache.camel.component.aws.eks.EKSOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the EKS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the EKS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEksComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the EKS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsEksComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which EKS client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -114,20 +192,6 @@ public interface AwsEksComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS EKS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.eks.EKSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsEksComponentBuilder configuration(
-                org.apache.camel.component.aws.eks.EKSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsEksComponentBuilderImpl
@@ -139,18 +203,30 @@ public interface AwsEksComponentBuilderFactory {
         protected EKSComponent buildConcreteComponent() {
             return new EKSComponent();
         }
+        private org.apache.camel.component.aws.eks.EKSConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.eks.EKSComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.eks.EKSConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((EKSComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((EKSComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((EKSComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((EKSComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((EKSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((EKSComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((EKSComponent) component).setConfiguration((org.apache.camel.component.aws.eks.EKSConfiguration) value); return true;
+            case "eksClient": getOrCreateConfiguration((EKSComponent) component).setEksClient((com.amazonaws.services.eks.AmazonEKS) value); return true;
+            case "lazyStartProducer": ((EKSComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((EKSComponent) component).setOperation((org.apache.camel.component.aws.eks.EKSOperations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((EKSComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((EKSComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((EKSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((EKSComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((EKSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((EKSComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

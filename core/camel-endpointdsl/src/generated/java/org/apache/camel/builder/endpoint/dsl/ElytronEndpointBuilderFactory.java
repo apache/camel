@@ -57,12 +57,12 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * For HTTP endpoint: if true , text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange ;
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
          * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true , text and binary messages will be wrapped as java.io.Reader and
+         * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange ; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -75,12 +75,12 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * For HTTP endpoint: if true , text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange ;
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
          * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true , text and binary messages will be wrapped as java.io.Reader and
+         * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange ; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -255,36 +255,6 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * if true , the consumer will post notifications to the route when a
-         * new WebSocket peer connects, disconnects, etc. See
-         * UndertowConstants.EVENT_TYPE and EventType .
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: websocket
-         */
-        default ElytronEndpointConsumerBuilder fireWebSocketChannelEvents(
-                boolean fireWebSocketChannelEvents) {
-            doSetProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
-            return this;
-        }
-        /**
-         * if true , the consumer will post notifications to the route when a
-         * new WebSocket peer connects, disconnects, etc. See
-         * UndertowConstants.EVENT_TYPE and EventType .
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: websocket
-         */
-        default ElytronEndpointConsumerBuilder fireWebSocketChannelEvents(
-                String fireWebSocketChannelEvents) {
-            doSetProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
-            return this;
-        }
-        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -308,6 +278,36 @@ public interface ElytronEndpointBuilderFactory {
         default ElytronEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * if true, the consumer will post notifications to the route when a new
+         * WebSocket peer connects, disconnects, etc. See
+         * UndertowConstants.EVENT_TYPE and EventType.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: websocket
+         */
+        default ElytronEndpointConsumerBuilder fireWebSocketChannelEvents(
+                boolean fireWebSocketChannelEvents) {
+            doSetProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
+            return this;
+        }
+        /**
+         * if true, the consumer will post notifications to the route when a new
+         * WebSocket peer connects, disconnects, etc. See
+         * UndertowConstants.EVENT_TYPE and EventType.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: websocket
+         */
+        default ElytronEndpointConsumerBuilder fireWebSocketChannelEvents(
+                String fireWebSocketChannelEvents) {
+            doSetProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
             return this;
         }
     }
@@ -379,12 +379,13 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies a comma-delimited set of Undertow HttpHandler instances to
-         * lookup in your Registry. These handlers are added to the Undertow
-         * handler chain (for example, to add security). Important: You can not
-         * use different handlers with different Undertow endpoints using the
-         * same port number. The handlers is associated to the port number. If
-         * you need different handlers, then use different port numbers.
+         * Specifies a comma-delimited set of io.undertow.server.HttpHandler
+         * instances to lookup in your Registry. These handlers are added to the
+         * Undertow handler chain (for example, to add security). Important: You
+         * can not use different handlers with different Undertow endpoints
+         * using the same port number. The handlers is associated to the port
+         * number. If you need different handlers, then use different port
+         * numbers.
          * 
          * The option is a:
          * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
@@ -397,12 +398,13 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies a comma-delimited set of Undertow HttpHandler instances to
-         * lookup in your Registry. These handlers are added to the Undertow
-         * handler chain (for example, to add security). Important: You can not
-         * use different handlers with different Undertow endpoints using the
-         * same port number. The handlers is associated to the port number. If
-         * you need different handlers, then use different port numbers.
+         * Specifies a comma-delimited set of io.undertow.server.HttpHandler
+         * instances to lookup in your Registry. These handlers are added to the
+         * Undertow handler chain (for example, to add security). Important: You
+         * can not use different handlers with different Undertow endpoints
+         * using the same port number. The handlers is associated to the port
+         * number. If you need different handlers, then use different port
+         * numbers.
          * 
          * The option will be converted to a
          * <code>java.util.Set&lt;org.apache.camel.component.undertow.HttpHandlerRegistrationInfo&gt;</code> type.
@@ -580,12 +582,12 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * For HTTP endpoint: if true , text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange ;
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
          * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true , text and binary messages will be wrapped as java.io.Reader and
+         * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange ; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -598,12 +600,12 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * For HTTP endpoint: if true , text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange ;
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
          * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true , text and binary messages will be wrapped as java.io.Reader and
+         * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange ; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -710,7 +712,7 @@ public interface ElytronEndpointBuilderFactory {
         }
         /**
          * Sets additional channel options. The options that can be used are
-         * defined in org.xnio.Options . To configure from endpoint uri, then
+         * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
          * option.close-abort=true&option.send-buffer=8192.
          * 
@@ -726,7 +728,7 @@ public interface ElytronEndpointBuilderFactory {
         }
         /**
          * Sets additional channel options. The options that can be used are
-         * defined in org.xnio.Options . To configure from endpoint uri, then
+         * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
          * option.close-abort=true&option.send-buffer=8192.
          * 
@@ -901,6 +903,32 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointProducerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronEndpointProducerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Timeout in milliseconds when sending to a websocket channel. The
          * default timeout is 30000 (30 seconds).
          * 
@@ -952,32 +980,6 @@ public interface ElytronEndpointBuilderFactory {
          */
         default ElytronEndpointProducerBuilder sendToAll(String sendToAll) {
             doSetProperty("sendToAll", sendToAll);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ElytronEndpointProducerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * To configure security using SSLContextParameters.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ElytronEndpointProducerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1159,12 +1161,12 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * For HTTP endpoint: if true , text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange ;
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
          * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true , text and binary messages will be wrapped as java.io.Reader and
+         * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange ; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1177,12 +1179,12 @@ public interface ElytronEndpointBuilderFactory {
             return this;
         }
         /**
-         * For HTTP endpoint: if true , text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange ;
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
          * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true , text and binary messages will be wrapped as java.io.Reader and
+         * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange ; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte
          * respectively.
          * 
          * The option will be converted to a <code>boolean</code> type.

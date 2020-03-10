@@ -49,6 +49,17 @@ public interface BoxComponentBuilderFactory {
      */
     interface BoxComponentBuilder extends ComponentBuilder<BoxComponent> {
         /**
+         * Box application client ID.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BoxComponentBuilder clientId(java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -59,6 +70,28 @@ public interface BoxComponentBuilderFactory {
         default BoxComponentBuilder configuration(
                 org.apache.camel.component.box.BoxConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The enterprise ID to use for an App Enterprise.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BoxComponentBuilder enterpriseId(java.lang.String enterpriseId) {
+            doSetProperty("enterpriseId", enterpriseId);
+            return this;
+        }
+        /**
+         * The user ID to use for an App User.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default BoxComponentBuilder userId(java.lang.String userId) {
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -114,6 +147,154 @@ public interface BoxComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * Custom HTTP params for settings like proxy host.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: advanced
+         */
+        default BoxComponentBuilder httpParams(
+                java.util.Map<java.lang.String, java.lang.Object> httpParams) {
+            doSetProperty("httpParams", httpParams);
+            return this;
+        }
+        /**
+         * The type of authentication for connection. Types of Authentication:
+         * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
+         * - OAuth 2.0 with JSON Web Tokens.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: APP_USER_AUTHENTICATION
+         * Group: authentication
+         */
+        default BoxComponentBuilder authenticationType(
+                java.lang.String authenticationType) {
+            doSetProperty("authenticationType", authenticationType);
+            return this;
+        }
+        /**
+         * Custom Access Token Cache for storing and retrieving access tokens.
+         * 
+         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder accessTokenCache(
+                com.box.sdk.IAccessTokenCache accessTokenCache) {
+            doSetProperty("accessTokenCache", accessTokenCache);
+            return this;
+        }
+        /**
+         * Box application client secret.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder clientSecret(java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * The type of encryption algorithm for JWT. Supported Algorithms:
+         * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
+         * 
+         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * 
+         * Default: RSA_SHA_256
+         * Group: security
+         */
+        default BoxComponentBuilder encryptionAlgorithm(
+                com.box.sdk.EncryptionAlgorithm encryptionAlgorithm) {
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
+            return this;
+        }
+        /**
+         * The maximum number of access tokens in cache.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 100
+         * Group: security
+         */
+        default BoxComponentBuilder maxCacheEntries(int maxCacheEntries) {
+            doSetProperty("maxCacheEntries", maxCacheEntries);
+            return this;
+        }
+        /**
+         * The private key for generating the JWT signature.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder privateKeyFile(
+                java.lang.String privateKeyFile) {
+            doSetProperty("privateKeyFile", privateKeyFile);
+            return this;
+        }
+        /**
+         * The password for the private key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder privateKeyPassword(
+                java.lang.String privateKeyPassword) {
+            doSetProperty("privateKeyPassword", privateKeyPassword);
+            return this;
+        }
+        /**
+         * The ID for public key for validating the JWT signature.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder publicKeyId(java.lang.String publicKeyId) {
+            doSetProperty("publicKeyId", publicKeyId);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Box user name, MUST be provided.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder userName(java.lang.String userName) {
+            doSetProperty("userName", userName);
+            return this;
+        }
+        /**
+         * Box user password, MUST be provided if authSecureStorage is not set,
+         * or returns null on first call.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BoxComponentBuilder userPassword(java.lang.String userPassword) {
+            doSetProperty("userPassword", userPassword);
+            return this;
+        }
     }
 
     class BoxComponentBuilderImpl
@@ -125,16 +306,38 @@ public interface BoxComponentBuilderFactory {
         protected BoxComponent buildConcreteComponent() {
             return new BoxComponent();
         }
+        private org.apache.camel.component.box.BoxConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.box.BoxComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.box.BoxConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "clientId": getOrCreateConfiguration((BoxComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((BoxComponent) component).setConfiguration((org.apache.camel.component.box.BoxConfiguration) value); return true;
+            case "enterpriseId": getOrCreateConfiguration((BoxComponent) component).setEnterpriseId((java.lang.String) value); return true;
+            case "userId": getOrCreateConfiguration((BoxComponent) component).setUserId((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((BoxComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BoxComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((BoxComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "httpParams": getOrCreateConfiguration((BoxComponent) component).setHttpParams((java.util.Map) value); return true;
+            case "authenticationType": getOrCreateConfiguration((BoxComponent) component).setAuthenticationType((java.lang.String) value); return true;
+            case "accessTokenCache": getOrCreateConfiguration((BoxComponent) component).setAccessTokenCache((com.box.sdk.IAccessTokenCache) value); return true;
+            case "clientSecret": getOrCreateConfiguration((BoxComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "encryptionAlgorithm": getOrCreateConfiguration((BoxComponent) component).setEncryptionAlgorithm((com.box.sdk.EncryptionAlgorithm) value); return true;
+            case "maxCacheEntries": getOrCreateConfiguration((BoxComponent) component).setMaxCacheEntries((int) value); return true;
+            case "privateKeyFile": getOrCreateConfiguration((BoxComponent) component).setPrivateKeyFile((java.lang.String) value); return true;
+            case "privateKeyPassword": getOrCreateConfiguration((BoxComponent) component).setPrivateKeyPassword((java.lang.String) value); return true;
+            case "publicKeyId": getOrCreateConfiguration((BoxComponent) component).setPublicKeyId((java.lang.String) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((BoxComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "userName": getOrCreateConfiguration((BoxComponent) component).setUserName((java.lang.String) value); return true;
+            case "userPassword": getOrCreateConfiguration((BoxComponent) component).setUserPassword((java.lang.String) value); return true;
             default: return false;
             }
         }

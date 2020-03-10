@@ -252,6 +252,67 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the ACL token to be used with Consul.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder aclToken(String aclToken) {
+            doSetProperty("aclToken", aclToken);
+            return this;
+        }
+        /**
+         * Sets the password to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder sslContextParameters(
+                Object sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration using an
+         * org.apache.camel.support.jsse.SSLContextParameters instance.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder sslContextParameters(
+                String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * Sets the username to be used for basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ConsulEndpointConsumerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
+            return this;
+        }
+        /**
          * The second to wait for a watch event, default 10 seconds.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -323,67 +384,6 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
-            return this;
-        }
-        /**
-         * Sets the ACL token to be used with Consul.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ConsulEndpointConsumerBuilder aclToken(String aclToken) {
-            doSetProperty("aclToken", aclToken);
-            return this;
-        }
-        /**
-         * Sets the password to be used for basic authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ConsulEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * SSL configuration using an
-         * org.apache.camel.support.jsse.SSLContextParameters instance.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ConsulEndpointConsumerBuilder sslContextParameters(
-                Object sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * SSL configuration using an
-         * org.apache.camel.support.jsse.SSLContextParameters instance.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * 
-         * Group: security
-         */
-        default ConsulEndpointConsumerBuilder sslContextParameters(
-                String sslContextParameters) {
-            doSetProperty("sslContextParameters", sslContextParameters);
-            return this;
-        }
-        /**
-         * Sets the username to be used for basic authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default ConsulEndpointConsumerBuilder userName(String userName) {
-            doSetProperty("userName", userName);
             return this;
         }
     }

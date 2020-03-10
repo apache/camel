@@ -51,6 +51,32 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleCalendarStreamComponent> {
         /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Google Calendar application name. Example would be
+         * camel-google-calendar/1.0.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder applicationName(
+                java.lang.String applicationName) {
+            doSetProperty("applicationName", applicationName);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -67,6 +93,122 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         default GoogleCalendarStreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * The calendarId to be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: primary
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder calendarId(
+                java.lang.String calendarId) {
+            doSetProperty("calendarId", calendarId);
+            return this;
+        }
+        /**
+         * Client ID of the calendar application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder clientId(
+                java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
+         * Client secret of the calendar application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * Take into account the lastUpdate of the last event polled as start
+         * date for the next poll.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder considerLastUpdate(
+                boolean considerLastUpdate) {
+            doSetProperty("considerLastUpdate", considerLastUpdate);
+            return this;
+        }
+        /**
+         * Consume events in the selected calendar from now on.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder consumeFromNow(
+                boolean consumeFromNow) {
+            doSetProperty("consumeFromNow", consumeFromNow);
+            return this;
+        }
+        /**
+         * Max results to be returned.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder maxResults(int maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * The query to execute on calendar.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder query(
+                java.lang.String query) {
+            doSetProperty("query", query);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * Specifies the level of permissions you want a calendar application to
+         * have to a user account. See
+         * https://developers.google.com/calendar/auth for more info.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarStreamComponentBuilder scopes(
+                java.util.List<java.lang.String> scopes) {
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -120,13 +262,31 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         protected GoogleCalendarStreamComponent buildConcreteComponent() {
             return new GoogleCalendarStreamComponent();
         }
+        private org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "applicationName": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setApplicationName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleCalendarStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "calendarId": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setCalendarId((java.lang.String) value); return true;
+            case "clientId": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientId((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "considerLastUpdate": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsiderLastUpdate((boolean) value); return true;
+            case "consumeFromNow": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsumeFromNow((boolean) value); return true;
+            case "maxResults": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setMaxResults((int) value); return true;
+            case "query": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setQuery((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "scopes": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setScopes((java.util.List) value); return true;
             case "basicPropertyBinding": ((GoogleCalendarStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
             case "configuration": ((GoogleCalendarStreamComponent) component).setConfiguration((org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration) value); return true;

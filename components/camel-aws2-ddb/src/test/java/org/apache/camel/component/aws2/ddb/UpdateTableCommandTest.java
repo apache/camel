@@ -19,10 +19,10 @@ package org.apache.camel.component.aws2.ddb;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateTableCommandTest {
 
@@ -31,7 +31,7 @@ public class UpdateTableCommandTest {
     private Ddb2Configuration configuration;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new Ddb2Configuration();

@@ -53,7 +53,6 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
@@ -72,7 +71,6 @@ import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
 

@@ -44,7 +44,6 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.HasId;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -344,7 +343,7 @@ public class SupervisingRouteController extends DefaultRouteController {
             LOGGER.info("Route {} has been requested to stop: stop supervising it", route.getId());
 
             // Mark the route as un-managed
-            route.getContext().setRouteController(null);
+            route.get().setRouteController(null);
 
             consumer.accept(route);
         }
@@ -354,7 +353,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         synchronized (lock) {
             // If a manual start is triggered, then the controller should take
             // care that the route is started
-            route.getContext().setRouteController(this);
+            route.get().setRouteController(this);
 
             try {
                 if (checker) {
@@ -419,7 +418,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
 
         void start(RouteHolder route) {
-            route.getContext().setRouteController(SupervisingRouteController.this);
+            route.get().setRouteController(SupervisingRouteController.this);
 
             routes.computeIfAbsent(
                 route,
@@ -452,7 +451,7 @@ public class SupervisingRouteController extends DefaultRouteController {
 
                                 if (backOffTask != null && backOffTask.getStatus() == BackOffTimer.Task.Status.Exhausted && stopped) {
                                     LOGGER.info("Back-off for route {} is exhausted, no more attempts will be made and stop supervising it", route.getId());
-                                    r.getContext().setRouteController(null);
+                                    r.get().setRouteController(null);
                                 }
                             }
                         }
@@ -505,12 +504,8 @@ public class SupervisingRouteController extends DefaultRouteController {
             return this.route;
         }
 
-        public RouteContext getContext() {
-            return this.route.getRouteContext();
-        }
-
         public ServiceStatus getStatus() {
-            return getContext().getCamelContext().getRouteController().getRouteStatus(getId());
+            return route.getCamelContext().getRouteController().getRouteStatus(getId());
         }
 
         int getInitializationOrder() {
@@ -518,7 +513,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
 
         public int getStartupOrder() {
-            Integer order = route.getRouteContext().getStartupOrder();
+            Integer order = route.getStartupOrder();
             if (order == null) {
                 order = Integer.MAX_VALUE;
             }
@@ -583,7 +578,7 @@ public class SupervisingRouteController extends DefaultRouteController {
 
         @Override
         public void onInit(Route route) {
-            if (!route.getRouteContext().isAutoStartup()) {
+            if (!route.isAutoStartup()) {
                 LOGGER.info("Route {} won't be supervised (reason: has explicit auto-startup flag set to false)", route.getId());
                 return;
             }
@@ -599,8 +594,8 @@ public class SupervisingRouteController extends DefaultRouteController {
 
             RouteHolder holder = new RouteHolder(route, routeCount.incrementAndGet());
             if (routes.add(holder)) {
-                holder.getContext().setRouteController(SupervisingRouteController.this);
-                holder.getContext().setAutoStartup(false);
+                holder.get().setRouteController(SupervisingRouteController.this);
+                holder.get().setAutoStartup(false);
 
                 if (contextStarted.get()) {
                     LOGGER.info("Context is already started: attempt to start route {}", route.getId());

@@ -30,20 +30,20 @@ public class EKS2Configuration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
-    @UriParam(label = "producer")
+    @UriParam
     private EksClient eksClient;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam(label = "producer")
+    @UriParam
     @Metadata(required = true)
     private EKS2Operations operation;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
-    @UriParam(label = "producer")
+    @UriParam
     private String proxyHost;
-    @UriParam(label = "producer")
+    @UriParam
     private Integer proxyPort;
     @UriParam
     private String region;

@@ -19,17 +19,15 @@ package org.apache.camel.component.aws2.kinesis;
 import java.time.Instant;
 import java.util.ArrayList;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
@@ -44,13 +42,13 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.services.kinesis.model.StreamDescription;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KinesisConsumerClosedShardWithSilentTest {
 
     @Mock
@@ -63,7 +61,7 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     private Kinesis2Consumer undertest;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         Kinesis2Configuration configuration = new Kinesis2Configuration();
         configuration.setAmazonKinesisClient(kinesisClient);
@@ -79,10 +77,12 @@ public class KinesisConsumerClosedShardWithSilentTest {
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").build());
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).
+             thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator").records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build());
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
             .thenReturn(DescribeStreamResponse.builder().streamDescription(StreamDescription.builder().shards(shardList).build()).build());
-        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class))).thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
+        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+            .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
     }
 
     @Test
@@ -158,36 +158,5 @@ public class KinesisConsumerClosedShardWithSilentTest {
         verify(kinesisClient, times(2)).getRecords(getRecordsReqCap.capture());
         assertThat(getRecordsReqCap.getAllValues().get(0).shardIterator(), is("shardIterator"));
         assertThat(getRecordsReqCap.getAllValues().get(1).shardIterator(), is("nextShardIterator"));
-    }
-
-    @Test
-    public void recordsAreSentToTheProcessor() throws Exception {
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator")
-            .records(Record.builder().sequenceNumber("1").build(), Record.builder().sequenceNumber("2").build()).build());
-
-        int messageCount = undertest.poll();
-
-        assertThat(messageCount, is(2));
-        final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
-
-        verify(processor, times(2)).process(exchangeCaptor.capture(), any(AsyncCallback.class));
-        assertThat(exchangeCaptor.getAllValues().get(0).getIn().getBody(Record.class).sequenceNumber(), is("1"));
-        assertThat(exchangeCaptor.getAllValues().get(1).getIn().getBody(Record.class).sequenceNumber(), is("2"));
-    }
-
-    @Test
-    public void exchangePropertiesAreSet() throws Exception {
-        String partitionKey = "partitionKey";
-        String sequenceNumber = "1";
-        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(GetRecordsResponse.builder().nextShardIterator("nextShardIterator")
-            .records(Record.builder().sequenceNumber(sequenceNumber).approximateArrivalTimestamp(Instant.now()).partitionKey(partitionKey).build()).build());
-
-        undertest.poll();
-
-        final ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
-
-        verify(processor).process(exchangeCaptor.capture(), any(AsyncCallback.class));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(Kinesis2Constants.PARTITION_KEY, String.class), is(partitionKey));
-        assertThat(exchangeCaptor.getValue().getIn().getHeader(Kinesis2Constants.SEQUENCE_NUMBER, String.class), is(sequenceNumber));
     }
 }

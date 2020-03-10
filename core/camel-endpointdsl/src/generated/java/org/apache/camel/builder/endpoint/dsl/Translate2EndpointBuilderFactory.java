@@ -40,17 +40,6 @@ public interface Translate2EndpointBuilderFactory {
             return (AdvancedTranslate2EndpointBuilder) this;
         }
         /**
-         * Amazon AWS Access Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Translate2EndpointBuilder accessKey(String accessKey) {
-            doSetProperty("accessKey", accessKey);
-            return this;
-        }
-        /**
          * Being able to autodetect the source language.
          * 
          * The option is a: <code>boolean</code> type.
@@ -222,17 +211,6 @@ public interface Translate2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Translate2EndpointBuilder secretKey(String secretKey) {
-            doSetProperty("secretKey", secretKey);
-            return this;
-        }
-        /**
          * Source language to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -276,6 +254,28 @@ public interface Translate2EndpointBuilderFactory {
          */
         default Translate2EndpointBuilder translateClient(String translateClient) {
             doSetProperty("translateClient", translateClient);
+            return this;
+        }
+        /**
+         * Amazon AWS Access Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Translate2EndpointBuilder accessKey(String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Translate2EndpointBuilder secretKey(String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -358,8 +358,8 @@ public interface Translate2EndpointBuilderFactory {
      * Proxy enum for <code>software.amazon.awssdk.core.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     public interface Translate2Builders {

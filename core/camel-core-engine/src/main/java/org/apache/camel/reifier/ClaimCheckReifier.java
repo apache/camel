@@ -19,20 +19,20 @@ package org.apache.camel.reifier;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ClaimCheckDefinition;
 import org.apache.camel.model.ClaimCheckOperation;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
-    public ClaimCheckReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, ClaimCheckDefinition.class.cast(definition));
+    public ClaimCheckReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, ClaimCheckDefinition.class.cast(definition));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         claim.setKey(parseString(definition.getKey()));
         claim.setFilter(parseString(definition.getFilter()));
 
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy();
         if (strategy != null) {
             claim.setAggregationStrategy(strategy);
         }
@@ -102,10 +102,10 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         return claim;
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
+            Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {

@@ -18,7 +18,6 @@ package org.apache.camel.component.openstack;
 
 import java.io.IOException;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;

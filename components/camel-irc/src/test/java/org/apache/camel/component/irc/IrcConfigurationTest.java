@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.irc;
 
-import java.net.URI;
 import java.util.List;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

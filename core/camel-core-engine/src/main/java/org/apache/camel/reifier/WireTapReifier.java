@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
@@ -28,13 +29,11 @@ import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.WireTapProcessor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
-    public WireTapReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, definition);
+    public WireTapReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, definition);
     }
 
     @Override
@@ -50,11 +49,11 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         SendDynamicProcessor dynamicTo = (SendDynamicProcessor)super.createProcessor();
 
         // create error handler we need to use for processing the wire tapped
-        Processor target = wrapInErrorHandler(dynamicTo);
+        Processor target = wrapInErrorHandler(dynamicTo, true);
 
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         // is true by default
         boolean isCopy = parseBoolean(definition.getCopy(), true);
@@ -66,7 +65,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         answer.setCopy(isCopy);
         Processor newExchangeProcessor = definition.getNewExchangeProcessor();
         if (definition.getNewExchangeProcessorRef() != null) {
-            newExchangeProcessor = routeContext.mandatoryLookup(parseString(definition.getNewExchangeProcessorRef()), Processor.class);
+            newExchangeProcessor = mandatoryLookup(parseString(definition.getNewExchangeProcessorRef()), Processor.class);
         }
         if (newExchangeProcessor != null) {
             answer.addNewExchangeProcessor(newExchangeProcessor);
@@ -82,7 +81,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         }
         Processor onPrepare = definition.getOnPrepare();
         if (definition.getOnPrepareRef() != null) {
-            onPrepare = CamelContextHelper.mandatoryLookup(camelContext, parseString(definition.getOnPrepareRef()), Processor.class);
+            onPrepare = mandatoryLookup(parseString(definition.getOnPrepareRef()), Processor.class);
         }
         if (onPrepare != null) {
             answer.setOnPrepare(onPrepare);
@@ -92,10 +91,10 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
     }
 
     @Override
-    protected Expression createExpression(RouteContext routeContext, String uri) {
+    protected Expression createExpression(String uri) {
         // whether to use dynamic or static uri
         if (parseBoolean(definition.getDynamicUri(), true)) {
-            return super.createExpression(routeContext, uri);
+            return super.createExpression(uri);
         } else {
             return ExpressionBuilder.constantExpression(uri);
         }

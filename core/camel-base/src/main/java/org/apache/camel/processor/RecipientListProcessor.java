@@ -16,9 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,23 +25,21 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedExchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Route;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,6 +205,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             Producer producer;
             ExchangePattern pattern;
             try {
+                recipient = prepareRecipient(exchange, recipient);
                 Endpoint existing = getExistingEndpoint(exchange, recipient);
                 if (existing == null) {
                     endpoint = resolveEndpoint(exchange, recipient, prototype);
@@ -244,8 +240,6 @@ public class RecipientListProcessor extends MulticastProcessor {
      */
     protected ProcessorExchangePair createProcessorExchangePair(int index, Endpoint endpoint, Producer producer,
                                                                 Exchange exchange, ExchangePattern pattern, boolean prototypeEndpoint) {
-        Processor prepared = producer;
-
         // copy exchange, and do not share the unit of work
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
@@ -255,11 +249,11 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         // set property which endpoint we send to
-        setToEndpoint(copy, prepared);
+        setToEndpoint(copy, producer);
 
         // rework error handling to support fine grained error handling
-        RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
-        prepared = createErrorHandler(routeContext, copy, prepared);
+        Route route = ExchangeHelper.getRoute(exchange);
+        Processor prepared = createErrorHandler(route, copy, producer);
 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
@@ -274,58 +268,62 @@ public class RecipientListProcessor extends MulticastProcessor {
         return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy, pattern, prototypeEndpoint);
     }
 
-    @Override
-    protected Processor createErrorHandler(RouteContext routeContext, ErrorHandlerFactory builder, Exchange exchange, Processor processor) throws Exception {
-        // in case its a reference to another builder then we want the real builder
-        final ErrorHandlerFactory ehBuilder = builder.getOrLookupErrorHandlerFactory(routeContext);
-
-        Processor answer = super.createErrorHandler(routeContext, ehBuilder, exchange, processor);
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                // remove error handler builder from route context as we are done with the recipient list
-                // and we cannot reuse this and must remove it to avoid leaking the error handler on the route context
-                routeContext.removeErrorHandlers(ehBuilder);
-            }
-        });
-        return answer;
-    }
-
-    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof Endpoint) {
-            return (Endpoint) recipient;
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
         } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
             recipient = ((String) recipient).trim();
         }
         if (recipient != null) {
-            // convert to a string type we can work with
-            String uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
-            return exchange.getContext().hasEndpoint(uri);
+            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            String uri;
+            if (recipient instanceof String) {
+                uri = (String) recipient;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint
+            return ecc.normalizeUri(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        }
+        if (recipient != null) {
+            if (recipient instanceof NormalizedEndpointUri) {
+                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+                return ecc.hasEndpoint(nu);
+            } else {
+                String uri = recipient.toString().trim();
+                return exchange.getContext().hasEndpoint(uri);
+            }
         }
         return null;
     }
 
     protected static Endpoint resolveEndpoint(Exchange exchange, Object recipient, boolean prototype) {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            recipient = ((String) recipient).trim();
-        }
-        if (recipient != null) {
-            return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
-        } else {
-            return null;
-        }
+        return prototype ? ExchangeHelper.resolvePrototypeEndpoint(exchange, recipient) : ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
-    protected ExchangePattern resolveExchangePattern(Object recipient) throws UnsupportedEncodingException, URISyntaxException, MalformedURLException {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof String) {
-            String s = ((String) recipient).trim();
-            // see if exchangePattern is a parameter in the url
-            s = URISupport.normalizeUri(s);
+    protected ExchangePattern resolveExchangePattern(Object recipient) {
+        String s = null;
+
+        if (recipient instanceof NormalizedEndpointUri) {
+            s = ((NormalizedEndpointUri) recipient).getUri();
+        } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
+            s = ((String) recipient).trim();
+        }
+        if (s != null) {
             return EndpointHelper.resolveExchangePatternFromUrl(s);
         }
+
         return null;
     }
 

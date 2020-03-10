@@ -75,6 +75,25 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AmqpComponentBuilder disableReplyTo(boolean disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
          * The durable subscriber name for specifying durable topic
          * subscriptions. The clientId option must be configured as well.
          * 
@@ -104,6 +123,23 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Allows you to force the use of a specific javax.jms.Message
+         * implementation for sending JMS messages. Possible values are: Bytes,
+         * Map, Object, Stream, Text. By default, Camel would determine which
+         * JMS message type to use from the In body type. This option allows you
+         * to specify it.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
+         * 
+         * Group: common
+         */
+        default AmqpComponentBuilder jmsMessageType(
+                org.apache.camel.component.jms.JmsMessageType jmsMessageType) {
+            doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
          * Specifies whether to test the connection on startup. This ensures
          * that when Camel starts that all the JMS consumers have a valid
          * connection to the JMS broker. If a connection cannot be granted then
@@ -118,20 +154,6 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
-            return this;
-        }
-        /**
-         * The JMS acknowledgement mode defined as an Integer. Allows you to set
-         * vendor-specific extensions to the acknowledgment mode. For the
-         * regular modes, it is preferable to use the acknowledgementModeName
-         * instead.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default AmqpComponentBuilder acknowledgementMode(int acknowledgementMode) {
-            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -264,6 +286,42 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Provides an explicit ReplyTo destination, which overrides any
+         * incoming value of Message.getJMSReplyTo().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AmqpComponentBuilder replyTo(java.lang.String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
+         * Specifies whether to use persistent delivery by default for replies.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default AmqpComponentBuilder replyToDeliveryPersistent(
+                boolean replyToDeliveryPersistent) {
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            return this;
+        }
+        /**
+         * Sets the JMS selector to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AmqpComponentBuilder selector(java.lang.String selector) {
+            doSetProperty("selector", selector);
+            return this;
+        }
+        /**
          * Set whether to make the subscription durable. The durable
          * subscription name to be used can be specified through the
          * subscriptionName property. Default is false. Set this to true to
@@ -364,6 +422,29 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * The consumer type to use, which can be one of: Simple, Default, or
+         * Custom. The consumer type determines which Spring JMS listener to
+         * use. Default will use
+         * org.springframework.jms.listener.DefaultMessageListenerContainer,
+         * Simple will use
+         * org.springframework.jms.listener.SimpleMessageListenerContainer. When
+         * Custom is specified, the MessageListenerContainerFactory defined by
+         * the messageListenerContainerFactory option will determine what
+         * org.springframework.jms.listener.AbstractMessageListenerContainer to
+         * use.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.ConsumerType</code> type.
+         * 
+         * Default: Default
+         * Group: consumer (advanced)
+         */
+        default AmqpComponentBuilder consumerType(
+                org.apache.camel.component.jms.ConsumerType consumerType) {
+            doSetProperty("consumerType", consumerType);
+            return this;
+        }
+        /**
          * Specifies what default TaskExecutor type to use in the
          * DefaultMessageListenerContainer, for both consumer endpoints and the
          * ReplyTo consumer of producer endpoints. Possible values: SimpleAsync
@@ -387,11 +468,11 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
-         * Enables eager loading of JMS properties as soon as a message is
-         * loaded which generally is inefficient as the JMS properties may not
-         * be required but sometimes can catch early any issues with the
-         * underlying JMS provider and the use of JMS properties. See also the
-         * option eagerLoadingOfBody.
+         * Enables eager loading of JMS properties and payload as soon as a
+         * message is loaded which generally is inefficient as the JMS
+         * properties may not be required but sometimes can catch early any
+         * issues with the underlying JMS provider and the use of JMS
+         * properties. See also the option eagerPoisonBody.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -436,6 +517,22 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether a JMS consumer is allowed to send a reply message to the same
+         * destination that the consumer is using to consume from. This prevents
+         * an endless loop by consuming and sending back the same message to
+         * itself.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         */
+        default AmqpComponentBuilder replyToSameDestinationAllowed(
+                boolean replyToSameDestinationAllowed) {
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
+            return this;
+        }
+        /**
          * Allows you to specify a custom task executor for consuming messages.
          * 
          * The option is a:
@@ -446,6 +543,19 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder taskExecutor(
                 org.springframework.core.task.TaskExecutor taskExecutor) {
             doSetProperty("taskExecutor", taskExecutor);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS. This option
+         * requires JMS 2.0 compliant broker.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: producer
+         */
+        default AmqpComponentBuilder deliveryDelay(long deliveryDelay) {
+            doSetProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
@@ -482,19 +592,19 @@ public interface AmqpComponentBuilderFactory {
          * preserveMessageQos option, which operates at message granularity,
          * reading QoS properties exclusively from the Camel In message headers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Default: false
          * Group: producer
          */
         default AmqpComponentBuilder explicitQosEnabled(
-                boolean explicitQosEnabled) {
+                java.lang.Boolean explicitQosEnabled) {
             doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
         }
         /**
-         * Sets whether date headers should be formatted according to the ISO
-         * 8601 standard.
+         * Sets whether JMS date properties should be formatted according to the
+         * ISO 8601 standard.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -563,20 +673,6 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
-         * Specifies the maximum number of concurrent consumers for continue
-         * routing when timeout occurred when using request/reply over JMS.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 1
-         * Group: producer
-         */
-        default AmqpComponentBuilder replyOnTimeoutToMaxConcurrentConsumers(
-                int replyOnTimeoutToMaxConcurrentConsumers) {
-            doSetProperty("replyOnTimeoutToMaxConcurrentConsumers", replyOnTimeoutToMaxConcurrentConsumers);
-            return this;
-        }
-        /**
          * Specifies the default number of concurrent consumers when doing
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
@@ -603,6 +699,35 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
             doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of concurrent consumers for continue
+         * routing when timeout occurred when using request/reply over JMS.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: producer
+         */
+        default AmqpComponentBuilder replyToOnTimeoutMaxConcurrentConsumers(
+                int replyToOnTimeoutMaxConcurrentConsumers) {
+            doSetProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination in the JMS message, which
+         * overrides the setting of replyTo. It is useful if you want to forward
+         * the message to a remote Queue and receive the reply message from the
+         * ReplyTo destination.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AmqpComponentBuilder replyToOverride(
+                java.lang.String replyToOverride) {
+            doSetProperty("replyToOverride", replyToOverride);
             return this;
         }
         /**
@@ -703,13 +828,10 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
-         * Use this JMS property to correlate messages in InOut exchange pattern
-         * (request-reply) instead of JMSCorrelationID property. This allows you
-         * to exchange messages with systems that do not correlate messages
-         * using JMSCorrelationID JMS property. If used JMSCorrelationID will
-         * not be used or set by Camel. The value of here named property will be
-         * generated if not supplied in the header of the message under the same
-         * name.
+         * When using InOut exchange pattern use this JMS property instead of
+         * JMSCorrelationID JMS property to correlate messages. If set messages
+         * will be correlated solely on the value of this property
+         * JMSCorrelationID property will be ignored and not set by Camel.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -718,6 +840,26 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder correlationProperty(
                 java.lang.String correlationProperty) {
             doSetProperty("correlationProperty", correlationProperty);
+            return this;
+        }
+        /**
+         * Use this option to force disabling time to live. For example when you
+         * do request/reply over JMS, then Camel will by default use the
+         * requestTimeout value as time to live on the message being sent. The
+         * problem is that the sender and receiver systems have to have their
+         * clocks synchronized, so they are in sync. This is not always so easy
+         * to archive. So you can use disableTimeToLive=true to not set a time
+         * to live value on the sent message. Then the message will not expire
+         * on the receiver system. See below in section About time to live for
+         * more details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         */
+        default AmqpComponentBuilder disableTimeToLive(boolean disableTimeToLive) {
+            doSetProperty("disableTimeToLive", disableTimeToLive);
             return this;
         }
         /**
@@ -773,6 +915,20 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the JMS Selector using the fixed name to be used so you can
+         * filter out your own replies from the others when using a shared queue
+         * (that is, if you are not using a temporary reply queue).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AmqpComponentBuilder replyToDestinationSelectorName(
+                java.lang.String replyToDestinationSelectorName) {
+            doSetProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
+            return this;
+        }
+        /**
          * Sets whether StreamMessage type is enabled or not. Message payloads
          * of streaming kind such as files, InputStream, etc will either by sent
          * as BytesMessage or StreamMessage. This option controls which kind
@@ -799,7 +955,7 @@ public interface AmqpComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AmqpComponentBuilder allowAutoWiredConnectionFactory(
@@ -815,12 +971,28 @@ public interface AmqpComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AmqpComponentBuilder allowAutoWiredDestinationResolver(
                 boolean allowAutoWiredDestinationResolver) {
             doSetProperty("allowAutoWiredDestinationResolver", allowAutoWiredDestinationResolver);
+            return this;
+        }
+        /**
+         * Controls whether or not to include serialized headers. Applies only
+         * when transferExchange is true. This requires that the objects are
+         * serializable. Camel will exclude any non-serializable objects and log
+         * it at WARN level.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AmqpComponentBuilder allowSerializedHeaders(
+                boolean allowSerializedHeaders) {
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1002,22 +1174,6 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows you to use your own implementation of the
-         * org.springframework.jms.core.JmsOperations interface. Camel uses
-         * JmsTemplate as default. Can be used for testing purpose, but not used
-         * much as stated in the spring API docs.
-         * 
-         * The option is a:
-         * <code>org.springframework.jms.core.JmsOperations</code> type.
-         * 
-         * Group: advanced
-         */
-        default AmqpComponentBuilder jmsOperations(
-                org.springframework.jms.core.JmsOperations jmsOperations) {
-            doSetProperty("jmsOperations", jmsOperations);
-            return this;
-        }
-        /**
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as javax.jms.TextMessage to a String etc.
          * 
@@ -1090,6 +1246,23 @@ public interface AmqpComponentBuilderFactory {
          */
         default AmqpComponentBuilder messageIdEnabled(boolean messageIdEnabled) {
             doSetProperty("messageIdEnabled", messageIdEnabled);
+            return this;
+        }
+        /**
+         * Registry ID of the MessageListenerContainerFactory used to determine
+         * what
+         * org.springframework.jms.listener.AbstractMessageListenerContainer to
+         * use to consume messages. Setting this will automatically set
+         * consumerType to Custom.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
+         * 
+         * Group: advanced
+         */
+        default AmqpComponentBuilder messageListenerContainerFactory(
+                org.apache.camel.component.jms.MessageListenerContainerFactory messageListenerContainerFactory) {
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -1270,6 +1443,20 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         */
+        default AmqpComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Allows to configure the default errorHandler logging level for
          * logging uncaught exceptions.
          * 
@@ -1295,20 +1482,6 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
-            return this;
-        }
-        /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * header to and from Camel message.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * 
-         * Group: filter
-         */
-        default AmqpComponentBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1410,97 +1583,115 @@ public interface AmqpComponentBuilderFactory {
         protected AMQPComponent buildConcreteComponent() {
             return new AMQPComponent();
         }
+        private org.apache.camel.component.jms.JmsConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.amqp.AMQPComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.jms.JmsConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "clientId": ((AMQPComponent) component).setClientId((java.lang.String) value); return true;
-            case "connectionFactory": ((AMQPComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
-            case "durableSubscriptionName": ((AMQPComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
+            case "clientId": getOrCreateConfiguration((AMQPComponent) component).setClientId((java.lang.String) value); return true;
+            case "connectionFactory": getOrCreateConfiguration((AMQPComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "disableReplyTo": getOrCreateConfiguration((AMQPComponent) component).setDisableReplyTo((boolean) value); return true;
+            case "durableSubscriptionName": getOrCreateConfiguration((AMQPComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
             case "includeAmqpAnnotations": ((AMQPComponent) component).setIncludeAmqpAnnotations((boolean) value); return true;
-            case "testConnectionOnStartup": ((AMQPComponent) component).setTestConnectionOnStartup((boolean) value); return true;
-            case "acknowledgementMode": ((AMQPComponent) component).setAcknowledgementMode((int) value); return true;
-            case "acknowledgementModeName": ((AMQPComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
-            case "asyncConsumer": ((AMQPComponent) component).setAsyncConsumer((boolean) value); return true;
-            case "autoStartup": ((AMQPComponent) component).setAutoStartup((boolean) value); return true;
+            case "jmsMessageType": getOrCreateConfiguration((AMQPComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
+            case "testConnectionOnStartup": getOrCreateConfiguration((AMQPComponent) component).setTestConnectionOnStartup((boolean) value); return true;
+            case "acknowledgementModeName": getOrCreateConfiguration((AMQPComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
+            case "asyncConsumer": getOrCreateConfiguration((AMQPComponent) component).setAsyncConsumer((boolean) value); return true;
+            case "autoStartup": getOrCreateConfiguration((AMQPComponent) component).setAutoStartup((boolean) value); return true;
             case "bridgeErrorHandler": ((AMQPComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "cacheLevel": ((AMQPComponent) component).setCacheLevel((int) value); return true;
-            case "cacheLevelName": ((AMQPComponent) component).setCacheLevelName((java.lang.String) value); return true;
-            case "concurrentConsumers": ((AMQPComponent) component).setConcurrentConsumers((int) value); return true;
-            case "maxConcurrentConsumers": ((AMQPComponent) component).setMaxConcurrentConsumers((int) value); return true;
-            case "subscriptionDurable": ((AMQPComponent) component).setSubscriptionDurable((boolean) value); return true;
-            case "subscriptionName": ((AMQPComponent) component).setSubscriptionName((java.lang.String) value); return true;
-            case "subscriptionShared": ((AMQPComponent) component).setSubscriptionShared((boolean) value); return true;
-            case "acceptMessagesWhileStopping": ((AMQPComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
-            case "allowReplyManagerQuickStop": ((AMQPComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
-            case "defaultTaskExecutorType": ((AMQPComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
-            case "eagerLoadingOfProperties": ((AMQPComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
-            case "eagerPoisonBody": ((AMQPComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
-            case "exposeListenerSession": ((AMQPComponent) component).setExposeListenerSession((boolean) value); return true;
-            case "taskExecutor": ((AMQPComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
-            case "deliveryMode": ((AMQPComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
-            case "deliveryPersistent": ((AMQPComponent) component).setDeliveryPersistent((boolean) value); return true;
-            case "explicitQosEnabled": ((AMQPComponent) component).setExplicitQosEnabled((boolean) value); return true;
-            case "formatDateHeadersToIso8601": ((AMQPComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
+            case "cacheLevel": getOrCreateConfiguration((AMQPComponent) component).setCacheLevel((int) value); return true;
+            case "cacheLevelName": getOrCreateConfiguration((AMQPComponent) component).setCacheLevelName((java.lang.String) value); return true;
+            case "concurrentConsumers": getOrCreateConfiguration((AMQPComponent) component).setConcurrentConsumers((int) value); return true;
+            case "maxConcurrentConsumers": getOrCreateConfiguration((AMQPComponent) component).setMaxConcurrentConsumers((int) value); return true;
+            case "replyTo": getOrCreateConfiguration((AMQPComponent) component).setReplyTo((java.lang.String) value); return true;
+            case "replyToDeliveryPersistent": getOrCreateConfiguration((AMQPComponent) component).setReplyToDeliveryPersistent((boolean) value); return true;
+            case "selector": getOrCreateConfiguration((AMQPComponent) component).setSelector((java.lang.String) value); return true;
+            case "subscriptionDurable": getOrCreateConfiguration((AMQPComponent) component).setSubscriptionDurable((boolean) value); return true;
+            case "subscriptionName": getOrCreateConfiguration((AMQPComponent) component).setSubscriptionName((java.lang.String) value); return true;
+            case "subscriptionShared": getOrCreateConfiguration((AMQPComponent) component).setSubscriptionShared((boolean) value); return true;
+            case "acceptMessagesWhileStopping": getOrCreateConfiguration((AMQPComponent) component).setAcceptMessagesWhileStopping((boolean) value); return true;
+            case "allowReplyManagerQuickStop": getOrCreateConfiguration((AMQPComponent) component).setAllowReplyManagerQuickStop((boolean) value); return true;
+            case "consumerType": getOrCreateConfiguration((AMQPComponent) component).setConsumerType((org.apache.camel.component.jms.ConsumerType) value); return true;
+            case "defaultTaskExecutorType": getOrCreateConfiguration((AMQPComponent) component).setDefaultTaskExecutorType((org.apache.camel.component.jms.DefaultTaskExecutorType) value); return true;
+            case "eagerLoadingOfProperties": getOrCreateConfiguration((AMQPComponent) component).setEagerLoadingOfProperties((boolean) value); return true;
+            case "eagerPoisonBody": getOrCreateConfiguration((AMQPComponent) component).setEagerPoisonBody((java.lang.String) value); return true;
+            case "exposeListenerSession": getOrCreateConfiguration((AMQPComponent) component).setExposeListenerSession((boolean) value); return true;
+            case "replyToSameDestinationAllowed": getOrCreateConfiguration((AMQPComponent) component).setReplyToSameDestinationAllowed((boolean) value); return true;
+            case "taskExecutor": getOrCreateConfiguration((AMQPComponent) component).setTaskExecutor((org.springframework.core.task.TaskExecutor) value); return true;
+            case "deliveryDelay": getOrCreateConfiguration((AMQPComponent) component).setDeliveryDelay((long) value); return true;
+            case "deliveryMode": getOrCreateConfiguration((AMQPComponent) component).setDeliveryMode((java.lang.Integer) value); return true;
+            case "deliveryPersistent": getOrCreateConfiguration((AMQPComponent) component).setDeliveryPersistent((boolean) value); return true;
+            case "explicitQosEnabled": getOrCreateConfiguration((AMQPComponent) component).setExplicitQosEnabled((java.lang.Boolean) value); return true;
+            case "formatDateHeadersToIso8601": getOrCreateConfiguration((AMQPComponent) component).setFormatDateHeadersToIso8601((boolean) value); return true;
             case "lazyStartProducer": ((AMQPComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "preserveMessageQos": ((AMQPComponent) component).setPreserveMessageQos((boolean) value); return true;
-            case "priority": ((AMQPComponent) component).setPriority((int) value); return true;
-            case "replyOnTimeoutToMaxConcurrentConsumers": ((AMQPComponent) component).setReplyOnTimeoutToMaxConcurrentConsumers((int) value); return true;
-            case "replyToConcurrentConsumers": ((AMQPComponent) component).setReplyToConcurrentConsumers((int) value); return true;
-            case "replyToMaxConcurrentConsumers": ((AMQPComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
-            case "replyToType": ((AMQPComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
-            case "requestTimeout": ((AMQPComponent) component).setRequestTimeout((long) value); return true;
-            case "timeToLive": ((AMQPComponent) component).setTimeToLive((long) value); return true;
-            case "allowAdditionalHeaders": ((AMQPComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
-            case "allowNullBody": ((AMQPComponent) component).setAllowNullBody((boolean) value); return true;
-            case "alwaysCopyMessage": ((AMQPComponent) component).setAlwaysCopyMessage((boolean) value); return true;
-            case "correlationProperty": ((AMQPComponent) component).setCorrelationProperty((java.lang.String) value); return true;
-            case "forceSendOriginalMessage": ((AMQPComponent) component).setForceSendOriginalMessage((boolean) value); return true;
-            case "includeSentJMSMessageID": ((AMQPComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
-            case "replyToCacheLevelName": ((AMQPComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
-            case "streamMessageTypeEnabled": ((AMQPComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
+            case "preserveMessageQos": getOrCreateConfiguration((AMQPComponent) component).setPreserveMessageQos((boolean) value); return true;
+            case "priority": getOrCreateConfiguration((AMQPComponent) component).setPriority((int) value); return true;
+            case "replyToConcurrentConsumers": getOrCreateConfiguration((AMQPComponent) component).setReplyToConcurrentConsumers((int) value); return true;
+            case "replyToMaxConcurrentConsumers": getOrCreateConfiguration((AMQPComponent) component).setReplyToMaxConcurrentConsumers((int) value); return true;
+            case "replyToOnTimeoutMaxConcurrentConsumers": getOrCreateConfiguration((AMQPComponent) component).setReplyToOnTimeoutMaxConcurrentConsumers((int) value); return true;
+            case "replyToOverride": getOrCreateConfiguration((AMQPComponent) component).setReplyToOverride((java.lang.String) value); return true;
+            case "replyToType": getOrCreateConfiguration((AMQPComponent) component).setReplyToType((org.apache.camel.component.jms.ReplyToType) value); return true;
+            case "requestTimeout": getOrCreateConfiguration((AMQPComponent) component).setRequestTimeout((long) value); return true;
+            case "timeToLive": getOrCreateConfiguration((AMQPComponent) component).setTimeToLive((long) value); return true;
+            case "allowAdditionalHeaders": getOrCreateConfiguration((AMQPComponent) component).setAllowAdditionalHeaders((java.lang.String) value); return true;
+            case "allowNullBody": getOrCreateConfiguration((AMQPComponent) component).setAllowNullBody((boolean) value); return true;
+            case "alwaysCopyMessage": getOrCreateConfiguration((AMQPComponent) component).setAlwaysCopyMessage((boolean) value); return true;
+            case "correlationProperty": getOrCreateConfiguration((AMQPComponent) component).setCorrelationProperty((java.lang.String) value); return true;
+            case "disableTimeToLive": getOrCreateConfiguration((AMQPComponent) component).setDisableTimeToLive((boolean) value); return true;
+            case "forceSendOriginalMessage": getOrCreateConfiguration((AMQPComponent) component).setForceSendOriginalMessage((boolean) value); return true;
+            case "includeSentJMSMessageID": getOrCreateConfiguration((AMQPComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
+            case "replyToCacheLevelName": getOrCreateConfiguration((AMQPComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
+            case "replyToDestinationSelectorName": getOrCreateConfiguration((AMQPComponent) component).setReplyToDestinationSelectorName((java.lang.String) value); return true;
+            case "streamMessageTypeEnabled": getOrCreateConfiguration((AMQPComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;
             case "allowAutoWiredConnectionFactory": ((AMQPComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
             case "allowAutoWiredDestinationResolver": ((AMQPComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
-            case "asyncStartListener": ((AMQPComponent) component).setAsyncStartListener((boolean) value); return true;
-            case "asyncStopListener": ((AMQPComponent) component).setAsyncStopListener((boolean) value); return true;
+            case "allowSerializedHeaders": getOrCreateConfiguration((AMQPComponent) component).setAllowSerializedHeaders((boolean) value); return true;
+            case "asyncStartListener": getOrCreateConfiguration((AMQPComponent) component).setAsyncStartListener((boolean) value); return true;
+            case "asyncStopListener": getOrCreateConfiguration((AMQPComponent) component).setAsyncStopListener((boolean) value); return true;
             case "basicPropertyBinding": ((AMQPComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((AMQPComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
-            case "destinationResolver": ((AMQPComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
-            case "errorHandler": ((AMQPComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
-            case "exceptionListener": ((AMQPComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
-            case "idleConsumerLimit": ((AMQPComponent) component).setIdleConsumerLimit((int) value); return true;
-            case "idleTaskExecutionLimit": ((AMQPComponent) component).setIdleTaskExecutionLimit((int) value); return true;
-            case "includeAllJMSXProperties": ((AMQPComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
-            case "jmsKeyFormatStrategy": ((AMQPComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
-            case "jmsOperations": ((AMQPComponent) component).setJmsOperations((org.springframework.jms.core.JmsOperations) value); return true;
-            case "mapJmsMessage": ((AMQPComponent) component).setMapJmsMessage((boolean) value); return true;
-            case "maxMessagesPerTask": ((AMQPComponent) component).setMaxMessagesPerTask((int) value); return true;
-            case "messageConverter": ((AMQPComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
-            case "messageCreatedStrategy": ((AMQPComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
-            case "messageIdEnabled": ((AMQPComponent) component).setMessageIdEnabled((boolean) value); return true;
-            case "messageTimestampEnabled": ((AMQPComponent) component).setMessageTimestampEnabled((boolean) value); return true;
-            case "pubSubNoLocal": ((AMQPComponent) component).setPubSubNoLocal((boolean) value); return true;
+            case "destinationResolver": getOrCreateConfiguration((AMQPComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
+            case "errorHandler": getOrCreateConfiguration((AMQPComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
+            case "exceptionListener": getOrCreateConfiguration((AMQPComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "idleConsumerLimit": getOrCreateConfiguration((AMQPComponent) component).setIdleConsumerLimit((int) value); return true;
+            case "idleTaskExecutionLimit": getOrCreateConfiguration((AMQPComponent) component).setIdleTaskExecutionLimit((int) value); return true;
+            case "includeAllJMSXProperties": getOrCreateConfiguration((AMQPComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;
+            case "jmsKeyFormatStrategy": getOrCreateConfiguration((AMQPComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.jms.JmsKeyFormatStrategy) value); return true;
+            case "mapJmsMessage": getOrCreateConfiguration((AMQPComponent) component).setMapJmsMessage((boolean) value); return true;
+            case "maxMessagesPerTask": getOrCreateConfiguration((AMQPComponent) component).setMaxMessagesPerTask((int) value); return true;
+            case "messageConverter": getOrCreateConfiguration((AMQPComponent) component).setMessageConverter((org.springframework.jms.support.converter.MessageConverter) value); return true;
+            case "messageCreatedStrategy": getOrCreateConfiguration((AMQPComponent) component).setMessageCreatedStrategy((org.apache.camel.component.jms.MessageCreatedStrategy) value); return true;
+            case "messageIdEnabled": getOrCreateConfiguration((AMQPComponent) component).setMessageIdEnabled((boolean) value); return true;
+            case "messageListenerContainerFactory": getOrCreateConfiguration((AMQPComponent) component).setMessageListenerContainerFactory((org.apache.camel.component.jms.MessageListenerContainerFactory) value); return true;
+            case "messageTimestampEnabled": getOrCreateConfiguration((AMQPComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "pubSubNoLocal": getOrCreateConfiguration((AMQPComponent) component).setPubSubNoLocal((boolean) value); return true;
             case "queueBrowseStrategy": ((AMQPComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
-            case "receiveTimeout": ((AMQPComponent) component).setReceiveTimeout((long) value); return true;
-            case "recoveryInterval": ((AMQPComponent) component).setRecoveryInterval((long) value); return true;
-            case "requestTimeoutCheckerInterval": ((AMQPComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
-            case "transferException": ((AMQPComponent) component).setTransferException((boolean) value); return true;
-            case "transferExchange": ((AMQPComponent) component).setTransferExchange((boolean) value); return true;
-            case "useMessageIDAsCorrelationID": ((AMQPComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
-            case "waitForProvisionCorrelationToBeUpdatedCounter": ((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
-            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": ((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
-            case "errorHandlerLoggingLevel": ((AMQPComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
-            case "errorHandlerLogStackTrace": ((AMQPComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "receiveTimeout": getOrCreateConfiguration((AMQPComponent) component).setReceiveTimeout((long) value); return true;
+            case "recoveryInterval": getOrCreateConfiguration((AMQPComponent) component).setRecoveryInterval((long) value); return true;
+            case "requestTimeoutCheckerInterval": getOrCreateConfiguration((AMQPComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
+            case "transferException": getOrCreateConfiguration((AMQPComponent) component).setTransferException((boolean) value); return true;
+            case "transferExchange": getOrCreateConfiguration((AMQPComponent) component).setTransferExchange((boolean) value); return true;
+            case "useMessageIDAsCorrelationID": getOrCreateConfiguration((AMQPComponent) component).setUseMessageIDAsCorrelationID((boolean) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedCounter((int) value); return true;
+            case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration((AMQPComponent) component).setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime((long) value); return true;
             case "headerFilterStrategy": ((AMQPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "password": ((AMQPComponent) component).setPassword((java.lang.String) value); return true;
-            case "username": ((AMQPComponent) component).setUsername((java.lang.String) value); return true;
-            case "transacted": ((AMQPComponent) component).setTransacted((boolean) value); return true;
-            case "lazyCreateTransactionManager": ((AMQPComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
-            case "transactionManager": ((AMQPComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
-            case "transactionName": ((AMQPComponent) component).setTransactionName((java.lang.String) value); return true;
-            case "transactionTimeout": ((AMQPComponent) component).setTransactionTimeout((int) value); return true;
+            case "errorHandlerLoggingLevel": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
+            case "errorHandlerLogStackTrace": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "password": getOrCreateConfiguration((AMQPComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((AMQPComponent) component).setUsername((java.lang.String) value); return true;
+            case "transacted": getOrCreateConfiguration((AMQPComponent) component).setTransacted((boolean) value); return true;
+            case "lazyCreateTransactionManager": getOrCreateConfiguration((AMQPComponent) component).setLazyCreateTransactionManager((boolean) value); return true;
+            case "transactionManager": getOrCreateConfiguration((AMQPComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;
+            case "transactionName": getOrCreateConfiguration((AMQPComponent) component).setTransactionName((java.lang.String) value); return true;
+            case "transactionTimeout": getOrCreateConfiguration((AMQPComponent) component).setTransactionTimeout((int) value); return true;
             default: return false;
             }
         }

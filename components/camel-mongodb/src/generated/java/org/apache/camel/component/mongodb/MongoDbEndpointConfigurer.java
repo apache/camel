@@ -15,45 +15,41 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionindex":
         case "collectionIndex": target.setCollectionIndex(property(camelContext, java.lang.String.class, value)); return true;
-        case "createcollection":
-        case "createCollection": target.setCreateCollection(property(camelContext, boolean.class, value)); return true;
-        case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
-        case "mongoconnection":
-        case "mongoConnection": target.setMongoConnection(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
-        case "operation": target.setOperation(property(camelContext, org.apache.camel.component.mongodb.MongoDbOperation.class, value)); return true;
-        case "outputtype":
-        case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.mongodb.MongoDbOutputType.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumertype":
         case "consumerType": target.setConsumerType(property(camelContext, java.lang.String.class, value)); return true;
+        case "createcollection":
+        case "createCollection": target.setCreateCollection(property(camelContext, boolean.class, value)); return true;
+        case "cursorregenerationdelay":
+        case "cursorRegenerationDelay": target.setCursorRegenerationDelay(property(camelContext, long.class, value)); return true;
+        case "database": target.setDatabase(property(camelContext, java.lang.String.class, value)); return true;
+        case "dynamicity": target.setDynamicity(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cursorregenerationdelay":
-        case "cursorRegenerationDelay": target.setCursorRegenerationDelay(property(camelContext, long.class, value)); return true;
-        case "dynamicity": target.setDynamicity(property(camelContext, boolean.class, value)); return true;
-        case "readpreference":
-        case "readPreference": target.setReadPreference(property(camelContext, java.lang.String.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "writeconcern":
-        case "writeConcern": target.setWriteConcern(property(camelContext, java.lang.String.class, value)); return true;
-        case "writeresultasheader":
-        case "writeResultAsHeader": target.setWriteResultAsHeader(property(camelContext, boolean.class, value)); return true;
-        case "streamfilter":
-        case "streamFilter": target.setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "mongoconnection":
+        case "mongoConnection": target.setMongoConnection(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, org.apache.camel.component.mongodb.MongoDbOperation.class, value)); return true;
+        case "outputtype":
+        case "outputType": target.setOutputType(property(camelContext, org.apache.camel.component.mongodb.MongoDbOutputType.class, value)); return true;
         case "persistentid":
         case "persistentId": target.setPersistentId(property(camelContext, java.lang.String.class, value)); return true;
         case "persistenttailtracking":
         case "persistentTailTracking": target.setPersistentTailTracking(property(camelContext, boolean.class, value)); return true;
+        case "readpreference":
+        case "readPreference": target.setReadPreference(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamfilter":
+        case "streamFilter": target.setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tailtrackcollection":
         case "tailTrackCollection": target.setTailTrackCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "tailtrackdb":
@@ -62,6 +58,10 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "tailTrackField": target.setTailTrackField(property(camelContext, java.lang.String.class, value)); return true;
         case "tailtrackincreasingfield":
         case "tailTrackIncreasingField": target.setTailTrackIncreasingField(property(camelContext, java.lang.String.class, value)); return true;
+        case "writeconcern":
+        case "writeConcern": target.setWriteConcern(property(camelContext, java.lang.String.class, value)); return true;
+        case "writeresultasheader":
+        case "writeResultAsHeader": target.setWriteResultAsHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

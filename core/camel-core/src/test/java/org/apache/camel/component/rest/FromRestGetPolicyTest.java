@@ -19,17 +19,17 @@ package org.apache.camel.component.rest;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class FromRestGetPolicyTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
@@ -60,12 +60,12 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
     private class MyDummyPolicy implements Policy {
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // noop
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, Processor processor) {
+        public Processor wrap(Route route, Processor processor) {
             return processor;
         }
     }

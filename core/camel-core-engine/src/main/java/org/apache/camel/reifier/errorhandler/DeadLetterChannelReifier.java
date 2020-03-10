@@ -20,15 +20,15 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.StringHelper;
 
 public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelBuilder> {
 
-    public DeadLetterChannelReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, definition);
+    public DeadLetterChannelReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, definition);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
                                                          definition.isUseOriginalBody(), definition.getRetryWhilePolicy(camelContext),
                                                          getExecutorService(camelContext), definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
-        configure(routeContext, answer);
+        configure(answer);
         return answer;
     }
 

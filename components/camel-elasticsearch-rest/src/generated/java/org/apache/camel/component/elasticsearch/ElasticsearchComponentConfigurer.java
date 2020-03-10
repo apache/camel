@@ -15,28 +15,28 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "client": target.setClient(property(camelContext, org.elasticsearch.client.RestClient.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "enablessl":
+        case "enableSSL": target.setEnableSSL(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "enablesniffer":
         case "enableSniffer": target.setEnableSniffer(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "hostaddresses":
         case "hostAddresses": target.setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxretrytimeout":
         case "maxRetryTimeout": target.setMaxRetryTimeout(property(camelContext, int.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "sniffafterfailuredelay":
         case "sniffAfterFailureDelay": target.setSniffAfterFailureDelay(property(camelContext, int.class, value)); return true;
         case "snifferinterval":
         case "snifferInterval": target.setSnifferInterval(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
-        case "enablessl":
-        case "enableSSL": target.setEnableSSL(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }

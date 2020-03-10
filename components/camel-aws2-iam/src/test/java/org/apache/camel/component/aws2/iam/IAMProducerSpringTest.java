@@ -20,8 +20,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.iam.model.AddUserToGroupResponse;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
@@ -37,6 +37,9 @@ import software.amazon.awssdk.services.iam.model.ListUsersResponse;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupResponse;
 import software.amazon.awssdk.services.iam.model.StatusType;
 import software.amazon.awssdk.services.iam.model.UpdateAccessKeyResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IAMProducerSpringTest extends CamelSpringTestSupport {
 

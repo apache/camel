@@ -1879,7 +1879,7 @@ public interface JpaEndpointBuilderFactory {
          * Syntax: <code>jpa:entityType</code>
          * 
          * Path parameter: entityType (required)
-         * The JPA annotated class to use as entity.
+         * Entity class name
          */
         default JpaEndpointBuilder jpa(String path) {
             return JpaEndpointBuilderFactory.jpa(path);
@@ -1897,7 +1897,7 @@ public interface JpaEndpointBuilderFactory {
      * Syntax: <code>jpa:entityType</code>
      * 
      * Path parameter: entityType (required)
-     * The JPA annotated class to use as entity.
+     * Entity class name
      */
     static JpaEndpointBuilder jpa(String path) {
         class JpaEndpointBuilderImpl extends AbstractEndpointBuilder implements JpaEndpointBuilder, AdvancedJpaEndpointBuilder {

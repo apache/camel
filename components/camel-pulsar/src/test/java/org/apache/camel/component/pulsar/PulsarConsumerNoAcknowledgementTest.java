@@ -72,9 +72,7 @@ public class PulsarConsumerNoAcknowledgementTest extends PulsarTestSupport {
         PulsarComponent comp = new PulsarComponent(context);
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
-        comp.setAllowManualAcknowledgement(true); // Set to true here instead of
-                                                  // the endpoint query
-                                                  // parameter.
+        comp.getConfiguration().setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
         registry.bind("pulsar", comp);
     }
 

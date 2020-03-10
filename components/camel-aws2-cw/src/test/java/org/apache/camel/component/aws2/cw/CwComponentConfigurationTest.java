@@ -19,11 +19,14 @@ package org.apache.camel.component.aws2.cw;
 import java.time.Instant;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CwComponentConfigurationTest extends CamelTestSupport {
 
@@ -45,29 +48,35 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         assertEquals(NOW, endpoint.getConfiguration().getTimestamp());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        component.createEndpoint("aws2-cw://camel.apache.org/test?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-cw://camel.apache.org/test?secretKey=yyy");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx");
+        });
     }
 
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         Cw2Endpoint endpoint = (Cw2Endpoint)component.createEndpoint("aws2-cw://camel.apache.org/test");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
@@ -78,9 +87,9 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Cw2Endpoint endpoint = (Cw2Endpoint)component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
@@ -92,9 +101,9 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointOptionsAndProxy() throws Exception {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.id());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.id());
         Cw2Endpoint endpoint = (Cw2Endpoint)component
             .createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000");
 

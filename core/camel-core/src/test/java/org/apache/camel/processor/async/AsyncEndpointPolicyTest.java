@@ -25,11 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.junit.Test;
@@ -40,8 +40,8 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
     private static String afterThreadName;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyPolicy("foo"));
         return jndi;
     }
@@ -102,12 +102,12 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // no need to modify the route
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
+        public Processor wrap(Route route, final Processor processor) {
             return new AsyncProcessor() {
                 public boolean process(final Exchange exchange, final AsyncCallback callback) {
                     invoked++;

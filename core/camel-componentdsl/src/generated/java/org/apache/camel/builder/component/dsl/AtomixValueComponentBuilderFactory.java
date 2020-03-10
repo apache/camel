@@ -49,13 +49,13 @@ public interface AtomixValueComponentBuilderFactory {
             extends
                 ComponentBuilder<AtomixValueComponent> {
         /**
-         * The shared AtomixClient instance.
+         * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: <code>io.atomix.Atomix</code> type.
          * 
          * Group: common
          */
-        default AtomixValueComponentBuilder atomix(io.atomix.AtomixClient atomix) {
+        default AtomixValueComponentBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -85,6 +85,20 @@ public interface AtomixValueComponentBuilderFactory {
             return this;
         }
         /**
+         * The default action.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.atomix.client.value.AtomixValue.Action</code> type.
+         * 
+         * Default: SET
+         * Group: common
+         */
+        default AtomixValueComponentBuilder defaultAction(
+                org.apache.camel.component.atomix.client.value.AtomixValue.Action defaultAction) {
+            doSetProperty("defaultAction", defaultAction);
+            return this;
+        }
+        /**
          * The nodes the AtomixClient should connect to.
          * 
          * The option is a:
@@ -96,6 +110,42 @@ public interface AtomixValueComponentBuilderFactory {
         default AtomixValueComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
             doSetProperty("nodes", nodes);
+            return this;
+        }
+        /**
+         * The header that wil carry the result.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixValueComponentBuilder resultHeader(
+                java.lang.String resultHeader) {
+            doSetProperty("resultHeader", resultHeader);
+            return this;
+        }
+        /**
+         * The class name (fqn) of the Atomix transport.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
+         * Group: common
+         */
+        default AtomixValueComponentBuilder transportClassName(
+                java.lang.String transportClassName) {
+            doSetProperty("transportClassName", transportClassName);
+            return this;
+        }
+        /**
+         * The resource ttl.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixValueComponentBuilder ttl(long ttl) {
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -152,6 +202,83 @@ public interface AtomixValueComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * The cluster wide default resource configuration.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixValueComponentBuilder defaultResourceConfig(
+                java.util.Properties defaultResourceConfig) {
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
+            return this;
+        }
+        /**
+         * The local default resource options.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixValueComponentBuilder defaultResourceOptions(
+                java.util.Properties defaultResourceOptions) {
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
+            return this;
+        }
+        /**
+         * Sets if the local member should join groups as PersistentMember or
+         * not. If set to ephemeral the local member will receive an auto
+         * generated ID thus the local one is ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AtomixValueComponentBuilder ephemeral(boolean ephemeral) {
+            doSetProperty("ephemeral", ephemeral);
+            return this;
+        }
+        /**
+         * The read consistency level.
+         * 
+         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AtomixValueComponentBuilder readConsistency(
+                io.atomix.resource.ReadConsistency readConsistency) {
+            doSetProperty("readConsistency", readConsistency);
+            return this;
+        }
+        /**
+         * Cluster wide resources configuration.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.util.Properties></code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixValueComponentBuilder resourceConfigs(
+                java.util.Map<java.lang.String, java.util.Properties> resourceConfigs) {
+            doSetProperty("resourceConfigs", resourceConfigs);
+            return this;
+        }
+        /**
+         * Local resources configurations.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.util.Properties></code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixValueComponentBuilder resourceOptions(
+                java.util.Map<java.lang.String, java.util.Properties> resourceOptions) {
+            doSetProperty("resourceOptions", resourceOptions);
+            return this;
+        }
     }
 
     class AtomixValueComponentBuilderImpl
@@ -163,19 +290,36 @@ public interface AtomixValueComponentBuilderFactory {
         protected AtomixValueComponent buildConcreteComponent() {
             return new AtomixValueComponent();
         }
+        private org.apache.camel.component.atomix.client.value.AtomixValueConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.atomix.client.value.AtomixValueComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.atomix.client.value.AtomixValueConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "atomix": ((AtomixValueComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
+            case "atomix": getOrCreateConfiguration((AtomixValueComponent) component).setAtomix((io.atomix.Atomix) value); return true;
             case "configuration": ((AtomixValueComponent) component).setConfiguration((org.apache.camel.component.atomix.client.value.AtomixValueConfiguration) value); return true;
             case "configurationUri": ((AtomixValueComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "nodes": ((AtomixValueComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "defaultAction": getOrCreateConfiguration((AtomixValueComponent) component).setDefaultAction((org.apache.camel.component.atomix.client.value.AtomixValue.Action) value); return true;
+            case "nodes": ((AtomixValueComponent) component).setNodes((java.util.List) value); return true;
+            case "resultHeader": getOrCreateConfiguration((AtomixValueComponent) component).setResultHeader((java.lang.String) value); return true;
+            case "transportClassName": getOrCreateConfiguration((AtomixValueComponent) component).setTransportClassName((java.lang.String) value); return true;
+            case "ttl": getOrCreateConfiguration((AtomixValueComponent) component).setTtl((long) value); return true;
             case "bridgeErrorHandler": ((AtomixValueComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((AtomixValueComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((AtomixValueComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "defaultResourceConfig": getOrCreateConfiguration((AtomixValueComponent) component).setDefaultResourceConfig((java.util.Properties) value); return true;
+            case "defaultResourceOptions": getOrCreateConfiguration((AtomixValueComponent) component).setDefaultResourceOptions((java.util.Properties) value); return true;
+            case "ephemeral": getOrCreateConfiguration((AtomixValueComponent) component).setEphemeral((boolean) value); return true;
+            case "readConsistency": getOrCreateConfiguration((AtomixValueComponent) component).setReadConsistency((io.atomix.resource.ReadConsistency) value); return true;
+            case "resourceConfigs": getOrCreateConfiguration((AtomixValueComponent) component).setResourceConfigs((java.util.Map) value); return true;
+            case "resourceOptions": getOrCreateConfiguration((AtomixValueComponent) component).setResourceOptions((java.util.Map) value); return true;
             default: return false;
             }
         }

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.reifier;
 
-import org.apache.camel.impl.engine.DefaultRouteContext;
+import org.apache.camel.Route;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.ProcessDefinition;
-import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
 
 import static junit.framework.TestCase.fail;
@@ -26,7 +26,7 @@ import static junit.framework.TestCase.fail;
 public class ProcessorReifierTest {
     @Test
     public void testHandleCustomProcessorDefinition() {
-        RouteContext ctx = new DefaultRouteContext(null, null, null);
+        Route ctx = new DefaultRoute(null, null, null, null, null);
         try {
             ProcessorReifier.reifier(ctx, new MyProcessor());
 

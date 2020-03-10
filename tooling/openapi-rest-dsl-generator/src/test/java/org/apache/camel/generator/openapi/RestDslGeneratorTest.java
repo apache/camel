@@ -26,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
@@ -36,7 +35,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 

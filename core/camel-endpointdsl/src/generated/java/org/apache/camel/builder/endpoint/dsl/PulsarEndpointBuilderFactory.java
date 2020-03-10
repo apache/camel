@@ -101,7 +101,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to allow manual message acknowledgements. If this option is
          * enabled, then messages are not immediately acknowledged after being
          * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
-         * header on the org.apache.camel.Exchange . Messages can then be
+         * header on the org.apache.camel.Exchange. Messages can then be
          * acknowledged using PulsarMessageReceipt at any time before the
          * ackTimeout occurs.
          * 
@@ -119,7 +119,7 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to allow manual message acknowledgements. If this option is
          * enabled, then messages are not immediately acknowledged after being
          * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
-         * header on the org.apache.camel.Exchange . Messages can then be
+         * header on the org.apache.camel.Exchange. Messages can then be
          * acknowledged using PulsarMessageReceipt at any time before the
          * ackTimeout occurs.
          * 
@@ -221,6 +221,75 @@ public interface PulsarEndpointBuilderFactory {
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 String consumerQueueSize) {
             doSetProperty("consumerQueueSize", consumerQueueSize);
+            return this;
+        }
+        /**
+         * Name of the topic where the messages which fail maxRedeliverCount
+         * times will be sent. Note: if not set, default topic name will be
+         * topicName-subscriptionName-DLQ.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder deadLetterTopic(
+                String deadLetterTopic) {
+            doSetProperty("deadLetterTopic", deadLetterTopic);
+            return this;
+        }
+        /**
+         * Maximum number of times that a message will be redelivered before
+         * being sent to the dead letter queue. If this value is not set, no
+         * Dead Letter Policy will be created.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder maxRedeliverCount(
+                Integer maxRedeliverCount) {
+            doSetProperty("maxRedeliverCount", maxRedeliverCount);
+            return this;
+        }
+        /**
+         * Maximum number of times that a message will be redelivered before
+         * being sent to the dead letter queue. If this value is not set, no
+         * Dead Letter Policy will be created.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder maxRedeliverCount(
+                String maxRedeliverCount) {
+            doSetProperty("maxRedeliverCount", maxRedeliverCount);
+            return this;
+        }
+        /**
+         * Set the negative acknowledgement delay.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60000000
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder negativeAckRedeliveryDelayMicros(
+                long negativeAckRedeliveryDelayMicros) {
+            doSetProperty("negativeAckRedeliveryDelayMicros", negativeAckRedeliveryDelayMicros);
+            return this;
+        }
+        /**
+         * Set the negative acknowledgement delay.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60000000
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder negativeAckRedeliveryDelayMicros(
+                String negativeAckRedeliveryDelayMicros) {
+            doSetProperty("negativeAckRedeliveryDelayMicros", negativeAckRedeliveryDelayMicros);
             return this;
         }
         /**
@@ -459,7 +528,7 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Control whether automatic batching of messages is enabled for the
-         * producer. Default is true.
+         * producer.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -473,7 +542,7 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Control whether automatic batching of messages is enabled for the
-         * producer. Default is true.
+         * producer.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -486,8 +555,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the maximum number of messages permitted in a batch. Default
-         * 1,000.
+         * The maximum size to batch messages.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -500,8 +568,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the maximum number of messages permitted in a batch. Default
-         * 1,000.
+         * The maximum size to batch messages.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -514,10 +581,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the time period within which the messages sent will be batched if
-         * batch messages are enabled. If set to a non zero value, messages will
-         * be queued until either: this time interval expires the max number of
-         * messages in a batch is reached Default is 1ms.
+         * The maximum time period within which the messages sent will be
+         * batched if batchingEnabled is true.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -530,10 +595,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the time period within which the messages sent will be batched if
-         * batch messages are enabled. If set to a non zero value, messages will
-         * be queued until either: this time interval expires the max number of
-         * messages in a batch is reached Default is 1ms.
+         * The maximum time period within which the messages sent will be
+         * batched if batchingEnabled is true.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -546,10 +609,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the send and asyncSend operations should block when the
-         * outgoing message queue is full. If set to false, send operations will
-         * immediately fail with ProducerQueueIsFullError when there is no space
-         * left in the pending queue. Default is false.
+         * Whether to block the producing thread if pending messages queue is
+         * full or to throw a ProducerQueueIsFullError.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -562,10 +623,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the send and asyncSend operations should block when the
-         * outgoing message queue is full. If set to false, send operations will
-         * immediately fail with ProducerQueueIsFullError when there is no space
-         * left in the pending queue. Default is false.
+         * Whether to block the producing thread if pending messages queue is
+         * full or to throw a ProducerQueueIsFullError.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -578,7 +637,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the compression type for the producer.
+         * Compression type to use.
          * 
          * The option is a:
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.
@@ -592,7 +651,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the compression type for the producer.
+         * Compression type to use.
          * 
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.
@@ -606,10 +665,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the baseline for the sequence ids for messages published by the
-         * producer. First message will be using (initialSequenceId 1) as its
-         * sequence id and subsequent messages will be assigned incremental
-         * sequence ids, if not otherwise specified.
+         * The first message published will have a sequence Id of
+         * initialSequenceId 1.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -622,10 +679,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the baseline for the sequence ids for messages published by the
-         * producer. First message will be using (initialSequenceId 1) as its
-         * sequence id and subsequent messages will be assigned incremental
-         * sequence ids, if not otherwise specified.
+         * The first message published will have a sequence Id of
+         * initialSequenceId 1.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -680,8 +735,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the max size of the queue holding the messages pending to receive
-         * an acknowledgment from the broker. Default is 1000.
+         * Size of the pending massages queue. When the queue is full, by
+         * default, any further sends will fail unless blockIfQueueFull=true.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -694,8 +749,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the max size of the queue holding the messages pending to receive
-         * an acknowledgment from the broker. Default is 1000.
+         * Size of the pending massages queue. When the queue is full, by
+         * default, any further sends will fail unless blockIfQueueFull=true.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -708,8 +763,10 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the number of max pending messages across all the partitions.
-         * Default is 50000.
+         * The maximum number of pending messages for partitioned topics. The
+         * maxPendingMessages value will be reduced if (number of partitions
+         * maxPendingMessages) exceeds this value. Partitioned topics have a
+         * pending message queue for each partition.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -722,8 +779,10 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the number of max pending messages across all the partitions.
-         * Default is 50000.
+         * The maximum number of pending messages for partitioned topics. The
+         * maxPendingMessages value will be reduced if (number of partitions
+         * maxPendingMessages) exceeds this value. Partitioned topics have a
+         * pending message queue for each partition.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -736,7 +795,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a custom Message Router.
+         * Custom Message Router to use.
          * 
          * The option is a:
          * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
@@ -748,7 +807,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a custom Message Router.
+         * Custom Message Router to use.
          * 
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
@@ -760,7 +819,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the message routing mode for the producer.
+         * Message Routing Mode to use.
          * 
          * The option is a:
          * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
@@ -774,7 +833,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the message routing mode for the producer.
+         * Message Routing Mode to use.
          * 
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
@@ -800,7 +859,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Send timeout in milliseconds. Defaults to 30,000ms (30 seconds).
+         * Send timeout in milliseconds.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -812,7 +871,7 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Send timeout in milliseconds. Defaults to 30,000ms (30 seconds).
+         * Send timeout in milliseconds.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

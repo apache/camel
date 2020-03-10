@@ -208,6 +208,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-aws2-s3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-aws2-ses</artifactId>
 		</dependency>
 		<dependency>
@@ -233,6 +237,10 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-base64</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-base</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -317,6 +325,10 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-corda</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core-languages</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -1176,6 +1188,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-xml-jaxp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xmlsecurity</artifactId>
 		</dependency>
 		<dependency>
@@ -1223,13 +1239,5 @@
 			<artifactId>camel-zookeeper</artifactId>
 		</dependency>
 	</dependencies>
-
-    <!-- camel-jira -->
-    <repositories>
-        <repository>
-            <id>atlassian-public</id>
-            <url>https://packages.atlassian.com/maven-external</url>
-        </repository>
-    </repositories>
 
 </project>

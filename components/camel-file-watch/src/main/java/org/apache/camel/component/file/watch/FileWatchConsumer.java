@@ -62,7 +62,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         antPathMatcher = new AntPathMatcher();
-        baseDirectory = Paths.get(getEndpoint().getPath());
+        baseDirectory = Paths.get(getEndpoint().getPath()).toAbsolutePath();
     }
 
     @Override

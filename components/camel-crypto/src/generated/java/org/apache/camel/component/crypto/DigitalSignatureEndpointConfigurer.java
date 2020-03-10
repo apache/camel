@@ -17,39 +17,39 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": target.getConfiguration().setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "alias": target.getConfiguration().setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "certificatename":
-        case "certificateName": target.getConfiguration().setCertificateName(property(camelContext, java.lang.String.class, value)); return true;
-        case "keystore": target.getConfiguration().setKeystore(property(camelContext, java.security.KeyStore.class, value)); return true;
-        case "keystorename":
-        case "keystoreName": target.getConfiguration().setKeystoreName(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "privatekey":
-        case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
-        case "privatekeyname":
-        case "privateKeyName": target.getConfiguration().setPrivateKeyName(property(camelContext, java.lang.String.class, value)); return true;
-        case "provider": target.getConfiguration().setProvider(property(camelContext, java.lang.String.class, value)); return true;
-        case "publickeyname":
-        case "publicKeyName": target.getConfiguration().setPublicKeyName(property(camelContext, java.lang.String.class, value)); return true;
-        case "securerandomname":
-        case "secureRandomName": target.getConfiguration().setSecureRandomName(property(camelContext, java.lang.String.class, value)); return true;
-        case "signatureheadername":
-        case "signatureHeaderName": target.getConfiguration().setSignatureHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
         case "bufferSize": target.getConfiguration().setBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "certificate": target.getConfiguration().setCertificate(property(camelContext, java.security.cert.Certificate.class, value)); return true;
+        case "certificatename":
+        case "certificateName": target.getConfiguration().setCertificateName(property(camelContext, java.lang.String.class, value)); return true;
         case "clearheaders":
         case "clearHeaders": target.getConfiguration().setClearHeaders(property(camelContext, boolean.class, value)); return true;
         case "keystoreparameters":
         case "keyStoreParameters": target.getConfiguration().setKeyStoreParameters(property(camelContext, org.apache.camel.support.jsse.KeyStoreParameters.class, value)); return true;
+        case "keystore": target.getConfiguration().setKeystore(property(camelContext, java.security.KeyStore.class, value)); return true;
+        case "keystorename":
+        case "keystoreName": target.getConfiguration().setKeystoreName(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekey":
+        case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "privatekeyname":
+        case "privateKeyName": target.getConfiguration().setPrivateKeyName(property(camelContext, java.lang.String.class, value)); return true;
+        case "provider": target.getConfiguration().setProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "publickey":
         case "publicKey": target.getConfiguration().setPublicKey(property(camelContext, java.security.PublicKey.class, value)); return true;
+        case "publickeyname":
+        case "publicKeyName": target.getConfiguration().setPublicKeyName(property(camelContext, java.lang.String.class, value)); return true;
         case "securerandom":
         case "secureRandom": target.getConfiguration().setSecureRandom(property(camelContext, java.security.SecureRandom.class, value)); return true;
+        case "securerandomname":
+        case "secureRandomName": target.getConfiguration().setSecureRandomName(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatureheadername":
+        case "signatureHeaderName": target.getConfiguration().setSignatureHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

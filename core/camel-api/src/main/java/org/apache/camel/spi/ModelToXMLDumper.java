@@ -25,6 +25,11 @@ import org.apache.camel.NamedNode;
 public interface ModelToXMLDumper {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "modelxml-dumper";
+
+    /**
      * Dumps the definition as XML
      *
      * @param context the CamelContext

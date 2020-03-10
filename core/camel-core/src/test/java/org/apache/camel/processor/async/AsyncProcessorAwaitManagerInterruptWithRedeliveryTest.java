@@ -21,14 +21,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.Context;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,11 +98,10 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext jndiContext = new JndiContext();
-
-        jndiContext.bind("myBean", bean);
-        return jndiContext;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("myBean", bean);
+        return answer;
     }
 
     @Override

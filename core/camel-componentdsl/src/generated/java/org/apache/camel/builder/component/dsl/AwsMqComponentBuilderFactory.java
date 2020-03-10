@@ -58,6 +58,32 @@ public interface AwsMqComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a existing configured AmazonMQClient as client.
+         * 
+         * The option is a: <code>com.amazonaws.services.mq.AmazonMQ</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder amazonMqClient(
+                com.amazonaws.services.mq.AmazonMQ amazonMqClient) {
+            doSetProperty("amazonMqClient", amazonMqClient);
+            return this;
+        }
+        /**
+         * The Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.mq.MQConfiguration</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder configuration(
+                org.apache.camel.component.aws.mq.MQConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -79,7 +105,59 @@ public interface AwsMqComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which MQ client needs to work.
+         * The operation to perform. It can be
+         * listBrokers,createBroker,deleteBroker.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.mq.MQOperations</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder operation(
+                org.apache.camel.component.aws.mq.MQOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the MQ client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the MQ client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsMqComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the MQ client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsMqComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which MQ client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -114,19 +192,6 @@ public interface AwsMqComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS MQ default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.mq.MQConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsMqComponentBuilder configuration(
-                org.apache.camel.component.aws.mq.MQConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsMqComponentBuilderImpl
@@ -138,18 +203,30 @@ public interface AwsMqComponentBuilderFactory {
         protected MQComponent buildConcreteComponent() {
             return new MQComponent();
         }
+        private org.apache.camel.component.aws.mq.MQConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.mq.MQComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.mq.MQConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((MQComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((MQComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((MQComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((MQComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((MQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((MQComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "amazonMqClient": getOrCreateConfiguration((MQComponent) component).setAmazonMqClient((com.amazonaws.services.mq.AmazonMQ) value); return true;
             case "configuration": ((MQComponent) component).setConfiguration((org.apache.camel.component.aws.mq.MQConfiguration) value); return true;
+            case "lazyStartProducer": ((MQComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((MQComponent) component).setOperation((org.apache.camel.component.aws.mq.MQOperations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((MQComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((MQComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((MQComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((MQComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((MQComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((MQComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

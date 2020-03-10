@@ -49,6 +49,47 @@ public interface ReactiveStreamsComponentBuilderFactory {
             extends
                 ComponentBuilder<ReactiveStreamsComponent> {
         /**
+         * The maximum number of threads used by the reactive streams internal
+         * engine.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: common
+         */
+        default ReactiveStreamsComponentBuilder threadPoolMaxSize(
+                int threadPoolMaxSize) {
+            doSetProperty("threadPoolMaxSize", threadPoolMaxSize);
+            return this;
+        }
+        /**
+         * The minimum number of threads used by the reactive streams internal
+         * engine.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
+         */
+        default ReactiveStreamsComponentBuilder threadPoolMinSize(
+                int threadPoolMinSize) {
+            doSetProperty("threadPoolMinSize", threadPoolMinSize);
+            return this;
+        }
+        /**
+         * The name of the thread pool used by the reactive streams internal
+         * engine.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: CamelReactiveStreamsWorker
+         * Group: common
+         */
+        default ReactiveStreamsComponentBuilder threadPoolName(
+                java.lang.String threadPoolName) {
+            doSetProperty("threadPoolName", threadPoolName);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -118,16 +159,16 @@ public interface ReactiveStreamsComponentBuilderFactory {
             return this;
         }
         /**
-         * Configures the internal engine for Reactive Streams.
+         * To use an existing reactive stream engine configuration.
          * 
          * The option is a:
          * <code>org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration</code> type.
          * 
          * Group: advanced
          */
-        default ReactiveStreamsComponentBuilder internalEngineConfiguration(
-                org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration internalEngineConfiguration) {
-            doSetProperty("internalEngineConfiguration", internalEngineConfiguration);
+        default ReactiveStreamsComponentBuilder reactiveStreamsEngineConfiguration(
+                org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration reactiveStreamsEngineConfiguration) {
+            doSetProperty("reactiveStreamsEngineConfiguration", reactiveStreamsEngineConfiguration);
             return this;
         }
         /**
@@ -162,11 +203,14 @@ public interface ReactiveStreamsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "threadPoolMaxSize": ((ReactiveStreamsComponent) component).setThreadPoolMaxSize((int) value); return true;
+            case "threadPoolMinSize": ((ReactiveStreamsComponent) component).setThreadPoolMinSize((int) value); return true;
+            case "threadPoolName": ((ReactiveStreamsComponent) component).setThreadPoolName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((ReactiveStreamsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "backpressureStrategy": ((ReactiveStreamsComponent) component).setBackpressureStrategy((org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy) value); return true;
             case "lazyStartProducer": ((ReactiveStreamsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((ReactiveStreamsComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "internalEngineConfiguration": ((ReactiveStreamsComponent) component).setInternalEngineConfiguration((org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration) value); return true;
+            case "reactiveStreamsEngineConfiguration": ((ReactiveStreamsComponent) component).setReactiveStreamsEngineConfiguration((org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration) value); return true;
             case "serviceType": ((ReactiveStreamsComponent) component).setServiceType((java.lang.String) value); return true;
             default: return false;
             }

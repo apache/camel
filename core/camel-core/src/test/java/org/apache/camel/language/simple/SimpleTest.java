@@ -37,10 +37,10 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.MethodNotFoundException;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.InetAddressUtil;
 import org.junit.Test;
 
@@ -50,8 +50,8 @@ public class SimpleTest extends LanguageTestSupport {
     private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myAnimal", new Animal("Donkey", 17));
         return jndi;
     }

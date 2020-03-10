@@ -19,17 +19,17 @@ package org.apache.camel.reifier.loadbalancer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class FailoverLoadBalancerReifier extends LoadBalancerReifier<FailoverLoadBalancerDefinition> {
 
-    public FailoverLoadBalancerReifier(RouteContext routeContext, LoadBalancerDefinition definition) {
-        super(routeContext, (FailoverLoadBalancerDefinition)definition);
+    public FailoverLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
+        super(route, (FailoverLoadBalancerDefinition)definition);
     }
 
     @Override

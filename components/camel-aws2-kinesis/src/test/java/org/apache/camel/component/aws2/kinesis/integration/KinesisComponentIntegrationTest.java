@@ -25,13 +25,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.Record;
 
-@Ignore("Must be manually tested.")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("Must be manually tested.")
 public class KinesisComponentIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonKinesisClient")
@@ -68,7 +71,6 @@ public class KinesisComponentIntegrationTest extends CamelTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange, String data, String partition) {
-        assertIsInstanceOf(Record.class, resultExchange.getIn().getBody());
         Record record = resultExchange.getIn().getBody(Record.class);
         assertEquals(data, new String(record.data().asByteArray()));
         assertEquals(partition, resultExchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY));

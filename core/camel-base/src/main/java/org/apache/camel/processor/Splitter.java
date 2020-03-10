@@ -34,11 +34,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
@@ -137,7 +137,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         final Object value;
         final Iterator<?> iterator;
         private final Exchange copy;
-        private final RouteContext routeContext;
+        private final Route route;
         private final Exchange original;
 
         private SplitterIterable(Exchange exchange, Object value) {
@@ -145,7 +145,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             this.value = value;
             this.iterator = ObjectHelper.createIterator(value);
             this.copy = copyAndPrepareSubExchange(exchange, true);
-            this.routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
+            this.route = ExchangeHelper.getRoute(exchange);
         }
 
         @Override
@@ -197,7 +197,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                             Message in = newExchange.getIn();
                             in.setBody(part);
                         }
-                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, routeContext);
+                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, route);
                     } else {
                         return null;
                     }

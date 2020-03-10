@@ -15,8 +15,11 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TikaEndpoint target = (TikaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tikaconfig":
         case "tikaConfig": target.getTikaConfiguration().setTikaConfig(property(camelContext, org.apache.tika.config.TikaConfig.class, value)); return true;
         case "tikaconfiguri":
@@ -25,9 +28,6 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "tikaParseOutputEncoding": target.getTikaConfiguration().setTikaParseOutputEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "tikaparseoutputformat":
         case "tikaParseOutputFormat": target.getTikaConfiguration().setTikaParseOutputFormat(property(camelContext, org.apache.camel.component.tika.TikaParseOutputFormat.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

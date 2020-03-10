@@ -66,6 +66,236 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether the consumer should close the folder after polling. Setting
+         * this option to false and having disconnect=false as well, then the
+         * consumer keep the folder open between polls.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder closeFolder(boolean closeFolder) {
+            doSetProperty("closeFolder", closeFolder);
+            return this;
+        }
+        /**
+         * After processing a mail message, it can be copied to a mail folder
+         * with the given name. You can override this configuration value, with
+         * a header with the key copyTo, allowing you to copy messages to folder
+         * names configured at runtime.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder copyTo(java.lang.String copyTo) {
+            doSetProperty("copyTo", copyTo);
+            return this;
+        }
+        /**
+         * Deletes the messages after they have been processed. This is done by
+         * setting the DELETED flag on the mail message. If false, the SEEN flag
+         * is set instead. As of Camel 2.10 you can override this configuration
+         * option by setting a header with the key delete to determine if the
+         * mail should be deleted or not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder delete(boolean delete) {
+            doSetProperty("delete", delete);
+            return this;
+        }
+        /**
+         * Whether the consumer should disconnect after polling. If enabled this
+         * forces Camel to connect on each poll.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder disconnect(boolean disconnect) {
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * If the mail consumer cannot retrieve a given mail message, then this
+         * option allows to handle the caused exception by the consumer's error
+         * handler. By enable the bridge error handler on the consumer, then the
+         * Camel routing error handler can handle the exception instead. The
+         * default behavior would be the consumer throws an exception and no
+         * mails from the batch would be able to be routed by Camel.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder handleFailedMessage(
+                boolean handleFailedMessage) {
+            doSetProperty("handleFailedMessage", handleFailedMessage);
+            return this;
+        }
+        /**
+         * This option enables transparent MIME decoding and unfolding for mail
+         * headers.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder mimeDecodeHeaders(boolean mimeDecodeHeaders) {
+            doSetProperty("mimeDecodeHeaders", mimeDecodeHeaders);
+            return this;
+        }
+        /**
+         * After processing a mail message, it can be moved to a mail folder
+         * with the given name. You can override this configuration value, with
+         * a header with the key moveTo, allowing you to move messages to folder
+         * names configured at runtime.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder moveTo(java.lang.String moveTo) {
+            doSetProperty("moveTo", moveTo);
+            return this;
+        }
+        /**
+         * Will mark the javax.mail.Message as peeked before processing the mail
+         * message. This applies to IMAPMessage messages types only. By using
+         * peek the mail will not be eager marked as SEEN on the mail server,
+         * which allows us to rollback the mail message if there is an error
+         * processing in Camel.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder peek(boolean peek) {
+            doSetProperty("peek", peek);
+            return this;
+        }
+        /**
+         * If the mail consumer cannot retrieve a given mail message, then this
+         * option allows to skip the message and move on to retrieve the next
+         * mail message. The default behavior would be the consumer throws an
+         * exception and no mails from the batch would be able to be routed by
+         * Camel.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder skipFailedMessage(boolean skipFailedMessage) {
+            doSetProperty("skipFailedMessage", skipFailedMessage);
+            return this;
+        }
+        /**
+         * Whether to limit by unseen mails only.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default Pop3ComponentBuilder unseen(boolean unseen) {
+            doSetProperty("unseen", unseen);
+            return this;
+        }
+        /**
+         * Sets the maximum number of messages to consume during a poll. This
+         * can be used to avoid overloading a mail server, if a mailbox folder
+         * contains a lot of messages. Default value of -1 means no fetch size
+         * and all messages will be consumed. Setting the value to 0 is a
+         * special corner case, where Camel will not consume any messages at
+         * all.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: -1
+         * Group: consumer (advanced)
+         */
+        default Pop3ComponentBuilder fetchSize(int fetchSize) {
+            doSetProperty("fetchSize", fetchSize);
+            return this;
+        }
+        /**
+         * The folder to poll.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: INBOX
+         * Group: consumer (advanced)
+         */
+        default Pop3ComponentBuilder folderName(java.lang.String folderName) {
+            doSetProperty("folderName", folderName);
+            return this;
+        }
+        /**
+         * Specifies whether Camel should map the received mail message to Camel
+         * body/headers/attachments. If set to true, the body of the mail
+         * message is mapped to the body of the Camel IN message, the mail
+         * headers are mapped to IN headers, and the attachments to Camel IN
+         * attachment message. If this option is set to false then the IN
+         * message contains a raw javax.mail.Message. You can retrieve this raw
+         * message by calling
+         * exchange.getIn().getBody(javax.mail.Message.class).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer (advanced)
+         */
+        default Pop3ComponentBuilder mapMailMessage(boolean mapMailMessage) {
+            doSetProperty("mapMailMessage", mapMailMessage);
+            return this;
+        }
+        /**
+         * Sets the BCC email address. Separate multiple email addresses with
+         * comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Pop3ComponentBuilder bcc(java.lang.String bcc) {
+            doSetProperty("bcc", bcc);
+            return this;
+        }
+        /**
+         * Sets the CC email address. Separate multiple email addresses with
+         * comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Pop3ComponentBuilder cc(java.lang.String cc) {
+            doSetProperty("cc", cc);
+            return this;
+        }
+        /**
+         * The from email address.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: camel@localhost
+         * Group: producer
+         */
+        default Pop3ComponentBuilder from(java.lang.String from) {
+            doSetProperty("from", from);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -83,6 +313,102 @@ public interface Pop3ComponentBuilderFactory {
          */
         default Pop3ComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The Reply-To recipients (the receivers of the response mail).
+         * Separate multiple email addresses with a comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Pop3ComponentBuilder replyTo(java.lang.String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
+         * The Subject of the message being sent. Note: Setting the subject in
+         * the header takes precedence over this option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Pop3ComponentBuilder subject(java.lang.String subject) {
+            doSetProperty("subject", subject);
+            return this;
+        }
+        /**
+         * Sets the To email address. Separate multiple email addresses with
+         * comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Pop3ComponentBuilder to(java.lang.String to) {
+            doSetProperty("to", to);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.component.mail.JavaMailSender for
+         * sending emails.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default Pop3ComponentBuilder javaMailSender(
+                org.apache.camel.component.mail.JavaMailSender javaMailSender) {
+            doSetProperty("javaMailSender", javaMailSender);
+            return this;
+        }
+        /**
+         * Sets additional java mail properties, that will append/override any
+         * default properties that is set based on all the other options. This
+         * is useful if you need to add some special options but want to keep
+         * the others as is.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder additionalJavaMailProperties(
+                java.util.Properties additionalJavaMailProperties) {
+            doSetProperty("additionalJavaMailProperties", additionalJavaMailProperties);
+            return this;
+        }
+        /**
+         * Specifies the key to an IN message header that contains an
+         * alternative email body. For example, if you send emails in text/html
+         * format and want to provide an alternative mail body for non-HTML
+         * email clients, set the alternative mail body with this key as a
+         * header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: CamelMailAlternativeBody
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder alternativeBodyHeader(
+                java.lang.String alternativeBodyHeader) {
+            doSetProperty("alternativeBodyHeader", alternativeBodyHeader);
+            return this;
+        }
+        /**
+         * To use a custom AttachmentsContentTransferEncodingResolver to resolve
+         * what content-type-encoding to use for attachments.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * 
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder attachmentsContentTransferEncodingResolver(
+                org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
+            doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
         /**
@@ -113,6 +439,30 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The connection timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder connectionTimeout(int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * The mail message content type. Use text/html for HTML mails.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: text/plain
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder contentType(java.lang.String contentType) {
+            doSetProperty("contentType", contentType);
+            return this;
+        }
+        /**
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
@@ -124,6 +474,91 @@ public interface Pop3ComponentBuilderFactory {
         default Pop3ComponentBuilder contentTypeResolver(
                 org.apache.camel.component.mail.ContentTypeResolver contentTypeResolver) {
             doSetProperty("contentTypeResolver", contentTypeResolver);
+            return this;
+        }
+        /**
+         * Enable debug mode on the underlying mail framework. The SUN Mail
+         * framework logs the debug messages to System.out by default.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder debugMode(boolean debugMode) {
+            doSetProperty("debugMode", debugMode);
+            return this;
+        }
+        /**
+         * Option to let Camel ignore unsupported charset in the local JVM when
+         * sending mails. If the charset is unsupported then charset=XXX (where
+         * XXX represents the unsupported charset) is removed from the
+         * content-type and it relies on the platform default instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder ignoreUnsupportedCharset(
+                boolean ignoreUnsupportedCharset) {
+            doSetProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
+            return this;
+        }
+        /**
+         * Option to let Camel ignore unsupported charset in the local JVM when
+         * sending mails. If the charset is unsupported then charset=XXX (where
+         * XXX represents the unsupported charset) is removed from the
+         * content-type and it relies on the platform default instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder ignoreUriScheme(boolean ignoreUriScheme) {
+            doSetProperty("ignoreUriScheme", ignoreUriScheme);
+            return this;
+        }
+        /**
+         * Sets the java mail options. Will clear any default properties and
+         * only use the properties provided for this method.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder javaMailProperties(
+                java.util.Properties javaMailProperties) {
+            doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
+         * Specifies the mail session that camel should use for all mail
+         * interactions. Useful in scenarios where mail sessions are created and
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
+         * 
+         * The option is a: <code>javax.mail.Session</code> type.
+         * 
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder session(javax.mail.Session session) {
+            doSetProperty("session", session);
+            return this;
+        }
+        /**
+         * Whether to use disposition inline or attachment.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default Pop3ComponentBuilder useInlineAttachments(
+                boolean useInlineAttachments) {
+            doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
         /**
@@ -141,6 +576,30 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The password for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Pop3ComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         */
+        default Pop3ComponentBuilder sslContextParameters(
+                org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Enable usage of global SSL context parameters.
          * 
          * The option is a: <code>boolean</code> type.
@@ -151,6 +610,17 @@ public interface Pop3ComponentBuilderFactory {
         default Pop3ComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
             doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
+        /**
+         * The username for login.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Pop3ComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -164,6 +634,13 @@ public interface Pop3ComponentBuilderFactory {
         protected MailComponent buildConcreteComponent() {
             return new MailComponent();
         }
+        private org.apache.camel.component.mail.MailConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.mail.MailComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.mail.MailConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -171,12 +648,46 @@ public interface Pop3ComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((MailComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "closeFolder": getOrCreateConfiguration((MailComponent) component).setCloseFolder((boolean) value); return true;
+            case "copyTo": getOrCreateConfiguration((MailComponent) component).setCopyTo((java.lang.String) value); return true;
+            case "delete": getOrCreateConfiguration((MailComponent) component).setDelete((boolean) value); return true;
+            case "disconnect": getOrCreateConfiguration((MailComponent) component).setDisconnect((boolean) value); return true;
+            case "handleFailedMessage": getOrCreateConfiguration((MailComponent) component).setHandleFailedMessage((boolean) value); return true;
+            case "mimeDecodeHeaders": getOrCreateConfiguration((MailComponent) component).setMimeDecodeHeaders((boolean) value); return true;
+            case "moveTo": getOrCreateConfiguration((MailComponent) component).setMoveTo((java.lang.String) value); return true;
+            case "peek": getOrCreateConfiguration((MailComponent) component).setPeek((boolean) value); return true;
+            case "skipFailedMessage": getOrCreateConfiguration((MailComponent) component).setSkipFailedMessage((boolean) value); return true;
+            case "unseen": getOrCreateConfiguration((MailComponent) component).setUnseen((boolean) value); return true;
+            case "fetchSize": getOrCreateConfiguration((MailComponent) component).setFetchSize((int) value); return true;
+            case "folderName": getOrCreateConfiguration((MailComponent) component).setFolderName((java.lang.String) value); return true;
+            case "mapMailMessage": getOrCreateConfiguration((MailComponent) component).setMapMailMessage((boolean) value); return true;
+            case "bcc": getOrCreateConfiguration((MailComponent) component).setBcc((java.lang.String) value); return true;
+            case "cc": getOrCreateConfiguration((MailComponent) component).setCc((java.lang.String) value); return true;
+            case "from": getOrCreateConfiguration((MailComponent) component).setFrom((java.lang.String) value); return true;
             case "lazyStartProducer": ((MailComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "replyTo": getOrCreateConfiguration((MailComponent) component).setReplyTo((java.lang.String) value); return true;
+            case "subject": getOrCreateConfiguration((MailComponent) component).setSubject((java.lang.String) value); return true;
+            case "to": getOrCreateConfiguration((MailComponent) component).setTo((java.lang.String) value); return true;
+            case "javaMailSender": getOrCreateConfiguration((MailComponent) component).setJavaMailSender((org.apache.camel.component.mail.JavaMailSender) value); return true;
+            case "additionalJavaMailProperties": getOrCreateConfiguration((MailComponent) component).setAdditionalJavaMailProperties((java.util.Properties) value); return true;
+            case "alternativeBodyHeader": getOrCreateConfiguration((MailComponent) component).setAlternativeBodyHeader((java.lang.String) value); return true;
+            case "attachmentsContentTransferEncodingResolver": getOrCreateConfiguration((MailComponent) component).setAttachmentsContentTransferEncodingResolver((org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver) value); return true;
             case "basicPropertyBinding": ((MailComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((MailComponent) component).setConfiguration((org.apache.camel.component.mail.MailConfiguration) value); return true;
+            case "connectionTimeout": getOrCreateConfiguration((MailComponent) component).setConnectionTimeout((int) value); return true;
+            case "contentType": getOrCreateConfiguration((MailComponent) component).setContentType((java.lang.String) value); return true;
             case "contentTypeResolver": ((MailComponent) component).setContentTypeResolver((org.apache.camel.component.mail.ContentTypeResolver) value); return true;
+            case "debugMode": getOrCreateConfiguration((MailComponent) component).setDebugMode((boolean) value); return true;
+            case "ignoreUnsupportedCharset": getOrCreateConfiguration((MailComponent) component).setIgnoreUnsupportedCharset((boolean) value); return true;
+            case "ignoreUriScheme": getOrCreateConfiguration((MailComponent) component).setIgnoreUriScheme((boolean) value); return true;
+            case "javaMailProperties": getOrCreateConfiguration((MailComponent) component).setJavaMailProperties((java.util.Properties) value); return true;
+            case "session": getOrCreateConfiguration((MailComponent) component).setSession((javax.mail.Session) value); return true;
+            case "useInlineAttachments": getOrCreateConfiguration((MailComponent) component).setUseInlineAttachments((boolean) value); return true;
             case "headerFilterStrategy": ((MailComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "password": getOrCreateConfiguration((MailComponent) component).setPassword((java.lang.String) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((MailComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((MailComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "username": getOrCreateConfiguration((MailComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

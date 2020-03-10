@@ -24,12 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Constants;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Operations;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class EC2ComponentIntegrationTest extends CamelTestSupport {
 
     @Test

@@ -21,7 +21,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.simple.Simple;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -30,7 +29,7 @@ import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
- * Creates an {@link Simple} language builder.
+ * Creates an {@link org.apache.camel.language.simple.Simple} language builder.
  * <p/>
  * This builder is available in the Java DSL from the {@link RouteBuilder} which
  * means that using simple language for {@link Expression}s or

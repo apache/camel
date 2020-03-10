@@ -20,7 +20,6 @@ import java.util.List;
 
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
-import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.impl.GenericClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -43,7 +42,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createRegistry());
+        final CamelContext context = new DefaultCamelContext(createCamelRegistry());
 
         // add FhirComponent to Camel context but don't set up componentConfiguration
         final FhirComponent component = new FhirComponent(context);

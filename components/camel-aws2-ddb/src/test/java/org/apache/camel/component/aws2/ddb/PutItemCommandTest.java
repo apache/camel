@@ -22,12 +22,12 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PutItemCommandTest {
 
@@ -36,7 +36,7 @@ public class PutItemCommandTest {
     private Ddb2Configuration configuration;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new Ddb2Configuration();

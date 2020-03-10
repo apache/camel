@@ -58,6 +58,33 @@ public interface AwsEcsComponentBuilderFactory {
             return this;
         }
         /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ecs.ECSConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsEcsComponentBuilder configuration(
+                org.apache.camel.component.aws.ecs.ECSConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS ECS as client.
+         * 
+         * The option is a: <code>com.amazonaws.services.ecs.AmazonECS</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default AwsEcsComponentBuilder ecsClient(
+                com.amazonaws.services.ecs.AmazonECS ecsClient) {
+            doSetProperty("ecsClient", ecsClient);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -79,7 +106,58 @@ public interface AwsEcsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which ECS client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.ecs.ECSOperations</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEcsComponentBuilder operation(
+                org.apache.camel.component.aws.ecs.ECSOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the ECS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEcsComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the ECS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsEcsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the ECS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsEcsComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which ECS client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -114,20 +192,6 @@ public interface AwsEcsComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS ECS default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.ecs.ECSConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AwsEcsComponentBuilder configuration(
-                org.apache.camel.component.aws.ecs.ECSConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsEcsComponentBuilderImpl
@@ -139,18 +203,30 @@ public interface AwsEcsComponentBuilderFactory {
         protected ECSComponent buildConcreteComponent() {
             return new ECSComponent();
         }
+        private org.apache.camel.component.aws.ecs.ECSConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.ecs.ECSComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.ecs.ECSConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((ECSComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((ECSComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((ECSComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((ECSComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((ECSComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((ECSComponent) component).setAccessKey((java.lang.String) value); return true;
             case "configuration": ((ECSComponent) component).setConfiguration((org.apache.camel.component.aws.ecs.ECSConfiguration) value); return true;
+            case "ecsClient": getOrCreateConfiguration((ECSComponent) component).setEcsClient((com.amazonaws.services.ecs.AmazonECS) value); return true;
+            case "lazyStartProducer": ((ECSComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((ECSComponent) component).setOperation((org.apache.camel.component.aws.ecs.ECSOperations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((ECSComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((ECSComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((ECSComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((ECSComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((ECSComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((ECSComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

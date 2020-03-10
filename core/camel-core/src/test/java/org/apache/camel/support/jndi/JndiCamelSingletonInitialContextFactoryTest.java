@@ -26,7 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,10 +48,10 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = new JndiRegistry(new InitialContext(env));
-        jndi.bind("jdbc/myDataSource", FAKE);
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Context context = new InitialContext(env);
+        context.bind("jdbc/myDataSource", FAKE);
+        return new DefaultRegistry(new JndiBeanRepository(context));
     }
 
     @Test

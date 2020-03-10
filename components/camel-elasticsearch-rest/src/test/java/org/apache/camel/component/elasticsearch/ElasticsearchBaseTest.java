@@ -34,7 +34,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.utility.Base58;
 
-
 public class ElasticsearchBaseTest extends CamelTestSupport {
     public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.3.2";
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;

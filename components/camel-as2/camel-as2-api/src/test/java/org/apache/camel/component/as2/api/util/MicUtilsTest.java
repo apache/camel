@@ -30,14 +30,14 @@ import org.apache.http.HttpVersion;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MicUtilsTest {
 
@@ -76,12 +76,12 @@ public class MicUtilsTest {
     private static final String EXPECTED_MESSAGE_DIGEST_ALGORITHM = "sha1";
     private static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "XUt+ug5GEDD0X9+Nv8DGYZZThOQ=";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
@@ -100,12 +100,11 @@ public class MicUtilsTest {
         request.setEntity(basicEntity);
 
         ReceivedContentMic receivedContentMic = MicUtils.createReceivedContentMic(request, null);
-        assertNotNull("Failed to create Received Content MIC");
+        assertNotNull(receivedContentMic, "Failed to create Received Content MIC");
         LOG.debug("Digest Algorithm: " + receivedContentMic.getDigestAlgorithmId());
-        assertEquals("Unexpected digest algorithm value", EXPECTED_MESSAGE_DIGEST_ALGORITHM, receivedContentMic.getDigestAlgorithmId());
+        assertEquals(EXPECTED_MESSAGE_DIGEST_ALGORITHM, receivedContentMic.getDigestAlgorithmId(), "Unexpected digest algorithm value");
         LOG.debug("Encoded Message Digest: " + receivedContentMic.getEncodedMessageDigest());
-        assertEquals("Unexpected encoded message digest value", EXPECTED_ENCODED_MESSAGE_DIGEST, receivedContentMic.getEncodedMessageDigest());
-
+        assertEquals(EXPECTED_ENCODED_MESSAGE_DIGEST, receivedContentMic.getEncodedMessageDigest(), "Unexpected encoded message digest value");
     }
 
 }

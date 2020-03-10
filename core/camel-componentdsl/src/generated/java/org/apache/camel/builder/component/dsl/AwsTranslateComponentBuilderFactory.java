@@ -61,6 +61,32 @@ public interface AwsTranslateComponentBuilderFactory {
             return this;
         }
         /**
+         * Being able to autodetect the source language.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder autodetectSourceLanguage(
+                boolean autodetectSourceLanguage) {
+            doSetProperty("autodetectSourceLanguage", autodetectSourceLanguage);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.translate.TranslateConfiguration</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder configuration(
+                org.apache.camel.component.aws.translate.TranslateConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -82,7 +108,61 @@ public interface AwsTranslateComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which Translate client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.translate.TranslateOperations</code> type.
+         * 
+         * Default: translateText
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder operation(
+                org.apache.camel.component.aws.translate.TranslateOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Translate client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder proxyHost(
+                java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Translate client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Translate client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which Translate client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -105,6 +185,43 @@ public interface AwsTranslateComponentBuilderFactory {
             return this;
         }
         /**
+         * Source language to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder sourceLanguage(
+                java.lang.String sourceLanguage) {
+            doSetProperty("sourceLanguage", sourceLanguage);
+            return this;
+        }
+        /**
+         * Target language to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder targetLanguage(
+                java.lang.String targetLanguage) {
+            doSetProperty("targetLanguage", targetLanguage);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS Translate as client.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.translate.AmazonTranslate</code> type.
+         * 
+         * Group: producer
+         */
+        default AwsTranslateComponentBuilder translateClient(
+                com.amazonaws.services.translate.AmazonTranslate translateClient) {
+            doSetProperty("translateClient", translateClient);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -118,19 +235,6 @@ public interface AwsTranslateComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * The AWS Translate default configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.translate.TranslateConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default AwsTranslateComponentBuilder configuration(
-                org.apache.camel.component.aws.translate.TranslateConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class AwsTranslateComponentBuilderImpl
@@ -142,18 +246,33 @@ public interface AwsTranslateComponentBuilderFactory {
         protected TranslateComponent buildConcreteComponent() {
             return new TranslateComponent();
         }
+        private org.apache.camel.component.aws.translate.TranslateConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.translate.TranslateComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.translate.TranslateConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((TranslateComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((TranslateComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((TranslateComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((TranslateComponent) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((TranslateComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((TranslateComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "autodetectSourceLanguage": getOrCreateConfiguration((TranslateComponent) component).setAutodetectSourceLanguage((boolean) value); return true;
             case "configuration": ((TranslateComponent) component).setConfiguration((org.apache.camel.component.aws.translate.TranslateConfiguration) value); return true;
+            case "lazyStartProducer": ((TranslateComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((TranslateComponent) component).setOperation((org.apache.camel.component.aws.translate.TranslateOperations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((TranslateComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((TranslateComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((TranslateComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((TranslateComponent) component).setRegion((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((TranslateComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "sourceLanguage": getOrCreateConfiguration((TranslateComponent) component).setSourceLanguage((java.lang.String) value); return true;
+            case "targetLanguage": getOrCreateConfiguration((TranslateComponent) component).setTargetLanguage((java.lang.String) value); return true;
+            case "translateClient": getOrCreateConfiguration((TranslateComponent) component).setTranslateClient((com.amazonaws.services.translate.AmazonTranslate) value); return true;
+            case "basicPropertyBinding": ((TranslateComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;
             }
         }

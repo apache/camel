@@ -18,14 +18,15 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Test;
 
 public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+    protected Registry createRegistry() throws Exception {
+        Registry registry = new DefaultRegistry();
         registry.bind("checkin", new MyBean1());
         registry.bind("handler", new MyBean2());
         return registry;

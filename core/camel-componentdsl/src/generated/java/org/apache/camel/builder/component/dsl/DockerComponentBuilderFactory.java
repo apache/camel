@@ -63,6 +63,53 @@ public interface DockerComponentBuilderFactory {
             return this;
         }
         /**
+         * Email address associated with the user.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default DockerComponentBuilder email(java.lang.String email) {
+            doSetProperty("email", email);
+            return this;
+        }
+        /**
+         * Docker host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: localhost
+         * Group: common
+         */
+        default DockerComponentBuilder host(java.lang.String host) {
+            doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * Docker port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 2375
+         * Group: common
+         */
+        default DockerComponentBuilder port(java.lang.Integer port) {
+            doSetProperty("port", port);
+            return this;
+        }
+        /**
+         * Request timeout for response (in seconds).
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default DockerComponentBuilder requestTimeout(
+                java.lang.Integer requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -116,6 +163,166 @@ public interface DockerComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * The fully qualified class name of the DockerCmdExecFactory
+         * implementation to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
+         * Group: advanced
+         */
+        default DockerComponentBuilder cmdExecFactory(
+                java.lang.String cmdExecFactory) {
+            doSetProperty("cmdExecFactory", cmdExecFactory);
+            return this;
+        }
+        /**
+         * Whether to follow redirect filter.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default DockerComponentBuilder followRedirectFilter(
+                boolean followRedirectFilter) {
+            doSetProperty("followRedirectFilter", followRedirectFilter);
+            return this;
+        }
+        /**
+         * Whether to use logging filter.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default DockerComponentBuilder loggingFilter(boolean loggingFilter) {
+            doSetProperty("loggingFilter", loggingFilter);
+            return this;
+        }
+        /**
+         * Maximum route connections.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         */
+        default DockerComponentBuilder maxPerRouteConnections(
+                java.lang.Integer maxPerRouteConnections) {
+            doSetProperty("maxPerRouteConnections", maxPerRouteConnections);
+            return this;
+        }
+        /**
+         * Maximum total connections.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 100
+         * Group: advanced
+         */
+        default DockerComponentBuilder maxTotalConnections(
+                java.lang.Integer maxTotalConnections) {
+            doSetProperty("maxTotalConnections", maxTotalConnections);
+            return this;
+        }
+        /**
+         * Additional configuration parameters as key/value pairs.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: advanced
+         */
+        default DockerComponentBuilder parameters(
+                java.util.Map<java.lang.String, java.lang.Object> parameters) {
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * Server address for docker registry.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https://index.docker.io/v1/
+         * Group: advanced
+         */
+        default DockerComponentBuilder serverAddress(
+                java.lang.String serverAddress) {
+            doSetProperty("serverAddress", serverAddress);
+            return this;
+        }
+        /**
+         * Socket connection mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default DockerComponentBuilder socket(boolean socket) {
+            doSetProperty("socket", socket);
+            return this;
+        }
+        /**
+         * Location containing the SSL certificate chain.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default DockerComponentBuilder certPath(java.lang.String certPath) {
+            doSetProperty("certPath", certPath);
+            return this;
+        }
+        /**
+         * Password to authenticate with.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default DockerComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Use HTTPS communication.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default DockerComponentBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Check TLS.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         */
+        default DockerComponentBuilder tlsVerify(boolean tlsVerify) {
+            doSetProperty("tlsVerify", tlsVerify);
+            return this;
+        }
+        /**
+         * User name to authenticate with.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default DockerComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class DockerComponentBuilderImpl
@@ -127,6 +334,13 @@ public interface DockerComponentBuilderFactory {
         protected DockerComponent buildConcreteComponent() {
             return new DockerComponent();
         }
+        private org.apache.camel.component.docker.DockerConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.docker.DockerComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.docker.DockerConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
@@ -134,9 +348,26 @@ public interface DockerComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((DockerComponent) component).setConfiguration((org.apache.camel.component.docker.DockerConfiguration) value); return true;
+            case "email": getOrCreateConfiguration((DockerComponent) component).setEmail((java.lang.String) value); return true;
+            case "host": getOrCreateConfiguration((DockerComponent) component).setHost((java.lang.String) value); return true;
+            case "port": getOrCreateConfiguration((DockerComponent) component).setPort((java.lang.Integer) value); return true;
+            case "requestTimeout": getOrCreateConfiguration((DockerComponent) component).setRequestTimeout((java.lang.Integer) value); return true;
             case "bridgeErrorHandler": ((DockerComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((DockerComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((DockerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "cmdExecFactory": getOrCreateConfiguration((DockerComponent) component).setCmdExecFactory((java.lang.String) value); return true;
+            case "followRedirectFilter": getOrCreateConfiguration((DockerComponent) component).setFollowRedirectFilter((boolean) value); return true;
+            case "loggingFilter": getOrCreateConfiguration((DockerComponent) component).setLoggingFilter((boolean) value); return true;
+            case "maxPerRouteConnections": getOrCreateConfiguration((DockerComponent) component).setMaxPerRouteConnections((java.lang.Integer) value); return true;
+            case "maxTotalConnections": getOrCreateConfiguration((DockerComponent) component).setMaxTotalConnections((java.lang.Integer) value); return true;
+            case "parameters": getOrCreateConfiguration((DockerComponent) component).setParameters((java.util.Map) value); return true;
+            case "serverAddress": getOrCreateConfiguration((DockerComponent) component).setServerAddress((java.lang.String) value); return true;
+            case "socket": getOrCreateConfiguration((DockerComponent) component).setSocket((boolean) value); return true;
+            case "certPath": getOrCreateConfiguration((DockerComponent) component).setCertPath((java.lang.String) value); return true;
+            case "password": getOrCreateConfiguration((DockerComponent) component).setPassword((java.lang.String) value); return true;
+            case "secure": getOrCreateConfiguration((DockerComponent) component).setSecure((boolean) value); return true;
+            case "tlsVerify": getOrCreateConfiguration((DockerComponent) component).setTlsVerify((boolean) value); return true;
+            case "username": getOrCreateConfiguration((DockerComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

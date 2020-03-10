@@ -49,6 +49,35 @@ public interface LuceneComponentBuilderFactory {
             extends
                 ComponentBuilder<LuceneComponent> {
         /**
+         * An Analyzer builds TokenStreams, which analyze text. It thus
+         * represents a policy for extracting index terms from text. The value
+         * for analyzer can be any class that extends the abstract class
+         * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of
+         * analyzers out of the box.
+         * 
+         * The option is a: <code>org.apache.lucene.analysis.Analyzer</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default LuceneComponentBuilder analyzer(
+                org.apache.lucene.analysis.Analyzer analyzer) {
+            doSetProperty("analyzer", analyzer);
+            return this;
+        }
+        /**
+         * A file system directory in which index files are created upon
+         * analysis of the document by the specified analyzer.
+         * 
+         * The option is a: <code>java.io.File</code> type.
+         * 
+         * Group: producer
+         */
+        default LuceneComponentBuilder indexDir(java.io.File indexDir) {
+            doSetProperty("indexDir", indexDir);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -67,6 +96,29 @@ public interface LuceneComponentBuilderFactory {
         default LuceneComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * An integer value that limits the result set of the search operation.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default LuceneComponentBuilder maxHits(int maxHits) {
+            doSetProperty("maxHits", maxHits);
+            return this;
+        }
+        /**
+         * An optional directory containing files to be used to be analyzed and
+         * added to the index at producer startup.
+         * 
+         * The option is a: <code>java.io.File</code> type.
+         * 
+         * Group: producer
+         */
+        default LuceneComponentBuilder srcDir(java.io.File srcDir) {
+            doSetProperty("srcDir", srcDir);
             return this;
         }
         /**
@@ -108,13 +160,24 @@ public interface LuceneComponentBuilderFactory {
         protected LuceneComponent buildConcreteComponent() {
             return new LuceneComponent();
         }
+        private org.apache.camel.component.lucene.LuceneConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.lucene.LuceneComponent component) {
+            if (component.getConfig() == null) {
+                component.setConfig(new org.apache.camel.component.lucene.LuceneConfiguration());
+            }
+            return component.getConfig();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "analyzer": getOrCreateConfiguration((LuceneComponent) component).setAnalyzer((org.apache.lucene.analysis.Analyzer) value); return true;
+            case "indexDir": getOrCreateConfiguration((LuceneComponent) component).setIndexDir((java.io.File) value); return true;
             case "lazyStartProducer": ((LuceneComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxHits": getOrCreateConfiguration((LuceneComponent) component).setMaxHits((int) value); return true;
+            case "srcDir": getOrCreateConfiguration((LuceneComponent) component).setSrcDir((java.io.File) value); return true;
             case "basicPropertyBinding": ((LuceneComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "config": ((LuceneComponent) component).setConfig((org.apache.camel.component.lucene.LuceneConfiguration) value); return true;
             default: return false;

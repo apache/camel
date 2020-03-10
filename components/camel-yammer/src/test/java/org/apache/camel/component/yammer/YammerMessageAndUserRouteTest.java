@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.Messages;
 import org.apache.camel.component.yammer.model.User;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
 import org.junit.Test;
 
 public class YammerMessageAndUserRouteTest extends CamelTestSupport {

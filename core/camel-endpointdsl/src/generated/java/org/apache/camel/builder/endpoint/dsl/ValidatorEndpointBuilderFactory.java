@@ -210,8 +210,8 @@ public interface ValidatorEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom LSResourceResolver. See also
-         * setResourceResolverFactory(ValidatorResourceResolverFactory).
+         * To use a custom LSResourceResolver. Do not use together with
+         * resourceResolverFactory.
          * 
          * The option is a: <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * 
@@ -223,8 +223,8 @@ public interface ValidatorEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom LSResourceResolver. See also
-         * setResourceResolverFactory(ValidatorResourceResolverFactory).
+         * To use a custom LSResourceResolver. Do not use together with
+         * resourceResolverFactory.
          * 
          * The option will be converted to a
          * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
@@ -237,10 +237,10 @@ public interface ValidatorEndpointBuilderFactory {
             return this;
         }
         /**
-         * For creating a resource resolver which depends on the endpoint
-         * resource URI. Must not be used in combination with method
-         * setResourceResolver(LSResourceResolver) . If not set then
-         * DefaultValidatorResourceResolverFactory is used.
+         * To use a custom LSResourceResolver which depends on a dynamic
+         * endpoint resource URI. The default resource resolver factory resturns
+         * a resource resolver which can read files from the class path and file
+         * system. Do not use together with resourceResolver.
          * 
          * The option is a:
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
@@ -253,10 +253,10 @@ public interface ValidatorEndpointBuilderFactory {
             return this;
         }
         /**
-         * For creating a resource resolver which depends on the endpoint
-         * resource URI. Must not be used in combination with method
-         * setResourceResolver(LSResourceResolver) . If not set then
-         * DefaultValidatorResourceResolverFactory is used.
+         * To use a custom LSResourceResolver which depends on a dynamic
+         * endpoint resource URI. The default resource resolver factory resturns
+         * a resource resolver which can read files from the class path and file
+         * system. Do not use together with resourceResolver.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
@@ -378,7 +378,7 @@ public interface ValidatorEndpointBuilderFactory {
          * Syntax: <code>validator:resourceUri</code>
          * 
          * Path parameter: resourceUri (required)
-         * URL to a local resource on the classpath,or a reference to lookup a
+         * URL to a local resource on the classpath, or a reference to lookup a
          * bean in the Registry, or a full URL to a remote resource or resource
          * on the file system which contains the XSD to validate against.
          */
@@ -397,7 +397,7 @@ public interface ValidatorEndpointBuilderFactory {
      * Syntax: <code>validator:resourceUri</code>
      * 
      * Path parameter: resourceUri (required)
-     * URL to a local resource on the classpath,or a reference to lookup a bean
+     * URL to a local resource on the classpath, or a reference to lookup a bean
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
      */

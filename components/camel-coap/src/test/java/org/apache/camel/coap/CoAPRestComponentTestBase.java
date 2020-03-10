@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;

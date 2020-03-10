@@ -34,7 +34,7 @@ public class EndpointTransformeReifier extends TransformerReifier<EndpointTransf
     @Override
     protected Transformer doCreateTransformer() {
         Endpoint endpoint = definition.getUri() != null ? camelContext.getEndpoint(definition.getUri())
-                : camelContext.getRegistry().lookupByNameAndType(parseString(definition.getRef()), Endpoint.class);
+                : lookup(parseString(definition.getRef()), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
         return new ProcessorTransformer(camelContext).setProcessor(processor)
                 .setModel(parseString(definition.getScheme()))

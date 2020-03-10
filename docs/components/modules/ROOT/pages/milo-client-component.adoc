@@ -29,21 +29,36 @@ for this component:
 
 
 // component options: START
-The OPC UA Client component supports 8 options, which are listed below.
+The OPC UA Client component supports 23 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *applicationName* (common) | Default application name |  | String
-| *applicationUri* (common) | Default application URI |  | String
-| *defaultConfiguration* (common) | All default options for client |  | MiloClientConfiguration
-| *productUri* (common) | Default product URI |  | String
-| *reconnectTimeout* (common) | Default reconnect timeout |  | Long
+| *clientId* (common) | A virtual client id to force the creation of a new connection instance |  | String
+| *configuration* (common) | All default options for client configurations |  | MiloClientConfiguration
+| *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
+| *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *allowedSecurityPolicies* (client) | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | String
+| *applicationName* (client) | The application name | Apache Camel adapter for Eclipse Milo | String
+| *applicationUri* (client) | The application URI | http://camel.apache.org/EclipseMilo/Client | String
+| *channelLifetime* (client) | Channel lifetime in milliseconds |  | Long
+| *keyAlias* (client) | The name of the key in the keystore file |  | String
+| *keyPassword* (client) | The key password |  | String
+| *keyStorePassword* (client) | The keystore password |  | String
+| *keyStoreType* (client) | The key store type |  | String
+| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | String
+| *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
+| *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
+| *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
+| *productUri* (client) | The product URI | http://camel.apache.org/EclipseMilo | String
+| *requestTimeout* (client) | Request timeout in milliseconds |  | Long
+| *sessionName* (client) | Session name |  | String
+| *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
 |===
 // component options: END
 

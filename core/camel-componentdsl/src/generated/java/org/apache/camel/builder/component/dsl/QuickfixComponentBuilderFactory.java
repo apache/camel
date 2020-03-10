@@ -51,21 +51,6 @@ public interface QuickfixComponentBuilderFactory {
             extends
                 ComponentBuilder<QuickfixjComponent> {
         /**
-         * To use the given map of pre configured QuickFix configurations mapped
-         * to the key.
-         * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * org.apache.camel.component.quickfixj.QuickfixjConfiguration></code>
-         * type.
-         * 
-         * Group: common
-         */
-        default QuickfixComponentBuilder configurations(
-                java.util.Map<java.lang.String, org.apache.camel.component.quickfixj.QuickfixjConfiguration> configurations) {
-            doSetProperty("configurations", configurations);
-            return this;
-        }
-        /**
          * If set to true, the engines will be created and started when needed
          * (when first message is send).
          * 
@@ -186,7 +171,6 @@ public interface QuickfixComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configurations": ((QuickfixjComponent) component).setConfigurations((java.util.Map<java.lang.String, org.apache.camel.component.quickfixj.QuickfixjConfiguration>) value); return true;
             case "lazyCreateEngines": ((QuickfixjComponent) component).setLazyCreateEngines((boolean) value); return true;
             case "bridgeErrorHandler": ((QuickfixjComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((QuickfixjComponent) component).setLazyStartProducer((boolean) value); return true;

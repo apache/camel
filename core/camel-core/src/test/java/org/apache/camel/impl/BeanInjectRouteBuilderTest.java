@@ -24,6 +24,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class BeanInjectRouteBuilderTest extends ContextTestSupport {
@@ -32,10 +33,10 @@ public class BeanInjectRouteBuilderTest extends ContextTestSupport {
     private FooBar foo;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("foo", new FooBar());
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
+        registry.bind("foo", new FooBar());
+        return registry;
     }
 
     @Override

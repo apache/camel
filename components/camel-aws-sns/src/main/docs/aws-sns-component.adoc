@@ -33,19 +33,32 @@ The topic will be created if they don't already exists. +
 
 
 // component options: START
-The AWS Simple Notification System component supports 6 options, which are listed below.
+The AWS Simple Notification System component supports 19 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *amazonSNSClient* (producer) | To use the AmazonSNS as the client |  | AmazonSNS
+| *amazonSQSClient* (producer) | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
+| *autoCreateTopic* (producer) | Setting the autocreation of the topic | true | boolean
+| *configuration* (producer) | The component configuration |  | SnsConfiguration
+| *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *region* (producer) | The region in which SNS client needs to work |  | String
-| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *messageStructure* (producer) | The message structure to use such as json |  | String
+| *policy* (producer) | The policy for this queue |  | String
+| *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *queueUrl* (producer) | The queueUrl to subscribe to |  | String
+| *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
+| *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
+| *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | The AWS SNS default configuration |  | SnsConfiguration
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
 

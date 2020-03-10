@@ -11,17 +11,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JiraComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.jira.JiraConfiguration getOrCreateConfiguration(JiraComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.jira.JiraConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JiraComponent target = (JiraComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "accesstoken":
+        case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jira.JiraConfiguration.class, value)); return true;
+        case "consumerkey":
+        case "consumerKey": getOrCreateConfiguration(target).setConsumerKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "delay": getOrCreateConfiguration(target).setDelay(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "jiraurl":
+        case "jiraUrl": getOrCreateConfiguration(target).setJiraUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "privatekey":
+        case "privateKey": getOrCreateConfiguration(target).setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "verificationcode":
+        case "verificationCode": getOrCreateConfiguration(target).setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

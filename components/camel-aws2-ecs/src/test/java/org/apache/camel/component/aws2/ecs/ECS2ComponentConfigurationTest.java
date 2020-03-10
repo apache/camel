@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.aws2.ecs;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ECS2ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://label");
 
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
@@ -37,9 +39,9 @@ public class ECS2ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         ECS2Endpoint endpoint = (ECS2Endpoint)component.createEndpoint("aws2-ecs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -50,9 +52,9 @@ public class ECS2ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         ECS2Endpoint endpoint = (ECS2Endpoint)component
             .createEndpoint("aws2-ecs://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 

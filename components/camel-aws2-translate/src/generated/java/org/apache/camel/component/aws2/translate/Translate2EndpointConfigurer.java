@@ -19,6 +19,8 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": target.getConfiguration().setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.translate.Translate2Operations.class, value)); return true;
@@ -33,13 +35,11 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcelanguage":
         case "sourceLanguage": target.getConfiguration().setSourceLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "targetlanguage":
         case "targetLanguage": target.getConfiguration().setTargetLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "translateclient":
         case "translateClient": target.getConfiguration().setTranslateClient(property(camelContext, software.amazon.awssdk.services.translate.TranslateClient.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

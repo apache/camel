@@ -138,8 +138,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
         Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws2-ses://from@example.com");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
@@ -150,9 +150,9 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Ses2Endpoint endpoint = (Ses2Endpoint)component.createEndpoint("aws-ses://from@example.com?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
@@ -164,9 +164,9 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.setAccessKey("XXX");
-        component.setSecretKey("YYY");
-        component.setRegion(Region.US_WEST_1.toString());
+        component.getConfiguration().setAccessKey("XXX");
+        component.getConfiguration().setSecretKey("YYY");
+        component.getConfiguration().setRegion(Region.US_WEST_1.toString());
         Ses2Endpoint endpoint = (Ses2Endpoint)component
             .createEndpoint("aws2-ses://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 

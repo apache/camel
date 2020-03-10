@@ -82,28 +82,6 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The private key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * The public key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -167,6 +145,108 @@ public interface BraintreeEndpointBuilderFactory {
         default BraintreeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option is a: <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder httpLogLevel(Level httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option will be converted to a
+         * <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder httpLogLevel(
+                String httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set log category to use to log http calls.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Braintree
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder httpLogName(String httpLogName) {
+            doSetProperty("httpLogName", httpLogName);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointConsumerBuilder logHandlerEnabled(
+                String logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * The proxy host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * The proxy port.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -547,37 +627,38 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The proxy host.
+         * The access token granted by a merchant to another in order to process
+         * transactions on their behalf. Used in place of environment, merchant
+         * id, public key and private key fields.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: proxy
+         * Group: security
          */
-        default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
-            doSetProperty("proxyHost", proxyHost);
+        default BraintreeEndpointConsumerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
-         * The proxy port.
+         * The private key provided by Braintree.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: proxy
+         * Group: security
          */
-        default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
+        default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
-         * The proxy port.
+         * The public key provided by Braintree.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: proxy
+         * Group: security
          */
-        default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
-            doSetProperty("proxyPort", proxyPort);
+        default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
+            doSetProperty("publicKey", publicKey);
             return this;
         }
     }
@@ -681,20 +762,6 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The access token granted by a merchant to another in order to process
-         * transactions on their behalf. Used in place of environment, merchant
-         * id, public key and private key fields.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder accessToken(
-                String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -773,63 +840,6 @@ public interface BraintreeEndpointBuilderFactory {
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option is a: <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
-                Level httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option will be converted to a
-         * <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
-                String httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointConsumerBuilder logHandlerEnabled(
-                String logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
             return this;
         }
     }
@@ -877,28 +887,6 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The private key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
-            return this;
-        }
-        /**
-         * The public key provided by Braintree.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
-            doSetProperty("publicKey", publicKey);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -941,6 +929,74 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option is a: <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeEndpointProducerBuilder httpLogLevel(Level httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option will be converted to a
+         * <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeEndpointProducerBuilder httpLogLevel(
+                String httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set log category to use to log http calls.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Braintree
+         * Group: logging
+         */
+        default BraintreeEndpointProducerBuilder httpLogName(String httpLogName) {
+            doSetProperty("httpLogName", httpLogName);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointProducerBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointProducerBuilder logHandlerEnabled(
+                String logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
          * The proxy host.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -974,6 +1030,41 @@ public interface BraintreeEndpointBuilderFactory {
             doSetProperty("proxyPort", proxyPort);
             return this;
         }
+        /**
+         * The access token granted by a merchant to another in order to process
+         * transactions on their behalf. Used in place of environment, merchant
+         * id, public key and private key fields.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeEndpointProducerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * The private key provided by Braintree.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * The public key provided by Braintree.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
+            doSetProperty("publicKey", publicKey);
+            return this;
+        }
     }
 
     /**
@@ -984,20 +1075,6 @@ public interface BraintreeEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default BraintreeEndpointProducerBuilder basic() {
             return (BraintreeEndpointProducerBuilder) this;
-        }
-        /**
-         * The access token granted by a merchant to another in order to process
-         * transactions on their behalf. Used in place of environment, merchant
-         * id, public key and private key fields.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointProducerBuilder accessToken(
-                String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
         }
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
@@ -1078,63 +1155,6 @@ public interface BraintreeEndpointBuilderFactory {
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option is a: <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
-                Level httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option will be converted to a
-         * <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
-                String httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointProducerBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointProducerBuilder logHandlerEnabled(
-                String logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
             return this;
         }
     }
@@ -1183,25 +1203,70 @@ public interface BraintreeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The private key provided by Braintree.
+         * Set logging level for http calls, see java.util.logging.Level.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.util.logging.Level</code> type.
          * 
-         * Group: common
+         * Group: logging
          */
-        default BraintreeEndpointBuilder privateKey(String privateKey) {
-            doSetProperty("privateKey", privateKey);
+        default BraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
         /**
-         * The public key provided by Braintree.
+         * Set logging level for http calls, see java.util.logging.Level.
+         * 
+         * The option will be converted to a
+         * <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
+         */
+        default BraintreeEndpointBuilder httpLogLevel(String httpLogLevel) {
+            doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Set log category to use to log http calls.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Default: Braintree
+         * Group: logging
          */
-        default BraintreeEndpointBuilder publicKey(String publicKey) {
-            doSetProperty("publicKey", publicKey);
+        default BraintreeEndpointBuilder httpLogName(String httpLogName) {
+            doSetProperty("httpLogName", httpLogName);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default BraintreeEndpointBuilder logHandlerEnabled(
+                String logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
             return this;
         }
         /**
@@ -1238,6 +1303,41 @@ public interface BraintreeEndpointBuilderFactory {
             doSetProperty("proxyPort", proxyPort);
             return this;
         }
+        /**
+         * The access token granted by a merchant to another in order to process
+         * transactions on their behalf. Used in place of environment, merchant
+         * id, public key and private key fields.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * The private key provided by Braintree.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeEndpointBuilder privateKey(String privateKey) {
+            doSetProperty("privateKey", privateKey);
+            return this;
+        }
+        /**
+         * The public key provided by Braintree.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default BraintreeEndpointBuilder publicKey(String publicKey) {
+            doSetProperty("publicKey", publicKey);
+            return this;
+        }
     }
 
     /**
@@ -1249,19 +1349,6 @@ public interface BraintreeEndpointBuilderFactory {
                 AdvancedBraintreeEndpointProducerBuilder {
         default BraintreeEndpointBuilder basic() {
             return (BraintreeEndpointBuilder) this;
-        }
-        /**
-         * The access token granted by a merchant to another in order to process
-         * transactions on their behalf. Used in place of environment, merchant
-         * id, public key and private key fields.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedBraintreeEndpointBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
         }
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
@@ -1340,62 +1427,6 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option is a: <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Set logging level for http calls, see java.util.logging.Level.
-         * 
-         * The option will be converted to a
-         * <code>java.util.logging.Level</code> type.
-         * 
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointBuilder httpLogLevel(
-                String httpLogLevel) {
-            doSetProperty("httpLogLevel", httpLogLevel);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointBuilder logHandlerEnabled(
-                boolean logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
-            return this;
-        }
-        /**
-         * Sets whether to enable the BraintreeLogHandler. It may be desirable
-         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
-         * on the classpath. This option can also be configured globally on the
-         * BraintreeComponent.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: logging
-         */
-        default AdvancedBraintreeEndpointBuilder logHandlerEnabled(
-                String logHandlerEnabled) {
-            doSetProperty("logHandlerEnabled", logHandlerEnabled);
             return this;
         }
     }

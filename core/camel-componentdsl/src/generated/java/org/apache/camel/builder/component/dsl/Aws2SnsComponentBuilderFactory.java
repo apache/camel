@@ -49,14 +49,55 @@ public interface Aws2SnsComponentBuilderFactory {
      */
     interface Aws2SnsComponentBuilder extends ComponentBuilder<Sns2Component> {
         /**
-         * Amazon AWS Access Key.
+         * To use the AmazonSNS as the client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.sns.SnsClient</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder amazonSNSClient(
+                software.amazon.awssdk.services.sns.SnsClient amazonSNSClient) {
+            doSetProperty("amazonSNSClient", amazonSNSClient);
+            return this;
+        }
+        /**
+         * Setting the autocreation of the topic.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder autoCreateTopic(boolean autoCreateTopic) {
+            doSetProperty("autoCreateTopic", autoCreateTopic);
+            return this;
+        }
+        /**
+         * Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.sns.Sns2Configuration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder configuration(
+                org.apache.camel.component.aws2.sns.Sns2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or
+         * a custom CMK.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
-        default Aws2SnsComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2SnsComponentBuilder kmsMasterKeyId(
+                java.lang.String kmsMasterKeyId) {
+            doSetProperty("kmsMasterKeyId", kmsMasterKeyId);
             return this;
         }
         /**
@@ -81,7 +122,80 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which SNS client needs to work.
+         * The message structure to use such as json.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder messageStructure(
+                java.lang.String messageStructure) {
+            doSetProperty("messageStructure", messageStructure);
+            return this;
+        }
+        /**
+         * The policy for this queue.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder policy(java.lang.String policy) {
+            doSetProperty("policy", policy);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the SNS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SNS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SNS client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The queueUrl to subscribe to.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder queueUrl(java.lang.String queueUrl) {
+            doSetProperty("queueUrl", queueUrl);
+            return this;
+        }
+        /**
+         * The region in which SNS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -92,14 +206,42 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
+         * Define if Server Side Encryption is enabled or not on the topic.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder serverSideEncryptionEnabled(
+                boolean serverSideEncryptionEnabled) {
+            doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            return this;
+        }
+        /**
+         * The subject which is used if the message header 'CamelAwsSnsSubject'
+         * is not present.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
-        default Aws2SnsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
+        default Aws2SnsComponentBuilder subject(java.lang.String subject) {
+            doSetProperty("subject", subject);
+            return this;
+        }
+        /**
+         * Define if the subscription between SNS Topic and SQS must be done or
+         * not.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder subscribeSNStoSQS(
+                boolean subscribeSNStoSQS) {
+            doSetProperty("subscribeSNStoSQS", subscribeSNStoSQS);
             return this;
         }
         /**
@@ -117,17 +259,25 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS SNS default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.sns.Sns2Configuration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2SnsComponentBuilder configuration(
-                org.apache.camel.component.aws2.sns.Sns2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2SnsComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2SnsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -141,18 +291,37 @@ public interface Aws2SnsComponentBuilderFactory {
         protected Sns2Component buildConcreteComponent() {
             return new Sns2Component();
         }
+        private org.apache.camel.component.aws2.sns.Sns2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.sns.Sns2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.sns.Sns2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((Sns2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((Sns2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((Sns2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "amazonSNSClient": getOrCreateConfiguration((Sns2Component) component).setAmazonSNSClient((software.amazon.awssdk.services.sns.SnsClient) value); return true;
+            case "autoCreateTopic": getOrCreateConfiguration((Sns2Component) component).setAutoCreateTopic((boolean) value); return true;
             case "configuration": ((Sns2Component) component).setConfiguration((org.apache.camel.component.aws2.sns.Sns2Configuration) value); return true;
+            case "kmsMasterKeyId": getOrCreateConfiguration((Sns2Component) component).setKmsMasterKeyId((java.lang.String) value); return true;
+            case "lazyStartProducer": ((Sns2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "messageStructure": getOrCreateConfiguration((Sns2Component) component).setMessageStructure((java.lang.String) value); return true;
+            case "policy": getOrCreateConfiguration((Sns2Component) component).setPolicy((java.lang.String) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Sns2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Sns2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Sns2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "queueUrl": getOrCreateConfiguration((Sns2Component) component).setQueueUrl((java.lang.String) value); return true;
+            case "region": getOrCreateConfiguration((Sns2Component) component).setRegion((java.lang.String) value); return true;
+            case "serverSideEncryptionEnabled": getOrCreateConfiguration((Sns2Component) component).setServerSideEncryptionEnabled((boolean) value); return true;
+            case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;
+            case "subscribeSNStoSQS": getOrCreateConfiguration((Sns2Component) component).setSubscribeSNStoSQS((boolean) value); return true;
+            case "basicPropertyBinding": ((Sns2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

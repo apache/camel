@@ -1,6 +1,6 @@
 [[exchangeProperty-language]]
 = ExchangeProperty Language
-:page-source: core/camel-base/src/main/docs/exchangeProperty-language.adoc
+:page-source: core/camel-core-languages/src/main/docs/exchangeProperty-language.adoc
 
 *Since Camel 2.0*
 

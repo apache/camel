@@ -119,19 +119,11 @@ public class DefaultCamelContextTest extends TestSupport {
         assertNotNull(endpoint);
 
         try {
-            ctx.getEndpoint(null);
+            ctx.getEndpoint((String) null);
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             // expected
         }
-    }
-
-    @Test
-    public void testGetEndpointNoScheme() throws Exception {
-        DefaultCamelContext ctx = new DefaultCamelContext();
-        ctx.disableJMX();
-        Endpoint endpoint = ctx.getEndpoint("log");
-        assertNotNull(endpoint);
     }
 
     @Test
@@ -181,8 +173,8 @@ public class DefaultCamelContextTest extends TestSupport {
         try {
             ctx.getEndpoint("xxx:foo");
             fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getMessage().contains("No component found with scheme: xxx"));
+        } catch (NoSuchEndpointException e) {
+            assertTrue(e.getMessage().contains("No endpoint could be found for: xxx:"));
         }
     }
 
@@ -280,7 +272,7 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(1, map.size());
 
         try {
-            ctx.hasEndpoint(null);
+            ctx.hasEndpoint((String) null);
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
             // expected

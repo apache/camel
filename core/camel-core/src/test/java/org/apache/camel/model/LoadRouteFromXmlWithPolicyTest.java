@@ -23,16 +23,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.Route;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyPolicy("foo"));
         return jndi;
     }
@@ -83,12 +83,12 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // no need to modify the route
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
+        public Processor wrap(Route route, final Processor processor) {
             return new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     invoked++;

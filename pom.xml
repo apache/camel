@@ -126,11 +126,46 @@
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
-        <groovy-version>3.0.1</groovy-version>
+        <groovy-version>3.0.2</groovy-version>
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+            <name>Maven Central</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <!-- camel-jira -->
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://packages.atlassian.com/maven-external</url>
+            <name>Atlassian Public Repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <!-- camel-ipfs and camel-weka -->
+        <repository>
+            <id>jboss.thirdparty</id>
+            <name>JBoss Thirdparty Repository</name>
+            <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
         <repository>
             <id>apache.snapshots</id>
             <url>https://repository.apache.org/snapshots/</url>

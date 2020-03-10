@@ -17,10 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.util.PackageHelper;

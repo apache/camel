@@ -273,6 +273,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws2-s3</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-ses</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -495,6 +500,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-engine</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core-languages</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

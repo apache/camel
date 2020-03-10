@@ -54,6 +54,7 @@
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-engine/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-core-languages/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-catalog/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>
@@ -123,7 +124,8 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/2.2.11_1</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
     <bundle dependency='true'>mvn:commons-net/commons-net/${commons-net-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}$Export-Package=org.apache.zookeeper;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper-jute/${zookeeper-version}$Export-Package=org.apache.jute;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
     <bundle>wrap:mvn:org.apache.activemq/activemq-osgi/${activemq-version}$overwrite=merge&amp;Import-Package=org.springframework.*;resolution:=optional;version="[5,6)",*;resolution:=optional</bundle>
     <bundle>mvn:org.apache.camel/camel-activemq/${project.version}</bundle>
   </feature>
@@ -1125,22 +1127,6 @@
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-mail-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-mail/${project.version}</bundle>
   </feature>
-  <feature name='camel-google-pubsub' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-pubsub/${google-api-services-pubsub-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
-    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-google-pubsub/${project.version}</bundle>
-  </feature>
   <feature name='camel-grape' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
@@ -1208,7 +1194,8 @@
   </feature>
   <feature name='camel-guava-eventbus' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${guava-eventbus-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle>mvn:org.apache.camel/camel-guava-eventbus/${project.version}</bundle>
   </feature>
   <feature name='camel-hazelcast' version='${project.version}' start-level='50'>
@@ -1244,7 +1231,8 @@
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:commons-net/commons-net/${commons-net-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}$Export-Package=org.apache.zookeeper;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper-jute/${zookeeper-version}$Export-Package=org.apache.jute;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlenc/0.52_1</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
@@ -1600,6 +1588,7 @@
   <feature name='camel-kafka' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.kafka-clients/${kafka-bundle-version}</bundle>
+
     <bundle dependency='true'>wrap:mvn:org.lz4/lz4-java/${lz4-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-kafka/${project.version}</bundle>
     <feature dependency='true'>snappy</feature>
@@ -1621,6 +1610,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.automaton/${automaton-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okclient-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:io.fabric8/zjsonpatch/${zjsonpatch-version}</bundle>
     <bundle dependency='true'>mvn:io.fabric8/kubernetes-model/${kubernetes-model-version}</bundle>
@@ -1977,6 +1967,7 @@
     <bundle dependency='true'>mvn:org.ow2.asm/asm-tree/${asm-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
     <bundle dependency='true'>mvn:org.pacesys/openstack4j-core/${openstack4j-version}</bundle>
     <bundle dependency='true'>mvn:org.pacesys.openstack4j.connectors/openstack4j-okhttp/${openstack4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-openstack/${project.version}</bundle>
@@ -2300,40 +2291,32 @@
   </feature>
   <feature name='camel-soroush' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-
     <bundle dependency='true'>mvn:org.glassfish.jersey.core/jersey-client/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:jakarta.ws.rs/jakarta.ws.rs-api/${jakarta-api-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.jersey.core/jersey-common/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2/osgi-resource-locator/${hk2-osgi-resource-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2.external/jakarta.inject/${hk2-version}</bundle>
-
     <bundle dependency='true'>mvn:org.glassfish.jersey.media/jersey-media-json-jackson/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.jersey.ext/jersey-entity-filtering/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
-
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>
-
+    <bundle dependency='true'>mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.squareup.okhttp3/okhttp-sse/${okclient-version}</bundle>
-
     <bundle dependency='true'>mvn:org.glassfish.jersey.inject/jersey-hk2/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-locator/${hk2-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2.external/aopalliance-repackaged/${hk2-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-api/${hk2-version}</bundle>
     <bundle dependency='true'>mvn:org.glassfish.hk2/hk2-utils/${hk2-version}</bundle>
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
-
     <bundle dependency='true'>mvn:org.glassfish.jersey.media/jersey-media-sse/${jersey-version}</bundle>
-
     <bundle dependency='true'>mvn:org.glassfish.jersey.media/jersey-media-multipart/${jersey-version}</bundle>
     <bundle dependency='true'>mvn:org.jvnet.mimepull/mimepull/${mimepull-version}</bundle>
-
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
-
     <bundle>mvn:org.apache.camel/camel-soroush/${project.version}</bundle>
   </feature>
   <feature name='camel-splunk' version='${project.version}' start-level='50'>
@@ -2673,7 +2656,8 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${guava-eventbus-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle>mvn:org.apache.camel/camel-wordpress/${project.version}</bundle>
   </feature>
   <feature name='camel-workday' version='${project.version}' start-level='50'>
@@ -2788,22 +2772,27 @@
   </feature>
   <feature name='camel-zookeeper' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}$Export-Package=org.apache.zookeeper;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper-jute/${zookeeper-version}$Export-Package=org.apache.jute;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-framework/${curator-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-client/${curator-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-recipes/${curator-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-x-discovery/${curator-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${zookeeper-guava-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zookeeper/${project.version}</bundle>
   </feature>
   <feature name='camel-zookeeper-master' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}$Export-Package=org.apache.zookeeper;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.zookeeper/zookeeper-jute/${zookeeper-version}$Export-Package=org.apache.jute;version=${zookeeper-version},org.apache.zookeeper.*;version=${zookeeper-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-framework/${curator-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-client/${curator-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-recipes/${curator-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${zookeeper-guava-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>

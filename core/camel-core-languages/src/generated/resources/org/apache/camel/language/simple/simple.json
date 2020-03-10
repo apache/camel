@@ -1,0 +1,24 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "simple",
+    "modelName": "simple",
+    "title": "Simple",
+    "description": "To use Camels built-in Simple language in Camel expressions or predicates.",
+    "deprecated": false,
+    "deprecationNote": "language,core,java",
+    "firstVersion": "1.1.0",
+    "label": "language,core,java",
+    "javaType": "org.apache.camel.language.simple.SimpleLanguage",
+    "modelJavaType": "org.apache.camel.model.language.SimpleExpression",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-core-languages",
+    "version": "3.2.0-SNAPSHOT"
+  },
+  "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The expression value in your chosen language syntax" },
+    "resultType": { "kind": "attribute", "displayName": "Result Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the class name of the result type (type from output)" },
+    "trim": { "kind": "attribute", "displayName": "Trim", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Sets the id of this node" }
+  }
+}

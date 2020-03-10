@@ -134,7 +134,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (59 parameters):
+=== Query Parameters (60 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -164,6 +164,7 @@ with the following path and query parameters:
 | *autoAck* (consumer) | If messages should be auto acknowledged | true | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Number of concurrent consumers when consuming from broker. (eg similar as to the same option for the JMS component). | 1 | int
+| *consumerTag* (consumer) | Specify a client-generated consumer tag to establish context when invoking the consume operation |  | String
 | *exclusiveConsumer* (consumer) | Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you want a long-lived shared queue to be temporarily accessible by just one consumer. | false | boolean
 | *prefetchCount* (consumer) | The maximum number of messages that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
 | *prefetchEnabled* (consumer) | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean

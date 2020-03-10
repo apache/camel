@@ -24,7 +24,6 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 
-
 public class BeanConfig {
     String[] schemes;
     String title;

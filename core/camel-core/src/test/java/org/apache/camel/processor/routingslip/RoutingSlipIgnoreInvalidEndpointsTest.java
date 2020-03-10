@@ -17,7 +17,7 @@
 package org.apache.camel.processor.routingslip;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
             template.sendBodyAndHeader("direct:b", "Hello", "myHeader", "direct:start,fail:endpoint,mock:result");
             fail("Expect the exception here.");
         } catch (Exception ex) {
-            assertTrue("Get a wrong cause of the exception", ex.getCause() instanceof ResolveEndpointFailedException);
+            assertTrue("Get a wrong cause of the exception", ex.getCause() instanceof NoSuchEndpointException);
         }
         assertMockEndpointsSatisfied();
     }

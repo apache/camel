@@ -106,7 +106,7 @@
         <dependency>
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
-            <version>1.6.8</version>
+            <version>1.6.17</version>
             <scope>test</scope>
         </dependency>
         <dependency>

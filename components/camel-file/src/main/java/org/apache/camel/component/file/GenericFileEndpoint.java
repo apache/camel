@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -489,14 +488,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     @SuppressWarnings("unchecked")
     protected GenericFileProcessStrategy<T> createGenericFileStrategy() {
-        Class<?> factory = null;
-        try {
-            FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/component/");
-            LOG.trace("Using FactoryFinder: {}", finder);
-            factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class).orElse(null);
-        } catch (IOException e) {
-            LOG.trace("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
-        }
+        FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/component/");
+        LOG.trace("Using FactoryFinder: {}", finder);
+        Class<?> factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class).orElse(null);
 
         if (factory == null) {
             // use default

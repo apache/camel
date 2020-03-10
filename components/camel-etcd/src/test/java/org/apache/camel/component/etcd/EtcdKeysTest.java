@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class EtcdKeysTest extends EtcdTestSupport {
 
@@ -117,14 +116,14 @@ public class EtcdKeysTest extends EtcdTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:keys-set")
-                    .to("etcd-keys")
-                        .to("mock:result-set");
+                    .to("etcd-keys:dummy")
+                    .to("mock:result-set");
                 from("direct:keys-get")
-                    .to("etcd-keys")
-                        .to("mock:result-get");
+                    .to("etcd-keys:dummy")
+                    .to("mock:result-get");
                 from("direct:keys-del")
-                    .to("etcd-keys")
-                        .to("mock:result-del");
+                    .to("etcd-keys:dummy")
+                    .to("mock:result-del");
             }
         };
     }

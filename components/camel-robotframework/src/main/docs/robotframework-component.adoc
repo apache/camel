@@ -47,13 +47,58 @@ You can append query options to the URI in the following format,
 === Options
 
 // component options: START
-The Robot Framework component supports 4 options, which are listed below.
+The Robot Framework component supports 49 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *argumentFile* (common) | A text file to read more arguments from. |  | File
+| *combinedTagStats* (common) | Creates combined statistics based on tags. Use the format tags:title List |  | String
+| *criticalTags* (common) | Tests that have the given tags are considered critical. List |  | String
+| *debugFile* (common) | A debug file that is written during execution. |  | File
+| *document* (common) | Sets the documentation of the top-level tests suites. |  | String
+| *dryrun* (common) | Sets dryrun mode on use. In the dry run mode tests are run without executing keywords originating from test libraries. Useful for validating test data syntax. | false | boolean
+| *excludes* (common) | Selects the tests cases by tags. List |  | String
+| *exitOnFailure* (common) | Sets robot to stop execution immediately if a critical test fails. | false | boolean
+| *includes* (common) | Selects the tests cases by tags. List |  | String
+| *listener* (common) | Sets a single listener for monitoring tests execution |  | String
+| *listeners* (common) | Sets multiple listeners for monitoring tests execution. Use the format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List |  | String
+| *log* (common) | Sets the path to the generated log file. |  | File
+| *logLevel* (common) | Sets the threshold level for logging. |  | String
+| *logTitle* (common) | Sets a title for the generated tests log. |  | String
+| *metadata* (common) | Sets free metadata for the top level tests suites. comma seperated list of string resulting as List |  | String
+| *monitorColors* (common) | Using ANSI colors in console. Normally colors work in unixes but not in Windows. Default is 'on'. 'on' - use colors in unixes but not in Windows 'off' - never use colors 'force' - always use colors (also in Windows) |  | String
+| *monitorWidth* (common) | Width of the monitor output. Default is 78. | 78 | String
+| *name* (common) | Sets the name of the top-level tests suites. |  | String
+| *nonCriticalTags* (common) | Tests that have the given tags are not critical. List |  | String
+| *noStatusReturnCode* (common) | If true, sets the return code to zero regardless of failures in test cases. Error codes are returned normally. | false | boolean
+| *output* (common) | Sets the path to the generated output file. |  | File
+| *outputDirectory* (common) | Configures where generated reports are to be placed. |  | File
+| *randomize* (common) | Sets the test execution order to be randomized. Valid values are all, suite, and test |  | String
+| *report* (common) | Sets the path to the generated report file. |  | File
+| *reportBackground* (common) | Sets background colors for the generated report and summary. |  | String
+| *reportTitle* (common) | Sets a title for the generated tests report. |  | String
+| *runEmptySuite* (common) | Executes tests also if the top level test suite is empty. Useful e.g. with --include/--exclude when it is not an error that no test matches the condition. | false | boolean
+| *runFailed* (common) | Re-run failed tests, based on output.xml file. |  | File
+| *runMode* (common) | Sets the execution mode for this tests run. Note that this setting has been deprecated in Robot Framework 2.8. Use separate dryryn, skipTeardownOnExit, exitOnFailure, and randomize settings instead. |  | String
+| *skipTeardownOnExit* (common) | Sets whether the teardowns are skipped if the test execution is prematurely stopped. | false | boolean
+| *splitOutputs* (common) | Splits output and log files. |  | String
+| *suites* (common) | Selects the tests suites by name. List |  | String
+| *suiteStatLevel* (common) | Defines how many levels to show in the Statistics by Suite table in outputs. |  | String
+| *summaryTitle* (common) | Sets a title for the generated summary report. |  | String
+| *tagDocs* (common) | Adds documentation to the specified tags. List |  | String
+| *tags* (common) | Sets the tags(s) to all executed tests cases. List |  | String
+| *tagStatExcludes* (common) | Excludes these tags from the Statistics by Tag and Test Details by Tag tables in outputs. List |  | String
+| *tagStatIncludes* (common) | Includes only these tags in the Statistics by Tag and Test Details by Tag tables in outputs. List |  | String
+| *tagStatLinks* (common) | Adds external links to the Statistics by Tag table in outputs. Use the format pattern:link:title List |  | String
+| *tests* (common) | Selects the tests cases by name. List |  | String
+| *timestampOutputs* (common) | Adds a timestamp to all output files. | false | boolean
+| *variableFiles* (common) | Sets variables using variables files. Use the format path:args List |  | String
+| *variables* (common) | Sets individual variables. Use the format name:value List |  | String
+| *warnOnSkippedFiles* (common) | Show a warning when an invalid file is skipped. | false | boolean
+| *xunitFile* (common) | Sets the path to the generated XUnit compatible result file, relative to outputDirectory. The file is in xml format. By default, the file name is derived from the testCasesDirectory parameter, replacing blanks in the directory name by underscores. |  | File
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

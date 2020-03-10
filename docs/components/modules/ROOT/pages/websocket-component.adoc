@@ -33,7 +33,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty Websocket component supports 16 options, which are listed below.
+The Jetty Websocket component supports 15 options, which are listed below.
 
 
 
@@ -42,7 +42,6 @@ The Jetty Websocket component supports 16 options, which are listed below.
 | Name | Description | Default | Type
 | *host* (common) | The hostname. The default value is 0.0.0.0 | 0.0.0.0 | String
 | *port* (common) | The port number. The default value is 9292 | 9292 | Integer
-| *socketFactory* (common) | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation. |  | Map
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *staticResources* (consumer) | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath, if you prefix with classpath:, otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:., or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean

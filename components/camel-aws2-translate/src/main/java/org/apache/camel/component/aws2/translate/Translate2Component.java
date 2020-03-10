@@ -33,13 +33,7 @@ import software.amazon.awssdk.services.translate.TranslateClient;
 public class Translate2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private Translate2Configuration configuration;
+    private Translate2Configuration configuration = new Translate2Configuration();
 
     public Translate2Component() {
         this(null);
@@ -56,9 +50,6 @@ public class Translate2Component extends DefaultComponent {
         Translate2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Translate2Configuration();
 
         Translate2Endpoint endpoint = new Translate2Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -72,43 +63,10 @@ public class Translate2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS Translate default configuration
+     * Component configuration
      */
     public void setConfiguration(Translate2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which Translate client needs to work
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(Translate2Configuration configuration) {

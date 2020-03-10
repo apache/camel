@@ -22,7 +22,6 @@ import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import com.amazonaws.services.kinesisfirehose.model.PutRecordRequest;
 import com.amazonaws.services.kinesisfirehose.model.PutRecordResult;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class KinesisFirehoseProducerTest {
     private Message inMessage;
     @Mock
     private PutRecordResult putRecordResult;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
     private Exchange exchange;
 
     private KinesisFirehoseProducer kinesisFirehoseProducer;

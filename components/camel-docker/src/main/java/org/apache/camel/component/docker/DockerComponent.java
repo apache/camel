@@ -76,7 +76,7 @@ public class DockerComponent extends DefaultComponent {
     /**
      * To use the shared docker configuration
      */
-    protected DockerConfiguration getConfiguration() {
+    public DockerConfiguration getConfiguration() {
         return configuration;
     }
 

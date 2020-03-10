@@ -15,10 +15,10 @@ public class ServiceComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceComponent target = (ServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "service": target.setService(property(camelContext, org.apache.camel.cloud.ServiceRegistry.class, value)); return true;
         case "serviceselector":
         case "serviceSelector": target.setServiceSelector(property(camelContext, org.apache.camel.cloud.ServiceRegistry.Selector.class, value)); return true;

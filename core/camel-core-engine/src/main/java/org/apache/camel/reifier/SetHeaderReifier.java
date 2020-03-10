@@ -18,17 +18,17 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.processor.SetHeaderProcessor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
 
-    public SetHeaderReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SetHeaderDefinition)definition);
+    public SetHeaderReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SetHeaderDefinition)definition);
     }
 
     @Override

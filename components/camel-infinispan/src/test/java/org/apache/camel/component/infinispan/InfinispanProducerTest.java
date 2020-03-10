@@ -1077,49 +1077,49 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("infinispan?cacheContainer=#cacheContainer");
+                    .to("infinispan:default?cacheContainer=#cacheContainer");
                 from("direct:put")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=PUT");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUT");
                 from("direct:put-deprecated-option")
-                    .to("infinispan?cacheContainer=#cacheContainer&command=PUT");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&command=PUT");
                 from("direct:put-deprecated-command")
-                    .to("infinispan?cacheContainer=#cacheContainer&command=CamelInfinispanOperationPut");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&command=CamelInfinispanOperationPut");
                 from("direct:putifabsent")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=PUTIFABSENT");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTIFABSENT");
                 from("direct:get")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=GET");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=GET");
                 from("direct:getOrDefault")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=GETORDEFAULT");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=GETORDEFAULT");
                 from("direct:remove")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=REMOVE");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REMOVE");
                 from("direct:clear")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=CLEAR");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CLEAR");
                 from("direct:replace")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=REPLACE");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REPLACE");
                 from("direct:containskey")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=CONTAINSKEY");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CONTAINSKEY");
                 from("direct:containsvalue")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=CONTAINSVALUE");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CONTAINSVALUE");
                 from("direct:size")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=SIZE");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=SIZE");
                 from("direct:putasync")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=PUTASYNC");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTASYNC");
                 from("direct:putallasync")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=PUTALLASYNC");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTALLASYNC");
                 from("direct:putifabsentasync")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=PUTIFABSENTASYNC");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUTIFABSENTASYNC");
                 from("direct:replaceasync")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=REPLACEASYNC");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REPLACEASYNC");
                 from("direct:removeasync")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=REMOVEASYNC");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=REMOVEASYNC");
                 from("direct:clearasync")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=CLEARASYNC");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=CLEARASYNC");
                 from("direct:stats")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=STATS");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=STATS");
                 from("direct:compute")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=COMPUTE&remappingFunction=#mappingFunction");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTE&remappingFunction=#mappingFunction");
                 from("direct:computeAsync")
-                    .to("infinispan?cacheContainer=#cacheContainer&operation=COMPUTEASYNC&remappingFunction=#mappingFunction");
+                    .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTEASYNC&remappingFunction=#mappingFunction");
             }
         };
     }

@@ -29,7 +29,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 
-
 /**
  * Unit test that show custom header filter useful to send Connection Close header
  */

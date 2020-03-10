@@ -24,21 +24,19 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.processor.EvaluateExpressionProcessor;
-import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 
 public class RecipientListReifier extends ProcessorReifier<RecipientListDefinition<?>> {
 
-    public RecipientListReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (RecipientListDefinition<?>)definition);
+    public RecipientListReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (RecipientListDefinition<?>)definition);
     }
 
     @Override
@@ -59,7 +57,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         } else {
             answer = new RecipientList(camelContext, expression);
         }
-        answer.setAggregationStrategy(createAggregationStrategy(routeContext));
+        answer.setAggregationStrategy(createAggregationStrategy());
         answer.setParallelProcessing(isParallelProcessing);
         answer.setParallelAggregate(isParallelAggregate);
         answer.setStreaming(isStreaming);
@@ -71,7 +69,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             answer.setCacheSize(parseInt(definition.getCacheSize()));
         }
         if (definition.getOnPrepareRef() != null) {
-            definition.setOnPrepare(CamelContextHelper.mandatoryLookup(camelContext, definition.getOnPrepareRef(), Processor.class));
+            definition.setOnPrepare(mandatoryLookup(definition.getOnPrepareRef(), Processor.class));
         }
         if (definition.getOnPrepare() != null) {
             answer.setOnPrepare(definition.getOnPrepare());
@@ -101,7 +99,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         // special error handling
         // when sending to the recipients individually
         Processor evalProcessor = new EvaluateExpressionProcessor(expression);
-        evalProcessor = super.wrapInErrorHandler(evalProcessor);
+        evalProcessor = wrapInErrorHandler(evalProcessor, true);
 
         pipe.add(evalProcessor);
         pipe.add(answer);
@@ -110,10 +108,10 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         return answer.newPipeline(camelContext, pipe);
     }
 
-    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+    private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategy();
         if (strategy == null && definition.getStrategyRef() != null) {
-            Object aggStrategy = routeContext.lookup(parseString(definition.getStrategyRef()), Object.class);
+            Object aggStrategy = lookup(parseString(definition.getStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy)aggStrategy;
             } else if (aggStrategy != null) {

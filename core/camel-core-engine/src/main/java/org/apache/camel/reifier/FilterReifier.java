@@ -17,15 +17,15 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class FilterReifier extends ExpressionReifier<FilterDefinition> {
 
-    public FilterReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, FilterDefinition.class.cast(definition));
+    public FilterReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, FilterDefinition.class.cast(definition));
     }
 
     @Override

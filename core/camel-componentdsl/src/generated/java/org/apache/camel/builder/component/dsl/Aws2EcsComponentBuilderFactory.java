@@ -47,14 +47,30 @@ public interface Aws2EcsComponentBuilderFactory {
      */
     interface Aws2EcsComponentBuilder extends ComponentBuilder<ECS2Component> {
         /**
-         * Amazon AWS Access Key.
+         * Component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ecs.ECS2Configuration</code>
+         * type.
          * 
          * Group: producer
          */
-        default Aws2EcsComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2EcsComponentBuilder configuration(
+                org.apache.camel.component.aws2.ecs.ECS2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS ECS as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.ecs.EcsClient</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EcsComponentBuilder ecsClient(
+                software.amazon.awssdk.services.ecs.EcsClient ecsClient) {
+            doSetProperty("ecsClient", ecsClient);
             return this;
         }
         /**
@@ -79,7 +95,59 @@ public interface Aws2EcsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which ECS client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ecs.ECS2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EcsComponentBuilder operation(
+                org.apache.camel.component.aws2.ecs.ECS2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the ECS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EcsComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the ECS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EcsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the ECS client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2EcsComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which ECS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -87,17 +155,6 @@ public interface Aws2EcsComponentBuilderFactory {
          */
         default Aws2EcsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2EcsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -115,17 +172,25 @@ public interface Aws2EcsComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS ECS default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.ecs.ECS2Configuration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2EcsComponentBuilder configuration(
-                org.apache.camel.component.aws2.ecs.ECS2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2EcsComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2EcsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -139,18 +204,30 @@ public interface Aws2EcsComponentBuilderFactory {
         protected ECS2Component buildConcreteComponent() {
             return new ECS2Component();
         }
+        private org.apache.camel.component.aws2.ecs.ECS2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.ecs.ECS2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.ecs.ECS2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((ECS2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((ECS2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((ECS2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((ECS2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((ECS2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((ECS2Component) component).setConfiguration((org.apache.camel.component.aws2.ecs.ECS2Configuration) value); return true;
+            case "ecsClient": getOrCreateConfiguration((ECS2Component) component).setEcsClient((software.amazon.awssdk.services.ecs.EcsClient) value); return true;
+            case "lazyStartProducer": ((ECS2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((ECS2Component) component).setOperation((org.apache.camel.component.aws2.ecs.ECS2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((ECS2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((ECS2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((ECS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((ECS2Component) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((ECS2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((ECS2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((ECS2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -18,10 +18,10 @@ package org.apache.camel.reifier;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.impl.engine.DefaultInterceptSendToEndpoint;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -29,14 +29,13 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.URISupport;
 
 public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEndpointDefinition> {
 
-    public InterceptSendToEndpointReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (InterceptSendToEndpointDefinition) definition);
+    public InterceptSendToEndpointReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (InterceptSendToEndpointDefinition) definition);
     }
 
     @Override
@@ -49,12 +48,12 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             ToDefinition to = new ToDefinition(parseString(definition.getAfterUri()));
             // at first use custom factory
             if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-                afterProcessor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(routeContext, to);
+                afterProcessor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, to);
             }
             // fallback to default implementation if factory did not create the
             // processor
             if (afterProcessor == null) {
-                afterProcessor = reifier(routeContext, to).createProcessor();
+                afterProcessor = createProcessor(to);
             }
         }
         final Processor after = afterProcessor;
@@ -66,7 +65,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                 if (endpoint instanceof DefaultInterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
-                } else if (matchURI == null || matchPattern(camelContext, uri, matchURI)) {
+                } else if (matchURI == null || matchPattern(uri, matchURI)) {
                     // only proxy if the uri is matched decorate endpoint with
                     // our proxy
                     // should be false by default
@@ -87,7 +86,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         // instead we use the proxy endpoints producer do the triggering. That
         // is we trigger when someone sends
         // an exchange to the endpoint, see InterceptSendToEndpoint for details.
-        RouteDefinition route = (RouteDefinition)routeContext.getRoute();
+        RouteDefinition route = (RouteDefinition) this.route.getRoute();
         List<ProcessorDefinition<?>> outputs = route.getOutputs();
         outputs.remove(definition);
 
@@ -97,13 +96,12 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
     /**
      * Does the uri match the pattern.
      *
-     * @param camelContext the CamelContext
      * @param uri the uri
      * @param pattern the pattern, which can be an endpoint uri as well
      * @return <tt>true</tt> if matched and we should intercept, <tt>false</tt>
      *         if not matched, and not intercept.
      */
-    protected boolean matchPattern(CamelContext camelContext, String uri, String pattern) {
+    protected boolean matchPattern(String uri, String pattern) {
         // match using the pattern as-is
         boolean match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
         if (!match) {

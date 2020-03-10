@@ -15,8 +15,12 @@ public class DdbEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DdbEndpoint target = (DdbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonddbclient":
         case "amazonDDBClient": target.getConfiguration().setAmazonDDBClient(property(camelContext, com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "consistentread":
         case "consistentRead": target.getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
         case "keyattributename":
@@ -35,15 +39,11 @@ public class DdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readcapacity":
         case "readCapacity": target.getConfiguration().setReadCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
-        case "writecapacity":
-        case "writeCapacity": target.getConfiguration().setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "accesskey":
-        case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "writecapacity":
+        case "writeCapacity": target.getConfiguration().setWriteCapacity(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }

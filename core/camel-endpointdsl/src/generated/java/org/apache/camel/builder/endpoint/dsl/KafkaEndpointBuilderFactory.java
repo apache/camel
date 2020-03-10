@@ -174,7 +174,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow doing manual commits via KafkaManualCommit . If this
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
          * option is enabled then an instance of KafkaManualCommit is stored on
          * the Exchange message header, which allows end users to access this
          * API and perform manual offset commits via the Kafka consumer.
@@ -190,7 +190,7 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow doing manual commits via KafkaManualCommit . If this
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
          * option is enabled then an instance of KafkaManualCommit is stored on
          * the Exchange message header, which allows end users to access this
          * API and perform manual offset commits via the Kafka consumer.
@@ -646,8 +646,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for deserialization kafka headers
-         * values to camel headers values.
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
          * 
          * The option is a:
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
@@ -660,8 +660,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for deserialization kafka headers
-         * values to camel headers values.
+         * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
+         * values.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
@@ -972,6 +972,22 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointConsumerBuilder valueDeserializer(
                 String valueDeserializer) {
             doSetProperty("valueDeserializer", valueDeserializer);
+            return this;
+        }
+        /**
+         * URL of the Confluent Platform schema registry servers to use. The
+         * format is host1:port1,host2:port2. This is known as
+         * schema.registry.url in the Confluent Platform documentation. This
+         * option is only available in the Confluent Platform (not standard
+         * Apache Kafka).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: confluent
+         */
+        default KafkaEndpointConsumerBuilder schemaRegistryURL(
+                String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**
@@ -1317,22 +1333,6 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointConsumerBuilder sslTruststoreType(
                 String sslTruststoreType) {
             doSetProperty("sslTruststoreType", sslTruststoreType);
-            return this;
-        }
-        /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: confluent
-         */
-        default KafkaEndpointConsumerBuilder schemaRegistryURL(
-                String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
     }
@@ -1721,8 +1721,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for serialization camel headers
-         * values to kafka headers values.
+         * To use a custom KafkaHeaderSerializer to serialize kafka headers
+         * values.
          * 
          * The option is a:
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
@@ -1735,8 +1735,8 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets custom KafkaHeaderDeserializer for serialization camel headers
-         * values to kafka headers values.
+         * To use a custom KafkaHeaderSerializer to serialize kafka headers
+         * values.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
@@ -1823,7 +1823,7 @@ public interface KafkaEndpointBuilderFactory {
          * occurs only under load when records arrive faster than they can be
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
-         * accomplishes this by adding a small amount of artificial delaythat
+         * accomplishes this by adding a small amount of artificial delay that
          * is, rather than immediately sending out a record the producer will
          * wait for up to the given delay to allow other records to be sent so
          * that the sends can be batched together. This can be thought of as
@@ -1852,7 +1852,7 @@ public interface KafkaEndpointBuilderFactory {
          * occurs only under load when records arrive faster than they can be
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
-         * accomplishes this by adding a small amount of artificial delaythat
+         * accomplishes this by adding a small amount of artificial delay that
          * is, rather than immediately sending out a record the producer will
          * wait for up to the given delay to allow other records to be sent so
          * that the sends can be batched together. This can be thought of as
@@ -2468,7 +2468,9 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * To use a custom worker pool for continue routing Exchange after kafka
          * server has acknowledge the message that was sent to it from
-         * KafkaProducer using asynchronous non-blocking processing.
+         * KafkaProducer using asynchronous non-blocking processing. If using
+         * this option then you must handle the lifecycle of the thread pool to
+         * shut the pool down when no longer needed.
          * 
          * The option is a: <code>java.util.concurrent.ExecutorService</code>
          * type.
@@ -2483,7 +2485,9 @@ public interface KafkaEndpointBuilderFactory {
         /**
          * To use a custom worker pool for continue routing Exchange after kafka
          * server has acknowledge the message that was sent to it from
-         * KafkaProducer using asynchronous non-blocking processing.
+         * KafkaProducer using asynchronous non-blocking processing. If using
+         * this option then you must handle the lifecycle of the thread pool to
+         * shut the pool down when no longer needed.
          * 
          * The option will be converted to a
          * <code>java.util.concurrent.ExecutorService</code> type.
@@ -2554,6 +2558,22 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointProducerBuilder workerPoolMaxSize(
                 String workerPoolMaxSize) {
             doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
+            return this;
+        }
+        /**
+         * URL of the Confluent Platform schema registry servers to use. The
+         * format is host1:port1,host2:port2. This is known as
+         * schema.registry.url in the Confluent Platform documentation. This
+         * option is only available in the Confluent Platform (not standard
+         * Apache Kafka).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: confluent
+         */
+        default KafkaEndpointProducerBuilder schemaRegistryURL(
+                String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**
@@ -2964,22 +2984,6 @@ public interface KafkaEndpointBuilderFactory {
             doSetProperty("sslTruststoreType", sslTruststoreType);
             return this;
         }
-        /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: confluent
-         */
-        default KafkaEndpointProducerBuilder schemaRegistryURL(
-                String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
     }
 
     /**
@@ -3184,6 +3188,21 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
             doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            return this;
+        }
+        /**
+         * URL of the Confluent Platform schema registry servers to use. The
+         * format is host1:port1,host2:port2. This is known as
+         * schema.registry.url in the Confluent Platform documentation. This
+         * option is only available in the Confluent Platform (not standard
+         * Apache Kafka).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: confluent
+         */
+        default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**
@@ -3523,21 +3542,6 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslTruststoreType(String sslTruststoreType) {
             doSetProperty("sslTruststoreType", sslTruststoreType);
-            return this;
-        }
-        /**
-         * URL of the Confluent Platform schema registry servers to use. The
-         * format is host1:port1,host2:port2. This is known as
-         * schema.registry.url in the Confluent Platform documentation. This
-         * option is only available in the Confluent Platform (not standard
-         * Apache Kafka).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: confluent
-         */
-        default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
-            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
     }

@@ -27,9 +27,12 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.SimpleBuilder;
+import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.util.URISupport;
 
 @XmlTransient
@@ -47,19 +50,23 @@ public class AbstractEndpointBuilder {
     public Endpoint resolve(CamelContext context) throws NoSuchEndpointException {
         Map<String, Object> remaining = new HashMap<>();
         // we should not bind complex objects to registry as we create the endpoint via the properties as-is
-        String uri = computeUri(remaining, context, false);
-        Endpoint endpoint = context.getEndpoint(uri, properties);
+        NormalizedEndpointUri uri = computeUri(remaining, context, false);
+        ExtendedCamelContext ecc = (ExtendedCamelContext) context;
+        Endpoint endpoint = ecc.getEndpoint(uri, properties);
         if (endpoint == null) {
-            throw new NoSuchEndpointException(uri);
+            throw new NoSuchEndpointException(uri.getUri());
         }
         return endpoint;
     }
 
     public String getUri() {
-        return computeUri(new HashMap<>(), null, false);
+        return computeUri(new HashMap<>(), null, false).getUri();
     }
 
-    protected String computeUri(Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry) {
+    protected NormalizedUri computeUri(Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry) {
+        NormalizedUri answer;
+
+        // sort parameters so it can be regarded as normalized
         Map<String, Object> params = new TreeMap<>();
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
@@ -78,15 +85,17 @@ public class AbstractEndpointBuilder {
             params.put("hash", Integer.toHexString(remaining.hashCode()));
         }
         if (params.isEmpty()) {
-            return scheme + ":" + path;
+            answer = new NormalizedUri(scheme + ":" + path);
         } else {
             try {
                 String query = URISupport.createQueryString(params);
-                return scheme + ":" + path + "?" + query;
+                answer = new NormalizedUri(scheme + ":" + path + "?" + query);
             } catch (URISyntaxException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
+
+        return answer;
     }
 
     @Override
@@ -104,9 +113,8 @@ public class AbstractEndpointBuilder {
 
     public Expression expr(CamelContext camelContext) {
         // need to bind complex properties so we can return an uri that includes these parameters too
-        String uri = computeUri(new HashMap<>(), camelContext, true);
-        return SimpleBuilder.simple(uri);
+        NormalizedEndpointUri uri = computeUri(new HashMap<>(), camelContext, true);
+        return SimpleBuilder.simple(uri.getUri());
     }
-
 
 }

@@ -49,7 +49,7 @@ public class JmsDestinationResolverTest extends CamelTestSupport {
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         JmsComponent jms = camelContext.getComponent(componentName, JmsComponent.class);
-        jms.setDestinationResolver(new MyDestinationResolver());
+        jms.getConfiguration().setDestinationResolver(new MyDestinationResolver());
 
         return camelContext;
     }

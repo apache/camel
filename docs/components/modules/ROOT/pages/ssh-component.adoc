@@ -43,21 +43,21 @@ The SSH component supports 17 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *host* (common) | Sets the hostname of the remote SSH server. |  | String
-| *pollCommand* (common) | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer, i.e. from(ssh://...). You may need to end your command with a newline, and that must be URL encoded %0A |  | String
-| *port* (common) | Sets the port number for the remote SSH server. |  | int
-| *timeout* (common) | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. |  | long
+| *failOnUnknownHost* (common) | Specifies whether a connection to an unknown host should fail or not. This value is only checked when the property knownHosts is set. | false | boolean
+| *knownHostsResource* (common) | Sets the resource path for a known_hosts file |  | String
+| *timeout* (common) | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. | 30000 | long
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *pollCommand* (consumer) | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer, i.e. from(ssh://...) You may need to end your command with a newline, and that must be URL encoded %0A |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *channelType* (advanced) | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. |  | String
-| *configuration* (advanced) | To use the shared SSH configuration |  | SshConfiguration
+| *channelType* (advanced) | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. | exec | String
+| *configuration* (advanced) | Component configuration |  | SshConfiguration
 | *shellPrompt* (advanced) | Sets the shellPrompt to be dropped when response is read after command execution |  | String
-| *sleepForShellPrompt* (advanced) | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. |  | long
+| *sleepForShellPrompt* (advanced) | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. | 100 | long
 | *certResource* (security) | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
 | *certResourcePassword* (security) | Sets the password to use in loading certResource, if certResource is an encrypted key. |  | String
 | *keyPairProvider* (security) | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
-| *keyType* (security) | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. |  | String
+| *keyType* (security) | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. From Camel 3.0.0 / 2.25.0, by default Camel will select the first available KeyPair that is loaded. Prior to this, a KeyType of 'ssh-rsa' was enforced by default. |  | String
 | *password* (security) | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
 | *username* (security) | Sets the username to use in logging into the remote SSH server. |  | String
 |===

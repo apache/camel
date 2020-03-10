@@ -51,18 +51,71 @@ public interface AwsKinesisComponentBuilderFactory {
             extends
                 ComponentBuilder<KinesisComponent> {
         /**
-         * Amazon AWS Access Key.
+         * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
+         * 
+         * Group: common
+         */
+        default AwsKinesisComponentBuilder amazonKinesisClient(
+                com.amazonaws.services.kinesis.AmazonKinesis amazonKinesisClient) {
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.kinesis.KinesisConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default AwsKinesisComponentBuilder configuration(
+                org.apache.camel.component.aws.kinesis.KinesisConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AwsKinesisComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default AwsKinesisComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * To define a proxy port when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default AwsKinesisComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Default: HTTPS
+         * Group: common
+         */
+        default AwsKinesisComponentBuilder proxyProtocol(
+                com.amazonaws.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which Kinesis client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1)You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -70,17 +123,6 @@ public interface AwsKinesisComponentBuilderFactory {
          */
         default AwsKinesisComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AwsKinesisComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -100,6 +142,77 @@ public interface AwsKinesisComponentBuilderFactory {
         default AwsKinesisComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Defines where in the Kinesis stream to start getting records.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
+         * type.
+         * 
+         * Default: TRIM_HORIZON
+         * Group: consumer
+         */
+        default AwsKinesisComponentBuilder iteratorType(
+                com.amazonaws.services.kinesis.model.ShardIteratorType iteratorType) {
+            doSetProperty("iteratorType", iteratorType);
+            return this;
+        }
+        /**
+         * Maximum number of records that will be fetched in each poll.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer
+         */
+        default AwsKinesisComponentBuilder maxResultsPerRequest(
+                int maxResultsPerRequest) {
+            doSetProperty("maxResultsPerRequest", maxResultsPerRequest);
+            return this;
+        }
+        /**
+         * The sequence number to start polling from. Required if iteratorType
+         * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsKinesisComponentBuilder sequenceNumber(
+                java.lang.String sequenceNumber) {
+            doSetProperty("sequenceNumber", sequenceNumber);
+            return this;
+        }
+        /**
+         * Define what will be the behavior in case of shard closed. Possible
+         * value are ignore, silent and fail. In case of ignore a message will
+         * be logged and the consumer will restart from the beginning,in case of
+         * silent there will be no logging and the consumer will start from the
+         * beginning,in case of fail a ReachedClosedStateException will be
+         * raised.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> type.
+         * 
+         * Default: ignore
+         * Group: consumer
+         */
+        default AwsKinesisComponentBuilder shardClosed(
+                org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum shardClosed) {
+            doSetProperty("shardClosed", shardClosed);
+            return this;
+        }
+        /**
+         * Defines which shardId in the Kinesis stream to get records from.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AwsKinesisComponentBuilder shardId(java.lang.String shardId) {
+            doSetProperty("shardId", shardId);
             return this;
         }
         /**
@@ -138,16 +251,25 @@ public interface AwsKinesisComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS S3 default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws.kinesis.KinesisConfiguration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default AwsKinesisComponentBuilder configuration(
-                org.apache.camel.component.aws.kinesis.KinesisConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default AwsKinesisComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AwsKinesisComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -161,19 +283,35 @@ public interface AwsKinesisComponentBuilderFactory {
         protected KinesisComponent buildConcreteComponent() {
             return new KinesisComponent();
         }
+        private org.apache.camel.component.aws.kinesis.KinesisConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws.kinesis.KinesisComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws.kinesis.KinesisConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((KinesisComponent) component).setAccessKey((java.lang.String) value); return true;
-            case "region": ((KinesisComponent) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((KinesisComponent) component).setSecretKey((java.lang.String) value); return true;
+            case "amazonKinesisClient": getOrCreateConfiguration((KinesisComponent) component).setAmazonKinesisClient((com.amazonaws.services.kinesis.AmazonKinesis) value); return true;
+            case "configuration": ((KinesisComponent) component).setConfiguration((org.apache.camel.component.aws.kinesis.KinesisConfiguration) value); return true;
+            case "proxyHost": getOrCreateConfiguration((KinesisComponent) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((KinesisComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((KinesisComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((KinesisComponent) component).setRegion((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((KinesisComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "iteratorType": getOrCreateConfiguration((KinesisComponent) component).setIteratorType((com.amazonaws.services.kinesis.model.ShardIteratorType) value); return true;
+            case "maxResultsPerRequest": getOrCreateConfiguration((KinesisComponent) component).setMaxResultsPerRequest((int) value); return true;
+            case "sequenceNumber": getOrCreateConfiguration((KinesisComponent) component).setSequenceNumber((java.lang.String) value); return true;
+            case "shardClosed": getOrCreateConfiguration((KinesisComponent) component).setShardClosed((org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum) value); return true;
+            case "shardId": getOrCreateConfiguration((KinesisComponent) component).setShardId((java.lang.String) value); return true;
             case "lazyStartProducer": ((KinesisComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((KinesisComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((KinesisComponent) component).setConfiguration((org.apache.camel.component.aws.kinesis.KinesisConfiguration) value); return true;
+            case "accessKey": getOrCreateConfiguration((KinesisComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((KinesisComponent) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

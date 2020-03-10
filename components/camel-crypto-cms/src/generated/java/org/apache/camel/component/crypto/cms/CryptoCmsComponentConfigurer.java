@@ -15,12 +15,12 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoCmsComponent target = (CryptoCmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "envelopeddatadecryptorconfiguration":
         case "envelopedDataDecryptorConfiguration": target.setEnvelopedDataDecryptorConfiguration(property(camelContext, org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "signeddataverifierconfiguration":
         case "signedDataVerifierConfiguration": target.setSignedDataVerifierConfiguration(property(camelContext, org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration.class, value)); return true;
         default: return false;

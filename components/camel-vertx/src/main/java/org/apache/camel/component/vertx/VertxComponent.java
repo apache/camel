@@ -47,11 +47,15 @@ public class VertxComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private VertxFactory vertxFactory;
+    @Metadata
     private Vertx vertx;
+    @Metadata
     private String host;
+    @Metadata
     private int port;
     @Metadata(defaultValue = "60")
     private int timeout = 60;
+    @Metadata
     private VertxOptions vertxOptions;
 
     public VertxComponent() {

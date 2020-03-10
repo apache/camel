@@ -11,15 +11,160 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMySqlComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DebeziumMySqlComponent target = (DebeziumMySqlComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bigintunsignedhandlingmode":
+        case "bigintUnsignedHandlingMode": getOrCreateConfiguration(target).setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "binlogbuffersize":
+        case "binlogBufferSize": getOrCreateConfiguration(target).setBinlogBufferSize(property(camelContext, int.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "columnblacklist":
+        case "columnBlacklist": getOrCreateConfiguration(target).setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
+        case "connectkeepalive":
+        case "connectKeepAlive": getOrCreateConfiguration(target).setConnectKeepAlive(property(camelContext, boolean.class, value)); return true;
+        case "connectkeepaliveintervalms":
+        case "connectKeepAliveIntervalMs": getOrCreateConfiguration(target).setConnectKeepAliveIntervalMs(property(camelContext, long.class, value)); return true;
+        case "connecttimeoutms":
+        case "connectTimeoutMs": getOrCreateConfiguration(target).setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "databaseblacklist":
+        case "databaseBlacklist": getOrCreateConfiguration(target).setDatabaseBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistory":
+        case "databaseHistory": getOrCreateConfiguration(target).setDatabaseHistory(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistoryfilefilename":
+        case "databaseHistoryFileFilename": getOrCreateConfiguration(target).setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistorykafkabootstrapservers":
+        case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration(target).setDatabaseHistoryKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistorykafkarecoveryattempts":
+        case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration(target).setDatabaseHistoryKafkaRecoveryAttempts(property(camelContext, int.class, value)); return true;
+        case "databasehistorykafkarecoverypollintervalms":
+        case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration(target).setDatabaseHistoryKafkaRecoveryPollIntervalMs(property(camelContext, int.class, value)); return true;
+        case "databasehistorykafkatopic":
+        case "databaseHistoryKafkaTopic": getOrCreateConfiguration(target).setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": getOrCreateConfiguration(target).setDatabaseHistorySkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration(target).setDatabaseHistoryStoreOnlyMonitoredTablesDdl(property(camelContext, boolean.class, value)); return true;
+        case "databasehostname":
+        case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseinitialstatements":
+        case "databaseInitialStatements": getOrCreateConfiguration(target).setDatabaseInitialStatements(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasejdbcdriver":
+        case "databaseJdbcDriver": getOrCreateConfiguration(target).setDatabaseJdbcDriver(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasepassword":
+        case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseport":
+        case "databasePort": getOrCreateConfiguration(target).setDatabasePort(property(camelContext, int.class, value)); return true;
+        case "databaseserverid":
+        case "databaseServerId": getOrCreateConfiguration(target).setDatabaseServerId(property(camelContext, long.class, value)); return true;
+        case "databaseserveridoffset":
+        case "databaseServerIdOffset": getOrCreateConfiguration(target).setDatabaseServerIdOffset(property(camelContext, long.class, value)); return true;
+        case "databaseservername":
+        case "databaseServerName": getOrCreateConfiguration(target).setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslkeystore":
+        case "databaseSslKeystore": getOrCreateConfiguration(target).setDatabaseSslKeystore(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslkeystorepassword":
+        case "databaseSslKeystorePassword": getOrCreateConfiguration(target).setDatabaseSslKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasesslmode":
+        case "databaseSslMode": getOrCreateConfiguration(target).setDatabaseSslMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasessltruststore":
+        case "databaseSslTruststore": getOrCreateConfiguration(target).setDatabaseSslTruststore(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasessltruststorepassword":
+        case "databaseSslTruststorePassword": getOrCreateConfiguration(target).setDatabaseSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseuser":
+        case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasewhitelist":
+        case "databaseWhitelist": getOrCreateConfiguration(target).setDatabaseWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "decimalhandlingmode":
+        case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "enabletimeadjuster":
+        case "enableTimeAdjuster": getOrCreateConfiguration(target).setEnableTimeAdjuster(property(camelContext, boolean.class, value)); return true;
+        case "eventdeserializationfailurehandlingmode":
+        case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration(target).setEventDeserializationFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "gtidnewchannelposition":
+        case "gtidNewChannelPosition": getOrCreateConfiguration(target).setGtidNewChannelPosition(property(camelContext, java.lang.String.class, value)); return true;
+        case "gtidsourceexcludes":
+        case "gtidSourceExcludes": getOrCreateConfiguration(target).setGtidSourceExcludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "gtidsourcefilterdmlevents":
+        case "gtidSourceFilterDmlEvents": getOrCreateConfiguration(target).setGtidSourceFilterDmlEvents(property(camelContext, boolean.class, value)); return true;
+        case "gtidsourceincludes":
+        case "gtidSourceIncludes": getOrCreateConfiguration(target).setGtidSourceIncludes(property(camelContext, java.lang.String.class, value)); return true;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
+        case "heartbeattopicsprefix":
+        case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "includequery":
+        case "includeQuery": getOrCreateConfiguration(target).setIncludeQuery(property(camelContext, boolean.class, value)); return true;
+        case "includeschemachanges":
+        case "includeSchemaChanges": getOrCreateConfiguration(target).setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "inconsistentschemahandlingmode":
+        case "inconsistentSchemaHandlingMode": getOrCreateConfiguration(target).setInconsistentSchemaHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "internalkeyconverter":
+        case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "internalvalueconverter":
+        case "internalValueConverter": getOrCreateConfiguration(target).setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxbatchsize":
+        case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesize":
+        case "maxQueueSize": getOrCreateConfiguration(target).setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "messagekeycolumns":
+        case "messageKeyColumns": getOrCreateConfiguration(target).setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": getOrCreateConfiguration(target).setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": getOrCreateConfiguration(target).setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": getOrCreateConfiguration(target).setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
+        case "offsetstorage":
+        case "offsetStorage": getOrCreateConfiguration(target).setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": getOrCreateConfiguration(target).setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": getOrCreateConfiguration(target).setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": getOrCreateConfiguration(target).setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollintervalms":
+        case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "snapshotdelayms":
+        case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
+        case "snapshotfetchsize":
+        case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": getOrCreateConfiguration(target).setSnapshotLockingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmode":
+        case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotnewtables":
+        case "snapshotNewTables": getOrCreateConfiguration(target).setSnapshotNewTables(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotselectstatementoverrides":
+        case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourcestructversion":
+        case "sourceStructVersion": getOrCreateConfiguration(target).setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableblacklist":
+        case "tableBlacklist": getOrCreateConfiguration(target).setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableignorebuiltin":
+        case "tableIgnoreBuiltin": getOrCreateConfiguration(target).setTableIgnoreBuiltin(property(camelContext, boolean.class, value)); return true;
+        case "tablewhitelist":
+        case "tableWhitelist": getOrCreateConfiguration(target).setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeprecisionmode":
+        case "timePrecisionMode": getOrCreateConfiguration(target).setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

@@ -52,7 +52,7 @@ public class JmsIncludeAllJMSXPropertiesTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setIncludeAllJMSXProperties(true);
+        jms.getConfiguration().setIncludeAllJMSXProperties(true);
         camelContext.addComponent("activemq", jms);
         return camelContext;
     }

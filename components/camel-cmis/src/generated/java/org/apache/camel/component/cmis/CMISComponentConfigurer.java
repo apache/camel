@@ -15,14 +15,14 @@ public class CMISComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CMISComponent target = (CMISComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "sessionfacadefactory":
-        case "sessionFacadeFactory": target.setSessionFacadeFactory(property(camelContext, org.apache.camel.component.cmis.CMISSessionFacadeFactory.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "sessionfacadefactory":
+        case "sessionFacadeFactory": target.setSessionFacadeFactory(property(camelContext, org.apache.camel.component.cmis.CMISSessionFacadeFactory.class, value)); return true;
         default: return false;
         }
     }

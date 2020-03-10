@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DdbComponentRegistryClientTest extends CamelTestSupport {
 
@@ -31,11 +34,11 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutRegistryClient() throws Exception {
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
-        Ddb2Endpoint endpoint = (Ddb2Endpoint)component.createEndpoint("aws2-ddb://myTable");
-
-        assertEquals("myTable", endpoint.getConfiguration().getTableName());
+        assertThrows(IllegalArgumentException.class, () -> {
+            Ddb2Endpoint endpoint = (Ddb2Endpoint)component.createEndpoint("aws2-ddb://myTable");
+        });
     }
 }

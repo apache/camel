@@ -17,33 +17,33 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
-public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
+public class PolicyReifier extends AbstractPolicyReifier<PolicyDefinition> {
 
-    public PolicyReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (PolicyDefinition) definition);
+    public PolicyReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (PolicyDefinition) definition);
     }
 
     @Override
     public Processor createProcessor() throws Exception {
-        Policy policy = resolvePolicy(routeContext);
+        Policy policy = resolvePolicy();
         ObjectHelper.notNull(policy, "policy", definition);
 
         // before wrap
-        policy.beforeWrap(routeContext, definition);
+        policy.beforeWrap(route, definition);
 
         // create processor after the before wrap
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap
-        Processor target = policy.wrap(routeContext, childProcessor);
+        Processor target = policy.wrap(route, childProcessor);
 
         if (!(target instanceof Service)) {
             // wrap the target so it becomes a service and we can manage its
@@ -53,12 +53,8 @@ public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
         return target;
     }
 
-    protected Policy resolvePolicy(RouteContext routeContext) {
-        if (definition.getPolicy() != null) {
-            return definition.getPolicy();
-        }
-        // reuse code on transacted definition to do the resolution
-        return TransactedReifier.resolvePolicy(routeContext, definition.getRef(), definition.getType());
+    protected Policy resolvePolicy() {
+        return resolvePolicy(definition.getPolicy(), definition.getRef(), definition.getType());
     }
 
 }

@@ -49,7 +49,7 @@ public class InfinispanConsumerEntryCreatedTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan:default?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
                         .to("mock:result");
             }
         };

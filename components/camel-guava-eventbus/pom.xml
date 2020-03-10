@@ -42,6 +42,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <version>${guava-eventbus-version}</version>
             <scope>provided</scope>
         </dependency>
 

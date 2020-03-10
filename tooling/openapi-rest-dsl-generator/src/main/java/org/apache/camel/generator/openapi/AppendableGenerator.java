@@ -21,7 +21,6 @@ import java.io.IOException;
 import com.squareup.javapoet.JavaFile;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 
-
 final class AppendableGenerator extends RestDslSourceCodeGenerator<Appendable> {
 
     AppendableGenerator(final OasDocument openapi) {

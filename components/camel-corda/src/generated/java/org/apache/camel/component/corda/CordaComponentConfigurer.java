@@ -11,17 +11,40 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CordaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.corda.CordaConfiguration getOrCreateConfiguration(CordaComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.corda.CordaConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CordaComponent target = (CordaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.corda.CordaConfiguration.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.corda.CordaConfiguration.class, value)); return true;
+        case "contractstateclass":
+        case "contractStateClass": getOrCreateConfiguration(target).setContractStateClass(property(camelContext, java.lang.Class.class, value)); return true;
+        case "flowlogicarguments":
+        case "flowLogicArguments": getOrCreateConfiguration(target).setFlowLogicArguments(property(camelContext, java.lang.Object[].class, value)); return true;
+        case "flowlogicclass":
+        case "flowLogicClass": getOrCreateConfiguration(target).setFlowLogicClass(property(camelContext, java.lang.Class.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, java.lang.String.class, value)); return true;
+        case "pagespecification":
+        case "pageSpecification": getOrCreateConfiguration(target).setPageSpecification(property(camelContext, net.corda.core.node.services.vault.PageSpecification.class, value)); return true;
+        case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "processsnapshot":
+        case "processSnapshot": getOrCreateConfiguration(target).setProcessSnapshot(property(camelContext, boolean.class, value)); return true;
+        case "querycriteria":
+        case "queryCriteria": getOrCreateConfiguration(target).setQueryCriteria(property(camelContext, net.corda.core.node.services.vault.QueryCriteria.class, value)); return true;
+        case "sort": getOrCreateConfiguration(target).setSort(property(camelContext, net.corda.core.node.services.vault.Sort.class, value)); return true;
+        case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

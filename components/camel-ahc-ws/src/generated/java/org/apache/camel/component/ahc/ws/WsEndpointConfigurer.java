@@ -17,12 +17,12 @@ public class WsEndpointConfigurer extends AhcEndpointConfigurer implements Gener
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "sendmessageonerror":
-        case "sendMessageOnError": target.setSendMessageOnError(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "sendmessageonerror":
+        case "sendMessageOnError": target.setSendMessageOnError(property(camelContext, boolean.class, value)); return true;
         case "usestreaming":
         case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);

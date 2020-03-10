@@ -41,19 +41,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -68,7 +67,6 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AsyncCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -138,9 +136,9 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * <p/>
      * See the <tt>createProcessorExchangePair</tt> and <tt>createErrorHandler</tt> methods.
      */
-    static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
+    static final class ErrorHandlerKey extends KeyValueHolder<Route, Processor> {
 
-        PreparedErrorHandler(RouteContext key, Processor value) {
+        ErrorHandlerKey(Route key, Processor value) {
             super(key, value);
         }
 
@@ -163,7 +161,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     private ExecutorService aggregateExecutorService;
     private boolean shutdownAggregateExecutorService;
     private final long timeout;
-    private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ErrorHandlerKey, Processor> errorHandlers = new ConcurrentHashMap<>();
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
@@ -663,8 +661,8 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             // and add the pair
-            RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
-            result.add(createProcessorExchangePair(index++, processor, copy, routeContext));
+            Route route = ExchangeHelper.getRoute(exchange);
+            result.add(createProcessorExchangePair(index++, processor, copy, route));
         }
 
         if (exchange.getException() != null) {
@@ -685,18 +683,18 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
      * @param index        the index
      * @param processor    the processor
      * @param exchange     the exchange
-     * @param routeContext the route context
+     * @param route the route context
      * @return prepared for use
      */
     protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor, Exchange exchange,
-                                                                RouteContext routeContext) {
+                                                                Route route) {
         Processor prepared = processor;
 
         // set property which endpoint we send to
         setToEndpoint(exchange, prepared);
 
         // rework error handling to support fine grained error handling
-        prepared = createErrorHandler(routeContext, exchange, prepared);
+        prepared = createErrorHandler(route, exchange, prepared);
 
         // invoke on prepare on the exchange if specified
         if (onPrepare != null) {
@@ -709,20 +707,20 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
-    protected Processor createErrorHandler(RouteContext routeContext, Exchange exchange, Processor processor) {
+    protected Processor createErrorHandler(Route route, Exchange exchange, Processor processor) {
         Processor answer;
 
         boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
 
         // do not wrap in error handler if we are inside a try block
-        if (!tryBlock && routeContext != null) {
+        if (!tryBlock && route != null) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
             // for the entire multicast block again which will start from scratch again
 
             // create key for cache
-            final PreparedErrorHandler key = new PreparedErrorHandler(routeContext, processor);
+            final ErrorHandlerKey key = new ErrorHandlerKey(route, processor);
 
             // lookup cached first to reuse and preserve memory
             answer = errorHandlers.get(key);
@@ -732,14 +730,13 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
 
             LOG.trace("Creating error handler for: {}", processor);
-            ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
             // create error handler (create error handler directly to keep it light weight,
-            // instead of using ProcessorDefinition.wrapInErrorHandler)
+            // instead of using ProcessorReifier.wrapInErrorHandler)
             try {
-                processor = createErrorHandler(routeContext, builder, exchange, processor);
+                processor = route.createErrorHandler(processor);
 
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
-                answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
+                answer = createUnitOfWorkProcessor(route, processor, exchange);
 
                 boolean child = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
 
@@ -757,36 +754,28 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
+            answer = createUnitOfWorkProcessor(route, processor, exchange);
         }
 
         return answer;
     }
 
     /**
-     * Strategy to create the error handler from the builder
-     */
-    protected Processor createErrorHandler(RouteContext routeContext, ErrorHandlerFactory builder, Exchange exchange, Processor processor) throws Exception {
-        return builder.createErrorHandler(routeContext, processor);
-    }
-
-    /**
      * Strategy to create the unit of work to be used for the sub route
      *
-     * @param routeContext the route context
      * @param processor    the processor
      * @param exchange     the exchange
      * @return the unit of work processor
      */
-    protected Processor createUnitOfWorkProcessor(RouteContext routeContext, Processor processor, Exchange exchange) {
+    protected Processor createUnitOfWorkProcessor(Route route, Processor processor, Exchange exchange) {
         CamelInternalProcessor internal = new CamelInternalProcessor(exchange.getContext(), processor);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
-            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(routeContext, exchange.getContext(), parent));
+            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(route, exchange.getContext(), parent));
         } else {
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, exchange.getContext()));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, exchange.getContext()));
         }
 
         return internal;

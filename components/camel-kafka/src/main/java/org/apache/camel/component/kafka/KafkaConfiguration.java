@@ -1331,7 +1331,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * under load when records arrive faster than they can be sent out. However
      * in some circumstances the client may want to reduce the number of
      * requests even under moderate load. This setting accomplishes this by
-     * adding a small amount of artificial delay—that is, rather than
+     * adding a small amount of artificial delay that is, rather than
      * immediately sending out a record the producer will wait for up to the
      * given delay to allow other records to be sent so that the sends can be
      * batched together. This can be thought of as analogous to Nagle's
@@ -1635,6 +1635,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * To use a custom worker pool for continue routing {@link Exchange} after
      * kafka server has acknowledge the message that was sent to it from
      * {@link KafkaProducer} using asynchronous non-blocking processing.
+     * If using this option then you must handle the lifecycle of the thread pool
+     * to shut the pool down when no longer needed.
      */
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;

@@ -15,6 +15,8 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HazelcastAtomicnumberEndpoint target = (HazelcastAtomicnumberEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "defaultoperation":
         case "defaultOperation": target.setDefaultOperation(property(camelContext, org.apache.camel.component.hazelcast.HazelcastOperation.class, value)); return true;
         case "hazelcastinstance":
@@ -23,8 +25,6 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
         case "hazelcastInstanceName": target.setHazelcastInstanceName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

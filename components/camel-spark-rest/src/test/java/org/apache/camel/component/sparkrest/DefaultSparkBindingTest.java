@@ -70,7 +70,7 @@ public class DefaultSparkBindingTest {
         when(httpServletRequest.getRequestURI()).thenReturn("http://localhost?query=value");
         when(httpServletRequest.getContentType()).thenReturn("application/json");
         
-        when(camelExchange.getFromEndpoint()).thenReturn(new SparkEndpoint("/", null));   
+        when(camelExchange.getFromEndpoint()).thenReturn(new SparkRestEndpoint("/", null));
     }
     
     @DataPoints("exchangeHeaderScenarios")

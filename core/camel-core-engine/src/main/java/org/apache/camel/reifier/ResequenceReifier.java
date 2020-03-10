@@ -18,6 +18,7 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -28,14 +29,12 @@ import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
-    public ResequenceReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (ResequenceDefinition)definition);
+    public ResequenceReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ResequenceDefinition)definition);
     }
 
     @Override
@@ -51,13 +50,13 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         }
 
         if (stream != null) {
-            return createStreamResequencer(routeContext, stream);
+            return createStreamResequencer(stream);
         } else {
             // default as batch mode
             if (batch == null) {
                 batch = BatchResequencerConfig.getDefault();
             }
-            return createBatchResequencer(routeContext, batch);
+            return createBatchResequencer(batch);
         }
     }
 
@@ -65,19 +64,18 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
      * Creates a batch {@link Resequencer} instance applying the given
      * <code>config</code>.
      *
-     * @param routeContext route context.
      * @param config batch resequencer configuration.
      * @return the configured batch resequencer.
      * @throws Exception can be thrown
      */
     @SuppressWarnings("deprecation")
-    protected Resequencer createBatchResequencer(RouteContext routeContext, BatchResequencerConfig config) throws Exception {
+    protected Resequencer createBatchResequencer(BatchResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
         // and wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
@@ -100,24 +98,23 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
      * Creates a {@link StreamResequencer} instance applying the given
      * <code>config</code>.
      *
-     * @param routeContext route context.
      * @param config stream resequencer configuration.
      * @return the configured stream resequencer.
      * @throws Exception can be thrwon
      */
-    protected StreamResequencer createStreamResequencer(RouteContext routeContext, StreamResequencerConfig config) throws Exception {
+    protected StreamResequencer createStreamResequencer(StreamResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext, camelContext));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
 
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
         ExpressionResultComparator comparator;
         if (config.getComparatorRef() != null) {
-            comparator = CamelContextHelper.mandatoryLookup(camelContext, config.getComparatorRef(), ExpressionResultComparator.class);
+            comparator = mandatoryLookup(config.getComparatorRef(), ExpressionResultComparator.class);
         } else {
             comparator = config.getComparator();
             if (comparator == null) {

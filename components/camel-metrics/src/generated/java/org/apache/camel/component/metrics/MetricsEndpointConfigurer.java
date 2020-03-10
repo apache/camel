@@ -16,16 +16,16 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
         MetricsEndpoint target = (MetricsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.component.metrics.MetricsTimerAction.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "decrement": target.setDecrement(property(camelContext, java.lang.Long.class, value)); return true;
         case "increment": target.setIncrement(property(camelContext, java.lang.Long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mark": target.setMark(property(camelContext, java.lang.Long.class, value)); return true;
         case "subject": target.setSubject(property(camelContext, java.lang.Object.class, value)); return true;
-        case "value": target.setValue(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "value": target.setValue(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }

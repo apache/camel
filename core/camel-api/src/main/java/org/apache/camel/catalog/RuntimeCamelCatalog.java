@@ -31,6 +31,11 @@ import org.apache.camel.spi.SendDynamicAware;
 public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "runtime-camelcatalog";
+
+    /**
      * Returns the component information as JSon format.
      * <p/>
      * This API is needed by {@link ComponentVerifierExtension}.

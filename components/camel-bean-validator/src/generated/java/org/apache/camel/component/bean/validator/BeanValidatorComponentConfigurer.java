@@ -15,14 +15,14 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanValidatorComponent target = (BeanValidatorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "ignorexmlconfiguration":
-        case "ignoreXmlConfiguration": target.setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
+        case "ignorexmlconfiguration":
+        case "ignoreXmlConfiguration": target.setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messageinterpolator":
         case "messageInterpolator": target.setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
         case "traversableresolver":

@@ -20,12 +20,12 @@ import org.bouncycastle.cms.CMSCompressedDataGenerator;
 import org.bouncycastle.cms.jcajce.ZlibCompressor;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.operator.OutputCompressor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CompressedEntityTest {
     
@@ -60,14 +60,14 @@ public class CompressedEntityTest {
     
     public static final String APPLICATION_PKCS7_MIME_COMPRESSED_TRANSFER_ENCODING = "base64";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
-    
+
     @Test
     public void createCompressedEntityTest() throws Exception {
         TextPlainEntity textPlainEntity = new TextPlainEntity(TEXT_PLAIN_CONTENT, TEXT_PLAIN_CONTENT_CHARSET_NAME,
@@ -81,9 +81,9 @@ public class CompressedEntityTest {
                 textPlainEntity, cGen, compressor, APPLICATION_PKCS7_MIME_COMPRESSED_TRANSFER_ENCODING, false);
 
         MimeEntity decompressedEntity = compressedEntity.getCompressedEntity(new ZlibExpanderProvider());
-        assertTrue("", decompressedEntity instanceof TextPlainEntity);
+        assertTrue(decompressedEntity instanceof TextPlainEntity, "");
         TextPlainEntity decompressedTextPlainEntity = (TextPlainEntity) decompressedEntity;
-        assertEquals("", EXPECTED_TEXT_PLAIN_CONTENT, decompressedTextPlainEntity.getText());
+        assertEquals(EXPECTED_TEXT_PLAIN_CONTENT, decompressedTextPlainEntity.getText(), "");
     }
 
 }

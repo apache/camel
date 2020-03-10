@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", label = "cache,datagrid,clustering")
 public class InfinispanEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "The cache to use")
+    @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")
     @Metadata(required = true)
     private final String cacheName;
     @UriParam

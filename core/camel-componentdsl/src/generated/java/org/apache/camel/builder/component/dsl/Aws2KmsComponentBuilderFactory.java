@@ -47,14 +47,30 @@ public interface Aws2KmsComponentBuilderFactory {
      */
     interface Aws2KmsComponentBuilder extends ComponentBuilder<KMS2Component> {
         /**
-         * Amazon AWS Access Key.
+         * Component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.kms.KMS2Configuration</code>
+         * type.
          * 
          * Group: producer
          */
-        default Aws2KmsComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2KmsComponentBuilder configuration(
+                org.apache.camel.component.aws2.kms.KMS2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * To use a existing configured AWS KMS as client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.kms.KmsClient</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KmsComponentBuilder kmsClient(
+                software.amazon.awssdk.services.kms.KmsClient kmsClient) {
+            doSetProperty("kmsClient", kmsClient);
             return this;
         }
         /**
@@ -79,7 +95,59 @@ public interface Aws2KmsComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which KMS client needs to work.
+         * The operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.kms.KMS2Operations</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KmsComponentBuilder operation(
+                org.apache.camel.component.aws2.kms.KMS2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the KMS client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KmsComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the KMS client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KmsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the KMS client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2KmsComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which EKS client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -87,17 +155,6 @@ public interface Aws2KmsComponentBuilderFactory {
          */
         default Aws2KmsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2KmsComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -115,17 +172,25 @@ public interface Aws2KmsComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS KMS default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.kms.KMS2Configuration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2KmsComponentBuilder configuration(
-                org.apache.camel.component.aws2.kms.KMS2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2KmsComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2KmsComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -139,18 +204,30 @@ public interface Aws2KmsComponentBuilderFactory {
         protected KMS2Component buildConcreteComponent() {
             return new KMS2Component();
         }
+        private org.apache.camel.component.aws2.kms.KMS2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.kms.KMS2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.kms.KMS2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((KMS2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((KMS2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((KMS2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((KMS2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((KMS2Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((KMS2Component) component).setConfiguration((org.apache.camel.component.aws2.kms.KMS2Configuration) value); return true;
+            case "kmsClient": getOrCreateConfiguration((KMS2Component) component).setKmsClient((software.amazon.awssdk.services.kms.KmsClient) value); return true;
+            case "lazyStartProducer": ((KMS2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((KMS2Component) component).setOperation((org.apache.camel.component.aws2.kms.KMS2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((KMS2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((KMS2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((KMS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((KMS2Component) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((KMS2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((KMS2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((KMS2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

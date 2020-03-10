@@ -361,8 +361,8 @@ public interface SdbEndpointBuilderFactory {
      * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
      */
     enum Protocol {
-        http,
-        https;
+        HTTP,
+        HTTPS;
     }
 
     public interface SdbBuilders {

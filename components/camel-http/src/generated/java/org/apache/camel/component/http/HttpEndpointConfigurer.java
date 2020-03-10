@@ -15,53 +15,53 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HttpEndpoint target = (HttpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "disablestreamcache":
-        case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
-        case "headerfilterstrategy":
-        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
-        case "httpbinding":
-        case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
+        case "authdomain":
+        case "authDomain": target.setAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
+        case "authhost":
+        case "authHost": target.setAuthHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "authmethod":
+        case "authMethod": target.setAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "authmethodpriority":
+        case "authMethodPriority": target.setAuthMethodPriority(property(camelContext, java.lang.String.class, value)); return true;
+        case "authpassword":
+        case "authPassword": target.setAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "authusername":
+        case "authUsername": target.setAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "authenticationpreemptive":
+        case "authenticationPreemptive": target.setAuthenticationPreemptive(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeendpoint":
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
         case "clearexpiredcookies":
         case "clearExpiredCookies": target.setClearExpiredCookies(property(camelContext, boolean.class, value)); return true;
-        case "connectionclose":
-        case "connectionClose": target.setConnectionClose(property(camelContext, boolean.class, value)); return true;
-        case "copyheaders":
-        case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
-        case "customhostheader":
-        case "customHostHeader": target.setCustomHostHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "httpmethod":
-        case "httpMethod": target.setHttpMethod(property(camelContext, org.apache.camel.http.common.HttpMethods.class, value)); return true;
-        case "ignoreresponsebody":
-        case "ignoreResponseBody": target.setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "preservehostheader":
-        case "preserveHostHeader": target.setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
-        case "throwexceptiononfailure":
-        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
-        case "transferexception":
-        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
-        case "cookiehandler":
-        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
-        case "cookiestore":
-        case "cookieStore": target.setCookieStore(property(camelContext, org.apache.http.client.CookieStore.class, value)); return true;
-        case "deletewithbody":
-        case "deleteWithBody": target.setDeleteWithBody(property(camelContext, boolean.class, value)); return true;
-        case "getwithbody":
-        case "getWithBody": target.setGetWithBody(property(camelContext, boolean.class, value)); return true;
-        case "okstatuscoderange":
-        case "okStatusCodeRange": target.setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientbuilder":
         case "clientBuilder": target.setClientBuilder(property(camelContext, org.apache.http.impl.client.HttpClientBuilder.class, value)); return true;
         case "clientconnectionmanager":
         case "clientConnectionManager": target.setClientConnectionManager(property(camelContext, org.apache.http.conn.HttpClientConnectionManager.class, value)); return true;
+        case "connectionclose":
+        case "connectionClose": target.setConnectionClose(property(camelContext, boolean.class, value)); return true;
         case "connectionsperroute":
         case "connectionsPerRoute": target.setConnectionsPerRoute(property(camelContext, int.class, value)); return true;
+        case "cookiehandler":
+        case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "cookiestore":
+        case "cookieStore": target.setCookieStore(property(camelContext, org.apache.http.client.CookieStore.class, value)); return true;
+        case "copyheaders":
+        case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
+        case "customhostheader":
+        case "customHostHeader": target.setCustomHostHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "deletewithbody":
+        case "deleteWithBody": target.setDeleteWithBody(property(camelContext, boolean.class, value)); return true;
+        case "disablestreamcache":
+        case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
+        case "getwithbody":
+        case "getWithBody": target.setGetWithBody(property(camelContext, boolean.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "httpbinding":
+        case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
         case "httpclient":
         case "httpClient": target.setHttpClient(property(camelContext, org.apache.http.client.HttpClient.class, value)); return true;
         case "httpclientconfigurer":
@@ -70,6 +70,12 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "httpClientOptions": target.setHttpClientOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "httpcontext":
         case "httpContext": target.setHttpContext(property(camelContext, org.apache.http.protocol.HttpContext.class, value)); return true;
+        case "httpmethod":
+        case "httpMethod": target.setHttpMethod(property(camelContext, org.apache.camel.http.common.HttpMethods.class, value)); return true;
+        case "ignoreresponsebody":
+        case "ignoreResponseBody": target.setIgnoreResponseBody(property(camelContext, boolean.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessagebody":
         case "mapHttpMessageBody": target.setMapHttpMessageBody(property(camelContext, boolean.class, value)); return true;
         case "maphttpmessageformurlencodedbody":
@@ -78,9 +84,10 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "mapHttpMessageHeaders": target.setMapHttpMessageHeaders(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
-        case "usesystemproperties":
-        case "useSystemProperties": target.setUseSystemProperties(property(camelContext, boolean.class, value)); return true;
+        case "okstatuscoderange":
+        case "okStatusCodeRange": target.setOkStatusCodeRange(property(camelContext, java.lang.String.class, value)); return true;
+        case "preservehostheader":
+        case "preserveHostHeader": target.setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
         case "proxyauthdomain":
         case "proxyAuthDomain": target.setProxyAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthhost":
@@ -99,22 +106,15 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "proxyHost": target.setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
         case "proxyPort": target.setProxyPort(property(camelContext, int.class, value)); return true;
-        case "authdomain":
-        case "authDomain": target.setAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
-        case "authenticationpreemptive":
-        case "authenticationPreemptive": target.setAuthenticationPreemptive(property(camelContext, boolean.class, value)); return true;
-        case "authhost":
-        case "authHost": target.setAuthHost(property(camelContext, java.lang.String.class, value)); return true;
-        case "authmethod":
-        case "authMethod": target.setAuthMethod(property(camelContext, java.lang.String.class, value)); return true;
-        case "authmethodpriority":
-        case "authMethodPriority": target.setAuthMethodPriority(property(camelContext, java.lang.String.class, value)); return true;
-        case "authpassword":
-        case "authPassword": target.setAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "authusername":
-        case "authUsername": target.setAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "usesystemproperties":
+        case "useSystemProperties": target.setUseSystemProperties(property(camelContext, boolean.class, value)); return true;
         case "x509hostnameverifier":
         case "x509HostnameVerifier": target.setX509HostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         default: return false;

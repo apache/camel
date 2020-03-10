@@ -38,7 +38,7 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
                 onException(Exception.class).handled(true).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("fail", routeId);
                     }
 
@@ -91,7 +91,7 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
                 onException(Exception.class).handled(true).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
                         assertEquals("fail", routeId);
                     }
                 }).to("mock:error");

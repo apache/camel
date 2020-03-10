@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,11 +39,11 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected Registry createRegistry() throws Exception {
         AntPathMatcherGenericFileFilter<File> filterNotCaseSensitive = new AntPathMatcherGenericFileFilter<>("**/c*");
         filterNotCaseSensitive.setCaseSensitive(false);
 
-        JndiRegistry jndi = super.createRegistry();
+        Registry jndi = super.createRegistry();
         jndi.bind("filter", new AntPathMatcherGenericFileFilter<File>("**/c*"));
         jndi.bind("caseInsensitiveFilter", filterNotCaseSensitive);
         return jndi;

@@ -44,14 +44,21 @@ _znode_) that will be the target of the endpoint:
 == Options
 
 // component options: START
-The ZooKeeper component supports 4 options, which are listed below.
+The ZooKeeper component supports 11 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *listChildren* (common) | Whether the children of the node should be listed | false | boolean
+| *timeout* (common) | The time interval to wait on connection before timing out. | 5000 | int
+| *backoff* (consumer) | The time interval to backoff for after an error before retrying. | 5000 | long
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *repeat* (consumer) | Should changes to the znode be 'watched' and repeatedly processed. | false | boolean
+| *sendEmptyMessageOnDelete* (consumer) | Upon the delete of a znode, should an empty message be send to the consumer | true | boolean
+| *create* (producer) | Should the endpoint create the node if it does not currently exist. | false | boolean
+| *createMode* (producer) | The create mode that should be used for the newly created node. The value can be one of: PERSISTENT, PERSISTENT_SEQUENTIAL, EPHEMERAL, EPHEMERAL_SEQUENTIAL | EPHEMERAL | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | To use a shared ZooKeeperConfiguration |  | ZooKeeperConfiguration

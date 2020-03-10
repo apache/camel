@@ -41,6 +41,7 @@ public class SqlComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlComponent.class);
 
+    @Metadata
     private DataSource dataSource;
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean usePlaceholder = true;

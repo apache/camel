@@ -49,14 +49,68 @@ public interface Aws2DdbComponentBuilderFactory {
      */
     interface Aws2DdbComponentBuilder extends ComponentBuilder<Ddb2Component> {
         /**
-         * Amazon AWS Access Key.
+         * To use the AmazonDynamoDB as the client.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.dynamodb.DynamoDbClient</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder amazonDDBClient(
+                software.amazon.awssdk.services.dynamodb.DynamoDbClient amazonDDBClient) {
+            doSetProperty("amazonDDBClient", amazonDDBClient);
+            return this;
+        }
+        /**
+         * The component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ddb.Ddb2Configuration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder configuration(
+                org.apache.camel.component.aws2.ddb.Ddb2Configuration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Determines whether or not strong consistency should be enforced when
+         * data is read.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder consistentRead(boolean consistentRead) {
+            doSetProperty("consistentRead", consistentRead);
+            return this;
+        }
+        /**
+         * Attribute name when creating table.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
-        default Aws2DdbComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2DdbComponentBuilder keyAttributeName(
+                java.lang.String keyAttributeName) {
+            doSetProperty("keyAttributeName", keyAttributeName);
+            return this;
+        }
+        /**
+         * Attribute type when creating table.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder keyAttributeType(
+                java.lang.String keyAttributeType) {
+            doSetProperty("keyAttributeType", keyAttributeType);
             return this;
         }
         /**
@@ -81,6 +135,71 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
+         * What operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
+         * 
+         * Default: PutItem
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder operation(
+                org.apache.camel.component.aws2.ddb.Ddb2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy host when instantiating the DDB client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * The region in which DynamoDB client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDB client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The provisioned throughput to reserve for reading resources from your
+         * table.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2DdbComponentBuilder readCapacity(java.lang.Long readCapacity) {
+            doSetProperty("readCapacity", readCapacity);
+            return this;
+        }
+        /**
          * The region in which DDB client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -92,14 +211,16 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
+         * The provisioned throughput to reserved for writing resources to your
+         * table.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>java.lang.Long</code> type.
          * 
          * Group: producer
          */
-        default Aws2DdbComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
+        default Aws2DdbComponentBuilder writeCapacity(
+                java.lang.Long writeCapacity) {
+            doSetProperty("writeCapacity", writeCapacity);
             return this;
         }
         /**
@@ -117,17 +238,25 @@ public interface Aws2DdbComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS DDB default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.ddb.Ddb2Configuration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2DdbComponentBuilder configuration(
-                org.apache.camel.component.aws2.ddb.Ddb2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2DdbComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2DdbComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -141,18 +270,35 @@ public interface Aws2DdbComponentBuilderFactory {
         protected Ddb2Component buildConcreteComponent() {
             return new Ddb2Component();
         }
+        private org.apache.camel.component.aws2.ddb.Ddb2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.ddb.Ddb2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.ddb.Ddb2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((Ddb2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((Ddb2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((Ddb2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((Ddb2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "amazonDDBClient": getOrCreateConfiguration((Ddb2Component) component).setAmazonDDBClient((software.amazon.awssdk.services.dynamodb.DynamoDbClient) value); return true;
             case "configuration": ((Ddb2Component) component).setConfiguration((org.apache.camel.component.aws2.ddb.Ddb2Configuration) value); return true;
+            case "consistentRead": getOrCreateConfiguration((Ddb2Component) component).setConsistentRead((boolean) value); return true;
+            case "keyAttributeName": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeName((java.lang.String) value); return true;
+            case "keyAttributeType": getOrCreateConfiguration((Ddb2Component) component).setKeyAttributeType((java.lang.String) value); return true;
+            case "lazyStartProducer": ((Ddb2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((Ddb2Component) component).setOperation((org.apache.camel.component.aws2.ddb.Ddb2Operations) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Ddb2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Ddb2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Ddb2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "readCapacity": getOrCreateConfiguration((Ddb2Component) component).setReadCapacity((java.lang.Long) value); return true;
+            case "region": getOrCreateConfiguration((Ddb2Component) component).setRegion((java.lang.String) value); return true;
+            case "writeCapacity": getOrCreateConfiguration((Ddb2Component) component).setWriteCapacity((java.lang.Long) value); return true;
+            case "basicPropertyBinding": ((Ddb2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((Ddb2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Ddb2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -15,27 +15,27 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EtcdWatchEndpoint target = (EtcdWatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
-        case "servicepath":
-        case "servicePath": target.getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "uris": target.getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
-        case "sendemptyexchangeontimeout":
-        case "sendEmptyExchangeOnTimeout": target.getConfiguration().setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
-        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "fromindex":
         case "fromIndex": target.getConfiguration().setFromIndex(property(camelContext, long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "recursive": target.getConfiguration().setRecursive(property(camelContext, boolean.class, value)); return true;
+        case "sendemptyexchangeontimeout":
+        case "sendEmptyExchangeOnTimeout": target.getConfiguration().setSendEmptyExchangeOnTimeout(property(camelContext, boolean.class, value)); return true;
+        case "servicepath":
+        case "servicePath": target.getConfiguration().setServicePath(property(camelContext, java.lang.String.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "uris": target.getConfiguration().setUris(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
         case "userName": target.getConfiguration().setUserName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;

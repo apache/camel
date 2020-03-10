@@ -177,9 +177,6 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *shuffle* (sort) | To shuffle the list of files (sort in random order) | false | boolean
-| *sortBy* (sort) | Built-in sort by using the File Language. Supports nested sorts, so you can have a sort by file name and as a 2nd group sort by modified date. |  | String
-| *sorter* (sort) | Pluggable sorter as a java.util.Comparator class. |  | Comparator
 | *account* (security) | Account to use for login |  | String
 | *disableSecureDataChannel Defaults* (security) | Use this option to disable default options when using secure data channel. This allows you to be in full control what the execPbsz and execProt setting should be used. Default is false | false | boolean
 | *execPbsz* (security) | When using secure data channel you can set the exec protection buffer size |  | Long
@@ -191,6 +188,9 @@ with the following path and query parameters:
 | *securityProtocol* (security) | Set the underlying security protocol. | TLSv1.2 | String
 | *sslContextParameters* (security) | Gets the JSSE configuration that overrides any settings in FtpsEndpoint#\ftpClientKeyStoreParameters, \ftpClientTrustStoreParameters, and FtpsConfiguration#getSecurityProtocol(). |  | SSLContextParameters
 | *username* (security) | Username to use for login |  | String
+| *shuffle* (sort) | To shuffle the list of files (sort in random order) | false | boolean
+| *sortBy* (sort) | Built-in sort by using the File Language. Supports nested sorts, so you can have a sort by file name and as a 2nd group sort by modified date. |  | String
+| *sorter* (sort) | Pluggable sorter as a java.util.Comparator class. |  | Comparator
 |===
 // endpoint options: END
 

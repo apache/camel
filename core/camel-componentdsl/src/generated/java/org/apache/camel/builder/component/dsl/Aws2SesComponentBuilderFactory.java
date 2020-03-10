@@ -48,14 +48,30 @@ public interface Aws2SesComponentBuilderFactory {
      */
     interface Aws2SesComponentBuilder extends ComponentBuilder<Ses2Component> {
         /**
-         * Amazon AWS Access Key.
+         * To use the AmazonSimpleEmailService as the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>software.amazon.awssdk.services.ses.SesClient</code> type.
          * 
          * Group: producer
          */
-        default Aws2SesComponentBuilder accessKey(java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2SesComponentBuilder amazonSESClient(
+                software.amazon.awssdk.services.ses.SesClient amazonSESClient) {
+            doSetProperty("amazonSESClient", amazonSESClient);
+            return this;
+        }
+        /**
+         * component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.ses.Ses2Configuration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Aws2SesComponentBuilder configuration(
+                org.apache.camel.component.aws2.ses.Ses2Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -80,7 +96,46 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * The region in which SES client needs to work.
+         * To define a proxy host when instantiating the SES client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SesComponentBuilder proxyHost(java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the SES client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SesComponentBuilder proxyPort(java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SES client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2SesComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which SES client needs to work. When using this
+         * parameter, the configuration will expect the lowercase name of the
+         * region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -91,14 +146,52 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Secret Key.
+         * List of reply-to email address(es) for the message, override it using
+         * 'CamelAwsSesReplyToAddresses' header.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SesComponentBuilder replyToAddresses(
+                java.util.List<java.lang.String> replyToAddresses) {
+            doSetProperty("replyToAddresses", replyToAddresses);
+            return this;
+        }
+        /**
+         * The email address to which bounce notifications are to be forwarded,
+         * override it using 'CamelAwsSesReturnPath' header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
-        default Aws2SesComponentBuilder secretKey(java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
+        default Aws2SesComponentBuilder returnPath(java.lang.String returnPath) {
+            doSetProperty("returnPath", returnPath);
+            return this;
+        }
+        /**
+         * The subject which is used if the message header 'CamelAwsSesSubject'
+         * is not present.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SesComponentBuilder subject(java.lang.String subject) {
+            doSetProperty("subject", subject);
+            return this;
+        }
+        /**
+         * List of destination email address. Can be overriden with
+         * 'CamelAwsSesTo' header.
+         * 
+         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SesComponentBuilder to(java.util.List<java.lang.String> to) {
+            doSetProperty("to", to);
             return this;
         }
         /**
@@ -116,17 +209,25 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS SES default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.ses.Ses2Configuration</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2SesComponentBuilder configuration(
-                org.apache.camel.component.aws2.ses.Ses2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2SesComponentBuilder accessKey(java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2SesComponentBuilder secretKey(java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -140,18 +241,33 @@ public interface Aws2SesComponentBuilderFactory {
         protected Ses2Component buildConcreteComponent() {
             return new Ses2Component();
         }
+        private org.apache.camel.component.aws2.ses.Ses2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.ses.Ses2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.ses.Ses2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((Ses2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((Ses2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((Ses2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((Ses2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((Ses2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "amazonSESClient": getOrCreateConfiguration((Ses2Component) component).setAmazonSESClient((software.amazon.awssdk.services.ses.SesClient) value); return true;
             case "configuration": ((Ses2Component) component).setConfiguration((org.apache.camel.component.aws2.ses.Ses2Configuration) value); return true;
+            case "lazyStartProducer": ((Ses2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((Ses2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((Ses2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Ses2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((Ses2Component) component).setRegion((java.lang.String) value); return true;
+            case "replyToAddresses": getOrCreateConfiguration((Ses2Component) component).setReplyToAddresses((java.util.List) value); return true;
+            case "returnPath": getOrCreateConfiguration((Ses2Component) component).setReturnPath((java.lang.String) value); return true;
+            case "subject": getOrCreateConfiguration((Ses2Component) component).setSubject((java.lang.String) value); return true;
+            case "to": getOrCreateConfiguration((Ses2Component) component).setTo((java.util.List) value); return true;
+            case "basicPropertyBinding": ((Ses2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((Ses2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((Ses2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

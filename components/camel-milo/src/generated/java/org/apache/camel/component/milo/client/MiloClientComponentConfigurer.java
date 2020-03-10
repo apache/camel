@@ -11,26 +11,62 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MiloClientComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.milo.client.MiloClientConfiguration getOrCreateConfiguration(MiloClientComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.milo.client.MiloClientConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MiloClientComponent target = (MiloClientComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedsecuritypolicies":
+        case "allowedSecurityPolicies": getOrCreateConfiguration(target).setAllowedSecurityPolicies(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
-        case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
+        case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
-        case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "defaultconfiguration":
-        case "defaultConfiguration": target.setDefaultConfiguration(property(camelContext, org.apache.camel.component.milo.client.MiloClientConfiguration.class, value)); return true;
-        case "producturi":
-        case "productUri": target.setProductUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "reconnecttimeout":
-        case "reconnectTimeout": target.setReconnectTimeout(property(camelContext, java.lang.Long.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "applicationUri": getOrCreateConfiguration(target).setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "channellifetime":
+        case "channelLifetime": getOrCreateConfiguration(target).setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
+        case "clientid":
+        case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.milo.client.MiloClientConfiguration.class, value)); return true;
+        case "discoveryendpointsuffix":
+        case "discoveryEndpointSuffix": getOrCreateConfiguration(target).setDiscoveryEndpointSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "discoveryendpointuri":
+        case "discoveryEndpointUri": getOrCreateConfiguration(target).setDiscoveryEndpointUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "keyalias":
+        case "keyAlias": getOrCreateConfiguration(target).setKeyAlias(property(camelContext, java.lang.String.class, value)); return true;
+        case "keypassword":
+        case "keyPassword": getOrCreateConfiguration(target).setKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": getOrCreateConfiguration(target).setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoretype":
+        case "keyStoreType": getOrCreateConfiguration(target).setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystoreurl":
+        case "keyStoreUrl": getOrCreateConfiguration(target).setKeyStoreUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxpendingpublishrequests":
+        case "maxPendingPublishRequests": getOrCreateConfiguration(target).setMaxPendingPublishRequests(property(camelContext, java.lang.Long.class, value)); return true;
+        case "maxresponsemessagesize":
+        case "maxResponseMessageSize": getOrCreateConfiguration(target).setMaxResponseMessageSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "overridehost":
+        case "overrideHost": getOrCreateConfiguration(target).setOverrideHost(property(camelContext, boolean.class, value)); return true;
+        case "producturi":
+        case "productUri": getOrCreateConfiguration(target).setProductUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "sessionname":
+        case "sessionName": getOrCreateConfiguration(target).setSessionName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sessiontimeout":
+        case "sessionTimeout": getOrCreateConfiguration(target).setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
     }

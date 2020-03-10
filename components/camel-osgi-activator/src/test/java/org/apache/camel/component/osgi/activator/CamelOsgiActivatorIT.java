@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.osgi.activator.CamelRoutesActivator;
 import org.apache.camel.osgi.activator.CamelRoutesActivatorConstants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,8 +46,8 @@ import org.osgi.framework.ServiceRegistration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.streamBundle;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)

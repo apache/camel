@@ -147,7 +147,7 @@ public interface Model {
      * @param id id of the processor definition
      * @return the processor definition or <tt>null</tt> if not found
      */
-    ProcessorDefinition getProcessorDefinition(String id);
+    ProcessorDefinition<?> getProcessorDefinition(String id);
 
     /**
      * Gets the processor definition from any of the routes which with the given
@@ -158,7 +158,7 @@ public interface Model {
      * @return the processor definition or <tt>null</tt> if not found
      * @throws ClassCastException is thrown if the type is not correct type
      */
-    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
+    <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type);
 
     /**
      * Sets the validators that can be referenced in the routes.

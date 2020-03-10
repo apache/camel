@@ -15,6 +15,10 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LogEndpoint target = (LogEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "exchangeformatter":
+        case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
         case "groupactiveonly":
         case "groupActiveOnly": target.setGroupActiveOnly(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "groupdelay":
@@ -29,11 +33,6 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "logmask":
         case "logMask": target.setLogMask(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "marker": target.setMarker(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "exchangeformatter":
-        case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "maxchars":
         case "maxChars": target.setMaxChars(property(camelContext, int.class, value)); return true;
         case "multiline": target.setMultiline(property(camelContext, boolean.class, value)); return true;
@@ -66,6 +65,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "skipbodylineseparator":
         case "skipBodyLineSeparator": target.setSkipBodyLineSeparator(property(camelContext, boolean.class, value)); return true;
         case "style": target.setStyle(property(camelContext, org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

@@ -15,13 +15,15 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchEndpoint target = (ElasticsearchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
-        case "enablesniffer":
-        case "enableSniffer": target.getConfiguration().setEnableSniffer(property(camelContext, boolean.class, value)); return true;
         case "enablessl":
         case "enableSSL": target.getConfiguration().setEnableSSL(property(camelContext, boolean.class, value)); return true;
+        case "enablesniffer":
+        case "enableSniffer": target.getConfiguration().setEnableSniffer(property(camelContext, boolean.class, value)); return true;
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.Integer.class, value)); return true;
         case "hostaddresses":
         case "hostAddresses": target.getConfiguration().setHostAddresses(property(camelContext, java.lang.String.class, value)); return true;
@@ -41,13 +43,11 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
         case "snifferInterval": target.getConfiguration().setSnifferInterval(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usescroll":
         case "useScroll": target.getConfiguration().setUseScroll(property(camelContext, boolean.class, value)); return true;
         case "waitforactiveshards":
         case "waitForActiveShards": target.getConfiguration().setWaitForActiveShards(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

@@ -19,6 +19,9 @@ package org.apache.camel.maven.packaging;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 
@@ -28,7 +31,7 @@ public final class PropertyConfigurerGenerator {
     }
 
     public static void generatePropertyConfigurer(String pn, String cn, String en,
-                                                  String pfqn, String psn, boolean hasSuper,
+                                                  String pfqn, String psn, boolean hasSuper, boolean component,
                                                   Collection<? extends BaseOptionModel> options, Writer w) throws IOException {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
@@ -44,6 +47,20 @@ public final class PropertyConfigurerGenerator {
         w.write("public class " + cn + " extends " + psn + " implements GeneratedPropertyConfigurer {\n");
         w.write("\n");
         if (!options.isEmpty() || !hasSuper) {
+
+            // sort options A..Z so they always have same order
+            options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
+
+            if (component) {
+                // if its a component configurer then configuration classes are optional and we need
+                // to generate a method that can lazy create a new configuration if it was null
+                Optional<? extends BaseOptionModel> configurationOption = findConfiguration(options);
+                if (configurationOption.isPresent()) {
+                    w.write(createGetOrCreateConfiguration(en, configurationOption.get().getConfigurationClass(), configurationOption.get().getConfigurationField()));
+                    w.write("\n");
+                }
+            }
+
             w.write("    @Override\n");
             w.write("    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {\n");
             if (!options.isEmpty()) {
@@ -52,7 +69,7 @@ public final class PropertyConfigurerGenerator {
                 for (BaseOptionModel option : options) {
                     String getOrSet = option.getName();
                     getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
-                    String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getConfigurationField());
+                    String setterLambda = setterLambda(getOrSet, option.getJavaType(), option.getConfigurationField(), component);
                     if (!option.getName().toLowerCase().equals(option.getName())) {
                         w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
@@ -72,21 +89,45 @@ public final class PropertyConfigurerGenerator {
         w.write("\n");
     }
 
-    private static String setterLambda(String getOrSet, String type, String configurationField) {
+    private static Optional<? extends BaseOptionModel> findConfiguration(Collection<? extends BaseOptionModel> options) {
+        return options.stream().filter(o -> o.getConfigurationField() != null).findFirst();
+    }
+
+    private static String setterLambda(String getOrSet, String type, String configurationField, boolean component) {
         // type may contain generics so remove those
         if (type.indexOf('<') != -1) {
             type = type.substring(0, type.indexOf('<'));
         }
         type = type.replace('$', '.');
         if (configurationField != null) {
-            getOrSet = "get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1) + "().set" + getOrSet;
+            if (component) {
+                getOrSet = "getOrCreateConfiguration(target).set" + getOrSet;
+            } else {
+                getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1) + "().set" + getOrSet;
+            }
         } else {
-            getOrSet = "set" + getOrSet;
+            getOrSet = "target.set" + getOrSet;
         }
 
         // ((LogComponent) target).setGroupSize(property(camelContext,
         // java.lang.Integer.class, value))
-        return String.format("target.%s(property(camelContext, %s.class, value))", getOrSet, type);
+        return String.format("%s(property(camelContext, %s.class, value))", getOrSet, type);
+    }
+
+    private static String createGetOrCreateConfiguration(String targetClass, String configurationClass, String configurationField) {
+        String getter = "get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
+        String setter = "set" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
+
+        StringBuilder sb = new StringBuilder();
+        String line1 = String.format("    private %s getOrCreateConfiguration(%s target) {\n", configurationClass, targetClass);
+        String line2 = String.format("        if (target.%s() == null) {\n", getter);
+        String line3 = String.format("            target.%s(new %s());\n", setter, configurationClass);
+        String line4 = String.format("        }\n");
+        String line5 = String.format("        return target.%s();\n", getter);
+        String line6 = String.format("    }\n");
+
+        sb.append(line1).append(line2).append(line3).append(line4).append(line5).append(line6);
+        return sb.toString();
     }
 
 }

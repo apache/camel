@@ -51,7 +51,7 @@ public interface DrillEndpointBuilderFactory {
             return this;
         }
         /**
-         * Drill directory in ZooKeeper.
+         * Drill directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -132,7 +132,7 @@ public interface DrillEndpointBuilderFactory {
             return this;
         }
         /**
-         * ZooKeeper port number.
+         * Port number.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -144,7 +144,7 @@ public interface DrillEndpointBuilderFactory {
             return this;
         }
         /**
-         * ZooKeeper port number.
+         * Port number.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -245,8 +245,7 @@ public interface DrillEndpointBuilderFactory {
          * Syntax: <code>drill:host</code>
          * 
          * Path parameter: host (required)
-         * ZooKeeper host name or IP address. Use local instead of a host name
-         * or IP address to connect to the local Drillbit
+         * Host name or IP address
          */
         default DrillEndpointBuilder drill(String path) {
             return DrillEndpointBuilderFactory.drill(path);
@@ -264,8 +263,7 @@ public interface DrillEndpointBuilderFactory {
      * Syntax: <code>drill:host</code>
      * 
      * Path parameter: host (required)
-     * ZooKeeper host name or IP address. Use local instead of a host name or IP
-     * address to connect to the local Drillbit
+     * Host name or IP address
      */
     static DrillEndpointBuilder drill(String path) {
         class DrillEndpointBuilderImpl extends AbstractEndpointBuilder implements DrillEndpointBuilder, AdvancedDrillEndpointBuilder {

@@ -30,7 +30,9 @@ import org.jgroups.JChannel;
 @Component("jgroups")
 public class JGroupsComponent extends DefaultComponent {
 
+    @Metadata
     private JChannel channel;
+    @Metadata
     private String channelProperties;
     @Metadata(label = "consumer")
     private boolean enableViewMessages;

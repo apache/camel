@@ -173,8 +173,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
         }
 
-        // only cut if we hit max-chars limit
-        if (maxChars > 0 && sb.length() > maxChars) {
+        // only cut if we hit max-chars limit (or are using multiline
+        if (multiline || (maxChars > 0 && sb.length() > maxChars)) {
             StringBuilder answer = new StringBuilder();
             for (String s : sb.toString().split(SEPARATOR)) {
                 if (s != null) {

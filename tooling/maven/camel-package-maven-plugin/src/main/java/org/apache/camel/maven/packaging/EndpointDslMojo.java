@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Generated;
 
+import org.apache.camel.maven.packaging.dsl.component.ComponentsDslMetadataRegistry;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -52,7 +53,6 @@ import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.GenericType.BoundType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -62,6 +62,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
  * Generate Endpoint DSL source files for Components.
@@ -120,11 +122,26 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     @Parameter(defaultValue = "true")
     protected boolean generateEndpointBuilders;
 
-    @Parameter(defaultValue = "${camel-generate-endpoint-dsl}")
+    @Parameter(defaultValue = "true")
     protected boolean generateEndpointDsl;
 
-    @Parameter(defaultValue = "${project.basedir}/src/generated/java")
+    /**
+     * The output directory
+     */
+    @Parameter
     protected File sourcesOutputDir;
+
+    /**
+     * Component Metadata file
+     */
+    @Parameter
+    protected File componentsMetadata;
+
+    /**
+     * Components DSL Metadata
+     */
+    @Parameter
+    protected File outputResourcesDir;
 
     DynamicClassLoader projectClassLoader;
 
@@ -136,21 +153,26 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         componentsFactoriesPackageName = "org.apache.camel.builder.endpoint.dsl";
         generateEndpointBuilderFactory = true;
         generateEndpointBuilders = true;
-        generateEndpointDsl = Boolean.parseBoolean(project.getProperties().getProperty("camel-generate-endpoint-dsl", "false"));
-        sourcesOutputDir = new File(project.getBasedir(), "src/generated/java");
         super.execute(project, projectHelper, buildContext);
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!generateEndpointDsl) {
-            return;
-        }
-
         try {
             projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getTestClasspathElements());
         } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
             throw new RuntimeException(e.getMessage(), e);
+        }
+
+        Path root = findCamelDirectory(baseDir, "core/camel-endpointdsl").toPath();
+        if (sourcesOutputDir == null) {
+            sourcesOutputDir = root.resolve("src/generated/java").toFile();
+        }
+        if (outputResourcesDir == null) {
+            outputResourcesDir = root.resolve("src/generated/resources").toFile();
+        }
+        if (componentsMetadata == null) {
+            componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
         }
 
         Map<File, Supplier<String>> files;
@@ -164,23 +186,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         // generate component endpoint DSL files and write them
         executeComponent(files);
-
-        if (generateEndpointBuilderFactory || generateEndpointBuilders) {
-            getLog().info("Load components EndpointFactories");
-            List<File> endpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
-
-            if (generateEndpointBuilderFactory) {
-                getLog().info("Regenerate EndpointBuilderFactory");
-                // make sure EndpointBuilderFactory is synced
-                synchronizeEndpointBuilderFactoryInterface(endpointFactories);
-            }
-
-            if (generateEndpointBuilders) {
-                getLog().info("Regenerate EndpointBuilders");
-                // make sure EndpointBuilders is synced
-                synchronizeEndpointBuildersInterface(endpointFactories);
-            }
-        }
     }
 
     private static String loadJson(File file) {
@@ -223,20 +228,49 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     overrideComponentName = model.getArtifactId().replace("camel-", "");
                 }
 
-                createEndpointDsl(componentsFactoriesPackageName, model, compModels, overrideComponentName);
+                createEndpointDsl(model, compModels, overrideComponentName);
             }
         }
     }
 
+    private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
+
+        doCreateEndpointDsl(model, aliases, overrideComponentName);
+
+        // Update components metadata
+        getLog().info("Load components EndpointFactories");
+        List<File> endpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
+
+        getLog().info("Regenerate EndpointBuilderFactory");
+        // make sure EndpointBuilderFactory is synced
+        synchronizeEndpointBuilderFactoryInterface(endpointFactories);
+
+        getLog().info("Regenerate EndpointBuilders");
+        // make sure EndpointBuilders is synced
+        synchronizeEndpointBuildersInterface(endpointFactories);
+    }
+
+    private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final ComponentModel componentModel, final String className) {
+        final ComponentsDslMetadataRegistry componentsDslMetadataRegistry =
+                new ComponentsDslMetadataRegistry(sourcesOutputDir.toPath()
+                        .resolve(componentsFactoriesPackageName.replace('.', '/')).toFile(),
+                            componentsMetadata);
+        componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
+
+        getLog().info("Update components metadata with " + className);
+
+        return componentsDslMetadataRegistry;
+    }
+
     @SuppressWarnings("checkstyle:methodlength")
-    private void createEndpointDsl(String packageName, ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
+    private void doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
         String componentClassName = model.getJavaType();
         String builderName = getEndpointName(componentClassName);
         Class<?> realComponentClass = loadClass(componentClassName);
         Class<?> realEndpointClass = loadClass(findEndpointClassName(componentClassName));
 
         final JavaClass javaClass = new JavaClass(getProjectClassLoader());
-        javaClass.setPackage(packageName);
+        javaClass.setPackage(componentsFactoriesPackageName);
         javaClass.setName(builderName + "Factory");
         javaClass.setClass(false);
         javaClass.addImport("org.apache.camel.builder.EndpointConsumerBuilder");
@@ -333,7 +367,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             advancedBuilderClass.addMethod().setName("basic").setReturnType(loadClass(builderClass.getCanonicalName())).setDefault().setBody("return (" + builderName + ") this;");
         }
 
-        generateDummyClass(packageName + ".T");
+        generateDummyClass(componentsFactoriesPackageName + ".T");
 
         String doc = GENERATED_MSG;
         if (!Strings.isEmpty(model.getDescription())) {
@@ -514,7 +548,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             dslClass.addMethod(method.copy()).setDefault().setBodyF("return %s.%s(%s);", javaClass.getName(), method.getName(), String.join(",", method.getParametersNames()));
         }
 
-        writeSourceIfChanged(javaClass, packageName.replace('.', '/'), builderName + "Factory.java", false);
+        writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java", false);
     }
 
     private void synchronizeEndpointBuilderFactoryInterface(List<File> factories) throws MojoFailureException {
@@ -790,7 +824,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 enumClass.getJavaDoc().setText("Proxy enum for <code>" + type + "</code> enum.");
                 enumClasses.put(enumClassName, enumClass);
                 for (Object value : loadClass(type).getEnumConstants()) {
-                    enumClass.addValue(value.toString().replace('.', '_').replace('-', '_'));
+                    enumClass.addValue((((Enum<?>) value).name()).replace('.', '_').replace('-', '_'));
                 }
             }
             type = javaClass.getPackage() + "." + javaClass.getName() + "$" + enumClassName;

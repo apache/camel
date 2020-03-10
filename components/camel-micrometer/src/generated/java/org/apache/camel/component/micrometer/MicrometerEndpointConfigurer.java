@@ -16,14 +16,14 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "decrement": target.setDecrement(property(camelContext, java.lang.String.class, value)); return true;
         case "increment": target.setIncrement(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "value": target.setValue(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "value": target.setValue(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

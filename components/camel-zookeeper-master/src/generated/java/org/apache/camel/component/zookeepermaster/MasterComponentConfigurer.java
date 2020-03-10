@@ -15,21 +15,21 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MasterComponent target = (MasterComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "containeridfactory":
         case "containerIdFactory": target.setContainerIdFactory(property(camelContext, org.apache.camel.component.zookeepermaster.ContainerIdFactory.class, value)); return true;
+        case "curator": target.setCurator(property(camelContext, org.apache.curator.framework.CuratorFramework.class, value)); return true;
         case "maximumconnectiontimeout":
         case "maximumConnectionTimeout": target.setMaximumConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "zkroot":
         case "zkRoot": target.setZkRoot(property(camelContext, java.lang.String.class, value)); return true;
-        case "zookeeperurl":
-        case "zooKeeperUrl": target.setZooKeeperUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "curator": target.setCurator(property(camelContext, org.apache.curator.framework.CuratorFramework.class, value)); return true;
         case "zookeeperpassword":
         case "zooKeeperPassword": target.setZooKeeperPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "zookeeperurl":
+        case "zooKeeperUrl": target.setZooKeeperUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }

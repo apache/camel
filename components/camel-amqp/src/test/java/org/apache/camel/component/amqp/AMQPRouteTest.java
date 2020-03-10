@@ -143,7 +143,7 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     private void sendAmqpMessage(AMQPComponent component, String queue, String body,
                                  Consumer<AmqpJmsMessageFacade> messageCustomizer) throws JMSException {
-        ConnectionFactory factory = component.getConnectionFactory();
+        ConnectionFactory factory = component.getConfiguration().getConnectionFactory();
         try (Connection connection = factory.createConnection();
              Session session = connection.createSession();
              MessageProducer producer = session.createProducer(session.createQueue(queue))) {

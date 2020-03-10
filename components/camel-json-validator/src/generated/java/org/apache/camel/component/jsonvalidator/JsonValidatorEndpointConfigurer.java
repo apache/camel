@@ -15,8 +15,12 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonValidatorEndpoint target = (JsonValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "errorhandler":
+        case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class, value)); return true;
         case "failonnullbody":
         case "failOnNullBody": target.setFailOnNullBody(property(camelContext, boolean.class, value)); return true;
         case "failonnullheader":
@@ -25,10 +29,6 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "headerName": target.setHeaderName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "errorhandler":
-        case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class, value)); return true;
         case "schemaloader":
         case "schemaLoader": target.setSchemaLoader(property(camelContext, org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;

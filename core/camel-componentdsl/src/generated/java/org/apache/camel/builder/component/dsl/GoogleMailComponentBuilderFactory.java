@@ -49,6 +49,29 @@ public interface GoogleMailComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleMailComponent> {
         /**
+         * Google mail application name. Example would be camel-google-mail/1.0.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleMailComponentBuilder applicationName(
+                java.lang.String applicationName) {
+            doSetProperty("applicationName", applicationName);
+            return this;
+        }
+        /**
+         * Client ID of the mail application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default GoogleMailComponentBuilder clientId(java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
          * To use the shared configuration.
          * 
          * The option is a:
@@ -129,6 +152,45 @@ public interface GoogleMailComponentBuilderFactory {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the mail application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     class GoogleMailComponentBuilderImpl
@@ -140,17 +202,29 @@ public interface GoogleMailComponentBuilderFactory {
         protected GoogleMailComponent buildConcreteComponent() {
             return new GoogleMailComponent();
         }
+        private org.apache.camel.component.google.mail.GoogleMailConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.google.mail.GoogleMailComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.google.mail.GoogleMailConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
+            case "applicationName": getOrCreateConfiguration((GoogleMailComponent) component).setApplicationName((java.lang.String) value); return true;
+            case "clientId": getOrCreateConfiguration((GoogleMailComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleMailComponent) component).setConfiguration((org.apache.camel.component.google.mail.GoogleMailConfiguration) value); return true;
             case "bridgeErrorHandler": ((GoogleMailComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleMailComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GoogleMailComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleMailComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
+            case "accessToken": getOrCreateConfiguration((GoogleMailComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleMailComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleMailComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
         }

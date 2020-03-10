@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jcache;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -26,7 +25,6 @@ import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 import javax.cache.configuration.Factory;
 import javax.cache.event.CacheEntryEventFilter;
-import javax.cache.event.EventType;
 import javax.cache.expiry.ExpiryPolicy;
 import javax.cache.integration.CacheLoader;
 import javax.cache.integration.CacheWriter;

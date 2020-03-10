@@ -24,16 +24,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Route;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.impl.engine.EmptyProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.ProducerCache;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
@@ -43,7 +45,6 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -246,6 +247,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
             Endpoint endpoint;
             try {
                 Object recipient = iter.next(exchange);
+                recipient = prepareRecipient(exchange, recipient);
                 Endpoint existing = getExistingEndpoint(exchange, recipient);
                 if (existing == null) {
                     endpoint = resolveEndpoint(exchange, recipient, prototype);
@@ -315,17 +317,41 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return true;
     }
 
-    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
-        // trim strings as end users might have added spaces between separators
-        if (recipient instanceof Endpoint) {
-            return (Endpoint) recipient;
+    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
         } else if (recipient instanceof String) {
+            // trim strings as end users might have added spaces between separators
             recipient = ((String) recipient).trim();
         }
         if (recipient != null) {
-            // convert to a string type we can work with
-            String uri = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
-            return exchange.getContext().hasEndpoint(uri);
+            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            String uri;
+            if (recipient instanceof String) {
+                uri = (String) recipient;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint
+            return ecc.normalizeUri(uri);
+        }
+        return null;
+    }
+
+    protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {
+        if (recipient instanceof Endpoint) {
+            return (Endpoint) recipient;
+        }
+        if (recipient != null) {
+            if (recipient instanceof NormalizedEndpointUri) {
+                NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
+                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+                return ecc.hasEndpoint(nu);
+            } else {
+                String uri = recipient.toString();
+                return exchange.getContext().hasEndpoint(uri);
+            }
         }
         return null;
     }
@@ -361,13 +387,13 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return copy;
     }
 
-    protected AsyncProcessor createErrorHandler(RouteContext routeContext, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
+    protected AsyncProcessor createErrorHandler(Route route, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
         AsyncProcessor answer = processor;
 
         boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
 
         // do not wrap in error handler if we are inside a try block
-        if (!tryBlock && routeContext != null && errorHandler != null) {
+        if (!tryBlock && route != null && errorHandler != null) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
@@ -398,8 +424,8 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return producerCache.doInAsyncProducer(endpoint, exchange, callback, (p, ex, cb) -> {
 
             // rework error handling to support fine grained error handling
-            RouteContext routeContext = ex.getUnitOfWork() != null ? ex.getUnitOfWork().getRouteContext() : null;
-            AsyncProcessor target = createErrorHandler(routeContext, ex, p, endpoint);
+            Route route = ExchangeHelper.getRoute(ex);
+            AsyncProcessor target = createErrorHandler(route, ex, p, endpoint);
 
             // set property which endpoint we send to and the producer that can do it
             ex.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
@@ -448,6 +474,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                             boolean prototype = cacheSize < 0;
                             try {
                                 Object recipient = iter.next(ex);
+                                recipient = prepareRecipient(exchange, recipient);
                                 Endpoint existing = getExistingEndpoint(exchange, recipient);
                                 if (existing == null) {
                                     nextEndpoint = resolveEndpoint(exchange, recipient, prototype);

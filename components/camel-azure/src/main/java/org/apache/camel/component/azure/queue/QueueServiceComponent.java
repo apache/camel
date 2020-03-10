@@ -21,14 +21,17 @@ import java.util.Set;
 
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.queue.CloudQueue;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+
 @Component("azure-queue")
 public class QueueServiceComponent extends DefaultComponent {
+
+    public static final String MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE =
+            "One of azureQueueClient, credentials or both credentialsAccountName and credentialsAccountKey must be specified";
     
     @Metadata(label = "advanced")
     private QueueServiceConfiguration configuration;
@@ -77,9 +80,9 @@ public class QueueServiceComponent extends DefaultComponent {
 
     private void checkCredentials(QueueServiceConfiguration cfg) {
         CloudQueue client = cfg.getAzureQueueClient();
-        StorageCredentials creds = client == null ? cfg.getCredentials() : client.getServiceClient().getCredentials();
+        StorageCredentials creds = client == null ? cfg.getAccountCredentials() : client.getServiceClient().getCredentials();
         if (creds == null) {
-            throw new IllegalArgumentException("Credentials must be specified.");
+            throw new IllegalArgumentException(MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE);
         }
     }
     

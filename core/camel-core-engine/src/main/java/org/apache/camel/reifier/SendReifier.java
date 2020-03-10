@@ -19,29 +19,30 @@ package org.apache.camel.reifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 
 public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
 
-    public SendReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (SendDefinition) definition);
+    public SendReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (SendDefinition) definition);
     }
 
     @Override
     public Processor createProcessor() throws Exception {
-        Endpoint endpoint = resolveEndpoint(routeContext);
+        Endpoint endpoint = resolveEndpoint();
         return new SendProcessor(endpoint, parse(ExchangePattern.class, definition.getPattern()));
     }
 
-    public Endpoint resolveEndpoint(RouteContext context) {
+    public Endpoint resolveEndpoint() {
         if (definition.getEndpoint() == null) {
             if (definition.getEndpointProducerBuilder() == null) {
-                return context.resolveEndpoint(definition.getEndpointUri(), (String)null);
+                return CamelContextHelper.resolveEndpoint(camelContext, definition.getEndpointUri(), (String)null);
             } else {
-                return definition.getEndpointProducerBuilder().resolve(context.getCamelContext());
+                return definition.getEndpointProducerBuilder().resolve(camelContext);
             }
         } else {
             return definition.getEndpoint();

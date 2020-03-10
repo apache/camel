@@ -33,13 +33,7 @@ import software.amazon.awssdk.services.mq.MqClient;
 public class MQ2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private MQ2Configuration configuration;
+    private MQ2Configuration configuration = new MQ2Configuration();
 
     public MQ2Component() {
         this(null);
@@ -55,9 +49,6 @@ public class MQ2Component extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MQ2Configuration configuration = this.configuration != null ? this.configuration.copy() : new MQ2Configuration();
         MQ2Endpoint endpoint = new MQ2Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonMqClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -72,43 +63,10 @@ public class MQ2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS MQ default configuration
+     * Component configuration
      */
     public void setConfiguration(MQ2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    /**
-     * The region in which MQ client needs to work
-     */
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     private void checkAndSetRegistryClient(MQ2Configuration configuration) {

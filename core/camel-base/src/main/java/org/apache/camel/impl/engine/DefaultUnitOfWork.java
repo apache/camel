@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
@@ -33,7 +32,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.InflightRepository;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
@@ -62,8 +60,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private final Exchange exchange;
     private final ExtendedCamelContext context;
     private Logger log;
-    private RouteContext prevRouteContext;
-    private RouteContext routeContext;
+    private Route prevRoute;
+    private Route route;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
@@ -287,21 +285,21 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     @Override
-    public RouteContext getRouteContext() {
-        return routeContext;
+    public Route getRoute() {
+        return route;
     }
 
     @Override
-    public void pushRouteContext(RouteContext routeContext) {
-        this.prevRouteContext = this.routeContext;
-        this.routeContext = routeContext;
+    public void pushRoute(Route route) {
+        this.prevRoute = this.route;
+        this.route = route;
     }
 
     @Override
-    public RouteContext popRouteContext() {
-        RouteContext answer = this.routeContext;
-        this.routeContext = this.prevRouteContext;
-        this.prevRouteContext = null;
+    public Route popRoute() {
+        Route answer = this.route;
+        this.route = this.prevRoute;
+        this.prevRoute = null;
         return answer;
     }
 

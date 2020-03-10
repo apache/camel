@@ -21,16 +21,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> extends ErrorHandlerReifier<T> {
 
-    public DefaultErrorHandlerReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, (T)definition);
+    public DefaultErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, (T)definition);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> ex
                                                              definition.getRetryWhilePolicy(camelContext), getExecutorService(camelContext),
                                                              definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
         // configure error handler before we can use it
-        configure(routeContext, answer);
+        configure(answer);
         return answer;
     }
 
@@ -51,7 +51,7 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerBuilder> ex
             // camel context will shutdown the executor when it shutdown so no
             // need to shut it down when stopping
             if (executorServiceRef != null) {
-                executorService = camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ScheduledExecutorService.class);
+                executorService = lookup(executorServiceRef, ScheduledExecutorService.class);
                 if (executorService == null) {
                     ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
                     ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);

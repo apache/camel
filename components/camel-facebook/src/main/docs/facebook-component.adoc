@@ -57,17 +57,44 @@ to application APIs.
 
 
 // component options: START
-The Facebook component supports 4 options, which are listed below.
+The Facebook component supports 31 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *clientURL* (common) | Facebook4J API client URL |  | String
+| *clientVersion* (common) | Facebook4J client API version |  | String
+| *debugEnabled* (common) | Enables deubg output. Effective only with the embedded logger | false | Boolean
+| *gzipEnabled* (common) | Use Facebook GZIP encoding | true | Boolean
+| *httpConnectionTimeout* (common) | Http connection timeout in milliseconds | 20000 | Integer
+| *httpDefaultMaxPerRoute* (common) | HTTP maximum connections per route | 2 | Integer
+| *httpMaxTotalConnections* (common) | HTTP maximum total connections | 20 | Integer
+| *httpReadTimeout* (common) | Http read timeout in milliseconds | 120000 | Integer
+| *httpRetryCount* (common) | Number of HTTP retries | 0 | Integer
+| *httpRetryIntervalSeconds* (common) | HTTP retry interval in seconds | 5 | Integer
+| *httpStreamingReadTimeout* (common) | HTTP streaming read timeout in milliseconds | 40000 | Integer
+| *jsonStoreEnabled* (common) | If set to true, raw JSON forms will be stored in DataObjectFactory | false | Boolean
+| *mbeanEnabled* (common) | If set to true, Facebook4J mbean will be registerd | false | Boolean
+| *prettyDebugEnabled* (common) | Prettify JSON debug output if set to true | false | Boolean
+| *restBaseURL* (common) | API base URL | https://graph.facebook.com/ | String
+| *useSSL* (common) | Use SSL | true | Boolean
+| *videoBaseURL* (common) | Video API base URL | https://graph-video.facebook.com/ | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | To use the shared configuration |  | FacebookConfiguration
+| *httpProxyHost* (proxy) | HTTP proxy server host name |  | String
+| *httpProxyPassword* (proxy) | HTTP proxy server password |  | String
+| *httpProxyPort* (proxy) | HTTP proxy server port |  | Integer
+| *httpProxyUser* (proxy) | HTTP proxy server user name |  | String
+| *oAuthAccessToken* (security) | The user access token |  | String
+| *oAuthAccessTokenURL* (security) | OAuth access token URL | https://graph.facebook.com/oauth/access_token | String
+| *oAuthAppId* (security) | The application Id |  | String
+| *oAuthAppSecret* (security) | The application Secret |  | String
+| *oAuthAuthorizationURL* (security) | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
+| *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 |===
 // component options: END
 

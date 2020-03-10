@@ -44,10 +44,18 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core-engine</artifactId>
 		</dependency>		
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-languages</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-management</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-languages</artifactId>
+        </dependency>
 
         <!-- common deps used in tests -->
         <dependency>

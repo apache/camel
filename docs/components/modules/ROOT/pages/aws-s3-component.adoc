@@ -41,20 +41,50 @@ from("aws-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefi
 
 
 // component options: START
-The AWS S3 Storage Service component supports 7 options, which are listed below.
+The AWS S3 Storage Service component supports 37 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessKey* (common) | Amazon AWS Access Key |  | String
-| *region* (common) | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
-| *secretKey* (common) | Amazon AWS Secret Key |  | String
+| *amazonS3Client* (common) | Reference to a com.amazonaws.services.s3.AmazonS3 in the registry. |  | AmazonS3
+| *autoCreateBucket* (common) | Setting the autocreation of the bucket | true | boolean
+| *configuration* (common) | The component configuration |  | S3Configuration
+| *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
+| *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
+| *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
+| *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
+| *proxyProtocol* (common) | To define a proxy protocol when instantiating the S3 client. The value can be one of: HTTP, HTTPS | HTTPS | Protocol
+| *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
+| *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
+| *useEncryption* (common) | Define if encryption must be used or not | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *deleteAfterRead* (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the S3Constants#BUCKET_NAME and S3Constants#KEY headers, or only the S3Constants#KEY header. | true | boolean
+| *delimiter* (consumer) | The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| *fileName* (consumer) | To get the object from the bucket with the given file name |  | String
+| *includeBody* (consumer) | If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will be set with the S3 object metadata, but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
+| *prefix* (consumer) | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| *autocloseBody* (consumer) | If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
+| *deleteAfterWrite* (producer) | Delete file object after the S3 file has been uploaded | false | boolean
+| *keyName* (producer) | Setting the key name for an element in the bucket through endpoint parameter |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *multiPartUpload* (producer) | If it is true, camel will upload the file with multi part format, the part size is decided by the option of partSize | false | boolean
+| *operation* (producer) | The operation to do in case the user don't want to do only an upload. The value can be one of: copyObject, deleteBucket, listBuckets, downloadLink |  | S3Operations
+| *partSize* (producer) | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | long
+| *serverSideEncryption* (producer) | Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use AES256. |  | String
+| *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
+| *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
+| *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
+| *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
+| *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
+| *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
+| *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
+| *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *configuration* (advanced) | The AWS S3 default configuration |  | S3Configuration
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // component options: END
 
@@ -127,13 +157,13 @@ with the following path and query parameters:
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
 | *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
 | *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
 | *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
 | *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int

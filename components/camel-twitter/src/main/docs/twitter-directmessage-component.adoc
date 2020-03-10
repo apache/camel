@@ -82,6 +82,10 @@ with the following path and query parameters:
 | *numberOfPages* (filter) | The number of pages result which you want camel-twitter to consume. | 1 | Integer
 | *sinceId* (filter) | The last tweet id which will be used for pulling the tweets. It is useful when the camel route is restarted after a long running. | 1 | long
 | *userIds* (filter) | To filter by user ids for filter. Multiple values can be separated by comma. |  | String
+| *httpProxyHost* (proxy) | The http proxy host which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
+| *httpProxyPassword* (proxy) | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
+| *httpProxyPort* (proxy) | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | Integer
+| *httpProxyUser* (proxy) | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
@@ -96,15 +100,11 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. The value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *sortById* (sort) | Sorts by id, so the oldest are first, and newest last. | true | boolean
-| *httpProxyHost* (proxy) | The http proxy host which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
-| *httpProxyPassword* (proxy) | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
-| *httpProxyPort* (proxy) | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | Integer
-| *httpProxyUser* (proxy) | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
 | *accessToken* (security) | The access token. Can also be configured on the TwitterComponent level instead. |  | String
 | *accessTokenSecret* (security) | The access secret. Can also be configured on the TwitterComponent level instead. |  | String
 | *consumerKey* (security) | The consumer key. Can also be configured on the TwitterComponent level instead. |  | String
 | *consumerSecret* (security) | The consumer secret. Can also be configured on the TwitterComponent level instead. |  | String
+| *sortById* (sort) | Sorts by id, so the oldest are first, and newest last. | true | boolean
 |===
 // endpoint options: END
 

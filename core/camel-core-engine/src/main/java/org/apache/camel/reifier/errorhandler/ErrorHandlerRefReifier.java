@@ -18,18 +18,28 @@ package org.apache.camel.reifier.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 public class ErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandlerBuilderRef> {
 
-    public ErrorHandlerRefReifier(RouteContext routeContext, ErrorHandlerFactory definition) {
-        super(routeContext, (ErrorHandlerBuilderRef)definition);
+    public ErrorHandlerRefReifier(Route route, ErrorHandlerFactory definition) {
+        super(route, (ErrorHandlerBuilderRef)definition);
     }
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        return definition.createErrorHandler(routeContext, processor);
+        ErrorHandlerFactory handler = lookupErrorHandler(route);
+        return ErrorHandlerReifier.reifier(route, handler).createErrorHandler(processor);
+    }
+
+    private ErrorHandlerFactory lookupErrorHandler(Route route) {
+        ErrorHandlerFactory handler =
+                ErrorHandlerReifier.lookupErrorHandlerFactory(route, definition.getRef());
+        ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + "'");
+        route.addErrorHandlerFactoryReference(definition, handler);
+        return handler;
     }
 
 }

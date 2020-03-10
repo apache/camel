@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.RestConfiguration;
 
 /**
  * A {@code WebhookCapableEndpoint} is a special kind of endpoint that is able to operate in webhook mode if required.

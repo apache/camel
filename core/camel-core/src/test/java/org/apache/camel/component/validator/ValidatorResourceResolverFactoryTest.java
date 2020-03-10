@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.naming.Context;
+
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -27,9 +29,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,13 +41,13 @@ import static org.awaitility.Awaitility.await;
 
 public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
-    private JndiRegistry registry;
+    private Context jndiContext;
 
     @Test
     public void testConfigurationOnEndpoint() throws Exception {
         // ensure that validator from test method "testConfigurationOnComponent"
         // is unbind
-        registry.getContext().unbind("validator");
+        jndiContext.unbind("validator");
 
         String directStart = "direct:start";
         String endpointUri = "validator:org/apache/camel/component/validator/xsds/person.xsd?resourceResolverFactory=#resourceResolverFactory";
@@ -56,7 +60,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         // set resource resolver factory on component
         ValidatorComponent validatorComponent = new ValidatorComponent();
         validatorComponent.setResourceResolverFactory(new ResourceResolverFactoryImpl());
-        registry.bind("validator", validatorComponent);
+        jndiContext.bind("validator", validatorComponent);
 
         String directStart = "direct:startComponent";
         String endpointUri = "validator:org/apache/camel/component/validator/xsds/person.xsd";
@@ -105,10 +109,10 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        registry = super.createRegistry();
-        registry.bind("resourceResolverFactory", new ResourceResolverFactoryImpl());
-        return registry;
+    protected Registry createRegistry() throws Exception {
+        jndiContext = createJndiContext();
+        jndiContext.bind("resourceResolverFactory", new ResourceResolverFactoryImpl());
+        return new DefaultRegistry(new JndiBeanRepository(jndiContext));
 
     }
 

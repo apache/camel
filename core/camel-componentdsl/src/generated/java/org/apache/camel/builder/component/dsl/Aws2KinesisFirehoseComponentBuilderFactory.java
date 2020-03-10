@@ -51,15 +51,31 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             extends
                 ComponentBuilder<KinesisFirehose2Component> {
         /**
-         * Amazon AWS Access Key.
+         * Amazon Kinesis Firehose client to use for all requests for this
+         * endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>software.amazon.awssdk.services.firehose.FirehoseClient</code>
+         * type.
          * 
          * Group: producer
          */
-        default Aws2KinesisFirehoseComponentBuilder accessKey(
-                java.lang.String accessKey) {
-            doSetProperty("accessKey", accessKey);
+        default Aws2KinesisFirehoseComponentBuilder amazonKinesisFirehoseClient(
+                software.amazon.awssdk.services.firehose.FirehoseClient amazonKinesisFirehoseClient) {
+            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
+            return this;
+        }
+        /**
+         * Component configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder configuration(
+                org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -84,7 +100,51 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
-         * Amazon AWS Region.
+         * To define a proxy host when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder proxyHost(
+                java.lang.String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * To define a proxy port when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder proxyPort(
+                java.lang.Integer proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis Firehose
+         * client.
+         * 
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         */
+        default Aws2KinesisFirehoseComponentBuilder proxyProtocol(
+                software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * The region in which Kinesis Firehose client needs to work. When using
+         * this parameter, the configuration will expect the lowercase name of
+         * the region (for example ap-east-1) You'll need to use the name
+         * Region.EU_WEST_1.id().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -93,18 +153,6 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         default Aws2KinesisFirehoseComponentBuilder region(
                 java.lang.String region) {
             doSetProperty("region", region);
-            return this;
-        }
-        /**
-         * Amazon AWS Secret Key.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2KinesisFirehoseComponentBuilder secretKey(
-                java.lang.String secretKey) {
-            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -122,16 +170,27 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
-         * The AWS Kinesis Firehose default configuration.
+         * Amazon AWS Access Key.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default Aws2KinesisFirehoseComponentBuilder configuration(
-                org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration configuration) {
-            doSetProperty("configuration", configuration);
+        default Aws2KinesisFirehoseComponentBuilder accessKey(
+                java.lang.String accessKey) {
+            doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Amazon AWS Secret Key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default Aws2KinesisFirehoseComponentBuilder secretKey(
+                java.lang.String secretKey) {
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -145,18 +204,29 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         protected KinesisFirehose2Component buildConcreteComponent() {
             return new KinesisFirehose2Component();
         }
+        private org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.firehose.KinesisFirehose2Component component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "accessKey": ((KinesisFirehose2Component) component).setAccessKey((java.lang.String) value); return true;
-            case "lazyStartProducer": ((KinesisFirehose2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "region": ((KinesisFirehose2Component) component).setRegion((java.lang.String) value); return true;
-            case "secretKey": ((KinesisFirehose2Component) component).setSecretKey((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((KinesisFirehose2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "amazonKinesisFirehoseClient": getOrCreateConfiguration((KinesisFirehose2Component) component).setAmazonKinesisFirehoseClient((software.amazon.awssdk.services.firehose.FirehoseClient) value); return true;
             case "configuration": ((KinesisFirehose2Component) component).setConfiguration((org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration) value); return true;
+            case "lazyStartProducer": ((KinesisFirehose2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "proxyHost": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyPort((java.lang.Integer) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((KinesisFirehose2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
+            case "region": getOrCreateConfiguration((KinesisFirehose2Component) component).setRegion((java.lang.String) value); return true;
+            case "basicPropertyBinding": ((KinesisFirehose2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "accessKey": getOrCreateConfiguration((KinesisFirehose2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "secretKey": getOrCreateConfiguration((KinesisFirehose2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;
             }
         }

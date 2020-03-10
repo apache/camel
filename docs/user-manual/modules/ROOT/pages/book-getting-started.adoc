@@ -241,7 +241,7 @@ the _location_ of a resource.
 
 A _URI_ (uniform resource identifier) is a URL _or_ a URN. So, to fully
 understand what URI means, you need to first understand what is a URN. +
-_URN_ is an acronym for __uniform resource name__. There are may "unique
+_URN_ is an acronym for __uniform resource name__. There are many "unique
 identifier" schemes in the world, for example, ISBNs (globally unique
 for books), social security numbers (unique within a country), customer
 numbers (unique within a company's customers database) and telephone

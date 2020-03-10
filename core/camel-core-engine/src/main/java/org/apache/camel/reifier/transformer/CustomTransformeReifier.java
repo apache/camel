@@ -34,7 +34,7 @@ public class CustomTransformeReifier extends TransformerReifier<CustomTransforme
         }
         Transformer transformer;
         if (definition.getRef() != null) {
-            transformer = camelContext.getRegistry().lookupByNameAndType(parseString(definition.getRef()), Transformer.class);
+            transformer = lookup(parseString(definition.getRef()), Transformer.class);
             if (transformer == null) {
                 throw new IllegalArgumentException("Cannot find transformer with ref:" + definition.getRef());
             }

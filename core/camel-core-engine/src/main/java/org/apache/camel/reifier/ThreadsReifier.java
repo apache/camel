@@ -20,19 +20,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
-    public ThreadsReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (ThreadsDefinition) definition);
+    public ThreadsReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ThreadsDefinition) definition);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         ExecutorService threadPool = getConfiguredExecutorService(name, definition, false);
 
         // resolve what rejected policy to use
-        ThreadPoolRejectedPolicy policy = resolveRejectedPolicy(routeContext);
+        ThreadPoolRejectedPolicy policy = resolveRejectedPolicy();
         if (policy == null) {
             if (parseBoolean(definition.getCallerRunsWhenRejected(), true)) {
                 // should use caller runs by default if not configured
@@ -100,7 +100,7 @@ public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
         return new ThreadsProcessor(camelContext, threadPool, shutdownThreadPool, policy);
     }
 
-    protected ThreadPoolRejectedPolicy resolveRejectedPolicy(RouteContext routeContext) {
+    protected ThreadPoolRejectedPolicy resolveRejectedPolicy() {
         if (definition.getExecutorServiceRef() != null && definition.getRejectedPolicy() == null) {
             ThreadPoolProfile threadPoolProfile = camelContext.getExecutorServiceManager().getThreadPoolProfile(parseString(definition.getExecutorServiceRef()));
             if (threadPoolProfile != null) {

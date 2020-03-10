@@ -15,6 +15,8 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FlinkEndpoint target = (FlinkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "collect": target.setCollect(property(camelContext, boolean.class, value)); return true;
         case "dataset":
         case "dataSet": target.setDataSet(property(camelContext, org.apache.flink.api.java.DataSet.class, value)); return true;
@@ -26,8 +28,6 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "dataStreamCallback": target.setDataStreamCallback(property(camelContext, org.apache.camel.component.flink.DataStreamCallback.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

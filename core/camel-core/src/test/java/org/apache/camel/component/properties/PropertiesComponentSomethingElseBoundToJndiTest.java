@@ -18,7 +18,7 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
 public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTestSupport {
@@ -49,8 +49,8 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         // bind something else as properties, but this should not cause Camel to
         // fail start
         jndi.bind("properties", this);

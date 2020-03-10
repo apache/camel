@@ -536,7 +536,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
         }
 
-        if (copy != null && copy.size() > 0) {
+        if (copy.size() > 0) {
             LOG.debug("Setting user extra triggerParameters {}", copy);
             setProperties(result, copy);
         }

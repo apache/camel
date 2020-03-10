@@ -38,16 +38,31 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Caffeine LoadCache component supports 3 options, which are listed below.
+The Caffeine LoadCache component supports 18 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
+| *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
+| *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| *evictionType* (producer) | Set the eviction Type for this cache. The value can be one of: size_based, time_based | SIZE_BASED | EvictionType
+| *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
+| *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
+| *initialCapacity* (producer) | Set the initial Capacity for the cache | 10000 | int
+| *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *maximumSize* (producer) | Set the maximum size for the cache | 10000 | int
+| *removalListener* (producer) | Set a specific removal Listener for the cache |  | RemovalListener
+| *statsCounter* (producer) | Set a specific Stats Counter for the cache stats |  | StatsCounter
+| *statsEnabled* (producer) | To enable stats on the cache | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | Sets the global component configuration |  | CaffeineConfiguration
+| *keyType* (advanced) | The cache key type, default java.lang.Object |  | String
+| *valueType* (advanced) | The cache value type, default java.lang.Object |  | String
 |===
 // component options: END
 

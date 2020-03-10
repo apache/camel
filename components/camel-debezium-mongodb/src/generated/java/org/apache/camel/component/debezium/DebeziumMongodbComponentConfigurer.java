@@ -11,15 +11,100 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
 
+    private org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMongodbComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DebeziumMongodbComponent target = (DebeziumMongodbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "collectionblacklist":
+        case "collectionBlacklist": getOrCreateConfiguration(target).setCollectionBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectionwhitelist":
+        case "collectionWhitelist": getOrCreateConfiguration(target).setCollectionWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
+        case "connectbackoffinitialdelayms":
+        case "connectBackoffInitialDelayMs": getOrCreateConfiguration(target).setConnectBackoffInitialDelayMs(property(camelContext, long.class, value)); return true;
+        case "connectbackoffmaxdelayms":
+        case "connectBackoffMaxDelayMs": getOrCreateConfiguration(target).setConnectBackoffMaxDelayMs(property(camelContext, long.class, value)); return true;
+        case "connectmaxattempts":
+        case "connectMaxAttempts": getOrCreateConfiguration(target).setConnectMaxAttempts(property(camelContext, int.class, value)); return true;
+        case "databaseblacklist":
+        case "databaseBlacklist": getOrCreateConfiguration(target).setDatabaseBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasehistoryfilefilename":
+        case "databaseHistoryFileFilename": getOrCreateConfiguration(target).setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "databasewhitelist":
+        case "databaseWhitelist": getOrCreateConfiguration(target).setDatabaseWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "fieldblacklist":
+        case "fieldBlacklist": getOrCreateConfiguration(target).setFieldBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "fieldrenames":
+        case "fieldRenames": getOrCreateConfiguration(target).setFieldRenames(property(camelContext, java.lang.String.class, value)); return true;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
+        case "heartbeattopicsprefix":
+        case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "initialsyncmaxthreads":
+        case "initialSyncMaxThreads": getOrCreateConfiguration(target).setInitialSyncMaxThreads(property(camelContext, int.class, value)); return true;
+        case "internalkeyconverter":
+        case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "internalvalueconverter":
+        case "internalValueConverter": getOrCreateConfiguration(target).setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxbatchsize":
+        case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesize":
+        case "maxQueueSize": getOrCreateConfiguration(target).setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "mongodbhosts":
+        case "mongodbHosts": getOrCreateConfiguration(target).setMongodbHosts(property(camelContext, java.lang.String.class, value)); return true;
+        case "mongodbmembersautodiscover":
+        case "mongodbMembersAutoDiscover": getOrCreateConfiguration(target).setMongodbMembersAutoDiscover(property(camelContext, boolean.class, value)); return true;
+        case "mongodbname":
+        case "mongodbName": getOrCreateConfiguration(target).setMongodbName(property(camelContext, java.lang.String.class, value)); return true;
+        case "mongodbpassword":
+        case "mongodbPassword": getOrCreateConfiguration(target).setMongodbPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "mongodbsslenabled":
+        case "mongodbSslEnabled": getOrCreateConfiguration(target).setMongodbSslEnabled(property(camelContext, boolean.class, value)); return true;
+        case "mongodbsslinvalidhostnameallowed":
+        case "mongodbSslInvalidHostnameAllowed": getOrCreateConfiguration(target).setMongodbSslInvalidHostnameAllowed(property(camelContext, boolean.class, value)); return true;
+        case "mongodbuser":
+        case "mongodbUser": getOrCreateConfiguration(target).setMongodbUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": getOrCreateConfiguration(target).setOffsetCommitPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": getOrCreateConfiguration(target).setOffsetCommitTimeoutMs(property(camelContext, long.class, value)); return true;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": getOrCreateConfiguration(target).setOffsetFlushIntervalMs(property(camelContext, long.class, value)); return true;
+        case "offsetstorage":
+        case "offsetStorage": getOrCreateConfiguration(target).setOffsetStorage(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": getOrCreateConfiguration(target).setOffsetStorageFileName(property(camelContext, java.lang.String.class, value)); return true;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": getOrCreateConfiguration(target).setOffsetStoragePartitions(property(camelContext, int.class, value)); return true;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": getOrCreateConfiguration(target).setOffsetStorageReplicationFactor(property(camelContext, int.class, value)); return true;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": getOrCreateConfiguration(target).setOffsetStorageTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "pollintervalms":
+        case "pollIntervalMs": getOrCreateConfiguration(target).setPollIntervalMs(property(camelContext, long.class, value)); return true;
+        case "snapshotdelayms":
+        case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, long.class, value)); return true;
+        case "snapshotfetchsize":
+        case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotmode":
+        case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "sourcestructversion":
+        case "sourceStructVersion": getOrCreateConfiguration(target).setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

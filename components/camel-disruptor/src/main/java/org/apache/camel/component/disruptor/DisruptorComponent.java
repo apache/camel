@@ -41,9 +41,6 @@ public class DisruptorComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "" + DEFAULT_BUFFER_SIZE)
     private int bufferSize = -1;
-    //for SEDA compatibility only
-    private int queueSize = -1;
-
     @Metadata(label = "consumer", defaultValue = "1")
     private int defaultConcurrentConsumers = 1;
     @Metadata(label = "consumer")
@@ -120,8 +117,6 @@ public class DisruptorComponent extends DefaultComponent {
             sizeToUse = size;
         } else if (bufferSize > 0) {
             sizeToUse = bufferSize;
-        } else if (queueSize > 0) {
-            sizeToUse = queueSize;
         } else {
             sizeToUse = DEFAULT_BUFFER_SIZE;
         }
@@ -238,19 +233,6 @@ public class DisruptorComponent extends DefaultComponent {
      */
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
-    }
-
-    /**
-     * To configure the ring buffer size
-     */
-    @Deprecated
-    public void setQueueSize(final int size) {
-        queueSize = size;
-    }
-
-    @Deprecated
-    public int getQueueSize() {
-        return queueSize;
     }
 
     /**

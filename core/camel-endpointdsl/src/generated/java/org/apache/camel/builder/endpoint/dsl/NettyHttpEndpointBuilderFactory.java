@@ -162,7 +162,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * This option allows producers and consumers (in client mode) to reuse
-         * the same Netty Channel for the lifecycle of processing the Exchange .
+         * the same Netty Channel for the lifecycle of processing the Exchange.
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
@@ -183,7 +183,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * This option allows producers and consumers (in client mode) to reuse
-         * the same Netty Channel for the lifecycle of processing the Exchange .
+         * the same Netty Channel for the lifecycle of processing the Exchange.
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
@@ -2042,7 +2042,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * This option allows producers and consumers (in client mode) to reuse
-         * the same Netty Channel for the lifecycle of processing the Exchange .
+         * the same Netty Channel for the lifecycle of processing the Exchange.
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
@@ -2063,7 +2063,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * This option allows producers and consumers (in client mode) to reuse
-         * the same Netty Channel for the lifecycle of processing the Exchange .
+         * the same Netty Channel for the lifecycle of processing the Exchange.
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
@@ -3515,7 +3515,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * This option allows producers and consumers (in client mode) to reuse
-         * the same Netty Channel for the lifecycle of processing the Exchange .
+         * the same Netty Channel for the lifecycle of processing the Exchange.
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange
@@ -3535,7 +3535,7 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * This option allows producers and consumers (in client mode) to reuse
-         * the same Netty Channel for the lifecycle of processing the Exchange .
+         * the same Netty Channel for the lifecycle of processing the Exchange.
          * This is useful if you need to call a server multiple times in a Camel
          * route and want to use the same network connection. When using this,
          * the channel is not returned to the connection pool until the Exchange

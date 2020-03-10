@@ -18,15 +18,15 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.processor.ScriptProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class ScriptReifier extends ExpressionReifier<ScriptDefinition> {
 
-    public ScriptReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (ScriptDefinition)definition);
+    public ScriptReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ScriptDefinition)definition);
     }
 
     @Override

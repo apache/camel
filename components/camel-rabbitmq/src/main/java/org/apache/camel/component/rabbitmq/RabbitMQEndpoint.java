@@ -166,11 +166,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean guaranteedDeliveries;
     @UriParam(label = "producer")
     private boolean allowNullHeaders;
-    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
+    @UriParam(label = "consumer")
+    private String consumerTag = "";
+    // camel-jms supports this setting but it is not currently configurable in
+    // camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
-    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
+    // camel-jms supports this setting but it is not currently configurable in
+    // camel-rabbitmq
     private String replyToType = ReplyToType.Temporary.name();
-    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
+    // camel-jms supports this setting but it is not currently configurable in
+    // camel-rabbitmq
     private String replyTo;
 
     private final RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
@@ -540,7 +545,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Configure SSL trust manager, SSL should be enabled for this option to be effective
+     * Configure SSL trust manager, SSL should be enabled for this option to be
+     * effective
      */
     public void setTrustManager(TrustManager trustManager) {
         this.trustManager = trustManager;
@@ -551,7 +557,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Connection client properties (client info used in negotiating with the server)
+     * Connection client properties (client info used in negotiating with the
+     * server)
      */
     public void setClientProperties(Map<String, Object> clientProperties) {
         this.clientProperties = clientProperties;
@@ -801,7 +808,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return PropertiesHelper.extractProperties(args, BINDING_ARG_PREFIX);
     }
 
-     /**
+    /**
      * Set timeout for waiting for a reply when using the InOut Exchange Pattern
      * (in milliseconds)
      */
@@ -845,7 +852,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * When true, the message will be published with
-     * <a href="https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> turned on
+     * <a href="https://www.rabbitmq.com/confirms.html">publisher
+     * acknowledgements</a> turned on
      */
     public boolean isPublisherAcknowledgements() {
         return publisherAcknowledgements;
@@ -870,9 +878,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     /**
      * When true, an exception will be thrown when the message cannot be
      * delivered (basic.return) and the message is marked as mandatory.
-     * PublisherAcknowledgement will also be activated in this case.
-     * See also <a href=https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a>
-     * - When will messages be confirmed.
+     * PublisherAcknowledgement will also be activated in this case. See also <a
+     * href=https://www.rabbitmq.com/confirms.html">publisher
+     * acknowledgements</a> - When will messages be confirmed.
      */
     public boolean isGuaranteedDeliveries() {
         return guaranteedDeliveries;
@@ -913,8 +921,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful
-     * when you want a long-lived shared queue to be temporarily accessible by just one consumer.
+     * Request exclusive access to the queue (meaning only this consumer can
+     * access the queue). This is useful when you want a long-lived shared queue
+     * to be temporarily accessible by just one consumer.
      */
     public void setExclusiveConsumer(boolean exclusiveConsumer) {
         this.exclusiveConsumer = exclusiveConsumer;
@@ -942,4 +951,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.passive = passive;
     }
 
+    public String getConsumerTag() {
+        return consumerTag;
+    }
+
+    /**
+     * Specify a client-generated consumer tag to establish context when
+     * invoking the consume operation
+     */
+    public void setConsumerTag(String consumerTag) {
+        this.consumerTag = consumerTag;
+    }
 }

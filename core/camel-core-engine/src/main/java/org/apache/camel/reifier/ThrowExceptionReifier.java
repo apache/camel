@@ -17,23 +17,22 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.processor.ThrowExceptionProcessor;
-import org.apache.camel.spi.RouteContext;
 
 public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefinition> {
 
-    public ThrowExceptionReifier(RouteContext routeContext, ProcessorDefinition<?> definition) {
-        super(routeContext, (ThrowExceptionDefinition) definition);
+    public ThrowExceptionReifier(Route route, ProcessorDefinition<?> definition) {
+        super(route, (ThrowExceptionDefinition) definition);
     }
 
     @Override
     public Processor createProcessor() {
         Exception exception = definition.getException();
         if (exception == null && definition.getRef() != null) {
-            exception = routeContext.lookup(parseString(definition.getRef()), Exception.class);
+            exception = lookup(parseString(definition.getRef()), Exception.class);
         }
 
         Class<? extends Exception> exceptionClass = definition.getExceptionClass();

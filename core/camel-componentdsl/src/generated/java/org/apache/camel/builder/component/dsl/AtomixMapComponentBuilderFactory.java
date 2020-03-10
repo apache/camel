@@ -49,13 +49,13 @@ public interface AtomixMapComponentBuilderFactory {
             extends
                 ComponentBuilder<AtomixMapComponent> {
         /**
-         * The shared AtomixClient instance.
+         * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * The option is a: <code>io.atomix.Atomix</code> type.
          * 
          * Group: common
          */
-        default AtomixMapComponentBuilder atomix(io.atomix.AtomixClient atomix) {
+        default AtomixMapComponentBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
             return this;
         }
@@ -85,6 +85,32 @@ public interface AtomixMapComponentBuilderFactory {
             return this;
         }
         /**
+         * The default action.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.atomix.client.map.AtomixMap.Action</code> type.
+         * 
+         * Default: PUT
+         * Group: common
+         */
+        default AtomixMapComponentBuilder defaultAction(
+                org.apache.camel.component.atomix.client.map.AtomixMap.Action defaultAction) {
+            doSetProperty("defaultAction", defaultAction);
+            return this;
+        }
+        /**
+         * The key to use if none is set in the header or to listen for events
+         * for a specific key.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixMapComponentBuilder key(java.lang.Object key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
          * The nodes the AtomixClient should connect to.
          * 
          * The option is a:
@@ -96,6 +122,42 @@ public interface AtomixMapComponentBuilderFactory {
         default AtomixMapComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
             doSetProperty("nodes", nodes);
+            return this;
+        }
+        /**
+         * The header that wil carry the result.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixMapComponentBuilder resultHeader(
+                java.lang.String resultHeader) {
+            doSetProperty("resultHeader", resultHeader);
+            return this;
+        }
+        /**
+         * The class name (fqn) of the Atomix transport.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
+         * Group: common
+         */
+        default AtomixMapComponentBuilder transportClassName(
+                java.lang.String transportClassName) {
+            doSetProperty("transportClassName", transportClassName);
+            return this;
+        }
+        /**
+         * The resource ttl.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
+         */
+        default AtomixMapComponentBuilder ttl(long ttl) {
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -152,6 +214,83 @@ public interface AtomixMapComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * The cluster wide default resource configuration.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMapComponentBuilder defaultResourceConfig(
+                java.util.Properties defaultResourceConfig) {
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
+            return this;
+        }
+        /**
+         * The local default resource options.
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMapComponentBuilder defaultResourceOptions(
+                java.util.Properties defaultResourceOptions) {
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
+            return this;
+        }
+        /**
+         * Sets if the local member should join groups as PersistentMember or
+         * not. If set to ephemeral the local member will receive an auto
+         * generated ID thus the local one is ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AtomixMapComponentBuilder ephemeral(boolean ephemeral) {
+            doSetProperty("ephemeral", ephemeral);
+            return this;
+        }
+        /**
+         * The read consistency level.
+         * 
+         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMapComponentBuilder readConsistency(
+                io.atomix.resource.ReadConsistency readConsistency) {
+            doSetProperty("readConsistency", readConsistency);
+            return this;
+        }
+        /**
+         * Cluster wide resources configuration.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.util.Properties></code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMapComponentBuilder resourceConfigs(
+                java.util.Map<java.lang.String, java.util.Properties> resourceConfigs) {
+            doSetProperty("resourceConfigs", resourceConfigs);
+            return this;
+        }
+        /**
+         * Local resources configurations.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.util.Properties></code> type.
+         * 
+         * Group: advanced
+         */
+        default AtomixMapComponentBuilder resourceOptions(
+                java.util.Map<java.lang.String, java.util.Properties> resourceOptions) {
+            doSetProperty("resourceOptions", resourceOptions);
+            return this;
+        }
     }
 
     class AtomixMapComponentBuilderImpl
@@ -163,19 +302,37 @@ public interface AtomixMapComponentBuilderFactory {
         protected AtomixMapComponent buildConcreteComponent() {
             return new AtomixMapComponent();
         }
+        private org.apache.camel.component.atomix.client.map.AtomixMapConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.atomix.client.map.AtomixMapComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.atomix.client.map.AtomixMapConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "atomix": ((AtomixMapComponent) component).setAtomix((io.atomix.AtomixClient) value); return true;
+            case "atomix": getOrCreateConfiguration((AtomixMapComponent) component).setAtomix((io.atomix.Atomix) value); return true;
             case "configuration": ((AtomixMapComponent) component).setConfiguration((org.apache.camel.component.atomix.client.map.AtomixMapConfiguration) value); return true;
             case "configurationUri": ((AtomixMapComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "nodes": ((AtomixMapComponent) component).setNodes((java.util.List<io.atomix.catalyst.transport.Address>) value); return true;
+            case "defaultAction": getOrCreateConfiguration((AtomixMapComponent) component).setDefaultAction((org.apache.camel.component.atomix.client.map.AtomixMap.Action) value); return true;
+            case "key": getOrCreateConfiguration((AtomixMapComponent) component).setKey((java.lang.Object) value); return true;
+            case "nodes": ((AtomixMapComponent) component).setNodes((java.util.List) value); return true;
+            case "resultHeader": getOrCreateConfiguration((AtomixMapComponent) component).setResultHeader((java.lang.String) value); return true;
+            case "transportClassName": getOrCreateConfiguration((AtomixMapComponent) component).setTransportClassName((java.lang.String) value); return true;
+            case "ttl": getOrCreateConfiguration((AtomixMapComponent) component).setTtl((long) value); return true;
             case "bridgeErrorHandler": ((AtomixMapComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((AtomixMapComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((AtomixMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "defaultResourceConfig": getOrCreateConfiguration((AtomixMapComponent) component).setDefaultResourceConfig((java.util.Properties) value); return true;
+            case "defaultResourceOptions": getOrCreateConfiguration((AtomixMapComponent) component).setDefaultResourceOptions((java.util.Properties) value); return true;
+            case "ephemeral": getOrCreateConfiguration((AtomixMapComponent) component).setEphemeral((boolean) value); return true;
+            case "readConsistency": getOrCreateConfiguration((AtomixMapComponent) component).setReadConsistency((io.atomix.resource.ReadConsistency) value); return true;
+            case "resourceConfigs": getOrCreateConfiguration((AtomixMapComponent) component).setResourceConfigs((java.util.Map) value); return true;
+            case "resourceOptions": getOrCreateConfiguration((AtomixMapComponent) component).setResourceOptions((java.util.Map) value); return true;
             default: return false;
             }
         }

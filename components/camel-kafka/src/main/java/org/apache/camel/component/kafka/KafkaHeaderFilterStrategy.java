@@ -29,7 +29,7 @@ public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getInFilter().add("org.apache.kafka.clients.producer.RecordMetadata");
 
         // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
-        setInFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+        setOutFilterPattern(CAMEL_FILTER_PATTERN);
+        setInFilterPattern(CAMEL_FILTER_PATTERN);
     }
 }

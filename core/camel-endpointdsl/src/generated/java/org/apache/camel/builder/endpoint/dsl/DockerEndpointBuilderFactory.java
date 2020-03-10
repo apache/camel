@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -451,6 +452,33 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Additional configuration parameters as key/value pairs.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedDockerEndpointConsumerBuilder parameters(
+                Map<String, Object> parameters) {
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * Additional configuration parameters as key/value pairs.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedDockerEndpointConsumerBuilder parameters(
+                String parameters) {
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
          * Server address for docker registry.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -883,6 +911,33 @@ public interface DockerEndpointBuilderFactory {
             return this;
         }
         /**
+         * Additional configuration parameters as key/value pairs.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedDockerEndpointProducerBuilder parameters(
+                Map<String, Object> parameters) {
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * Additional configuration parameters as key/value pairs.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedDockerEndpointProducerBuilder parameters(
+                String parameters) {
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
          * Server address for docker registry.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1269,6 +1324,32 @@ public interface DockerEndpointBuilderFactory {
         default AdvancedDockerEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
             doSetProperty("maxTotalConnections", maxTotalConnections);
+            return this;
+        }
+        /**
+         * Additional configuration parameters as key/value pairs.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedDockerEndpointBuilder parameters(
+                Map<String, Object> parameters) {
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * Additional configuration parameters as key/value pairs.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedDockerEndpointBuilder parameters(String parameters) {
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**

@@ -23,8 +23,6 @@ import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLValidateContext;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -32,19 +30,19 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public abstract class XmlSignatureConfiguration implements Cloneable {
 
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private String baseUri;
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private Map<String, ?> cryptoContextProperties;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
-    @UriParam(label = "common", defaultValue = "false")
+    @UriParam(label = "producer", defaultValue = "false")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
-    @UriParam(label = "common", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private String schemaResourceUri;
-    @UriParam(label = "common")
+    @UriParam(label = "producer")
     private String outputXmlEncoding;
     @UriParam(label = "advanced")
     private URIDereferencer uriDereferencer;

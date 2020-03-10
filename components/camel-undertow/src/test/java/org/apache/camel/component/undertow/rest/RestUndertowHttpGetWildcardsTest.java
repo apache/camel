@@ -17,8 +17,6 @@
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.DefaultUndertowHttpBinding;
@@ -48,7 +46,7 @@ public class RestUndertowHttpGetWildcardsTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 // configure to use undertow on localhost with the given port
-                restConfiguration().component("undertow").host("localhost").port(getPort()).endpointProperty("undertowHttpBinding", "#mybinding");
+                restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/{query}").route().to("log:query").process(exchange -> {

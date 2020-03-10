@@ -44,7 +44,6 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ReactiveExecutor;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -54,6 +53,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -593,14 +593,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
-        private final RouteContext routeContext;
+        private final Route route;
         private String routeId;
         private UnitOfWorkFactory uowFactory;
 
-        public UnitOfWorkProcessorAdvice(RouteContext routeContext, CamelContext camelContext) {
-            this.routeContext = routeContext;
-            if (routeContext != null) {
-                this.routeId = routeContext.getRouteId();
+        public UnitOfWorkProcessorAdvice(Route route, CamelContext camelContext) {
+            this.route = route;
+            if (route != null) {
+                this.routeId = route.getRouteId();
             }
             this.uowFactory = camelContext.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
             // optimize uow factory to initialize it early and once per advice
@@ -611,9 +611,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public UnitOfWork before(Exchange exchange) throws Exception {
             // if the exchange doesn't have from route id set, then set it if it originated
             // from this unit of work
-            if (routeContext != null && exchange.getFromRouteId() == null) {
+            if (route != null && exchange.getFromRouteId() == null) {
                 if (routeId == null) {
-                    this.routeId = routeContext.getRouteId();
+                    this.routeId = route.getRouteId();
                 }
                 ExtendedExchange ee = (ExtendedExchange) exchange;
                 ee.setFromRouteId(routeId);
@@ -632,10 +632,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
 
             // for any exchange we should push/pop route context so we can keep track of which route we are routing
-            if (routeContext != null) {
+            if (route != null) {
                 UnitOfWork existing = exchange.getUnitOfWork();
                 if (existing != null) {
-                    existing.pushRouteContext(routeContext);
+                    existing.pushRoute(route);
                 }
             }
 
@@ -652,8 +652,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
 
             // after UoW is done lets pop the route context which must be done on every existing UoW
-            if (routeContext != null && existing != null) {
-                existing.popRouteContext();
+            if (route != null && existing != null) {
+                existing.popRoute();
             }
         }
 
@@ -674,8 +674,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final UnitOfWork parent;
 
-        public ChildUnitOfWorkProcessorAdvice(RouteContext routeContext, CamelContext camelContext, UnitOfWork parent) {
-            super(routeContext, camelContext);
+        public ChildUnitOfWorkProcessorAdvice(Route route, CamelContext camelContext, UnitOfWork parent) {
+            super(route, camelContext);
             this.parent = parent;
         }
 
@@ -709,11 +709,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // route id from the exchange UoW state
             String targetRouteId = this.routeId;
             if (targetRouteId == null) {
-                UnitOfWork uow = exchange.getUnitOfWork();
-                RouteContext rc = uow != null ? uow.getRouteContext() : null;
-                if (rc != null) {
-                    targetRouteId = rc.getRouteId();
-                }
+                targetRouteId = ExchangeHelper.getRouteId(exchange);
             }
 
             MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis(), exchange);

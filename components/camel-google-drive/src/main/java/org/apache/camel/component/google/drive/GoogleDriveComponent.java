@@ -32,6 +32,9 @@ import org.apache.camel.util.ObjectHelper;
 @Component("google-drive")
 public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiName, GoogleDriveConfiguration, GoogleDriveApiCollection> {
 
+    @Metadata
+    GoogleDriveConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Drive client;
     @Metadata(label = "advanced")

@@ -77,6 +77,7 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
 
 import static java.lang.invoke.MethodHandles.publicLookup;
+
 /**
  * A Camel REST-DSL openApi reader that parse the rest-dsl into a openApi model representation.
  * <p/>

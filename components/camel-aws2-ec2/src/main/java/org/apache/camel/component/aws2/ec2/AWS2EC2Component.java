@@ -33,13 +33,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 public class AWS2EC2Component extends DefaultComponent {
 
     @Metadata
-    private String accessKey;
-    @Metadata
-    private String secretKey;
-    @Metadata
-    private String region;
-    @Metadata(label = "advanced")
-    private AWS2EC2Configuration configuration;
+    private AWS2EC2Configuration configuration = new AWS2EC2Configuration();
 
     public AWS2EC2Component() {
         this(null);
@@ -56,9 +50,6 @@ public class AWS2EC2Component extends DefaultComponent {
 
         AWS2EC2Configuration configuration = this.configuration != null ? this.configuration.copy() : new AWS2EC2Configuration();
         AWS2EC2Endpoint endpoint = new AWS2EC2Endpoint(uri, this, configuration);
-        endpoint.getConfiguration().setAccessKey(accessKey);
-        endpoint.getConfiguration().setSecretKey(secretKey);
-        endpoint.getConfiguration().setRegion(region);
         setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonEc2Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
@@ -73,43 +64,10 @@ public class AWS2EC2Component extends DefaultComponent {
     }
 
     /**
-     * The AWS EC2 default configuration
+     * The component configuration
      */
     public void setConfiguration(AWS2EC2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    /**
-     * The region in which EC2 client needs to work
-     */
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    /**
-     * Amazon AWS Access Key
-     */
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Amazon AWS Secret Key
-     */
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
     }
 
     private void checkAndSetRegistryClient(AWS2EC2Configuration configuration) {

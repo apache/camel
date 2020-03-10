@@ -15,25 +15,25 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RedisEndpoint target = (RedisEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channels": target.getConfiguration().setChannels(property(camelContext, java.lang.String.class, value)); return true;
         case "command": target.getConfiguration().setCommand(property(camelContext, org.apache.camel.component.redis.Command.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, org.springframework.data.redis.connection.RedisConnectionFactory.class, value)); return true;
-        case "redistemplate":
-        case "redisTemplate": target.getConfiguration().setRedisTemplate(property(camelContext, org.springframework.data.redis.core.RedisTemplate.class, value)); return true;
-        case "serializer": target.getConfiguration().setSerializer(property(camelContext, org.springframework.data.redis.serializer.RedisSerializer.class, value)); return true;
-        case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "listenercontainer":
-        case "listenerContainer": target.getConfiguration().setListenerContainer(property(camelContext, org.springframework.data.redis.listener.RedisMessageListenerContainer.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "listenercontainer":
+        case "listenerContainer": target.getConfiguration().setListenerContainer(property(camelContext, org.springframework.data.redis.listener.RedisMessageListenerContainer.class, value)); return true;
+        case "redistemplate":
+        case "redisTemplate": target.getConfiguration().setRedisTemplate(property(camelContext, org.springframework.data.redis.core.RedisTemplate.class, value)); return true;
+        case "serializer": target.getConfiguration().setSerializer(property(camelContext, org.springframework.data.redis.serializer.RedisSerializer.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }

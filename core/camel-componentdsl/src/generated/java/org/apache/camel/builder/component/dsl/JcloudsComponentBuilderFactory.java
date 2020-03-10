@@ -147,8 +147,8 @@ public interface JcloudsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "blobStores": ((JcloudsComponent) component).setBlobStores((java.util.List<org.jclouds.blobstore.BlobStore>) value); return true;
-            case "computeServices": ((JcloudsComponent) component).setComputeServices((java.util.List<org.jclouds.compute.ComputeService>) value); return true;
+            case "blobStores": ((JcloudsComponent) component).setBlobStores((java.util.List) value); return true;
+            case "computeServices": ((JcloudsComponent) component).setComputeServices((java.util.List) value); return true;
             case "bridgeErrorHandler": ((JcloudsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((JcloudsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((JcloudsComponent) component).setBasicPropertyBinding((boolean) value); return true;

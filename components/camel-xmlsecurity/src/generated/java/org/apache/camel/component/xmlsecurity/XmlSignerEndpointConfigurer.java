@@ -19,6 +19,8 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "addKeyInfoReference": target.getConfiguration().setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "canonicalizationmethod":
         case "canonicalizationMethod": target.getConfiguration().setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
         case "clearheaders":
@@ -37,12 +39,12 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "disallowDoctypeDecl": target.getConfiguration().setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "keyaccessor":
         case "keyAccessor": target.getConfiguration().setKeyAccessor(property(camelContext, org.apache.camel.component.xmlsecurity.api.KeyAccessor.class, value)); return true;
+        case "lazystartproducer":
+        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "omitxmldeclaration":
         case "omitXmlDeclaration": target.getConfiguration().setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "outputxmlencoding":
         case "outputXmlEncoding": target.getConfiguration().setOutputXmlEncoding(property(camelContext, java.lang.String.class, value)); return true;
-        case "lazystartproducer":
-        case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "parentlocalname":
         case "parentLocalName": target.getConfiguration().setParentLocalName(property(camelContext, java.lang.String.class, value)); return true;
         case "parentnamespace":
@@ -62,15 +64,13 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "signatureAlgorithm": target.getConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signatureid":
         case "signatureId": target.getConfiguration().setSignatureId(property(camelContext, java.lang.String.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "transformmethods":
         case "transformMethods": target.getConfiguration().setTransformMethods(property(camelContext, java.util.List.class, value)); return true;
-        case "xpathstoidattributes":
-        case "xpathsToIdAttributes": target.getConfiguration().setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "uridereferencer":
         case "uriDereferencer": target.getConfiguration().setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
+        case "xpathstoidattributes":
+        case "xpathsToIdAttributes": target.getConfiguration().setXpathsToIdAttributes(property(camelContext, java.util.List.class, value)); return true;
         default: return false;
         }
     }

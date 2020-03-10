@@ -27,16 +27,20 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.MainModel.MainGroupModel;
 import org.apache.camel.tooling.util.JavadocHelper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Prepares camel-main by generating Camel Main configuration metadata for
@@ -48,17 +52,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated spring boot tooling file
      */
-    @Parameter(readonly = true, defaultValue = "${project.basedir}/src/generated/resources")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
-
-    /**
-     * The build directory
-     */
-    @Parameter(readonly = true, defaultValue = "${project.build.directory}/")
-    protected File buildDir;
-
-    @Parameter(defaultValue = "${camel-generate-main}")
-    protected boolean generateMain;
 
     /**
      * Parses the Camel Main configuration java source file.
@@ -147,15 +142,20 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
     }
 
     @Override
+    public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
+        outFolder = new File(project.getBasedir(), "src/generated/resources");
+        super.execute(project, projectHelper, buildContext);
+    }
+
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!generateMain) {
+        // scan for configuration files
+        File[] files = new File(project.getBasedir(), "src/main/java/org/apache/camel/main").listFiles(f -> f.isFile() && f.getName().endsWith("Properties.java"));
+        if (files == null || files.length == 0) {
             return;
         }
 
         final List<MainModel.MainOptionModel> data = new ArrayList<>();
-
-        // scan for configuration files
-        File[] files = new File(project.getBasedir(), "src/main/java/org/apache/camel/main").listFiles(f -> f.isFile() && f.getName().endsWith("Properties.java"));
 
         for (File file : files) {
             getLog().info("Parsing Camel Main configuration file: " + file);
@@ -181,7 +181,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         }
 
         // include additional rest configuration from camel-api
-        File restConfig = new File(buildDir, "../../camel-api/src/main/java/org/apache/camel/spi/RestConfiguration.java");
+        File camelApiDir = PackageHelper.findCamelDirectory(project.getBasedir(), "core/camel-api");
+        File restConfig = new File(camelApiDir, "src/main/java/org/apache/camel/spi/RestConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(restConfig);
             model.forEach(m -> m.setName("camel.rest." + m.getName()));

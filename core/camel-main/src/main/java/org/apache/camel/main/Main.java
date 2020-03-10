@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.Registry;
 
 /**

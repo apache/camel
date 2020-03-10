@@ -60,6 +60,17 @@
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-client</artifactId>
             <version>${curator-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava-eventbus-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
@@ -71,7 +82,6 @@
             <artifactId>curator-recipes</artifactId>
             <version>${curator-version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-x-discovery</artifactId>
@@ -233,6 +243,5 @@
         </profile>
 
     </profiles>
-
 
 </project>

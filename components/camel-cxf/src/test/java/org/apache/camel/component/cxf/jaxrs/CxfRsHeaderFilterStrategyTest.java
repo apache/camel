@@ -36,7 +36,9 @@ public class CxfRsHeaderFilterStrategyTest extends Assert {
         assertTrue("Get a wrong filtered result", filter.applyFilterToCamelHeaders(Exchange.CHARSET_NAME, "just a test", null));
         assertTrue("Get a wrong filtered result", filter.applyFilterToCamelHeaders(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, "just a test", null));
         assertTrue("Get a wrong filtered result", filter.applyFilterToCamelHeaders("org.apache.camel.such.Header", "just a test", null));
-        assertFalse("Get a wrong filtered result", filter.applyFilterToCamelHeaders("camel.result", "just a test", null));
+        assertTrue("Get a wrong filtered result", filter.applyFilterToCamelHeaders("camel.result", "just a test", null));
+
+        assertFalse("Get a wrong filtered result", filter.applyFilterToCamelHeaders("MyWorld", "just a test", null));
     }
 
 }

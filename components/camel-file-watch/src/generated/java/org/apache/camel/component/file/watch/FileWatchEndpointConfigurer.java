@@ -19,11 +19,17 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "antInclude": target.setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreate":
         case "autoCreate": target.setAutoCreate(property(camelContext, boolean.class, value)); return true;
+        case "basicpropertybinding":
+        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "events": target.setEvents(property(camelContext, java.util.Set.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filehasher":
         case "fileHasher": target.setFileHasher(property(camelContext, io.methvin.watcher.hashing.FileHasher.class, value)); return true;
         case "pollthreads":
@@ -31,15 +37,9 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "queuesize":
         case "queueSize": target.setQueueSize(property(camelContext, int.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
+        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "usefilehashing":
         case "useFileHashing": target.setUseFileHashing(property(camelContext, boolean.class, value)); return true;
-        case "exceptionhandler":
-        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
-        case "exchangepattern":
-        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
