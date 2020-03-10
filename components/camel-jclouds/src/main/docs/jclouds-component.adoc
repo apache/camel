@@ -234,7 +234,7 @@ route.
 
 === Example 2: Getting/Reading from a blob
 
-This example will show you how you can read the contnet of a blob using
+This example will show you how you can read the content of a blob using
 the jclouds component.
 
 [source,java]
