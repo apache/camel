@@ -18,8 +18,8 @@ package org.apache.camel.component.rabbitmq;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-public class RabbitMQHeaderFilterStrategy  extends DefaultHeaderFilterStrategy {
-	
+public class RabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+
     public RabbitMQHeaderFilterStrategy() {
         initialize();
     }

@@ -31,15 +31,20 @@ import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.junit.Test;
 
 /**
- * Integration test to check that RabbitMQ Endpoint is able to reconnect to broker when broker
- * is not available.
+ * Integration test to check that RabbitMQ Endpoint is able to reconnect to
+ * broker when broker is not available.
  * <ul>
  * <li>Stop the broker</li>
- * <li>Run the test: the producer complains it can not send messages, the consumer is silent</li>
- * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
- * <li>Stop the broker: the producer complains it can not send messages, the consumer is silent</li>
- * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
- * <li>Kill all connections from the broker: the producer sends messages, and the consumer receives messages</li>
+ * <li>Run the test: the producer complains it can not send messages, the
+ * consumer is silent</li>
+ * <li>Start the broker: the producer sends messages, and the consumer receives
+ * messages</li>
+ * <li>Stop the broker: the producer complains it can not send messages, the
+ * consumer is silent</li>
+ * <li>Start the broker: the producer sends messages, and the consumer receives
+ * messages</li>
+ * <li>Kill all connections from the broker: the producer sends messages, and
+ * the consumer receives messages</li>
  * </ul>
  */
 public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
@@ -48,9 +53,8 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest"
-                          + "&queue=q3&routingKey=rk3" + "&automaticRecoveryEnabled=true"
-                          + "&requestedHeartbeat=1000" + "&connectionTimeout=5000")
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest" + "&queue=q3&routingKey=rk3" + "&automaticRecoveryEnabled=true"
+                    + "&requestedHeartbeat=1000" + "&connectionTimeout=5000")
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("mock:producing")
@@ -66,19 +70,9 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
             @Override
             @SuppressWarnings("unchecked")
             public void configure() throws Exception {
-                from("direct:rabbitMQ")
-                        .id("producingRoute")
-                        .onException(AlreadyClosedException.class, ConnectException.class)
-                        .maximumRedeliveries(10)
-                        .redeliveryDelay(500L)
-                        .end()
-                        .log("Sending message")
-                        .inOnly(rabbitMQEndpoint)
-                        .to(producingMockEndpoint);
-                from(rabbitMQEndpoint)
-                        .id("consumingRoute")
-                        .log("Receiving message")
-                        .to(consumingMockEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").onException(AlreadyClosedException.class, ConnectException.class).maximumRedeliveries(10).redeliveryDelay(500L).end()
+                    .log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
+                from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").to(consumingMockEndpoint);
             }
         };
     }

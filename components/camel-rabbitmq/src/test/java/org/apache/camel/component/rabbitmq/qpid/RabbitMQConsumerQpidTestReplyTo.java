@@ -36,12 +36,12 @@ public class RabbitMQConsumerQpidTestReplyTo extends RabbitMQConsumerIntTestRepl
     public static void stopBroker() {
         systemLauncher.shutdown();
     }
-    
+
     @Override
     @Before
     public void setUpRabbitMQ() throws Exception {
         super.setUpRabbitMQ();
-        
+
         channel.queueDeclare(QUEUE, false, false, true, null);
     }
 }

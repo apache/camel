@@ -37,25 +37,25 @@ import org.junit.Test;
  */
 public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
     protected static final String QUEUE = "amq.rabbitmq.reply-to";
-    
+
     private static final String EXCHANGE = "ex_reply";
     private static final String ROUTING_KEY = "testreply";
     private static final String REQUEST = "Knock! Knock!";
     private static final String REPLY = "Hello world";
 
     protected Channel channel;
-    
+
     @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&routingKey=" + ROUTING_KEY)
     private Endpoint from;
 
     private Connection connection;
-    
+
     @Before
     public void setUpRabbitMQ() throws Exception {
         connection = connection();
         channel = connection.createChannel();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         context().setTracing(true);
@@ -64,10 +64,8 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
             @Override
             public void configure() throws Exception {
                 log.info("Building routes...");
-                
-                from(from)
-                        .log(body().toString())
-                        .setBody(simple(REPLY));
+
+                from(from).log(body().toString()).setBody(simple(REPLY));
             }
         };
     }
@@ -75,16 +73,16 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
     @Test
     public void replyMessageIsReceived() throws IOException, TimeoutException, InterruptedException {
         final List<String> received = new ArrayList<>();
-        
+
         AMQP.BasicProperties.Builder prop = new AMQP.BasicProperties.Builder();
         prop.replyTo(QUEUE);
-        
+
         channel.basicConsume(QUEUE, true, new ArrayPopulatingConsumer(received));
         channel.basicPublish(EXCHANGE, ROUTING_KEY, prop.build(), REQUEST.getBytes());
-        
+
         assertThatBodiesReceivedIn(received, REPLY);
     }
-    
+
     private void assertThatBodiesReceivedIn(final List<String> received, final String... expected) throws InterruptedException {
         Thread.sleep(500);
 
@@ -93,7 +91,7 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
             assertEquals(body, received.get(0));
         }
     }
-    
+
     private class ArrayPopulatingConsumer extends DefaultConsumer {
         private final List<String> received;
 
@@ -103,10 +101,7 @@ public class RabbitMQConsumerIntTestReplyTo extends AbstractRabbitMQIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag,
-                                   Envelope envelope,
-                                   AMQP.BasicProperties properties,
-                                   byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             received.add(new String(body));
         }
     }

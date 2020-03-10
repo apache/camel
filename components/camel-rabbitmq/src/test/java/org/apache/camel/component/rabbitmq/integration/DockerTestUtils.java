@@ -31,17 +31,13 @@ public class DockerTestUtils {
 
     public static GenericContainer rabbitMQContainer() {
         // docker run -it -p 5672:5672
-        //  -e RABBITMQ_DEFAULT_USER=cameltest
-        //  -e RABBITMQ_DEFAULT_PASS=cameltest
-        //  --hostname my-rabbit
-        //  --name some-rabbit rabbitmq:3
-        GenericContainer container = new GenericContainer<>(CONTAINER_IMAGE)
-                .withNetworkAliases(CONTAINER_NAME)
-                .withExposedPorts(EXPOSE_PORT)
-                .withEnv("RABBITMQ_DEFAULT_USER", "cameltest")
-                .withEnv("RABBITMQ_DEFAULT_PASS", "cameltest")
-                .withCreateContainerCmdModifier(cmd -> cmd.withHostName("my-rabbit"))
-                .waitingFor(Wait.forLogMessage(".*Server startup complete.*\n", 1));
+        // -e RABBITMQ_DEFAULT_USER=cameltest
+        // -e RABBITMQ_DEFAULT_PASS=cameltest
+        // --hostname my-rabbit
+        // --name some-rabbit rabbitmq:3
+        GenericContainer container = new GenericContainer<>(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME).withExposedPorts(EXPOSE_PORT)
+            .withEnv("RABBITMQ_DEFAULT_USER", "cameltest").withEnv("RABBITMQ_DEFAULT_PASS", "cameltest").withCreateContainerCmdModifier(cmd -> cmd.withHostName("my-rabbit"))
+            .waitingFor(Wait.forLogMessage(".*Server startup complete.*\n", 1));
         container.setPortBindings(Arrays.asList(String.format("%d:%d", EXPOSE_PORT, EXPOSE_PORT)));
 
         return container;

@@ -22,7 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class RabbitMQConnectionFactorySupport {
-    
+
     public ConnectionFactory createFactoryFor(final RabbitMQEndpoint endpoint) {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUsername(endpoint.getUsername());

@@ -42,9 +42,10 @@ public class RabbitMQMessageConverter {
     private boolean allowNullHeaders;
     private boolean allowCustomHeaders;
     private final HeaderFilterStrategy headerFilterStrategy = new RabbitMQHeaderFilterStrategy();
-    
+
     /**
-     * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
+     * Will take an {@link Exchange} and add header values back to the
+     * {@link Exchange#getIn()}
      */
     public void mergeAmqpProperties(Exchange exchange, AMQP.BasicProperties properties) {
 
@@ -169,27 +170,27 @@ public class RabbitMQMessageConverter {
 
         for (Map.Entry<String, Object> header : headers.entrySet()) {
             // filter header values.
-        	Object value = getValidRabbitMQHeaderValue(header.getKey(), header.getValue());
-            
-            // additionaly filter out the OVERRIDE header so it does not propagate
+            Object value = getValidRabbitMQHeaderValue(header.getKey(), header.getValue());
+
+            // additionaly filter out the OVERRIDE header so it does not
+            // propagate
             if ((value != null || isAllowNullHeaders()) && !header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
-            	boolean filteredHeader;
-            	if (!allowCustomHeaders) {
-            		filteredHeader = headerFilterStrategy.applyFilterToCamelHeaders(header.getKey(), header.getValue(), exchange);
-            		if (filteredHeader) {
-                    	filteredHeaders.put(header.getKey(), header.getValue());
-            		}
-            	} else {
-            	    filteredHeaders.put(header.getKey(), header.getValue());
-            	}
+                boolean filteredHeader;
+                if (!allowCustomHeaders) {
+                    filteredHeader = headerFilterStrategy.applyFilterToCamelHeaders(header.getKey(), header.getValue(), exchange);
+                    if (filteredHeader) {
+                        filteredHeaders.put(header.getKey(), header.getValue());
+                    }
+                } else {
+                    filteredHeaders.put(header.getKey(), header.getValue());
+                }
             } else if (LOG.isDebugEnabled()) {
                 if (header.getValue() == null) {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
                 } else if (header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
                     LOG.debug("Preventing header propagation: {} with value {}:", header.getKey(), header.getValue());
                 } else {
-                    LOG.debug("Ignoring header: {} of class: {} with value: {}",
-                              header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
+                    LOG.debug("Ignoring header: {} of class: {} with value: {}", header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
                 }
             }
         }
@@ -254,7 +255,7 @@ public class RabbitMQMessageConverter {
         if (out) {
             // use OUT message
             message = camelExchange.getOut();
-        }  else {
+        } else {
             if (camelExchange.getIn() != null) {
                 // Use the existing message so we keep the headers
                 message = camelExchange.getIn();
@@ -305,8 +306,7 @@ public class RabbitMQMessageConverter {
 
     private void deserializeBody(final Exchange camelExchange, final Message message, final byte[] body) {
         Object messageBody = null;
-        try (InputStream b = new ByteArrayInputStream(body);
-             ObjectInputStream o = new ObjectInputStream(b)) {
+        try (InputStream b = new ByteArrayInputStream(body); ObjectInputStream o = new ObjectInputStream(b)) {
             messageBody = o.readObject();
         } catch (IOException | ClassNotFoundException e) {
             LOG.warn("Could not deserialize the object");
@@ -314,7 +314,7 @@ public class RabbitMQMessageConverter {
         }
         if (messageBody instanceof Throwable) {
             LOG.debug("Reply was an Exception. Setting the Exception on the Exchange");
-            camelExchange.setException((Throwable) messageBody);
+            camelExchange.setException((Throwable)messageBody);
         } else {
             message.setBody(messageBody);
         }
@@ -340,11 +340,11 @@ public class RabbitMQMessageConverter {
         this.allowNullHeaders = allowNullHeaders;
     }
 
-	public boolean isAllowCustomHeaders() {
-		return allowCustomHeaders;
-	}
+    public boolean isAllowCustomHeaders() {
+        return allowCustomHeaders;
+    }
 
-	public void setAllowCustomHeaders(boolean allowCustomHeaders) {
-		this.allowCustomHeaders = allowCustomHeaders;
-	}
+    public void setAllowCustomHeaders(boolean allowCustomHeaders) {
+        this.allowCustomHeaders = allowCustomHeaders;
+    }
 }
