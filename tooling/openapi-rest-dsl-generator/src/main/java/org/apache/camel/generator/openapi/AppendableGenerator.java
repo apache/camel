@@ -23,8 +23,8 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 
 final class AppendableGenerator extends RestDslSourceCodeGenerator<Appendable> {
 
-    AppendableGenerator(final OasDocument openapi) {
-        super(openapi);
+    AppendableGenerator(final OasDocument document) {
+        super(document);
     }
 
     @Override
