@@ -247,6 +247,7 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 </camelContext>
 ----
 
+In case you have multiple connection factories in your application or multiple connection factories in your registry, don't forge to set the `autoDetectConnectionFactory` to false.
 
 == Message Headers
 
