@@ -17,9 +17,12 @@
 package org.apache.camel.component.aws2.lambda;
 
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
@@ -35,11 +38,13 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
     }
 
-    @Test(expected = PropertyBindingException.class)
+    @Test
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint)component
-            .createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+        assertThrows(PropertyBindingException.class, () -> {
+            Lambda2Endpoint endpoint = (Lambda2Endpoint)component
+                .createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+        });
     }
 }
