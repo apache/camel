@@ -320,6 +320,16 @@ producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
 producer sets will be overridden.
 
+== Allowing custom Headers
+
+The `allowCustomHeaders` endpoint option can be used to avoid adding custom headers to the message sent to RabbitMQ.
+If set to false, the user will have only rabbitmq.* headers in the payload of the message. Default value for this option is true.
+
+[NOTE]
+====
+If you decide to use the allowCustomHeaders option, don't add sensitive information as header. It's not recommended and it's dangerous. Don't do it.
+====
+
 == Message Body
 
 The component will use the camel exchange in body as the rabbit mq
