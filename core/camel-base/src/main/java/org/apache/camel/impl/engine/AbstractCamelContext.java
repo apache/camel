@@ -2565,6 +2565,13 @@ public abstract class AbstractCamelContext extends ServiceSupport
     }
 
     @Override
+    public void init() {
+        try (MDCHelper mdcHelper = new MDCHelper()) {
+            super.init();
+        }
+    }
+
+    @Override
     public void stop() {
         try (MDCHelper mdcHelper = new MDCHelper()) {
             super.stop();
