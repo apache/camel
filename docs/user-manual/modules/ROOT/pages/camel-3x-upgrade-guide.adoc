@@ -421,6 +421,28 @@ Should now be:
     exchange.setRollbackOnly(true);
 ----
 
+==== Exchange.ERRORHANDLER_HANDLED
+
+The exchange property `Exchange.ERRORHANDLER_HANDLED` was used to indicate that the error handling mechanism for a given exchange
+had completed.  This property sometimes had to be conveyed by aggregation strategies, so instead of
+
+[source,java]
+----
+    oldExchange.getProperties().put(
+            Exchange.ERRORHANDLER_HANDLED,
+            newExchange.getProperties().get(Exchange.ERRORHANDLER_HANDLED));
+----
+
+one should now use:
+
+[source,java]
+----
+    Boolean handled = newExchange.adapt(ExtendedExchange.class)
+            .getErrorHandlerHandled();
+    oldExchange.adapt(ExtendedExchange.class)
+            .setErrorHandlerHandled(handled);
+----
+
 ==== ModelHelper removed
 
 The class `org.apache.camel.model.ModelHelper` has been removed. Instead you can use its functionality from `ExtendedCamelContext` by
