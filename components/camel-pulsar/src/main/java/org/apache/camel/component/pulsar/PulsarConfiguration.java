@@ -183,8 +183,8 @@ public class PulsarConfiguration implements Cloneable {
     /**
      * Whether to allow manual message acknowledgements.
      * <p/>
-     * If this option is enabled, then messages are not immediately acknowledged
-     * after being consumed. Instead, an instance of
+     * If this option is enabled, then messages are not acknowledged automatically
+     * after successful route completion. Instead, an instance of
      * {@link PulsarMessageReceipt} is stored as a header on the
      * {@link org.apache.camel.Exchange}. Messages can then be acknowledged
      * using {@link PulsarMessageReceipt} at any time before the ackTimeout

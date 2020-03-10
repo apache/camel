@@ -99,11 +99,11 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Whether to allow manual message acknowledgements. If this option is
-         * enabled, then messages are not immediately acknowledged after being
-         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
-         * header on the org.apache.camel.Exchange. Messages can then be
-         * acknowledged using PulsarMessageReceipt at any time before the
-         * ackTimeout occurs.
+         * enabled, then messages are not acknowledged automatically after
+         * successful route completion. Instead, an instance of
+         * PulsarMessageReceipt is stored as a header on the
+         * org.apache.camel.Exchange. Messages can then be acknowledged using
+         * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -117,11 +117,11 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Whether to allow manual message acknowledgements. If this option is
-         * enabled, then messages are not immediately acknowledged after being
-         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
-         * header on the org.apache.camel.Exchange. Messages can then be
-         * acknowledged using PulsarMessageReceipt at any time before the
-         * ackTimeout occurs.
+         * enabled, then messages are not acknowledged automatically after
+         * successful route completion. Instead, an instance of
+         * PulsarMessageReceipt is stored as a header on the
+         * org.apache.camel.Exchange. Messages can then be acknowledged using
+         * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -493,7 +493,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
@@ -507,7 +507,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
@@ -927,7 +927,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
@@ -941,7 +941,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
@@ -1007,7 +1007,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(boolean synchronous) {
@@ -1020,7 +1020,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {
