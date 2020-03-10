@@ -24,9 +24,9 @@ import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Transformer;
 
-public class DataFormatTransformeReifier extends TransformerReifier<DataFormatTransformerDefinition> {
+public class DataFormatTransformerReifier extends TransformerReifier<DataFormatTransformerDefinition> {
 
-    public DataFormatTransformeReifier(CamelContext camelContext, TransformerDefinition definition) {
+    public DataFormatTransformerReifier(CamelContext camelContext, TransformerDefinition definition) {
         super(camelContext, (DataFormatTransformerDefinition)definition);
     }
 
