@@ -39,7 +39,7 @@ public class SpringBootProjectSourceCodeGenerator {
 
     private String packageName;
 
-    public void generate(Path destination) throws IOException {
+    public void generate(final Path destination) throws IOException {
         final JavaFile javaFile = generateSourceCode();
 
         javaFile.writeTo(destination);
@@ -56,30 +56,9 @@ public class SpringBootProjectSourceCodeGenerator {
         return this;
     }
 
-    JavaFile generateSourceCode() {
-        notEmpty(packageName, "packageName");
-
-        final MethodSpec methodSpec = generateRestMethod();
-
-        final String classNameToUse = "CamelRestController";
-
-        final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class).addMember("value",
-            "$S", getClass().getName());
-        final AnnotationSpec.Builder restAnnotation = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.web.bind.annotation.RestController"));
-
-        TypeSpec.Builder builder = TypeSpec.classBuilder(classNameToUse)
-            .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
-            .addAnnotation(generatedAnnotation.build())
-            .addAnnotation(restAnnotation.build())
-            .addJavadoc("Forward requests to the Camel servlet so it can service REST requests.\n");
-        TypeSpec generatedRestController = builder.build();
-
-        return JavaFile.builder(packageName, generatedRestController).indent(indent).build();
-    }
-
     MethodSpec generateRestMethod() {
-        ClassName req = ClassName.bestGuess("javax.servlet.http.HttpServletRequest");
-        ClassName res = ClassName.bestGuess("javax.servlet.http.HttpServletResponse");
+        final ClassName req = ClassName.bestGuess("javax.servlet.http.HttpServletRequest");
+        final ClassName res = ClassName.bestGuess("javax.servlet.http.HttpServletResponse");
 
         final AnnotationSpec.Builder reqAnnotation = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.web.bind.annotation.RequestMapping"))
             .addMember("value", "\"/**\"");
@@ -98,6 +77,27 @@ public class SpringBootProjectSourceCodeGenerator {
         forward.addCode("}\n");
 
         return forward.build();
+    }
+
+    JavaFile generateSourceCode() {
+        notEmpty(packageName, "packageName");
+
+        final MethodSpec methodSpec = generateRestMethod();
+
+        final String classNameToUse = "CamelRestController";
+
+        final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class).addMember("value",
+            "$S", getClass().getName());
+        final AnnotationSpec.Builder restAnnotation = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.web.bind.annotation.RestController"));
+
+        final TypeSpec.Builder builder = TypeSpec.classBuilder(classNameToUse)
+            .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
+            .addAnnotation(generatedAnnotation.build())
+            .addAnnotation(restAnnotation.build())
+            .addJavadoc("Forward requests to the Camel servlet so it can service REST requests.\n");
+        final TypeSpec generatedRestController = builder.build();
+
+        return JavaFile.builder(packageName, generatedRestController).indent(indent).build();
     }
 
     public static SpringBootProjectSourceCodeGenerator generator() {
