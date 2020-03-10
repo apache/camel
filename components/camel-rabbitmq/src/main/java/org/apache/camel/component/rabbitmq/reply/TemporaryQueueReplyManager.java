@@ -44,8 +44,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                              String originalCorrelationId, String correlationId, long requestTimeout) {
+    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId, String correlationId,
+                                              long requestTimeout) {
         return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
@@ -69,7 +69,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             correlation.remove(correlationID);
             handler.onReply(correlationID, properties, message);
         } else {
-            // we could not correlate the received reply message to a matching request and therefore
+            // we could not correlate the received reply message to a matching
+            // request and therefore
             // we cannot continue routing the unknown message
             // log a warn and then ignore the message
             LOG.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
@@ -86,16 +87,15 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         Channel channel = conn.createChannel();
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
-            channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(),
-                            endpoint.isPrefetchGlobal());
+            channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
         }
 
-        //Let the server pick a random name for us
+        // Let the server pick a random name for us
         DeclareOk result = channel.queueDeclare();
         LOG.debug("Using temporary queue name: {}", result.getQueue());
         setReplyTo(result.getQueue());
 
-        //TODO check for the RabbitMQConstants.EXCHANGE_NAME header
+        // TODO check for the RabbitMQConstants.EXCHANGE_NAME header
         channel.queueBind(getReplyTo(), endpoint.getExchangeName(), getReplyTo());
 
         consumer = new RabbitConsumer(this, channel);
@@ -110,7 +110,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         consumer.stop();
     }
 
-    //TODO combine with class in RabbitMQConsumer
+    // TODO combine with class in RabbitMQConsumer
     class RabbitConsumer extends com.rabbitmq.client.DefaultConsumer {
 
         private final TemporaryQueueReplyManager consumer;
@@ -130,8 +130,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope,
-                                   AMQP.BasicProperties properties, byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             consumer.onMessage(properties, body);
         }
 

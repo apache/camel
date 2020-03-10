@@ -26,8 +26,8 @@ public interface MessageSentCallback {
     /**
      * Callback when the message has been sent.
      *
-     * @param session     the session
-     * @param message     the message
+     * @param session the session
+     * @param message the message
      * @param destination the destination
      */
     void sent(Connection session, byte[] message, String destination);

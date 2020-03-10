@@ -965,16 +965,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.consumerTag = consumerTag;
     }
 
-	public boolean isAllowCustomHeaders() {
-		return allowCustomHeaders;
-	}
+    public boolean isAllowCustomHeaders() {
+        return allowCustomHeaders;
+    }
 
     /**
      * Allow pass custom values to header
      */
-	public void setAllowCustomHeaders(boolean allowCustomHeaders) {
-		this.allowCustomHeaders = allowCustomHeaders;
-	}
-    
+    public void setAllowCustomHeaders(boolean allowCustomHeaders) {
+        this.allowCustomHeaders = allowCustomHeaders;
+    }
 
 }

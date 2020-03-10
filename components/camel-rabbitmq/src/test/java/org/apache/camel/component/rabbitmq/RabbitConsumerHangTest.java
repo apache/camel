@@ -41,7 +41,8 @@ public class RabbitConsumerHangTest {
         RabbitConsumer rabbitConsumer = new RabbitConsumer(consumer);
 
         rabbitConsumer.handleDelivery(null, null, null, null);
-        // will now fail with some NPE which is expected as we have not mocked all the inner details
+        // will now fail with some NPE which is expected as we have not mocked
+        // all the inner details
         try {
             rabbitConsumer.handleDelivery(null, null, null, null);
             fail("Should have thrown NPE");

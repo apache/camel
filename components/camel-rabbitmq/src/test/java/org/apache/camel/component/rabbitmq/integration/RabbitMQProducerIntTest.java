@@ -61,10 +61,10 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
 
     @Produce("direct:start-allow-null-headers")
     protected ProducerTemplate templateAllowNullHeaders;
-    
+
     @Produce("direct:start-not-allow-custom-headers")
     protected ProducerTemplate templateNotAllowCustomHeaders;
-    
+
     @Produce("direct:start-allow-custom-headers")
     protected ProducerTemplate templateAllowCustomHeaders;
 
@@ -160,7 +160,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
 
         assertThatBodiesAndHeadersReceivedIn(receivedHeaders, headers, received, "new message");
     }
-    
+
     @Test
     public void producedMessageNotAllowCustomHeaders() throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
@@ -179,7 +179,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
         assertFalse(receivedHeaders.containsKey(CUSTOM_HEADER));
     }
-    
+
     @Test
     public void producedMessageAllowCustomHeaders() throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
@@ -208,8 +208,9 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         }
     }
 
-    private void assertThatBodiesAndHeadersReceivedIn(Map<String, Object> receivedHeaders, Map<String, Object> expectedHeaders,
-                                                      final List<String> received, final String... expected) throws InterruptedException {
+    private void assertThatBodiesAndHeadersReceivedIn(Map<String, Object> receivedHeaders, Map<String, Object> expectedHeaders, final List<String> received,
+                                                      final String... expected)
+        throws InterruptedException {
         Thread.sleep(500);
 
         assertListSize(received, expected.length);
@@ -288,10 +289,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag,
-                                   Envelope envelope,
-                                   AMQP.BasicProperties properties,
-                                   byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             LOGGER.info("AMQP.BasicProperties: {}", properties);
 
             receivedHeaders.putAll(properties.getHeaders());
