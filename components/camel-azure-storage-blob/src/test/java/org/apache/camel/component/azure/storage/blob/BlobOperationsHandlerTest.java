@@ -25,7 +25,7 @@ class BlobOperationsHandlerTest {
     public void setup() {
         configuration = new BlobConfiguration();
         configuration.setAccountName("cameldev");
-        configuration.setAccessKey("2PS1ZnTqmR7ORJ33VSY+ASeq2yuRx+vIx10/+kaT/pu0yYe0iFkZDSMnXpHc33onLg8fxOyN/zx+4hPriZNC+g==");
+        configuration.setAccessKey("----");
     }
 
     @Test
