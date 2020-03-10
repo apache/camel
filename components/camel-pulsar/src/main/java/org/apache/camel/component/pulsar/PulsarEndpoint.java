@@ -46,8 +46,7 @@ public class PulsarEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String topic;
 
-    @UriParam(defaultValue = "true", label = "advanced",
-            description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean synchronous;
 
     @UriParam
