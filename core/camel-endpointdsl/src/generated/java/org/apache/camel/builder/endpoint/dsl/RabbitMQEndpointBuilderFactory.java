@@ -1659,6 +1659,32 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Allow pass custom values to header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder allowCustomHeaders(
+                boolean allowCustomHeaders) {
+            doSetProperty("allowCustomHeaders", allowCustomHeaders);
+            return this;
+        }
+        /**
+         * Allow pass custom values to header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder allowCustomHeaders(
+                String allowCustomHeaders) {
+            doSetProperty("allowCustomHeaders", allowCustomHeaders);
+            return this;
+        }
+        /**
          * Allow pass null values to header.
          * 
          * The option is a: <code>boolean</code> type.
