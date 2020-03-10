@@ -51,6 +51,7 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     public PulsarEndpoint(String uri, PulsarComponent component) {
         super(uri, component);
+        this.setSynchronous(true); // Override default.
     }
 
     @Override
