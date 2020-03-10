@@ -52,7 +52,6 @@
         <dependency>
             <groupId>io.apicurio</groupId>
             <artifactId>apicurio-data-models</artifactId>
-            <version>1.0.16.Final</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -70,7 +69,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
 
