@@ -30,6 +30,7 @@ import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.LongString;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ public class RabbitMQMessageConverter {
     protected static final Logger LOG = LoggerFactory.getLogger(RabbitMQMessageConverter.class);
 
     private boolean allowNullHeaders;
+    private boolean allowCustomHeaders;
+    private final HeaderFilterStrategy headerFilterStrategy = new RabbitMQHeaderFilterStrategy();
     
     /**
      * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
@@ -164,14 +167,21 @@ public class RabbitMQMessageConverter {
         final Map<String, Object> headers = msg.getHeaders();
         Map<String, Object> filteredHeaders = new HashMap<>();
 
-        // TODO: Add support for a HeaderFilterStrategy. See: org.apache.camel.component.jms.JmsBinding#shouldOutputHeader
         for (Map.Entry<String, Object> header : headers.entrySet()) {
             // filter header values.
-            Object value = getValidRabbitMQHeaderValue(header.getKey(), header.getValue());
-
+        	Object value = getValidRabbitMQHeaderValue(header.getKey(), header.getValue());
+            
             // additionaly filter out the OVERRIDE header so it does not propagate
             if ((value != null || isAllowNullHeaders()) && !header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
-                filteredHeaders.put(header.getKey(), header.getValue());
+            	boolean filteredHeader;
+            	if (!allowCustomHeaders) {
+            		filteredHeader = headerFilterStrategy.applyFilterToCamelHeaders(header.getKey(), header.getValue(), exchange);
+            		if (filteredHeader) {
+                    	filteredHeaders.put(header.getKey(), header.getValue());
+            		}
+            	} else {
+            	    filteredHeaders.put(header.getKey(), header.getValue());
+            	}
             } else if (LOG.isDebugEnabled()) {
                 if (header.getValue() == null) {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
@@ -329,4 +339,12 @@ public class RabbitMQMessageConverter {
     public void setAllowNullHeaders(boolean allowNullHeaders) {
         this.allowNullHeaders = allowNullHeaders;
     }
+
+	public boolean isAllowCustomHeaders() {
+		return allowCustomHeaders;
+	}
+
+	public void setAllowCustomHeaders(boolean allowCustomHeaders) {
+		this.allowCustomHeaders = allowCustomHeaders;
+	}
 }

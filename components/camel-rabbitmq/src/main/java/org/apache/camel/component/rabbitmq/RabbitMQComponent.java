@@ -267,7 +267,7 @@ public class RabbitMQComponent extends DefaultComponent {
 
         // Change null headers processing for message converter
         endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
-
+        endpoint.getMessageConverter().setAllowCustomHeaders(endpoint.isAllowCustomHeaders());
         return endpoint;
     }
 
