@@ -79,7 +79,7 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObjectRange&autoCreateBucket=false";
+                String awsEndpoint = "aws2-s3://mycamelbucket?operation=getObjectRange&autoCreateBucket=false";
 
                 from("direct:getObjectRange").to(awsEndpoint).process(new Processor() {
 
