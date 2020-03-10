@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
  */
 @Component("aws2-kms")
 public class KMS2Component extends DefaultComponent {
-	
+
     private static final Logger LOG = LoggerFactory.getLogger(KMS2Component.class);
     
     @Metadata
