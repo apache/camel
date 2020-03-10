@@ -43,10 +43,10 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithoutOperation() throws Exception {
-    	assertThrows(IllegalArgumentException.class, () -> {
-            Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
+        Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
+        assertThrows(IllegalArgumentException.class, () -> {
             component.createEndpoint("aws2-lambda://myFunction");
-    	});
+        });
     }
 
     @Test
