@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicLong;
+import com.hazelcast.cp.CPSubsystem;
+import com.hazelcast.cp.IAtomicLong;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
@@ -34,14 +35,19 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
     @Mock
     private IAtomicLong atomicNumber;
 
+    @Mock
+    private CPSubsystem cpSubsystem;
+
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.getAtomicLong("foo")).thenReturn(atomicNumber);
+        when(hazelcastInstance.getCPSubsystem()).thenReturn(cpSubsystem);
+        when(cpSubsystem.getAtomicLong("foo")).thenReturn(atomicNumber);
     }
 
     @Override
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        verify(hazelcastInstance, atLeastOnce()).getAtomicLong("foo");
+        verify(hazelcastInstance,times(10)).getCPSubsystem();
+        verify(cpSubsystem, atLeastOnce()).getAtomicLong("foo");
     }
 
     @After

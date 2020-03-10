@@ -309,6 +309,7 @@ public final class HazelcastConstants {
     // listener actions
     public static final String REMOVED = "removed";
     public static final String EVICTED = "evicted";
+    public static final String EXPIRED = "expired";
     public static final String UPDATED = "updated";
     public static final String ADDED = "added";
 

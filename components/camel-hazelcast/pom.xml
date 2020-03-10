@@ -48,11 +48,6 @@
             <artifactId>hazelcast</artifactId>
             <version>${hazelcast-version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-client</artifactId>
-            <version>${hazelcast-version}</version>
-        </dependency>
 
 
         <dependency>

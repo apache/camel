@@ -20,31 +20,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicLong;
+import com.hazelcast.cp.CPSubsystem;
+import com.hazelcast.cp.IAtomicLong;
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSpringTestSupport {
 
     @Mock
     private IAtomicLong atomicNumber;
 
+    @Mock
+    private CPSubsystem cpSubsystem;
+
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.getAtomicLong("foo")).thenReturn(atomicNumber);
+        when(hazelcastInstance.getCPSubsystem()).thenReturn(cpSubsystem);
+        when(cpSubsystem.getAtomicLong("foo")).thenReturn(atomicNumber);
     }
 
     @Override
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        verify(hazelcastInstance, atLeastOnce()).getAtomicLong("foo");
+        verify(hazelcastInstance,times(7)).getCPSubsystem();
+        verify(cpSubsystem, atLeastOnce()).getAtomicLong("foo");
     }
 
     @After

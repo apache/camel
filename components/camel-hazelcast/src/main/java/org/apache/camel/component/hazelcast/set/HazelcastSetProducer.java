@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast.set;
 import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ISet;
+import com.hazelcast.collection.ISet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
