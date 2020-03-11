@@ -78,16 +78,16 @@ public class Ddb2Component extends DefaultComponent {
 
     private void checkAndSetRegistryClient(Ddb2Configuration configuration, Ddb2Endpoint endpoint) {
         if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonDDBClient())) {
-            LOG.debug("Looking for an CloudWatchClient instance in the registry");
+            LOG.debug("Looking for an DynamoDbClient instance in the registry");
             Set<DynamoDbClient> clients = getCamelContext().getRegistry().findByType(DynamoDbClient.class);
             if (clients.size() == 1) {
-                LOG.debug("Found exactly one CloudWatchClient instance in the registry");
+                LOG.debug("Found exactly one DynamoDbClient instance in the registry");
                 configuration.setAmazonDDBClient(clients.stream().findFirst().get());
             } else {
-                LOG.debug("No CloudWatchClient instance in the registry");
+                LOG.debug("No DynamoDbClient instance in the registry");
             }
         } else {
-            LOG.debug("CloudWatchClient instance is already set at endpoint level: skipping the check in the registry");
+            LOG.debug("DynamoDbClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 }
