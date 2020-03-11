@@ -50,9 +50,7 @@
  ** xref:java-dsl.adoc[Java DSL]
  ** xref:spring.adoc[Spring support]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
-* Supported expression languages
-<!-- languages:adoc -->
-<!-- endinject -->
+* Supported expression languages -- see Components documentation
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 <!-- eips:adoc -->
 <!-- endinject -->

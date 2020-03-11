@@ -22,7 +22,7 @@ from("activemq:queue:hello?selector=color='red'")
 
 == Selective Consumer using Filter pattern
 
-The other approach is to use a xref:filter-eip.adoc[Message Filter] which is applied;
+The other approach is to use a xref:eips:filter-eip.adoc[Message Filter] which is applied;
 then if the filter matches the message your consumer is invoked as shown in the following example.
 
 [source,java]

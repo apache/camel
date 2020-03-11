@@ -19,4 +19,6 @@ name: components
 title: Component reference
 version: latest
 nav:
-- modules/ROOT/nav.adoc
+  - modules/ROOT/nav.adoc
+  - modules/dataformats/nav.adoc
+  - modules/languages/nav.adoc

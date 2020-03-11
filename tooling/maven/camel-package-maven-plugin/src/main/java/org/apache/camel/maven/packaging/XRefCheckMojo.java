@@ -43,6 +43,7 @@ import org.snakeyaml.engine.v2.api.LoadSettings;
 @Mojo(name = "xref-check", threadSafe = true)
 public class XRefCheckMojo extends AbstractMojo {
 
+    public static final java.lang.String PLAYBOOK = "antora-playbook-local-xref-check.yml";
     /**
      * The maven project.
      */
@@ -69,7 +70,7 @@ public class XRefCheckMojo extends AbstractMojo {
         List<String> unresolved = new ArrayList<>();
         Load yaml = new Load(LoadSettings.builder().build());
         Map site;
-        try (Reader r = Files.newBufferedReader(path.resolve("site.yml"))) {
+        try (Reader r = Files.newBufferedReader(path.resolve(PLAYBOOK))) {
             site = (Map) yaml.loadFromReader(r);
         }
         Map<String, Path> pages = new HashMap<>();

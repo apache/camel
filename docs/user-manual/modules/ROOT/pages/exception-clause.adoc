@@ -417,7 +417,7 @@ message instead of the fixed text `Sorry`:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionHandleAndTransformTest.java
 
-And we can use the xref:simple-language.adoc[Simple] language to set a readable error
+And we can use the xref:components:languages:simple-language.adoc[Simple] language to set a readable error
 message with the caused exception message:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionHandleAndTransformTest.java

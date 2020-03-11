@@ -1,0 +1,51 @@
+[[threads-eip]]
+= Threads EIP
+The Threads Pattern allows you to introduce a thread pool into a route.
+
+== Options
+
+// eip options: START
+The Threads EIP supports 10 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *executorServiceRef* | To refer to a custom thread pool or use a thread pool profile (as overlay) |  | String
+| *poolSize* | Sets the core pool size |  | Integer
+| *maxPoolSize* | Sets the maximum pool size |  | Integer
+| *keepAliveTime* | Sets the keep alive time for idle threads |  | Long
+| *timeUnit* | Sets the keep alive time unit. By default SECONDS is used. |  | TimeUnit
+| *maxQueueSize* | Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue |  | Integer
+| *allowCoreThreadTimeOut* | Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size Is by default false | false | Boolean
+| *threadName* | Sets the thread name to use. | Threads | String
+| *rejectedPolicy* | Sets the handler for tasks which cannot be executed by the thread pool. |  | ThreadPoolRejectedPolicy
+| *callerRunsWhenRejected* | Whether or not to use as caller runs as fallback when a task is rejected being added to the thread pool (when its full). This is only used as fallback if no rejectedPolicy has been configured, or the thread pool has no configured rejection handler. Is by default true | true | String
+|===
+// eip options: END
+
+== Samples
+
+The example below will add a Thread pool with a pool size of 5 threads before sending to *mock:result*.
+
+[source,java]
+----
+from("seda:a")
+  .threads(5)
+  .to("mock:result");
+----
+
+=== Spring DSL
+
+The sample below demonstrates the threads EIP in Spring DSL:
+
+[source,xml]
+----
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="seda:a"/>
+        <threads poolSize="5"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----

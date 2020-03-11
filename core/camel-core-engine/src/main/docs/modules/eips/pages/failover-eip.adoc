@@ -1,0 +1,46 @@
+[[failover-eip]]
+= Failover EIP
+
+Failover Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
+
+== Options
+
+// eip options: START
+The Failover EIP supports 4 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *exception* | A list of class names for specific exceptions to monitor. If no exceptions is configured then all exceptions is monitored |  | List
+| *roundRobin* | Whether or not the failover load balancer should operate in round robin mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting). |  | String
+| *sticky* | Whether or not the failover load balancer should operate in sticky mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If sticky is enabled, then it keeps state and will continue with the last known good endpoint. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting). |  | String
+| *maximumFailoverAttempts* | A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. his option can be used whether or not roundRobin is enabled or not. | -1 | String
+|===
+// eip options: END
+
+== Examples
+
+In this case we are using the header test as correlation expression:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance()
+    .failover(MyException.class)
+    .to("seda:x", "seda:y", "seda:z");
+----
+
+In XML you'll have a route like this
+
+[source,xml]
+----
+<from uri="direct:start"/>
+    <loadBalance>
+       <failover>
+           <exception>com.example.camel.MyException</exception>
+       </failover>
+       <to uri="seda:x"/>      
+       <to uri="seda:y"/>      
+       <to uri="seda:z"/>       
+    </loadBalance> 
+----
