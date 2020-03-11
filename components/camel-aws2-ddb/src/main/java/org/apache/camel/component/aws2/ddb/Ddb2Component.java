@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @Component("aws2-ddb")
 public class Ddb2Component extends DefaultComponent {
-	
+
     private static final Logger LOG = LoggerFactory.getLogger(Ddb2Component.class);
 
     @Metadata
