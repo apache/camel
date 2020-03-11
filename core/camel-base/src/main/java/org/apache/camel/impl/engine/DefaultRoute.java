@@ -568,7 +568,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
                 ((RouteIdAware) consumer).setRouteId(this.getId());
             }
         }
-        Processor processor = getProcessor();
         if (processor instanceof Service) {
             services.add((Service)processor);
         }
