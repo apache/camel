@@ -39,12 +39,12 @@ public class RabbitMQProducerQpidTest extends RabbitMQProducerIntTest {
     public static void stopBroker() {
         systemLauncher.shutdown();
     }
-    
+
     @Ignore
     @Override
     public void producedMessageIsReceivedWhenPublisherAcknowledgementsAreEnabledAndBadRoutingKeyIsUsed() throws InterruptedException, IOException, TimeoutException {
     }
-    
+
     @Ignore
     @Override
     public void shouldSuccessfullyProduceMessageWhenGuaranteedDeliveryIsActivatedOnABadRouteButMessageIsNotMandatory() throws InterruptedException, IOException, TimeoutException {

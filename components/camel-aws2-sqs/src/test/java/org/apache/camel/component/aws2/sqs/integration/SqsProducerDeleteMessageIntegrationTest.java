@@ -51,15 +51,15 @@ public class SqsProducerDeleteMessageIntegrationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+        final String sqsEndpointUri = String.format("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1");
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                from("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=false").startupOrder(1).log("${body}")
-                    .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&operation=deleteMessage").log("${body}")
+                from("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1&deleteAfterRead=false").startupOrder(1).log("${body}")
+                    .to("aws2-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1&operation=deleteMessage").log("${body}")
                     .log("${header.CamelAwsSqsReceiptHandle}").to("mock:result");
             }
         };

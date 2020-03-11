@@ -24,10 +24,15 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @Component("aws2-s3")
 public class AWS2S3Component extends DefaultComponent {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Component.class);
 
     @Metadata
     private AWS2S3Configuration configuration = new AWS2S3Configuration();
@@ -55,7 +60,7 @@ public class AWS2S3Component extends DefaultComponent {
         configuration.setBucketName(remaining);
         AWS2S3Endpoint endpoint = new AWS2S3Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        checkAndSetRegistryClient(configuration, endpoint);
         if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
@@ -74,10 +79,18 @@ public class AWS2S3Component extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void checkAndSetRegistryClient(AWS2S3Configuration configuration) {
-        Set<S3Client> clients = getCamelContext().getRegistry().findByType(S3Client.class);
-        if (clients.size() == 1) {
-            configuration.setAmazonS3Client(clients.stream().findFirst().get());
+    private void checkAndSetRegistryClient(AWS2S3Configuration configuration, AWS2S3Endpoint endpoint) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonS3Client())) {
+            LOG.debug("Looking for an S3Client instance in the registry");
+            Set<S3Client> clients = getCamelContext().getRegistry().findByType(S3Client.class);
+            if (clients.size() == 1) {
+                LOG.debug("Found exactly one S3Client instance in the registry");
+                configuration.setAmazonS3Client(clients.stream().findFirst().get());
+            } else {
+                LOG.debug("No S3Client instance in the registry");
+            }
+        } else {
+            LOG.debug("S3Client instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 }

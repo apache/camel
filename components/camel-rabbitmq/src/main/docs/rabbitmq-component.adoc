@@ -133,7 +133,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (60 parameters):
+=== Query Parameters (61 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -172,6 +172,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
+| *allowCustomHeaders* (producer) | Allow pass custom values to header | false | boolean
 | *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
 | *bridgeEndpoint* (producer) | If the bridgeEndpoint is true, the producer will ignore the message header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY | false | boolean
 | *channelPoolMaxSize* (producer) | Get maximum number of opened channel in pool | 10 | int
@@ -246,6 +247,7 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 </camelContext>
 ----
 
+In case you have multiple connection factories in your application or multiple connection factories in your registry, don't forge to set the `autoDetectConnectionFactory` to false.
 
 == Message Headers
 
@@ -317,6 +319,16 @@ Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
 producer sets will be overridden.
+
+== Allowing custom Headers
+
+The `allowCustomHeaders` endpoint option can be used to avoid adding custom headers to the message sent to RabbitMQ.
+If set to false, the user will have only rabbitmq.* headers in the payload of the message. Default value for this option is true.
+
+[NOTE]
+====
+If you decide to use the allowCustomHeaders option, don't add sensitive information as header. It's not recommended and it's dangerous. Don't do it.
+====
 
 == Message Body
 

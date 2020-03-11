@@ -67,6 +67,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean useDataType;
     private boolean useBreadcrumb;
     private boolean allowAddingNewRoutes = true;
+    private boolean clearModelReferences;
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxCreateConnector;
@@ -655,6 +656,14 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
         this.allowAddingNewRoutes = allowAddingNewRoutes;
+    }
+
+    public boolean isClearModelReferences() {
+        return clearModelReferences;
+    }
+
+    public void setClearModelReferences(boolean clearModelReferences) {
+        this.clearModelReferences = clearModelReferences;
     }
 
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {

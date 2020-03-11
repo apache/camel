@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
+import io.apicurio.datamodels.core.util.ReferenceUtil;
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasParameter;
 import io.apicurio.datamodels.openapi.models.OasResponse;
@@ -69,14 +70,20 @@ class OperationVisitor<T> {
 
     CodeEmitter<T> emit(final OasParameter parameter) {
         emitter.emit("param");
-        emit("name", parameter.getName());
-        final String parameterType = parameter.in;
+
+        OasParameter toUse = parameter;
+        if (ObjectHelper.isNotEmpty(parameter.$ref)) {
+            toUse = (OasParameter) ReferenceUtil.resolveRef(parameter.$ref, parameter);
+        }
+
+        emit("name", toUse.getName());
+        final String parameterType = toUse.in;
         if (ObjectHelper.isNotEmpty(parameterType)) {
             emit("type", RestParamType.valueOf(parameterType));
         }
-        if (!parameterType.equals("body")) {
-            if (parameter instanceof Oas20Parameter) {
-                final Oas20Parameter serializableParameter = (Oas20Parameter)parameter;
+        if (!"body".equals(parameterType)) {
+            if (toUse instanceof Oas20Parameter) {
+                final Oas20Parameter serializableParameter = (Oas20Parameter) toUse;
 
                 final String dataType = serializableParameter.type;
                 emit("dataType", dataType);
@@ -86,7 +93,7 @@ class OperationVisitor<T> {
                     emit("collectionFormat", CollectionFormat.valueOf(collectionFormat));
                 }
                 if (ObjectHelper.isNotEmpty(serializableParameter.default_)) {
-                    String value = serializableParameter.default_.toString();
+                    final String value = serializableParameter.default_.toString();
                     emit("defaultValue", value);
                 }
 
@@ -94,18 +101,18 @@ class OperationVisitor<T> {
                 if ("array".equals(dataType) && items != null) {
                     emit("arrayType", items.type);
                 }
-            } else if (parameter instanceof Oas30Parameter) {
-                final Oas30Parameter serializableParameter = (Oas30Parameter)parameter;
-                Oas30Schema schema = (Oas30Schema)serializableParameter.schema;
+            } else if (toUse instanceof Oas30Parameter) {
+                final Oas30Parameter serializableParameter = (Oas30Parameter) toUse;
+                final Oas30Schema schema = (Oas30Schema) serializableParameter.schema;
                 if (schema != null) {
                     final String dataType = schema.type;
                     if (ObjectHelper.isNotEmpty(dataType)) {
                         emit("dataType", dataType);
                     }
                     emit("allowableValues", asStringList(schema.enum_));
-                    final String collectionFormat = serializableParameter.style;
-                    if (ObjectHelper.isNotEmpty(collectionFormat)) {
-                        if (collectionFormat.equals("form")) {
+                    final String style = serializableParameter.style;
+                    if (ObjectHelper.isNotEmpty(style)) {
+                        if (style.equals("form")) {
                             if (serializableParameter.explode) {
                                 emit("collectionFormat", CollectionFormat.multi);
                             } else {
@@ -114,23 +121,23 @@ class OperationVisitor<T> {
                         }
                     }
                     if (ObjectHelper.isNotEmpty(schema.default_)) {
-                        String value = schema.default_.toString();
+                        final String value = schema.default_.toString();
                         emit("defaultValue", value);
                     }
 
                     if ("array".equals(dataType) && schema.items != null
                         && schema.items instanceof Oas30ItemsSchema) {
-                        emit("arrayType", ((Oas30ItemsSchema)schema.items).type);
+                        emit("arrayType", ((Oas30ItemsSchema) schema.items).type);
                     }
                 }
             }
         }
-        if (parameter.required != null) {
-            emit("required", parameter.required);
+        if (toUse.required != null) {
+            emit("required", toUse.required);
         } else {
             emit("required", Boolean.FALSE);
         }
-        emit("description", parameter.description);
+        emit("description", toUse.description);
         emitter.emit("endParam");
 
         return emitter;
@@ -159,59 +166,57 @@ class OperationVisitor<T> {
 
             emit("id", operation.operationId);
             emit("description", operation.description);
-            List<String> operationLevelConsumes = new ArrayList<String>();
+            List<String> operationLevelConsumes = new ArrayList<>();
             if (operation instanceof Oas20Operation) {
-                operationLevelConsumes = ((Oas20Operation)operation).consumes;
+                operationLevelConsumes = ((Oas20Operation) operation).consumes;
             } else if (operation instanceof Oas30Operation) {
-                Oas30Operation oas30Operation = (Oas30Operation)operation;
-                if (oas30Operation.requestBody != null 
-                    && oas30Operation.requestBody.content != null) { 
-                    for (String ct : oas30Operation.requestBody.content.keySet()) {
+                final Oas30Operation oas30Operation = (Oas30Operation) operation;
+                if (oas30Operation.requestBody != null
+                    && oas30Operation.requestBody.content != null) {
+                    for (final String ct : oas30Operation.requestBody.content.keySet()) {
                         operationLevelConsumes.add(ct);
                     }
                 }
-                    
+
             }
             emit("consumes", operationLevelConsumes);
-            List<String> operationLevelProduces = new ArrayList<String>();
+            List<String> operationLevelProduces = new ArrayList<>();
             if (operation instanceof Oas20Operation) {
-                operationLevelProduces = ((Oas20Operation)operation).produces;
+                operationLevelProduces = ((Oas20Operation) operation).produces;
             } else if (operation instanceof Oas30Operation) {
-                Oas30Operation oas30Operation = (Oas30Operation)operation;
+                final Oas30Operation oas30Operation = (Oas30Operation) operation;
                 if (oas30Operation.responses != null) {
-                    for (OasResponse response : oas30Operation.responses.getResponses()) {
-                        Oas30Response oas30Response = (Oas30Response)response;
-                        for (String ct : oas30Response.content.keySet()) {
+                    for (final OasResponse response : oas30Operation.responses.getResponses()) {
+                        final Oas30Response oas30Response = (Oas30Response) response;
+                        for (final String ct : oas30Response.content.keySet()) {
                             operationLevelProduces.add(ct);
                         }
                     }
                 }
             }
             emit("produces", operationLevelProduces);
-            
+
             if (operation.getParameters() != null) {
-                operation.getParameters().forEach(parameter -> {
-                    emit(parameter);
-                });
+                operation.getParameters().forEach(this::emit);
             }
             if (operation instanceof Oas30Operation) {
-                emitOas30Operation((Oas30Operation)operation);
+                emitOas30Operation((Oas30Operation) operation);
             }
 
             emitter.emit("to", destinationGenerator.generateDestinationFor(operation));
         }
+
     }
 
-    private CodeEmitter<T> emitOas30Operation(Oas30Operation operation) {
-        
+    private CodeEmitter<T> emitOas30Operation(final Oas30Operation operation) {
         if (operation.requestBody != null) {
             boolean foundForm = false;
-            Oas30RequestBody requestBody = operation.requestBody;
-            for (Entry<String, Oas30MediaType> entry : requestBody.content.entrySet()) {
-                String ct = entry.getKey();
-                Oas30MediaType mediaType = entry.getValue();
+            final Oas30RequestBody requestBody = operation.requestBody;
+            for (final Entry<String, Oas30MediaType> entry : requestBody.content.entrySet()) {
+                final String ct = entry.getKey();
+                final Oas30MediaType mediaType = entry.getValue();
                 if (ct.contains("form") && mediaType.schema.properties != null) {
-                    for (Entry<String, OasSchema> entrySchema :  mediaType.schema.properties.entrySet()) {
+                    for (final Entry<String, OasSchema> entrySchema : mediaType.schema.properties.entrySet()) {
                         foundForm = true;
                         emitter.emit("param");
                         emit("name", entrySchema.getKey());
@@ -232,8 +237,8 @@ class OperationVisitor<T> {
                 emitter.emit("endParam");
             }
         }
-        
+
         return emitter;
-        
+
     }
 }

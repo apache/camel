@@ -61,7 +61,7 @@ public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws2-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&messageGroupIdStrategy=useExchangeId"
+        final String sqsEndpointUri = String.format("aws2-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=eu-west-1&messageGroupIdStrategy=useExchangeId"
                                                     + "&messageDeduplicationIdStrategy=useContentBasedDeduplication");
 
         return new RouteBuilder() {
@@ -69,7 +69,7 @@ public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage")).to(sqsEndpointUri);
 
-                from("aws2-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&deleteAfterRead=false").startupOrder(1).log("${body}").to("mock:result");
+                from("aws2-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxxx)&region=eu-west-1&deleteAfterRead=false").startupOrder(1).log("${body}").to("mock:result");
             }
         };
     }

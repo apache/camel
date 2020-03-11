@@ -68,7 +68,8 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
             if (!consumer.getEndpoint().isAutoAck()) {
                 lock.acquire();
             }
-            //Channel might be open because while we were waiting for the lock, stop() has been succesfully called.
+            // Channel might be open because while we were waiting for the lock,
+            // stop() has been succesfully called.
             if (!channel.isOpen()) {
                 // we could not open the channel so release the lock
                 if (!consumer.getEndpoint().isAutoAck()) {
@@ -181,7 +182,8 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         if (channel == null) {
             throw new IOException("The RabbitMQ channel is not open");
         }
-        tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(), consumer.getEndpoint().getConsumerTag(), false, consumer.getEndpoint().isExclusiveConsumer(), null, this);
+        tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(), consumer.getEndpoint().getConsumerTag(), false,
+                                   consumer.getEndpoint().isExclusiveConsumer(), null, this);
     }
 
     @Override
@@ -230,8 +232,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     /**
      * No-op implementation of {@link Consumer#handleCancelOk}.
      *
-     * @param consumerTag
-     *            the defined consumer tag (client- or server-generated)
+     * @param consumerTag the defined consumer tag (client- or server-generated)
      */
     @Override
     public void handleCancelOk(String consumerTag) {
@@ -242,8 +243,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     /**
      * No-op implementation of {@link Consumer#handleCancel(String)}
      *
-     * @param consumerTag
-     *            the defined consumer tag (client- or server-generated)
+     * @param consumerTag the defined consumer tag (client- or server-generated)
      */
     @Override
     public void handleCancel(String consumerTag) throws IOException {
@@ -252,7 +252,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         try {
             channel.basicCancel(tag);
         } catch (Exception e) {
-            //no-op
+            // no-op
         }
 
         this.consumer.getEndpoint().declareExchangeAndQueue(channel);
@@ -285,8 +285,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                     LOG.debug(e.getMessage(), e);
 
                     Integer networkRecoveryInterval = consumer.getEndpoint().getNetworkRecoveryInterval();
-                    final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0
-                            ? networkRecoveryInterval : 100L;
+                    final long connectionRetryInterval = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
                     try {
                         Thread.sleep(connectionRetryInterval);
                     } catch (InterruptedException e1) {
@@ -329,8 +328,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     }
 
     private boolean isAutomaticRecoveryEnabled() {
-        return this.consumer.getEndpoint().getAutomaticRecoveryEnabled() != null
-            && this.consumer.getEndpoint().getAutomaticRecoveryEnabled();
+        return this.consumer.getEndpoint().getAutomaticRecoveryEnabled() != null && this.consumer.getEndpoint().getAutomaticRecoveryEnabled();
     }
 
     private boolean isChannelOpen() {
@@ -346,8 +344,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         LOG.debug("Created channel: {}", channel);
         // setup the basicQos
         if (consumer.getEndpoint().isPrefetchEnabled()) {
-            channel.basicQos(consumer.getEndpoint().getPrefetchSize(), consumer.getEndpoint().getPrefetchCount(),
-                    consumer.getEndpoint().isPrefetchGlobal());
+            channel.basicQos(consumer.getEndpoint().getPrefetchSize(), consumer.getEndpoint().getPrefetchCount(), consumer.getEndpoint().isPrefetchGlobal());
         }
 
         // This really only needs to be called on the first consumer or on

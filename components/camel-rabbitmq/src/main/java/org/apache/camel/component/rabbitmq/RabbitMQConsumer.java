@@ -87,9 +87,9 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     }
 
     private boolean isAutomaticRecoveryEnabled() {
-        return this.endpoint.getAutomaticRecoveryEnabled() != null
-            && this.endpoint.getAutomaticRecoveryEnabled();
+        return this.endpoint.getAutomaticRecoveryEnabled() != null && this.endpoint.getAutomaticRecoveryEnabled();
     }
+
     /**
      * Create the consumers but don't start yet
      */
@@ -193,8 +193,6 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
             executor = null;
         }
     }
-
-
 
     /**
      * Task in charge of opening connection and adding listener when consumer is

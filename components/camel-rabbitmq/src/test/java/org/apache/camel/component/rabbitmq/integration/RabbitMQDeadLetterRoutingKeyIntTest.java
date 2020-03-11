@@ -43,28 +43,14 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQDeadLetterRoutingKeyIntTest.class);
 
-    private static final String CONSUMER = "rabbitmq:ex9?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest"
-            + "&skipExchangeDeclare=false"
-            + "&skipQueueDeclare=false"
-            + "&autoDelete=false"
-            + "&durable=true"
-            + "&autoAck=false"
-            + "&queue=q9"
-            + "&routingKey=rk1"
-            + "&deadLetterExchange=dlx"
-            + "&deadLetterQueue=dlq"
-            + "&deadLetterExchangeType=fanout";
-    
+    private static final String CONSUMER = "rabbitmq:ex9?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest" + "&skipExchangeDeclare=false"
+                                           + "&skipQueueDeclare=false" + "&autoDelete=false" + "&durable=true" + "&autoAck=false" + "&queue=q9" + "&routingKey=rk1"
+                                           + "&deadLetterExchange=dlx" + "&deadLetterQueue=dlq" + "&deadLetterExchangeType=fanout";
+
     private static final String CONSUMER_WITH_DEADLETTER_ROUTING_KEY = "rabbitmq:ex10?hostname=localhost&portNumber=5672&username=cameltest&password=cameltest"
-            + "&skipExchangeDeclare=false"
-            + "&skipQueueDeclare=false"
-            + "&autoDelete=false&durable=true"
-            + "&autoAck=false&queue=q10"
-            + "&routingKey=rk1"
-            + "&deadLetterExchange=dlx"
-            + "&deadLetterQueue=dlq"
-            + "&deadLetterExchangeType=fanout"
-            + "&deadLetterRoutingKey=rk2";
+                                                                       + "&skipExchangeDeclare=false" + "&skipQueueDeclare=false" + "&autoDelete=false&durable=true"
+                                                                       + "&autoAck=false&queue=q10" + "&routingKey=rk1" + "&deadLetterExchange=dlx" + "&deadLetterQueue=dlq"
+                                                                       + "&deadLetterExchangeType=fanout" + "&deadLetterRoutingKey=rk2";
 
     private Connection connection;
     private Channel channel;
@@ -107,12 +93,10 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
         final List<String> received = new ArrayList<>();
         final StringBuilder routingKey = new StringBuilder();
 
-        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
-                .contentType("text/plain")
-                .contentEncoding(StandardCharsets.UTF_8.toString()).build();
+        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().contentType("text/plain").contentEncoding(StandardCharsets.UTF_8.toString()).build();
 
-        receivedEndpoint.whenAnyExchangeReceived(exchange -> { 
-            throw new Exception("Simulated exception"); 
+        receivedEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new Exception("Simulated exception");
         });
 
         channel.basicPublish("ex9", "rk1", properties, "new message".getBytes(StandardCharsets.UTF_8));
@@ -130,12 +114,10 @@ public class RabbitMQDeadLetterRoutingKeyIntTest extends AbstractRabbitMQIntTest
         final List<String> received = new ArrayList<>();
         StringBuilder routingKey = new StringBuilder();
 
-        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
-                .contentType("text/plain")
-                .contentEncoding(StandardCharsets.UTF_8.toString()).build();
+        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().contentType("text/plain").contentEncoding(StandardCharsets.UTF_8.toString()).build();
 
-        receivedEndpoint.whenAnyExchangeReceived(exchange -> { 
-            throw new Exception("Simulated exception"); 
+        receivedEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new Exception("Simulated exception");
         });
 
         channel.basicPublish("ex10", "rk1", properties, "new message".getBytes(StandardCharsets.UTF_8));

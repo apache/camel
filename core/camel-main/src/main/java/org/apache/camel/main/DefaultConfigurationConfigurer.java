@@ -154,6 +154,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
         ecc.setAllowAddingNewRoutes(config.isAllowAddingNewRoutes());
+        ecc.setClearModelReferences(config.isClearModelReferences());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());

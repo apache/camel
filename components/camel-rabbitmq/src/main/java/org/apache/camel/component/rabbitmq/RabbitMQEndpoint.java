@@ -166,6 +166,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean guaranteedDeliveries;
     @UriParam(label = "producer")
     private boolean allowNullHeaders;
+    @UriParam(label = "producer")
+    private boolean allowCustomHeaders = true;
     @UriParam(label = "consumer")
     private String consumerTag = "";
     // camel-jms supports this setting but it is not currently configurable in
@@ -962,4 +964,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public void setConsumerTag(String consumerTag) {
         this.consumerTag = consumerTag;
     }
+
+    public boolean isAllowCustomHeaders() {
+        return allowCustomHeaders;
+    }
+
+    /**
+     * Allow pass custom values to header
+     */
+    public void setAllowCustomHeaders(boolean allowCustomHeaders) {
+        this.allowCustomHeaders = allowCustomHeaders;
+    }
+
 }

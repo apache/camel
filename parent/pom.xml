@@ -88,7 +88,7 @@
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-bundle-version>1.11.714_1</aws-java-sdk-bundle-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.10.81</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.10.83</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -341,7 +341,7 @@
         <javax-activation-version>1.2.0</javax-activation-version>
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
-        <jakarta-mail-version>1.6.4</jakarta-mail-version>
+        <jakarta-mail-version>1.6.5</jakarta-mail-version>
         <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
         <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
@@ -370,7 +370,7 @@
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.0</jettison-version>
-        <jgit-version>5.6.1.202002131546-r</jgit-version>
+        <jgit-version>5.7.0.202003090808-r</jgit-version>
         <jgroups-version>4.2.0.Final</jgroups-version>
         <jgroups-raft-version>0.5.1.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
