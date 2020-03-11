@@ -1,12 +1,18 @@
 [list-of-camel-components]
-= List of Camel components
+= Components
 
-The following Apache Camel artifacts are provided:
+Component references are references used to place a component in an assembly. Apache Component references 
+provides various references that offers services for messaging, sending data, notifcations and various other 
+services that can not only resolve easy messaging and transferring data but also provide securing of data.
 
-== Components
+Below are the list of components that are provided by the Apache Camel.
+
+== List of Components
 
 // components: START
 Number of Components: 332 in 265 JAR artifacts (1 deprecated)
+
+The following Apache Camel artifacts are provided:
 
 [width="100%",cols="4,1,5",options="header"]
 |===
