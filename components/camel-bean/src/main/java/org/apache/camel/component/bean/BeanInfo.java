@@ -171,25 +171,9 @@ public class BeanInfo {
 
     public MethodInvocation createInvocation(Object pojo, Exchange exchange)
         throws AmbiguousMethodCallException, MethodNotFoundException {
-        return createInvocation(pojo, exchange, null);
-    }
 
-    private MethodInvocation createInvocation(Object pojo, Exchange exchange, Method explicitMethod)
-        throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
         
-        // find the explicit method to invoke
-        if (explicitMethod != null) {
-            for (List<MethodInfo> infos : operations.values()) {
-                for (MethodInfo info : infos) {
-                    if (explicitMethod.equals(info.getMethod())) {
-                        return info.createMethodInvocation(pojo, info.hasParameters(), exchange);
-                    }
-                }
-            }
-            throw new MethodNotFoundException(exchange, pojo, explicitMethod.getName());
-        }
-
         String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (methodName != null) {
 
