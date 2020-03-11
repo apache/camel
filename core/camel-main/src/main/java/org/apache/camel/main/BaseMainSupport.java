@@ -770,11 +770,10 @@ public abstract class BaseMainSupport extends ServiceSupport {
         }
         if (!restProperties.isEmpty()) {
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            RestConfiguration rest = model.getRestConfiguration();
+            RestConfiguration rest = camelContext.getRestConfiguration();
             if (rest == null) {
                 rest = new RestConfiguration();
-                model.setRestConfiguration(rest);
+                camelContext.setRestConfiguration(rest);
             }
             setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
@@ -806,8 +805,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
             });
         }
         if (!restProperties.isEmpty()) {
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            RestConfiguration rest = model.getRestConfiguration();
+            RestConfiguration rest = camelContext.getRestConfiguration();
             restProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.rest.{}={} on bean: {}", k, v, rest);
             });
