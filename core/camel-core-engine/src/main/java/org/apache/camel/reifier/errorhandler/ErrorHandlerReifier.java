@@ -186,9 +186,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         // so we should use that one
         if (!isErrorHandlerFactoryConfigured(ref)) {
             // see if there has been configured a error handler builder on the route
-            // TODO: Avoid using RouteDefinition - tests should pass: https://issues.apache.org/jira/browse/CAMEL-13984
-            RouteDefinition def = (RouteDefinition) route.getRoute();
-            answer = def.getErrorHandlerFactory();
+            answer = route.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
             if (answer instanceof ErrorHandlerBuilderRef) {
                 ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
