@@ -20,11 +20,16 @@ import java.util.Arrays;
 
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.MethodSpec.Builder;
+import io.apicurio.datamodels.openapi.models.OasOperation;
+import io.apicurio.datamodels.openapi.models.OasPathItem;
+import io.apicurio.datamodels.openapi.models.OasPaths;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Parameter;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
 import io.apicurio.datamodels.openapi.v3.models.Oas30ParameterDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
+import org.apache.camel.generator.openapi.PathVisitor.HttpMethod;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,22 +56,55 @@ public class OperationVisitorTest {
     }
 
     @Test
-    public void shouldEmitCodeForOas3ParameterInPath() {
+    public void shouldEmitCodeForOas32arameterInPath() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
 
-        final Oas30Parameter parameter = new Oas30Parameter("param");
+        final Oas20Document document = new Oas20Document();
+        final OasPaths paths = document.createPaths();
+        final OasPathItem path = paths.addPathItem("", paths.createPathItem("/path/{param}"));
+        final OasOperation operation = path.createOperation("get");
+        final Oas20Parameter parameter = new Oas20Parameter("param");
         parameter.in = "path";
+        path.addParameter(parameter);
 
-        visitor.emit(parameter);
+        visitor.visit(HttpMethod.GET, operation);
 
         assertThat(method.build().toString()).isEqualTo("void configure() {\n"
-            + "      param()\n"
+            + "    get(\"/path/{param}\")\n"
+            + "      .param()\n"
             + "        .name(\"param\")\n"
             + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
             + "        .required(false)\n"
-            + "      .endParam()}\n");
+            + "      .endParam()\n"
+            + "      .to(\"direct:rest1\")}\n");
+    }
+
+    @Test
+    public void shouldEmitCodeForOas3ParameterInPath() {
+        final Builder method = MethodSpec.methodBuilder("configure");
+        final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, new OperationFilter(), "/path/{param}", new DirectToOperationId());
+
+        final Oas30Document document = new Oas30Document();
+        final OasPaths paths = document.createPaths();
+        final OasPathItem path = paths.addPathItem("", paths.createPathItem("/path/{param}"));
+        final OasOperation operation = path.createOperation("get");
+        final Oas30Parameter parameter = new Oas30Parameter("param");
+        parameter.in = "path";
+        path.addParameter(parameter);
+
+        visitor.visit(HttpMethod.GET, operation);
+
+        assertThat(method.build().toString()).isEqualTo("void configure() {\n"
+            + "    get(\"/path/{param}\")\n"
+            + "      .param()\n"
+            + "        .name(\"param\")\n"
+            + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
+            + "        .required(false)\n"
+            + "      .endParam()\n"
+            + "      .to(\"direct:rest1\")}\n");
     }
 
     @Test
@@ -131,6 +169,25 @@ public class OperationVisitorTest {
             + "        .name(\"param\")\n"
             + "        .type(org.apache.camel.model.rest.RestParamType.query)\n"
             + "        .dataType(\"integer\")\n"
+            + "        .required(false)\n"
+            + "      .endParam()}\n");
+    }
+
+    @Test
+    public void shouldEmitCodeForOas3PathParameter() {
+        final Builder method = MethodSpec.methodBuilder("configure");
+        final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null);
+
+        final Oas30Parameter parameter = new Oas30Parameter("param");
+        parameter.in = "path";
+
+        visitor.emit(parameter);
+
+        assertThat(method.build().toString()).isEqualTo("void configure() {\n"
+            + "      param()\n"
+            + "        .name(\"param\")\n"
+            + "        .type(org.apache.camel.model.rest.RestParamType.path)\n"
             + "        .required(false)\n"
             + "      .endParam()}\n");
     }

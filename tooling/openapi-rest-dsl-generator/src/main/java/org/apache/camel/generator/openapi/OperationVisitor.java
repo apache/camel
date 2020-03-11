@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import io.apicurio.datamodels.core.util.ReferenceUtil;
 import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasParameter;
+import io.apicurio.datamodels.openapi.models.OasPathItem;
 import io.apicurio.datamodels.openapi.models.OasResponse;
 import io.apicurio.datamodels.openapi.models.OasSchema;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Items;
@@ -196,9 +197,14 @@ class OperationVisitor<T> {
             }
             emit("produces", operationLevelProduces);
 
-            if (operation.getParameters() != null) {
+            if (ObjectHelper.isNotEmpty(operation.getParameters())) {
                 operation.getParameters().forEach(this::emit);
             }
+            final OasPathItem pathItem = (OasPathItem) operation.parent();
+            if (ObjectHelper.isNotEmpty(pathItem.getParameters())) {
+                pathItem.getParameters().forEach(this::emit);
+            }
+
             if (operation instanceof Oas30Operation) {
                 emitOas30Operation((Oas30Operation) operation);
             }
