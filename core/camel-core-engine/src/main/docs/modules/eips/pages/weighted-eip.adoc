@@ -1,0 +1,43 @@
+[[weighted-eip]]
+= Weighted EIP
+
+Weighted Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
+
+== Options
+
+// eip options: START
+The Weighted EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *roundRobin* | To enable round robin mode. By default the weighted distribution mode is used. The default value is false. |  | String
+| *distributionRatio* | *Required* The distribution ratio is a delimited String consisting on integer weights separated by delimiters for example 2,3,5. The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list. |  | String
+| *distributionRatioDelimiter* | Delimiter used to specify the distribution ratio. The default value is , | , | String
+|===
+// eip options: END
+
+== Examples
+
+In this case we are using the header test as correlation expression:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance()
+    .weighted(false, "4,2,1")
+    .to("seda:x", "seda:y", "seda:z");
+----
+
+In XML you'll have a route like this
+
+[source,xml]
+----
+<from uri="direct:start"/> 
+  <loadBalance> 
+    <weighted roundRobin="false" distributionRatio="4 2 1"/> 
+    <to uri="seda:x"/> 
+    <to uri="seda:y"/> 
+    <to uri="seda:z"/> 
+  </loadBalance>
+----

@@ -332,7 +332,7 @@ The `Exchange.FAILURE_ENDPOINT` have the constant value
 This allows for example you to fetch this information in your dead
 letter queue and use that for error reporting. +
  This is useable if the Camel route is a bit dynamic such as the dynamic
-xref:recipientList-eip.adoc[Recipient List] so you know which endpoints
+xref:eips:recipientList-eip.adoc[Recipient List] so you know which endpoints
 failed.
 
 These information is kept on the Exchange even if the message

@@ -1,0 +1,618 @@
+[[serviceCall-eip]]
+= Service Call EIP
+
+The Service Call EIP allows to call remote services in a distributed system.
+The service to call is looked up in a service registry of some sorts such as Kubernetes, Consul, Etcd, Zookeeper, DNS.
+The EIP separates the configuration of the service registry from the calling of the service.
+
+When calling a service you may just refer to the name of the service in the EIP as shown below:
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo")
+    .to("mock:result");
+----
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo"/>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+Camel will then:
+
+* search for a service call configuration from the Camel context and registry
+* lookup a service with the name ```foo``` from an external service registry
+* filter the servers
+* select the server to use
+* build a Camel URI using the chosen server info
+
+By default the Service Call EIP uses camel-http so assuming that the selected service instance runs on host ```myhost.com``` on port ```80```, the computed Camel URI will be:
+
+[source]
+----
+http:myhost.com:80
+----
+
+== Service Name to Camel URI Examples
+
+It is often needed to build more complex Camel URI which may include options or paths which is possible through different options:name: value
+
+The *service name* supports a limited uri like syntax, here some examples
+
+[width="100%",cols="25%a,75%a",options="header"]
+|===
+|Name |Resolution
+
+|foo | http://host:port
+|foo/path | http://host:port/path
+|foo/path?foo=bar | http://host:port/path?foo=bar
+|===
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo/hello")
+    .to("mock:result");
+----
+
+If you want to have more control over the uri construction, you can use the *uri* directive:
+
+[width="100%",cols="25%a,40%a,35%a",options="header"]
+|===
+|Name | URI | Resolution
+
+|foo | undertow:http://foo/hello | undertow:http://host:port/hello
+|foo | undertow:http://foo.host:foo.port/hello | undertow:http://host:port/hello
+|===
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo", "undertow:http://foo/hello")
+    .to("mock:result");
+----
+
+Advanced users can have full control over the uri construction through expressions:
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall()
+        .name("foo")
+        .expression()
+            .simple("undertow:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello");
+----
+
+== Options
+// eip options: START
+The Service Call EIP supports 14 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Sets the name of the service to use |  | String
+| *uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
+| *component* | The component to use. | http | String
+| *pattern* | *Required* Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
+| *configurationRef* | Refers to a ServiceCall configuration to use |  | String
+| *serviceDiscoveryRef* | Sets a reference to a custom ServiceDiscovery to use. |  | String
+| *serviceFilterRef* | Sets a reference to a custom ServiceFilter to use. |  | String
+| *serviceChooserRef* | Sets a reference to a custom ServiceChooser to use. |  | String
+| *loadBalancerRef* | Sets a reference to a custom ServiceLoadBalancer to use. |  | String
+| *expressionRef* | Set a reference to a custom Expression to use. |  | String
+| *serviceDiscoveryConfiguration* | *Required* Configures the ServiceDiscovery using the given configuration. |  | ServiceCallServiceDiscoveryConfiguration
+| *serviceFilterConfiguration* | *Required* Configures the ServiceFilter using the given configuration. |  | ServiceCallServiceFilterConfiguration
+| *loadBalancerConfiguration* | *Required* Configures the LoadBalancer using the given configuration. |  | ServiceCallServiceLoadBalancerConfiguration
+| *expressionConfiguration* | *Required* Configures the Expression using the given configuration. |  | ServiceCallExpressionConfiguration
+|===
+// eip options: END
+
+In addition to ref/binding configuration style you can leverage specific configuration DSL to customize specific options:
+
+== Static Service Discovery
+
+This service discovery implementation does not query any external services to find out the list of services associated to a named service but keep them in memory. Each service should be provided in the following form:
+
+[source]
+----
+[service@]host:port
+----
+
+[TIP]
+====
+The ``service`` part is used to discriminate against the services but if not provided it acts like a wildcard so each non named service will be returned whatever the service name is. This is useful if you have a single service so the service name is redundant.
+====
+
+[NOTE]
+====
+This implementation is provided by ``camel-core`` artifact.
+====
+
+Available options:
+
+[width="100%",cols="3,1m,6",options="header"]
+|===
+| Name | Java Type | Description
+| servers | String | A comma separated list of servers in the form: [service@]host:port,[service@]host2:port,[service@]host3:port
+|===
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo")
+        .staticServiceDiscovery()
+            .servers("service1@host1:80,service1@host2:80")
+            .servers("service2@host1:8080,service2@host2:8080,service2@host3:8080")
+            .end()
+    .to("mock:result");
+----
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <staticServiceDiscovery>
+        <servers>service1@host1:80,service1@host2:80</servers>
+        <servers>service2@host1:8080,service2@host2:8080,service2@host3:8080</servers>
+      </staticServiceDiscovery>
+    </serviceCall
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== Consul Service Discovery
+
+To leverage Consul for Service Discovery, maven users will need to add the following dependency to their pom.xml
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-consul</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+Available options:
+
+[width="100%",cols="3,1m,6",options="header"]
+|===
+| Name | Java Type | Description
+| url | String | The Consul agent URL
+| datacenter | String | The data center
+| aclToken | String | Sets the ACL token to be used with Consul
+| userName | String | Sets the username to be used for basic authentication
+| password | String | Sets the password to be used for basic authentication
+| connectTimeoutMillis | Long | Connect timeout for OkHttpClient
+| readTimeoutMillis | Long | Read timeout for OkHttpClient
+| writeTimeoutMillis | Long | Write timeout for OkHttpClient
+|===
+
+And example in Java
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo")
+        .consulServiceDiscovery()
+            .url("http://consul-cluster:8500")
+            .datacenter("neverland")
+            .end()
+    .to("mock:result");
+----
+
+== DNS Service Discovery
+
+To leverage DNS for Service Discovery, maven users will need to add the following dependency to their pom.xml
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dns</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+Available options:
+
+[width="100%",cols="3,1m,6",options="header"]
+|===
+| Name | Java Type | Description
+| proto | String | The transport protocol of the desired service, default "_tcp"
+| domain | String | The user name to use for basic authentication
+|===
+
+Example in Java:
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo")
+        .dnsServiceDiscovery("my.domain.com")
+    .to("mock:result");
+----
+
+And in XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <dnsServiceDiscovery domain="my.domain.com"/>
+    </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== Etcd Service Discovery
+
+To leverage Etcd for Service Discovery, maven users will need to add the following dependency to their pom.xml
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-etcd</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+Available options:
+
+[width="100%",cols="3,1m,6",options="header"]
+|===
+| Name | Java Type | Description
+| uris | String | The URIs the client can connect to
+| userName | String | The user name to use for basic authentication
+| password | String | The password to use for basic authentication
+| timeout | Long | To set the maximum time an action could take to complete
+| servicePath | String | The path to look for for service discovery, default "/services"
+| type | String | To set the discovery type, valid values are "on-demand" and "watch"
+|===
+
+Example in Java
+----
+from("direct:start")
+    .serviceCall("foo")
+        .etcdServiceDiscovery()
+            .uris("http://etcd1:4001,http://etcd2:4001")
+            .servicePath("/camel/services")
+            .end()
+    .to("mock:result");
+----
+
+And in XML
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <etcdServiceDiscovery uris="http://etcd1:4001,http://etcd2:4001" servicePath="/camel/services"/>
+    </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== Kubernetes Service Discovery
+
+To leverage Kubernetes for Service Discovery, maven users will need to add the following dependency to their pom.xml
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kubernetes</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+Available options:
+
+[width="100%",cols="3,1m,6",options="header"]
+|===
+| Name | Java Type | Description
+| lookup | String | How to perform service lookup. Possible values: client, dns, environment
+| apiVersion | String | Kubernetes API version when using client lookup
+| caCertData | String | Sets the Certificate Authority data when using client lookup
+| caCertFile | String | Sets the Certificate Authority data that are loaded from the file when using client lookup
+| clientCertData | String | Sets the Client Certificate data when using client lookup
+| clientCertFile | String | Sets the Client Certificate data that are loaded from the file when using client lookup
+| clientKeyAlgo | String | Sets the Client Keystore algorithm, such as RSA when using client lookup
+| clientKeyData | String | Sets the Client Keystore data when using client lookup
+| clientKeyFile | String | Sets the Client Keystore data that are loaded from the file when using client lookup
+| clientKeyPassphrase | String | Sets the Client Keystore passphrase when using client lookup
+| dnsDomain | String | Sets the DNS domain to use for dns lookup
+| namespace | String | The Kubernetes namespace to use. By default the namespace's name is taken from the environment variable KUBERNETES_MASTER
+| oauthToken | String | Sets the OAUTH token for authentication (instead of username/password) when using client lookup
+| username | String | Sets the username for authentication when using client lookup
+| password | String | Sets the password for authentication when using client lookup
+| trustCerts | Boolean | Sets whether to turn on trust certificate check when using client lookup
+|===
+
+Example in Java
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo")
+        .kubernetesServiceDiscovery()
+            .lookup("dns")
+            .namespace("myNamespace")
+            .dnsDomain("my.domain.com")
+            .end()
+    .to("mock:result");
+----
+
+And in XML
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <kubernetesServiceDiscovery lookup="dns" namespace="myNamespace" dnsDomain="my.domain.com"/>
+    </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== Blacklist Service Filter
+
+This service filter implementation removes the listed services from those found by the service discovery.
+Each service should be provided in the following form:
+
+[source]
+----
+[service@]host:port
+----
+
+[NOTE]
+====
+The services are removed if they fully match
+====
+
+Available options:
+
+[width="100%",cols="3,1m,6",options="header"]
+|===
+| Name | Java Type | Description
+| servers | String | A comma separated list of servers to blacklist: [service@]host:port,[service@]host2:port,[service@]host3:port
+|===
+
+Example in Java
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo")
+        .staticServiceDiscovery()
+            .servers("service1@host1:80,service1@host2:80")
+            .servers("service2@host1:8080,service2@host2:8080,service2@host3:8080")
+            .end()
+        .blacklistFilter()
+            .servers("service2@host2:8080")
+            .end()
+    .to("mock:result");
+----
+
+And in XML
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <staticServiceDiscovery>
+        <servers>service1@host1:80,service1@host2:80</servers>
+        <servers>service2@host1:8080,service2@host2:8080,service2@host3:8080</servers>
+      </staticServiceDiscovery>
+      <blacklistServiceFilter>
+        <servers>service2@host2:8080</servers>
+      </blacklistServiceFilter>
+    </serviceCall
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== Load Balancer
+
+The Service Call EIP comes with its own Load Balancer which is istantiated by default if a custom is not configured and
+glues Service Discovery, Service Filer, Service Chooser and Service Expression together to load balance requests among the available services.
+
+If you need a more sophisticate load balancer you can use Ribbon by adding camel-ribbon to the mix,
+maven users will need to add the following dependency to their pom.xml
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ribbon</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+Available options:
+
+[width="100%",cols="3,1m,6",options="header"]
+|===
+| Name | Java Type | Description
+| clientName | String | The Ribbon client name
+| properties | List<PropertyDefinition> | Custom client config properties
+|===
+
+To leverage Ribbon, it is required to explicit enable it:
+
+Java example
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall("foo")
+        .ribbonLoadBalancer()
+    .to("mock:result");
+----
+
+And in XML
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <ribbonLoadBalancer/>
+    </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+You can configure Ribbon key programmatic using `RibbonConfiguration`:
+
+[source,java]
+----
+RibbonConfiguration configuration = new RibbonConfiguration();
+configuration.addProperty("listOfServers", "localhost:9090,localhost:9091");
+
+from("direct:start")
+    .serviceCall("foo")
+        .loadBalancer(new RibbonServiceLoadBalancer(configuration))
+    .to("mock:result");
+----
+
+Or leveraging XML specific configuration:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <ribbonLoadBalancer>
+          <properties key="listOfServers" value="localhost:9090,localhost:9091"/>
+      </ribbonLoadBalancer>
+    </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== Shared configurations
+
+The Service Call EIP can be configured straight on the route definition or through shared configurations,
+here an example with two configurations registered in the Camel Context:
+
+[source,java]
+----
+ServiceCallConfigurationDefinition globalConf = new ServiceCallConfigurationDefinition();
+globalConf.setServiceDiscovery(
+    name -> Arrays.asList(
+        new DefaultServiceDefinition(name, "my.host1.com", 8080),
+        new DefaultServiceDefinition(name, "my.host2.com", 443))
+);
+globalConf.setServiceChooser(
+    list -> list.get(ThreadLocalRandom.current().nextInt(list.size()))
+);
+
+ServiceCallConfigurationDefinition httpsConf = new ServiceCallConfigurationDefinition();
+httpsConf.setServiceFilter(
+    list -> list.stream().filter(s -> s.getPort() == 443).collect(toList())
+);
+
+getContext().setServiceCallConfiguration(globalConf);
+getContext().addServiceCallConfiguration("https", httpsConf);
+----
+
+Each Service Call definition and configuration will inherit from the `globalConf` which can be seen as default configuration,
+then you can reference the `httpsConf` in your route as follow:
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall()
+        .name("foo")
+        .serviceCallConfiguration("https")
+        .end()
+    .to("mock:result");
+----
+
+This route will leverages the service discovery and service chooser from `globalConf` and the service filter from `httpsConf`
+but you can override any of them if needed straight on the route:
+
+[source,java]
+----
+from("direct:start")
+    .serviceCall()
+        .name("foo")
+        .serviceCallConfiguration("https")
+        .serviceChooser(list -> list.get(0))
+        .end()
+    .to("mock:result");
+----
+
+== Spring Boot support
+
+In a Spring-Boot application you can externalize most of the configuration options:
+
+[source,properties]
+.application.properties
+----
+# this can be configured stright tot he route and it has been included to show
+# property placeholders support
+service.name = foo
+
+# this property is not mandatory and it has been included to show how to configure
+# the service discovery implementation provided by camel-consul
+camel.cloud.consul.service-discovery.url = http://localhost:8500
+
+# Add a static list of servers for the service named foo
+camel.cloud.service-discovery.services[foo] = host1.static:8080,host2.static:8080
+----
+
+[source,java]
+.Routes
+----
+@Component
+public class MyRouteBuilder implements RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("direct:start")
+            .serviceCall("{{service.name}}");
+    }
+}
+----
+
+== Spring Cloud support
+
+If you are using Camel in an application based on Spring Cloud, you can leverage Spring Cloud service discovery and load balancing capabilities by adding the Spring Cloud related dependencies (i.e. spring-cloud-consul, spring-cloud-kubernetes) as any Spring Boot/Cloud application in addition to Camel's own camel-spring-cloud dependency.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-cloud dependency</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----

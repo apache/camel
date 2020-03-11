@@ -1,0 +1,136 @@
+[[syslog-dataformat]]
+= Syslog DataFormat
+:page-source: components/camel-syslog/src/main/docs/syslog-dataformat.adoc
+
+*Since Camel 2.6*
+
+The Syslog dataformat is used for working with
+http://www.ietf.org/rfc/rfc3164.txt[RFC3164] and RFC5424 messages.
+
+This component supports the following:
+
+* UDP consumption of syslog messages
+* Agnostic data format using either plain String objects or
+SyslogMessage model objects.
+* Type Converter from/to SyslogMessage and
+String
+* Integration with the xref:ROOT:mina-component.adoc[camel-mina] component.
+* Integration with the xref:ROOT:netty-component.adoc[camel-netty] component.
+* Encoder and decoder for
+the xref:ROOT:netty-component.adoc[Netty Component] component.
+* Support for RFC5424 also.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-syslog</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== RFC3164 Syslog protocol
+
+Syslog uses the user datagram protocol (UDP)
+as its underlying transport layer mechanism.  
+The UDP port that has been assigned to syslog is 514.
+
+To expose a Syslog listener service we reuse the existing
+xref:ROOT:mina-component.adoc[Mina Component] component or xref:ROOT:netty-component.adoc[Netty Component]
+where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
+messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
+renamed to `SyslogDataFormat`.
+
+== Options
+
+// dataformat options: START
+The Syslog dataformat supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+ND
+
+== RFC5424 Syslog protocol
+
+*Since Camel 2.14*
+
+To expose a Syslog listener service we reuse the
+existing xref:ROOT:mina-component.adoc[Mina Component] component
+or xref:ROOT:netty-component.adoc[Netty Component] where we just use
+the `SyslogDataFormat` to marshal and unmarshal messages
+
+=== Exposing a Syslog listener
+
+In our Spring XML file, we configure an endpoint to listen for udp
+messages on port 10514, note that in netty we disable the defaultCodec,
+this  +
+ will allow a fallback to a NettyTypeConverter and delivers the message
+as an InputStream:
+
+[source,xml]
+------------------------------------------------------------------------------------------
+<camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+
+    <dataFormats>
+          <syslog id="mySyslog"/>
+    </dataFormats>
+
+    <route>
+          <from uri="netty:udp://localhost:10514?sync=false&amp;allowDefaultCodec=false"/>
+          <unmarshal><custom ref="mySyslog"/></unmarshal>
+          <to uri="mock:stop1"/>
+    </route>
+
+</camelContext>
+------------------------------------------------------------------------------------------
+
+The same route using xref:ROOT:mina-component.adoc[Mina Component]
+
+[source,xml]
+-------------------------------------------------------------------------
+<camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+
+    <dataFormats>
+          <syslog id="mySyslog"/>
+    </dataFormats>
+
+    <route>
+          <from uri="mina:udp://localhost:10514"/>
+          <unmarshal><custom ref="mySyslog"/></unmarshal>
+          <to uri="mock:stop1"/>
+    </route>
+
+</camelContext>
+-------------------------------------------------------------------------
+
+=== Sending syslog messages to a remote destination
+
+[source,xml]
+-------------------------------------------------------------------------
+<camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+
+    <dataFormats>
+        <syslog id="mySyslog"/>
+    </dataFormats>
+
+    <route>
+        <from uri="direct:syslogMessages"/>
+        <marshal><custom ref="mySyslog"/></marshal>
+        <to uri="mina:udp://remotehost:10514"/>
+    </route>
+
+</camelContext>
+-------------------------------------------------------------------------
+
+
+include::camel-spring-boot::page$syslog-starter.adoc[]

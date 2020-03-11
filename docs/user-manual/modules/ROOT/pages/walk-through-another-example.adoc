@@ -156,7 +156,7 @@ sendConfirmEmai bean
 
 What to notice here is that the `to` is not the end of the route (the
 world) in this example it's used in the middle of the
-xref:pipeline-eip.adoc[Pipes and filters]. In fact we can change
+xref:eips:pipeline-eip.adoc[Pipes and filters]. In fact we can change
 the `bean` types to `to` as well:
 
 [source,syntaxhighlighter-pre]

@@ -89,18 +89,16 @@
                             <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js --non-interactive gulp</commandlineArgs>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <executions>
                     <execution>
-                        <id>xref-check</id>
+                        <id>antora-check-xref</id>
                         <goals>
-                            <goal>xref-check</goal>
+                            <goal>exec</goal>
                         </goals>
-                        <phase>verify</phase>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <executable>${project.basedir}/node/node</executable>
+                            <commandlineArgs>${project.basedir}/node_modules/@antora/cli/bin/antora --generator @antora/xref-validator antora-playbook-local-xref-check.yml</commandlineArgs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
