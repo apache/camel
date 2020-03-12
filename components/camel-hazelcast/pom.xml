@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            com.hazelcast.*;version="[3.2,4)"
+            com.hazelcast.*;version="[4,5)"
         </camel.osgi.import.before.defaults>
     </properties>
 
