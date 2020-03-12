@@ -20,6 +20,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
         case "httpmethodrestrict":
         case "httpMethodRestrict": target.setHttpMethodRestrict(property(camelContext, java.lang.String.class, value)); return true;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "produces": target.setProduces(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
