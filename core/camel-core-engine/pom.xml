@@ -51,9 +51,9 @@
         <!-- JAXB annotations are used for the EIP models -->
         <!-- but they are only used at runtime when using camel-xml-jaxb -->
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <scope>provided</scope>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta-jaxb-version}</version>
         </dependency>
 
         <!-- required dependencies by camel-core -->
@@ -362,18 +362,6 @@
                                 <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
                             </environmentVariables>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>jakarta.xml.bind</groupId>
-                                <artifactId>jakarta.xml.bind-api</artifactId>
-                                <version>${jakarta-jaxb-version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.glassfish.jaxb</groupId>
-                                <artifactId>jaxb-runtime</artifactId>
-                                <version>${glassfish-jaxb-runtime-version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

@@ -29,8 +29,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
@@ -136,14 +134,6 @@ public class BaseParser {
             setter.accept(existing);
         }
         existing.add(element);
-    }
-
-    protected <V, B> B unmarshal(XmlAdapter<V, B> adapter, V value) throws XmlPullParserException {
-        try {
-            return adapter.unmarshal(value);
-        } catch (Exception e) {
-            throw new XmlPullParserException("Unable to unmarshal value", parser, e);
-        }
     }
 
     @SuppressWarnings("unchecked")

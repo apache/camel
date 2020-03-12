@@ -33,10 +33,10 @@ public class XStreamDataFormatReifier extends DataFormatReifier<XStreamDataForma
         properties.put("xstreamDriver", asRef(definition.getDriverRef()));
         properties.put("permissions", definition.getPermissions());
         properties.put("encoding", definition.getEncoding());
-        properties.put("converters", definition.getConverters());
-        properties.put("aliases", definition.getAliases());
-        properties.put("omitFields", definition.getOmitFields());
-        properties.put("implicitCollections", definition.getImplicitCollections());
+        properties.put("converters", definition.getConvertersAsMap());
+        properties.put("aliases", definition.getAliasesAsMap());
+        properties.put("omitFields", definition.getOmitFieldsAsMap());
+        properties.put("implicitCollections", definition.getImplicitCollectionsAsMap());
         properties.put("mode", definition.getMode());
     }
 

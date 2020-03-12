@@ -287,18 +287,6 @@
                                 <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
                             </environmentVariables>
                         </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>jakarta.xml.bind</groupId>
-                                <artifactId>jakarta.xml.bind-api</artifactId>
-                                <version>${jakarta-jaxb-version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.glassfish.jaxb</groupId>
-                                <artifactId>jaxb-runtime</artifactId>
-                                <version>${glassfish-jaxb-runtime-version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

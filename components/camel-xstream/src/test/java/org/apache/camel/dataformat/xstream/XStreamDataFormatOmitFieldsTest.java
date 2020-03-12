@@ -55,8 +55,8 @@ public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-                Map<String, String[]> omitFields = new HashMap<>();
-                omitFields.put(PurchaseOrder.class.getName(), new String[]{"price"});
+                Map<String, String> omitFields = new HashMap<>();
+                omitFields.put(PurchaseOrder.class.getName(), "price");
                 xStreamDataFormat.setOmitFields(omitFields);
 
                 from("direct:start").
