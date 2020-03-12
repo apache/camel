@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.ExceptionHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -139,6 +140,8 @@ public class RabbitMQComponent extends DefaultComponent {
     private Map<String, Object> args;
     @Metadata(label = "advanced")
     private Map<String, Object> clientProperties;
+    @Metadata(label = "advanced")
+    private ExceptionHandler connectionFactoryExceptionHandler;
 
     public RabbitMQComponent() {
     }
@@ -244,6 +247,7 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setDeadLetterQueue(getDeadLetterQueue());
         endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
         endpoint.setAllowNullHeaders(isAllowNullHeaders());
+        endpoint.setConnectionFactoryExceptionHandler(getConnectionFactoryExceptionHandler());
         setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {
@@ -865,5 +869,16 @@ public class RabbitMQComponent extends DefaultComponent {
 
     public void setAllowNullHeaders(boolean allowNullHeaders) {
         this.allowNullHeaders = allowNullHeaders;
+    }
+
+    public ExceptionHandler getConnectionFactoryExceptionHandler() {
+        return connectionFactoryExceptionHandler;
+    }
+
+    /**
+     * Custom rabbitmq ExceptionHandler for ConnectionFactory
+     */
+    public void setConnectionFactoryExceptionHandler(ExceptionHandler connectionFactoryExceptionHandler) {
+        this.connectionFactoryExceptionHandler = connectionFactoryExceptionHandler;
     }
 }
