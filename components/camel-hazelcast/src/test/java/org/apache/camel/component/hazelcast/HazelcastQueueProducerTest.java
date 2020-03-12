@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.hazelcast.collection.IQueue;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;

@@ -19,8 +19,9 @@ package org.apache.camel.component.hazelcast.seda;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.hazelcast.core.BaseQueue;
+import com.hazelcast.collection.BaseQueue;
 import com.hazelcast.transaction.TransactionContext;
+import com.hazelcast.transaction.TransactionOptions;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
