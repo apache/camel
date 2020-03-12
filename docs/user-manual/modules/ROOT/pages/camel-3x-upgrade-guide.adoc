@@ -770,3 +770,8 @@ The deprecated method `preProcessUri` has been removed.
 The method `getEndpoint` now throws `NoSuchEndpointException` directly instead of being wrapped
 within an `FailedToResolveEndpoint`.
 
+==== JavaUuidGenerator
+
+The `org.apache.camel.impl.engine.JavaUuidGenerator` class has been removed.
+Its a very slow UUID generator and its not recommended to be used.
+
