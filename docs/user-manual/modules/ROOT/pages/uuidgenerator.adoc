@@ -25,7 +25,7 @@ Warning: You should not change the UUID generator at runtime (it should only be
 set once)!
 
 [[UuidGenerator-ConfiguringfromSpringDSL]]
-== Configuring from XNL DSL
+== Configuring from XML DSL
 
 Camel will configure this UUID generator by doing a lookup in the Spring
 bean registry to find the bean of the type
