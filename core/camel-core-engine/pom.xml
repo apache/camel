@@ -54,6 +54,7 @@
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>${jakarta-jaxb-version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- required dependencies by camel-core -->
