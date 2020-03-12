@@ -17,13 +17,14 @@
 package org.apache.camel.component.hazelcast;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryEventType;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MultiMap;
+import com.hazelcast.multimap.MultiMap;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getMultiMap("mm")).thenReturn(map);
-        when(map.addEntryListener(any(), eq(true))).thenReturn("foo");
+        when(map.addEntryListener(any(), eq(true))).thenReturn(UUID.randomUUID());
     }
 
     @Override

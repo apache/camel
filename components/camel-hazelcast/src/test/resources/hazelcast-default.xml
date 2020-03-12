@@ -17,15 +17,16 @@
     limitations under the License.
 
 -->
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.7.xsd"
-					 xmlns="http://www.hazelcast.com/schema/config"
-					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		   xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
 
-	<group>
+	<!--  DEPRECATED SINCE: 4.0group>
 		<name>dev</name>
 		<password>dev-pass</password>
-	</group>
-	
+	</group-->
+
 	<!-- Disable the version check -->
 	<properties>
 	  <property name="hazelcast.phone.home.enabled">false</property>
@@ -86,13 +87,20 @@
 			Valid values are: NONE (no eviction), LRU (Least Recently Used), LFU
 			(Least Frequently Used). NONE is the default.
 		-->
-		<eviction-policy>LRU</eviction-policy>
+		<eviction eviction-policy="LRU" max-size-policy="PER_NODE" size="20"/>
+		<!--
+            Maximum number of seconds for each entry to stay idle in the map. Entries that are
+            idle(not touched) for more than <max-idle-seconds> will get
+            automatically evicted from the map. Entry is touched if get, put or containsKey is called.
+            Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0.
+        -->
+		<max-idle-seconds>0</max-idle-seconds>
 		<!--
 			Maximum size of the map. When max size is reached, map is evicted
 			based on the policy defined. Any integer between 0 and
 			Integer.MAX_VALUE. 0 means Integer.MAX_VALUE. Default is 0.
 		-->
-		<max-size>5</max-size>
+		<!--  DEPRECATED SINCE: 4.0 <max-size>5</max-size-->
 		<!--
 			When max. size is reached, specified percentage of the map will be
 			evicted. Any integer between 0 and 100. If 25 is set for example, 25%

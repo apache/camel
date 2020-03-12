@@ -18,7 +18,7 @@ package org.apache.camel.component.hazelcast.listener;
 
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.MapEvent;
+import com.hazelcast.map.MapEvent;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 
@@ -59,5 +59,10 @@ public class CamelEntryListener extends CamelListener implements EntryListener<O
     @Override
     public void entryUpdated(EntryEvent<Object, Object> event) {
         this.sendExchange(HazelcastConstants.UPDATED, event.getKey(), event.getValue());
+    }
+
+    @Override
+    public void entryExpired(EntryEvent<Object, Object> event) {
+        this.sendExchange(HazelcastConstants.EXPIRED, event.getKey(), event.getValue());
     }
 }

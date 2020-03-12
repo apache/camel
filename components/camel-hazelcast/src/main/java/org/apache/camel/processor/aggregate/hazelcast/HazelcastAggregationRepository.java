@@ -25,10 +25,10 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.TransactionalMap;
+import com.hazelcast.map.IMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
+import com.hazelcast.transaction.TransactionalMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * {@link RecoverableAggregationRepository} and {@link OptimisticLockingAggregationRepository}.
  * Defaults to thread-safe (non-optimistic) locking and recoverable strategy.
  * Hazelcast settings are given to an end-user and can be controlled with repositoryName and persistentRespositoryName,
- * both are {@link com.hazelcast.core.IMap} &lt;String, Exchange&gt;. However HazelcastAggregationRepository
+ * both are {@link com.hazelcast.map.IMap} &lt;String, Exchange&gt;. However HazelcastAggregationRepository
  * can run it's own Hazelcast instance, but obviously no benefits of Hazelcast clustering are gained this way.
  * If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it will DESTROY this
  * instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself whenever you instantiate
@@ -208,7 +208,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-        Lock l = hzInstance.getLock(mapName);
+        Lock l = hzInstance.getCPSubsystem().getLock(mapName);
         try {
             l.lock();
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
