@@ -46,7 +46,7 @@ public class HazelcastAtomicnumberProducerForSpringTest extends HazelcastCamelSp
 
     @Override
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        verify(hazelcastInstance,times(7)).getCPSubsystem();
+        verify(hazelcastInstance, times(7)).getCPSubsystem();
         verify(cpSubsystem, atLeastOnce()).getAtomicLong("foo");
     }
 

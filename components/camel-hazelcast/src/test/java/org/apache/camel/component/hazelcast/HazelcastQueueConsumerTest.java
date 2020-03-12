@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.collection.IQueue;
 import com.hazelcast.collection.ItemEvent;
 import com.hazelcast.collection.ItemListener;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ItemEventType;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

@@ -46,7 +46,7 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
 
     @Override
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        verify(hazelcastInstance,times(10)).getCPSubsystem();
+        verify(hazelcastInstance, times(10)).getCPSubsystem();
         verify(cpSubsystem, atLeastOnce()).getAtomicLong("foo");
     }
 
