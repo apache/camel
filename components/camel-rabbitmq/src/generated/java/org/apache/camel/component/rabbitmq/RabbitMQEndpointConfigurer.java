@@ -43,6 +43,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, com.rabbitmq.client.ConnectionFactory.class, value)); return true;
+        case "connectionfactoryexceptionhandler":
+        case "connectionFactoryExceptionHandler": target.setConnectionFactoryExceptionHandler(property(camelContext, com.rabbitmq.client.ExceptionHandler.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "consumertag":

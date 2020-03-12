@@ -59,6 +59,9 @@ public class RabbitMQConnectionFactorySupport {
         if (endpoint.getTopologyRecoveryEnabled() != null) {
             factory.setTopologyRecoveryEnabled(endpoint.getTopologyRecoveryEnabled());
         }
+        if (endpoint.getConnectionFactoryExceptionHandler() != null) {
+            factory.setExceptionHandler(endpoint.getConnectionFactoryExceptionHandler());
+        }
         return factory;
     }
 }
