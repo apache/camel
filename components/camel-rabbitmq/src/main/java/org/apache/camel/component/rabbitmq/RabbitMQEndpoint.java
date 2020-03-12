@@ -31,6 +31,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.ExceptionHandler;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -170,6 +171,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean allowCustomHeaders = true;
     @UriParam(label = "consumer")
     private String consumerTag = "";
+    @UriParam(label = "advanced")
+    private ExceptionHandler connectionFactoryExceptionHandler;
+
     // camel-jms supports this setting but it is not currently configurable in
     // camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
@@ -976,4 +980,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.allowCustomHeaders = allowCustomHeaders;
     }
 
+
+    public ExceptionHandler getConnectionFactoryExceptionHandler() {
+        return connectionFactoryExceptionHandler;
+    }
+
+    /**
+     * Custom rabbitmq ExceptionHandler for ConnectionFactory
+     */
+    public void setConnectionFactoryExceptionHandler(ExceptionHandler connectionFactoryExceptionHandler) {
+        this.connectionFactoryExceptionHandler = connectionFactoryExceptionHandler;
+    }
 }
