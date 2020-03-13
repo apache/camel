@@ -362,8 +362,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
-         * EXCLUSIVE.
+         * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
+         * to EXCLUSIVE.
          * 
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
@@ -377,8 +377,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
-         * EXCLUSIVE.
+         * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
+         * to EXCLUSIVE.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
@@ -525,6 +525,34 @@ public interface PulsarEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedPulsarEndpointProducerBuilder advanced() {
             return (AdvancedPulsarEndpointProducerBuilder) this;
+        }
+        /**
+         * Control batching method used by the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * 
+         * Default: DEFAULT
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batcherBuilder(
+                Object batcherBuilder) {
+            doSetProperty("batcherBuilder", batcherBuilder);
+            return this;
+        }
+        /**
+         * Control batching method used by the producer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * 
+         * Default: DEFAULT
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batcherBuilder(
+                String batcherBuilder) {
+            doSetProperty("batcherBuilder", batcherBuilder);
+            return this;
         }
         /**
          * Control whether automatic batching of messages is enabled for the
@@ -1045,7 +1073,8 @@ public interface PulsarEndpointBuilderFactory {
     enum SubscriptionType {
         EXCLUSIVE,
         SHARED,
-        FAILOVER;
+        FAILOVER,
+        KEY_SHARED;
     }
 
     /**
