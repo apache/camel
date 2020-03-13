@@ -19,10 +19,17 @@ package org.apache.camel.component.aws2.ses;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SesComponentConfigurationTest extends CamelTestSupport {
 
@@ -111,28 +118,36 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertTrue(endpoint.getConfiguration().getReplyToAddresses().contains("replyTo2@example.com"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSourceName() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.createEndpoint("aws2-ses:// ");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ses:// ");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAmazonSESClientConfiguration() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.createEndpoint("aws2-ses://from@example.com");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ses://from@example.com");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.createEndpoint("aws2-ses://from@example.com?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ses://from@example.com?secretKey=yyy");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
-        component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx");
+        });
     }
 
     @Test
