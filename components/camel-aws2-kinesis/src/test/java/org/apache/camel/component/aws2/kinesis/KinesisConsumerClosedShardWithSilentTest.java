@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import java.time.Instant;
 import java.util.ArrayList;
 
 import org.apache.camel.AsyncProcessor;
@@ -42,11 +41,11 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.services.kinesis.model.StreamDescription;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class KinesisConsumerClosedShardWithSilentTest {

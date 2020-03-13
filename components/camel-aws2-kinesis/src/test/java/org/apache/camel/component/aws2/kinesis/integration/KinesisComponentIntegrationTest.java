@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.Record;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Must be manually tested.")
 public class KinesisComponentIntegrationTest extends CamelTestSupport {

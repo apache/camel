@@ -36,7 +36,6 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
 
 public class InfinispanManager extends ServiceSupport {

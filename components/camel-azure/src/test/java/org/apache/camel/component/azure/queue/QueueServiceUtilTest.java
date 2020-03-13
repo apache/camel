@@ -25,7 +25,6 @@ import org.junit.Test;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.newAccountKeyCredentials;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
 
-
 public class QueueServiceUtilTest extends CamelTestSupport {
 
     @Test
