@@ -25,11 +25,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 
 public class SesComponentTest extends CamelTestSupport {
 
