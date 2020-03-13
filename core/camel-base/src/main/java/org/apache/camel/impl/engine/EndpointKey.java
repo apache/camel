@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -34,7 +35,7 @@ public final class EndpointKey extends ValueHolder<String> implements Normalized
      * Optimized when the uri is already normalized.
      */
     public EndpointKey(String uri, boolean normalized) {
-        super(normalized ? uri : AbstractCamelContext.normalizeEndpointUri(uri));
+        super(normalized ? uri : EndpointHelper.normalizeEndpointUri(uri));
         StringHelper.notEmpty(uri, "uri");
     }
 

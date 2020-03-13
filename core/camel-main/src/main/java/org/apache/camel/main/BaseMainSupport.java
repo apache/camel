@@ -53,8 +53,8 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -71,7 +71,7 @@ import static org.apache.camel.util.StringHelper.matches;
 /**
  * Base class for main implementations to allow bootstrapping Camel in standalone mode.
  */
-public abstract class BaseMainSupport extends ServiceSupport {
+public abstract class BaseMainSupport extends BaseService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 

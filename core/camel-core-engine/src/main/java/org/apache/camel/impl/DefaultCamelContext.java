@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -39,11 +40,13 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.channel.DefaultChannel;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
@@ -319,7 +322,33 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void startRouteDefinitions() throws Exception {
-        model.startRouteDefinitions();
+        List<RouteDefinition> routeDefinitions = model.getRouteDefinitions();
+        if (routeDefinitions != null) {
+            startRouteDefinitions(routeDefinitions);
+        }
+    }
+
+    public void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception {
+        RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
+        for (RouteDefinition routeDefinition : routeDefinitions) {
+            // assign ids to the routes and validate that the id's is all unique
+            String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
+            if (duplicate != null) {
+                throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+            }
+
+            // must ensure route is prepared, before we can start it
+            if (!routeDefinition.isPrepared()) {
+                RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
+                routeDefinition.markPrepared();
+            }
+
+            // indicate we are staring the route using this thread so
+            // we are able to query this if needed
+            Route route = new RouteReifier(getCamelContextReference(), routeDefinition).createRoute();
+            RouteService routeService = new RouteService(route);
+            startRouteService(routeService, true);
+        }
     }
 
     @Override

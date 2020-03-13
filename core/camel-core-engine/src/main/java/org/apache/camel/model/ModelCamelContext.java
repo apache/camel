@@ -16,11 +16,20 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 
 /**
  * Model level interface for the {@link CamelContext}
  */
 public interface ModelCamelContext extends CamelContext, Model {
+
+    /**
+     * Start all routes from this model.
+     */
+    void startRouteDefinitions() throws Exception;
+
+    void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception;
 
 }
