@@ -475,55 +475,20 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 // we also support @BeanInject and @PropertyInject annotations
                 Annotation[] anns = method.getParameterAnnotations()[i];
                 if (anns.length == 1) {
-                    // TODO: Use helper getInjectionPropertyValue
                     // we dont assume there are multiple annotations on the same parameter so grab first
                     Annotation ann = anns[0];
                     if (ann.annotationType() == PropertyInject.class) {
                         PropertyInject pi = (PropertyInject) ann;
-                        // build key with default value included as this is supported during resolving
-                        String key = pi.value();
-                        if (!isEmpty(pi.defaultValue())) {
-                            key = key + ":" + pi.defaultValue();
-                        }
-                        // need to force property lookup by having key enclosed in tokens
-                        key = PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN;
-                        try {
-                            Object value = getOrLookupCamelContext().resolvePropertyPlaceholders(key);
-                            parameters[i] = getOrLookupCamelContext().getTypeConverter().convertTo(type, value);
-                        } catch (Exception e) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                        }
+                        Object result = getPostProcessorHelper().getInjectionPropertyValue(type, pi.value(), pi.defaultValue(), null, null, null);
+                        parameters[i] = result;
                     } else if (ann.annotationType() == BeanConfigInject.class) {
                         BeanConfigInject pi = (BeanConfigInject) ann;
-                        // build key with default value included as this is supported during resolving
-                        // it may be a configuration class which we want to instantiate and configure with
-                        // project inject as base keys
                         Object result = getPostProcessorHelper().getInjectionBeanConfigValue(type, pi.value());
                         parameters[i] = result;
                     } else if (ann.annotationType() == BeanInject.class) {
-                        // TODO: Use helper
                         BeanInject bi = (BeanInject) ann;
-                        String key = bi.value();
-                        Object value;
-                        if (isEmpty(key)) {
-                            // empty key so lookup anonymously by type
-                            Set<?> instances = getOrLookupCamelContext().getRegistry().findByType(type);
-                            if (instances.size() == 0) {
-                                throw new NoSuchBeanException(null, key);
-                            } else if (instances.size() == 1) {
-                                parameters[i] = instances.iterator().next();
-                            } else {
-                                // there are multiple instances of the same type, so barf
-                                throw new IllegalArgumentException("Multiple beans of the same type: " + type
-                                    + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: " + method);
-                            }
-                        } else {
-                            value = getOrLookupCamelContext().getRegistry().lookupByName(key);
-                            if (value == null) {
-                                throw new NoSuchBeanException(key);
-                            }
-                            parameters[i] = getOrLookupCamelContext().getTypeConverter().convertTo(type, value);
-                        }
+                        Object result = getPostProcessorHelper().getInjectionBeanValue(type, bi.value());
+                        parameters[i] = result;
                     }
                 } else {
                     // okay attempt to default to singleton instances from the registry
