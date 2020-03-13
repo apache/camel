@@ -27,15 +27,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.ACCOUNT_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CONTAINER_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.BLOB_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.QUEUE_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_KEY;
 import static org.apache.camel.component.azure.blob.BlobServiceComponent.MISSING_BLOB_CREDNTIALS_EXCEPTION_MESSAGE;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.ACCOUNT_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.BLOB_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CONTAINER_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.QUEUE_NAME;
 import static org.apache.camel.component.azure.queue.QueueServiceComponent.MISSING_QUEUE_CREDNTIALS_EXCEPTION_MESSAGE;
-
 
 public class MissingCredentialsTest extends CamelTestSupport {
 

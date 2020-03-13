@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.azure.common;
 
-import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
-import com.microsoft.azure.storage.core.Base64;
 import com.microsoft.azure.storage.queue.CloudQueue;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.azure.blob.BlobServiceConfiguration;
 import org.apache.camel.component.azure.blob.BlobServiceEndpoint;
 import org.apache.camel.component.azure.blob.BlobServiceUtil;
@@ -30,24 +27,21 @@ import org.apache.camel.component.azure.queue.QueueServiceConfiguration;
 import org.apache.camel.component.azure.queue.QueueServiceEndpoint;
 import org.apache.camel.component.azure.queue.QueueServiceUtil;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.newAccountKeyCredentials;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerBlockBlobClient;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerQueueClient;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.ACCOUNT_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CONTAINER_NAME;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.BLOB_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.QUEUE_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_KEY;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CREDENTIALS_ACCOUNT_NAME;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CREDENTIALS_ACCOUNT_KEY;
-import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CLIENT_CREDENTIALS_ACCOUNT_NAME;
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CLIENT_CREDENTIALS_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CLIENT_CREDENTIALS_ACCOUNT_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CONTAINER_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CREDENTIALS_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.CREDENTIALS_ACCOUNT_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.INLINE_CREDENTIALS_ACCOUNT_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.QUEUE_NAME;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerBlockBlobClient;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
+import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerQueueClient;
 
 public class AzureCredentialsTest extends CamelTestSupport {
 

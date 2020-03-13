@@ -25,7 +25,6 @@ import com.microsoft.azure.storage.core.Base64;
 import com.microsoft.azure.storage.queue.CloudQueue;
 import org.apache.camel.CamelContext;
 
-
 public final class AzureServiceCommonTestUtil {
 
     public static final String ACCOUNT_NAME = "camelazure";

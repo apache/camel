@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.undertow.rest;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.apache.camel.component.undertow.DefaultUndertowHttpBinding;
-import org.apache.camel.component.undertow.UndertowHttpBinding;
 import org.junit.Test;
 
 public class RestUndertowHttpGetTest extends BaseUndertowTest {
