@@ -21,13 +21,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.BeanConfigInject;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExtendedCamelContext;
@@ -37,15 +41,18 @@ import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.loadClass;
 
 /**
  * A bean post processor which implements the <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
@@ -475,6 +482,14 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                         } catch (Exception e) {
                             throw RuntimeCamelException.wrapRuntimeCamelException(e);
                         }
+                    } else if (ann.annotationType() == BeanConfigInject.class) {
+                        BeanConfigInject pi = (BeanConfigInject) ann;
+                        // build key with default value included as this is supported during resolving
+                        // it may be a configuration class which we want to instantiate and configure with
+                        // project inject as base keys
+                        ExtendedCamelContext ecc = (ExtendedCamelContext) getOrLookupCamelContext();
+                        Object result = resolveBeanConfigInject(ecc, pi, type);
+                        parameters[i] = result;
                     } else if (ann.annotationType() == BeanInject.class) {
                         BeanInject bi = (BeanInject) ann;
                         String key = bi.value();
@@ -520,6 +535,61 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
 
         return parameters;
+    }
+
+    private Object resolveBeanConfigInject(ExtendedCamelContext ecc, BeanConfigInject pi, Class<?> type) {
+        // create an instance of type
+        Object bean;
+        Set<?> instances = ecc.getRegistry().findByType(type);
+        if (instances.size() == 1) {
+            bean = instances.iterator().next();
+        } else if (instances.size() > 1) {
+            return null;
+        } else {
+            // attempt to create a new instance
+            try {
+                bean = ecc.getInjector().newInstance(type);
+            } catch (Throwable e) {
+                // ignore
+                return null;
+            }
+        }
+
+        // root key
+        String rootKey = pi.value();
+        // clip trailing dot
+        if (rootKey.endsWith(".")) {
+            rootKey = rootKey.substring(0, rootKey.length() - 1);
+        }
+
+        // get all properties and transfer to map
+        Properties props = ecc.getPropertiesComponent().loadProperties();
+        Map<String, Object> map = new LinkedHashMap<>();
+        for (String key : props.stringPropertyNames()) {
+            map.put(key, props.getProperty(key));
+        }
+
+        // lookup configurer if there is any
+        // use FQN class name first, then simple name, and root key last
+        GeneratedPropertyConfigurer configurer = null;
+        String[] names = new String[]{type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer"};
+        for (String name : names) {
+            configurer = ecc.getConfigurerResolver().resolvePropertyConfigurer(name, ecc);
+            if (configurer != null) {
+                break;
+            }
+        }
+
+        new PropertyBindingSupport.Builder()
+            .withCamelContext(ecc)
+            .withIgnoreCase(true)
+            .withTarget(bean)
+            .withConfigurer(configurer)
+            .withOptionPrefix(rootKey + ".")
+            .withProperties(map)
+            .bind();
+
+        return bean;
     }
 
 }
