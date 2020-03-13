@@ -25,7 +25,7 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 
 public class InfinispanComponentTest extends InfinispanTestSupport {
-    private final String cacheName = UUID.randomUUID().toString();
+    private final String cacheName = "default";
 
     @Test
     public void consumerReceivedEntryCreatedEventNotifications() throws Exception {
