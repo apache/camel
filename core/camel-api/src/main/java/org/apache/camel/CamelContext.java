@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -79,7 +80,20 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * <p/>
  * For more advanced APIs with {@link CamelContext} see {@link ExtendedCamelContext}, which you can obtain via the adapt method.
  */
-public interface CamelContext extends StatefulService, RuntimeConfiguration {
+public interface CamelContext extends RuntimeConfiguration, AutoCloseable {
+
+    boolean isStarted();
+    boolean isStarting();
+    boolean isStopped();
+    boolean isStopping();
+    boolean isSuspended();
+    boolean isSuspending();
+    boolean isRunAllowed();
+    void init();
+    void suspend();
+    void resume();
+    void shutdown();
+    void close() throws IOException;
 
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
@@ -121,7 +135,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @throws RuntimeCamelException is thrown if starting failed
      */
-    @Override
     void start();
 
     /**
@@ -131,7 +144,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @throws RuntimeCamelException is thrown if stopping failed
      */
-    @Override
     void stop();
 
     /**
@@ -197,7 +209,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @return the status
      */
-    @Override
     ServiceStatus getStatus();
 
     /**

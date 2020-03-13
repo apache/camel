@@ -32,6 +32,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -56,7 +57,7 @@ import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
  */
 public class RouteService extends ChildServiceSupport {
 
-    private final AbstractCamelContext camelContext;
+    private final CamelContext camelContext;
     private final Route route;
     private boolean removingRoutes;
     private final Map<Route, Consumer> inputs = new HashMap<>();
@@ -65,7 +66,7 @@ public class RouteService extends ChildServiceSupport {
 
     public RouteService(Route route) {
         this.route = route;
-        this.camelContext = this.route.getCamelContext().adapt(AbstractCamelContext.class);
+        this.camelContext = this.route.getCamelContext();
     }
 
     public String getId() {
@@ -192,7 +193,7 @@ public class RouteService extends ChildServiceSupport {
             }
 
             // add routes to camel context
-            camelContext.addRoute(route);
+            camelContext.adapt(ExtendedCamelContext.class).addRoute(route);
 
             // add the routes to the inflight registry so they are pre-installed
             camelContext.getInflightRepository().addRoute(route.getId());
@@ -253,7 +254,7 @@ public class RouteService extends ChildServiceSupport {
             EventHelper.notifyRouteStopped(camelContext, route);
         }
         if (isRemovingRoutes()) {
-            camelContext.removeRoute(route);
+            camelContext.adapt(ExtendedCamelContext.class).removeRoute(route);
         }
         // need to warm up again
         warmUpDone.set(false);
@@ -291,7 +292,7 @@ public class RouteService extends ChildServiceSupport {
         camelContext.getInflightRepository().removeRoute(route.getId());
 
         // remove the routes from the collections
-        camelContext.removeRoute(route);
+        camelContext.adapt(ExtendedCamelContext.class).removeRoute(route);
 
         // clear inputs on shutdown
         inputs.clear();

@@ -28,24 +28,19 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.Route;
-import org.apache.camel.impl.engine.AbstractCamelContext;
-import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.reifier.RouteReifier;
 
 public class DefaultModel implements Model {
 
@@ -84,7 +79,7 @@ public class DefaultModel implements Model {
         removeRouteDefinitions(list);
         this.routeDefinitions.addAll(list);
         if (shouldStartRoutes()) {
-            startRouteDefinitions(list);
+            getCamelContext().adapt(ModelCamelContext.class).startRouteDefinitions(list);
         }
     }
 
@@ -298,11 +293,6 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void startRouteDefinitions() throws Exception {
-        startRouteDefinitions(routeDefinitions);
-    }
-
-    @Override
     public void setRouteFilterPattern(String include, String exclude) {
         setRouteFilter(RouteFilters.filterByPattern(include, exclude));
     }
@@ -315,49 +305,6 @@ public class DefaultModel implements Model {
     @Override
     public void setRouteFilter(Function<RouteDefinition, Boolean> routeFilter) {
         this.routeFilter = routeFilter;
-    }
-
-    protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
-        if (list != null) {
-            for (RouteDefinition route : list) {
-                startRoute(route);
-            }
-        }
-    }
-
-    public void startRoute(RouteDefinition routeDefinition) throws Exception {
-        prepare(routeDefinition);
-        start(routeDefinition);
-    }
-
-    protected void prepare(RouteDefinition routeDefinition) throws Exception {
-        // assign ids to the routes and validate that the id's is all unique
-        RouteDefinitionHelper.forceAssignIds(camelContext, routeDefinitions);
-        String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
-        if (duplicate != null) {
-            throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
-        }
-
-        // must ensure route is prepared, before we can start it
-        if (!routeDefinition.isPrepared()) {
-            RouteDefinitionHelper.prepareRoute(camelContext, routeDefinition);
-            routeDefinition.markPrepared();
-        }
-    }
-
-    protected void start(RouteDefinition routeDefinition) throws Exception {
-        // indicate we are staring the route using this thread so
-        // we are able to query this if needed
-        AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
-        mcc.setStartingRoutes(true);
-        try {
-            Route route = new RouteReifier(camelContext, routeDefinition).createRoute();
-            RouteService routeService = new RouteService(route);
-            mcc.startRouteService(routeService, true);
-        } finally {
-            // we are done staring routes
-            mcc.setStartingRoutes(false);
-        }
     }
 
     /**

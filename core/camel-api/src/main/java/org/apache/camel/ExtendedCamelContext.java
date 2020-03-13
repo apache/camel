@@ -52,6 +52,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
@@ -566,4 +567,10 @@ public interface ExtendedCamelContext extends CamelContext {
      * If references to the model are removed when Camel is started or not.
      */
     boolean isClearModelReferences();
+
+    RouteController getInternalRouteController();
+
+    void addRoute(Route route);
+
+    void removeRoute(Route route);
 }

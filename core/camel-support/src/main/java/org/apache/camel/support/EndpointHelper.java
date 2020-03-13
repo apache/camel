@@ -55,6 +55,23 @@ public final class EndpointHelper {
     }
 
     /**
+     * Normalize uri so we can do endpoint hits with minor mistakes and
+     * parameters is not in the same order.
+     *
+     * @param uri the uri
+     * @return normalized uri
+     * @throws ResolveEndpointFailedException if uri cannot be normalized
+     */
+    public static String normalizeEndpointUri(String uri) {
+        try {
+            uri = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+        return uri;
+    }
+
+    /**
      * Creates a {@link PollingConsumer} and polls all pending messages on the endpoint
      * and invokes the given {@link Processor} to process each {@link Exchange} and then closes
      * down the consumer and throws any exceptions thrown.
@@ -120,11 +137,7 @@ public final class EndpointHelper {
         }
 
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
-        try {
-            uri = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
+        uri = normalizeEndpointUri(uri);
 
         // we need to test with and without scheme separators (//)
         boolean match = PatternHelper.matchPattern(toggleUriSchemeSeparators(uri), pattern);

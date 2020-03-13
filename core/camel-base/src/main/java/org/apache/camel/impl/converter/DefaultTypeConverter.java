@@ -51,11 +51,6 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
     }
 
     @Override
-    public boolean allowNull() {
-        return false;
-    }
-
-    @Override
     public boolean isRunAllowed() {
         // as type converter is used during initialization then allow it to always run
         return true;
