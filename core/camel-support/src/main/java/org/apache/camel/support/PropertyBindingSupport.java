@@ -197,7 +197,7 @@ public final class PropertyBindingSupport {
         }
 
         /**
-         * Whether properties should be filtered by prefix.         *
+         * Whether properties should be filtered by prefix.
          * Note that the prefix is removed from the key before the property is bound.
          */
         public Builder withOptionPrefix(String optionPrefix) {
@@ -509,7 +509,14 @@ public final class PropertyBindingSupport {
                     key = key.substring(optionPrefix.length());
                 }
 
-                boolean bound = bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+                boolean bound = false;
+                if (configurer != null) {
+                    // attempt configurer first
+                    bound = configurer.configure(camelContext, target, key, value, ignoreCase);
+                }
+                if (!bound) {
+                    bound = bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+                }
                 if (bound && removeParameter) {
                     properties.remove(propertyKey);
                 }

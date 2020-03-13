@@ -16,84 +16,79 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.PropertyInject;
+import org.apache.camel.BeanConfigInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MainIoCNewRouteBuilderTest extends Assert {
+public class MainIoCBeanConfigInjectTest extends Assert {
 
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
-        main.addConfiguration(new MyConfiguration());
         main.addRoutesBuilder(new MyRouteBuilder());
+        main.addInitialProperty("bar.name", "Thirsty Bear");
+        main.addInitialProperty("bar.age", "23");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
-        endpoint.expectedBodiesReceived("World");
+        endpoint.expectedBodiesReceived("Thirsty Bear (minimum age: 23)");
 
-        main.getCamelTemplate().sendBody("direct:start", "<message>1</message>");
+        main.getCamelTemplate().sendBody("direct:start", "Which bar");
 
         endpoint.assertIsSatisfied();
-
-        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb = (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
-        assertNotNull(mcb);
-        assertEquals("Tiger", mcb.getName());
 
         main.stop();
     }
 
-    public static class MyConfiguration {
-
-        @BeanInject
-        private CamelContext camel;
-
-        @BindToRegistry
-        public static class MyCoolBean {
-
-            private String name = "Tiger";
-
-            public String getName() {
-                return name;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-        }
-
-        public void configure() {
-            camel.getGlobalOptions().put("foo", "123");
-        }
-    }
-
     public static class MyBar {
 
-        private final String name;
+        private final String description;
 
-        public MyBar(String name) {
-            this.name = name;
+        public MyBar(String description) {
+            this.description = description;
         }
 
         @Override
         public String toString() {
+            return description;
+        }
+    }
+
+    public static class MyBarConfig {
+
+        private String name;
+        private int age;
+
+        public String getName() {
             return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
         }
     }
 
     public static class MyRouteBuilder extends RouteBuilder {
 
         @BindToRegistry("bar")
-        public MyBar createBar(@PropertyInject("hello") String hello) {
-            return new MyBar(hello);
+        public MyBar createBar(@BeanConfigInject("bar") MyBarConfig config) {
+            String text = config.getName() + " (minimum age: " + config.getAge() + ")";
+            return new MyBar(text);
         }
 
         @Override
