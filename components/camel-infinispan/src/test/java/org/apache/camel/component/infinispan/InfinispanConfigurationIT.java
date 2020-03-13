@@ -33,8 +33,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class InfinispanConfigurationIT {
-	
-	private RemoteCacheManager manager = new RemoteCacheManager();
+
+    private RemoteCacheManager manager = new RemoteCacheManager();
 
     @Before
     public void setupCache() {
