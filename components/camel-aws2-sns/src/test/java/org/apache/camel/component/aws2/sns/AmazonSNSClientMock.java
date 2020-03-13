@@ -19,7 +19,6 @@ package org.apache.camel.component.aws2.sns;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
@@ -31,6 +30,8 @@ import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesResponse;
 import software.amazon.awssdk.services.sns.model.Topic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class AmazonSNSClientMock implements SnsClient {
 
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
@@ -40,9 +41,9 @@ public class AmazonSNSClientMock implements SnsClient {
 
     @Override
     public SetTopicAttributesResponse setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) {
-        Assert.assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.topicArn());
-        Assert.assertEquals("Policy", setTopicAttributesRequest.attributeName());
-        Assert.assertEquals("XXX", setTopicAttributesRequest.attributeValue());
+        assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.topicArn());
+        assertEquals("Policy", setTopicAttributesRequest.attributeName());
+        assertEquals("XXX", setTopicAttributesRequest.attributeValue());
         return SetTopicAttributesResponse.builder().build();
     }
 

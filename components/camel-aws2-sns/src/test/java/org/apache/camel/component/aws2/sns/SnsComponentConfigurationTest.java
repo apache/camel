@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.aws2.sns;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SnsComponentConfigurationTest extends CamelTestSupport {
 
@@ -133,16 +138,20 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPolicy());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        component.createEndpoint("aws2-sns://MyTopic?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-sns://MyTopic?secretKey=yyy");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         Sns2Component component = new Sns2Component(context);
-        component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-sns://MyTopic?accessKey=xxx");
+        });
     }
 
     @Test
