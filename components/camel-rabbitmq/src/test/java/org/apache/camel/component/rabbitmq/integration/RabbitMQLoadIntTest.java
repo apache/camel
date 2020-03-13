@@ -33,21 +33,20 @@ import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.junit.Test;
 
 /**
- * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and
- * consumers
+ * Integration test to check that RabbitMQ Endpoint is able handle heavy load
+ * using multiple producers and consumers
  */
 public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
     private static final int PRODUCER_COUNT = 10;
     private static final int CONSUMER_COUNT = 10;
     private static final int MESSAGE_COUNT = 100;
-    
+
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
-                          + "&queue=q4&routingKey=" + ROUTING_KEY + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
-                          + "&concurrentConsumers=" + CONSUMER_COUNT)
+    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest" + "&queue=q4&routingKey=" + ROUTING_KEY + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
+                    + "&concurrentConsumers=" + CONSUMER_COUNT)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("mock:producing")
@@ -62,15 +61,8 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
 
             @Override
             public void configure() throws Exception {
-                from("direct:rabbitMQ")
-                        .id("producingRoute")
-                        .log("Sending message")
-                        .inOnly(rabbitMQEndpoint)
-                        .to(producingMockEndpoint);
-                from(rabbitMQEndpoint)
-                        .id("consumingRoute")
-                        .log("Receiving message")
-                        .to(consumingMockEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
+                from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").to(consumingMockEndpoint);
             }
         };
     }
@@ -85,8 +77,7 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
                 @Override
                 public void run() {
                     for (int i = 0; i < MESSAGE_COUNT; i++) {
-                        directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY,
-                                                         ROUTING_KEY);
+                        directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY, ROUTING_KEY);
                     }
                 }
             }));

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.ExceptionHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -139,6 +140,8 @@ public class RabbitMQComponent extends DefaultComponent {
     private Map<String, Object> args;
     @Metadata(label = "advanced")
     private Map<String, Object> clientProperties;
+    @Metadata(label = "advanced")
+    private ExceptionHandler connectionFactoryExceptionHandler;
 
     public RabbitMQComponent() {
     }
@@ -148,9 +151,7 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     @Override
-    protected RabbitMQEndpoint createEndpoint(String uri,
-                                              String remaining,
-                                              Map<String, Object> params) throws Exception {
+    protected RabbitMQEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
 
         String host = getHostname();
         int port = getPortNumber();
@@ -175,7 +176,8 @@ public class RabbitMQComponent extends DefaultComponent {
         // ConnectionFactory reference
         ConnectionFactory connectionFactory = resolveAndRemoveReferenceParameter(params, "connectionFactory", ConnectionFactory.class, getConnectionFactory());
 
-        // try to lookup if there is a single instance in the registry of the ConnectionFactory
+        // try to lookup if there is a single instance in the registry of the
+        // ConnectionFactory
         if (connectionFactory == null && isAutoDetectConnectionFactory()) {
             Map<String, ConnectionFactory> map = getCamelContext().getRegistry().findByTypeWithName(ConnectionFactory.class);
             if (map != null && map.size() == 1) {
@@ -245,11 +247,12 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setDeadLetterQueue(getDeadLetterQueue());
         endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
         endpoint.setAllowNullHeaders(isAllowNullHeaders());
+        endpoint.setConnectionFactoryExceptionHandler(getConnectionFactoryExceptionHandler());
         setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
-                    new Object[]{endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
+                      new Object[] {endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
         }
 
         Map<String, Object> localArgs = new HashMap<>();
@@ -267,7 +270,7 @@ public class RabbitMQComponent extends DefaultComponent {
 
         // Change null headers processing for message converter
         endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
-
+        endpoint.getMessageConverter().setAllowCustomHeaders(endpoint.isAllowCustomHeaders());
         return endpoint;
     }
 
@@ -369,9 +372,10 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Whether to auto-detect looking up RabbitMQ connection factory from the registry.
-     * When enabled and a single instance of the connection factory is found then it will be used.
-     * An explicit connection factory can be configured on the component or endpoint level which takes precedence.
+     * Whether to auto-detect looking up RabbitMQ connection factory from the
+     * registry. When enabled and a single instance of the connection factory is
+     * found then it will be used. An explicit connection factory can be
+     * configured on the component or endpoint level which takes precedence.
      */
     public void setAutoDetectConnectionFactory(boolean autoDetectConnectionFactory) {
         this.autoDetectConnectionFactory = autoDetectConnectionFactory;
@@ -570,7 +574,8 @@ public class RabbitMQComponent extends DefaultComponent {
 
     /**
      * When true, the message will be published with
-     * <a href="https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a> turned on
+     * <a href="https://www.rabbitmq.com/confirms.html">publisher
+     * acknowledgements</a> turned on
      */
     public boolean isPublisherAcknowledgements() {
         return publisherAcknowledgements;
@@ -595,9 +600,9 @@ public class RabbitMQComponent extends DefaultComponent {
     /**
      * When true, an exception will be thrown when the message cannot be
      * delivered (basic.return) and the message is marked as mandatory.
-     * PublisherAcknowledgement will also be activated in this case.
-     * See also <a href=https://www.rabbitmq.com/confirms.html">publisher acknowledgements</a>
-     * - When will messages be confirmed.
+     * PublisherAcknowledgement will also be activated in this case. See also <a
+     * href=https://www.rabbitmq.com/confirms.html">publisher
+     * acknowledgements</a> - When will messages be confirmed.
      */
     public boolean isGuaranteedDeliveries() {
         return guaranteedDeliveries;
@@ -664,7 +669,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Connection client properties (client info used in negotiating with the server)
+     * Connection client properties (client info used in negotiating with the
+     * server)
      */
     public void setClientProperties(Map<String, Object> clientProperties) {
         this.clientProperties = clientProperties;
@@ -686,7 +692,8 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Configure SSL trust manager, SSL should be enabled for this option to be effective
+     * Configure SSL trust manager, SSL should be enabled for this option to be
+     * effective
      */
     public void setTrustManager(TrustManager trustManager) {
         this.trustManager = trustManager;
@@ -743,8 +750,9 @@ public class RabbitMQComponent extends DefaultComponent {
     }
 
     /**
-     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful
-     * when you want a long-lived shared queue to be temporarily accessible by just one consumer.
+     * Request exclusive access to the queue (meaning only this consumer can
+     * access the queue). This is useful when you want a long-lived shared queue
+     * to be temporarily accessible by just one consumer.
      */
     public void setExclusiveConsumer(boolean exclusiveConsumer) {
         this.exclusiveConsumer = exclusiveConsumer;
@@ -861,5 +869,16 @@ public class RabbitMQComponent extends DefaultComponent {
 
     public void setAllowNullHeaders(boolean allowNullHeaders) {
         this.allowNullHeaders = allowNullHeaders;
+    }
+
+    public ExceptionHandler getConnectionFactoryExceptionHandler() {
+        return connectionFactoryExceptionHandler;
+    }
+
+    /**
+     * Custom rabbitmq ExceptionHandler for ConnectionFactory
+     */
+    public void setConnectionFactoryExceptionHandler(ExceptionHandler connectionFactoryExceptionHandler) {
+        this.connectionFactoryExceptionHandler = connectionFactoryExceptionHandler;
     }
 }

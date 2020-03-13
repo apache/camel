@@ -24,6 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.ses.SesClient;
 
 /**
@@ -32,6 +35,8 @@ import software.amazon.awssdk.services.ses.SesClient;
 @Component("aws2-ses")
 public class Ses2Component extends DefaultComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Ses2Component.class);
+    
     @Metadata
     private Ses2Configuration configuration = new Ses2Configuration();
 
@@ -55,7 +60,7 @@ public class Ses2Component extends DefaultComponent {
         configuration.setFrom(remaining);
         Ses2Endpoint endpoint = new Ses2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        checkAndSetRegistryClient(configuration, endpoint);
         if (configuration.getAmazonSESClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
         }
@@ -74,10 +79,18 @@ public class Ses2Component extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void checkAndSetRegistryClient(Ses2Configuration configuration) {
-        Set<SesClient> clients = getCamelContext().getRegistry().findByType(SesClient.class);
-        if (clients.size() == 1) {
-            configuration.setAmazonSESClient(clients.stream().findFirst().get());
+    private void checkAndSetRegistryClient(Ses2Configuration configuration, Ses2Endpoint endpoint) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonSESClient())) {
+            LOG.debug("Looking for an SesClient instance in the registry");
+            Set<SesClient> clients = getCamelContext().getRegistry().findByType(SesClient.class);
+            if (clients.size() == 1) {
+                LOG.debug("Found exactly one SesClient instance in the registry");
+                configuration.setAmazonSESClient(clients.stream().findFirst().get());
+            } else {
+                LOG.debug("No SesClient instance in the registry");
+            }
+        } else {
+            LOG.debug("SesClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 }

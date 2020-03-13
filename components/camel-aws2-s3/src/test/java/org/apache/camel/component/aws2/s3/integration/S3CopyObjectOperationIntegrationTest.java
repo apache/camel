@@ -77,7 +77,7 @@ public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws2-s3://mycamel?amazonS3Client=#amazonS3Client&autoCreateBucket=false";
+                String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false";
               
                 from("direct:putObject").to(awsEndpoint);
                 

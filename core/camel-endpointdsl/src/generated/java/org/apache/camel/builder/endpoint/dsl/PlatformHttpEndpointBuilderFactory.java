@@ -107,6 +107,34 @@ public interface PlatformHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether or not the consumer should try to find a target consumer by
+         * matching the URI prefix if no exact match is found.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PlatformHttpEndpointBuilder matchOnUriPrefix(
+                boolean matchOnUriPrefix) {
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
+            return this;
+        }
+        /**
+         * Whether or not the consumer should try to find a target consumer by
+         * matching the URI prefix if no exact match is found.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default PlatformHttpEndpointBuilder matchOnUriPrefix(
+                String matchOnUriPrefix) {
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
+            return this;
+        }
+        /**
          * The content type this endpoint produces, such as application/xml or
          * application/json.
          * 

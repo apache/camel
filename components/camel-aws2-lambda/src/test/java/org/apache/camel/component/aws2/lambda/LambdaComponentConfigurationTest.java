@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.aws2.lambda;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LambdaComponentConfigurationTest extends CamelTestSupport {
 
@@ -37,28 +41,36 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutOperation() throws Exception {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        component.createEndpoint("aws2-lambda://myFunction");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-lambda://myFunction");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAmazonLambdaClientConfiguration() throws Exception {
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        component.createEndpoint("aws2-lambda://myFunction?operation=getFunction");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-lambda://myFunction?operation=getFunction");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
-        Lambda2Component component = context.getComponent("aws-lambda", Lambda2Component.class);
-        component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&secretKey=yyy");
+        Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&secretKey=yyy");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
-        Lambda2Component component = context.getComponent("aws-lambda", Lambda2Component.class);
-        component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&accessKey=xxx");
+        Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-lambda://myFunction?operation=getFunction&accessKey=xxx");
+        });
     }
 
     @Test

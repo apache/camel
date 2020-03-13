@@ -70,8 +70,18 @@ public class RabbitMQMessagePublisher {
             message.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
         }
         if (routingKey != null && routingKey.startsWith(RabbitMQConstants.RABBITMQ_DIRECT_REPLY_ROUTING_KEY)) {
-            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use default exchange for reply-to messages
-            message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use default exchange for reply-to messages
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
+                                                                                                                  // default
+                                                                                                                  // exchange
+                                                                                                                  // for
+                                                                                                                  // reply-to
+                                                                                                                  // messages
+            message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
+                                                                                                                           // default
+                                                                                                                           // exchange
+                                                                                                                           // for
+                                                                                                                           // reply-to
+                                                                                                                           // messages
         }
 
         return message;
@@ -81,13 +91,15 @@ public class RabbitMQMessagePublisher {
         AMQP.BasicProperties properties;
         byte[] body;
         try {
-            // To maintain backwards compatibility try the TypeConverter (The DefaultTypeConverter seems to only work on Strings)
+            // To maintain backwards compatibility try the TypeConverter (The
+            // DefaultTypeConverter seems to only work on Strings)
             body = camelExchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, camelExchange, message.getBody());
 
             properties = endpoint.getMessageConverter().buildProperties(camelExchange).build();
         } catch (NoTypeConversionAvailableException | TypeConversionException e) {
             if (message.getBody() instanceof Serializable) {
-                // Add the header so the reply processor knows to de-serialize it
+                // Add the header so the reply processor knows to de-serialize
+                // it
                 message.getHeaders().put(RabbitMQEndpoint.SERIALIZE_HEADER, true);
                 properties = endpoint.getMessageConverter().buildProperties(camelExchange).build();
                 body = serializeBodyFrom(message);
@@ -104,8 +116,9 @@ public class RabbitMQMessagePublisher {
     }
 
     private void publishToRabbitMQ(final AMQP.BasicProperties properties, final byte[] body) throws IOException {
-        String exchangeName = (String) message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
-        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
+        String exchangeName = (String)message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        // If it is BridgeEndpoint we should ignore the message header of
+        // EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || endpoint.isBridgeEndpoint()) {
             exchangeName = endpoint.getExchangeName();
         } else {

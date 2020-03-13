@@ -24,8 +24,8 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 
 final class PathGenerator extends RestDslSourceCodeGenerator<Path> {
 
-    PathGenerator(final OasDocument openapi) {
-        super(openapi);
+    PathGenerator(final OasDocument document) {
+        super(document);
     }
 
     @Override

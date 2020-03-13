@@ -24,6 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.mq.MqClient;
 
 /**
@@ -32,6 +35,8 @@ import software.amazon.awssdk.services.mq.MqClient;
 @Component("aws2-mq")
 public class MQ2Component extends DefaultComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MQ2Component.class);
+    
     @Metadata
     private MQ2Configuration configuration = new MQ2Configuration();
 
@@ -50,7 +55,7 @@ public class MQ2Component extends DefaultComponent {
         MQ2Configuration configuration = this.configuration != null ? this.configuration.copy() : new MQ2Configuration();
         MQ2Endpoint endpoint = new MQ2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        checkAndSetRegistryClient(configuration, endpoint);
         if (configuration.getAmazonMqClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonMQClient or accessKey and secretKey must be specified");
         }
@@ -69,10 +74,18 @@ public class MQ2Component extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void checkAndSetRegistryClient(MQ2Configuration configuration) {
-        Set<MqClient> clients = getCamelContext().getRegistry().findByType(MqClient.class);
-        if (clients.size() == 1) {
-            configuration.setAmazonMqClient(clients.stream().findFirst().get());
+    private void checkAndSetRegistryClient(MQ2Configuration configuration, MQ2Endpoint endpoint) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonMqClient())) {
+            LOG.debug("Looking for an MqClient instance in the registry");
+            Set<MqClient> clients = getCamelContext().getRegistry().findByType(MqClient.class);
+            if (clients.size() == 1) {
+                LOG.debug("Found exactly one MqClient instance in the registry");
+                configuration.setAmazonMqClient(clients.stream().findFirst().get());
+            } else {
+                LOG.debug("No MqClient instance in the registry");
+            }
+        } else {
+            LOG.debug("MqClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 }

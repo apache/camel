@@ -20,8 +20,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo;
 import software.amazon.awssdk.services.kafka.model.ClusterState;
@@ -29,6 +29,8 @@ import software.amazon.awssdk.services.kafka.model.CreateClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MSKProducerSpringTest extends CamelSpringTestSupport {
 

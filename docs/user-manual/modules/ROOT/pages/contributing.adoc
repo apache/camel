@@ -84,10 +84,8 @@ For more information see https://camel.apache.org/manual/latest/faq/how-does-the
 [#if-you-find-a-bug-or-problem]
 == If you find a bug or problem
 
-Please raise a new issue in our https://issues.apache.org/jira/browse/CAMEL[issue tracker]
-If you can create a JUnit test case then your issue is more likely to be resolved quicker.
+Please raise a new issue on our https://issues.apache.org/jira/browse/CAMEL[JIRA issue tracker]. This way we’ll know when it’s really fixed and we can ensure that the problem stays fixed in future releases. Please describe the bug/issue clearly, and add pictures/screenshots if necessary. If you can create a JUnit test case then your issue is more likely to be resolved quicker.
 e.g. take a look at some of the existing https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/[unit tests cases]
-Then we can add your issue to Subversion and then we'll know when it's really fixed and we can ensure that the problem stays fixed in future releases.
 
 [#working-on-the-code]
 == Working on the code
@@ -167,7 +165,7 @@ We gladly accept patches if you can find ways to improve, tune or fix Camel in s
 
 We recommend using github PRs instead of manual patch files. Especially for bigger patches.
 
-Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team \-> Create Patch. Then just save the patch as a file and then submit it. (You may have to click on Team \-> Share... first to enable the Subversion options).
+Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team \-> Create Patch. Then just save the patch as a file and attach it to the corresponding issue on our https://issues.apache.org/jira/browse/CAMEL[JIRA issue tracker].
 If you're a command line person try the following to create the patch
 
  diff -u Main.java.orig Main.java >> patchfile.txt

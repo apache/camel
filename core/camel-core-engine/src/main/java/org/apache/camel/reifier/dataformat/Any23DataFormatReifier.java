@@ -31,7 +31,7 @@ public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("outputFormat", definition.getOutputFormat());
-        properties.put("configurations", definition.getConfiguration());
+        properties.put("configurations", definition.getConfigurationAsMap());
         properties.put("extractors", definition.getExtractors());
         properties.put("baseURI", definition.getBaseURI());
     }

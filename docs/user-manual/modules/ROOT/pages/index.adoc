@@ -1,4 +1,20 @@
-= Summary
+= Apache Camel user manual
+
+Apache Camel™ is a versatile open-source integration framework based on
+known xref:enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns].
+
+Camel empowers you to define routing and mediation rules in a variety of
+domain-specific languages, including a Java-based xref:dsl.adoc[Fluent
+API], xref:spring.adoc[Spring] or
+xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
+xref:xml-configuration.adoc[XML Configuration] files.
+This means you get smart completion of
+routing rules in your IDE, whether in a Java or XML editor.
+
+For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel.adoc[Introduction] is provided.
+
+== Summary
 
 * <<Overview>>
 * <<Documentation>>
@@ -7,7 +23,6 @@
 
 == Overview
 
-* xref:faq/what-is-camel.adoc[Introduction]
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
 * xref:faq.adoc[FAQ]

@@ -597,6 +597,19 @@ public interface RabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default RabbitmqComponentBuilder connectionFactoryExceptionHandler(
+                com.rabbitmq.client.ExceptionHandler connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
          * Connection timeout.
          * 
          * The option is a: <code>int</code> type.
@@ -818,6 +831,7 @@ public interface RabbitmqComponentBuilderFactory {
             case "automaticRecoveryEnabled": ((RabbitMQComponent) component).setAutomaticRecoveryEnabled((java.lang.Boolean) value); return true;
             case "basicPropertyBinding": ((RabbitMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientProperties": ((RabbitMQComponent) component).setClientProperties((java.util.Map) value); return true;
+            case "connectionFactoryExceptionHandler": ((RabbitMQComponent) component).setConnectionFactoryExceptionHandler((com.rabbitmq.client.ExceptionHandler) value); return true;
             case "connectionTimeout": ((RabbitMQComponent) component).setConnectionTimeout((int) value); return true;
             case "networkRecoveryInterval": ((RabbitMQComponent) component).setNetworkRecoveryInterval((java.lang.Integer) value); return true;
             case "requestedChannelMax": ((RabbitMQComponent) component).setRequestedChannelMax((int) value); return true;

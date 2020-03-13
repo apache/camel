@@ -1480,7 +1480,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
-         * used.
+         * used. Note that query parameters in the message body are represented
+         * by a question mark instead of a # symbol.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1495,7 +1496,8 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
-         * used.
+         * used. Note that query parameters in the message body are represented
+         * by a question mark instead of a # symbol.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

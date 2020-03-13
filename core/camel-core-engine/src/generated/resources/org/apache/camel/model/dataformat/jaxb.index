@@ -41,14 +41,6 @@ UniVocityHeader
 UniVocityTsvDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat
-XStreamDataFormat$AliasEntry
-XStreamDataFormat$AliasList
-XStreamDataFormat$ConverterEntry
-XStreamDataFormat$ConverterList
-XStreamDataFormat$ImplicitCollectionEntry
-XStreamDataFormat$ImplicitCollectionList
-XStreamDataFormat$OmitFieldEntry
-XStreamDataFormat$OmitFieldList
 XmlRpcDataFormat
 YAMLDataFormat
 YAMLLibrary
