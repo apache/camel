@@ -38,7 +38,7 @@ public class InfinispanIdempotentRepositoryTest {
 
     @Before
     public void setUp() {
-        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").globalJmxStatistics().allowDuplicateDomains(true).build();
+        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").jmx().domain("test").build();
         Configuration conf = new ConfigurationBuilder().build();
         basicCacheContainer = new DefaultCacheManager(global, conf);
         basicCacheContainer.start();
