@@ -44,7 +44,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
-    private boolean useImmutableContext = false;
+    private boolean useImmutableContext;
     private Service camelContextService;
 
     /**
