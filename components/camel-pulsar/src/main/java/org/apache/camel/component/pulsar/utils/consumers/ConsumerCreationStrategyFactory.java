@@ -47,6 +47,8 @@ public final class ConsumerCreationStrategyFactory {
                 return new ExclusiveConsumerStrategy(pulsarConsumer);
             case FAILOVER:
                 return new FailoverConsumerStrategy(pulsarConsumer);
+            case KEY_SHARED:
+                return new KeySharedConsumerStrategy(pulsarConsumer);
             default:
                 return new ExclusiveConsumerStrategy(pulsarConsumer);
         }

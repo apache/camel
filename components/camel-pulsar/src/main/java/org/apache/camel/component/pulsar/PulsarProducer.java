@@ -88,7 +88,8 @@ public class PulsarProducer extends DefaultProducer {
                 .sendTimeout(configuration.getSendTimeoutMs(), TimeUnit.MILLISECONDS).blockIfQueueFull(configuration.isBlockIfQueueFull())
                 .maxPendingMessages(configuration.getMaxPendingMessages()).maxPendingMessagesAcrossPartitions(configuration.getMaxPendingMessagesAcrossPartitions())
                 .batchingMaxPublishDelay(configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS).batchingMaxMessages(configuration.getMaxPendingMessages())
-                .enableBatching(configuration.isBatchingEnabled()).initialSequenceId(configuration.getInitialSequenceId()).compressionType(configuration.getCompressionType());
+                .enableBatching(configuration.isBatchingEnabled()).batcherBuilder(configuration.getBatcherBuilder())
+                .initialSequenceId(configuration.getInitialSequenceId()).compressionType(configuration.getCompressionType());
             if (ObjectHelper.isNotEmpty(configuration.getMessageRouter())) {
                 producerBuilder.messageRouter(configuration.getMessageRouter());
             } else {
