@@ -48,7 +48,7 @@ In the example above we have a single route, which pickup files,
 from("file:src/data?noop=true")
 ---------------------------------------
 
-Then we use the `Content Based Router` (eg
+Then we use the `Content Based Router` (For example :- 
 the choice) to route the message depending if the person is from London
 or not.
 
