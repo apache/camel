@@ -43,7 +43,7 @@ To use the starter, add the following to your spring boot pom.xml file:
 [source,xml]
 ----
 <dependency>
-    <groupId>org.apache.camel</groupId>
+    <groupId>org.apache.camel.springboot</groupId>
     <artifactId>camel-spring-boot-starter</artifactId>
     <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
 </dependency>
@@ -618,7 +618,7 @@ https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-tes
 
 To get the `CamelContext` or `ProducerTemplate`, you can inject them into the class in the normal Spring manner, using `@Autowired`.
 
-You can also use xref:manual::spring-testing.adoc[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
+You can also use xref:latest@manual::spring-testing.adoc[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
 
 [source,java]
 ----
@@ -668,7 +668,7 @@ https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-tes
 
 To get the `CamelContext` or `ProducerTemplate`, you can inject them into the class in the normal Spring manner, using `@Autowired`.
 
-You can also use xref:manual::spring-testing.adoc[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
+You can also use xref:latest@manual::spring-testing.adoc[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
 
 [source,java]
 ----

@@ -6,9 +6,9 @@
 
 Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
 Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
+used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
 Configuration]. For example you could use XPath to create an
-Predicate in a xref:manual::filter-eip.adoc[Message
+Predicate in a xref:latest@manual:eips:filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List.
 
@@ -162,7 +162,7 @@ exchange:
 |function:properties |key for property |String |To lookup a property using the
 xref:properties-component.adoc[Properties] component (property placeholders).
 
-|function:simple |simple expression |Object |To evaluate a xref:manual::simple-language.adoc[Simple] expression.
+|function:simple |simple expression |Object |To evaluate a xref:simple-language.adoc[Simple] expression.
 |===
 
 CAUTION: `function:properties` and `function:simple` is not supported
@@ -296,7 +296,7 @@ For example
 [source,java]
 ----
 public class Foo {
-    
+
     @MessageDriven(uri = "activemq:my.queue")
     public void doSomething(@MyXPath("/ns1:foo/ns2:bar/text()") String correlationID, @Body String body) {
         // process the inbound message here
@@ -503,8 +503,8 @@ the following:
 
 [source]
 ----
-2012-01-16 13:23:45,878 [stSaxonWithFlag] INFO  XPathBuilder  - Namespaces discovered in message: 
-{xmlns:a=[http://apache.org/camel], DEFAULT=[http://apache.org/default], 
+2012-01-16 13:23:45,878 [stSaxonWithFlag] INFO  XPathBuilder  - Namespaces discovered in message:
+{xmlns:a=[http://apache.org/camel], DEFAULT=[http://apache.org/default],
 xmlns:b=[http://apache.org/camelA, http://apache.org/camelB]}
 ----
 
