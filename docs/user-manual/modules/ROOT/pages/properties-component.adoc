@@ -669,7 +669,6 @@ can easily be used as shown below:
 [source,xml]
 ----
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
     <route>
       <from uri="direct:start"/>
       <to uri="{`{env:SOMENAME}`}"/>
@@ -685,7 +684,6 @@ is a `log:foo` and `log:bar` value.
 [source,xml]
 ----
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
     <route>
       <from uri="direct:start"/>
       <to uri="{`{env:SOMENAME:log:foo}`}"/>
