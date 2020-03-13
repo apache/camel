@@ -162,7 +162,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
 
-                    messageConverter.populateRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage(), true);
+                    messageConverter.populateRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage(), true,
+                                                            endpoint.isAllowMessageBodySerialization());
 
                     // restore correlation id in case the remote server messed
                     // with it

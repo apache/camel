@@ -134,7 +134,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (62 parameters):
+=== Query Parameters (63 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -198,6 +198,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *topologyRecoveryEnabled* (advanced) | Enables connection topology recovery (should topology recovery be performed) |  | Boolean
 | *transferException* (advanced) | When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response | false | boolean
+| *allowMessageBodySerialization* (allowMessageBodySerialization) | Whether to allow Java serialization of the message body or not. If this value is true, the message body will be serialized on the producer side using Java serialization, if no type converter can handle the message body. On the consumer side, it will deserialize the message body if this value is true and the message contains a CamelSerialize header. Setting this value to true may introduce a security vulnerability as it allows an attacker to attempt to deserialize to a gadget object which could result in a RCE or other security vulnerability. | false | boolean
 | *password* (security) | Password for authenticated access | guest | String
 | *sslProtocol* (security) | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
 | *trustManager* (security) | Configure SSL trust manager, SSL should be enabled for this option to be effective |  | TrustManager
