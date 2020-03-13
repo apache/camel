@@ -199,6 +199,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 injectFieldBean(field, beanInject.value(), bean, beanName);
             }
 
+            BeanConfigInject beanConfigInject = field.getAnnotation(BeanConfigInject.class);
+            if (beanConfigInject != null) {
+                injectFieldBeanConfig(field, beanConfigInject.value(), bean, beanName);
+            }
+
             EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
             if (endpointInject != null) {
                 @SuppressWarnings("deprecation")
@@ -239,6 +244,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     public void injectFieldBean(Field field, String name, Object bean, String beanName) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionBeanValue(field.getType(), name));
+    }
+
+    public void injectFieldBeanConfig(Field field, String name, Object bean, String beanName) {
+        ReflectionHelper.setField(field, bean,
+                getPostProcessorHelper().getInjectionBeanConfigValue(field.getType(), name));
     }
 
     public void injectFieldProperty(Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
@@ -465,6 +475,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 // we also support @BeanInject and @PropertyInject annotations
                 Annotation[] anns = method.getParameterAnnotations()[i];
                 if (anns.length == 1) {
+                    // TODO: Use helper getInjectionPropertyValue
                     // we dont assume there are multiple annotations on the same parameter so grab first
                     Annotation ann = anns[0];
                     if (ann.annotationType() == PropertyInject.class) {
@@ -487,10 +498,10 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                         // build key with default value included as this is supported during resolving
                         // it may be a configuration class which we want to instantiate and configure with
                         // project inject as base keys
-                        ExtendedCamelContext ecc = (ExtendedCamelContext) getOrLookupCamelContext();
-                        Object result = resolveBeanConfigInject(ecc, pi, type);
+                        Object result = getPostProcessorHelper().getInjectionBeanConfigValue(type, pi.value());
                         parameters[i] = result;
                     } else if (ann.annotationType() == BeanInject.class) {
+                        // TODO: Use helper
                         BeanInject bi = (BeanInject) ann;
                         String key = bi.value();
                         Object value;

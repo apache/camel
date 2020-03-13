@@ -16,15 +16,24 @@
  */
 package org.apache.camel.impl;
 
-public class FooBar {
+public class FooBarConfig {
 
-    private String greeting = "Hello";
+    private int age = 42;
+    private String name;
 
-    public String hello(String name) {
-        return greeting + " " + name;
+    public int getAge() {
+        return age;
     }
 
-    public void setGreeting(String greeting) {
-        this.greeting = greeting;
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
