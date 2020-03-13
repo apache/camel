@@ -88,7 +88,7 @@
         <awaitility-version>4.0.2</awaitility-version>
         <aws-java-sdk-bundle-version>1.11.714_1</aws-java-sdk-bundle-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.10.82</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.10.85</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.4.0</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -130,7 +130,7 @@
         <commons-collections4-version>4.4</commons-collections4-version>
         <commons-compress-version>1.19</commons-compress-version>
         <commons-configuration-version>1.9</commons-configuration-version>
-        <commons-configuration2-version>2.6</commons-configuration2-version>
+        <commons-configuration2-version>2.7</commons-configuration2-version>
         <commons-csv-version>1.6</commons-csv-version>
         <commons-cli-version>1.4</commons-cli-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
@@ -277,7 +277,7 @@
         <hapi-fhir-version>4.1.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
-        <hazelcast-version>3.12.6</hazelcast-version>
+        <hazelcast-version>4.0</hazelcast-version>
         <hbase-version>1.2.6</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.1.2.Final</hibernate-validator-version>
@@ -300,7 +300,7 @@
         <icu4j-version>65.1</icu4j-version>
         <ignite-version>2.7.6</ignite-version>
         <impsort-maven-plugin-version>1.3.2</impsort-maven-plugin-version>
-        <infinispan-version>10.1.3.Final</infinispan-version>
+        <infinispan-version>10.1.4.Final</infinispan-version>
         <influx-java-driver-version>2.17</influx-java-driver-version>
         <influx-java-driver-bundle-version>2.17_1</influx-java-driver-bundle-version>
         <influx-guava-version>20.0</influx-guava-version>
@@ -341,7 +341,7 @@
         <javax-activation-version>1.2.0</javax-activation-version>
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
-        <jakarta-mail-version>1.6.4</jakarta-mail-version>
+        <jakarta-mail-version>1.6.5</jakarta-mail-version>
         <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
         <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
@@ -370,7 +370,7 @@
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.0</jettison-version>
-        <jgit-version>5.6.1.202002131546-r</jgit-version>
+        <jgit-version>5.7.0.202003090808-r</jgit-version>
         <jgroups-version>4.2.0.Final</jgroups-version>
         <jgroups-raft-version>0.5.1.Final</jgroups-raft-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
@@ -421,8 +421,8 @@
         <kafka-bundle-version>2.4.0_1</kafka-bundle-version>
         <karaf4-version>4.2.8</karaf4-version>
         <kie-version>7.34.0.Final</kie-version>
-        <kubernetes-client-version>4.8.0</kubernetes-client-version>
-        <kubernetes-model-version>4.8.0</kubernetes-model-version>
+        <kubernetes-client-version>4.9.0</kubernetes-client-version>
+        <kubernetes-model-version>4.9.0</kubernetes-model-version>
         <kudu-version>1.10.0</kudu-version>
         <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
         <leveldbjni-version>1.8</leveldbjni-version>
@@ -483,7 +483,7 @@
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockwebserver-version>0.1.7</mockwebserver-version>
         <mockito-version>3.3.0</mockito-version>
-        <mongo-java-driver-version>3.12.1</mongo-java-driver-version>
+        <mongo-java-driver-version>3.12.2</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msv-version>2013.6.1</msv-version>
         <mustache-java-version>0.9.6</mustache-java-version>
@@ -500,7 +500,7 @@
         <netty-version>4.1.47.Final</netty-version>
         <netty-reactive-streams-version>2.0.3</netty-reactive-streams-version>
         <netty40-version>4.0.56.Final</netty40-version>
-        <networknt-json-schema-validator-version>1.0.32</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>1.0.33</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>8.9</nimbus-jose-jwt>
         <nitrite-version>3.3.0</nitrite-version>
         <noggit-bundle-version>0.5_1</noggit-bundle-version>
@@ -548,7 +548,7 @@
         <pubnub-version>4.25.0</pubnub-version>
         <pulsar-version>2.5.0</pulsar-version>
         <pulsar-bundle-version>2.5.0_1</pulsar-bundle-version>
-        <qpid-broker-version>7.1.8</qpid-broker-version>
+        <qpid-broker-version>8.0.0</qpid-broker-version>
         <qpid-proton-j-version>0.33.3</qpid-proton-j-version>
         <qpid-jms-client-version>0.49.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>

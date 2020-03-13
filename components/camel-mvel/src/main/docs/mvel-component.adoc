@@ -8,7 +8,7 @@
 // HEADER END
 
 The MVEL component allows you to process a message using an
-http://mvel.codehaus.org/[MVEL] template. This can be ideal when using
+http://mvel.documentnode.com/[MVEL] template. This can be ideal when using
 Templating to generate responses for requests.
 
 Maven users will need to add the following dependency to their `pom.xml`

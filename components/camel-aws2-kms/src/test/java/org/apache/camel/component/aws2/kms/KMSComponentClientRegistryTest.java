@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws2.kms;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KMSComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,12 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getKmsClient());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         KMS2Component component = context.getComponent("aws2-kms", KMS2Component.class);
-        KMS2Endpoint endpoint = (KMS2Endpoint)component.createEndpoint("aws2-kms://TestDomain");
+        assertThrows(IllegalArgumentException.class, () -> {
+            KMS2Endpoint endpoint = (KMS2Endpoint)component.createEndpoint("aws2-kms://TestDomain");
+        });
     }
 }

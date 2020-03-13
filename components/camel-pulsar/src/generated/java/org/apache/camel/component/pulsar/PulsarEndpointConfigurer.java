@@ -23,6 +23,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowManualAcknowledgement": target.getPulsarConfiguration().setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "batcherbuilder":
+        case "batcherBuilder": target.getPulsarConfiguration().setBatcherBuilder(property(camelContext, org.apache.pulsar.client.api.BatcherBuilder.class, value)); return true;
         case "batchingenabled":
         case "batchingEnabled": target.getPulsarConfiguration().setBatchingEnabled(property(camelContext, boolean.class, value)); return true;
         case "batchingmaxmessages":

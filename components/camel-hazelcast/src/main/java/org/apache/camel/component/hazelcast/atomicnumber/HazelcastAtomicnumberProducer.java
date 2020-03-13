@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast.atomicnumber;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicLong;
+import com.hazelcast.cp.IAtomicLong;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -34,7 +34,7 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
     public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
         super(endpoint);
-        this.atomicnumber = hazelcastInstance.getAtomicLong(cacheName);
+        this.atomicnumber = hazelcastInstance.getCPSubsystem().getAtomicLong(cacheName);
     }
 
     @Override

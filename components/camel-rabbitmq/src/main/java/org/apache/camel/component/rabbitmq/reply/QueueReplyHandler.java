@@ -24,8 +24,7 @@ import org.apache.camel.Exchange;
  */
 public class QueueReplyHandler extends TemporaryQueueReplyHandler {
 
-    public QueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                             String originalCorrelationId, String correlationId, long timeout) {
+    public QueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId, String correlationId, long timeout) {
         super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
     }
 

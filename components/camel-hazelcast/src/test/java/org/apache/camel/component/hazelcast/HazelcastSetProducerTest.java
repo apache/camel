@@ -19,8 +19,8 @@ package org.apache.camel.component.hazelcast;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.hazelcast.collection.ISet;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ISet;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;

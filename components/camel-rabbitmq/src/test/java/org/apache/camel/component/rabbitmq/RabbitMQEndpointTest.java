@@ -120,7 +120,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         customHeaders.put("longStringHeader", LongStringHelper.asLongString("Some really long string"));
         customHeaders.put("timestampHeader", new Timestamp(4200));
         customHeaders.put("byteHeader", Byte.valueOf((byte)0));
-        customHeaders.put("floatHeader", Float.valueOf((float) 42.4242));
+        customHeaders.put("floatHeader", Float.valueOf((float)42.4242));
         customHeaders.put("longHeader", Long.valueOf(420000000000000000L));
         Mockito.when(properties.getHeaders()).thenReturn(customHeaders);
 
@@ -139,7 +139,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals("Some really long string", exchange.getIn().getHeader("longStringHeader"));
         assertEquals(new Timestamp(4200), exchange.getIn().getHeader("timestampHeader"));
         assertEquals(Byte.valueOf((byte)0), exchange.getIn().getHeader("byteHeader"));
-        assertEquals(Float.valueOf((float) 42.4242), exchange.getIn().getHeader("floatHeader"));
+        assertEquals(Float.valueOf((float)42.4242), exchange.getIn().getHeader("floatHeader"));
         assertEquals(Long.valueOf(420000000000000000L), exchange.getIn().getHeader("longHeader"));
         assertEquals(body, exchange.getIn().getBody());
     }

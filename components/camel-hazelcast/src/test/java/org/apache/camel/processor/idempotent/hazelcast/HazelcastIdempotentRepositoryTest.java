@@ -18,7 +18,7 @@ package org.apache.camel.processor.idempotent.hazelcast;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;

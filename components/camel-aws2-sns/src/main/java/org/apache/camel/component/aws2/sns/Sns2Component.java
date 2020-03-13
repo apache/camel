@@ -24,12 +24,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 @Component("aws2-sns")
 public class Sns2Component extends DefaultComponent {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Sns2Component.class);
+    
     @Metadata
     private Sns2Configuration configuration = new Sns2Configuration();
 
@@ -62,7 +67,7 @@ public class Sns2Component extends DefaultComponent {
         }
         Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        checkAndSetRegistryClient(configuration, endpoint);
         if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
@@ -81,10 +86,18 @@ public class Sns2Component extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void checkAndSetRegistryClient(Sns2Configuration configuration) {
-        Set<SnsClient> clients = getCamelContext().getRegistry().findByType(SnsClient.class);
-        if (clients.size() == 1) {
-            configuration.setAmazonSNSClient(clients.stream().findFirst().get());
+    private void checkAndSetRegistryClient(Sns2Configuration configuration, Sns2Endpoint endpoint) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonSNSClient())) {
+            LOG.debug("Looking for an SnsClient instance in the registry");
+            Set<SnsClient> clients = getCamelContext().getRegistry().findByType(SnsClient.class);
+            if (clients.size() == 1) {
+                LOG.debug("Found exactly one SnsClient instance in the registry");
+                configuration.setAmazonSNSClient(clients.stream().findFirst().get());
+            } else {
+                LOG.debug("No SnsClient instance in the registry");
+            }
+        } else {
+            LOG.debug("SnsClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 }

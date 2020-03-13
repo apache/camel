@@ -92,11 +92,11 @@ public interface PulsarComponentBuilderFactory {
         }
         /**
          * Whether to allow manual message acknowledgements. If this option is
-         * enabled, then messages are not immediately acknowledged after being
-         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
-         * header on the org.apache.camel.Exchange. Messages can then be
-         * acknowledged using PulsarMessageReceipt at any time before the
-         * ackTimeout occurs.
+         * enabled, then messages are not acknowledged automatically after
+         * successful route completion. Instead, an instance of
+         * PulsarMessageReceipt is stored as a header on the
+         * org.apache.camel.Exchange. Messages can then be acknowledged using
+         * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -248,8 +248,8 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
-         * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
-         * EXCLUSIVE.
+         * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
+         * to EXCLUSIVE.
          * 
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
@@ -274,6 +274,20 @@ public interface PulsarComponentBuilderFactory {
         default PulsarComponentBuilder pulsarMessageReceiptFactory(
                 org.apache.camel.component.pulsar.PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
             doSetProperty("pulsarMessageReceiptFactory", pulsarMessageReceiptFactory);
+            return this;
+        }
+        /**
+         * Control batching method used by the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * 
+         * Default: DEFAULT
+         * Group: producer
+         */
+        default PulsarComponentBuilder batcherBuilder(
+                org.apache.pulsar.client.api.BatcherBuilder batcherBuilder) {
+            doSetProperty("batcherBuilder", batcherBuilder);
             return this;
         }
         /**
@@ -538,6 +552,7 @@ public interface PulsarComponentBuilderFactory {
             case "subscriptionName": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionName((java.lang.String) value); return true;
             case "subscriptionType": getOrCreateConfiguration((PulsarComponent) component).setSubscriptionType((org.apache.camel.component.pulsar.utils.consumers.SubscriptionType) value); return true;
             case "pulsarMessageReceiptFactory": ((PulsarComponent) component).setPulsarMessageReceiptFactory((org.apache.camel.component.pulsar.PulsarMessageReceiptFactory) value); return true;
+            case "batcherBuilder": getOrCreateConfiguration((PulsarComponent) component).setBatcherBuilder((org.apache.pulsar.client.api.BatcherBuilder) value); return true;
             case "batchingEnabled": getOrCreateConfiguration((PulsarComponent) component).setBatchingEnabled((boolean) value); return true;
             case "batchingMaxMessages": getOrCreateConfiguration((PulsarComponent) component).setBatchingMaxMessages((int) value); return true;
             case "batchingMaxPublishDelayMicros": getOrCreateConfiguration((PulsarComponent) component).setBatchingMaxPublishDelayMicros((long) value); return true;

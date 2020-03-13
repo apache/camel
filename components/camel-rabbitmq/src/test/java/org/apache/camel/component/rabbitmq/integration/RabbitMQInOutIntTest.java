@@ -60,15 +60,12 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-                    + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
-                    + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest" + "&autoAck=true&queue=q4&routingKey="
+                    + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-            + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
-            + "&transferException=true&requestTimeout=" + TIMEOUT_MS
-            + "&args=#args")
+                    + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS + "&args=#args")
     private Endpoint noAutoAckEndpoint;
 
     @EndpointInject("mock:result")
@@ -125,9 +122,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
                 from("direct:rabbitMQNoAutoAck").id("producingRouteNoAutoAck").setHeader("routeHeader", simple("routeHeader")).inOut(noAutoAckEndpoint);
 
-                from(noAutoAckEndpoint).id("consumingRouteNoAutoAck")
-                        .to(resultEndpoint)
-                        .throwException(new IllegalStateException("test exception"));
+                from(noAutoAckEndpoint).id("consumingRouteNoAutoAck").to(resultEndpoint).throwException(new IllegalStateException("test exception"));
             }
         };
     }
@@ -154,11 +149,14 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         headers.put("String", "String");
         headers.put("Boolean", Boolean.valueOf(false));
 
-        // This will blow up the connection if not removed before sending the message
+        // This will blow up the connection if not removed before sending the
+        // message
         headers.put("TestObject1", testObject);
-        // This will blow up the connection if not removed before sending the message
+        // This will blow up the connection if not removed before sending the
+        // message
         headers.put("class", testObject.getClass());
-        // This will mess up de-serialization if not removed before sending the message
+        // This will mess up de-serialization if not removed before sending the
+        // message
         headers.put("CamelSerialize", true);
 
         // populate a map and an arrayList
@@ -169,9 +167,11 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
             tmpList.add(name);
             tmpMap.put(name, name);
         }
-        // This will blow up the connection if not removed before sending the message
+        // This will blow up the connection if not removed before sending the
+        // message
         headers.put("arrayList", tmpList);
-        // This will blow up the connection if not removed before sending the message
+        // This will blow up the connection if not removed before sending the
+        // message
         headers.put("map", tmpMap);
 
         String reply = template.requestBodyAndHeaders("direct:rabbitMQ", "header", headers, String.class);
@@ -216,7 +216,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
         TestSerializableObject newFoo = null;
         try (InputStream b = new ByteArrayInputStream(body); ObjectInputStream o = new ObjectInputStream(b);) {
-            newFoo = (TestSerializableObject) o.readObject();
+            newFoo = (TestSerializableObject)o.readObject();
         } catch (IOException | ClassNotFoundException e) {
         }
         assertEquals(foo.getName(), newFoo.getName());
@@ -273,7 +273,8 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
         resultEndpoint.expectedMessageCount(0);
 
-        context.stop(); //On restarting the camel context, if the message was not acknowledged the message would be reprocessed
+        context.stop(); // On restarting the camel context, if the message was
+                        // not acknowledged the message would be reprocessed
         context.start();
 
         resultEndpoint.assertIsSatisfied();

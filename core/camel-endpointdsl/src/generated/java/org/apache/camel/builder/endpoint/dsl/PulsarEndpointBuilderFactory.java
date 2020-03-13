@@ -99,11 +99,11 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Whether to allow manual message acknowledgements. If this option is
-         * enabled, then messages are not immediately acknowledged after being
-         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
-         * header on the org.apache.camel.Exchange. Messages can then be
-         * acknowledged using PulsarMessageReceipt at any time before the
-         * ackTimeout occurs.
+         * enabled, then messages are not acknowledged automatically after
+         * successful route completion. Instead, an instance of
+         * PulsarMessageReceipt is stored as a header on the
+         * org.apache.camel.Exchange. Messages can then be acknowledged using
+         * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -117,11 +117,11 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Whether to allow manual message acknowledgements. If this option is
-         * enabled, then messages are not immediately acknowledged after being
-         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
-         * header on the org.apache.camel.Exchange. Messages can then be
-         * acknowledged using PulsarMessageReceipt at any time before the
-         * ackTimeout occurs.
+         * enabled, then messages are not acknowledged automatically after
+         * successful route completion. Instead, an instance of
+         * PulsarMessageReceipt is stored as a header on the
+         * org.apache.camel.Exchange. Messages can then be acknowledged using
+         * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -362,8 +362,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
-         * EXCLUSIVE.
+         * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
+         * to EXCLUSIVE.
          * 
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
@@ -377,8 +377,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
-         * EXCLUSIVE.
+         * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
+         * to EXCLUSIVE.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
@@ -493,7 +493,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
@@ -507,7 +507,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
@@ -525,6 +525,34 @@ public interface PulsarEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedPulsarEndpointProducerBuilder advanced() {
             return (AdvancedPulsarEndpointProducerBuilder) this;
+        }
+        /**
+         * Control batching method used by the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * 
+         * Default: DEFAULT
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batcherBuilder(
+                Object batcherBuilder) {
+            doSetProperty("batcherBuilder", batcherBuilder);
+            return this;
+        }
+        /**
+         * Control batching method used by the producer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * 
+         * Default: DEFAULT
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batcherBuilder(
+                String batcherBuilder) {
+            doSetProperty("batcherBuilder", batcherBuilder);
+            return this;
         }
         /**
          * Control whether automatic batching of messages is enabled for the
@@ -927,7 +955,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
@@ -941,7 +969,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
@@ -1007,7 +1035,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(boolean synchronous) {
@@ -1020,7 +1048,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {
@@ -1045,7 +1073,8 @@ public interface PulsarEndpointBuilderFactory {
     enum SubscriptionType {
         EXCLUSIVE,
         SHARED,
-        FAILOVER;
+        FAILOVER,
+        KEY_SHARED;
     }
 
     /**

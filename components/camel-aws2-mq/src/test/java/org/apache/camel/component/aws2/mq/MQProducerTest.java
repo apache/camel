@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.mq.model.BrokerState;
 import software.amazon.awssdk.services.mq.model.ConfigurationId;
 import software.amazon.awssdk.services.mq.model.CreateBrokerResponse;
@@ -37,6 +37,8 @@ import software.amazon.awssdk.services.mq.model.EngineType;
 import software.amazon.awssdk.services.mq.model.ListBrokersResponse;
 import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.User;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MQProducerTest extends CamelTestSupport {
 

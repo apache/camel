@@ -60,7 +60,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     @Override
     public RabbitMQEndpoint getEndpoint() {
-        return (RabbitMQEndpoint) super.getEndpoint();
+        return (RabbitMQEndpoint)super.getEndpoint();
     }
 
     /**
@@ -71,7 +71,8 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     }
 
     /**
-     * Do something with a pooled channel (similar to Spring JDBC TransactionTemplate#execute)
+     * Do something with a pooled channel (similar to Spring JDBC
+     * TransactionTemplate#execute)
      */
     private <T> T execute(ChannelCallback<T> callback) throws Exception {
         Channel channel;
@@ -100,6 +101,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     /**
      * Open connection and initialize channel pool
+     * 
      * @throws Exception
      */
     private synchronized void openConnectionAndChannelPool() throws Exception {
@@ -108,8 +110,8 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         LOG.debug("Created connection: {}", conn);
 
         LOG.trace("Creating channel pool...");
-        channelPool = new GenericObjectPool<>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
-                GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getEndpoint().getChannelPoolMaxWait());
+        channelPool = new GenericObjectPool<>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(), GenericObjectPool.WHEN_EXHAUSTED_BLOCK,
+                                              getEndpoint().getChannelPoolMaxWait());
         attemptDeclaration();
     }
 
@@ -127,6 +129,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     /**
      * This will reconnect only if the connection is closed.
+     * 
      * @throws Exception
      */
     private synchronized void checkConnectionAndChannelPool() throws Exception {
@@ -153,6 +156,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     /**
      * If needed, close Connection and Channel
+     * 
      * @throws IOException
      */
     private synchronized void closeConnectionAndChannel() throws IOException {
@@ -215,7 +219,8 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
         initReplyManager();
 
-        // the request timeout can be overruled by a header otherwise the endpoint configured value is used
+        // the request timeout can be overruled by a header otherwise the
+        // endpoint configured value is used
         final long timeout = exchange.getIn().getHeader(RabbitMQConstants.REQUEST_TIMEOUT, getEndpoint().getRequestTimeout(), long.class);
 
         final String originalCorrelationId = in.getHeader(RabbitMQConstants.CORRELATIONID, String.class);
@@ -226,8 +231,9 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
         in.setHeader(RabbitMQConstants.REPLY_TO, replyManager.getReplyTo());
 
-        String exchangeName = (String) exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
-        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
+        String exchangeName = (String)exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        // If it is BridgeEndpoint we should ignore the message header of
+        // EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
         } else {
@@ -235,7 +241,8 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
 
         String key = in.getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
-        // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
+        // we just need to make sure RoutingKey option take effect if it is not
+        // BridgeEndpoint
         if (key == null || getEndpoint().isBridgeEndpoint()) {
             key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
         }
@@ -252,13 +259,15 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             exchange.setException(e);
             return true;
         }
-        // continue routing asynchronously (reply will be processed async when its received)
+        // continue routing asynchronously (reply will be processed async when
+        // its received)
         return false;
     }
 
     private boolean processInOnly(Exchange exchange, AsyncCallback callback) throws Exception {
-        String exchangeName = (String) exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
-        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
+        String exchangeName = (String)exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        // If it is BridgeEndpoint we should ignore the message header of
+        // EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
         } else {
@@ -266,7 +275,8 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
 
         String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
-        // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
+        // we just need to make sure RoutingKey option take effect if it is not
+        // BridgeEndpoint
         if (key == null || getEndpoint().isBridgeEndpoint()) {
             key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
         }
@@ -315,8 +325,10 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                     return;
                 }
                 LOG.debug("Starting reply manager");
-                // must use the classloader from the application context when creating reply manager,
-                // as it should inherit the classloader from app context and not the current which may be
+                // must use the classloader from the application context when
+                // creating reply manager,
+                // as it should inherit the classloader from app context and not
+                // the current which may be
                 // a different classloader
                 ClassLoader current = Thread.currentThread().getContextClassLoader();
                 ClassLoader ac = getEndpoint().getCamelContext().getApplicationContextClassLoader();
@@ -324,12 +336,14 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                     if (ac != null) {
                         Thread.currentThread().setContextClassLoader(ac);
                     }
-                    // validate that replyToType and replyTo is configured accordingly
+                    // validate that replyToType and replyTo is configured
+                    // accordingly
                     if (getEndpoint().getReplyToType() != null) {
-                        // setting temporary with a fixed replyTo is not supported
+                        // setting temporary with a fixed replyTo is not
+                        // supported
                         if (getEndpoint().getReplyTo() != null && getEndpoint().getReplyToType().equals(ReplyToType.Temporary.name())) {
-                            throw new IllegalArgumentException("ReplyToType " + ReplyToType.Temporary
-                                            + " is not supported when replyTo " + getEndpoint().getReplyTo() + " is also configured.");
+                            throw new IllegalArgumentException("ReplyToType " + ReplyToType.Temporary + " is not supported when replyTo " + getEndpoint().getReplyTo()
+                                                               + " is also configured.");
                         }
                     }
 
@@ -355,7 +369,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             if (replyManager != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Stopping RabbitMQReplyManager: {} from processing replies from: {}", replyManager,
-                                    getEndpoint().getReplyTo() != null ? getEndpoint().getReplyTo() : "temporary queue");
+                              getEndpoint().getReplyTo() != null ? getEndpoint().getReplyTo() : "temporary queue");
                 }
                 ServiceHelper.stopService(replyManager);
             }

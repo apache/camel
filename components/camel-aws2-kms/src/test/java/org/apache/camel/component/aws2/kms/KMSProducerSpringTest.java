@@ -20,13 +20,16 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
 import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class KMSProducerSpringTest extends CamelSpringTestSupport {
 

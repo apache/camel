@@ -216,7 +216,11 @@ public class GroupTest {
                 container.stop();
             }
 
-            FileUtils.deleteDirectory(dataDir.toFile());
+            try {
+                FileUtils.deleteDirectory(dataDir.toFile());
+            } catch (Throwable e) {
+                // ignore
+            }
         }
     }
 

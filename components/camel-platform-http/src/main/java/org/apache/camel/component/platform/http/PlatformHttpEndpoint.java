@@ -40,6 +40,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @Metadata(required = true)
     private final String path;
 
+    @UriParam(label = "consumer", defaultValue = "false", description = "Whether or not the consumer should try to find a target consumer "
+            + "by matching the URI prefix if no exact match is found.")
+    private boolean matchOnUriPrefix;
+
     @UriParam(label = "consumer", description = "A comma separated list of HTTP methods to serve, e.g. GET,POST ."
             + " If no methods are specified, all methods will be served.")
     private String httpMethodRestrict;
@@ -99,6 +103,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     public void setPlatformHttpEngine(PlatformHttpEngine platformHttpEngine) {
         this.platformHttpEngine = platformHttpEngine;
+    }
+
+    public boolean getMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
     }
 
     public String getHttpMethodRestrict() {

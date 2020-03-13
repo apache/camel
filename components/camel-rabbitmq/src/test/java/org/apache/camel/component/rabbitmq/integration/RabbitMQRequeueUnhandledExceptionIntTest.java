@@ -26,7 +26,8 @@ import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.junit.Test;
 
 /**
- * Integration test to confirm REQUEUE header causes message to be re-queued when an unhandled exception occurs.
+ * Integration test to confirm REQUEUE header causes message to be re-queued
+ * when an unhandled exception occurs.
  */
 public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
@@ -34,8 +35,7 @@ public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIn
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
-            + "&autoAck=false&queue=q4&routingKey=" + ROUTING_KEY)
+    @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest" + "&autoAck=false&queue=q4&routingKey=" + ROUTING_KEY)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("mock:producing")
@@ -50,20 +50,10 @@ public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIn
 
             @Override
             public void configure() throws Exception {
-                from("direct:rabbitMQ")
-                        .id("producingRoute")
-                        .log("Sending message")
-                        .inOnly(rabbitMQEndpoint)
-                        .to(producingMockEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
 
-                from(rabbitMQEndpoint)
-                        .onException(Exception.class)
-                        .handled(false)
-                        .end()
-                        .id("consumingRoute")
-                        .log("Receiving message")
-                        .inOnly(consumingMockEndpoint)
-                        .throwException(new Exception("Simulated unhandled exception"));
+                from(rabbitMQEndpoint).onException(Exception.class).handled(false).end().id("consumingRoute").log("Receiving message").inOnly(consumingMockEndpoint)
+                    .throwException(new Exception("Simulated unhandled exception"));
             }
         };
     }

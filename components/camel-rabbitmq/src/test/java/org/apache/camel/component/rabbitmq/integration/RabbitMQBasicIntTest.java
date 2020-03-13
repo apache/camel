@@ -40,14 +40,9 @@ public class RabbitMQBasicIntTest extends AbstractRabbitMQIntTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(foo)
-                    .log("FOO received: ${body}")
-                    .to(bar);
+                from(foo).log("FOO received: ${body}").to(bar);
 
-                from(bar)
-                    .log("BAR received: ${body}")
-                    .to(mock)
-                    .transform().simple("Bye ${body}");
+                from(bar).log("BAR received: ${body}").to(mock).transform().simple("Bye ${body}");
             }
         };
     }
@@ -90,4 +85,3 @@ public class RabbitMQBasicIntTest extends AbstractRabbitMQIntTest {
     }
 
 }
-

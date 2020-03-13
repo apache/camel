@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.component.rabbitmq;
 
-import java.util.UUID;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-import org.apache.camel.spi.UuidGenerator;
+public class RabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
-/**
- * This implementation uses the {@link UUID} from Java.
- * <p/>
- * The implementation of {@link UUID} is synchronized and therefore
- * other {@link org.apache.camel.spi.UuidGenerator} may be faster in high concurrent systems.
- */
-public class JavaUuidGenerator implements UuidGenerator {
-    
-    @Override
-    public String generateUuid() {
-        return UUID.randomUUID().toString();
+    public RabbitMQHeaderFilterStrategy() {
+        initialize();
     }
+
+    protected void initialize() {
+        // filter headers begin with "Camel" or "org.apache.camel"
+        setOutFilterPattern("rabbitmq.*");
+        setInFilterPattern("rabbitmq.*");
+    }
+
 }

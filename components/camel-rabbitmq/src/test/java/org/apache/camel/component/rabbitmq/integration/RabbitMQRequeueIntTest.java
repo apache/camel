@@ -30,7 +30,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
 /**
- * Integration test to confirm REQUEUE header causes message to be re-queued instead of sent to DLQ.
+ * Integration test to confirm REQUEUE header causes message to be re-queued
+ * instead of sent to DLQ.
  */
 public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
@@ -40,8 +41,8 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
     protected ProducerTemplate directProducer;
 
     @EndpointInject("rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
-            + "&autoAck=false&autoDelete=false&durable=true&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout"
-            + "&deadLetterQueue=" + DEAD_LETTER_QUEUE_NAME + "&routingKey=" + ROUTING_KEY)
+                    + "&autoAck=false&autoDelete=false&durable=true&queue=q4&deadLetterExchange=dlx&deadLetterExchangeType=fanout" + "&deadLetterQueue=" + DEAD_LETTER_QUEUE_NAME
+                    + "&routingKey=" + ROUTING_KEY)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("mock:producing")
@@ -71,24 +72,15 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         connection.abort();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
             public void configure() {
-                from("direct:rabbitMQ")
-                        .id("producingRoute")
-                        .log("Sending message")
-                        .inOnly(rabbitMQEndpoint)
-                        .to(producingMockEndpoint);
+                from("direct:rabbitMQ").id("producingRoute").log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
 
-                from(rabbitMQEndpoint)
-                        .id("consumingRoute")
-                        .log("Receiving message")
-                        .inOnly(consumingMockEndpoint)
-                        .throwException(new Exception("Simulated exception"));
+                from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").inOnly(consumingMockEndpoint).throwException(new Exception("Simulated exception"));
             }
         };
     }
@@ -103,7 +95,8 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         directProducer.sendBody("Hello, World!");
         deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
-        // If message was rejected and not requeued, it will be published in dead letter queue
+        // If message was rejected and not requeued, it will be published in
+        // dead letter queue
         await().atMost(5, SECONDS).until(() -> received.size() == 1);
 
         producingMockEndpoint.assertIsSatisfied();
@@ -120,7 +113,8 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, 4L);
         deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
-        // If message was rejected and not requeued, it will be published in dead letter queue
+        // If message was rejected and not requeued, it will be published in
+        // dead letter queue
         await().atMost(5, SECONDS).until(() -> received.size() == 1);
 
         producingMockEndpoint.assertIsSatisfied();
@@ -137,7 +131,8 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, false);
         deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
-        // If message was rejected and not requeued, it will be published in dead letter queue
+        // If message was rejected and not requeued, it will be published in
+        // dead letter queue
         await().atMost(5, SECONDS).until(() -> received.size() == 1);
 
         producingMockEndpoint.assertIsSatisfied();
@@ -154,12 +149,10 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, true);
         deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
-        Awaitility.await()
-                .during(1, SECONDS)
-                .atMost(2, SECONDS)
-                .until(() ->  received.size() >= 0);
+        Awaitility.await().during(1, SECONDS).atMost(2, SECONDS).until(() -> received.size() >= 0);
 
-        // If message was rejected and requeued it will not be published in dead letter queue
+        // If message was rejected and requeued it will not be published in dead
+        // letter queue
         assertEquals(0, received.size());
         producingMockEndpoint.assertIsSatisfied();
         consumingMockEndpoint.assertIsSatisfied();
@@ -174,10 +167,7 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         }
 
         @Override
-        public void handleDelivery(String consumerTag,
-                                   com.rabbitmq.client.Envelope envelope,
-                                   com.rabbitmq.client.AMQP.BasicProperties properties,
-                                   byte[] body) {
+        public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope, com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) {
             received.add(new String(body));
         }
     }

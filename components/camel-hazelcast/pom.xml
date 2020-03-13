@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            com.hazelcast.*;version="[3.2,4)"
+            com.hazelcast.*;version="[4,5)"
         </camel.osgi.import.before.defaults>
     </properties>
 
@@ -46,11 +46,6 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>${hazelcast-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-client</artifactId>
             <version>${hazelcast-version}</version>
         </dependency>
 

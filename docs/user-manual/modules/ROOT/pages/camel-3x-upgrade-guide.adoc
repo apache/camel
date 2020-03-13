@@ -643,6 +643,37 @@ After:
 camel.component.activemq.broker-url=tcp://localhost:61616
 ----
 
+=== camel-any23
+
+The XML DSL has changed for the `<configuration>` element, which now
+is flattened so the key/values should be configured on it directly:
+
+Before:
+[source,mxl]
+----
+    <dataFormats>
+      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+        <configuration>
+          <property key="any23.extraction.metadata.nesting" value="off" />
+          <property key="another-key" value="another-value" />
+        </configuration>
+        <extractors>html-head-title</extractors>
+      </any23>
+    </dataFormats>
+----
+
+After:
+[source,mxl]
+----
+    <dataFormats>
+      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+        <configuration key="any23.extraction.metadata.nesting" value="off"/>
+        <configuration key="another-key" value="another-value"/>
+        <extractors>html-head-title</extractors>
+      </any23>
+    </dataFormats>
+----
+
 === camel-infinispan
 
 Camel now requires endpoint URIs to include context-path which means
@@ -653,6 +684,49 @@ the endpoint URI `infinispan` should be changed to `infinispan:current`.
 The google-pubnub component has been improved to use a new Java library and become faster.
 
 Support for Apache Karaf has been removed.
+
+=== camel-xstream
+
+The XML DSL has changed for the `<converters>`, `<alias>`, `implicitCollections`, and `omitFields` elements,
+which now is flattened so the key/values should be configured on it directly.
+
+Before:
+[source,xml]
+----
+<xstream id="xstream-1" mode="NO_REFERENCES"
+    permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
+    <converters>
+        <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
+    </converters>
+    <aliases>
+                <alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
+    </aliases>
+    <implicitCollections>
+       <class name="org.apache.camel.dataformat.xstream.PurchaseHistory">
+          <field>history</field>
+       </class>
+    </implicitCollections>
+</xstream>
+----
+
+After:
+[source,xml]
+----
+<xstream id="xstream-1" mode="NO_REFERENCES"
+    permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
+    <converters key="purchase-converter" value="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter"/>
+    <aliases key="purchase-order" value="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+    <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history"/>
+</xstream>
+----
+
+Multiple values for `implicitCollections` and `omitFields` can be separated by comma
+
+For example:
+[source,xml]
+----
+    <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history,adress"/>
+----
 
 === Endpoint URIs without context path
 
@@ -695,4 +769,9 @@ The deprecated method `preProcessUri` has been removed.
 
 The method `getEndpoint` now throws `NoSuchEndpointException` directly instead of being wrapped
 within an `FailedToResolveEndpoint`.
+
+==== JavaUuidGenerator
+
+The `org.apache.camel.impl.engine.JavaUuidGenerator` class has been removed.
+Its a very slow UUID generator and its not recommended to be used.
 

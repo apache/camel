@@ -22,7 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class RabbitMQConnectionFactorySupport {
-    
+
     public ConnectionFactory createFactoryFor(final RabbitMQEndpoint endpoint) {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUsername(endpoint.getUsername());
@@ -58,6 +58,9 @@ public class RabbitMQConnectionFactorySupport {
         }
         if (endpoint.getTopologyRecoveryEnabled() != null) {
             factory.setTopologyRecoveryEnabled(endpoint.getTopologyRecoveryEnabled());
+        }
+        if (endpoint.getConnectionFactoryExceptionHandler() != null) {
+            factory.setExceptionHandler(endpoint.getConnectionFactoryExceptionHandler());
         }
         return factory;
     }

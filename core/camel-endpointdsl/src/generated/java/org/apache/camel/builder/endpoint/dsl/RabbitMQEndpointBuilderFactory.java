@@ -957,6 +957,32 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointConsumerBuilder connectionFactoryExceptionHandler(
+                Object connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option will be converted to a
+         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointConsumerBuilder connectionFactoryExceptionHandler(
+                String connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
          * Connection timeout.
          * 
          * The option is a: <code>int</code> type.
@@ -1659,6 +1685,32 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Allow pass custom values to header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder allowCustomHeaders(
+                boolean allowCustomHeaders) {
+            doSetProperty("allowCustomHeaders", allowCustomHeaders);
+            return this;
+        }
+        /**
+         * Allow pass custom values to header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder allowCustomHeaders(
+                String allowCustomHeaders) {
+            doSetProperty("allowCustomHeaders", allowCustomHeaders);
+            return this;
+        }
+        /**
          * Allow pass null values to header.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2120,6 +2172,32 @@ public interface RabbitMQEndpointBuilderFactory {
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
                 String clientProperties) {
             doSetProperty("clientProperties", clientProperties);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointProducerBuilder connectionFactoryExceptionHandler(
+                Object connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option will be converted to a
+         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointProducerBuilder connectionFactoryExceptionHandler(
+                String connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }
         /**
@@ -2981,6 +3059,32 @@ public interface RabbitMQEndpointBuilderFactory {
         default AdvancedRabbitMQEndpointBuilder clientProperties(
                 String clientProperties) {
             doSetProperty("clientProperties", clientProperties);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointBuilder connectionFactoryExceptionHandler(
+                Object connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option will be converted to a
+         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointBuilder connectionFactoryExceptionHandler(
+                String connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }
         /**
