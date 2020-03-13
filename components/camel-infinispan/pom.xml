@@ -87,6 +87,12 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-commons-test</artifactId>
+            <version>${infinispan-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
             <artifactId>infinispan-spring5-remote</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
