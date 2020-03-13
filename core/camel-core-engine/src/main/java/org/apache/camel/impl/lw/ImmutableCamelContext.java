@@ -128,6 +128,10 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
 
     protected volatile CamelContext delegate;
 
+    protected ImmutableCamelContext(CamelContext delegate) {
+        this.delegate = delegate;
+    }
+
     /**
      * Creates the {@link ModelCamelContext} using
      * {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -141,10 +145,6 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
                 return ImmutableCamelContext.this;
             }
         };
-    }
-
-    public CamelContext getCamelContextReference() {
-        return this;
     }
 
     /**
@@ -169,8 +169,8 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
         setRegistry(registry);
     }
 
-    protected ImmutableCamelContext(CamelContext delegate) {
-        this.delegate = delegate;
+    public CamelContext getCamelContextReference() {
+        return this;
     }
 
     @Override

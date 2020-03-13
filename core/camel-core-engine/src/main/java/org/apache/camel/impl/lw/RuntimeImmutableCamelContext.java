@@ -1346,7 +1346,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until
         // we find it
-        String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
+        String[] subPackages = new String[] {"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
         for (String sub : subPackages) {
             String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
             InputStream inputStream = getClassResolver().loadResourceAsStream(path);
