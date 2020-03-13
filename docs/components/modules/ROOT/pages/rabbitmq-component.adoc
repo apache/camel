@@ -52,7 +52,7 @@ exchange name determines which exchange the queue will bind to.
 == Options
 
 // component options: START
-The RabbitMQ component supports 52 options, which are listed below.
+The RabbitMQ component supports 53 options, which are listed below.
 
 
 
@@ -98,6 +98,7 @@ The RabbitMQ component supports 52 options, which are listed below.
 | *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
+| *connectionFactoryException Handler* (advanced) | Custom rabbitmq ExceptionHandler for ConnectionFactory |  | ExceptionHandler
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
@@ -134,7 +135,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (61 parameters):
+=== Query Parameters (62 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -187,6 +188,7 @@ with the following path and query parameters:
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
+| *connectionFactoryException Handler* (advanced) | Custom rabbitmq ExceptionHandler for ConnectionFactory |  | ExceptionHandler
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
