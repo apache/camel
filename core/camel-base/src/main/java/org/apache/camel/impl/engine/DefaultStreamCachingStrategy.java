@@ -21,7 +21,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -257,7 +256,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     protected String customResolveManagementName(String pattern) {
         if (pattern.contains("#uuid#")) {
-            String uuid = UUID.randomUUID().toString();
+            String uuid = camelContext.getUuidGenerator().generateUuid();
             pattern = StringHelper.replaceAll(pattern, "#uuid#", uuid);
         }
         return FilePathResolver.resolvePath(pattern);
