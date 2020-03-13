@@ -21,18 +21,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SnsProducerTest {
 
     @Mock
@@ -41,7 +42,7 @@ public class SnsProducerTest {
     private Sns2Endpoint endpoint;
     private Sns2Producer producer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         producer = new Sns2Producer(endpoint);
 
