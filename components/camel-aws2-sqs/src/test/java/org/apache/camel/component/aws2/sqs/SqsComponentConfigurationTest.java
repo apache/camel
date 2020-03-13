@@ -16,10 +16,16 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SqsComponentConfigurationTest extends CamelTestSupport {
 
@@ -191,24 +197,30 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertEquals(50, consumer.getMaxMessagesPerPoll());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.createEndpoint("aws2-sqs://MyQueue?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-sqs://MyQueue?secretKey=yyy");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx");
+        });
     }
 
     // Setting extendMessageVisibility on an SQS consumer should make
     // visibilityTimeout compulsory
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithExtendMessageVisibilityAndNoVisibilityTimeoutThrowsException() throws Exception {
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy&extendMessageVisibility=true");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy&extendMessageVisibility=true");
+        });
     }
 
     @Test

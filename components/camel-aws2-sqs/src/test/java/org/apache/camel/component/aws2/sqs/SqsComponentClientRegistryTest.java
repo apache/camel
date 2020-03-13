@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SqsComponentClientRegistryTest extends CamelTestSupport {
 
@@ -32,10 +35,12 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAmazonSQSClient());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithMinimalSQSClientMisconfiguration() throws Exception {
 
         Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue");
+        assertThrows(IllegalArgumentException.class, () -> {
+            Sqs2Endpoint endpoint = (Sqs2Endpoint)component.createEndpoint("aws2-sqs://MyQueue");
+        });
     }
 }
