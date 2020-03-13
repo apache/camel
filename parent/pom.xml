@@ -548,7 +548,7 @@
         <pubnub-version>4.25.0</pubnub-version>
         <pulsar-version>2.5.0</pulsar-version>
         <pulsar-bundle-version>2.5.0_1</pulsar-bundle-version>
-        <qpid-broker-version>7.1.8</qpid-broker-version>
+        <qpid-broker-version>8.0.0</qpid-broker-version>
         <qpid-proton-j-version>0.33.3</qpid-proton-j-version>
         <qpid-jms-client-version>0.49.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
