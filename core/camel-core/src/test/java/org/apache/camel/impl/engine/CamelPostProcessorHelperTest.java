@@ -487,6 +487,27 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     }
 
     @Test
+    public void testBeanConfigInjectByMethod() throws Exception {
+        Properties initial = new Properties();
+        initial.put("foobar.name", "Goofy");
+        initial.put("foobar.age", "34");
+        context.getPropertiesComponent().setInitialProperties(initial);
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyBeanConfigInjectByMethod bean = new MyBeanConfigInjectByMethod();
+        Method method = bean.getClass().getMethod("initFooBar", FooBarConfig.class);
+
+        BeanConfigInject beanInject = method.getAnnotation(BeanConfigInject.class);
+        Class<?> type = method.getParameterTypes()[0];
+        Object value = helper.getInjectionBeanConfigValue(type, beanInject.value());
+        method.invoke(bean, value);
+
+        String out = bean.doSomething("Camel");
+        assertEquals("Goofy (age: 34) likes Camel", out);
+    }
+
+    @Test
     public void testFluentProducerTemplateWithNoInjection() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
         NoBeanInjectionTestClass myBean = new NoBeanInjectionTestClass();
@@ -774,6 +795,21 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             FooBar bean = new FooBar();
             bean.setGreeting(config.getName() + " (age: " + config.getAge() + ") likes");
             return bean.hello(body);
+        }
+    }
+
+    public class MyBeanConfigInjectByMethod {
+
+        public FooBar fooBar;
+
+        @BeanConfigInject("foobar")
+        public void initFooBar(FooBarConfig config) {
+            fooBar = new FooBar();
+            fooBar.setGreeting(config.getName() + " (age: " + config.getAge() + ") likes");
+        }
+
+        public String doSomething(String body) {
+            return fooBar.hello(body);
         }
     }
 
