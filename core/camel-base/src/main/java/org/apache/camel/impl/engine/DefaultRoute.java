@@ -157,7 +157,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public String getDescription() {
         Object value = properties.get(Route.DESCRIPTION_PROPERTY);
-        return value != null ? value.toString() : null;
+        return value != null ? (String) value : null;
     }
 
     @Override
