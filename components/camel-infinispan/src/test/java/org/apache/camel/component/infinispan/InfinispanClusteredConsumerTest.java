@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.infinispan.commons.test.TestResourceTracker;
 import org.infinispan.distribution.MagicKey;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
