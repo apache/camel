@@ -49,7 +49,7 @@ public class RestDslGeneratorTest {
     final Instant generated = Instant.parse("2017-10-17T00:00:00.000Z");
 
     @Test
-    public void shouldCreateDefinitions() throws IOException {
+    public void shouldCreateDefinitions() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             final RestsDefinition definition = RestDslGenerator.toDefinition(document).generate(context);
             assertThat(definition).isNotNull();
@@ -108,7 +108,7 @@ public class RestDslGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithDefaults() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithDefaults() throws Exception {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document).withGeneratedTime(generated).generate(code);
@@ -120,7 +120,7 @@ public class RestDslGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithFilter() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithFilter() throws Exception {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
@@ -140,7 +140,7 @@ public class RestDslGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithOptions() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithOptions() throws Exception {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
@@ -158,7 +158,7 @@ public class RestDslGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateSourceCodeWithRestComponent() throws IOException, URISyntaxException {
+    public void shouldGenerateSourceCodeWithRestComponent() throws Exception {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
