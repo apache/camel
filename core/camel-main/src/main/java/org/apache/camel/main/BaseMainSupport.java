@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,6 +33,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -51,8 +55,11 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -63,6 +70,7 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
@@ -952,13 +960,29 @@ public abstract class BaseMainSupport extends BaseService {
 
         for (String key : prop.stringPropertyNames()) {
             computeProperties("camel.component.", key, prop, properties, name -> {
-                Component target = camelContext.getComponent(name);
-                if (target == null) {
-                    throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find component with name " + name
-                            + ". Make sure you have the component on the classpath");
+                List<Object> targets = new ArrayList<>();
+
+                if (name.endsWith("*")) {
+                    // its a wildcard so match any existing component and what we can discover
+                    List<String> names = camelContext.getComponentNames();
+                    Set<String> resolved = camelContext.adapt(ExtendedCamelContext.class).getComponentNameResolver().resolveNames(camelContext);
+
+                    Stream.of(names, resolved).flatMap(Collection::stream).forEach(n -> {
+                        if (PatternHelper.matchPattern(n, name)) {
+                            Component target = camelContext.getComponent(n);
+                            targets.add(target);
+                        }
+                    });
+                } else {
+                    // its an existing component name
+                    Component target = camelContext.getComponent(name);
+                    if (target == null) {
+                        throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find component with name " + name
+                                + ". Make sure you have the component on the classpath");
+                    }
                 }
 
-                return target;
+                return targets;
             });
             computeProperties("camel.dataformat.", key, prop, properties, name -> {
                 DataFormat target = camelContext.resolveDataFormat(name);
@@ -967,7 +991,7 @@ public abstract class BaseMainSupport extends BaseService {
                             + ". Make sure you have the dataformat on the classpath");
                 }
 
-                return target;
+                return Collections.singleton(target);
             });
             computeProperties("camel.language.", key, prop, properties, name -> {
                 Language target;
@@ -978,7 +1002,7 @@ public abstract class BaseMainSupport extends BaseService {
                             + ". Make sure you have the language on the classpath");
                 }
 
-                return target;
+                return Collections.singleton(target);
             });
         }
 
@@ -1010,6 +1034,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    // TODO: Lets use this to configure components also when using wildcards
+    // eg put wildcards into a special properties and then map them here
     protected void autowireConfigurationFromRegistry(CamelContext camelContext, boolean bindNullOnly, boolean deepNesting) throws Exception {
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
@@ -1113,7 +1139,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    public static void computeProperties(String keyPrefix, String key, Properties prop, Map<PropertyOptionKey, Map<String, Object>> properties, Function<String, Object> supplier) {
+    protected static void computeProperties(String keyPrefix, String key, Properties prop, Map<PropertyOptionKey, Map<String, Object>> properties,
+                                            Function<String, Iterable<Object>> supplier) {
         if (key.startsWith(keyPrefix)) {
             // grab name
             final int dot = key.indexOf(".", keyPrefix.length());
@@ -1143,8 +1170,6 @@ public abstract class BaseMainSupport extends BaseService {
                 return;
             }
 
-
-
             String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
             String option = dot == -1 ? "" : key.substring(dot + 1);
             String value = prop.getProperty(key, "");
@@ -1156,16 +1181,18 @@ public abstract class BaseMainSupport extends BaseService {
 
             validateOptionAndValue(key, option, value);
 
-            Object target = supplier.apply(name);
-            PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
-            Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
+            Iterable<Object> targets = supplier.apply(name);
+            for (Object target : targets) {
+                PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
+                Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
 
-            // we ignore case for property keys (so we should store them in canonical style
-            values.put(optionKey(option), value);
+                // we ignore case for property keys (so we should store them in canonical style
+                values.put(optionKey(option), value);
+            }
         }
     }
 
-    public static boolean isServiceEnabled(String prefix, String name, Properties properties) {
+    protected static boolean isServiceEnabled(String prefix, String name, Properties properties) {
         ObjectHelper.notNull(prefix, "prefix");
         ObjectHelper.notNull(name, "name");
         ObjectHelper.notNull(properties, "properties");
@@ -1177,6 +1204,6 @@ public abstract class BaseMainSupport extends BaseService {
         final String group = properties.getProperty(prefix + "enabled", "true");
         final String item = properties.getProperty(prefix + name + ".enabled", group);
 
-        return Boolean.valueOf(item);
+        return Boolean.parseBoolean(item);
     }
 }
