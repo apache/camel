@@ -72,6 +72,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormat;
@@ -145,6 +146,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     private final ModelJAXBContextFactory modelJAXBContextFactory;
     private final RuntimeCamelCatalog camelRuntimeCatalog;
     private final ComponentResolver componentResolver;
+    private final ComponentNameResolver componentNameResolver;
     private final LanguageResolver languageResolver;
     private final DataFormatResolver dataFormatResolver;
     private final UuidGenerator uuidGenerator;
@@ -186,6 +188,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
         routes = Collections.unmodifiableList(context.getRoutes());
         uuidGenerator = context.getUuidGenerator();
         componentResolver = context.adapt(ExtendedCamelContext.class).getComponentResolver();
+        componentNameResolver = context.adapt(ExtendedCamelContext.class).getComponentNameResolver();
         languageResolver = context.adapt(ExtendedCamelContext.class).getLanguageResolver();
         dataFormatResolver = context.adapt(ExtendedCamelContext.class).getDataFormatResolver();
         endpoints = (EndpointRegistry) context.getEndpointRegistry();
@@ -413,6 +416,11 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     @Override
     public ComponentResolver getComponentResolver() {
         return componentResolver;
+    }
+
+    @Override
+    public ComponentNameResolver getComponentNameResolver() {
+        return componentNameResolver;
     }
 
     @Override
@@ -1410,6 +1418,11 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
 
     @Override
     public void setComponentResolver(ComponentResolver componentResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setComponentNameResolver(ComponentNameResolver componentResolver) {
         throw new UnsupportedOperationException();
     }
 

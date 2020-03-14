@@ -1143,7 +1143,8 @@ public abstract class BaseMainSupport extends BaseService {
                 return;
             }
 
-            Object target = supplier.apply(name);
+
+
             String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
             String option = dot == -1 ? "" : key.substring(dot + 1);
             String value = prop.getProperty(key, "");
@@ -1155,6 +1156,7 @@ public abstract class BaseMainSupport extends BaseService {
 
             validateOptionAndValue(key, option, value);
 
+            Object target = supplier.apply(name);
             PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
             Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
 

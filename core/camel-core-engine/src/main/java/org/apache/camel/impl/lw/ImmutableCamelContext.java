@@ -69,6 +69,7 @@ import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormat;
@@ -1163,6 +1164,16 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
     @Override
     public void setComponentResolver(ComponentResolver componentResolver) {
         getExtendedCamelContext().setComponentResolver(componentResolver);
+    }
+
+    @Override
+    public ComponentNameResolver getComponentNameResolver() {
+        return getExtendedCamelContext().getComponentNameResolver();
+    }
+
+    @Override
+    public void setComponentNameResolver(ComponentNameResolver componentNameResolver) {
+        getExtendedCamelContext().setComponentNameResolver(componentNameResolver);
     }
 
     @Override

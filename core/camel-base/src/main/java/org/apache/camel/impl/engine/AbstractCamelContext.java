@@ -91,6 +91,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormat;
@@ -246,6 +247,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile Injector injector;
     private volatile CamelBeanPostProcessor beanPostProcessor;
     private volatile ComponentResolver componentResolver;
+    private volatile ComponentNameResolver componentNameResolver;
     private volatile LanguageResolver languageResolver;
     private volatile ConfigurerResolver configurerResolver;
     private volatile DataFormatResolver dataFormatResolver;
@@ -1882,6 +1884,21 @@ public abstract class AbstractCamelContext extends BaseService
         this.componentResolver = doAddService(componentResolver);
     }
 
+    public ComponentNameResolver getComponentNameResolver() {
+        if (componentNameResolver == null) {
+            synchronized (lock) {
+                if (componentNameResolver == null) {
+                    setComponentNameResolver(createComponentNameResolver());
+                }
+            }
+        }
+        return componentNameResolver;
+    }
+
+    public void setComponentNameResolver(ComponentNameResolver componentNameResolver) {
+        this.componentNameResolver = doAddService(componentNameResolver);
+    }
+
     public LanguageResolver getLanguageResolver() {
         if (languageResolver == null) {
             synchronized (lock) {
@@ -3497,6 +3514,7 @@ public abstract class AbstractCamelContext extends BaseService
         getFactoryFinderResolver();
         getDefaultFactoryFinder();
         getComponentResolver();
+        getComponentNameResolver();
         getDataFormatResolver();
         getManagementStrategy();
         getHeadersMapFactory();
@@ -4430,6 +4448,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract CamelBeanPostProcessor createBeanPostProcessor();
 
     protected abstract ComponentResolver createComponentResolver();
+
+    protected abstract ComponentNameResolver createComponentNameResolver();
 
     protected abstract Registry createRegistry();
 

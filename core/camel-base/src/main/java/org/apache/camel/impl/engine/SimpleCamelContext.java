@@ -39,6 +39,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
@@ -152,6 +153,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
+    }
+
+    @Override
+    protected ComponentNameResolver createComponentNameResolver() {
+        return new DefaultComponentNameResolver();
     }
 
     @Override
