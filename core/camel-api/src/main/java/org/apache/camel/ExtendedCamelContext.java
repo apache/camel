@@ -30,6 +30,7 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
@@ -260,6 +261,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets a custom {@link ComponentResolver} to use.
      */
     void setComponentResolver(ComponentResolver componentResolver);
+
+    /**
+     * Gets the {@link ComponentNameResolver} to use.
+     */
+    ComponentNameResolver getComponentNameResolver();
+
+    /**
+     * Sets a custom {@link ComponentNameResolver} to use.
+     */
+    void setComponentNameResolver(ComponentNameResolver componentNameResolver);
 
     /**
      * Gets the {@link LanguageResolver} to use.
