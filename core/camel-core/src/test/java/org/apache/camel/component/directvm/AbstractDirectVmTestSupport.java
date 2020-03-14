@@ -21,7 +21,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 
@@ -40,9 +39,9 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
         doPostSetup();
 
         context2 = new DefaultCamelContext();
+        context2.start();
         template2 = context2.createProducerTemplate();
-
-        ServiceHelper.startService(template2, context2);
+        template2.start();
 
         // add routes after CamelContext has been started
         RouteBuilder routeBuilder = createRouteBuilderForSecondContext();
@@ -58,7 +57,8 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(context2, template2);
+        template2.stop();
+        context2.stop();
 
         super.tearDown();
     }
