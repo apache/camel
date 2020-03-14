@@ -23,9 +23,11 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
 
@@ -52,30 +54,30 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnmarshalReturnOutputStream() throws Exception {
+    void testUnmarshalReturnOutputStream() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:unmarshal", "direct:unmarshal");
     }
     
     @Test
-    public void testUnmarshalReturnOutputStreamDsl() throws Exception {
+    void testUnmarshalReturnOutputStreamDsl() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:unmarshaldsl", "direct:unmarshaldsl");
     }
 
     @Test
-    public void testUnmarshalMarshalReturnOutputStream() throws Exception {
+    void testUnmarshalMarshalReturnOutputStream() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:marshal", "direct:unmarshalthenmarshal");
     }
     
     @Test
-    public void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
+    void testUnmarshalMarshalReturnOutputStreamDsl() throws Exception {
         baseASN1DataFormatWithStreamTest("mock:marshaldsl", "direct:unmarshalthenmarshaldsl");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
 
                 asn1 = new ASN1DataFormat();
 

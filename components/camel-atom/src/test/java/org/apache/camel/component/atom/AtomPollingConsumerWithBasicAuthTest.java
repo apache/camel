@@ -17,16 +17,16 @@
 package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 public class AtomPollingConsumerWithBasicAuthTest extends AtomPollingConsumerTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=false&username=camel&password=camelPass")
                         .to("mock:result");
 
@@ -37,13 +37,13 @@ public class AtomPollingConsumerWithBasicAuthTest extends AtomPollingConsumerTes
         };
     }
 
-    @BeforeClass
-    public static void startServer() {
+    @BeforeAll
+    static void startServer() {
         JettyTestServer.getInstance().startServer();
     }
 
-    @AfterClass
-    public static void stopServer() {
+    @AfterAll
+    static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }
 

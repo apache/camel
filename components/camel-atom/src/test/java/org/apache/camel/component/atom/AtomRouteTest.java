@@ -22,16 +22,19 @@ import org.apache.abdera.model.Entry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AtomRouteTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AtomRouteTest.class);
 
     @Test
-    public void testFeedGetsUpdatedEvents() throws Exception {
+    void testFeedGetsUpdatedEvents() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount(7);
 
@@ -48,11 +51,11 @@ public class AtomRouteTest extends CamelTestSupport {
         int counter = 0;
         for (Exchange exchange : list) {
             Entry entry = exchange.getIn().getBody(Entry.class);
-            assertNotNull("No entry found for exchange: " + exchange);
+            assertNotNull(entry, "No entry found for exchange: " + exchange);
 
             String expectedTitle = expectedTitles[counter];
             String title = entry.getTitle();
-            assertEquals("Title of message " + counter, expectedTitle, title);
+            assertEquals(expectedTitle, title, "Title of message " + counter);
 
             LOG.debug("<<<< {}", entry);
 
@@ -61,9 +64,9 @@ public class AtomRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("atom:file:src/test/data/feed.atom?delay=500").to("mock:results");
             }
         };

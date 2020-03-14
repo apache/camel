@@ -18,8 +18,10 @@ package org.apache.camel.component.atom;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
@@ -28,7 +30,7 @@ import org.junit.Test;
 public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
 
     @Test
-    public void testConsumeIdleMessages() throws Exception {
+    void testConsumeIdleMessages() throws Exception {
         Thread.sleep(110);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
@@ -38,9 +40,9 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&delay=50&initialDelay=0"
                         + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
                         .to("mock:result");
