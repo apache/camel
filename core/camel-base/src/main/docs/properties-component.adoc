@@ -668,7 +668,6 @@ can easily be used as shown below:
 [source,xml]
 ----
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
     <route>
       <from uri="direct:start"/>
       <to uri="{`{env:SOMENAME}`}"/>
@@ -684,7 +683,6 @@ is a `log:foo` and `log:bar` value.
 [source,xml]
 ----
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
     <route>
       <from uri="direct:start"/>
       <to uri="{`{env:SOMENAME:log:foo}`}"/>
@@ -692,8 +690,6 @@ is a `log:foo` and `log:bar` value.
     </route>
   </camelContext>
 ----
-
- 
 
 The service function is for looking up a service which is defined using
 OS environment variables using the service naming idiom, to refer to a
