@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +58,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * Interface used to represent the CamelContext used to configure routes and the
  * policies to use during message exchanges between endpoints.
  * <p/>
- * The CamelContext offers the following methods to control the lifecycle:
+ * The CamelContext offers the following methods {@link CamelContextLifecycle} to control the lifecycle:
  * <ul>
  *   <li>{@link #start()}  - to start (<b>important:</b> the start method is not blocked, see more details
  *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>
@@ -80,20 +79,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * <p/>
  * For more advanced APIs with {@link CamelContext} see {@link ExtendedCamelContext}, which you can obtain via the adapt method.
  */
-public interface CamelContext extends RuntimeConfiguration, AutoCloseable {
-
-    boolean isStarted();
-    boolean isStarting();
-    boolean isStopped();
-    boolean isStopping();
-    boolean isSuspended();
-    boolean isSuspending();
-    boolean isRunAllowed();
-    void init();
-    void suspend();
-    void resume();
-    void shutdown();
-    void close() throws IOException;
+public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
@@ -126,25 +112,6 @@ public interface CamelContext extends RuntimeConfiguration, AutoCloseable {
      * If CamelContext during the start procedure was vetoed, and therefore causing Camel to not start.
      */
     boolean isVetoStarted();
-
-    /**
-     * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
-     *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>.
-     * <p/>
-     * See more details at the class-level javadoc of this class.
-     *
-     * @throws RuntimeCamelException is thrown if starting failed
-     */
-    void start();
-
-    /**
-     * Stop and shutdown the {@link CamelContext} (will stop all routes/components/endpoints etc and clear internal state/cache).
-     * <p/>
-     * See more details at the class-level javadoc of this class.
-     *
-     * @throws RuntimeCamelException is thrown if stopping failed
-     */
-    void stop();
 
     /**
      * Gets the name (id) of the this CamelContext.
@@ -203,13 +170,6 @@ public interface CamelContext extends RuntimeConfiguration, AutoCloseable {
      * @return the version
      */
     String getVersion();
-
-    /**
-     * Get the status of this CamelContext
-     *
-     * @return the status
-     */
-    ServiceStatus getStatus();
 
     /**
      * Gets the uptime in a human readable format
