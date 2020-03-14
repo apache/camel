@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -33,8 +32,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -43,6 +40,7 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -55,11 +53,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -91,6 +86,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
+    protected final Properties wildcardProperties = new OrderedProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected List<RoutesBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
@@ -552,6 +548,9 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
         }
+        if (mainConfigurationProperties.isAutowireComponentProperties() || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
+            autowireWildcardProperties(camelContext);
+        }
 
         // tracing may be enabled by some other property (i.e. camel.context.tracer.exchange-formatter.show-headers)
         if (camelContext.isTracing() && !mainConfigurationProperties.isTracing()) {
@@ -958,31 +957,26 @@ public abstract class BaseMainSupport extends BaseService {
 
         Map<PropertyOptionKey, Map<String, Object>> properties = new LinkedHashMap<>();
 
+        // filter out wildcard properties
+        for (String key : prop.stringPropertyNames()) {
+            if (key.contains("*")) {
+                wildcardProperties.put(key, prop.getProperty(key));
+            }
+        }
+        // and remove wildcards
+        for (String key : wildcardProperties.stringPropertyNames()) {
+            prop.remove(key);
+        }
+
         for (String key : prop.stringPropertyNames()) {
             computeProperties("camel.component.", key, prop, properties, name -> {
-                List<Object> targets = new ArrayList<>();
-
-                if (name.endsWith("*")) {
-                    // its a wildcard so match any existing component and what we can discover
-                    List<String> names = camelContext.getComponentNames();
-                    Set<String> resolved = camelContext.adapt(ExtendedCamelContext.class).getComponentNameResolver().resolveNames(camelContext);
-
-                    Stream.of(names, resolved).flatMap(Collection::stream).forEach(n -> {
-                        if (PatternHelper.matchPattern(n, name)) {
-                            Component target = camelContext.getComponent(n);
-                            targets.add(target);
-                        }
-                    });
-                } else {
-                    // its an existing component name
-                    Component target = camelContext.getComponent(name);
-                    if (target == null) {
-                        throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find component with name " + name
-                                + ". Make sure you have the component on the classpath");
-                    }
+                // its an existing component name
+                Component target = camelContext.getComponent(name);
+                if (target == null) {
+                    throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find component with name " + name
+                            + ". Make sure you have the component on the classpath");
                 }
-
-                return targets;
+                return Collections.singleton(target);
             });
             computeProperties("camel.dataformat.", key, prop, properties, name -> {
                 DataFormat target = camelContext.resolveDataFormat(name);
@@ -1034,8 +1028,6 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    // TODO: Lets use this to configure components also when using wildcards
-    // eg put wildcards into a special properties and then map them here
     protected void autowireConfigurationFromRegistry(CamelContext camelContext, boolean bindNullOnly, boolean deepNesting) throws Exception {
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
@@ -1046,6 +1038,66 @@ public abstract class BaseMainSupport extends BaseService {
                 });
             }
         });
+    }
+
+    protected void autowireWildcardProperties(CamelContext camelContext) {
+        if (wildcardProperties.isEmpty()) {
+            return;
+        }
+
+        // autowire any pre-existing components as they have been added before we are invoked
+        for (String name : camelContext.getComponentNames()) {
+            Component comp = camelContext.getComponent(name);
+            doAutowireWildcardProperties(name, comp);
+        }
+
+        // and autowire any new components that may be added in the future
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onComponentAdd(String name, Component component) {
+                doAutowireWildcardProperties(name, component);
+            }
+        });
+    }
+
+    protected void doAutowireWildcardProperties(String name, Component component) {
+        Map<PropertyOptionKey, Map<String, Object>> properties = new LinkedHashMap<>();
+        Map<String, String> autoConfiguredProperties = new LinkedHashMap<>();
+        String match = ("camel.component." + name).toLowerCase(Locale.US);
+
+        for (String key : wildcardProperties.stringPropertyNames()) {
+            String mKey = key.substring(0, key.indexOf('*')).toLowerCase(Locale.US);
+            if (match.startsWith(mKey)) {
+                computeProperties("camel.component.", key, wildcardProperties, properties, s -> Collections.singleton(component));
+            }
+        }
+
+        try {
+            for (Map.Entry<PropertyOptionKey, Map<String, Object>> entry : properties.entrySet()) {
+                setPropertiesOnTarget(
+                        camelContext,
+                        entry.getKey().getInstance(),
+                        entry.getValue(),
+                        entry.getKey().getOptionPrefix(),
+                        mainConfigurationProperties.isAutoConfigurationFailFast(),
+                        true,
+                        autoConfiguredProperties);
+            }
+            // log summary of configurations
+            if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
+                LOG.info("Auto-configuration component {} summary:", name);
+                autoConfiguredProperties.forEach((k, v) -> {
+                    boolean sensitive = SENSITIVE_KEYS.contains(k.toLowerCase(Locale.US));
+                    if (sensitive) {
+                        LOG.info("\t{}=xxxxxx", k);
+                    } else {
+                        LOG.info("\t{}={}", k, v);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     protected static void validateOptionAndValue(String key, String option, String value) {
