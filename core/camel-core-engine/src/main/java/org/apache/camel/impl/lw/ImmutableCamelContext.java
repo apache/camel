@@ -229,7 +229,7 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         delegate.close();
     }
 
