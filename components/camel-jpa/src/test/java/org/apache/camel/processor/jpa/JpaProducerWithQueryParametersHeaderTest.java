@@ -25,17 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JpaProducerWithQueryParametersHeaderTest extends Assert {
-    
-    protected static final Logger LOG = LoggerFactory.getLogger(JpaProducerWithQueryParametersHeaderTest.class);
     
     protected DefaultCamelContext camelContext;
     protected ProducerTemplate template;
@@ -80,12 +75,12 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
             }
         });
 
+        camelContext.start();
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startService(template, camelContext);
     }
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(template, camelContext);
+        camelContext.stop();
     }
 }
