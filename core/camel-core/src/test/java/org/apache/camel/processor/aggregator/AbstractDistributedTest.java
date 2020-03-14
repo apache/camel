@@ -40,7 +40,8 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         context2 = new DefaultCamelContext();
         context2.setUseMDCLogging(true);
         template2 = context2.createProducerTemplate();
-        ServiceHelper.startService(template2, context2);
+        context2.start();
+        template2.start();
 
         // add routes after CamelContext has been started
         context2.addRoutes(createRouteBuilder2());
@@ -49,7 +50,8 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(context2, template2);
+        context2.stop();
+        template2.stop();
 
         super.tearDown();
     }
