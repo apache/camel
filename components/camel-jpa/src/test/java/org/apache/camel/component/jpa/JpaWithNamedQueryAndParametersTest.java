@@ -129,9 +129,10 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
         // bind the params
         registry.bind("params", params);
         camelContext.setRegistry(registry);
+
+        camelContext.start();
         
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -148,6 +149,7 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template);
+        camelContext.stop();
     }
 }
