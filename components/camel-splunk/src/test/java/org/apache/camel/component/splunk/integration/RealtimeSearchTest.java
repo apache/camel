@@ -48,7 +48,7 @@ public class RealtimeSearchTest extends SplunkTest {
                 from("direct:submit").to("splunk://submit?username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&index=" + INDEX + "&sourceType=testSource&source=test")
                         .to("mock:submit-result");
 
-                from("splunk://realtime?delay=5s&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&initEarliestTime=rt-10s&search=search index=" + INDEX
+                from("splunk://realtime?delay=5000&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD + "&initEarliestTime=rt-10s&search=search index=" + INDEX
                                 + " sourcetype=testSource").to("mock:search-saved");
             }
         };

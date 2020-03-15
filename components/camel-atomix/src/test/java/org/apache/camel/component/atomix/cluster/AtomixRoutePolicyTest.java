@@ -89,7 +89,7 @@ public final class AtomixRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:atomix?delay=1s&period=1s")
+                    from("timer:atomix?delay=1000&period=1000")
                         .routeId("route-" + address.port())
                         .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
                         .log("From ${routeId}")

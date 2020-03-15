@@ -694,7 +694,7 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
 
         // time pattern
-        result = catalog.validateEndpointProperties("timer://foo?fixedRate=true&delay=0&period=2s");
+        result = catalog.validateEndpointProperties("timer://foo?fixedRate=true&delay=0&period=2000");
         assertTrue(result.isSuccess());
 
         // reference lookup

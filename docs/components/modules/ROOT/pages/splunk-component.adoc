@@ -80,7 +80,7 @@ name of the query in the savedSearch option.
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------
-      from("splunk://normal?delay=5s&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
+      from("splunk://normal?delay=5000&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
           .to("direct:search-result");
 ---------------------------------------------------------------------------------------------------------------------------------------------
 

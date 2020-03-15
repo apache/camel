@@ -30,7 +30,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
 			 <!-- trigger every second -->
-       <from uri="timer://kickoff?period=1s"/>
+       <from uri="timer://kickoff?period=1000"/>
        <setBody>
          <constant>select * from customer</constant>
        </setBody>

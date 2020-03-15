@@ -41,7 +41,7 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // trigger every second
-                from("timer://kickoff?period=1s").
+                from("timer://kickoff?period=1000").
                     setBody(constant("select * from customer")).
                     to("jdbc:testdb").
                     to("mock:result");

@@ -786,7 +786,7 @@ For example a timer with a 5 second period
 
 [source,java]
 ----
-from("timer:foo?period=5s")
+from("timer:foo?period=5000")
 ----
 
 Should now be specified as numeric only:
