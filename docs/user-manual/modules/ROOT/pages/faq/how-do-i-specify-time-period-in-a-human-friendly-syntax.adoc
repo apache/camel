@@ -1,0 +1,55 @@
+[[HowdoIspecifytimeperiodinahumanfriendlysyntax-HowdoIspecifytimeperiodinahumanfriendlysyntax]]
+= How do I specify time period in a human friendly syntax?
+
+*Since Camel 2.3*
+
+Some of the Camel xref:component.adoc[components] offers options to
+specify a time period, which must be entered in milli second as unit.
+This may be unfriendly to read as a human when the value is large such
+as 45min = 2700000 millis.
+
+So in Camel 2.3 you can now configure any endpoint uri parameter using a
+String syntax, which at runtime will get converted to millis (`long`
+type).
+
+You can use the following short syntax, which is most common to use:
+
+[width="100%",cols="50%,50%",options="header",]
+|============
+|Syntax |Unit
+|h |hour
+|m |minute
+|s |second
+|============
+
+So for example the xref:components::timer-component.adoc[Timer] endpoint can be configured as
+follows:
+
+[source,java]
+----
+from("timer:foo?period=45m").to("log:foo");
+----
+
+You can mix and match the units so you can do this as well:
+
+[source,java]
+----
+from("timer:foo?period=1h15m").to("log:foo");
+from("timer:bar?period=2h30s").to("log:bar");
+from("timer:bar?period=3h45m58s").to("log:bar");
+----
+
+However you can also use long syntax:
+
+[width="100%",cols="50%,50%",options="header",]
+|=========================
+|Syntax |Unit
+|hour or hours |hour
+|minute or minutes |minute
+|second or seconds |second
+|=========================
+
+[source,java]
+----
+from("timer:foo?period=45minutes").to("log:foo");
+----
