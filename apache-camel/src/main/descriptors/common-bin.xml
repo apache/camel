@@ -34,6 +34,7 @@
         <include>org.apache.camel:camel-base</include>
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-core</include>
+        <include>org.apache.camel:camel-core-cluster</include>
         <include>org.apache.camel:camel-core-engine</include>
         <include>org.apache.camel:camel-core-languages</include>
         <include>org.apache.camel:camel-core-osgi</include>

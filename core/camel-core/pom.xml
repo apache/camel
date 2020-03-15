@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Core</name>
-    <description>The Core Camel Java DSL based router</description>
+    <description>The Core Camel Framework</description>
 
     <dependencies>
 
@@ -42,6 +42,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-languages</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-cluster</artifactId>
         </dependency>
 
         <!-- core components -->
