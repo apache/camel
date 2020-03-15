@@ -183,7 +183,7 @@ public abstract class AbstractCamelContext extends BaseService
         Eager, Default, Lazy
     }
 
-    private final AtomicBoolean vetoStarted = new AtomicBoolean();
+    private VetoCamelContextStartException vetoed;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
@@ -403,7 +403,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public boolean isVetoStarted() {
-        return vetoStarted.get();
+        return vetoed != null;
     }
 
     public Initialization getInitialization() {
@@ -2486,6 +2486,18 @@ public abstract class AbstractCamelContext extends BaseService
     public void start() {
         super.start();
 
+        // did the start veto?
+        if (vetoed != null) {
+            if (vetoed.isRethrowException()) {
+                throw RuntimeCamelException.wrapRuntimeException(vetoed);
+            } else {
+                LOG.info("CamelContext ({}) vetoed to not start due {}", getName(), vetoed.getMessage());
+                // swallow exception and change state of this camel context to stopped
+                stop();
+                return;
+            }
+        }
+
         // okay the routes has been started so emit event that CamelContext
         // has started (here at the end)
         EventHelper.notifyCamelContextStarted(this);
@@ -2517,7 +2529,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStartContext() throws Exception {
         startDate = new Date();
 
-        vetoStarted.set(false);
+        vetoed = null;
         stopWatch.restart();
         LOG.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
 
@@ -2551,16 +2563,8 @@ public abstract class AbstractCamelContext extends BaseService
             VetoCamelContextStartException veto = ObjectHelper.getException(VetoCamelContextStartException.class, e);
             if (veto != null) {
                 // mark we veto against starting Camel
-                vetoStarted.set(true);
-                if (veto.isRethrowException()) {
-                    throw e;
-                } else {
-                    LOG.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
-                    // swallow exception and change state of this camel context
-                    // to stopped
-                    stop();
-                    return;
-                }
+                vetoed = veto;
+                return;
             } else {
                 LOG.error("Error starting CamelContext (" + getName() + ") due to exception thrown: " + e.getMessage(), e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
