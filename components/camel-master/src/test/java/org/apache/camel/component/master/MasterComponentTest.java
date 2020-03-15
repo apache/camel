@@ -76,7 +76,7 @@ public class MasterComponentTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("master:ns:timer:test?delay=1s&period=1s")
+                    from("master:ns:timer:test?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .log("From ${routeId}")
                         .process(e -> contextLatch.countDown());

@@ -90,7 +90,7 @@ public class ConsulClusteredRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:consul?delay=1s&period=1s").routeId("route-" + id).routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
+                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id).routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
                         .process(e -> contextLatch.countDown());
                 }
             });

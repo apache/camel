@@ -92,7 +92,7 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:master?delay=1s&period=1s")
+                from("timer:master?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .routePolicy(ClusteredRoutePolicy.forNamespace("jgr"))
                         .log("From ${routeId}");

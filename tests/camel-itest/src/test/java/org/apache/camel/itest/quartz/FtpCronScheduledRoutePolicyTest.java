@@ -43,7 +43,7 @@ import org.junit.Test;
 public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
 
     protected FtpServer ftpServer;
-    private String ftp = "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5s&idempotent=false&localWorkDirectory=target/tmp";
+    private String ftp = "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5000&idempotent=false&localWorkDirectory=target/tmp";
 
     @Test
     public void testFtpCronScheduledRoutePolicyTest() throws Exception {

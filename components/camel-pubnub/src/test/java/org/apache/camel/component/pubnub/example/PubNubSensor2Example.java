@@ -73,7 +73,7 @@ public final class PubNubSensor2Example {
                 .log("${body} headers : ${headers}").to("mock:result");
             
             //TODO Could remote control device to turn on/off sensor measurement 
-            from("timer:master?delay=15s&period=5s").routeId("unicast2device-route")
+            from("timer:master?delay=15000&period=5000").routeId("unicast2device-route")
                 .setHeader(PubNubConstants.CHANNEL, method(PubNubSensor2Example.PubsubRoute.DataProcessorBean.class, "getUnicastChannelOfDevice()"))
                 .setBody(constant("Hello device"))
                 .to(masterEP);

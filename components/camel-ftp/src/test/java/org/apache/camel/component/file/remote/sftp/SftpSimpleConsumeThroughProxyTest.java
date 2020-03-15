@@ -69,7 +69,7 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&proxy=#proxy").routeId("foo").noAutoStartup()
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10000&disconnect=true&proxy=#proxy").routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
         };

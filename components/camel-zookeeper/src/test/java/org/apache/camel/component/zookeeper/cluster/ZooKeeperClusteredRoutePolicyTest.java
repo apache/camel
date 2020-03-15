@@ -92,7 +92,7 @@ public final class ZooKeeperClusteredRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:zookeeper?delay=1s&period=1s")
+                    from("timer:zookeeper?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
                         .log("From ${routeId}")

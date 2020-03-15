@@ -65,7 +65,7 @@ public class ConsumerStreamingTest extends SplunkMockTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("splunk://normal?delay=5s&username=foo&password=bar&initEarliestTime=-10s&latestTime=now&search=search index=myindex&sourceType=testSource&streaming=true")
+                from("splunk://normal?delay=5000&username=foo&password=bar&initEarliestTime=-10s&latestTime=now&search=search index=myindex&sourceType=testSource&streaming=true")
                         .to("mock:search-result");
             }
         };
