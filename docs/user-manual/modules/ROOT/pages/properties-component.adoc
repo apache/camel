@@ -792,7 +792,7 @@ public static final class MyBeerFunction implements PropertiesFunction {
 ----
 
 The function must implement
-the `org.apache.camel.spi.PropertiesFunction`
+the `org.apache.camel.component.properties.PropertiesFunction`
 interface. The method `getName` is  the name of the function, eg beer.
 And the `apply` method is where we implement the custom logic to do. As
 the sample code is from an unit test, it just returns a value to refer
@@ -802,7 +802,7 @@ To register a custom function from Java code is as shown below:
 
 [source,java]
 ----
-PropertiesComponent pc = context.getPropertiesComponent();
+PropertiesComponent pc = (org.apache.camel.componennt.properties.PropertiesComponent) context.getPropertiesComponent();
 pc.addFunction(new MyBeerFunction());
 ----
  
