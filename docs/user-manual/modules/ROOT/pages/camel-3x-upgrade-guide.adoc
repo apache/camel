@@ -771,6 +771,32 @@ from("direct:error").loadBalance().roundRobin().id("round")
 The base support for cluster in `org.apache.camel.cluster` has been moved
 out of `camel-core-engine` into separate JAR named `camel-cluster`.
 
+=== Configuring milli seconds
+
+Camel was using a type converter from `String` -> `long` that accepted
+a time pattern which allowed to configure long values such as `2s` for 2 seconds, eg `2000`.
+And more complex such as `8h15m` for 8 hours and 15 minutes.
+
+However as this was implemented as part of `String` -> `long` type convertion
+which then adds a little bit of overhead during routing, when converting from String to plain numbers.
+
+To make Camel routing engine as fast as possible, then this has been removed.
+
+For example a timer with a 5 second period
+
+[source,java]
+----
+from("timer:foo?period=5s")
+----
+
+Should now be specified as numeric only:
+
+[source,java]
+----
+from("timer:foo?period=5000")
+----
+
+
 === API changes
 
 ==== DefaultComponent
