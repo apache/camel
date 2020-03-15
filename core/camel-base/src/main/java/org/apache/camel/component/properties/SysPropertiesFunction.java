@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.properties;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.StringHelper;
 
 /**

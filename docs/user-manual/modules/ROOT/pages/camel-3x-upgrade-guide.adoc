@@ -813,3 +813,8 @@ within an `FailedToResolveEndpoint`.
 The `org.apache.camel.impl.engine.JavaUuidGenerator` class has been removed.
 Its a very slow UUID generator and its not recommended to be used.
 
+==== PropertiesComponent
+
+The `org.apache.camel.component.properties.PropertiesFunction` has been moved to `org.apache.camel.spi.PropertiesFunction`
+and its now possible to add custom functions on the `org.apache.camel.spi.PropertiesComponent` interface.
+

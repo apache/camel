@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;

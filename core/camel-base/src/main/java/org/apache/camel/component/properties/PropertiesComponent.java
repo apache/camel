@@ -35,6 +35,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
@@ -117,11 +118,11 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
     public PropertiesComponent() {
         // include out of the box functions
-        addFunction(new EnvPropertiesFunction());
-        addFunction(new SysPropertiesFunction());
-        addFunction(new ServicePropertiesFunction());
-        addFunction(new ServiceHostPropertiesFunction());
-        addFunction(new ServicePortPropertiesFunction());
+        addPropertiesFunction(new EnvPropertiesFunction());
+        addPropertiesFunction(new SysPropertiesFunction());
+        addPropertiesFunction(new ServicePropertiesFunction());
+        addPropertiesFunction(new ServiceHostPropertiesFunction());
+        addPropertiesFunction(new ServicePortPropertiesFunction());
     }
 
     /**
@@ -441,14 +442,14 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * Registers the {@link org.apache.camel.component.properties.PropertiesFunction} as a function to this component.
+     * Registers the {@link PropertiesFunction} as a function to this component.
      */
-    public void addFunction(PropertiesFunction function) {
+    public void addPropertiesFunction(PropertiesFunction function) {
         this.functions.put(function.getName(), function);
     }
 
     /**
-     * Is there a {@link org.apache.camel.component.properties.PropertiesFunction} with the given name?
+     * Is there a {@link PropertiesFunction} with the given name?
      */
     public boolean hasFunction(String name) {
         return functions.containsKey(name);
