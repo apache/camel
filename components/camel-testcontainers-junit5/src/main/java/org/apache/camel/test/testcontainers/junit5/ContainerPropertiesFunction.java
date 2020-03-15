@@ -18,7 +18,7 @@ package org.apache.camel.test.testcontainers.junit5;
 
 import java.util.List;
 
-import org.apache.camel.component.properties.PropertiesFunction;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.testcontainers.containers.GenericContainer;
