@@ -7,4 +7,5 @@ org.apache.camel.converter.IOConverterLoader
 org.apache.camel.converter.NIOConverterLoader
 org.apache.camel.converter.ObjectConverterLoader
 org.apache.camel.converter.SQLConverterLoader
+org.apache.camel.converter.TimePatternConverterLoader
 org.apache.camel.impl.converter.UriTypeConverterLoader
