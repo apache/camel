@@ -16,8 +16,7 @@ image::eip/ContentFilter.gif[image]
 
 A common way to filter messages is to use an
 xref:expression.adoc[Expression] in the xref:dsl.adoc[DSL] like
-xref:components::xquery-language.adoc[XQuery] or one of the supported
-xref:scripting-languages.adoc[Scripting Languages].
+xref:components::xquery-language.adoc[XQuery].
 
 == Using the xref:fluent-builders.adoc[Fluent Builders]
 

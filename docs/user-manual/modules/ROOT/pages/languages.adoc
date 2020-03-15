@@ -27,7 +27,6 @@ For more information, see xref:predicate.adoc[Compound Predicates].
 * xref:components::ognl-language.adoc[OGNL]
 * xref:ref-language.adoc[Ref Language]
 * xref:exchangeProperty-language.adoc[ExchangeProperty]
-* xref:scripting-languages.adoc[Scripting Languages] such as:
 ** xref:components::groovy-language.adoc[Groovy]
 * xref:simple-language.adoc[Simple]
 ** xref:file-language.adoc[File Language]
@@ -35,7 +34,6 @@ For more information, see xref:predicate.adoc[Compound Predicates].
 * xref:tokenize-language.adoc[Tokenizer]
 * xref:components::xpath-language.adoc[XPath]
 * xref:components::xquery-language.adoc[XQuery]
-* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages are also supported used as
 xref:parameter-binding-annotations.adoc[Annotation Based

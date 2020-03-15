@@ -127,7 +127,6 @@
  ** xref:wireTap-eip.adoc[Wire Tap EIP]
 * Frequently asked questions
  ** xref:faq/can-i-get-commercial-support.adoc[Can I get commercial support?]
- ** xref:faq/does-camel-work-on-ibms-jdk.adoc[Does Camel work on IBM's JDK?]
  ** xref:support.adoc[How can I get help?]
  ** xref:faq/how-can-i-get-the-source-code.adoc[How can I get the source code?]
  ** xref:faq/how-does-camel-compare-to-mule.adoc[How does Camel compare to Mule?]
