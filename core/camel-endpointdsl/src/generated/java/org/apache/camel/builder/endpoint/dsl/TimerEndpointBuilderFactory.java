@@ -81,9 +81,7 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Miliseconds before first event is triggered. You can also specify
-         * time values using units, such as 60s (60 seconds), 5m30s (5 minutes
-         * and 30 seconds), and 1h (1 hour).
+         * Milliseconds before first event is triggered.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -95,9 +93,7 @@ public interface TimerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Miliseconds before first event is triggered. You can also specify
-         * time values using units, such as 60s (60 seconds), 5m30s (5 minutes
-         * and 30 seconds), and 1h (1 hour).
+         * Milliseconds before first event is triggered.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -162,8 +158,7 @@ public interface TimerEndpointBuilderFactory {
         }
         /**
          * If greater than 0, generate periodic events every period
-         * milliseconds. You can also specify time values using units, such as
-         * 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+         * milliseconds.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -176,8 +171,7 @@ public interface TimerEndpointBuilderFactory {
         }
         /**
          * If greater than 0, generate periodic events every period
-         * milliseconds. You can also specify time values using units, such as
-         * 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
+         * milliseconds.
          * 
          * The option will be converted to a <code>long</code> type.
          * 

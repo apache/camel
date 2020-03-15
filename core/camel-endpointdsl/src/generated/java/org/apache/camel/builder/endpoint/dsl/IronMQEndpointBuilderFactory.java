@@ -421,9 +421,7 @@ public interface IronMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the next poll.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -435,9 +433,7 @@ public interface IronMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the next poll.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -475,9 +471,7 @@ public interface IronMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the first poll starts. You can also specify time
-         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the first poll starts.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -489,9 +483,7 @@ public interface IronMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the first poll starts. You can also specify time
-         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the first poll starts.
          * 
          * The option will be converted to a <code>long</code> type.
          * 

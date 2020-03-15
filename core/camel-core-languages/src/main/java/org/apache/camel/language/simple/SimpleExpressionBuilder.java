@@ -46,6 +46,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Expression builder used by the simple language.
@@ -413,12 +414,9 @@ public final class SimpleExpressionBuilder {
                 List<Long> offsets = new ArrayList<>();
                 Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
                 while (offsetMatcher.find()) {
-                    try {
-                        long value = exchange.getContext().getTypeConverter().mandatoryConvertTo(long.class, exchange, offsetMatcher.group(2).trim());
-                        offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
-                    } catch (NoTypeConversionAvailableException e) {
-                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
-                    }
+                    String time = offsetMatcher.group(2).trim();
+                    long value = TimeUtils.toMilliSeconds(time);
+                    offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
                 }
 
                 Date date;
