@@ -43,11 +43,9 @@ import org.apache.camel.support.DefaultEndpoint;
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = true)
     private String timerName;
-    @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period milliseconds."
-            + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
+    @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period milliseconds.")
     private long period = 1000;
-    @UriParam(defaultValue = "1000", description = "Miliseconds before first event is triggered."
-            + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
+    @UriParam(defaultValue = "1000", description = "Milliseconds before first event is triggered.")
     private long delay = 1000;
     @UriParam(defaultValue = "0")
     private long repeatCount;
@@ -151,8 +149,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      * The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option.
      * <p/>
      * The default value is 1000.
-     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
-     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     @ManagedAttribute(description = "Timer Delay")
     public void setDelay(long delay) {
@@ -181,8 +177,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      * If greater than 0, generate periodic events every period milliseconds.
      * <p/>
      * The default value is 1000.
-     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
-     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
