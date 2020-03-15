@@ -27,11 +27,11 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>camel-core-cluster</artifactId>
+    <artifactId>camel-cluster</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Core Cluster</name>
-    <description>Camel Core Cluster Support</description>
+    <name>Camel :: Cluster</name>
+    <description>Camel Cluster Support</description>
 
     <properties>
         <firstVersion>3.2.0</firstVersion>

@@ -34,13 +34,13 @@
         <include>org.apache.camel:camel-base</include>
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-core</include>
-        <include>org.apache.camel:camel-core-cluster</include>
         <include>org.apache.camel:camel-core-engine</include>
         <include>org.apache.camel:camel-core-languages</include>
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-core-catalog</include>
         <include>org.apache.camel:camel-cloud</include>
+        <include>org.apache.camel:camel-cluster</include>
         <include>org.apache.camel:camel-xml-jaxp</include>
         <include>org.apache.camel:camel-main</include>
         <include>org.apache.camel:camel-tooling-model</include>
