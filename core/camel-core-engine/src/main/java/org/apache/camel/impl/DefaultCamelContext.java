@@ -329,25 +329,35 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     public void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception {
-        RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
-        for (RouteDefinition routeDefinition : routeDefinitions) {
-            // assign ids to the routes and validate that the id's is all unique
-            String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
-            if (duplicate != null) {
-                throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
-            }
+        // indicate we are staring the route using this thread so
+        // we are able to query this if needed
+        boolean alreadyStartingRoutes = isStartingRoutes();
+        if (!alreadyStartingRoutes) {
+            setStartingRoutes(true);
+        }
+        try {
+            RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
+            for (RouteDefinition routeDefinition : routeDefinitions) {
+                // assign ids to the routes and validate that the id's is all unique
+                String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
+                if (duplicate != null) {
+                    throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+                }
 
-            // must ensure route is prepared, before we can start it
-            if (!routeDefinition.isPrepared()) {
-                RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
-                routeDefinition.markPrepared();
-            }
+                // must ensure route is prepared, before we can start it
+                if (!routeDefinition.isPrepared()) {
+                    RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
+                    routeDefinition.markPrepared();
+                }
 
-            // indicate we are staring the route using this thread so
-            // we are able to query this if needed
-            Route route = new RouteReifier(getCamelContextReference(), routeDefinition).createRoute();
-            RouteService routeService = new RouteService(route);
-            startRouteService(routeService, true);
+                Route route = new RouteReifier(getCamelContextReference(), routeDefinition).createRoute();
+                RouteService routeService = new RouteService(route);
+                startRouteService(routeService, true);
+            }
+        } finally {
+            if (!alreadyStartingRoutes) {
+                setStartingRoutes(false);
+            }
         }
     }
 
