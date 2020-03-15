@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.StartupListener;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CamelEvent;
@@ -297,7 +297,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
     }
 
-    private class CamelContextStartupListener extends EventNotifierSupport implements StartupListener {
+    private class CamelContextStartupListener extends EventNotifierSupport implements ExtendedStartupListener {
         @Override
         public void notify(CamelEvent event) throws Exception {
             onCamelContextStarted();
@@ -310,6 +310,11 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         @Override
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+            // noop
+        }
+
+        @Override
+        public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             if (alreadyStarted) {
                 // Invoke it only if the context was already started as this
                 // method is not invoked at last event as documented but after

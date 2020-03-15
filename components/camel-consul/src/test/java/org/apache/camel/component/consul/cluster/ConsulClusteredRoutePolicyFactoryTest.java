@@ -98,11 +98,13 @@ public class ConsulClusteredRoutePolicyFactoryTest {
             // Start the context after some random time so the startup order
             // changes for each test.
             Thread.sleep(ThreadLocalRandom.current().nextInt(500));
+            LOGGER.info("Starting CamelContext on node: {}", id);
             context.start();
+            LOGGER.info("Started CamelContext on node: {}", id);
 
             contextLatch.await();
 
-            LOGGER.debug("Shutting down node {}", id);
+            LOGGER.info("Shutting down node {}", id);
             RESULTS.add(id);
 
             context.stop();

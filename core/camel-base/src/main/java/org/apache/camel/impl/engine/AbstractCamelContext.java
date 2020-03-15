@@ -2483,6 +2483,26 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void start() {
+        super.start();
+
+        // okay the routes has been started so emit event that CamelContext
+        // has started (here at the end)
+        EventHelper.notifyCamelContextStarted(this);
+
+        // now call the startup listeners where the routes has been started
+        for (StartupListener startup : startupListeners) {
+            if (startup instanceof ExtendedStartupListener) {
+                try {
+                    ((ExtendedStartupListener)startup).onCamelContextFullyStarted(this, isStarted());
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
+        }
+    }
+
+    @Override
     protected synchronized void doStart() throws Exception {
         try {
             doStartContext();
@@ -2575,21 +2595,6 @@ public abstract class AbstractCamelContext extends BaseService
                         getRouteController().getClass().getName());
             }
             LOG.info("Apache Camel {} (CamelContext: {}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
-        }
-
-        // okay the routes has been started so emit event that CamelContext
-        // has started (here at the end)
-        EventHelper.notifyCamelContextStarted(this);
-
-        // now call the startup listeners where the routes has been started
-        for (StartupListener startup : startupListeners) {
-            if (startup instanceof ExtendedStartupListener) {
-                try {
-                    ((ExtendedStartupListener)startup).onCamelContextFullyStarted(this, isStarted());
-                } catch (Exception e) {
-                    throw RuntimeCamelException.wrapRuntimeException(e);
-                }
-            }
         }
     }
 
