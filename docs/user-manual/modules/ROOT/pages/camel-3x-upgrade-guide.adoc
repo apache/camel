@@ -649,29 +649,30 @@ The XML DSL has changed for the `<configuration>` element, which now
 is flattened so the key/values should be configured on it directly:
 
 Before:
-[source,mxl]
+[source,xml]
 ----
-    <dataFormats>
-      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
-        <configuration>
-          <property key="any23.extraction.metadata.nesting" value="off" />
-          <property key="another-key" value="another-value" />
-        </configuration>
-        <extractors>html-head-title</extractors>
-      </any23>
-    </dataFormats>
+<dataFormats>
+  <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+    <configuration>
+      <property key="any23.extraction.metadata.nesting" value="off" />
+      <property key="another-key" value="another-value" />
+    </configuration>
+    <extractors>html-head-title</extractors>
+  </any23>
+</dataFormats>
 ----
 
 After:
-[source,mxl]
+
+[source,xml]
 ----
-    <dataFormats>
-      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
-        <configuration key="any23.extraction.metadata.nesting" value="off"/>
-        <configuration key="another-key" value="another-value"/>
-        <extractors>html-head-title</extractors>
-      </any23>
-    </dataFormats>
+<dataFormats>
+  <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+    <configuration key="any23.extraction.metadata.nesting" value="off"/>
+    <configuration key="another-key" value="another-value"/>
+    <extractors>html-head-title</extractors>
+  </any23>
+</dataFormats>
 ----
 
 === camel-infinispan
@@ -725,7 +726,7 @@ Multiple values for `implicitCollections` and `omitFields` can be separated by c
 For example:
 [source,xml]
 ----
-    <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history,adress"/>
+<implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history,adress"/>
 ----
 
 === Endpoint URIs without context path
@@ -747,17 +748,28 @@ The context scope error handling has been modified a bit.  The processors in tho
 `onCompletion` are not shared between routes anymore.  This should have little effect in most cases.
 If there is a need to have a single set of processors involved (such as when using a loadbalancer or
 other stateful patterns), then an intermediary route needs to be used. The following exerpt:
-```
+
+[source,java]
+----
 onException(Exception.class).handled(true)
     .loadBalance().roundRobin().id("round")
     .to("mock:error", "mock:error2", "mock:error3");
-```
-needs to be rewritten as:
-```
+----
+
+... needs to be rewritten as:
+
+[source,java]
+----
 onException(Exception.class).handled(true).to("direct:error");
+
 from("direct:error").loadBalance().roundRobin().id("round")
     .to("mock:error", "mock:error2", "mock:error3");
-```
+----
+
+=== camel-cluster
+
+The base support for cluster in `org.apache.camel.cluster` has been moved
+out of `camel-core-engine` into separate JAR named `camel-cluster`.
 
 === API changes
 
