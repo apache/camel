@@ -17,8 +17,8 @@
 package org.apache.camel.component.zookeeper.cloud;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.zookeeper.ZooKeeperContainer;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinderPropertiesFunction;
 import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
 import org.apache.curator.framework.CuratorFramework;
@@ -49,9 +49,9 @@ public class SpringZooKeeperServiceCallRouteTest extends ContainerAwareSpringTes
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        final PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
+        final PropertiesComponent pc = context.getPropertiesComponent();
 
-        pc.addFunction(function);
+        pc.addPropertiesFunction(function);
 
         return context;
     }
