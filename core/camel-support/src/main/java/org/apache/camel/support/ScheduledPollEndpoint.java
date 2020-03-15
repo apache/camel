@@ -43,12 +43,10 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             description = "Whether the scheduler should be auto started.")
     private boolean startScheduler = true;
     @UriParam(defaultValue = "1000", label = "consumer,scheduler",
-            description = "Milliseconds before the first poll starts."
-                    + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
+            description = "Milliseconds before the first poll starts.")
     private long initialDelay = 1000;
     @UriParam(defaultValue = "500", label = "consumer,scheduler",
-            description = "Milliseconds before the next poll."
-                    + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")
+            description = "Milliseconds before the next poll.")
     private long delay = 500;
     @UriParam(defaultValue = "MILLISECONDS", label = "consumer,scheduler",
             description = "Time unit for initialDelay and delay options.")
@@ -205,8 +203,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      * Milliseconds before the first poll starts.
      * <p/>
      * The default value is 1000.
-     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
-     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     public void setInitialDelay(long initialDelay) {
         this.initialDelay = initialDelay;
@@ -220,8 +216,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      * Milliseconds before the next poll.
      * <p/>
      * The default value is 500.
-     * You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).
-     * @see <a href="http://camel.apache.org/how-do-i-specify-time-period-in-a-human-friendly-syntax.html">human friendly syntax</a>
      */
     public void setDelay(long delay) {
         this.delay = delay;
