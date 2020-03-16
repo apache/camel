@@ -104,7 +104,7 @@ public class AtomixMapProducerTest extends AtomixClientTestSupport {
         result = fluent.clearAll()
             .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
             .withHeader(AtomixClientConstants.RESOURCE_KEY, key1)
-            .withHeader(AtomixClientConstants.RESOURCE_TTL, "1s")
+            .withHeader(AtomixClientConstants.RESOURCE_TTL, "1000")
             .withBody(val)
             .request(Message.class);
 
