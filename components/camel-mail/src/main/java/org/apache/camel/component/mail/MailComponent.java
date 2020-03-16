@@ -76,7 +76,7 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
             SearchTerm st;
             if (searchTerm instanceof SimpleSearchTerm) {
                 // okay its a SimpleSearchTerm then lets convert that to SearchTerm
-                st = MailConverters.toSearchTerm((SimpleSearchTerm) searchTerm, getCamelContext().getTypeConverter());
+                st = MailConverters.toSearchTerm((SimpleSearchTerm) searchTerm);
             } else {
                 st = getCamelContext().getTypeConverter().mandatoryConvertTo(SearchTerm.class, searchTerm);
             }
@@ -104,7 +104,7 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
             // use SimpleSearchTerm as POJO to store the configuration and then convert that to the actual SearchTerm
             SimpleSearchTerm sst = new SimpleSearchTerm();
             setProperties(sst, sstParams);
-            SearchTerm st = MailConverters.toSearchTerm(sst, getCamelContext().getTypeConverter());
+            SearchTerm st = MailConverters.toSearchTerm(sst);
             endpoint.setSearchTerm(st);
         }
 
