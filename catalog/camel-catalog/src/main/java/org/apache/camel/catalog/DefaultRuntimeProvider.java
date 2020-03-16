@@ -108,16 +108,16 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     public List<String> findComponentNames() {
         List<String> names = new ArrayList<>();
         try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getComponentsCatalog())) {
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
-        }
         } catch (IOException e1) {
-			// ignore 
-		}
+            // ignore
+        }
         return names;
     }
 
@@ -125,16 +125,16 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     public List<String> findDataFormatNames() {
         List<String> names = new ArrayList<>();
         try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getDataFormatsCatalog())) {
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
-        }
         } catch (IOException e1) {
-			// ignore
-		}
+            // ignore
+        }
         return names;
     }
 
@@ -142,16 +142,16 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     public List<String> findLanguageNames() {
         List<String> names = new ArrayList<>();
         try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getLanguageCatalog())) {
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
-        }
         } catch (IOException e1) {
-			// ignore
-		}
+            // ignore
+        }
         return names;
     }
 
@@ -159,16 +159,16 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     public List<String> findOtherNames() {
         List<String> names = new ArrayList<>();
         try (InputStream is = getCamelCatalog().getVersionManager().getResourceAsStream(getOtherCatalog())) {
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
-        }
         } catch (IOException e1) {
-			// ignore
-		}
+            // ignore
+        }
         return names;
     }
 }
