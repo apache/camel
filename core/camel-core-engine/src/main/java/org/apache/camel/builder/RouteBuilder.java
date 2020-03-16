@@ -530,12 +530,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // setup rest configuration before adding the rests
         if (getRestConfigurations() != null) {
             for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfigurations().entrySet()) {
-                RestConfiguration config = entry.getValue().asRestConfiguration(getContext());
-                if ("".equals(entry.getKey())) {
-                    camelContext.setRestConfiguration(config);
-                } else {
-                    camelContext.addRestConfiguration(config);
-                }
+                entry.getValue().asRestConfiguration(
+                    getContext(),
+                    camelContext.getRestConfiguration(entry.getKey(), true));
             }
         }
         // cannot add rests as routes yet as we need to initialize this
