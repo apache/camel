@@ -1425,6 +1425,11 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
         getExtendedCamelContext().removeRoute(route);
     }
 
+    @Override
+    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        return getExtendedCamelContext().createErrorHandler(route, processor);
+    }
+
     //
     // CatalogCamelContext
     //

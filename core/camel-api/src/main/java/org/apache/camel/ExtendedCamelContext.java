@@ -584,4 +584,7 @@ public interface ExtendedCamelContext extends CamelContext {
     void addRoute(Route route);
 
     void removeRoute(Route route);
+
+    Processor createErrorHandler(Route route, Processor processor) throws Exception;
+
 }

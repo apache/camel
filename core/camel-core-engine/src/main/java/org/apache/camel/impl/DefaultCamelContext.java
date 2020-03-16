@@ -48,6 +48,7 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -396,4 +397,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             }
         }
     }
+
+    @Override
+    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        return ErrorHandlerReifier.reifier(route, route.getErrorHandlerFactory())
+                .createErrorHandler(processor);
+    }
+
 }
