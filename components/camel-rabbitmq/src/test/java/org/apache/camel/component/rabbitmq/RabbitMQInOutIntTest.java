@@ -56,15 +56,13 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-                    + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
-                    + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest" + "&autoAck=true&queue=q4&routingKey="
+                    + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS + "&allowMessageBodySerialization=true")
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-            + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
-            + "&transferException=true&requestTimeout=" + TIMEOUT_MS
-            + "&args=#args")
+                    + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY + "&transferException=true&requestTimeout="
+                    + TIMEOUT_MS + "&args=#args" + "&allowMessageBodySerialization=true")
     private Endpoint noAutoAckEndpoint;
 
     @EndpointInject("mock:result")
@@ -148,7 +146,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         testObject.setName("header");
 
         headers.put("String", "String");
-        headers.put("Boolean", new Boolean(false));
+        headers.put("Boolean", Boolean.valueOf(false));
 
         // This will blow up the connection if not removed before sending the message
         headers.put("TestObject1", testObject);
@@ -231,7 +229,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     }
 
     @Test
-    public void inOutTimeOutTest() {
+    public void inOutTimeOutTest() throws InterruptedException {
         try {
             template.requestBodyAndHeader("direct:rabbitMQ", "TimeOut", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE, String.class);
             fail("This should have thrown a timeOut exception");
