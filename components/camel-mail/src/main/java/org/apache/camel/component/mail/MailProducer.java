@@ -60,13 +60,13 @@ public class MailProducer extends DefaultAsyncProducer {
                 mimeMessage = (MimeMessage) body;
             } else {
                 // Create a message with exchange data
-                mimeMessage = new MimeMessage(sender.getSession());
+                mimeMessage = new MimeMessage(getSender(exchange).getSession());
                 getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
-            sender.send(mimeMessage);
+            getSender(exchange).send(mimeMessage);
             // set the message ID for further processing
             exchange.getIn().setHeader(MailConstants.MAIL_MESSAGE_ID, mimeMessage.getMessageID());
         } catch (MessagingException | IOException e) {
