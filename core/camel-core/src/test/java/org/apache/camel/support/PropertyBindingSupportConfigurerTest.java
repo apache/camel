@@ -206,7 +206,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         @Override
         public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             name = name.toLowerCase(Locale.US);
-            name = name.replaceAll("-","");
+            name = name.replaceAll("-", "");
             if (target instanceof Bar) {
                 Bar bar = (Bar) target;
                 if ("age".equals(name)) {
