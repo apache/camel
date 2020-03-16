@@ -87,17 +87,18 @@ public class MasterEndpointFailoverTest {
             }
         });
         // Need to start at less one consumerContext to enable the vm queue for producerContext
-        ServiceHelper.startService(consumerContext1);
-        ServiceHelper.startService(producerContext);
+        producerContext.start();
+        consumerContext1.start();
+
         result1Endpoint = consumerContext1.getEndpoint("mock:result1", MockEndpoint.class);
         result2Endpoint = consumerContext2.getEndpoint("mock:result2", MockEndpoint.class);
     }
 
     @After
     public void afterRun() throws Exception {
-        ServiceHelper.stopService(consumerContext1);
-        ServiceHelper.stopService(consumerContext2);
-        ServiceHelper.stopService(producerContext);
+        consumerContext1.stop();
+        consumerContext2.stop();
+        producerContext.stop();
         zkClientBean.destroy();
         zkContainer.stop();
     }
@@ -105,16 +106,15 @@ public class MasterEndpointFailoverTest {
     @Test
     public void testEndpoint() throws Exception {
         LOG.info("Starting consumerContext1");
-
-        ServiceHelper.startService(consumerContext1);
+        consumerContext1.start();
         assertMessageReceived(result1Endpoint, result2Endpoint);
 
         LOG.info("Starting consumerContext2");
-        ServiceHelper.startService(consumerContext2);
+        consumerContext2.start();
         assertMessageReceivedLoop(result1Endpoint, result2Endpoint, 3);
 
         LOG.info("Stopping consumerContext1");
-        ServiceHelper.stopService(consumerContext1);
+        consumerContext1.stop();
         assertMessageReceivedLoop(result2Endpoint, result1Endpoint, 3);
     }
 
