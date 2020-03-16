@@ -68,9 +68,8 @@ public class DefaultJavaMailSender implements JavaMailSender {
         this.javaMailProperties = javaMailProperties;
     }
 
-    @Override
-    public void addAdditionalJavaMailProperties(Map<String, Object> additional) {
-        getJavaMailProperties().putAll(additional);
+    public void addAdditionalJavaMailProperty(String key, String value) {
+        getJavaMailProperties().setProperty(key, value);
     }
 
     @Override

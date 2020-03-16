@@ -54,7 +54,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         }
 
         @Override
-        public void addAdditionalJavaMailProperties(Map<String, Object> additional) {
+        public void addAdditionalJavaMailProperty(String key, String value) {
         }
 
         @Override

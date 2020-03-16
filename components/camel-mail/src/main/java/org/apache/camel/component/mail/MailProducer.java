@@ -36,15 +36,17 @@ public class MailProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailProducer.class);
 
-    private final JavaMailSender sender;
+    private final JavaMailSender defaultSender;
 
     public MailProducer(MailEndpoint endpoint, JavaMailSender sender) {
         super(endpoint);
-        this.sender = sender;
+        this.defaultSender = sender;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        JavaMailSender mailSender = getSender(exchange);
+
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader applicationClassLoader = getEndpoint().getCamelContext().getApplicationContextClassLoader();
@@ -60,13 +62,13 @@ public class MailProducer extends DefaultAsyncProducer {
                 mimeMessage = (MimeMessage) body;
             } else {
                 // Create a message with exchange data
-                mimeMessage = new MimeMessage(getSender(exchange).getSession());
+                mimeMessage = new MimeMessage(mailSender.getSession());
                 getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
-            getSender(exchange).send(mimeMessage);
+            mailSender.send(mimeMessage);
             // set the message ID for further processing
             exchange.getIn().setHeader(MailConstants.MAIL_MESSAGE_ID, mimeMessage.getMessageID());
         } catch (MessagingException | IOException e) {
@@ -90,12 +92,17 @@ public class MailProducer extends DefaultAsyncProducer {
         if (additional.isEmpty()) {
             // no then use default sender
             LOG.trace("Using default JavaMailSender");
-            return sender;
+            return defaultSender;
         } else {
             // create new mail sender specially for this
             LOG.debug("Creating new JavaMailSender to include additional {} java mail properties", additional.size());
             JavaMailSender customSender = getEndpoint().getConfiguration().createJavaMailSender();
-            customSender.addAdditionalJavaMailProperties(additional);
+            additional.forEach((k, v) -> {
+                if (v != null) {
+                    // add with prefix so we dont loose that
+                    customSender.addAdditionalJavaMailProperty("mail.smtp." + k, v.toString());
+                }
+            });
             return customSender;
         }
     }
