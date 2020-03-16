@@ -732,5 +732,6 @@ For example to provide a dynamic uuid in `java.smtp.from` (SMTP MAIL command):
     .to("smtp://mymailserver:1234");
 ----
 
+NOTE: This is only supported when *not* using a custom `JavaMailSender`.
 
 include::camel-spring-boot::page$mail-starter.adoc[]
