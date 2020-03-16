@@ -156,8 +156,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             if (code >= 200 && code < 300) {
                 try {
                     final String responseBody = response.getResponseBody();
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("Received body for {} {}: {}", request.getMethod(), request.getUrl(), responseBody);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Received body for {} {}: {}", request.getMethod(), request.getUrl(), responseBody);
                     }
                     return mapper.readValue(responseBody, resultType);
                 } catch (IOException e) {
