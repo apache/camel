@@ -710,6 +710,48 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointConsumerBuilder allowMessageBodySerialization(
+                boolean allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointConsumerBuilder allowMessageBodySerialization(
+                String allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
          * Password for authenticated access.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2013,6 +2055,48 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointProducerBuilder allowMessageBodySerialization(
+                boolean allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointProducerBuilder allowMessageBodySerialization(
+                String allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
          * Password for authenticated access.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2897,6 +2981,48 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder vhost(String vhost) {
             doSetProperty("vhost", vhost);
+            return this;
+        }
+        /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointBuilder allowMessageBodySerialization(
+                boolean allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointBuilder allowMessageBodySerialization(
+                String allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
             return this;
         }
         /**
