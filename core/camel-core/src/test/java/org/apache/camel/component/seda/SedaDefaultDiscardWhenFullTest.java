@@ -31,6 +31,7 @@ public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:foo", "Bye World");
 
+        // wait a little bit for flaky CI
         Thread.sleep(10);
 
         // this message will be discarded
