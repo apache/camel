@@ -36,6 +36,9 @@ public class SedaDiscardWhenFullTest extends ContextTestSupport {
         // start route
         context.getRouteController().startRoute("foo");
 
+        // wait a little bit for flaky CI
+        Thread.sleep(10);
+
         // and now there is room for me
         template.sendBody("seda:foo?discardWhenFull=true", "Camel World");
 
