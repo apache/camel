@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -181,6 +182,13 @@ public abstract class MainSupport extends BaseMainSupport {
         completed.set(true);
         exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, DEFAULT_EXIT_CODE);
         latch.countDown();
+    }
+
+    /**
+     * Gets the complete task which allows to trigger this on demand.
+     */
+    public Runnable getCompleteTask() {
+        return this::completed;
     }
 
     @Deprecated
