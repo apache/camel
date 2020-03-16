@@ -113,6 +113,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "topologyRecoveryEnabled": target.setTopologyRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "transferexception":
         case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
+        case "allowmessagebodyserialization":
+        case "allowMessageBodySerialization": target.setAllowMessageBodySerialization(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "sslprotocol":
         case "sslProtocol": target.setSslProtocol(property(camelContext, java.lang.String.class, value)); return true;
