@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -24,6 +25,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,5 +82,21 @@ public class MailProducer extends DefaultAsyncProducer {
     @Override
     public MailEndpoint getEndpoint() {
         return (MailEndpoint) super.getEndpoint();
+    }
+
+    protected JavaMailSender getSender(Exchange exchange) {
+        // do we have special headers
+        Map<String, Object> additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), "mail.smtp.");
+        if (additional.isEmpty()) {
+            // no then use default sender
+            LOG.trace("Using default JavaMailSender");
+            return sender;
+        } else {
+            // create new mail sender specially for this
+            LOG.debug("Creating new JavaMailSender to include additional {} java mail properties", additional.size());
+            JavaMailSender customSender = getEndpoint().getConfiguration().createJavaMailSender();
+            customSender.addAdditionalJavaMailProperties(additional);
+            return customSender;
+        }
     }
 }
