@@ -1281,6 +1281,12 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        // TODO: need to revisit this in order to support dynamic endpoints uri
+        throw new UnsupportedOperationException();
+    }
+
     //
     // CatalogCamelContext
     //
