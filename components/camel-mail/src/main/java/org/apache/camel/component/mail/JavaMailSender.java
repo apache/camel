@@ -41,7 +41,7 @@ public interface JavaMailSender {
 
     void setJavaMailProperties(Properties javaMailProperties);
 
-    void addAdditionalJavaMailProperties(Map<String, Object> additional);
+    void addAdditionalJavaMailProperty(String key, String value);
 
     void setHost(String host);
 
