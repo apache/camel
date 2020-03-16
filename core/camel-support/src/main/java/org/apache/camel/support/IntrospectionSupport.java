@@ -783,7 +783,7 @@ public final class IntrospectionSupport {
     }
 
     static boolean isPropertyPlaceholder(CamelContext context, Object value) {
-        if (context != null) {
+        if (context != null && value != null) {
             String text = value.toString();
             return text.contains(PropertiesComponent.PREFIX_TOKEN) && text.contains(PropertiesComponent.SUFFIX_TOKEN);
         }
