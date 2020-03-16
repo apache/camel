@@ -90,7 +90,7 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findComponentNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(COMPONENTS_CATALOG);
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(COMPONENTS_CATALOG)) {
         if (is != null) {
             try {
                 CatalogHelper.loadLines(is, names);
@@ -98,13 +98,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
                 // ignore
             }
         }
+        } catch (IOException e1) {
+			// ignore
+		}
         return names;
     }
 
     @Override
     public List<String> findDataFormatNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(DATA_FORMATS_CATALOG);
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(DATA_FORMATS_CATALOG)) {
         if (is != null) {
             try {
                 CatalogHelper.loadLines(is, names);
@@ -112,13 +115,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
                 // ignore
             }
         }
+        } catch (IOException e1) {
+			// ignore
+		}
         return names;
     }
 
     @Override
     public List<String> findLanguageNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(LANGUAGE_CATALOG);
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(LANGUAGE_CATALOG)) {
         if (is != null) {
             try {
                 CatalogHelper.loadLines(is, names);
@@ -126,13 +132,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
                 // ignore
             }
         }
+        } catch (IOException e1) {
+			// ignore
+		}
         return names;
     }
 
     @Override
     public List<String> findOtherNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(OTHER_CATALOG);
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(OTHER_CATALOG)) {
         if (is != null) {
             try {
                 CatalogHelper.loadLines(is, names);
@@ -140,6 +149,9 @@ public class KarafRuntimeProvider implements RuntimeProvider {
                 // ignore
             }
         }
+        } catch (IOException e1) {
+			// ignore
+		}
         return names;
     }
 
