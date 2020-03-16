@@ -61,11 +61,12 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     protected ProducerTemplate directProducer;
 
     @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest" + "&autoAck=true&queue=q4&routingKey="
-                    + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
+                    + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS + "&allowMessageBodySerialization=true")
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-                    + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS + "&args=#args")
+                    + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY + "&transferException=true&requestTimeout="
+                    + TIMEOUT_MS + "&args=#args" + "&allowMessageBodySerialization=true")
     private Endpoint noAutoAckEndpoint;
 
     @EndpointInject("mock:result")

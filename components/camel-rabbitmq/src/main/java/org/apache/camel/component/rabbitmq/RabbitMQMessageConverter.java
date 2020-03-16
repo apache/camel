@@ -244,10 +244,11 @@ public class RabbitMQMessageConverter {
         return null;
     }
 
-    public void populateRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, final boolean out) {
+    public void populateRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, final boolean out,
+                                       final boolean allowMessageBodySerialization) {
         Message message = resolveMessageFrom(camelExchange, out);
         populateMessageHeaders(message, envelope, properties);
-        populateMessageBody(message, camelExchange, properties, body);
+        populateMessageBody(message, camelExchange, properties, body, allowMessageBodySerialization);
     }
 
     private Message resolveMessageFrom(final Exchange camelExchange, final boolean out) {
@@ -295,8 +296,9 @@ public class RabbitMQMessageConverter {
         }
     }
 
-    private void populateMessageBody(final Message message, final Exchange camelExchange, final AMQP.BasicProperties properties, final byte[] body) {
-        if (hasSerializeHeader(properties)) {
+    private void populateMessageBody(final Message message, final Exchange camelExchange, final AMQP.BasicProperties properties, final byte[] body,
+                                     final boolean allowMessageBodySerialization) {
+        if (allowMessageBodySerialization && hasSerializeHeader(properties)) {
             deserializeBody(camelExchange, message, body);
         } else {
             // Set the body as a byte[] and let the type converter deal with it

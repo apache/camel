@@ -18,6 +18,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "addresses": target.setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "allowcustomheaders":
         case "allowCustomHeaders": target.setAllowCustomHeaders(property(camelContext, boolean.class, value)); return true;
+        case "allowmessagebodyserialization":
+        case "allowMessageBodySerialization": target.setAllowMessageBodySerialization(property(camelContext, boolean.class, value)); return true;
         case "allownullheaders":
         case "allowNullHeaders": target.setAllowNullHeaders(property(camelContext, boolean.class, value)); return true;
         case "args": target.setArgs(property(camelContext, java.util.Map.class, value)); return true;
