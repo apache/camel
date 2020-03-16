@@ -19,6 +19,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel
 * <<Overview>>
 * <<Documentation>>
 * <<Community>>
+* <<Requirements>>
 * <<Developers>>
 
 == Overview
@@ -532,6 +533,23 @@ camel routes without them knowing
 * xref:user-stories.adoc[User Stories]
 * xref:team.adoc[Team]
 * https://github.com/camel-extra/camel-extra[Camel Extra]
+
+== Requirements
+
+=== Platform Requirements
+
+* Any platform that supports JDK 6 is required.
+
+=== JDK Requirements
+
+* Camel 2.6 or older requires JDK 1.5 or better.
+
+* Camel 2.7 onwards requires JDK 1.6 or JDK 1.7.
+
+* Camel 2.14 onwards requires JDK 1.7 or better.
+
+* Camel 2.18 onwards requires JDK 1.8
+
 
 == Developers
 
