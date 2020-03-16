@@ -713,4 +713,23 @@ These parameters should help to prevent bad performance when working with folder
 In previous versions these parameters have been evaluated too late, so that big mailboxes could still cause performance problems.
 With Camel 3.1 these parameters are evaluated earlier during the poll to avoid these problems.
 
+== Using headers with additional Java Mail Sender properties
+
+*Since Camel 3.2*
+
+When sending mails, then you can provide dynamic java mail properties for the `JavaMailSender` from
+the Exchange as message headers with keys starting with `java.smtp.`.
+
+You can set any of the `java.smtp` properties which you can find in the Java Mail documentation.
+
+For example to provide a dynamic uuid in `java.smtp.from` (SMTP MAIL command):
+
+[source,java]
+----
+    .setHeader("from", constant("reply2me@foo.com"));
+    .setHeader("java.smtp.from", method(UUID.class, "randomUUID"));
+    .to("smtp://mymailserver:1234");
+----
+
+
 include::camel-spring-boot::page$mail-starter.adoc[]
