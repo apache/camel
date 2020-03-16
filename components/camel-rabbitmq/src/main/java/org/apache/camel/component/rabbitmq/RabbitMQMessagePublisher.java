@@ -86,8 +86,9 @@ public class RabbitMQMessagePublisher {
 
             properties = endpoint.getMessageConverter().buildProperties(camelExchange).build();
         } catch (NoTypeConversionAvailableException | TypeConversionException e) {
-            if (message.getBody() instanceof Serializable) {
-                // Add the header so the reply processor knows to de-serialize it
+            if (message.getBody() instanceof Serializable && endpoint.isAllowMessageBodySerialization()) {
+                // Add the header so the reply processor knows to de-serialize
+                // it
                 message.getHeaders().put(RabbitMQEndpoint.SERIALIZE_HEADER, true);
                 properties = endpoint.getMessageConverter().buildProperties(camelExchange).build();
                 body = serializeBodyFrom(message);

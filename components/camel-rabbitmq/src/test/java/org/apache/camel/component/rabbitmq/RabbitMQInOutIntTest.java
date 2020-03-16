@@ -57,13 +57,13 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
                     + "&autoAck=true&queue=q4&routingKey=" + ROUTING_KEY
-                    + "&transferException=true&requestTimeout=" + TIMEOUT_MS)
+                    + "&transferException=true&requestTimeout=" + TIMEOUT_MS + "&allowMessageBodySerialization=true")
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
             + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
             + "&transferException=true&requestTimeout=" + TIMEOUT_MS
-            + "&queueArgs=#queueArgs")
+            + "&queueArgs=#queueArgs" + "&allowMessageBodySerialization=true")
     private Endpoint noAutoAckEndpoint;
 
     @EndpointInject(uri = "mock:result")
