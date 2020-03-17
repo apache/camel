@@ -30,6 +30,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
@@ -42,7 +43,7 @@ import spark.Service;
 public class SparkRestComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
-    
+
     /**
      * SPARK instance for the component
      */
@@ -232,7 +233,7 @@ public class SparkRestComponent extends DefaultComponent implements RestConsumer
             sparkInstance.port(getPort());
         } else {
             // if no explicit port configured, then use port from rest configuration
-            RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "spark-rest");
             int port = config.getPort();
             if (port > 0) {
                 sparkInstance.port(port);
@@ -244,7 +245,7 @@ public class SparkRestComponent extends DefaultComponent implements RestConsumer
             sparkInstance.ipAddress(host);
         } else {
             // if no explicit port configured, then use port from rest configuration
-            RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "spark-rest");
             host = config.getHost();
             if (ObjectHelper.isEmpty(host)) {
                 if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
@@ -261,11 +262,11 @@ public class SparkRestComponent extends DefaultComponent implements RestConsumer
         if (keystoreFile != null || truststoreFile != null) {
             sparkInstance.secure(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
         }
-        
+
         CamelSpark.threadPool(sparkInstance, minThreads, maxThreads, timeOutMillis);
 
         // configure component options
-        RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "spark-rest");
         // configure additional options on spark configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(sparkConfiguration, config.getComponentProperties());
@@ -307,7 +308,7 @@ public class SparkRestComponent extends DefaultComponent implements RestConsumer
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("spark-rest", true);
+            config = CamelContextHelper.getRestConfiguration(camelContext, "spark-rest");
         }
 
         Map<String, Object> map = new HashMap<>();
@@ -335,10 +336,10 @@ public class SparkRestComponent extends DefaultComponent implements RestConsumer
                 path = contextPath + "/" + path;
             }
         }
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
-        } 
+        }
 
         String url = RestComponentHelper.createRestConsumerUrl("spark-rest", verb, path, map);
 

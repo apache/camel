@@ -57,6 +57,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
@@ -1048,8 +1049,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("jetty", true);
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), "jetty");
         }
+
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -1083,11 +1085,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
-        
+
         RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
         String url = RestComponentHelper.createRestConsumerUrl("jetty", scheme, host, port, path, map);
@@ -1126,16 +1128,16 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         holder.setAsyncSupported(true);
         holder.setInitParameter(CamelServlet.ASYNC_PARAM, Boolean.toString(endpoint.isAsync()));
         context.addServlet(holder, "/*");
-        
+
         File file = File.createTempFile("camel", "");
         file.delete();
-        
+
         //must register the MultipartConfig to make jetty server multipart aware
         holder.getRegistration().setMultipartConfig(new MultipartConfigElement(file.getParentFile().getAbsolutePath(), -1, -1, 0));
 
         // use rest enabled resolver in case we use rest
         camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
-        
+
         //must make RFC7578 as default to avoid using the deprecated MultiPartInputStreamParser
         connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
              .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
@@ -1245,7 +1247,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration("jetty", true);
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "jetty");
+
         // configure additional options on jetty configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());

@@ -33,6 +33,7 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StaticService;
+import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -73,8 +74,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         if (apiProducer == null) {
             Endpoint restApiEndpoint = null;
             Endpoint restEndpoint = null;
-            for (Map.Entry<String, Endpoint> entry : camelContext.getEndpointMap().entrySet()) {
-                String uri = entry.getKey();
+            for (Map.Entry<? extends ValueHolder<String>, Endpoint> entry : camelContext.getEndpointRegistry().entrySet()) {
+                String uri = entry.getKey().get();
                 if (uri.startsWith("rest-api:")) {
                     restApiEndpoint = entry.getValue();
                     break;
@@ -89,11 +90,15 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 String componentName = rest.getProducerComponentName();
 
                 if (componentName != null) {
-                    RestConfiguration config = camelContext.getRestConfiguration(componentName, true);
+                    RestConfiguration config = camelContext.getRestConfiguration();
+
                     String apiComponent = config.getApiComponent() != null ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
                     String path = config.getApiContextPath() != null ? config.getApiContextPath() : "api-doc";
-                    restApiEndpoint = camelContext.getEndpoint(String.format("rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#", 
-                        path, camelContext.getName(), componentName, apiComponent));
+                    String uri = String.format(
+                        "rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#",
+                        path, camelContext.getName(), componentName, apiComponent);
+
+                    restApiEndpoint = camelContext.getEndpoint(uri);
                 }
             }
 
@@ -113,8 +118,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 Exchange dummy = apiProducer.getEndpoint().createExchange();
                 apiProducer.process(dummy);
 
-                String json = dummy.getMessage().getBody(String.class);
-                return json;
+                return dummy.getMessage().getBody(String.class);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }

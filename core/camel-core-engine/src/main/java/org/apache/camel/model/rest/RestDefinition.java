@@ -43,7 +43,6 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -677,23 +676,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         validateUniquePaths();
 
         List<RouteDefinition> answer = new ArrayList<>();
-        if (camelContext.getRestConfigurations().isEmpty()) {
-            // make sure to initialize a rest configuration when its empty
-            // lookup a global which may have been setup via camel-spring-boot
-            // etc
-            RestConfiguration conf = CamelContextHelper.lookup(camelContext, RestConstants.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
-            if (conf == null) {
-                conf = CamelContextHelper.findByType(camelContext, RestConfiguration.class);
-            }
-            if (conf != null) {
-                camelContext.setRestConfiguration(conf);
-            } else {
-                camelContext.setRestConfiguration(new RestConfiguration());
-            }
-        }
-        for (RestConfiguration config : camelContext.getRestConfigurations()) {
-            addRouteDefinition(camelContext, answer, config.getComponent(), config.getProducerComponent());
-        }
+
+        RestConfiguration config = camelContext.getRestConfiguration();
+
+        addRouteDefinition(camelContext, answer, config.getComponent(), config.getProducerComponent());
+
         return answer;
     }
 

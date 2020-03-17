@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.ObjectHelper;
 
@@ -587,4 +589,51 @@ public final class CamelContextHelper {
         return parent != null ? parent.getId() : null;
     }
 
+    /**
+     * Gets the {@link RestConfiguration} from the {@link CamelContext} and check if the component which consumes the
+     * configuration is compatible with the one for which the rest configuration is set-up.
+     *
+     * @param camelContext the camel context
+     * @param component the component that will consume the {@link RestConfiguration}
+     * @return the {@link RestConfiguration}
+     * @throws IllegalArgumentException is the component is not compatible with the {@link RestConfiguration} set-up
+     */
+    public static RestConfiguration getRestConfiguration(CamelContext camelContext, String component) {
+        RestConfiguration configuration = camelContext.getRestConfiguration();
+
+        validateRestConfigurationComponent(component, configuration.getComponent());
+
+        return configuration;
+    }
+
+    /**
+     * Gets the {@link RestConfiguration} from the {@link CamelContext} and check if the component which consumes the
+     * configuration is compatible with the one for which the rest configuration is set-up.
+     *
+     * @param camelContext the camel context
+     * @param component the component that will consume the {@link RestConfiguration}
+     * @param producerComponent the producer component that will consume the {@link RestConfiguration}
+     * @return the {@link RestConfiguration}
+     * @throws IllegalArgumentException is the component is not compatible with the {@link RestConfiguration} set-up
+     */
+    public static RestConfiguration getRestConfiguration(CamelContext camelContext, String component, String producerComponent) {
+        RestConfiguration configuration = camelContext.getRestConfiguration();
+
+        validateRestConfigurationComponent(component, configuration.getComponent());
+        validateRestConfigurationComponent(producerComponent, configuration.getProducerComponent());
+
+        return configuration;
+    }
+
+    private static void validateRestConfigurationComponent(String component, String configurationComponent) {
+        if (ObjectHelper.isEmpty(component) || ObjectHelper.isEmpty(configurationComponent)) {
+            return;
+        }
+
+        if (!Objects.equals(component, configurationComponent)) {
+            throw new IllegalArgumentException(
+                "No RestConfiguration for component: " + component + " found, RestConfiguration targets: " + configurationComponent
+            );
+        }
+    }
 }

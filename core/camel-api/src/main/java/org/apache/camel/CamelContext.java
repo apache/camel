@@ -622,30 +622,6 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     RestConfiguration getRestConfiguration();
 
     /**
-     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
-     *
-     * @param restConfiguration the REST configuration
-     */
-    @Deprecated
-    void addRestConfiguration(RestConfiguration restConfiguration);
-
-    /**
-     * Gets the REST configuration for the given component
-     *
-     * @param component the component name to get the configuration
-     * @param defaultIfNotFound determine if the default configuration is returned if there isn't a
-     *        specific configuration for the given component
-     * @return the configuration, or <tt>null</tt> if none has been configured.
-     */
-    RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
-
-    /**
-     * Gets all the RestConfiguration's
-     */
-    @Deprecated
-    Collection<RestConfiguration> getRestConfigurations();
-
-    /**
      * Gets the {@link org.apache.camel.spi.RestRegistry} to use
      */
     RestRegistry getRestRegistry();
@@ -740,7 +716,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws IllegalArgumentException is thrown if property placeholders was used and there was an error resolving them
      */
     String resolvePropertyPlaceholders(String text);
-    
+
     /**
      * Returns the configured properties component or create one if none has been configured.
      *
@@ -1092,9 +1068,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return the uuidGenerator
      */
     UuidGenerator getUuidGenerator();
-    
+
     /**
-     * Sets a custom {@link UuidGenerator} (should only be set once) 
+     * Sets a custom {@link UuidGenerator} (should only be set once)
      *
      * @param uuidGenerator the UUID Generator
      */

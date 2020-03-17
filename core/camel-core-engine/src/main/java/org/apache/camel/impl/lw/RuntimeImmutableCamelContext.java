@@ -714,16 +714,6 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     }
 
     @Override
-    public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Collection<RestConfiguration> getRestConfigurations() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public RestRegistry getRestRegistry() {
         throw new UnsupportedOperationException();
     }
@@ -1623,11 +1613,6 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
 
     @Override
     public void setRestConfiguration(RestConfiguration restConfiguration) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addRestConfiguration(RestConfiguration restConfiguration) {
         throw new UnsupportedOperationException();
     }
 

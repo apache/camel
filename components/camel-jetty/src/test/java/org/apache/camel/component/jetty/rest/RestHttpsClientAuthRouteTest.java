@@ -94,7 +94,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RestConfigurationDefinition restConfig = restConfiguration("jetty").scheme("https").host("localhost").port(port);
+                RestConfigurationDefinition restConfig = restConfiguration().scheme("https").host("localhost").port(port);
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
