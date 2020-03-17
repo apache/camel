@@ -543,42 +543,6 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
 
-    /**
-     * Whether it's allowed to add new routes after Camel has been started.
-     * This is enabled by default.
-     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
-     * <p/>
-     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
-     * As this affects the entire JVM where Camel JARs are on the classpath.
-     */
-    void setAllowAddingNewRoutes(boolean allowAddingNewRoutes);
-
-    /**
-     * Whether its allowed to add new routes after Camel has been started.
-     * This is enabled by default.
-     * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
-     * <p/>
-     * This should only be done on a JVM with a single Camel application (microservice like camel-main, camel-quarkus, camel-spring-boot).
-     * As this affects the entire JVM where Camel JARs are on the classpath.
-     */
-    boolean isAllowAddingNewRoutes();
-
-    /**
-     * Camel context can be configured to remove all references to the model definitions
-     * after it has been started.  It can be used in addition to the {@link #setAllowAddingNewRoutes(boolean)}
-     * method to reduce the footprint.
-     *
-     * @see #isAllowAddingNewRoutes()
-     * @param clearModelReferences
-     */
-    @Experimental
-    void setClearModelReferences(boolean clearModelReferences);
-
-    /**
-     * If references to the model are removed when Camel is started or not.
-     */
-    boolean isClearModelReferences();
-
     RouteController getInternalRouteController();
 
     void addRoute(Route route);

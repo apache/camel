@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +24,12 @@ import java.util.function.Function;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.impl.transformer.TransformerKey;
@@ -52,7 +47,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
@@ -129,17 +123,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
         model.addRouteDefinitions(routeDefinitions);
     }
 
     @Override
     public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
         model.addRouteDefinition(routeDefinition);
     }
 
@@ -160,9 +148,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
         model.addRestDefinitions(restDefinitions, addToRoutes);
     }
 
@@ -379,37 +364,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     @Override
     protected ExecutorServiceManager createExecutorServiceManager() {
         return new DefaultExecutorServiceManager(this);
-    }
-
-    @Override
-    protected void clearModelReferences() {
-        model = (Model) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Model.class }, new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                throw new UnsupportedOperationException("Model invocations are not supported at runtime");
-            }
-        });
-        for (Route route : getRoutes()) {
-            clearModelReferences(route);
-        }
-    }
-
-    private void clearModelReferences(Route r) {
-        if (r instanceof DefaultRoute) {
-            ((DefaultRoute) r).clearModelReferences();
-        }
-        clearModelReferences(r.navigate());
-    }
-
-    private void clearModelReferences(Navigate<Processor> nav) {
-        for (Processor processor : nav.next()) {
-            if (processor instanceof DefaultChannel) {
-                ((DefaultChannel) processor).clearModelReferences();
-            }
-            if (processor instanceof Navigate) {
-                clearModelReferences((Navigate<Processor>) processor);
-            }
-        }
     }
 
     @Override

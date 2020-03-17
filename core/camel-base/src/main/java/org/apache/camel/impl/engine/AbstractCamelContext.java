@@ -226,8 +226,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
-    private boolean allowAddingNewRoutes = true;
-    private boolean clearModelReferences;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
@@ -1157,10 +1155,6 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void addRoute(Route route) {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
-
         synchronized (this.routes) {
             this.routes.add(route);
         }
@@ -1168,9 +1162,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addRoutes(final RoutesBuilder builder) throws Exception {
-        if (isStarted() && !isAllowAddingNewRoutes()) {
-            throw new IllegalArgumentException("Adding new routes after CamelContext has been started is not allowed");
-        }
         try (LifecycleHelper helper = new LifecycleHelper()) {
             init();
             LOG.debug("Adding routes from builder: {}", builder);
@@ -1938,24 +1929,6 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public boolean isAllowAddingNewRoutes() {
-        return allowAddingNewRoutes;
-    }
-
-    @Override
-    public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
-        this.allowAddingNewRoutes = allowAddingNewRoutes;
-    }
-
-    public boolean isClearModelReferences() {
-        return clearModelReferences;
-    }
-
-    public void setClearModelReferences(boolean clearModelReferences) {
-        this.clearModelReferences = clearModelReferences;
-    }
-
-    @Override
     public Registry getRegistry() {
         if (registry == null) {
             synchronized (lock) {
@@ -2551,16 +2524,6 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        if (!isAllowAddingNewRoutes()) {
-            LOG.info("Adding new routes after CamelContext has started is not allowed");
-            disallowAddingNewRoutes();
-        }
-
-        if (isClearModelReferences()) {
-            LOG.info("Clearing model references");
-            clearModelReferences();
-        }
-
         if (LOG.isInfoEnabled()) {
             // count how many routes are actually started
             int started = 0;
@@ -2896,17 +2859,6 @@ public abstract class AbstractCamelContext extends BaseService
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextDestroyed(this);
-    }
-
-    /**
-     * Strategy invoked when adding new routes after CamelContext has been started is not allowed.
-     * This is used to do some internal optimizations.
-     */
-    protected void disallowAddingNewRoutes() {
-        ReifierStrategy.clearReifiers();
-    }
-
-    protected void clearModelReferences() {
     }
 
     public void startRouteDefinitions() throws Exception {
