@@ -21,6 +21,9 @@ package org.apache.camel.builder;
  * reference
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
+
+    public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
+
     private final String ref;
     private boolean supportTransacted;
 

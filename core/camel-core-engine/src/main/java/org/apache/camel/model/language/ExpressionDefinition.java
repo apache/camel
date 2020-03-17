@@ -32,7 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.Predicate;
-import org.apache.camel.reifier.language.ExpressionReifier;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
@@ -192,7 +192,11 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
-        return ExpressionReifier.reifier(camelContext, this).createExpression();
+        return camelContext.adapt(ModelCamelContext.class).createExpression(this);
+    }
+
+    public Predicate createPredicate(CamelContext camelContext) {
+        return camelContext.adapt(ModelCamelContext.class).createPredicate(this);
     }
 
     //
@@ -215,7 +219,7 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
     @Override
     public boolean matches(Exchange exchange) {
         if (predicate == null) {
-            predicate = ExpressionReifier.reifier(exchange.getContext(), this).createPredicate();
+            predicate = createPredicate(exchange.getContext());
         }
         ObjectHelper.notNull(predicate, "predicate");
         return predicate.matches(exchange);

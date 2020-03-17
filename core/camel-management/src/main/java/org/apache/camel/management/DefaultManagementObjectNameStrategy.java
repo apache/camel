@@ -326,7 +326,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             if (builder instanceof ErrorHandlerBuilderRef) {
                 builderRef = (ErrorHandlerBuilderRef) builder;
                 // does it refer to a non default error handler then do a 2nd lookup
-                if (!builderRef.getRef().equals(ErrorHandlerReifier.DEFAULT_ERROR_HANDLER_BUILDER)) {
+                if (!builderRef.getRef().equals(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER)) {
                     refBuilder = ErrorHandlerReifier.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
                     if (refBuilder != null) {
                         ref = builderRef.getRef();
