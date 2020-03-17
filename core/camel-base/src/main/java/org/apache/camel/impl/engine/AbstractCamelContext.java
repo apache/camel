@@ -197,7 +197,7 @@ public abstract class AbstractCamelContext extends BaseService
     private boolean autoCreateComponents = true;
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
     private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
-    private Map<String, RestConfiguration> restConfigurations = new ConcurrentHashMap<>();
+    private volatile RestConfiguration restConfiguration;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     private Set<LogListener> logListeners = new LinkedHashSet<>();
@@ -2006,39 +2006,19 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public RestConfiguration getRestConfiguration() {
-        return restConfigurations.get("");
+        if (restConfiguration == null) {
+            synchronized (lock) {
+                if (restConfiguration == null) {
+                    setRestConfiguration(createRestConfiguration());
+                }
+            }
+        }
+        return restConfiguration;
     }
 
     @Override
     public void setRestConfiguration(RestConfiguration restConfiguration) {
-        restConfigurations.put("", restConfiguration);
-    }
-
-    @Override
-    public Collection<RestConfiguration> getRestConfigurations() {
-        return restConfigurations.values();
-    }
-
-    @Override
-    public void addRestConfiguration(RestConfiguration restConfiguration) {
-        restConfigurations.put(restConfiguration.getComponent(), restConfiguration);
-    }
-
-    @Override
-    public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotExist) {
-        if (component == null) {
-            component = "";
-        }
-        RestConfiguration config = restConfigurations.get(component);
-        if (config == null && defaultIfNotExist) {
-            // grab the default configuration
-            config = getRestConfiguration();
-            if (config == null || (config.getComponent() != null && !config.getComponent().equals(component))) {
-                config = new RestConfiguration();
-                restConfigurations.put(component, config);
-            }
-        }
-        return config;
+        this.restConfiguration = restConfiguration;
     }
 
     @Override
@@ -4525,6 +4505,19 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry();
 
     protected abstract ValidatorRegistry<ValidatorKey> createValidatorRegistry();
+
+    protected RestConfiguration createRestConfiguration() {
+        // lookup a global which may have been on a container such spring-boot / CDI / etc.
+        RestConfiguration conf = CamelContextHelper.lookup(this, RestConfiguration.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
+        if (conf == null) {
+            conf = CamelContextHelper.findByType(this, RestConfiguration.class);
+        }
+        if (conf == null) {
+            conf = new RestConfiguration();
+        }
+
+        return conf;
+    }
 
     @Override
     public RouteController getInternalRouteController() {

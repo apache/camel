@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -48,7 +49,8 @@ public class WebhookComponent extends DefaultComponent {
         }
 
         WebhookConfiguration config = configuration != null ? configuration.copy() : new WebhookConfiguration();
-        RestConfiguration restConfig = getCamelContext().getRestConfiguration(config.getWebhookComponentName(), true);
+
+        RestConfiguration restConfig = CamelContextHelper.getRestConfiguration(getCamelContext(), config.getWebhookComponentName());
         config.storeConfiguration(restConfig);
 
         WebhookEndpoint endpoint = new WebhookEndpoint(uri, this, config);

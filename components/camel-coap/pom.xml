@@ -79,11 +79,6 @@
             <artifactId>camel-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jetty</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>

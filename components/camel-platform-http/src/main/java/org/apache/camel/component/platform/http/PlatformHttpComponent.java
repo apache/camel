@@ -28,6 +28,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
@@ -103,7 +104,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, true);
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
         }
 
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME, config);
@@ -113,11 +114,11 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
-        
+
         RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
         // do not append with context-path as the servlet path should be without context-path

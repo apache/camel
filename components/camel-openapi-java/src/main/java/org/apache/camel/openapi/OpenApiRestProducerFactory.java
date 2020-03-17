@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -100,13 +101,13 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             final JsonNode node = mapper.readTree(is);
             LOG.debug("Loaded openApi api-doc:\n{}", node.toPrettyString());
             return (OasDocument)Library.readDocument(node);
-            
-            
+
+
         } finally {
             IOHelper.close(is);
         }
-        
-        
+
+
     }
 
     private OasOperation getOpenApiOperation(OasDocument openApi, String verb, String path) {
@@ -166,7 +167,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                             list.add(ct);
                         }
                     }
-                    
+
                 }
                 if (list == null || list.isEmpty()) {
                     if (openApi instanceof Oas20Document) {
@@ -187,13 +188,13 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                     list = ((Oas20Operation)operation).consumes;
                 } else if (operation instanceof Oas30Operation) {
                     Oas30Operation oas30Operation = (Oas30Operation)operation;
-                    if (oas30Operation.requestBody != null 
-                        && oas30Operation.requestBody.content != null) { 
+                    if (oas30Operation.requestBody != null
+                        && oas30Operation.requestBody.content != null) {
                         for (String ct : oas30Operation.requestBody.content.keySet()) {
                             list.add(ct);
                         }
                     }
-                        
+
                 }
                 if (list == null || list.isEmpty()) {
                     if (openApi instanceof Oas20Document) {
@@ -211,18 +212,19 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
             String basePath = null;
             String uriTemplate = null;
             if (host == null) {
-                    
+
                 //if no explicit host has been configured then use host and base path from the openApi api-doc
                 host = RestOpenApiSupport.getHostFromOasDocument(openApi);
                 basePath = RestOpenApiSupport.getBasePathFromOasDocument(openApi);
                 uriTemplate = path;
-                
+
             } else {
                 // path includes also uri template
                 basePath = path;
                 uriTemplate = null;
             }
-            RestConfiguration config = camelContext.getRestConfiguration(componentName, true);   
+
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, componentName);
             return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
 
         } else {

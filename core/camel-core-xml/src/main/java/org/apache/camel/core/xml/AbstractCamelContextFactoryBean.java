@@ -438,23 +438,23 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().addRestDefinitions(getRests(), false);
 
             // convert rests api-doc into routes so they are routes for runtime
-            for (RestConfiguration config : getContext().getRestConfigurations()) {
-                if (config.getApiContextPath() != null) {
-                    // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
-                    // to the CamelContext, as we only want to setup rest-api once
-                    // so we check all existing routes if they have rest-api route already added
-                    boolean hasRestApi = false;
-                    for (RouteDefinition route : getContext().getRouteDefinitions()) {
-                        FromDefinition from = route.getInput();
-                        if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
-                            hasRestApi = true;
-                        }
+            RestConfiguration config = getContext().getRestConfiguration();
+
+            if (config.getApiContextPath() != null) {
+                // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
+                // to the CamelContext, as we only want to setup rest-api once
+                // so we check all existing routes if they have rest-api route already added
+                boolean hasRestApi = false;
+                for (RouteDefinition route : getContext().getRouteDefinitions()) {
+                    FromDefinition from = route.getInput();
+                    if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
+                        hasRestApi = true;
                     }
-                    if (!hasRestApi) {
-                        RouteDefinition route = RestDefinition.asRouteApiDefinition(getContext(), config);
-                        LOG.debug("Adding routeId: {} as rest-api route", route.getId());
-                        getRoutes().add(route);
-                    }
+                }
+                if (!hasRestApi) {
+                    RouteDefinition route = RestDefinition.asRouteApiDefinition(getContext(), config);
+                    LOG.debug("Adding routeId: {} as rest-api route", route.getId());
+                    getRoutes().add(route);
                 }
             }
 

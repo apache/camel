@@ -40,6 +40,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.RestProducerFactoryHelper;
@@ -351,7 +352,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("netty-http", true);
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), "netty-http");
         }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
@@ -383,11 +384,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         // allow HTTP Options as we want to handle CORS in rest-dsl
         boolean cors = config.isEnableCORS();
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
-        
+
         RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
         String url = RestComponentHelper.createRestConsumerUrl("netty-http", scheme, host, port, path, map);
@@ -404,6 +405,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         return consumer;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Producer createProducer(CamelContext camelContext, String host,
                                    String verb, String basePath, String uriTemplate, String queryParameters,
@@ -422,13 +424,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             url += "/" + uriTemplate;
         }
 
-        RestConfiguration config = getCamelContext().getRestConfiguration("netty-http", false);
-        if (config == null) {
-            config = getCamelContext().getRestConfiguration();
-        }
-        if (config == null) {
-            config = getCamelContext().getRestConfiguration("netty-http", true);
-        }
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "netty-http");
 
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
@@ -471,7 +467,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration("netty-http", true);
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "netty-http");
+
         // configure additional options on netty-http configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());

@@ -33,6 +33,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -279,7 +280,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("servlet", true);
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), "servlet");
         }
 
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties("servlet", config);
@@ -289,14 +290,14 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
-        
+
         RestComponentHelper.addHttpRestrictParam(map, verb, cors);
 
-        String url = RestComponentHelper.createRestConsumerUrl("servlet", path, map);  
+        String url = RestComponentHelper.createRestConsumerUrl("servlet", path, map);
 
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(endpoint, parameters);
@@ -324,7 +325,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration("servlet", true);
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "servlet");
+
         // configure additional options on jetty configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());

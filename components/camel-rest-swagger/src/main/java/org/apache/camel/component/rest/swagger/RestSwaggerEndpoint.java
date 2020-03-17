@@ -31,6 +31,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.models.HttpMethod;
@@ -59,6 +61,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -67,7 +70,6 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.client.methods.HttpGet;
 
-import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -332,13 +334,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final CamelContext camelContext = getCamelContext();
-        final RestConfiguration specificConfiguration = camelContext.getRestConfiguration(assignedComponentName, false);
-        if (specificConfiguration != null && isNotEmpty(specificConfiguration.getContextPath())) {
-            return specificConfiguration.getContextPath();
-        }
-
-        final RestConfiguration restConfiguration = camelContext.getRestConfiguration("rest-swagger", true);
+        final RestConfiguration restConfiguration = CamelContextHelper.getRestConfiguration(camelContext, assignedComponentName);
         final String restConfigurationBasePath = restConfiguration.getContextPath();
+
         if (isNotEmpty(restConfigurationBasePath)) {
             return restConfigurationBasePath;
         }
@@ -431,22 +429,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final CamelContext camelContext = getCamelContext();
-
-        final RestConfiguration specificRestConfiguration = camelContext.getRestConfiguration(assignedComponentName,
-            false);
-        final String specificConfigurationHost = hostFrom(specificRestConfiguration);
-        if (specificConfigurationHost != null) {
-            return specificConfigurationHost;
-        }
-
-        final RestConfiguration componentRestConfiguration = camelContext.getRestConfiguration("rest-swagger", false);
-        final String componentConfigurationHost = hostFrom(componentRestConfiguration);
-        if (componentConfigurationHost != null) {
-            return componentConfigurationHost;
-        }
-
-        final RestConfiguration globalRestConfiguration = camelContext.getRestConfiguration();
+        final RestConfiguration globalRestConfiguration = CamelContextHelper.getRestConfiguration(camelContext, assignedComponentName);
         final String globalConfigurationHost = hostFrom(globalRestConfiguration);
+
         if (globalConfigurationHost != null) {
             return globalConfigurationHost;
         }
