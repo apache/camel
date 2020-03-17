@@ -40,7 +40,7 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
 
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            IAM2Endpoint endpoint = (IAM2Endpoint)component.createEndpoint("aws2-iam://TestDomain");
+            component.createEndpoint("aws2-iam://TestDomain");
         });
     }
 }
