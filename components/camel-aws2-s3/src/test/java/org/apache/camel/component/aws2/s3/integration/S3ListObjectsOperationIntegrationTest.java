@@ -49,6 +49,7 @@ public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @SuppressWarnings("unchecked")
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
