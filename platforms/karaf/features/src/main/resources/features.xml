@@ -1775,13 +1775,15 @@
   <feature name='camel-mongodb' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
-    <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
+    <bundle dependency='true'>mvn:org.mongodb/bson/${mongo-java-driver-version}</bundle>
+    <bundle dependency='true'>mvn:org.mongodb/mongodb-driver-core/${mongo-java-driver-version}</bundle>
+    <bundle dependency='true'>mvn:org.mongodb/mongodb-driver-sync/${mongo-java-driver-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mongodb/${project.version}</bundle>
   </feature>
   <feature name='camel-mongodb-gridfs' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
-    <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
+    <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo3-java-driver-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mongodb-gridfs/${project.version}</bundle>
   </feature>
   <feature name='camel-msv' version='${project.version}' start-level='50'>
