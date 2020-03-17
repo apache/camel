@@ -45,7 +45,7 @@ public class CwComponentTest extends CamelTestSupport {
     @Test
     public void sendMetricFromHeaderValues() throws Exception {
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:start", new Processor() {
+        template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Cw2Constants.METRIC_NAMESPACE, "camel.apache.org/overriden");
                 exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "OverridenMetric");
