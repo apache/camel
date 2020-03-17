@@ -40,7 +40,7 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
 
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            AWS2EC2Endpoint endpoint = (AWS2EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain");
+            component.createEndpoint("aws-ec2://TestDomain");
         });
     }
 }
