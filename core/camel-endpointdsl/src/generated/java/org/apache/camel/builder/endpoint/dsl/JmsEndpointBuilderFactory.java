@@ -1061,6 +1061,32 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedJmsEndpointConsumerBuilder artemisStreamingEnabled(
+                boolean artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
+            return this;
+        }
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedJmsEndpointConsumerBuilder artemisStreamingEnabled(
+                String artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
+            return this;
+        }
+        /**
          * Whether to startup the JmsConsumer message listener asynchronously,
          * when starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
@@ -3067,6 +3093,32 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedJmsEndpointProducerBuilder artemisStreamingEnabled(
+                boolean artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
+            return this;
+        }
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedJmsEndpointProducerBuilder artemisStreamingEnabled(
+                String artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
+            return this;
+        }
+        /**
          * Whether to startup the JmsConsumer message listener asynchronously,
          * when starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
@@ -4338,6 +4390,32 @@ public interface JmsEndpointBuilderFactory {
         default AdvancedJmsEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
+            return this;
+        }
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedJmsEndpointBuilder artemisStreamingEnabled(
+                boolean artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
+            return this;
+        }
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AdvancedJmsEndpointBuilder artemisStreamingEnabled(
+                String artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
             return this;
         }
         /**

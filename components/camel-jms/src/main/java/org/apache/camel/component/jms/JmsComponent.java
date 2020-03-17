@@ -996,6 +996,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         configuration.setMessageCreatedStrategy(messageCreatedStrategy);
     }
 
+    public boolean isArtemisStreamingEnabled() {
+        return configuration.isArtemisStreamingEnabled();
+    }
+
+    public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
+        configuration.setArtemisStreamingEnabled(artemisStreamingEnabled);
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 

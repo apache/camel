@@ -29,6 +29,8 @@ public class JmsEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowSerializedHeaders": target.getConfiguration().setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "alwayscopymessage":
         case "alwaysCopyMessage": target.getConfiguration().setAlwaysCopyMessage(property(camelContext, boolean.class, value)); return true;
+        case "artemisstreamingenabled":
+        case "artemisStreamingEnabled": target.getConfiguration().setArtemisStreamingEnabled(property(camelContext, boolean.class, value)); return true;
         case "asyncconsumer":
         case "asyncConsumer": target.getConfiguration().setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
         case "asyncstartlistener":
