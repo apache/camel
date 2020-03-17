@@ -40,7 +40,7 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
 
         KMS2Component component = context.getComponent("aws2-kms", KMS2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            KMS2Endpoint endpoint = (KMS2Endpoint)component.createEndpoint("aws2-kms://TestDomain");
+            component.createEndpoint("aws2-kms://TestDomain");
         });
     }
 }
