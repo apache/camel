@@ -168,6 +168,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean allowNullHeaders;
     @UriParam(label = "allowMessageBodySerialization", defaultValue = "false")
     private boolean allowMessageBodySerialization;
+    // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private String replyToType = ReplyToType.Temporary.name();
