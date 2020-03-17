@@ -972,7 +972,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(getTypeConverterExistsLoggingLevel());
         }
         if (getRestConfiguration() != null) {
-            getRestConfiguration().asRestConfiguration(context, context.getRestConfiguration());
+            RestConfiguration config = context.getRestConfiguration();
+            if (config == null) {
+                config = new RestConfiguration();
+                context.setRestConfiguration(config);
+            }
+            if (context.getRestConfiguration() != null) {
+                // merge on top of existing
+                getRestConfiguration().asRestConfiguration(context, config);
+            }
         }
         if (getDefaultServiceCallConfiguration() != null) {
             context.setServiceCallConfiguration(getDefaultServiceCallConfiguration());
