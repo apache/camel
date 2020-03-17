@@ -685,11 +685,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                                                                              PropertiesParser.class);
                 pc.setPropertiesParser(parser);
             }
-            
+
             if (def.getDefaultFallbackEnabled() != null) {
                 pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }
-            
+
             if (def.getFunctions() != null && !def.getFunctions().isEmpty()) {
                 for (CamelPropertyPlaceholderFunctionDefinition function : def.getFunctions()) {
                     String ref = function.getRef();
@@ -972,7 +972,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(getTypeConverterExistsLoggingLevel());
         }
         if (getRestConfiguration() != null) {
-            context.setRestConfiguration(getRestConfiguration().asRestConfiguration(context));
+            getRestConfiguration().asRestConfiguration(context, context.getRestConfiguration());
         }
         if (getDefaultServiceCallConfiguration() != null) {
             context.setServiceCallConfiguration(getDefaultServiceCallConfiguration());
