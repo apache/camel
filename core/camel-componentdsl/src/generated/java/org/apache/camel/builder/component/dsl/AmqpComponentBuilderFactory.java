@@ -996,6 +996,19 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AmqpComponentBuilder artemisStreamingEnabled(
+                boolean artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
+            return this;
+        }
+        /**
          * Whether to startup the JmsConsumer message listener asynchronously,
          * when starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
@@ -1654,6 +1667,7 @@ public interface AmqpComponentBuilderFactory {
             case "allowAutoWiredConnectionFactory": ((AMQPComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
             case "allowAutoWiredDestinationResolver": ((AMQPComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
             case "allowSerializedHeaders": getOrCreateConfiguration((AMQPComponent) component).setAllowSerializedHeaders((boolean) value); return true;
+            case "artemisStreamingEnabled": getOrCreateConfiguration((AMQPComponent) component).setArtemisStreamingEnabled((boolean) value); return true;
             case "asyncStartListener": getOrCreateConfiguration((AMQPComponent) component).setAsyncStartListener((boolean) value); return true;
             case "asyncStopListener": getOrCreateConfiguration((AMQPComponent) component).setAsyncStopListener((boolean) value); return true;
             case "basicPropertyBinding": ((AMQPComponent) component).setBasicPropertyBinding((boolean) value); return true;
