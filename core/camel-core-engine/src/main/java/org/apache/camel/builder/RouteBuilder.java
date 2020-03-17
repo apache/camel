@@ -17,9 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -67,7 +65,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
-    private Map<String, RestConfigurationDefinition> restConfigurations;
+    private RestConfigurationDefinition restConfiguration;
     private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
@@ -160,26 +158,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @return the builder
      */
     public RestConfigurationDefinition restConfiguration() {
-        return restConfiguration("");
-    }
-
-    /**
-     * Configures the REST service for the given component
-     *
-     * @return the builder
-     */
-    public RestConfigurationDefinition restConfiguration(String component) {
-        if (restConfigurations == null) {
-            restConfigurations = new HashMap<>();
-        }
-        RestConfigurationDefinition restConfiguration = restConfigurations.get(component);
         if (restConfiguration == null) {
             restConfiguration = new RestConfigurationDefinition();
-            if (!component.isEmpty()) {
-                restConfiguration.component(component);
-            }
-            restConfigurations.put(component, restConfiguration);
         }
+
         return restConfiguration;
     }
 
@@ -528,39 +510,37 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         getRestCollection().setCamelContext(camelContext);
 
         // setup rest configuration before adding the rests
-        if (getRestConfigurations() != null) {
-            for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfigurations().entrySet()) {
-                entry.getValue().asRestConfiguration(
-                    getContext(),
-                    camelContext.getRestConfiguration(entry.getKey(), true));
-            }
+        if (restConfiguration != null) {
+            restConfiguration.asRestConfiguration(getContext(), camelContext.getRestConfiguration());
         }
+
         // cannot add rests as routes yet as we need to initialize this
         // specially
         camelContext.getExtension(Model.class).addRestDefinitions(getRestCollection().getRests(), false);
 
         // convert rests api-doc into routes so they are routes for runtime
-        for (RestConfiguration config : camelContext.getRestConfigurations()) {
-            if (config.getApiContextPath() != null) {
-                // avoid adding rest-api multiple times, in case multiple
-                // RouteBuilder classes is added
-                // to the CamelContext, as we only want to setup rest-api once
-                // so we check all existing routes if they have rest-api route
-                // already added
-                boolean hasRestApi = false;
-                for (RouteDefinition route : camelContext.getExtension(Model.class).getRouteDefinitions()) {
-                    FromDefinition from = route.getInput();
-                    if (from.getEndpointUri() != null && from.getEndpointUri().startsWith("rest-api:")) {
-                        hasRestApi = true;
-                    }
-                }
-                if (!hasRestApi) {
-                    RouteDefinition route = RestDefinition.asRouteApiDefinition(camelContext, config);
-                    log.debug("Adding routeId: {} as rest-api route", route.getId());
-                    getRouteCollection().route(route);
+        RestConfiguration config = camelContext.getRestConfiguration();
+
+        if (config.getApiContextPath() != null) {
+            // avoid adding rest-api multiple times, in case multiple
+            // RouteBuilder classes is added
+            // to the CamelContext, as we only want to setup rest-api once
+            // so we check all existing routes if they have rest-api route
+            // already added
+            boolean hasRestApi = false;
+            for (RouteDefinition route : camelContext.getExtension(Model.class).getRouteDefinitions()) {
+                FromDefinition from = route.getInput();
+                if (from.getEndpointUri() != null && from.getEndpointUri().startsWith("rest-api:")) {
+                    hasRestApi = true;
                 }
             }
+            if (!hasRestApi) {
+                RouteDefinition route = RestDefinition.asRouteApiDefinition(camelContext, config);
+                log.debug("Adding routeId: {} as rest-api route", route.getId());
+                getRouteCollection().route(route);
+            }
         }
+
         // add rest as routes and have them prepared as well via
         // routeCollection.route method
         getRestCollection().getRests().forEach(rest -> rest.asRouteDefinition(getContext()).forEach(route -> getRouteCollection().route(route)));
@@ -610,8 +590,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return restCollection;
     }
 
-    public Map<String, RestConfigurationDefinition> getRestConfigurations() {
-        return restConfigurations;
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
     }
 
     public void setRestCollection(RestsDefinition restCollection) {

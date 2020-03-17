@@ -84,7 +84,7 @@ public class RestSwaggerEndpointTest {
         final RestConfiguration restConfiguration = new RestConfiguration();
 
         final CamelContext camelContext = mock(CamelContext.class);
-        when(camelContext.getRestConfiguration("rest-swagger", true)).thenReturn(restConfiguration);
+        when(camelContext.getRestConfiguration()).thenReturn(restConfiguration);
 
         final Swagger swagger = new Swagger();
 
@@ -267,13 +267,8 @@ public class RestSwaggerEndpointTest {
     public void shouldHonourHostPrecedence() {
         final RestConfiguration globalRestConfiguration = new RestConfiguration();
 
-        final RestConfiguration componentRestConfiguration = new RestConfiguration();
-        final RestConfiguration specificRestConfiguration = new RestConfiguration();
-
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getRestConfiguration()).thenReturn(globalRestConfiguration);
-        when(camelContext.getRestConfiguration("rest-swagger", false)).thenReturn(componentRestConfiguration);
-        when(camelContext.getRestConfiguration("petstore", false)).thenReturn(specificRestConfiguration);
 
         final RestSwaggerComponent component = new RestSwaggerComponent();
         component.setCamelContext(camelContext);
@@ -291,10 +286,6 @@ public class RestSwaggerEndpointTest {
         globalRestConfiguration.setHost("component-rest");
         globalRestConfiguration.setScheme("http");
         assertThat(endpoint.determineHost(swagger)).isEqualTo("http://component-rest");
-
-        specificRestConfiguration.setHost("specific-rest");
-        specificRestConfiguration.setScheme("http");
-        assertThat(endpoint.determineHost(swagger)).isEqualTo("http://specific-rest");
 
         swagger.host("specification").scheme(Scheme.HTTP);
         assertThat(endpoint.determineHost(swagger)).isEqualTo("http://specification");

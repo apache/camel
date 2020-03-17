@@ -541,23 +541,6 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
     }
 
     @Override
-    @Deprecated
-    public void addRestConfiguration(RestConfiguration restConfiguration) {
-        delegate.addRestConfiguration(restConfiguration);
-    }
-
-    @Override
-    public RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound) {
-        return delegate.getRestConfiguration(component, defaultIfNotFound);
-    }
-
-    @Override
-    @Deprecated
-    public Collection<RestConfiguration> getRestConfigurations() {
-        return delegate.getRestConfigurations();
-    }
-
-    @Override
     public RestRegistry getRestRegistry() {
         return delegate.getRestRegistry();
     }

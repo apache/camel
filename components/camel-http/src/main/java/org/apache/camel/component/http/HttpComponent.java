@@ -43,6 +43,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -428,13 +429,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("http", false);
-            if (config == null) {
-                camelContext.getRestConfiguration();
-            }
-            if (config == null) {
-                config = camelContext.getRestConfiguration("http", true);
-            }
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), "http");
         }
 
         Map<String, Object> map = new HashMap<>();

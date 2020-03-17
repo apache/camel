@@ -70,7 +70,7 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration("jetty").host("localhost").port(getPort());
+                restConfiguration().host("localhost").port(getPort());
 
                 rest("/").get("/issues/{isin}").route().id("issues").process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin"))).endRest().get("/listings")
                     .route().id("listings").process(e -> e.getOut().setBody("some listings"));

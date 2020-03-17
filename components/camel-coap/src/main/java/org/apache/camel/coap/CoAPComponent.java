@@ -33,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
@@ -136,7 +137,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration("coap", true);
+            config = CamelContextHelper.getRestConfiguration(getCamelContext(), "coap");
         }
 
         if (config.isEnableCORS()) {
