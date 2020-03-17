@@ -122,7 +122,7 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
         Map<String, AttributeValue> key = new HashMap<>();
         key.put(attributeName, AttributeValue.builder().n(randomId).build());
 
-        Exchange exchange = template.send("direct:start", new Processor() {
+        template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Ddb2Constants.KEY, key);
                 exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
