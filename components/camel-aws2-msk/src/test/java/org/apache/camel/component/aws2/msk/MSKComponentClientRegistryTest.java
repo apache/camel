@@ -40,7 +40,7 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
 
         MSK2Component component = context.getComponent("aws2-msk", MSK2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            MSK2Endpoint endpoint = (MSK2Endpoint)component.createEndpoint("aws2-msk://label");
+            component.createEndpoint("aws2-msk://label");
         });
     }
 }
