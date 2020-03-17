@@ -45,7 +45,8 @@ public class BatchGetItemsCommandTest {
         command = new BatchGetItemsCommand(ddbClient, configuration, exchange);
     }
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void execute() {
         Map<String, AttributeValue> key = new HashMap<>();
         key.put("1", AttributeValue.builder().s("Key_1").build());
