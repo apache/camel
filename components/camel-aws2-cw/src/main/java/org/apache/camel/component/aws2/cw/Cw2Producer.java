@@ -82,7 +82,8 @@ public class Cw2Producer extends DefaultProducer {
         if (name != null && value != null) {
             metricDatum.dimensions(Dimension.builder().name(name).value(value).build());
         } else {
-            Map<String, String> dimensions = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSIONS, Map.class);
+            @SuppressWarnings("unchecked")
+			Map<String, String> dimensions = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSIONS, Map.class);
             if (dimensions != null) {
                 Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
