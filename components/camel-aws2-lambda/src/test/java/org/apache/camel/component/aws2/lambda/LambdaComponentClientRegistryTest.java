@@ -43,7 +43,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
         Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
         assertThrows(PropertyBindingException.class, () -> {
-            Lambda2Endpoint endpoint = (Lambda2Endpoint)component
+            component
                 .createEndpoint("aws2-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
         });
     }
