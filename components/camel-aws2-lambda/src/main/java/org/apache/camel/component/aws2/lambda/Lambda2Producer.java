@@ -199,7 +199,8 @@ public class Lambda2Producer extends DefaultProducer {
         message.setBody(result.payload().asUtf8String());
     }
 
-    private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+    @SuppressWarnings("unchecked")
+	private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
         CreateFunctionResponse result;
 
         try {
@@ -423,7 +424,8 @@ public class Lambda2Producer extends DefaultProducer {
         message.setBody(result);
     }
 
-    private void tagResource(LambdaClient lambdaClient, Exchange exchange) {
+    @SuppressWarnings("unchecked")
+	private void tagResource(LambdaClient lambdaClient, Exchange exchange) {
         TagResourceResponse result;
         try {
             TagResourceRequest.Builder request = TagResourceRequest.builder();
@@ -448,7 +450,8 @@ public class Lambda2Producer extends DefaultProducer {
         message.setBody(result);
     }
 
-    private void untagResource(LambdaClient lambdaClient, Exchange exchange) {
+    @SuppressWarnings("unchecked")
+	private void untagResource(LambdaClient lambdaClient, Exchange exchange) {
         UntagResourceResponse result;
         try {
             UntagResourceRequest.Builder request = UntagResourceRequest.builder();
