@@ -14,7 +14,7 @@ routing rules in your IDE, whether in a Java or XML editor.
 
 For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel.adoc[Introduction] is provided.
 
-Furthermore, camel has added a new API i.e. Endpoint-dsl. More information can be found under documentation section.
+
 
 == Summary
 
