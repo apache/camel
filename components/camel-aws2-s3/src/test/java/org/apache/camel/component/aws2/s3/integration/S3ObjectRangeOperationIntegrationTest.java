@@ -83,6 +83,7 @@ public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
                 from("direct:getObjectRange").to(awsEndpoint).process(new Processor() {
 
+                    @SuppressWarnings("unchecked")
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         ResponseInputStream<GetObjectResponse> s3 = exchange.getIn().getBody(ResponseInputStream.class);
