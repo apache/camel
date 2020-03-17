@@ -136,7 +136,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	private void createAndRunInstance(Ec2Client ec2Client, Exchange exchange) {
+    private void createAndRunInstance(Ec2Client ec2Client, Exchange exchange) {
         String ami;
         InstanceType instanceType;
         RunInstancesRequest.Builder builder = RunInstancesRequest.builder();
@@ -211,7 +211,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void startInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void startInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         StartInstancesRequest.Builder builder = StartInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -233,7 +233,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void stopInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void stopInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         StopInstancesRequest.Builder builder = StopInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -255,7 +255,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void terminateInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void terminateInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         TerminateInstancesRequest.Builder builder = TerminateInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -277,7 +277,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void describeInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void describeInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         DescribeInstancesRequest.Builder builder = DescribeInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -296,7 +296,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void describeInstancesStatus(Ec2Client ec2Client, Exchange exchange) {
+    private void describeInstancesStatus(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         DescribeInstanceStatusRequest.Builder builder = DescribeInstanceStatusRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -315,7 +315,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void rebootInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void rebootInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         RebootInstancesRequest.Builder builder = RebootInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -334,7 +334,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void monitorInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void monitorInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         MonitorInstancesRequest.Builder builder = MonitorInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -356,7 +356,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void unmonitorInstances(Ec2Client ec2Client, Exchange exchange) {
+    private void unmonitorInstances(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         UnmonitorInstancesRequest.Builder builder = UnmonitorInstancesRequest.builder();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(AWS2EC2Constants.INSTANCES_IDS))) {
@@ -378,7 +378,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void createTags(Ec2Client ec2Client, Exchange exchange) {
+    private void createTags(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         Collection<Tag> tags;
         CreateTagsRequest.Builder builder = CreateTagsRequest.builder();
@@ -407,7 +407,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void deleteTags(Ec2Client ec2Client, Exchange exchange) {
+    private void deleteTags(Ec2Client ec2Client, Exchange exchange) {
         Collection<String> instanceIds;
         Collection<Tag> tags;
         DeleteTagsRequest.Builder builder = DeleteTagsRequest.builder();
