@@ -40,7 +40,7 @@ public class MQComponentClientRegistryTest extends CamelTestSupport {
 
         MQ2Component component = context.getComponent("aws2-mq", MQ2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            MQ2Endpoint endpoint = (MQ2Endpoint)component.createEndpoint("aws2-mq://MyQueue");
+            component.createEndpoint("aws2-mq://MyQueue");
         });
     }
 }
