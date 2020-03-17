@@ -1,24 +1,17 @@
 package org.apache.camel.component.azure.storage.blob;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.azure.core.http.rest.Response;
-import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobContainerItem;
-import com.azure.storage.blob.models.BlobDownloadResponse;
 import com.azure.storage.blob.models.BlobItem;
-import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,19 +33,20 @@ public class BlobOperationsHandler {
                 .collect(Collectors.toList());
     }
 
-    public void handleDownloadBlob(final Exchange exchange, final BlobClient client) throws IOException {
+    public BlobExchangeResponse handleDownloadBlob(OutputStream outputStream, final BlobClient client) throws IOException {
        checkIfContainerOrBlobIsEmpty(configuration);
 
-       OutputStream outputStream = exchange.getIn().getBody(OutputStream.class);
+       final BlobExchangeResponse blobExchangeResponse = new BlobExchangeResponse();
+
        if (outputStream == null && !ObjectHelper.isEmpty(configuration.getFileDir())) {
            final File outputFile = new File(configuration.getFileDir(), configuration.getBlobName());
-           getMessageForResponse(exchange).setBody(outputFile);
+           blobExchangeResponse.setBody(outputFile);
            outputStream = new FileOutputStream(outputFile);
        }
        try {
            if (outputStream == null) {
                final BlobInputStream blobInputStream = client.openInputStream();
-               exchange.getIn().setBody(blobInputStream);
+               blobExchangeResponse.setBody(blobInputStream);
            } else {
                client.download(outputStream);
            }
@@ -61,6 +55,8 @@ public class BlobOperationsHandler {
                outputStream.close();
            }
        }
+
+       return blobExchangeResponse;
     }
 
     public List<BlobItem> handleListBlobs(final BlobContainerClient client) {

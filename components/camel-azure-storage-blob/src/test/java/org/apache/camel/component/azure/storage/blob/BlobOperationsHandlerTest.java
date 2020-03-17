@@ -1,15 +1,16 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Objects;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.models.BlobDownloadResponse;
-import org.apache.camel.Exchange;
+
 import org.apache.camel.component.azure.storage.blob.client.BlobClientFactory;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.DefaultExchange;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -22,10 +23,16 @@ class BlobOperationsHandlerTest {
     BlobConfiguration configuration;
 
     @BeforeAll
-    public void setup() {
+    public void setup() throws IOException {
         configuration = new BlobConfiguration();
         configuration.setAccountName("cameldev");
-        configuration.setAccessKey("----");
+        configuration.setAccessKey(loadKey());
+    }
+
+    private String loadKey() throws IOException {
+        final InputStream inputStream = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(".azure_key"));
+
+        return IOUtils.toString(inputStream, Charset.defaultCharset());
     }
 
     @Test
@@ -60,9 +67,8 @@ class BlobOperationsHandlerTest {
 
         //System.out.println(downloadResponse.getDeserializedHeaders());
 
-        final Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-        handler.handleDownloadBlob(exchange, client);
+        final BlobExchangeResponse response = handler.handleDownloadBlob(null, client);
 
-        System.out.println(exchange.getIn().getBody());
+        System.out.println(response.getBody());
     }
 }
