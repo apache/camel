@@ -145,7 +145,7 @@ public class Ses2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private List determineRawTo(Exchange exchange) {
+    private List<String> determineRawTo(Exchange exchange) {
         List<String> to = exchange.getIn().getHeader(Ses2Constants.TO, List.class);
         if (to == null) {
             to = getConfiguration().getTo();
