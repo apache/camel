@@ -38,6 +38,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
+import org.apache.camel.Navigate;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -53,6 +54,7 @@ import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
@@ -64,6 +66,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -1394,27 +1397,6 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
     }
 
     @Override
-    public void setAllowAddingNewRoutes(boolean allowAddingNewRoutes) {
-        getExtendedCamelContext().setAllowAddingNewRoutes(allowAddingNewRoutes);
-    }
-
-    @Override
-    public boolean isAllowAddingNewRoutes() {
-        return getExtendedCamelContext().isAllowAddingNewRoutes();
-    }
-
-    @Override
-    @Experimental
-    public void setClearModelReferences(boolean clearModelReferences) {
-        getExtendedCamelContext().setClearModelReferences(clearModelReferences);
-    }
-
-    @Override
-    public boolean isClearModelReferences() {
-        return getExtendedCamelContext().isClearModelReferences();
-    }
-
-    @Override
     public RouteController getInternalRouteController() {
         return getExtendedCamelContext().getInternalRouteController();
     }
@@ -1675,7 +1657,28 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
         }
         delegate.setAutoStartup(false);
         delegate.start();
+        for (Route route : delegate.getRoutes()) {
+            clearModelReferences(route);
+        }
         delegate = new RuntimeImmutableCamelContext(this, delegate);
+    }
+
+    private void clearModelReferences(Route r) {
+        if (r instanceof DefaultRoute) {
+            ((DefaultRoute) r).clearModelReferences();
+        }
+        clearModelReferences(r.navigate());
+    }
+
+    private void clearModelReferences(Navigate<Processor> nav) {
+        for (Processor processor : nav.next()) {
+            if (processor instanceof DefaultChannel) {
+                ((DefaultChannel) processor).clearModelReferences();
+            }
+            if (processor instanceof Navigate) {
+                clearModelReferences((Navigate<Processor>) processor);
+            }
+        }
     }
 
     public void startImmutable() {
