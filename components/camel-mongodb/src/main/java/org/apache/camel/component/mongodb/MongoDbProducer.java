@@ -323,7 +323,7 @@ public class MongoDbProducer extends DefaultProducer {
             if (query == null) {
                 query = new Document();
             }
-            return calculateCollection(exchange).count(query);
+            return calculateCollection(exchange).countDocuments(query);
         };
     }
 

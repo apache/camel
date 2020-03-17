@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
-import com.mongodb.WriteResult;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -174,7 +173,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         Map<String, Object> headers = new HashMap<>();
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityDisabled", body, headers);
-        assertEquals(WriteResult.class, result.getClass(), "Response isn't of type WriteResult");
+        assertEquals(Document.class, result.getClass(), "Response isn't of type WriteResult");
 
         MongoCollection<Document> collection = db.getCollection("otherCollection", Document.class);
         MongoCursor<Document> indexInfos = collection.listIndexes().iterator();
