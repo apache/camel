@@ -35,7 +35,7 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
     public void execute() {
         BatchGetItemResponse result = ddbClient.batchGetItem(BatchGetItemRequest.builder().requestItems(determineBatchItems()).build());
 
-        Map tmp = new HashMap<>();
+        HashMap<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.BATCH_RESPONSE, result.responses());
         tmp.put(Ddb2Constants.UNPROCESSED_KEYS, result.unprocessedKeys());
         addToResults(tmp);

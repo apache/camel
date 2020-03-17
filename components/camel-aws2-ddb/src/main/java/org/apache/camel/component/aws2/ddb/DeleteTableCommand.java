@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.ddb;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -34,7 +33,7 @@ public class DeleteTableCommand extends AbstractDdbCommand {
     public void execute() {
         TableDescription tableDescription = ddbClient.deleteTable(DeleteTableRequest.builder().tableName(determineTableName()).build()).tableDescription();
 
-        Map tmp = new HashMap<>();
+        HashMap<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.PROVISIONED_THROUGHPUT, tableDescription.provisionedThroughput());
         tmp.put(Ddb2Constants.CREATION_DATE, tableDescription.creationDateTime());
         tmp.put(Ddb2Constants.ITEM_COUNT, tableDescription.itemCount());
