@@ -28,11 +28,11 @@ public class ReachedClosedStatusException extends Exception {
         this.shardId = shardId;
     }
 
-	public String getStreamName() {
-		return streamName;
-	}
+    public String getStreamName() {
+        return streamName;
+    }
 
-	public String getShardId() {
-		return shardId;
-	}
+    public String getShardId() {
+        return shardId;
+    }
 }
