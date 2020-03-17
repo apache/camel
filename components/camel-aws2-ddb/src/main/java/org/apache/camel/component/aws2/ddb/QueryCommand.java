@@ -54,7 +54,7 @@ public class QueryCommand extends AbstractDdbCommand {
     }
 
     @SuppressWarnings("unchecked")
-	private Map<String, AttributeValue> determineStartKey() {
+    private Map<String, AttributeValue> determineStartKey() {
         return exchange.getIn().getHeader(Ddb2Constants.START_KEY, Map.class);
     }
 
@@ -63,7 +63,7 @@ public class QueryCommand extends AbstractDdbCommand {
     }
 
     @SuppressWarnings("unchecked")
-	private Map<String, Condition> determineKeyConditions() {
+    private Map<String, Condition> determineKeyConditions() {
         return exchange.getIn().getHeader(Ddb2Constants.KEY_CONDITIONS, Map.class);
     }
 }
