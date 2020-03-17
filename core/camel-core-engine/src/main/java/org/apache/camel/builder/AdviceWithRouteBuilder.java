@@ -26,7 +26,6 @@ import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -89,8 +88,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public static RouteDefinition adviceWith(CamelContext camelContext, Object routeId, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder) throws Exception {
         RouteDefinition rd = findRouteDefinition(camelContext, routeId);
-
-        return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
+        return camelContext.adapt(ModelCamelContext.class).adviceWith(rd, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 builder.accept(this);

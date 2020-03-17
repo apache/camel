@@ -34,10 +34,12 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Experimental;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
@@ -48,6 +50,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
@@ -57,6 +60,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
@@ -1634,6 +1638,31 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
     @Override
     public Function<RouteDefinition, Boolean> getRouteFilter() {
         return getModelCamelContext().getRouteFilter();
+    }
+
+    @Override
+    public Expression createExpression(ExpressionDefinition definition) {
+        return getModelCamelContext().createExpression(definition);
+    }
+
+    @Override
+    public Predicate createPredicate(ExpressionDefinition definition) {
+        return getModelCamelContext().createPredicate(definition);
+    }
+
+    @Override
+    public RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception {
+        return getModelCamelContext().adviceWith(definition, builder);
+    }
+
+    @Override
+    public void registerValidator(ValidatorDefinition validator) {
+        getModelCamelContext().registerValidator(validator);
+    }
+
+    @Override
+    public void registerTransformer(TransformerDefinition transformer) {
+        getModelCamelContext().registerTransformer(transformer);
     }
 
     //
