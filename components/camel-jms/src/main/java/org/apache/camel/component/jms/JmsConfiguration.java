@@ -451,6 +451,10 @@ public class JmsConfiguration implements Cloneable {
                     + " For example some message systems such as WMQ do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types."
                     + " You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.")
     private String allowAdditionalHeaders;
+    @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
+    private boolean formatDateHeadersToIso8601;
+    @UriParam(defaultValue = "true", label = "advanced", description = "Whether optimizing for Apache Artemis streaming mode.")
+    private boolean artemisStreamingEnabled = true;
 
     // JMS 2.0 API
     @UriParam(label = "consumer", description = "Set the name of a subscription to create. To be applied in case"
@@ -480,16 +484,11 @@ public class JmsConfiguration implements Cloneable {
             + " therefore this method switches the pubSubDomain flag as well."
             + " Requires a JMS 2.0 compatible message broker.")
     private boolean subscriptionShared;
-
     @UriParam(label = "producer,advanced", description = "Sets whether StreamMessage type is enabled or not."
             + " Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage."
             + " This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory."
             + " By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data.")
     private boolean streamMessageTypeEnabled;
-
-    @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
-    private boolean formatDateHeadersToIso8601;
-
     @UriParam(defaultValue = "-1", label = "producer", description = "Sets delivery delay to use for send calls for JMS. "
             + "This option requires JMS 2.0 compliant broker.")
     private long deliveryDelay = -1;
@@ -2208,4 +2207,14 @@ public class JmsConfiguration implements Cloneable {
         this.deliveryDelay = deliveryDelay;
     }
 
+    public boolean isArtemisStreamingEnabled() {
+        return artemisStreamingEnabled;
+    }
+
+    /**
+     * Whether optimizing for Apache Artemis streaming mode.
+     */
+    public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
+        this.artemisStreamingEnabled = artemisStreamingEnabled;
+    }
 }

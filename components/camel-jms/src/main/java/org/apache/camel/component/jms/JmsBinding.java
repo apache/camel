@@ -245,7 +245,8 @@ public class JmsBinding {
 
     protected Object createByteArrayFromBytesMessage(Exchange exchange, BytesMessage message) throws JMSException {
         // ActiveMQ has special optimised mode for bytes message, so we should use streaming if possible
-        Long size = getSafeLongProperty(message, "_AMQ_LARGE_SIZE");
+        boolean artemis = endpoint != null && endpoint.isArtemisStreamingEnabled();
+        Long size = artemis ? getSafeLongProperty(message, "_AMQ_LARGE_SIZE") : null;
         if (size != null && size > 0) {
             LOG.trace("Optimised for Artemis: Reading from BytesMessage in streaming mode directly into CachedOutputStream payload");
             CachedOutputStream cos = new CachedOutputStream(exchange, true);
@@ -604,7 +605,7 @@ public class JmsBinding {
         }
 
         if (type == Stream) {
-            boolean artemis = isVendor(session, "Artemis");
+            boolean artemis = endpoint.isArtemisStreamingEnabled() && isVendor(session, "Artemis");
             if (artemis) {
                 // if running ActiveMQ Artemis then it has optimised streaming mode using byte messages so enforce as bytes
                 type = Bytes;
@@ -634,7 +635,7 @@ public class JmsBinding {
                 BytesMessage message = session.createBytesMessage();
                 if (body != null) {
                     try {
-                        if (isVendor(session, "Artemis")) {
+                        if (endpoint.isArtemisStreamingEnabled() && isVendor(session, "Artemis")) {
                             LOG.trace("Optimised for Artemis: Streaming payload in BytesMessage");
                             InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                             message.setObjectProperty("JMS_AMQ_InputStream", is);
