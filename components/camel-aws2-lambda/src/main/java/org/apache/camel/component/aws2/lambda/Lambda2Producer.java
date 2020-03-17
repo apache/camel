@@ -200,7 +200,7 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
+    private void createFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
         CreateFunctionResponse result;
 
         try {
@@ -425,7 +425,7 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void tagResource(LambdaClient lambdaClient, Exchange exchange) {
+    private void tagResource(LambdaClient lambdaClient, Exchange exchange) {
         TagResourceResponse result;
         try {
             TagResourceRequest.Builder request = TagResourceRequest.builder();
@@ -451,7 +451,7 @@ public class Lambda2Producer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-	private void untagResource(LambdaClient lambdaClient, Exchange exchange) {
+    private void untagResource(LambdaClient lambdaClient, Exchange exchange) {
         UntagResourceResponse result;
         try {
             UntagResourceRequest.Builder request = UntagResourceRequest.builder();
