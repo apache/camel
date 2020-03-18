@@ -65,8 +65,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
         case "partsize":
         case "partSize": getOrCreateConfiguration(target).setPartSize(property(camelContext, long.class, value)); return true;
-        case "pathstyleaccess":
-        case "pathStyleAccess": getOrCreateConfiguration(target).setPathStyleAccess(property(camelContext, boolean.class, value)); return true;
         case "payloadsigningenabled":
         case "payloadSigningEnabled": getOrCreateConfiguration(target).setPayloadSigningEnabled(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;

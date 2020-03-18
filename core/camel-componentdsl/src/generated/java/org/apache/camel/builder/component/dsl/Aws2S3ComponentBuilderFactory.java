@@ -90,18 +90,6 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether or not the S3 client should use path style access.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default Aws2S3ComponentBuilder pathStyleAccess(boolean pathStyleAccess) {
-            doSetProperty("pathStyleAccess", pathStyleAccess);
-            return this;
-        }
-        /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
@@ -562,7 +550,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "amazonS3Client": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Client((software.amazon.awssdk.services.s3.S3Client) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((AWS2S3Component) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((AWS2S3Component) component).setConfiguration((org.apache.camel.component.aws2.s3.AWS2S3Configuration) value); return true;
-            case "pathStyleAccess": getOrCreateConfiguration((AWS2S3Component) component).setPathStyleAccess((boolean) value); return true;
             case "policy": getOrCreateConfiguration((AWS2S3Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((AWS2S3Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((AWS2S3Component) component).setProxyPort((java.lang.Integer) value); return true;

@@ -100,32 +100,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not the S3 client should use path style access.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default AWS2S3EndpointConsumerBuilder pathStyleAccess(
-                boolean pathStyleAccess) {
-            doSetProperty("pathStyleAccess", pathStyleAccess);
-            return this;
-        }
-        /**
-         * Whether or not the S3 client should use path style access.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default AWS2S3EndpointConsumerBuilder pathStyleAccess(
-                String pathStyleAccess) {
-            doSetProperty("pathStyleAccess", pathStyleAccess);
-            return this;
-        }
-        /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
@@ -1308,32 +1282,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not the S3 client should use path style access.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default AWS2S3EndpointProducerBuilder pathStyleAccess(
-                boolean pathStyleAccess) {
-            doSetProperty("pathStyleAccess", pathStyleAccess);
-            return this;
-        }
-        /**
-         * Whether or not the S3 client should use path style access.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default AWS2S3EndpointProducerBuilder pathStyleAccess(
-                String pathStyleAccess) {
-            doSetProperty("pathStyleAccess", pathStyleAccess);
-            return this;
-        }
-        /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
@@ -1992,30 +1940,6 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder autoCreateBucket(String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * Whether or not the S3 client should use path style access.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default AWS2S3EndpointBuilder pathStyleAccess(boolean pathStyleAccess) {
-            doSetProperty("pathStyleAccess", pathStyleAccess);
-            return this;
-        }
-        /**
-         * Whether or not the S3 client should use path style access.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common
-         */
-        default AWS2S3EndpointBuilder pathStyleAccess(String pathStyleAccess) {
-            doSetProperty("pathStyleAccess", pathStyleAccess);
             return this;
         }
         /**
