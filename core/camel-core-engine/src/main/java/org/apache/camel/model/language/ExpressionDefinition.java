@@ -225,4 +225,14 @@ public class ExpressionDefinition implements Expression, Predicate, ExpressionFa
         return predicate.matches(exchange);
     }
 
+    @Override
+    public void init(CamelContext context) {
+        if (expressionValue == null) {
+            expressionValue = createExpression(context);
+        }
+        if (predicate == null) {
+            predicate = createPredicate(context);
+        }
+    }
+
 }

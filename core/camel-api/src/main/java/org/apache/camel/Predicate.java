@@ -31,4 +31,10 @@ public interface Predicate {
      */
     boolean matches(Exchange exchange);
 
+    /**
+     * Initialize the predicate with the given camel context
+     */
+    default void init(CamelContext context) {
+    }
+
 }

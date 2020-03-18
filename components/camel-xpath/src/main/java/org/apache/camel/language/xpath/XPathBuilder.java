@@ -171,6 +171,10 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
     }
 
     @Override
+    public void init(CamelContext context) {
+    }
+
+    @Override
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         if (target != this) {
             throw new IllegalStateException("Can only configure our own instance !");
