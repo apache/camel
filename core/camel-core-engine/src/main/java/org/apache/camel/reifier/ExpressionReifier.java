@@ -36,7 +36,7 @@ abstract class ExpressionReifier<T extends ExpressionNode> extends ProcessorReif
      */
     protected FilterProcessor createFilterProcessor() throws Exception {
         Processor childProcessor = createOutputsProcessor();
-        return new FilterProcessor(createPredicate(), childProcessor);
+        return new FilterProcessor(camelContext, createPredicate(), childProcessor);
     }
 
     /**

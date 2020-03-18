@@ -110,6 +110,10 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
     }
 
     @Override
+    public void init(CamelContext context) {
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("BeanExpression[");
         if (bean != null) {
