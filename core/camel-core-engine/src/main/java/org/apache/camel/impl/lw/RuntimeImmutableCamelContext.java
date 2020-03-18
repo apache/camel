@@ -176,6 +176,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     private final List<Route> routes;
     private final boolean messageHistory;
     private final boolean allowUseOriginalMessage;
+    private final boolean logExhaustedMessageBody;
     private final String version;
     private Date startDate;
 
@@ -218,6 +219,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
         useMDCLogging = context.isUseMDCLogging();
         messageHistory = context.isMessageHistory();
         allowUseOriginalMessage = context.isAllowUseOriginalMessage();
+        logExhaustedMessageBody = context.isLogExhaustedMessageBody();
         version = context.getVersion();
     }
 
@@ -350,7 +352,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
 
     @Override
     public Boolean isLogExhaustedMessageBody() {
-        throw new UnsupportedOperationException();
+        return logExhaustedMessageBody;
     }
 
     @Override
