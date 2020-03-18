@@ -15,6 +15,8 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         UndertowComponent target = (UndertowComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedroles":
+        case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -25,6 +27,8 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "muteexception":
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
+        case "securityconfiguration":
+        case "securityConfiguration": target.setSecurityConfiguration(property(camelContext, java.lang.Object.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "undertowhttpbinding":

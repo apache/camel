@@ -105,7 +105,9 @@ public abstract class BaseElytronTest extends CamelTestSupport {
     }
 
     private KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        return KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        KeyPairGenerator generator =  KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        return generator.generateKeyPair();
     }
 
 }

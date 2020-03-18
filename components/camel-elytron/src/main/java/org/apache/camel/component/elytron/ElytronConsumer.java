@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elytron;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +58,7 @@ public class ElytronConsumer extends UndertowConsumer {
                 }
             }
 
-            if (isAllowed(roles, getElytronEndpoint().getAllowedRolesList())) {
+            if (isAllowed(roles, getElytronEndpoint().getAllowedRoles())) {
                 super.handleRequest(httpExchange);
             } else {
                 httpExchange.setStatusCode(StatusCodes.FORBIDDEN);
@@ -69,14 +70,15 @@ public class ElytronConsumer extends UndertowConsumer {
 
         super.handleRequest(httpExchange);
     }
-
-    public boolean isAllowed(Set<String> roles, List<String> allowedRoles) {
-        for (String role : allowedRoles) {
-            if (roles.contains(role)) {
-                return true;
+    public boolean isAllowed(Set<String> roles, String allowedRolesString) {
+        if (allowedRolesString != null) {
+            List<String> allowedRoles = Arrays.asList(allowedRolesString.split("\\s*,\\s*"));
+            for (String role : allowedRoles) {
+                if (roles.contains(role)) {
+                    return true;
+                }
             }
         }
-
-        return false;
+        return false;        
     }
 }

@@ -44,9 +44,8 @@ public class ElytronEndpoint extends UndertowEndpoint {
      */
     public static final String SECURITY_IDENTITY_HEADER = "securityIdentity";
 
-    @UriParam(label = "common")
-    private String allowedRoles = "";
-    private List<String> allowedRolesList = Collections.emptyList();
+    @UriParam(label = "security", description = "List of allowed roles in String format")
+    private String allowedRoles;
 
     public ElytronEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
@@ -72,18 +71,13 @@ public class ElytronEndpoint extends UndertowEndpoint {
         return exchange;
     }
 
-    public List<String> getAllowedRolesList() {
-        return allowedRolesList;
-    }
-
-    /**
-     * Comma separated list of allowed roles.
-     */
+    @Override
     public String getAllowedRoles() {
         return allowedRoles;
     }
 
+    @Override
     public void setAllowedRoles(String allowedRoles) {
-        this.allowedRolesList = allowedRoles == null ? null : Arrays.asList(allowedRoles.split("\\s*,\\s*"));
+        this.allowedRoles = allowedRoles;
     }
 }
