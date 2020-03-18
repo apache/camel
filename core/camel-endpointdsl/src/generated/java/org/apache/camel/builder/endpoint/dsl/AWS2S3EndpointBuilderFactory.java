@@ -852,62 +852,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return (AWS2S3EndpointConsumerBuilder) this;
         }
         /**
-         * The encryption materials to use in case of Symmetric/Asymmetric
-         * client usage.
-         * 
-         * The option is a:
-         * <code>software.amazon.awssdk.services.s3.model.Encryption</code>
-         * type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointConsumerBuilder encryptionMaterials(
-                Object encryptionMaterials) {
-            doSetProperty("encryptionMaterials", encryptionMaterials);
-            return this;
-        }
-        /**
-         * The encryption materials to use in case of Symmetric/Asymmetric
-         * client usage.
-         * 
-         * The option will be converted to a
-         * <code>software.amazon.awssdk.services.s3.model.Encryption</code>
-         * type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointConsumerBuilder encryptionMaterials(
-                String encryptionMaterials) {
-            doSetProperty("encryptionMaterials", encryptionMaterials);
-            return this;
-        }
-        /**
-         * Define if encryption must be used or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointConsumerBuilder useEncryption(
-                boolean useEncryption) {
-            doSetProperty("useEncryption", useEncryption);
-            return this;
-        }
-        /**
-         * Define if encryption must be used or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointConsumerBuilder useEncryption(
-                String useEncryption) {
-            doSetProperty("useEncryption", useEncryption);
-            return this;
-        }
-        /**
          * If this option is true and includeBody is true, then the
          * S3Object.close() method will be called on exchange completion. This
          * option is strongly related to includeBody option. In case of setting
@@ -1604,62 +1548,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return (AWS2S3EndpointProducerBuilder) this;
         }
         /**
-         * The encryption materials to use in case of Symmetric/Asymmetric
-         * client usage.
-         * 
-         * The option is a:
-         * <code>software.amazon.awssdk.services.s3.model.Encryption</code>
-         * type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder encryptionMaterials(
-                Object encryptionMaterials) {
-            doSetProperty("encryptionMaterials", encryptionMaterials);
-            return this;
-        }
-        /**
-         * The encryption materials to use in case of Symmetric/Asymmetric
-         * client usage.
-         * 
-         * The option will be converted to a
-         * <code>software.amazon.awssdk.services.s3.model.Encryption</code>
-         * type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder encryptionMaterials(
-                String encryptionMaterials) {
-            doSetProperty("encryptionMaterials", encryptionMaterials);
-            return this;
-        }
-        /**
-         * Define if encryption must be used or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder useEncryption(
-                boolean useEncryption) {
-            doSetProperty("useEncryption", useEncryption);
-            return this;
-        }
-        /**
-         * Define if encryption must be used or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder useEncryption(
-                String useEncryption) {
-            doSetProperty("useEncryption", useEncryption);
-            return this;
-        }
-        /**
          * Define the id of KMS key to use in case KMS is enabled.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2088,61 +1976,6 @@ public interface AWS2S3EndpointBuilderFactory {
                 AdvancedAWS2S3EndpointProducerBuilder {
         default AWS2S3EndpointBuilder basic() {
             return (AWS2S3EndpointBuilder) this;
-        }
-        /**
-         * The encryption materials to use in case of Symmetric/Asymmetric
-         * client usage.
-         * 
-         * The option is a:
-         * <code>software.amazon.awssdk.services.s3.model.Encryption</code>
-         * type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointBuilder encryptionMaterials(
-                Object encryptionMaterials) {
-            doSetProperty("encryptionMaterials", encryptionMaterials);
-            return this;
-        }
-        /**
-         * The encryption materials to use in case of Symmetric/Asymmetric
-         * client usage.
-         * 
-         * The option will be converted to a
-         * <code>software.amazon.awssdk.services.s3.model.Encryption</code>
-         * type.
-         * 
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointBuilder encryptionMaterials(
-                String encryptionMaterials) {
-            doSetProperty("encryptionMaterials", encryptionMaterials);
-            return this;
-        }
-        /**
-         * Define if encryption must be used or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointBuilder useEncryption(
-                boolean useEncryption) {
-            doSetProperty("useEncryption", useEncryption);
-            return this;
-        }
-        /**
-         * Define if encryption must be used or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default AdvancedAWS2S3EndpointBuilder useEncryption(String useEncryption) {
-            doSetProperty("useEncryption", useEncryption);
-            return this;
         }
         /**
          * Define if Accelerate Mode enabled is true or false.

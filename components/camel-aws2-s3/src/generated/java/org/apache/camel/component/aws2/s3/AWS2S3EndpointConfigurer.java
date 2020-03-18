@@ -47,8 +47,6 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
         case "dualstackenabled":
         case "dualstackEnabled": target.getConfiguration().setDualstackEnabled(property(camelContext, boolean.class, value)); return true;
-        case "encryptionmaterials":
-        case "encryptionMaterials": target.getConfiguration().setEncryptionMaterials(property(camelContext, software.amazon.awssdk.services.s3.model.Encryption.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -110,8 +108,6 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "useawskms":
         case "useAwsKMS": target.getConfiguration().setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
-        case "useencryption":
-        case "useEncryption": target.getConfiguration().setUseEncryption(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "useiamcredentials":
