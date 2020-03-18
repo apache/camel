@@ -400,19 +400,6 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the server-side encryption algorithm when encrypting the object
-         * using AWS-managed keys. For example use AES256.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default Aws2S3ComponentBuilder serverSideEncryption(
-                java.lang.String serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
          * The storage class to set in the
          * com.amazonaws.services.s3.model.PutObjectRequest request.
          * 
@@ -597,7 +584,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "multiPartUpload": getOrCreateConfiguration((AWS2S3Component) component).setMultiPartUpload((boolean) value); return true;
             case "operation": getOrCreateConfiguration((AWS2S3Component) component).setOperation((org.apache.camel.component.aws2.s3.AWS2S3Operations) value); return true;
             case "partSize": getOrCreateConfiguration((AWS2S3Component) component).setPartSize((long) value); return true;
-            case "serverSideEncryption": getOrCreateConfiguration((AWS2S3Component) component).setServerSideEncryption((java.lang.String) value); return true;
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;

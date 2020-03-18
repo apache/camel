@@ -80,8 +80,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "serversideencryption":
-        case "serverSideEncryption": getOrCreateConfiguration(target).setServerSideEncryption(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
         case "storageClass": getOrCreateConfiguration(target).setStorageClass(property(camelContext, java.lang.String.class, value)); return true;
         case "useawskms":

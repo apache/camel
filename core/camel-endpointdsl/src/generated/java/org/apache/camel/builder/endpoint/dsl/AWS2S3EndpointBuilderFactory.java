@@ -1610,19 +1610,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the server-side encryption algorithm when encrypting the object
-         * using AWS-managed keys. For example use AES256.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default AWS2S3EndpointProducerBuilder serverSideEncryption(
-                String serverSideEncryption) {
-            doSetProperty("serverSideEncryption", serverSideEncryption);
-            return this;
-        }
-        /**
          * The storage class to set in the
          * com.amazonaws.services.s3.model.PutObjectRequest request.
          * 
