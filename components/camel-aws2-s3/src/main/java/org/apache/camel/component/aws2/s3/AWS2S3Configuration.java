@@ -67,10 +67,6 @@ public class AWS2S3Configuration implements Cloneable {
     private AWS2S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
-    @UriParam(label = "common,advanced")
-    private Encryption encryptionMaterials;
-    @UriParam(label = "common,advanced", defaultValue = "false")
-    private boolean useEncryption;
     @UriParam(label = "common, advanced", defaultValue = "false")
     private boolean chunkedEncodingDisabled;
     @UriParam(label = "common, advanced", defaultValue = "false")
@@ -341,29 +337,6 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setAutocloseBody(boolean autocloseBody) {
         this.autocloseBody = autocloseBody;
-    }
-
-    public Encryption getEncryptionMaterials() {
-        return encryptionMaterials;
-    }
-
-    /**
-     * The encryption materials to use in case of Symmetric/Asymmetric client
-     * usage
-     */
-    public void setEncryptionMaterials(Encryption encryptionMaterials) {
-        this.encryptionMaterials = encryptionMaterials;
-    }
-
-    public boolean isUseEncryption() {
-        return useEncryption;
-    }
-
-    /**
-     * Define if encryption must be used or not
-     */
-    public void setUseEncryption(boolean useEncryption) {
-        this.useEncryption = useEncryption;
     }
 
     public boolean isUseAwsKMS() {
