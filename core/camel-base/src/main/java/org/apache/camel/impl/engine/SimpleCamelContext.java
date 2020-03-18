@@ -372,7 +372,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return new MulticastProcessor(getCamelContextReference(), processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
+        return new MulticastProcessor(getCamelContextReference(), null, processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
     }
 
     @Override

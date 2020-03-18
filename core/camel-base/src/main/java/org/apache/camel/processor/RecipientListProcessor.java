@@ -153,22 +153,22 @@ public class RecipientListProcessor extends MulticastProcessor {
 
     // TODO: camel-bean @RecipientList cacheSize
 
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter) {
-        super(camelContext, null);
+    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter) {
+        super(camelContext, route, null);
         this.producerCache = producerCache;
         this.iter = iter;
     }
 
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy) {
-        super(camelContext, null, aggregationStrategy);
+    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy) {
+        super(camelContext, route, null, aggregationStrategy);
         this.producerCache = producerCache;
         this.iter = iter;
     }
 
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
+    public RecipientListProcessor(CamelContext camelContext, Route route, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException,
                                   long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
-        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
+        super(camelContext, route, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
               shareUnitOfWork, parallelAggregate, stopOnAggregateException);
         this.producerCache = producerCache;
         this.iter = iter;

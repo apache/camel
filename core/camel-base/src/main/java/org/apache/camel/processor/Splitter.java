@@ -55,17 +55,17 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     private final Expression expression;
 
-    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                     ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
                     boolean useSubUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, expression, destination, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout,
-             onPrepare, useSubUnitOfWork, false, false);
+        this(camelContext, route, expression, destination, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout,
+             onPrepare, useSubUnitOfWork, parallelAggregate, false);
     }
 
-    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+    public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                     ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
                     boolean useSubUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
-        super(camelContext, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException,
+        super(camelContext, route, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException,
               timeout, onPrepare, useSubUnitOfWork, parallelAggregate, stopOnAggregateException);
         this.expression = expression;
         notNull(expression, "expression");
@@ -75,6 +75,12 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     @Override
     public String getTraceLabel() {
         return "split[" + expression + "]";
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        expression.init(getCamelContext());
     }
 
     @Override
