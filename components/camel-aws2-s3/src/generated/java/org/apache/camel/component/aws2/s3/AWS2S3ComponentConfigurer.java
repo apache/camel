@@ -48,8 +48,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "delimiter": getOrCreateConfiguration(target).setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
         case "dualstackenabled":
         case "dualstackEnabled": getOrCreateConfiguration(target).setDualstackEnabled(property(camelContext, boolean.class, value)); return true;
-        case "encryptionmaterials":
-        case "encryptionMaterials": getOrCreateConfiguration(target).setEncryptionMaterials(property(camelContext, software.amazon.awssdk.services.s3.model.Encryption.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "forceglobalbucketaccessenabled":
@@ -82,8 +80,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "storageClass": getOrCreateConfiguration(target).setStorageClass(property(camelContext, java.lang.String.class, value)); return true;
         case "useawskms":
         case "useAwsKMS": getOrCreateConfiguration(target).setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
-        case "useencryption":
-        case "useEncryption": getOrCreateConfiguration(target).setUseEncryption(property(camelContext, boolean.class, value)); return true;
         case "useiamcredentials":
         case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;

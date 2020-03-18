@@ -166,33 +166,6 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The encryption materials to use in case of Symmetric/Asymmetric
-         * client usage.
-         * 
-         * The option is a:
-         * <code>software.amazon.awssdk.services.s3.model.Encryption</code>
-         * type.
-         * 
-         * Group: common (advanced)
-         */
-        default Aws2S3ComponentBuilder encryptionMaterials(
-                software.amazon.awssdk.services.s3.model.Encryption encryptionMaterials) {
-            doSetProperty("encryptionMaterials", encryptionMaterials);
-            return this;
-        }
-        /**
-         * Define if encryption must be used or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: common (advanced)
-         */
-        default Aws2S3ComponentBuilder useEncryption(boolean useEncryption) {
-            doSetProperty("useEncryption", useEncryption);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -556,8 +529,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((AWS2S3Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((AWS2S3Component) component).setRegion((java.lang.String) value); return true;
             case "useIAMCredentials": getOrCreateConfiguration((AWS2S3Component) component).setUseIAMCredentials((boolean) value); return true;
-            case "encryptionMaterials": getOrCreateConfiguration((AWS2S3Component) component).setEncryptionMaterials((software.amazon.awssdk.services.s3.model.Encryption) value); return true;
-            case "useEncryption": getOrCreateConfiguration((AWS2S3Component) component).setUseEncryption((boolean) value); return true;
             case "bridgeErrorHandler": ((AWS2S3Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterRead((boolean) value); return true;
             case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
