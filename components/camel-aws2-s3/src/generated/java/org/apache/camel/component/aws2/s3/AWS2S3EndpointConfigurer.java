@@ -103,8 +103,6 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "serversideencryption":
-        case "serverSideEncryption": target.getConfiguration().setServerSideEncryption(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "storageclass":
