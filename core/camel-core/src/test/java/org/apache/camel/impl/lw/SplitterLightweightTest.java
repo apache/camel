@@ -35,7 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.MyAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SplitterLightweightTest extends ContextTestSupport {
@@ -43,7 +42,7 @@ public class SplitterLightweightTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        setUseImmutableContext(true);
+        setUseLightweightContext(true);
         super.setUp();
     }
 
