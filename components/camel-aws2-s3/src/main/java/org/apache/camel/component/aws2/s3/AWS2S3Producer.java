@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -36,14 +38,22 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.BucketCannedACL;
+import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadResponse;
+import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
+import software.amazon.awssdk.services.s3.model.CompletedPart;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CopyObjectResponse;
+import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -55,6 +65,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Storage
@@ -74,7 +85,11 @@ public class AWS2S3Producer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         AWS2S3Operations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
-            processSingleOp(exchange);
+            if (getConfiguration().isMultiPartUpload()) {
+                processMultiPart(exchange);
+            } else {
+                processSingleOp(exchange);
+            }
         } else {
             switch (operation) {
                 case copyObject:
@@ -101,6 +116,103 @@ public class AWS2S3Producer extends DefaultProducer {
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
             }
+        }
+    }
+    
+    public void processMultiPart(final Exchange exchange) throws Exception {
+        File filePayload = null;
+        Object obj = exchange.getIn().getMandatoryBody();
+        // Need to check if the message body is WrappedFile
+        if (obj instanceof WrappedFile) {
+            obj = ((WrappedFile<?>)obj).getFile();
+        }
+        if (obj instanceof File) {
+            filePayload = (File)obj;
+        } else {
+            throw new IllegalArgumentException("aws-s3: MultiPart upload requires a File input.");
+        }
+
+        Map<String, String> objectMetadata = determineMetadata(exchange);
+        if (objectMetadata.containsKey("Content-Length")) {
+        if (objectMetadata.get("Content-Length").equalsIgnoreCase("0")) {
+            objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
+        }
+        } else {
+            objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
+        }
+
+        final String keyName = determineKey(exchange);
+        CreateMultipartUploadRequest.Builder createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
+            .bucket(getConfiguration().getBucketName()).key(keyName);
+
+        String storageClass = determineStorageClass(exchange);
+        if (storageClass != null) {
+            createMultipartUploadRequest.storageClass(storageClass);
+        }
+
+        String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
+        if (cannedAcl != null) {
+            ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
+            createMultipartUploadRequest.acl(objectAcl);
+        }
+
+        BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
+        if (acl != null) {
+            // note: if cannedacl and acl are both specified the last one will
+            // be used. refer to
+            // PutObjectRequest#setAccessControlList for more details
+            createMultipartUploadRequest.acl(acl.toString());
+        }
+
+        if (getConfiguration().isUseAwsKMS()) {
+            createMultipartUploadRequest.ssekmsKeyId(getConfiguration().getAwsKMSKeyId());
+        }
+
+        LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
+
+        CreateMultipartUploadResponse initResponse = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
+        final long contentLength = Long.valueOf(objectMetadata.get("Content-Length"));
+        final List<String> partETags = new ArrayList<>();
+        List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
+        long partSize = getConfiguration().getPartSize();
+        CompleteMultipartUploadResponse uploadResult = null;
+
+        long filePosition = 0;
+
+        try {
+            for (int part = 1; filePosition < contentLength; part++) {
+                System.err.println("PART! " + part);
+                partSize = Math.min(partSize, contentLength - filePosition);
+
+                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName)
+                        .uploadId(initResponse.uploadId()).partNumber(part).build();
+
+                LOG.trace("Uploading part [{}] for {}", part, keyName);
+                String etag = getEndpoint().getS3Client().uploadPart(uploadRequest, RequestBody.fromFile(filePayload)).eTag();
+                partETags.add(etag);
+                CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
+                completedParts.add(partUpload);
+                filePosition += partSize;
+                System.err.println(filePosition);
+            }
+            CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
+            CompleteMultipartUploadRequest compRequest = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload).bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build();
+
+            uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
+
+        } catch (Exception e) {
+            getEndpoint().getS3Client().abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build());
+            throw e;
+        }
+
+        Message message = getMessageForResponse(exchange);
+        message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
+        if (uploadResult.versionId() != null) {
+            message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
+        }
+
+        if (getConfiguration().isDeleteAfterWrite()) {
+            FileUtil.deleteFile(filePayload);
         }
     }
 
