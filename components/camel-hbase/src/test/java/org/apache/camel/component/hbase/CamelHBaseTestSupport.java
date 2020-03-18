@@ -22,16 +22,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.TableNotFoundException;
 import org.apache.hadoop.hbase.client.Admin;
+import org.apache.hadoop.hbase.client.ColumnFamilyDescriptorBuilder;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.GenericContainer;
@@ -121,12 +121,11 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
     }
 
     protected void createTable(String name, byte[][] families) throws IOException {
-        HTableDescriptor descr = new HTableDescriptor(TableName.valueOf(name));
+        TableDescriptorBuilder builder = TableDescriptorBuilder.newBuilder(TableName.valueOf(name));
         for (byte[] fam : families) {
-            HColumnDescriptor cdescr = new HColumnDescriptor(fam);
-            descr.addFamily(cdescr);
+            builder.setColumnFamily(ColumnFamilyDescriptorBuilder.of(fam));
         }
-        connectHBase().getAdmin().createTable(descr);
+        connectHBase().getAdmin().createTable(builder.build());
     }
 
     protected void createTable(String name, String family) throws IOException {
