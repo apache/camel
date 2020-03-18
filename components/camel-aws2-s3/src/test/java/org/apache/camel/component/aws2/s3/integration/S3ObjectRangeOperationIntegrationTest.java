@@ -31,9 +31,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -43,7 +43,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);

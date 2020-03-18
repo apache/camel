@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,11 +30,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+
+@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ComponentIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("direct:start")
@@ -84,7 +90,6 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange) {
-        assertIsInstanceOf(String.class, resultExchange.getIn().getBody());
         assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
         assertEquals("mycamelbucket", resultExchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME));
         assertTrue(resultExchange.getIn().getHeader(AWS2S3Constants.KEY, String.class).startsWith("CamelUnitTest"));
