@@ -15,8 +15,6 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AWS2S3Endpoint target = (AWS2S3Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "acceleratemodeenabled":
-        case "accelerateModeEnabled": target.getConfiguration().setAccelerateModeEnabled(property(camelContext, boolean.class, value)); return true;
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazons3client":
@@ -37,24 +35,18 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "chunkedencodingdisabled":
-        case "chunkedEncodingDisabled": target.getConfiguration().setChunkedEncodingDisabled(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "deleteafterread":
         case "deleteAfterRead": target.getConfiguration().setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "deleteafterwrite":
         case "deleteAfterWrite": target.getConfiguration().setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
-        case "dualstackenabled":
-        case "dualstackEnabled": target.getConfiguration().setDualstackEnabled(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filename":
         case "fileName": target.getConfiguration().setFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "forceglobalbucketaccessenabled":
-        case "forceGlobalBucketAccessEnabled": target.getConfiguration().setForceGlobalBucketAccessEnabled(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": target.getConfiguration().setIncludeBody(property(camelContext, boolean.class, value)); return true;
@@ -73,8 +65,6 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
         case "partsize":
         case "partSize": target.getConfiguration().setPartSize(property(camelContext, long.class, value)); return true;
-        case "payloadsigningenabled":
-        case "payloadSigningEnabled": target.getConfiguration().setPayloadSigningEnabled(property(camelContext, boolean.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
