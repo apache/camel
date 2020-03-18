@@ -104,15 +104,13 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
 
     @Override
     public void init(CamelContext context) {
-        if (predicate == null) {
-            predicate = createPredicate(context);
-        }
-        predicate.init(context);
     }
 
     @Override
     public boolean matches(Exchange exchange) {
-        init(exchange.getContext());
+        if (predicate == null) {
+            predicate = createPredicate(exchange.getContext());
+        }
         return predicate.matches(exchange);
     }
 
