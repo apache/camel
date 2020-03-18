@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.s3.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.List;
 
 import org.apache.camel.BindToRegistry;
@@ -33,12 +31,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.S3Object;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
