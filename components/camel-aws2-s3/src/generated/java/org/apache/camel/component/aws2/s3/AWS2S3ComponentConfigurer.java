@@ -22,8 +22,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AWS2S3Component target = (AWS2S3Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "acceleratemodeenabled":
-        case "accelerateModeEnabled": getOrCreateConfiguration(target).setAccelerateModeEnabled(property(camelContext, boolean.class, value)); return true;
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazons3client":
@@ -38,20 +36,14 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "chunkedencodingdisabled":
-        case "chunkedEncodingDisabled": getOrCreateConfiguration(target).setChunkedEncodingDisabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Configuration.class, value)); return true;
         case "deleteafterread":
         case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
         case "deleteafterwrite":
         case "deleteAfterWrite": getOrCreateConfiguration(target).setDeleteAfterWrite(property(camelContext, boolean.class, value)); return true;
         case "delimiter": getOrCreateConfiguration(target).setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
-        case "dualstackenabled":
-        case "dualstackEnabled": getOrCreateConfiguration(target).setDualstackEnabled(property(camelContext, boolean.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
-        case "forceglobalbucketaccessenabled":
-        case "forceGlobalBucketAccessEnabled": getOrCreateConfiguration(target).setForceGlobalBucketAccessEnabled(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "keyname":
@@ -63,8 +55,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
         case "partsize":
         case "partSize": getOrCreateConfiguration(target).setPartSize(property(camelContext, long.class, value)); return true;
-        case "payloadsigningenabled":
-        case "payloadSigningEnabled": getOrCreateConfiguration(target).setPayloadSigningEnabled(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":

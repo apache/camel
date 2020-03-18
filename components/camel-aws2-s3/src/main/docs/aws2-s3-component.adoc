@@ -43,7 +43,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS2 S3 Storage Service component supports 33 options, which are listed below.
+The AWS2 S3 Storage Service component supports 28 options, which are listed below.
 
 
 
@@ -75,11 +75,6 @@ The AWS2 S3 Storage Service component supports 33 options, which are listed belo
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
-| *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
-| *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
-| *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
-| *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
-| *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -115,7 +110,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (53 parameters):
+=== Query Parameters (48 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -151,11 +146,6 @@ with the following path and query parameters:
 | *storageClass* (producer) | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
-| *accelerateModeEnabled* ( advanced) | Define if Accelerate Mode enabled is true or false | false | boolean
-| *chunkedEncodingDisabled* ( advanced) | Define if disabled Chunked Encoding is true or false | false | boolean
-| *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
-| *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
-| *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int

@@ -397,70 +397,6 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Define if Accelerate Mode enabled is true or false.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  advanced
-         */
-        default Aws2S3ComponentBuilder accelerateModeEnabled(
-                boolean accelerateModeEnabled) {
-            doSetProperty("accelerateModeEnabled", accelerateModeEnabled);
-            return this;
-        }
-        /**
-         * Define if disabled Chunked Encoding is true or false.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  advanced
-         */
-        default Aws2S3ComponentBuilder chunkedEncodingDisabled(
-                boolean chunkedEncodingDisabled) {
-            doSetProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
-            return this;
-        }
-        /**
-         * Define if Dualstack enabled is true or false.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  advanced
-         */
-        default Aws2S3ComponentBuilder dualstackEnabled(boolean dualstackEnabled) {
-            doSetProperty("dualstackEnabled", dualstackEnabled);
-            return this;
-        }
-        /**
-         * Define if Force Global Bucket Access enabled is true or false.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  advanced
-         */
-        default Aws2S3ComponentBuilder forceGlobalBucketAccessEnabled(
-                boolean forceGlobalBucketAccessEnabled) {
-            doSetProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
-            return this;
-        }
-        /**
-         * Define if Payload Signing enabled is true or false.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group:  advanced
-         */
-        default Aws2S3ComponentBuilder payloadSigningEnabled(
-                boolean payloadSigningEnabled) {
-            doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
-            return this;
-        }
-        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -545,11 +481,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "storageClass": getOrCreateConfiguration((AWS2S3Component) component).setStorageClass((java.lang.String) value); return true;
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
-            case "accelerateModeEnabled": getOrCreateConfiguration((AWS2S3Component) component).setAccelerateModeEnabled((boolean) value); return true;
-            case "chunkedEncodingDisabled": getOrCreateConfiguration((AWS2S3Component) component).setChunkedEncodingDisabled((boolean) value); return true;
-            case "dualstackEnabled": getOrCreateConfiguration((AWS2S3Component) component).setDualstackEnabled((boolean) value); return true;
-            case "forceGlobalBucketAccessEnabled": getOrCreateConfiguration((AWS2S3Component) component).setForceGlobalBucketAccessEnabled((boolean) value); return true;
-            case "payloadSigningEnabled": getOrCreateConfiguration((AWS2S3Component) component).setPayloadSigningEnabled((boolean) value); return true;
             case "basicPropertyBinding": ((AWS2S3Component) component).setBasicPropertyBinding((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((AWS2S3Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((AWS2S3Component) component).setSecretKey((java.lang.String) value); return true;
