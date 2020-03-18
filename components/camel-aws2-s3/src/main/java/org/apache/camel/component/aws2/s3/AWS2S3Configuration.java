@@ -63,8 +63,6 @@ public class AWS2S3Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
-    @UriParam
-    private boolean pathStyleAccess;
     @UriParam(label = "producer", enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,getObjectRange")
     private AWS2S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
@@ -316,17 +314,6 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
-    }
-
-    /**
-     * Whether or not the S3 client should use path style access
-     */
-    public void setPathStyleAccess(final boolean pathStyleAccess) {
-        this.pathStyleAccess = pathStyleAccess;
-    }
-
-    public boolean isPathStyleAccess() {
-        return pathStyleAccess;
     }
 
     public AWS2S3Operations getOperation() {
