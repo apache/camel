@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
 
     @BindToRegistry("myFilters")
-    public List<Filter> addFilters() throws Exception {
+    public List<Filter> addFilters() {
         List<Filter> filters = new LinkedList<>();
         filters.add(new ModelAwareColumnMatchingFilter().getFilteredList()); //not used, filters need to be rethink
         return filters;
@@ -43,22 +43,20 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
 
     @Test
     public void testPutMultiRowsAndScanWithFilters() throws Exception {
-        if (systemReady) {
-            putMultipleRows();
-            ProducerTemplate template = context.createProducerTemplate();
-            Endpoint endpoint = context.getEndpoint("direct:scan");
+        putMultipleRows();
+        ProducerTemplate template = context.createProducerTemplate();
+        Endpoint endpoint = context.getEndpoint("direct:scan");
 
-            Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
-            exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
-            exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
-            exchange.getIn().setHeader(HBaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
-            Exchange resp = template.send(endpoint, exchange);
-            Message out = resp.getMessage();
-            assertTrue(out.getHeaders().containsValue(body[0][0][0])
-                       && out.getHeaders().containsValue(body[1][0][0])
-                       && !out.getHeaders().containsValue(body[2][0][0]),
-                       "two first keys returned");
-        }
+        Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
+        exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+        exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+        exchange.getIn().setHeader(HBaseAttribute.HBASE_VALUE.asHeader(), body[0][0][0]);
+        Exchange resp = template.send(endpoint, exchange);
+        Message out = resp.getMessage();
+        assertTrue(out.getHeaders().containsValue(body[0][0][0])
+                        && out.getHeaders().containsValue(body[1][0][0])
+                        && !out.getHeaders().containsValue(body[2][0][0]),
+                "two first keys returned");
     }
 
     /**
@@ -71,9 +69,9 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("hbase://" + PERSON_TABLE);
+                        .to("hbase://" + PERSON_TABLE);
                 from("direct:scan")
-                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2");
+                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2");
             }
         };
     }
