@@ -181,7 +181,6 @@ public class AWS2S3Producer extends DefaultProducer {
 
         try {
             for (int part = 1; filePosition < contentLength; part++) {
-                System.err.println("PART! " + part);
                 partSize = Math.min(partSize, contentLength - filePosition);
 
                 UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName)
@@ -193,7 +192,6 @@ public class AWS2S3Producer extends DefaultProducer {
                 CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
                 completedParts.add(partUpload);
                 filePosition += partSize;
-                System.err.println(filePosition);
             }
             CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
             CompleteMultipartUploadRequest compRequest = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload).bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build();
