@@ -122,9 +122,9 @@ public class HBaseProducer extends DefaultProducer {
             ObjectHelper.notNull(family, "HBase column family", cell);
             ObjectHelper.notNull(column, "HBase column", cell);
             put.addColumn(
-                HBaseHelper.getHBaseFieldAsBytes(family),
-                HBaseHelper.getHBaseFieldAsBytes(column),
-                endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value)
+                    HBaseHelper.getHBaseFieldAsBytes(family),
+                    HBaseHelper.getHBaseFieldAsBytes(column),
+                    endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, value)
             );
         }
         return put;
@@ -196,15 +196,12 @@ public class HBaseProducer extends DefaultProducer {
         HBaseRow startRow = new HBaseRow(model.getCells());
         startRow.setId(start);
 
-        Scan scan;
+        Scan scan = new Scan();
         if (start != null) {
-            scan = new Scan(Bytes.toBytes(start));
-        } else {
-            scan = new Scan();
+            scan.withStartRow(Bytes.toBytes(start));
         }
-        
         if (ObjectHelper.isNotEmpty(stop)) {
-            scan.setStopRow(Bytes.toBytes(stop));
+            scan.withStopRow(Bytes.toBytes(stop));
         }
 
         if (filters != null && !filters.isEmpty()) {
@@ -240,12 +237,12 @@ public class HBaseProducer extends DefaultProducer {
                 String column = modelCell.getQualifier();
 
                 resultRow.setId(endpoint.getCamelContext().getTypeConverter().convertTo(
-                    model.getRowType(),
-                    result.getRow())
+                        model.getRowType(),
+                        result.getRow())
                 );
                 resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(
-                    modelCell.getValueType(),
-                    result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)))
+                        modelCell.getValueType(),
+                        result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column)))
                 );
 
                 resultCell.setFamily(modelCell.getFamily());
