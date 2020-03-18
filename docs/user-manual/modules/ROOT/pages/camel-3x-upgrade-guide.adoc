@@ -9,6 +9,21 @@ xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
 For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
+== Upgrading Camel 3.1 to 3.1
+
+=== Rest Configuration
+
+The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.
+
+The following methods have been removed:
+
+* org.apache.camel.CamelContext#addRestConfiguration(RestConfiguration restConfiguration)
+* org.apache.camel.CamelContext#getRestConfiguration(String component, boolean defaultIfNotFound)
+* org.apache.camel.CamelContext#getRestConfigurations
+
+
+https://issues.apache.org/jira/browse/CAMEL-13844
+
 == Upgrading Camel 3.0 to 3.1
 
 === camel-ahc, camel-netty-http, camel-undertow
@@ -79,7 +94,7 @@ Should be changed to
 milo-client:opc.tcp://foo:bar@localhost:1234
 ----
 
-The `camel-milo` server component requires Java 9 at runtime. 
+The `camel-milo` server component requires Java 9 at runtime.
 Property `strictEndpointUrlsEnabled` is no longer supported.
 Properties`hostName` and `serverName` are replaced by `path`.
 To successfully use certificates for secured communication, JCE Jurisdiction Policy File Default
