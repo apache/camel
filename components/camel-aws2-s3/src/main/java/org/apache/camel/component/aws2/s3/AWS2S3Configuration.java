@@ -67,16 +67,6 @@ public class AWS2S3Configuration implements Cloneable {
     private AWS2S3Operations operation;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
-    @UriParam(label = "common, advanced", defaultValue = "false")
-    private boolean chunkedEncodingDisabled;
-    @UriParam(label = "common, advanced", defaultValue = "false")
-    private boolean accelerateModeEnabled;
-    @UriParam(label = "common, advanced", defaultValue = "false")
-    private boolean dualstackEnabled;
-    @UriParam(label = "common, advanced", defaultValue = "false")
-    private boolean payloadSigningEnabled;
-    @UriParam(label = "common, advanced", defaultValue = "false")
-    private boolean forceGlobalBucketAccessEnabled;
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoCreateBucket = true;
     @UriParam(label = "producer,advanced", defaultValue = "false")
@@ -359,61 +349,6 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setAwsKMSKeyId(String awsKMSKeyId) {
         this.awsKMSKeyId = awsKMSKeyId;
-    }
-
-    public boolean isChunkedEncodingDisabled() {
-        return chunkedEncodingDisabled;
-    }
-
-    /**
-     * Define if disabled Chunked Encoding is true or false
-     */
-    public void setChunkedEncodingDisabled(boolean chunkedEncodingDisabled) {
-        this.chunkedEncodingDisabled = chunkedEncodingDisabled;
-    }
-
-    public boolean isAccelerateModeEnabled() {
-        return accelerateModeEnabled;
-    }
-
-    /**
-     * Define if Accelerate Mode enabled is true or false
-     */
-    public void setAccelerateModeEnabled(boolean accelerateModeEnabled) {
-        this.accelerateModeEnabled = accelerateModeEnabled;
-    }
-
-    public boolean isDualstackEnabled() {
-        return dualstackEnabled;
-    }
-
-    /**
-     * Define if Dualstack enabled is true or false
-     */
-    public void setDualstackEnabled(boolean dualstackEnabled) {
-        this.dualstackEnabled = dualstackEnabled;
-    }
-
-    public boolean isPayloadSigningEnabled() {
-        return payloadSigningEnabled;
-    }
-
-    /**
-     * Define if Payload Signing enabled is true or false
-     */
-    public void setPayloadSigningEnabled(boolean payloadSigningEnabled) {
-        this.payloadSigningEnabled = payloadSigningEnabled;
-    }
-
-    public boolean isForceGlobalBucketAccessEnabled() {
-        return forceGlobalBucketAccessEnabled;
-    }
-
-    /**
-     * Define if Force Global Bucket Access enabled is true or false
-     */
-    public void setForceGlobalBucketAccessEnabled(boolean forceGlobalBucketAccessEnabled) {
-        this.forceGlobalBucketAccessEnabled = forceGlobalBucketAccessEnabled;
     }
 
     /**
