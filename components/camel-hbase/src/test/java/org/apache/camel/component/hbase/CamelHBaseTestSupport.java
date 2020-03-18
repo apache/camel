@@ -17,38 +17,30 @@
 package org.apache.camel.component.hbase;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseTestingUtility;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.TableNotFoundException;
+import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Table;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.GenericContainer;
 
-public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
-    //The hbase testing utility has special requirements on the umask.
-    //We hold this value to check if the minicluster has properly started and tests can be run.
-    protected static Boolean systemReady = true;
+public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
 
-    protected static HBaseTestingUtility hbaseUtil = new HBaseTestingUtility();
-    protected static int numServers = 1;
     protected static final String PERSON_TABLE = "person";
     protected static final String INFO_FAMILY = "info";
-
-    private static final Logger LOG = LoggerFactory.getLogger(CamelHBaseTestSupport.class);
 
     protected String[] key = {"1", "2", "3"};
     protected final String[] family = {"info", "birthdate", "address"};
@@ -70,66 +62,81 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
             family[1].getBytes(),
             family[2].getBytes()};
 
-    @BeforeAll
-    public static void setUpClass() throws Exception {
-        try {
-            hbaseUtil.startMiniCluster(numServers);
-        } catch (Exception e) {
-            LOG.warn("couldn't start HBase cluster. Test is not started, but passed!", e);
-            systemReady = false;
-        }
-    }
-
-    @AfterAll
-    public static void tearDownClass() throws Exception {
-        if (systemReady) {
-            hbaseUtil.shutdownMiniCluster();
-        }
-    }
+    // init container once for a class
+    private GenericContainer cont;
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        if (systemReady) {
-            try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
-            } catch (TableExistsException ex) {
-                //Ignore if table exists
-            }
-
-            super.setUp();
+        super.setUp();
+        try {
+            createTable(PERSON_TABLE, families);
+        } catch (TableExistsException ex) {
+            //Ignore if table exists
         }
     }
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        if (systemReady) {
-            hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
-            super.tearDown();
+        try {
+            deleteTable(PERSON_TABLE);
+        } catch (TableNotFoundException e) {
+            // skip
         }
+        super.tearDown();
     }
 
     @Override
-    public CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(createCamelRegistry());
-        // configure hbase component
-        HBaseComponent component = context.getComponent("hbase", HBaseComponent.class);
-        component.setConfiguration(hbaseUtil.getConfiguration());
-        return context;
+    protected GenericContainer<?> createContainer() {
+        if (cont == null) {
+            cont = new HBaseContainer();
+        }
+        return cont;
+    }
+
+    @Override
+    protected long containersStartupTimeout() {
+        // on my laptop it takes around 30-60 seconds to start the cluster.
+        return TimeUnit.MINUTES.toSeconds(5);
     }
 
     protected void putMultipleRows() throws IOException {
-        Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-        Connection connection = ConnectionFactory.createConnection(configuration);
-        Table table = connection.getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
-
+        Table table = connectHBase().getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
         for (int r = 0; r < key.length; r++) {
             Put put = new Put(key[r].getBytes());
             put.addColumn(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
             table.put(put);
         }
-
         IOHelper.close(table);
+    }
+
+    protected Configuration getHBaseConfig() {
+        return HBaseContainer.defaultConf();
+    }
+
+    protected Connection connectHBase() throws IOException {
+        Connection connection = ConnectionFactory.createConnection(getHBaseConfig());
+        return connection;
+    }
+
+    protected void createTable(String name, byte[][] families) throws IOException {
+        HTableDescriptor descr = new HTableDescriptor(TableName.valueOf(name));
+        for (byte[] fam : families) {
+            HColumnDescriptor cdescr = new HColumnDescriptor(fam);
+            descr.addFamily(cdescr);
+        }
+        connectHBase().getAdmin().createTable(descr);
+    }
+
+    protected void createTable(String name, String family) throws IOException {
+        createTable(name, new byte[][]{family.getBytes()});
+    }
+
+    protected void deleteTable(String name) throws IOException {
+        Admin admin = connectHBase().getAdmin();
+        TableName tname = TableName.valueOf(name);
+        admin.disableTable(tname);
+        admin.deleteTable(tname);
     }
 }

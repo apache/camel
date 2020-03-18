@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.hbase.processor.idempotent;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hbase.CamelHBaseTestSupport;
-import org.apache.camel.component.hbase.HBaseHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.junit.jupiter.api.AfterEach;
@@ -41,114 +38,93 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        if (systemReady) {
-            try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), HBaseHelper.getHBaseFieldAsBytes(INFO_FAMILY));
-            } catch (TableExistsException ex) {
-                //Ignore if table exists
-            }
-            this.repository = new HBaseIdempotentRepository(hbaseUtil.getConfiguration(), PERSON_TABLE, INFO_FAMILY, "mycolumn");
-            super.setUp();
+        this.repository = new HBaseIdempotentRepository(getHBaseConfig(), PERSON_TABLE, INFO_FAMILY, "mycolumn");
+        super.setUp();
+        try {
+            createTable(PERSON_TABLE, INFO_FAMILY);
+        } catch (TableExistsException ex) {
+            //Ignore if table exists
         }
     }
 
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        if (systemReady) {
-            hbaseUtil.deleteTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE));
-            super.setUp();
-        }
+        deleteTable(PERSON_TABLE);
+        super.tearDown();
     }
 
     @Test
     public void testAdd() throws Exception {
-        if (systemReady) {
-            // add first key
-            assertTrue(repository.add(key01));
-            assertTrue(repository.contains(key01));
+        // add first key
+        assertTrue(repository.add(key01));
+        assertTrue(repository.contains(key01));
 
-            // try to add an other one
-            assertTrue(repository.add(key02));
-            assertTrue(repository.contains(key02));
+        // try to add an other one
+        assertTrue(repository.add(key02));
+        assertTrue(repository.contains(key02));
 
-            // try to add the first key again
-            assertFalse(repository.add(key01));
-        }
+        // try to add the first key again
+        assertFalse(repository.add(key01));
     }
 
     @Test
     public void testContains() throws Exception {
-        if (systemReady) {
-            assertFalse(repository.contains(key01));
+        assertFalse(repository.contains(key01));
 
-            // add key and check again
-            assertTrue(repository.add(key01));
-            assertTrue(repository.contains(key01));
-        }
+        // add key and check again
+        assertTrue(repository.add(key01));
+        assertTrue(repository.contains(key01));
     }
 
     @Test
     public void testRemove() throws Exception {
-        if (systemReady) {
-            // add key to remove
-            assertTrue(repository.add(key01));
-            assertTrue(repository.contains(key01));
-            // assertEquals(1, dataSet.size());
+        // add key to remove
+        assertTrue(repository.add(key01));
+        assertTrue(repository.contains(key01));
+        // assertEquals(1, dataSet.size());
 
-            // remove key
-            assertTrue(repository.remove(key01));
-            //assertEquals(0, dataSet.size());
+        // remove key
+        assertTrue(repository.remove(key01));
+        //assertEquals(0, dataSet.size());
 
-            // try to remove a key that isn't there
-            assertFalse(repository.remove(key02));
-        }
+        // try to remove a key that isn't there
+        assertFalse(repository.remove(key02));
     }
-    
+
     @Test
     public void testClear() throws Exception {
-        if (systemReady) {
-            // add key to remove
-            assertTrue(repository.add(key01));
-            assertTrue(repository.add(key02));
-            assertTrue(repository.contains(key01));
-            assertTrue(repository.contains(key02));
+        // add key to remove
+        assertTrue(repository.add(key01));
+        assertTrue(repository.add(key02));
+        assertTrue(repository.contains(key01));
+        assertTrue(repository.contains(key02));
 
-            // remove key
-            repository.clear();
+        // remove key
+        repository.clear();
 
-            assertFalse(repository.contains(key01));
-            assertFalse(repository.contains(key02));
-        }
+        assertFalse(repository.contains(key01));
+        assertFalse(repository.contains(key02));
     }
 
     @Test
     public void testConfirm() throws Exception {
-        if (systemReady) {
-            // it always return true
-            assertTrue(repository.confirm(key01));
-        }
+        // it always return true
+        assertTrue(repository.confirm(key01));
     }
 
     @Test
     public void testRepositoryInRoute() throws Exception {
-        if (systemReady) {
-            MockEndpoint mock = (MockEndpoint) context.getEndpoint("mock:out");
-            mock.expectedBodiesReceived("a", "b");
-            // c is a duplicate
+        MockEndpoint mock = (MockEndpoint) context.getEndpoint("mock:out");
+        mock.expectedBodiesReceived("a", "b");
+        // c is a duplicate
 
-            // send 3 message with one duplicated key (key01)
-            template.sendBodyAndHeader("direct:in", "a", "messageId", key01);
-            template.sendBodyAndHeader("direct:in", "b", "messageId", key02);
-            template.sendBodyAndHeader("direct:in", "c", "messageId", key01);
+        // send 3 message with one duplicated key (key01)
+        template.sendBodyAndHeader("direct:in", "a", "messageId", key01);
+        template.sendBodyAndHeader("direct:in", "b", "messageId", key02);
+        template.sendBodyAndHeader("direct:in", "c", "messageId", key01);
 
-            assertMockEndpointsSatisfied();
-        }
-    }
-
-    @Override
-    public CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(createCamelRegistry());
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -157,8 +133,8 @@ public class HBaseIdempotentRepositoryTest extends CamelHBaseTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                    .idempotentConsumer(header("messageId"), repository)
-                    .to("mock:out");
+                        .idempotentConsumer(header("messageId"), repository)
+                        .to("mock:out");
             }
         };
     }
