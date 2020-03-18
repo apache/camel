@@ -24,7 +24,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.lw.ImmutableCamelContext;
+import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
@@ -44,7 +44,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
-    private boolean useImmutableContext;
+    private boolean useLightweightContext;
     private Service camelContextService;
 
     /**
@@ -62,12 +62,12 @@ public abstract class ContextTestSupport extends TestSupport {
         this.useRouteBuilder = useRouteBuilder;
     }
 
-    public boolean isUseImmutableContext() {
-        return useImmutableContext;
+    public boolean isUseLightweightContext() {
+        return useLightweightContext;
     }
 
-    public void setUseImmutableContext(boolean useImmutableContext) {
-        this.useImmutableContext = useImmutableContext;
+    public void setUseLightweightContext(boolean useLightweightContext) {
+        this.useLightweightContext = useLightweightContext;
     }
 
     public Service getCamelContextService() {
@@ -180,8 +180,8 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.start();
         } else {
-            if (context instanceof ImmutableCamelContext) {
-                ImmutableCamelContext ctx = (ImmutableCamelContext) context;
+            if (context instanceof LightweightCamelContext) {
+                LightweightCamelContext ctx = (LightweightCamelContext) context;
                 Boolean autoStartup = ctx.isAutoStartup();
                 ctx.setAutoStartup(false);
                 ctx.start();
@@ -197,8 +197,8 @@ public abstract class ContextTestSupport extends TestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context;
-        if (useImmutableContext) {
-            ImmutableCamelContext ctx = new ImmutableCamelContext();
+        if (useLightweightContext) {
+            LightweightCamelContext ctx = new LightweightCamelContext();
             ctx.setRegistry(createRegistry());
             context = ctx;
         } else {

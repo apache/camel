@@ -132,11 +132,11 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 @Experimental
-public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamelContext, ModelCamelContext {
+public class LightweightCamelContext implements ExtendedCamelContext, CatalogCamelContext, ModelCamelContext {
 
     protected volatile CamelContext delegate;
 
-    protected ImmutableCamelContext(CamelContext delegate) {
+    protected LightweightCamelContext(CamelContext delegate) {
         this.delegate = delegate;
     }
 
@@ -146,11 +146,11 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
-    public ImmutableCamelContext() {
+    public LightweightCamelContext() {
         delegate = new DefaultCamelContext(false) {
             @Override
             public CamelContext getCamelContextReference() {
-                return ImmutableCamelContext.this;
+                return LightweightCamelContext.this;
             }
         };
     }
@@ -163,7 +163,7 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
      *
      * @param repository the bean repository.
      */
-    public ImmutableCamelContext(BeanRepository repository) {
+    public LightweightCamelContext(BeanRepository repository) {
         this(new DefaultRegistry(repository));
     }
 
@@ -172,7 +172,7 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
      *
      * @param registry the registry
      */
-    public ImmutableCamelContext(Registry registry) {
+    public LightweightCamelContext(Registry registry) {
         this();
         setRegistry(registry);
     }
@@ -1652,7 +1652,7 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
     //
 
     public void makeImmutable() {
-        if (delegate instanceof RuntimeImmutableCamelContext) {
+        if (delegate instanceof LightweightRuntimeCamelContext) {
             throw new IllegalStateException();
         }
         delegate.setAutoStartup(false);
@@ -1660,7 +1660,7 @@ public class ImmutableCamelContext implements ExtendedCamelContext, CatalogCamel
         for (Route route : delegate.getRoutes()) {
             clearModelReferences(route);
         }
-        delegate = new RuntimeImmutableCamelContext(this, delegate);
+        delegate = new LightweightRuntimeCamelContext(this, delegate);
     }
 
     private void clearModelReferences(Route r) {

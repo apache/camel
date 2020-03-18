@@ -136,9 +136,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RuntimeImmutableCamelContext implements ExtendedCamelContext, CatalogCamelContext {
+public class LightweightRuntimeCamelContext implements ExtendedCamelContext, CatalogCamelContext {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RuntimeImmutableCamelContext.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LightweightRuntimeCamelContext.class);
 
     private final CamelContext reference;
     private final Registry registry;
@@ -180,7 +180,7 @@ public class RuntimeImmutableCamelContext implements ExtendedCamelContext, Catal
     private final String version;
     private Date startDate;
 
-    RuntimeImmutableCamelContext(CamelContext reference, CamelContext context) {
+    LightweightRuntimeCamelContext(CamelContext reference, CamelContext context) {
         this.reference = reference;
         registry = context.getRegistry();
         typeConverter = new CoreTypeConverterRegistry(context.getTypeConverterRegistry());
