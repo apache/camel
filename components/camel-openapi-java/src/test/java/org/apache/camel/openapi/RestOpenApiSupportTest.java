@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class RestOpenApiSupportTest {
 
@@ -53,14 +53,14 @@ public class RestOpenApiSupportTest {
         headers.put(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, "http, HTTPS ");
         RestOpenApiSupport.setupXForwardedHeaders(openApi, headers);
 
-        
+
         assertEquals(openApi.basePath, "/prefix/base");
         assertEquals(openApi.host, "host");
         assertTrue(openApi.schemes.contains("http"));
         assertTrue(openApi.schemes.contains("https"));
-            
+
     }
-    
+
     @Test
     public void shouldAdaptFromXForwardHeadersV3() {
         Oas30Document doc = new Oas30Document();
@@ -73,11 +73,11 @@ public class RestOpenApiSupportTest {
         headers.put(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, "http, HTTPS ");
         RestOpenApiSupport.setupXForwardedHeaders(openApi, headers);
 
-        
+
         assertEquals(openApi.getServers().get(0).url, "http://host/prefix/base");
         assertEquals(openApi.getServers().get(1).url, "https://host/prefix/base");
-       
-            
+
+
     }
 
     @ParameterizedTest
@@ -94,7 +94,7 @@ public class RestOpenApiSupportTest {
 
         assertEquals(openApi.basePath, expected);
     }
-    
+
     @ParameterizedTest
     @MethodSource("basePathAndPrefixVariations")
     public void shouldAdaptWithVaryingBasePathsAndPrefixesV3(final String prefix, final String basePath,
@@ -127,15 +127,15 @@ public class RestOpenApiSupportTest {
         }
 
     }
-    
+
     @ParameterizedTest
     @MethodSource("schemeVariations")
     public void shouldAdaptWithVaryingSchemesV3(final String xForwardedScheme, final String[] expected) {
         final Oas30Document openApi = spy(new Oas30Document());
-        
+
         RestOpenApiSupport.setupXForwardedHeaders(openApi,
             Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
-        
+
         List<String> schemas = new ArrayList<String>();
         if (openApi.servers != null) {
             for (Server server : openApi.servers) {
@@ -144,7 +144,7 @@ public class RestOpenApiSupportTest {
                     schemas.add(url.getProtocol());
                 } catch (MalformedURLException e) {
 
-                    
+
                 }
             }
         }
@@ -160,7 +160,7 @@ public class RestOpenApiSupportTest {
 
         RestOpenApiSupport.setupXForwardedHeaders(openApi, Collections.emptyMap());
 
-        verifyZeroInteractions(openApi);
+        verifyNoInteractions(openApi);
     }
 
     static Stream<Arguments> basePathAndPrefixVariations() {
