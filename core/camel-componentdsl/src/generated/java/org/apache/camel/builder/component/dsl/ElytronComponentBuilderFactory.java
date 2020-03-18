@@ -191,6 +191,34 @@ public interface ElytronComponentBuilderFactory {
             return this;
         }
         /**
+         * Configuration used by UndertowSecurityProvider. Comma separated list
+         * of allowed roles.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronComponentBuilder allowedRoles(
+                java.lang.String allowedRoles) {
+            doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+        /**
+         * Configuration used by UndertowSecurityProvider. Security
+         * configuration object for use from UndertowSecurityProvider.
+         * Configuration is UndertowSecurityProvider specific. Each provider
+         * decides, whether it accepts configuration.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: security
+         */
+        default ElytronComponentBuilder securityConfiguration(
+                java.lang.Object securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -242,6 +270,8 @@ public interface ElytronComponentBuilderFactory {
             case "mechanismName": ((ElytronComponent) component).setMechanismName((java.lang.String) value); return true;
             case "securityDomainBuilder": ((ElytronComponent) component).setSecurityDomainBuilder((org.wildfly.security.auth.server.SecurityDomain.Builder) value); return true;
             case "undertowHttpBinding": ((ElytronComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
+            case "allowedRoles": ((ElytronComponent) component).setAllowedRoles((java.lang.String) value); return true;
+            case "securityConfiguration": ((ElytronComponent) component).setSecurityConfiguration((java.lang.Object) value); return true;
             case "sslContextParameters": ((ElytronComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((ElytronComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

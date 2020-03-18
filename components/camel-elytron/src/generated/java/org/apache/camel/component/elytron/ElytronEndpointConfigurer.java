@@ -11,15 +11,6 @@ import org.apache.camel.component.undertow.UndertowEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class ElytronEndpointConfigurer extends UndertowEndpointConfigurer implements GeneratedPropertyConfigurer {
 
-    @Override
-    public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        ElytronEndpoint target = (ElytronEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
-        case "allowedroles":
-        case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
-        default: return super.configure(camelContext, obj, name, value, ignoreCase);
-        }
-    }
 
 }
 

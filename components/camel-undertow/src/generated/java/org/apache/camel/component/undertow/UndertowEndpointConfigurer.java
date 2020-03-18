@@ -19,6 +19,8 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessLog": target.setAccessLog(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "accesslogreceiver":
         case "accessLogReceiver": target.setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
+        case "allowedroles":
+        case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -51,6 +53,8 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "preserveHostHeader": target.setPreserveHostHeader(property(camelContext, boolean.class, value)); return true;
         case "reuseaddresses":
         case "reuseAddresses": target.setReuseAddresses(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "securityconfiguration":
+        case "securityConfiguration": target.setSecurityConfiguration(property(camelContext, java.lang.Object.class, value)); return true;
         case "sendtimeout":
         case "sendTimeout": target.setSendTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "sendtoall":
