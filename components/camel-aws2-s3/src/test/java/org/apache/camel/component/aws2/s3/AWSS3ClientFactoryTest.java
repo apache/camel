@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.aws2.s3;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMOptimizedImpl;
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AWSS3ClientFactoryTest {
 
@@ -29,7 +30,7 @@ public class AWSS3ClientFactoryTest {
     public void getStandardS3ClientDefault() {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
         AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        Assert.assertTrue(awss3Client instanceof AWS2S3ClientStandardImpl);
+        assertTrue(awss3Client instanceof AWS2S3ClientStandardImpl);
     }
 
     @Test
@@ -37,7 +38,7 @@ public class AWSS3ClientFactoryTest {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
         s3Configuration.setUseIAMCredentials(false);
         AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        Assert.assertTrue(awss3Client instanceof AWS2S3ClientStandardImpl);
+        assertTrue(awss3Client instanceof AWS2S3ClientStandardImpl);
     }
 
     @Test
@@ -45,6 +46,6 @@ public class AWSS3ClientFactoryTest {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
         s3Configuration.setUseIAMCredentials(true);
         AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        Assert.assertTrue(awss3Client instanceof AWS2S3ClientIAMOptimizedImpl);
+        assertTrue(awss3Client instanceof AWS2S3ClientIAMOptimizedImpl);
     }
 }
