@@ -38,7 +38,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -134,9 +133,9 @@ public class AWS2S3Producer extends DefaultProducer {
 
         Map<String, String> objectMetadata = determineMetadata(exchange);
         if (objectMetadata.containsKey("Content-Length")) {
-        if (objectMetadata.get("Content-Length").equalsIgnoreCase("0")) {
-            objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
-        }
+            if (objectMetadata.get("Content-Length").equalsIgnoreCase("0")) {
+                objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
+            }
         } else {
             objectMetadata.put("Content-Length", String.valueOf(filePayload.length()));
         }
