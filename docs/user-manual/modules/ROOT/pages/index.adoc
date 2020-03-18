@@ -14,6 +14,8 @@ routing rules in your IDE, whether in a Java or XML editor.
 
 For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel.adoc[Introduction] is provided.
 
+
+
 == Summary
 
 * <<Overview>>
@@ -36,6 +38,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel
 * xref:examples.adoc[Examples]
 * xref:architecture.adoc[Architecture]
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+* xref:Endpoint-dsl.adoc[Endpoint-dsl]
 * xref:dsl.adoc[DSL]
 * <<Components>>
 * <<Data Formats>>
