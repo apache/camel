@@ -16,18 +16,16 @@
  */
 package org.apache.camel.dataformat.xstream;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.stream.XMLStreamException;
+import java.nio.charset.StandardCharsets;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.json.AbstractJsonWriter;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxReader;
@@ -35,6 +33,7 @@ import com.thoughtworks.xstream.io.xml.StaxWriter;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
@@ -44,14 +43,12 @@ import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
  */
 @Dataformat("json-xstream")
 public class JsonDataFormat extends AbstractXStreamWrapper {
-    private final MappedXMLOutputFactory mof;
-    private final MappedXMLInputFactory mif;
+    private MappedXMLOutputFactory mof;
+    private MappedXMLInputFactory mif;
     private boolean prettyPrint;
+    private boolean dropRootNode;
 
     public JsonDataFormat() {
-        final Map<?, ?> nstjsons = new HashMap<>();
-        mof = new MappedXMLOutputFactory(nstjsons);
-        mif = new MappedXMLInputFactory(nstjsons);
     }
 
     @Override
@@ -65,6 +62,14 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
 
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public boolean isDropRootNode() {
+        return dropRootNode;
+    }
+
+    public void setDropRootNode(boolean dropRootNode) {
+        this.dropRootNode = dropRootNode;
     }
 
     @Override
@@ -94,11 +99,11 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     @Override
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
         if (isPrettyPrint()) {
-            try {
-                // the json spec. expects UTF-8 as the default encoding
-                return new JsonWriter(new OutputStreamWriter(stream, "UTF-8"));
-            } catch (UnsupportedEncodingException uee) {
-                throw new XMLStreamException(uee);
+            // the json spec. expects UTF-8 as the default encoding
+            if (isDropRootNode()) {
+                return new JsonWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8), AbstractJsonWriter.DROP_ROOT_MODE);
+            } else {
+                return new JsonWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8));
             }
         }
 
@@ -108,5 +113,16 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     @Override
     protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
         return new StaxReader(new QNameMap(), mif.createXMLStreamReader(stream));
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        Configuration config = new Configuration();
+        config.setDropRootElement(dropRootNode);
+
+        mof = new MappedXMLOutputFactory(config);
+        mif = new MappedXMLInputFactory(config);
     }
 }

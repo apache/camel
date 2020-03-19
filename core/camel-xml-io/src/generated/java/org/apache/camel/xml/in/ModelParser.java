@@ -1941,6 +1941,7 @@ public class ModelParser extends BaseParser {
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
+                case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); break;
                 case "include": def.setInclude(val); break;
