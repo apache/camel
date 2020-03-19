@@ -386,10 +386,6 @@ public class AWS2S3Configuration implements Cloneable {
         this.keyName = keyName;
     }
 
-    public boolean hasProxyConfiguration() {
-        return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
-    }
-
     // *************************************************
     //
     // *************************************************
