@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -38,6 +40,7 @@ import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -82,6 +85,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
+
+    protected ClassLoader projectClassLoader;
 
     public PackageDataFormatMojo() {
     }
@@ -169,7 +174,17 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
                         String json = PackageHelper.loadText(new File(core, "target/classes/org/apache/camel/model/dataformat/" + modelName + PackageHelper.JSON_SUFIX));
 
-                        DataFormatModel dataFormatModel = extractDataFormatModel(project, json, name, javaType);
+                        // any excluded properties
+                        Class<?> clazz = loadClass(javaType);
+                        Metadata metadata = clazz.getAnnotation(Metadata.class);
+                        String included = "";
+                        String excluded = "";
+                        if (metadata != null) {
+                            included = metadata.includeProperties();
+                            excluded = metadata.excludeProperties();
+                        }
+
+                        DataFormatModel dataFormatModel = extractDataFormatModel(project, json, name, javaType, included, excluded);
                         if (log.isDebugEnabled()) {
                             log.debug("Model: " + dataFormatModel);
                         }
@@ -194,7 +209,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         List<DataFormatOptionModel> options = parseConfigurationSource(project, javaType);
                         options.removeIf(o -> !names.contains(o.getName()));
                         names.removeAll(options.stream().map(DataFormatOptionModel::getName).collect(Collectors.toList()));
-                        names.removeAll(Arrays.asList("contentTypeHeader", "id"));
+                        names.removeAll(Arrays.asList("id"));
                         if (!names.isEmpty()) {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }
@@ -226,7 +241,27 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return count;
     }
 
-    private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String name, String javaType) {
+    private Class<?> loadClass(String name) {
+        try {
+            return getProjectClassLoader().loadClass(name);
+        } catch (ClassNotFoundException e) {
+            throw (NoClassDefFoundError) new NoClassDefFoundError(name).initCause(e);
+        }
+    }
+
+    private ClassLoader getProjectClassLoader() {
+        if (projectClassLoader == null) {
+            try {
+                projectClassLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
+            } catch (DependencyResolutionRequiredException e) {
+                throw new RuntimeException("Unable to create project classloader", e);
+            }
+        }
+        return projectClassLoader;
+    }
+
+    private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String name, String javaType,
+                                                          String includedProperties, String excludedProperties) {
         EipModel def = JsonMapper.generateEipModel(json);
         DataFormatModel model = new DataFormatModel();
         model.setName(name);
@@ -245,6 +280,16 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
 
         for (EipOptionModel opt : def.getOptions()) {
             DataFormatOptionModel option = new DataFormatOptionModel();
+
+            if (excludedProperties.contains(opt.getName())) {
+                // skip excluded
+                continue;
+            }
+            if (!includedProperties.isEmpty() && !includedProperties.contains(opt.getName())) {
+                // skip if not included
+                continue;
+            }
+
             option.setName(opt.getName());
             option.setKind(opt.getKind());
             option.setDisplayName(opt.getDisplayName());
@@ -458,7 +503,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
             for (DataFormatOptionModel option : options) {
                 String name = option.getName();
-                if ("contentTypeHeader".equals(name) || "id".equals(name)) {
+                if ("id".equals(name)) {
                     continue;
                 }
                 String setter = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);

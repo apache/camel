@@ -32,7 +32,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("objectMapper", asRef(definition.getObjectMapper()));
-        if (definition.getLibrary() != JsonLibrary.XStream) {
+        if (definition.getLibrary() == JsonLibrary.Jackson) {
             if (definition.getUseDefaultObjectMapper() == null) {
                 // default true
                 properties.put("useDefaultObjectMapper", "true");

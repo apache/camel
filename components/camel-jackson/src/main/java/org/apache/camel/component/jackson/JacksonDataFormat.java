@@ -41,6 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -54,6 +55,7 @@ import org.slf4j.LoggerFactory;
  * to marshal to and from JSON.
  */
 @Dataformat("json-jackson")
+@Metadata(excludeProperties = "unmarshalTypeName,collectionTypeName,library,permissions,dropRootNode")
 public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);

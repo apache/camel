@@ -1,3 +1,4 @@
+[[circuitBreaker-eip]]
 = Circuit Breaker EIP
 
 The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
@@ -17,6 +18,18 @@ The states are as follows:
 * *Half Open* — After a short period in the open state, an operation is attempted to
   see whether it can complete successfully, and depending on the outcome, it will
   transfer to either open or closed state.
+
+// eip options: START
+The Circuit Breaker EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hystrixConfiguration* | Configures the circuit breaker to use Hystrix with the given configuration. |  | HystrixConfigurationDefinition
+| *resilience4jConfiguration* | Configures the circuit breaker to use Resilience4j with the given configuration. |  | Resilience4jConfigurationDefinition
+| *configurationRef* | Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to use for configuring the circuit breaker EIP. |  | String
+|===
+// eip options: END
 
 == Example
 
