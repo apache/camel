@@ -209,7 +209,7 @@ over xref:components::jms-component.adoc[JMS] where the queue name is dynamic de
 
 See more details at Message Endpoint about
 the dynamic to, and what syntax it supports. By default it uses
-the xref:simple-language.adoc[Simple] language, but it has more power than so.
+the xref:components:languages:simple-language.adoc[Simple] language, but it has more power than so.
 
 == Embedding Camel routes
 

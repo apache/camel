@@ -16,7 +16,7 @@ methods.
 The xref:manual::bean-binding.adoc[Bean Binding] rules are used to bind the
 xref:manual::message.adoc[Message] Exchange to the method parameters; so you can
 annotate the bean to extract headers or other expressions such as
-xref:components::xpath-language.adoc[XPath] or xref:components::xquery-language.adoc[XQuery] from the message.
+xref:xpath-language.adoc[XPath] or xref:xquery-language.adoc[XQuery] from the message.
 
 == Bean Language options
 
@@ -116,7 +116,7 @@ The xref:bean-language.adoc[Bean Language] also supports invoking beans
 that isn't registered in the xref:manual::registry.adoc[Registry]. This is
 usable for quickly to invoke a bean from Java DSL where you don't need
 to register the bean in the xref:manual::registry.adoc[Registry] such as the
-xref:spring.adoc[Spring] *`ApplicationContext`*. Camel can instantiate
+xref:ROOT:spring.adoc[Spring] *`ApplicationContext`*. Camel can instantiate
 the bean and invoke the method if given a class or invoke an already
 existing instance.
 
@@ -177,7 +177,7 @@ We have some test cases you can look at if it'll help
 is a JUnit test case showing the Java xref:manual::dsl.adoc[DSL] use of the bean
 expression being used in a filter
 * https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/aggregator.xml[aggregator.xml]
-is a Spring XML test case for the xref:manual::aggregate-eip.adoc[Aggregator] which
+is a Spring XML test case for the xref:manual:eips:aggregate-eip.adoc[Aggregator] which
 uses a bean method call to test for the completion of the aggregation.
 
 include::camel-spring-boot::page$bean-starter.adoc[]

@@ -1209,7 +1209,7 @@ Transactions and [Request Reply] over JMS
 When using Request Reply over JMS you cannot
 use a single transaction; JMS will not send any messages until a commit
 is performed, so the server side won't receive anything at all until the
-transaction commits. Therefore to use xref:manual::requestReply-eip.adoc[Request
+transaction commits. Therefore to use xref:manual:eips:requestReply-eip.adoc[Request
 Reply] you must commit a transaction after sending the request and then
 use a separate transaction for receiving the response.
 

@@ -1,0 +1,45 @@
+[[sticky-eip]]
+= Sticky EIP
+
+Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a correlation key to perform the sticky load balancing.
+
+== Options
+
+// eip options: START
+The Sticky EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *correlationExpression* | *Required* The correlation expression to use to calculate the correlation key |  | ExpressionSubElementDefinition
+|===
+// eip options: END
+
+== Examples
+
+In this case we are using the header test as correlation expression:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance()
+    .sticky(header("test"))
+    .to("seda:x", "seda:y", "seda:z");
+----
+
+In XML you'll have a route like this
+
+[source,xml]
+----
+<from uri="direct:start"/>
+    <loadBalance>
+       <sticky>
+           <correlationExpression>
+               <header>test</header>
+           </correlationExpression>
+       </sticky>
+       <to uri="seda:x"/>      
+       <to uri="seda:y"/>      
+       <to uri="seda:z"/>       
+    </loadBalance> 
+----

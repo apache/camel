@@ -29,7 +29,7 @@ default thread pool profile which is:
 --------------------------------------------------------------------------------------------------------
 
 What that means is that for example when you use
-xref:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
+xref:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
 then it would create a thread pool based on the profile above. The
 `rejectedPolicy` has four options:
 `Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the
@@ -79,7 +79,7 @@ xref:registry.adoc[Registry] for a `ExecutorService` with the id =
 fooProfile. If none found it will fallback and see if there is a
 `ThreadPoolProfile` defined with that id. And in this example there is
 and so the profile is used for creating a new `ExecutorService` which is
-handed back to the xref:multicast-eip.adoc[Multicast] EIP to use in the
+handed back to the xref:eips:multicast-eip.adoc[Multicast] EIP to use in the
 route.
 
 [[ThreadingModel-Createcustomthreadpool]]

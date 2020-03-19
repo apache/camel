@@ -1,0 +1,99 @@
+[[flatpack-dataformat]]
+= Flatpack DataFormat
+:page-source: components/camel-flatpack/src/main/docs/flatpack-dataformat.adoc
+
+*Since Camel 2.1*
+
+The xref:ROOT:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
+format that can be used to format between fixed width or delimited text
+messages to a `List` of rows as `Map`.
+
+* marshal = from `List<Map<String, Object>>` to `OutputStream` (can be
+converted to `String`)
+* unmarshal = from `java.io.InputStream` (such as a `File` or `String`)
+to a `java.util.List` as an
+`org.apache.camel.component.flatpack.DataSetList` instance. +
+ The result of the operation will contain all the data. If you need to
+process each row one by one you can split the exchange, using
+Splitter.
+
+*Notice:* The Flatpack library does currently not support header and
+trailers for the marshal operation.
+
+== Options
+
+// dataformat options: START
+The Flatpack dataformat supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| definition |  | String | The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap.
+| fixed | false | Boolean | Delimited or fixed. Is by default false = delimited
+| ignoreFirstRecord | true | Boolean | Whether the first line is ignored for delimited files (for the column headers). Is by default true.
+| textQualifier |  | String | If the text is qualified with a character. Uses quote character by default.
+| delimiter | , | String | The delimiter char (could be ; , or similar)
+| allowShortLines | false | Boolean | Allows for lines to be shorter than expected and ignores the extra characters
+| ignoreExtraColumns | false | Boolean | Allows for lines to be longer than expected and ignores the extra characters.
+| parserFactoryRef |  | String | References to a custom parser factory to lookup in the registry
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+ND
+
+== Usage
+
+To use the data format, simply instantiate an instance and invoke the
+marshal or unmarshal operation in the route builder:
+
+[source,java]
+---------------------------------------------------------------------------
+  FlatpackDataFormat fp = new FlatpackDataFormat();
+  fp.setDefinition(new ClassPathResource("INVENTORY-Delimited.pzmap.xml"));
+  ...
+  from("file:order/in").unmarshal(df).to("seda:queue:neworder");
+---------------------------------------------------------------------------
+
+The sample above will read files from the `order/in` folder and
+unmarshal the input using the Flatpack configuration file
+`INVENTORY-Delimited.pzmap.xml` that configures the structure of the
+files. The result is a `DataSetList` object we store on the SEDA queue.
+
+[source,java]
+-----------------------------------------------------------------------------------
+FlatpackDataFormat df = new FlatpackDataFormat();
+df.setDefinition(new ClassPathResource("PEOPLE-FixedLength.pzmap.xml"));
+df.setFixed(true);
+df.setIgnoreFirstRecord(false);
+
+from("seda:people").marshal(df).convertBodyTo(String.class).to("jms:queue:people");
+-----------------------------------------------------------------------------------
+
+In the code above we marshal the data from a Object representation as a
+`List` of rows as `Maps`. The rows as `Map` contains the column name as
+the key, and the corresponding value. This structure can be created
+in Java code from e.g. a processor. We marshal the data according to the
+Flatpack format and convert the result as a `String` object and store it
+on a JMS queue.
+
+== Dependencies
+
+To use Flatpack in your camel routes you need to add the a dependency on
+*camel-flatpack* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,java]
+-----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-flatpack</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-----------------------------------------
+
+include::camel-spring-boot::page$flatpack-starter.adoc[]
