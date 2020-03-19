@@ -182,16 +182,16 @@ public interface FluentProducerTemplate extends Service {
      *
      * <pre>
      * {@code
-     * FluentProducerTemplate.on(context)
-     *     .withTemplateCustomizer(
-     *         template -> {
-     *             template.setExecutorService(myExecutor);
-     *             template.setMaximumCacheSize(10);
+     * FluentProducerTemplate fluent = context.createFluentProducerTemplate();
+     * fluent.withTemplateCustomizer(
+     *         t -> {
+     *             t.setExecutorService(myExecutor);
+     *             t.setMaximumCacheSize(10);
      *         }
      *      )
      *     .withBody("the body")
      *     .to("direct:start")
-     *     .request()}
+     *     .send()}
      * </pre>
      *
      * Note that it is invoked only once.
