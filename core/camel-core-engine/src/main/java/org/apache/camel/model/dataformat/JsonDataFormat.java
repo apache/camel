@@ -84,6 +84,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String autoDiscoverObjectMapper;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
+    private String dropRootNode;
 
     public JsonDataFormat() {
         super("json");
@@ -386,6 +389,19 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
     }
 
+    public String getDropRootNode() {
+        return dropRootNode;
+    }
+
+    /**
+     * Whether XStream will drop the root node in the generated JSon.
+     * You may want to enable this when using POJOs; as then the written object will include the class name
+     * as root node, which is often not intended to be written in the JSon output.
+     */
+    public void setDropRootNode(String dropRootNode) {
+        this.dropRootNode = dropRootNode;
+    }
+
     @Override
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
@@ -526,6 +542,15 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     public JsonDataFormat autoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
+        return this;
+    }
+
+    public JsonDataFormat dropRootNode(boolean dropRootNode) {
+        return dropRootNode(Boolean.toString(dropRootNode));
+    }
+
+    public JsonDataFormat dropRootNode(String dropRootNode) {
+        this.dropRootNode = dropRootNode;
         return this;
     }
 

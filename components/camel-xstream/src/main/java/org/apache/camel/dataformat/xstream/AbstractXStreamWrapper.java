@@ -16,15 +16,13 @@
  */
 package org.apache.camel.dataformat.xstream;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.xml.stream.XMLStreamException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
