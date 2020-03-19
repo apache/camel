@@ -30,6 +30,7 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.PlatformHelper;
@@ -44,8 +45,9 @@ import org.slf4j.LoggerFactory;
  * The ftp component is used for uploading or downloading files from FTP
  * servers.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP", syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName", label = "file",
-        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+@UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
+        syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName", label = "file")
+@Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                 + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                 + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                 + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"

@@ -8,6 +8,7 @@
     "description": "The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.",
     "label": "messaging",
     "deprecated": false,
+    "deprecationNote": "",
     "async": true,
     "consumerOnly": false,
     "producerOnly": false,

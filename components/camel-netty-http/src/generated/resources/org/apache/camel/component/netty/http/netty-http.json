@@ -8,6 +8,7 @@
     "description": "Netty HTTP server and client using the Netty 4.x library.",
     "label": "http",
     "deprecated": false,
+    "deprecationNote": "",
     "async": true,
     "consumerOnly": false,
     "producerOnly": false,

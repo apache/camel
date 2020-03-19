@@ -8,6 +8,7 @@
     "description": "To copy files using the secure copy protocol (SCP).",
     "label": "file",
     "deprecated": false,
+    "deprecationNote": "",
     "async": false,
     "consumerOnly": false,
     "producerOnly": true,

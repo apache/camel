@@ -18,6 +18,8 @@ public class ThriftDataFormatConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         ThriftDataFormat dataformat = (ThriftDataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contenttypeheader":
+        case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "contenttypeformat":
         case "contentTypeFormat": dataformat.setContentTypeFormat(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;

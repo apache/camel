@@ -220,8 +220,13 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         // endpoint options
         findClassProperties(componentModel, classElement, new HashSet<>(), "", null, null, false);
 
+        String excludedProperties = "";
+        Metadata metadata = classElement.getAnnotation(Metadata.class);
+        if (metadata != null) {
+            excludedProperties = metadata.excludeProperties();
+        }
         // enhance and generate
-        enhanceComponentModel(componentModel, parentData, uriEndpoint.excludeProperties());
+        enhanceComponentModel(componentModel, parentData, excludedProperties);
 
         // if the component has known class name
         if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
@@ -723,13 +728,19 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         final Class<?> orgClassElement = classElement;
         excludes = new HashSet<>(excludes);
         while (true) {
+            String excludedProperties = "";
+            Metadata metadata = classElement.getAnnotation(Metadata.class);
+            if (metadata != null) {
+                excludedProperties = metadata.excludeProperties();
+            }
+
             final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
             if (uriEndpoint != null) {
-                Collections.addAll(excludes, uriEndpoint.excludeProperties().split(","));
+                Collections.addAll(excludes, excludedProperties.split(","));
             }
             for (Field fieldElement : classElement.getDeclaredFields()) {
 
-                Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+                metadata = fieldElement.getAnnotation(Metadata.class);
                 if (metadata != null && metadata.skip()) {
                     continue;
                 }
