@@ -245,6 +245,48 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * Configuration used by UndertowSecurityProvider. Comma separated list
+         * of allowed roles.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointConsumerBuilder allowedRoles(String allowedRoles) {
+            doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+        /**
+         * OConfiguration used by UndertowSecurityProvider. Security
+         * configuration object for use from UndertowSecurityProvider.
+         * Configuration is UndertowSecurityProvider specific. Each provider
+         * decides whether accepts configuration.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointConsumerBuilder securityConfiguration(
+                Object securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
+         * OConfiguration used by UndertowSecurityProvider. Security
+         * configuration object for use from UndertowSecurityProvider.
+         * Configuration is UndertowSecurityProvider specific. Each provider
+         * decides whether accepts configuration.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointConsumerBuilder securityConfiguration(
+                String securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -883,6 +925,48 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * Configuration used by UndertowSecurityProvider. Comma separated list
+         * of allowed roles.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointProducerBuilder allowedRoles(String allowedRoles) {
+            doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+        /**
+         * OConfiguration used by UndertowSecurityProvider. Security
+         * configuration object for use from UndertowSecurityProvider.
+         * Configuration is UndertowSecurityProvider specific. Each provider
+         * decides whether accepts configuration.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointProducerBuilder securityConfiguration(
+                Object securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
+         * OConfiguration used by UndertowSecurityProvider. Security
+         * configuration object for use from UndertowSecurityProvider.
+         * Configuration is UndertowSecurityProvider specific. Each provider
+         * decides whether accepts configuration.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointProducerBuilder securityConfiguration(
+                String securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -1163,6 +1247,48 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointBuilder useStreaming(String useStreaming) {
             doSetProperty("useStreaming", useStreaming);
+            return this;
+        }
+        /**
+         * Configuration used by UndertowSecurityProvider. Comma separated list
+         * of allowed roles.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointBuilder allowedRoles(String allowedRoles) {
+            doSetProperty("allowedRoles", allowedRoles);
+            return this;
+        }
+        /**
+         * OConfiguration used by UndertowSecurityProvider. Security
+         * configuration object for use from UndertowSecurityProvider.
+         * Configuration is UndertowSecurityProvider specific. Each provider
+         * decides whether accepts configuration.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointBuilder securityConfiguration(
+                Object securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
+            return this;
+        }
+        /**
+         * OConfiguration used by UndertowSecurityProvider. Security
+         * configuration object for use from UndertowSecurityProvider.
+         * Configuration is UndertowSecurityProvider specific. Each provider
+         * decides whether accepts configuration.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Group: security
+         */
+        default UndertowEndpointBuilder securityConfiguration(
+                String securityConfiguration) {
+            doSetProperty("securityConfiguration", securityConfiguration);
             return this;
         }
         /**
