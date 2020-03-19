@@ -18,13 +18,16 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.support.DefaultExchange;
 
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
@@ -38,9 +41,17 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         // if no timeout then we should block, and there use a negative timeout
         long time = definition.getTimeout() != null ? parseLong(definition.getTimeout()) : -1;
         boolean isIgnoreInvalidEndpoint = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
-        Expression exp = createExpression(definition.getExpression());
 
-        PollEnricher enricher = new PollEnricher(exp, time);
+        PollEnricher enricher;
+        if (definition.getExpression() instanceof ConstantExpression) {
+            Expression exp = createExpression(definition.getExpression());
+            Exchange ex = new DefaultExchange(camelContext);
+            String dest = exp.evaluate(ex, String.class);
+            enricher = new PollEnricher(dest, time);
+        } else {
+            Expression exp = createExpression(definition.getExpression());
+            enricher = new PollEnricher(exp, time);
+        }
 
         AggregationStrategy strategy = createAggregationStrategy();
         if (strategy == null) {

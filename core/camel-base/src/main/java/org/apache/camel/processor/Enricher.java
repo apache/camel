@@ -360,7 +360,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         if (recipient != null) {
             if (recipient instanceof NormalizedEndpointUri) {
                 NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+                ExtendedCamelContext ecc = exchange.getContext().adapt(ExtendedCamelContext.class);
                 return ecc.hasEndpoint(nu);
             } else {
                 String uri = recipient.toString();
