@@ -35,7 +35,8 @@ import org.apache.camel.spi.UriPath;
  * To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "servlet", extendsScheme = "http", title = "Servlet",
-        syntax = "servlet:contextPath", excludeProperties = "httpUri", consumerOnly = true, label = "http")
+        syntax = "servlet:contextPath", consumerOnly = true, label = "http")
+@Metadata(excludeProperties = "httpUri")
 public class ServletEndpoint extends HttpCommonEndpoint {
 
     private HttpBinding binding;

@@ -8,6 +8,7 @@
     "description": "To exchange data with external Websocket clients using Atmosphere.",
     "label": "websocket",
     "deprecated": false,
+    "deprecationNote": "",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,

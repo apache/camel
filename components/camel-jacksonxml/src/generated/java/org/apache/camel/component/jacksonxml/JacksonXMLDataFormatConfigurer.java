@@ -41,6 +41,8 @@ public class JacksonXMLDataFormatConfigurer extends PropertyConfigurerSupport im
         case "disableFeatures": dataformat.setDisableFeatures(property(camelContext, java.lang.String.class, value)); return true;
         case "allowunmarshalltype":
         case "allowUnmarshallType": dataformat.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
+        case "contenttypeheader":
+        case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

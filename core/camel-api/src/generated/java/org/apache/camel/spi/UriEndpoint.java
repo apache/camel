@@ -149,17 +149,6 @@ public @interface UriEndpoint {
     boolean lenientProperties() default false;
 
     /**
-     * To exclude one or more properties in this endpoint.
-     * <p/>
-     * This is used when a Camel component extend another component, and then may need to not use some of the properties from
-     * the parent component. Multiple properties can be separated by comma.
-     *
-     * @deprecated use {@link Metadata#excludeProperties()}
-     */
-    @Deprecated
-    String excludeProperties() default "";
-
-    /**
      * Generates source code for fast configuring of the endpoint properties which
      * uses direct method invocation of getter/setters.
      * Setting this to false will fallback to use reflection based introspection as Camel does in Camel 2.x.

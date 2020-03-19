@@ -9,6 +9,7 @@
     "description": "The ftps (FTP secure SSL\/TLS) component is used for uploading or downloading files from FTP servers.",
     "label": "file",
     "deprecated": false,
+    "deprecationNote": "",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,

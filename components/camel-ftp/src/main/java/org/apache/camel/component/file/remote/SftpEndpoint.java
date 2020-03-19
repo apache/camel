@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -28,8 +29,8 @@ import org.apache.camel.spi.UriParam;
  * The sftp (FTP over SSH) component is used for uploading or downloading files
  * from SFTP servers.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP", syntax = "sftp:host:port/directoryName", label = "file", 
-             excludeProperties = "appendChars,bufferSize,siteCommand,"
+@UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP", syntax = "sftp:host:port/directoryName", label = "file")
+@Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
                                  + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                                  + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                                  + "renameUsingCopy")
