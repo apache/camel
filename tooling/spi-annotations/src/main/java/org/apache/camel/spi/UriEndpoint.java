@@ -153,7 +153,10 @@ public @interface UriEndpoint {
      * <p/>
      * This is used when a Camel component extend another component, and then may need to not use some of the properties from
      * the parent component. Multiple properties can be separated by comma.
+     *
+     * @deprecated use {@link Metadata#excludeProperties()}
      */
+    @Deprecated
     String excludeProperties() default "";
 
     /**

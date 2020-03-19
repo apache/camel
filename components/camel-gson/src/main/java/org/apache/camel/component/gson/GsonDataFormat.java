@@ -36,6 +36,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -46,6 +47,7 @@ import org.apache.camel.util.IOHelper;
  * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
 @Dataformat("json-gson")
+@Metadata(includeProperties = "prettyPrint,contentTypeHeader")
 public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader {
 
     private Gson gson;

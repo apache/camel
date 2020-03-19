@@ -105,4 +105,20 @@ public @interface Metadata {
      */
     boolean skip() default false;
 
+    /**
+     * To exclude one or more properties.
+     * <p/>
+     * This is for example used when a Camel component extend another component, and then may need to not use some of the properties from
+     * the parent component. Multiple properties can be separated by comma.
+     */
+    String excludeProperties() default "";
+
+    /**
+     * To include one or more properties.
+     *
+     * Some dataformats share same base but individually they have some specific options, then this
+     * can be used to specify which options each implementation only supports.
+     */
+    String includeProperties() default "";
+
 }

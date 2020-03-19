@@ -32,6 +32,7 @@ import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
@@ -42,6 +43,7 @@ import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
  * ({@link org.apache.camel.spi.DataFormat}) using XStream and Jettison to marshal to and from JSON
  */
 @Dataformat("json-xstream")
+@Metadata(includeProperties = "prettyPrint,dropRootNode,contentTypeHeader")
 public class JsonDataFormat extends AbstractXStreamWrapper {
     private MappedXMLOutputFactory mof;
     private MappedXMLInputFactory mif;

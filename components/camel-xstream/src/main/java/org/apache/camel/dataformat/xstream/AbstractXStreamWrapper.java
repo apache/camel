@@ -319,7 +319,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
         this.mode = mode;
     }
 
-
     public boolean isContentTypeHeader() {
         return contentTypeHeader;
     }

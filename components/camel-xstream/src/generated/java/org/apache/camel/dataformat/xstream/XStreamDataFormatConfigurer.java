@@ -27,6 +27,8 @@ public class XStreamDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "implicitCollections": dataformat.setImplicitCollections(property(camelContext, java.util.Map.class, value)); return true;
         case "permissions": dataformat.setPermissions(property(camelContext, java.lang.String.class, value)); return true;
         case "mode": dataformat.setMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "contenttypeheader":
+        case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
