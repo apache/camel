@@ -14,13 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.platform.http;
+package org.apache.camel.component.platform.http.spi;
 
-public final class PlatformHttpConstants {
-    public static final String PLATFORM_HTTP_COMPONENT_NAME = "platform-http";
-    public static final String PLATFORM_HTTP_ENGINE_NAME = "platform-http-engine";
-    public static final String PLATFORM_HTTP_ENGINE_FACTORY = "platform-http-engine";
+import java.io.File;
 
-    private PlatformHttpConstants() {
-    }
+import org.apache.camel.Message;
+
+/**
+ * Attaches file uploads to Camel {@link Message}s.
+ */
+public interface UploadAttacher {
+
+    /**
+     * Attach the uploaded file represented by the given {@code localFile} and {@code fileName} to the given
+     * {@code message}
+     *
+     * @param localFile the uploaded file stored locally
+     * @param fileName  the name of the upload as sent by the client
+     * @param message   the {@link Message} to attach the upload to
+     */
+    void attachUpload(File localFile, String fileName, Message message);
+
 }

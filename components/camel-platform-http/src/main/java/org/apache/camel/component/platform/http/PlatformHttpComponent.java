@@ -19,10 +19,13 @@ package org.apache.camel.component.platform.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
@@ -31,15 +34,22 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestComponentHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Exposes HTTP endpoints leveraging the given platform's (SpringBoot, WildFly, Quarkus, ...) HTTP server.
  */
 @Component("platform-http")
 public class PlatformHttpComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformHttpComponent.class);
+
     @Metadata(label = "advanced", description = "An HTTP Server engine implementation to serve the requests")
     private PlatformHttpEngine engine;
+
+    private boolean localEngine;
 
     public PlatformHttpComponent() {
         super();
@@ -69,8 +79,46 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             String uriTemplate,
             String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
-                parameters, false);
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (engine == null) {
+            LOGGER.debug("Lookup platform http engine from registry");
+
+            engine = getCamelContext().getRegistry()
+                .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
+
+            if (engine == null) {
+                LOGGER.debug("Lookup platform http engine from factory");
+
+                engine = getCamelContext()
+                    .adapt(ExtendedCamelContext.class)
+                    .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
+                    .newInstance(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
+                    .orElseThrow(() -> new IllegalStateException(
+                        "PlatformHttpEngine is neither set on this endpoint neither found in Camel Registry or FactoryFinder.")
+                    );
+
+                localEngine = true;
+            }
+        }
+
+        CamelContextAware.trySetCamelContext(engine, getCamelContext());
+        ServiceHelper.startService(engine);
+
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        // Stop the platform-http engine only if it has been created through factory finder
+        if (localEngine) {
+            ServiceHelper.stopService(engine);
+        }
     }
 
     public PlatformHttpEngine getEngine() {
@@ -80,9 +128,8 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
     /**
      * Sets the {@link PlatformHttpEngine} to use.
      */
-    public PlatformHttpComponent setEngine(PlatformHttpEngine engine) {
+    public void setEngine(PlatformHttpEngine engine) {
         this.engine = engine;
-        return this;
     }
 
     private Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath,

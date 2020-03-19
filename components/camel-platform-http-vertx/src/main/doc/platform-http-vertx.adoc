@@ -1,0 +1,45 @@
+= PlatformHttp VertX
+
+*Since Camel 3.2*
+
+The camel-platform-http-vertx is a Vert.x based implementation of the `PlatformHttp` SPI.
+
+[NOTE]
+====
+At this time this component is an experiment so use it with care.
+====
+
+== Vert.x Route
+This implementation will by default lookup an instance of `VertxPlatformHttpRouter` on the registry however you can
+configure an existing instance using the getter/setter on the `VertxPlatformHttpEngine` class.
+
+== Auto detection from classpath
+
+To use this implementation all you need to do is to add the `camel-platform-http-vertx` dependency to the classpath,
+and the platform http component should auto-detect this.
+
+== VertxPlatformHttpServer
+
+In addition to the implementation of the `PlatformHttp` SPI based on Vert.x, this module provides a Vert.x based HTTP
+server compatible with the `VertxPlatformHttpEngine`:
+
+[source,java]
+----
+final int port = AvailablePortFinder.getNextAvailable();
+final CamelContext context = new DefaultCamelContext();
+
+VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+conf.setBindPort(port);
+
+context.addService(new VertxPlatformHttpServer(context, conf), true, true);
+context.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("platform-http:/test")
+            .routeId("get")
+            .setBody().constant("Hello from Camel's PlatformHttp service");
+    }
+});
+
+context.start();
+----
