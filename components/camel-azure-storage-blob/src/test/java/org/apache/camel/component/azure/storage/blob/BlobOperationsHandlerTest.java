@@ -67,8 +67,8 @@ class BlobOperationsHandlerTest {
 
         //System.out.println(downloadResponse.getDeserializedHeaders());
 
-        final BlobExchangeResponse response = handler.handleDownloadBlob(null, client);
+        final BlobExchangeResponse response = handler.handleDownloadBlob(client);
 
-        System.out.println(response.getBody());
+        System.out.println(response.getHeaders());
     }
 }

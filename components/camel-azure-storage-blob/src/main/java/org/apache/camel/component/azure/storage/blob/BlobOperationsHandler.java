@@ -12,6 +12,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobContainerItem;
 import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -33,30 +34,29 @@ public class BlobOperationsHandler {
                 .collect(Collectors.toList());
     }
 
-    public BlobExchangeResponse handleDownloadBlob(OutputStream outputStream, final BlobClient client) throws IOException {
+    public BlobExchangeResponse handleDownloadBlob(final BlobClient client) {
        checkIfContainerOrBlobIsEmpty(configuration);
 
        final BlobExchangeResponse blobExchangeResponse = new BlobExchangeResponse();
 
-       if (outputStream == null && !ObjectHelper.isEmpty(configuration.getFileDir())) {
+       if (isFileDownloadPathIsSet(configuration)) {
+           // then we download the file directly
            final File outputFile = new File(configuration.getFileDir(), configuration.getBlobName());
+           final BlobProperties properties = client.downloadToFile(outputFile.getAbsolutePath());
            blobExchangeResponse.setBody(outputFile);
-           outputStream = new FileOutputStream(outputFile);
-       }
-       try {
-           if (outputStream == null) {
-               final BlobInputStream blobInputStream = client.openInputStream();
-               blobExchangeResponse.setBody(blobInputStream);
-           } else {
-               client.download(outputStream);
-           }
-       } finally {
-           if (outputStream != null) {
-               outputStream.close();
-           }
+           blobExchangeResponse.setHeaders(BlobUtils.createHeadersFromBlobProperties(properties));
+       } else {
+           // then we return inputStream
+           final BlobInputStream inputStream = client.openInputStream();
+           blobExchangeResponse.setBody(inputStream);
+           blobExchangeResponse.setHeaders(BlobUtils.createHeadersFromBlobProperties(inputStream.getProperties()));
        }
 
        return blobExchangeResponse;
+    }
+
+    private boolean isFileDownloadPathIsSet(final BlobConfiguration configuration) {
+        return !ObjectHelper.isEmpty(configuration.getFileDir());
     }
 
     public List<BlobItem> handleListBlobs(final BlobContainerClient client) {
