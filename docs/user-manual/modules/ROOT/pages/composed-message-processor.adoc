@@ -13,15 +13,15 @@ Use Composed Message Processor to process a composite message.
 The Composed Message Processor splits the message up, routes the sub-messages to the appropriate destinations
 and re-aggregates the responses back into a single message.
 
-With Camel this pattern is implemented by the xref:split-eip.adoc[Splitter]
+With Camel this pattern is implemented by the xref:eips:split-eip.adoc[Splitter]
 which has built-in aggregation to re-aggregate the responses back into a single message.
 
 == Sample
 
-This sample uses the xref:split-eip.adoc[Splitter] as composed message processor to process each splitted message,
+This sample uses the xref:eips:split-eip.adoc[Splitter] as composed message processor to process each splitted message,
 aggregate and return a combined single response.
 
-The route and the code comments below explains how you can use the xref:split-eip.adoc[Splitter] to
+The route and the code comments below explains how you can use the xref:eips:split-eip.adoc[Splitter] to
 split each message to sub-message which are processed individuallay and then combined back into
 a single response message via the custom ``aggregationStrategy` (`MyOrderStategy`), which
 then are the output of the splitter, that are then further processed at the end of the route.
@@ -48,4 +48,4 @@ from("direct:start")
 
 == More details
 
-See the xref:split-eip.adoc[Splitter] EIP.
+See the xref:eips:split-eip.adoc[Splitter] EIP.

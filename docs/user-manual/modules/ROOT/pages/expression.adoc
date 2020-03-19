@@ -68,24 +68,24 @@ public interface Predicate {
 
 The following languages are supported out of the box
 
-* xref:components::bean-language.adoc[Bean Language] for using Java for expressions
-* xref:constant-language.adoc[Constant]
-* xref:header-language.adoc[Header]
-* xref:components::jsonpath-language.adoc[JSonPath]
+* xref:components:languages:bean-language.adoc[Bean Language] for using Java for expressions
+* xref:components:languages:constant-language.adoc[Constant]
+* xref:components:languages:header-language.adoc[Header]
+* xref:components:languages:jsonpath-language.adoc[JSonPath]
 * xref:components::mvel-component.adoc[Mvel]
-* xref:components::ognl-language.adoc[OGNL]
-* xref:ref-language.adoc[Ref Language]
+* xref:components:languages:ognl-language.adoc[OGNL]
+* xref:components:languages:ref-language.adoc[Ref Language]
 * ExchangeProperty / Property
 * Scripting Languages such as
 ** BeanShell
 ** JavaScript
-** xref:components::groovy-language.adoc[Groovy]
-* xref:simple-language.adoc[Simple]
-** xref:file-language.adoc[File Language]
-* xref:components::spel-language.adoc[Spring Expression Language]
+** xref:components:languages:groovy-language.adoc[Groovy]
+* xref:components:languages:simple-language.adoc[Simple]
+** xref:components:languages:file-language.adoc[File Language]
+* xref:components:languages:spel-language.adoc[Spring Expression Language]
 * xref:components::sql-component.adoc[SQL]
 * Tokenizer
-* xref:components::xpath-language.adoc[XPath]
+* xref:components:languages:xpath-language.adoc[XPath]
 * xref:components::xquery-component.adoc[XQuery]
 * https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
@@ -106,11 +106,11 @@ wish to use.
 
 |Scripting Languages such as
 BeanShell, JavaScript,
-xref:components::groovy-language.adoc[Groovy] |
+xref:components:languages:groovy-language.adoc[Groovy] |
 
 |xref:components::sql-component.adoc[SQL] |
 
-|xref:components::xpath-language.adoc[XPath] |https://github.com/apache/camel/blob/master/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
+|xref:components:languages:xpath-language.adoc[XPath] |https://github.com/apache/camel/blob/master/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
 
 |xref:components::xquery-component.adoc[XQuery] |https://github.com/apache/camel/blob/master/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
 |=======================================================================

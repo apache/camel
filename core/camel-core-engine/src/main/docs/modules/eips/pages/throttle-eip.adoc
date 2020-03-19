@@ -1,0 +1,83 @@
+[[throttle-eip]]
+= Throttle EIP
+
+The Throttler Pattern allows you to ensure that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external service.
+
+== Options
+
+// eip options: START
+The Throttle EIP supports 6 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *correlationExpression* | The expression used to calculate the correlation key to use for throttle grouping. The Exchange which has the same correlation key is throttled together. |  | ExpressionSubElementDefinition
+| *executorServiceRef* | To use a custom thread pool (ScheduledExecutorService) by the throttler. |  | String
+| *timePeriodMillis* | Sets the time period during which the maximum request count is valid for | 1000 | Long
+| *asyncDelayed* | Enables asynchronous delay which means the thread will not block while delaying. | false | Boolean
+| *callerRunsWhenRejected* | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true | true | Boolean
+| *rejectExecution* | Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false | false | Boolean
+|===
+// eip options: END
+
+== Samples
+
+[source,java]
+----
+from("seda:a")
+  .throttle(3).timePeriodMillis(10000)
+  .to("log:result", "mock:result");
+----
+
+So the above example will throttle messages all messages received on *seda:a* before being sent to *mock:result* ensuring that a maximum of 3 messages are sent in any 10 second window.
+Note that since `timePeriodMillis` defaults to 1000 milliseconds, just setting the `maximumRequestsPerPeriod` has the effect of setting the maximum number of requests per second. So to throttle requests at 100 requests per second between two endpoints, it would look more like this...
+
+[source,java]
+----
+from("seda:a")
+  .throttle(100)
+  .to("seda:b");
+----
+
+For further examples of this pattern in use you could look at the junit test case.
+
+And an example in XML
+[source,xml]
+----
+<route>
+  <from uri="seda:a"/>
+  <!-- throttle 3 messages per 10 sec -->
+  <throttle timePeriodMillis="10000">
+    <constant>3</constant>
+    <to uri="log:result"/>
+    <to uri="mock:result"/>
+  </throttle>
+</route>
+----
+
+== Dynamically changing maximum requests per period
+
+Since we use an Expression you can adjust this value at runtime, for example you can provide a header with the value. At runtime Camel evaluates the expression and converts the result to a `java.lang.Long` type. In the example below we use a header from the message to determine the maximum requests per period. If the header is absent, then the Throttler uses the old value. So that allows you to only provide a header if the value is to be changed:
+[source,xml]
+----
+<route>
+  <from uri="direct:expressionHeader"/>
+  <throttle timePeriodMillis="500">
+    <!-- use a header to determine how many messages to throttle per 0.5 sec -->
+    <header>throttleValue</header>
+    <to uri="log:result"/>
+    <to uri="mock:result"/>
+  </throttle>
+</route>
+----
+
+== Asynchronous delaying
+
+You can let the Throttler use non blocking asynchronous delaying, which means Camel will use a scheduler to schedule a task to be executed in the future. The task will then continue routing. This allows the caller thread to not block and be able to service other messages, etc.
+
+[source,java]
+---------------------
+from("seda:a")
+  .throttle(100).asyncDelayed()
+  .to("seda:b");
+---------------------

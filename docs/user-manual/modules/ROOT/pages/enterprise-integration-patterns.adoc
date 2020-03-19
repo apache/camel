@@ -22,7 +22,7 @@ a|image::eip/MessageIcon.gif[image]
 message channel exchange a piece of information?
 
 a|image::eip/PipesAndFiltersIcon.gif[image]
-|xref:pipeline-eip.adoc[Pipes and Filters] |How can we perform
+|xref:eips:pipeline-eip.adoc[Pipes and Filters] |How can we perform
 complex processing on a message while maintaining independence and
 flexibility?
 
@@ -116,35 +116,35 @@ when a message should be considered stale and thus shouldn’t be processed?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 a|image::eip/ContentBasedRouterIcon.gif[image]
-|xref:content-based-router-eip.adoc[Content Based Router] |How do we handle
+|xref:eips:content-based-router-eip.adoc[Content Based Router] |How do we handle
 a situation where the implementation of a single logical function (e.g.,
 inventory check) is spread across multiple physical systems?
 
 a|image::eip/MessageFilterIcon.gif[image]
-|xref:filter-eip.adoc[Message Filter] |How can a component avoid
+|xref:eips:filter-eip.adoc[Message Filter] |How can a component avoid
 receiving uninteresting messages?
 
 a|image::eip/DynamicRouterIcon.gif[image]
-|xref:dynamicRouter-eip.adoc[Dynamic Router] |How can you avoid the
+|xref:eips:dynamicRouter-eip.adoc[Dynamic Router] |How can you avoid the
 dependency of the router on all possible destinations while maintaining
 its efficiency?
 
 a|image::eip/RecipientListIcon.gif[image]
-|xref:recipientList-eip.adoc[Recipient List] |How do we route a message to
+|xref:eips:recipientList-eip.adoc[Recipient List] |How do we route a message to
 a list of (static or dynamically) specified recipients?
 
 a|image::eip/SplitterIcon.gif[image]
-|xref:split-eip.adoc[Splitter] |How can we process a message if it
+|xref:eips:split-eip.adoc[Splitter] |How can we process a message if it
 contains multiple elements, each of which may have to be processed in a
 different way?
 
 a|image::eip/AggregatorIcon.gif[image]
-|xref:aggregate-eip.adoc[Aggregator] |How do we combine the results of
+|xref:eips:aggregate-eip.adoc[Aggregator] |How do we combine the results of
 individual, but related messages so that they can be processed as a
 whole?
 
 a|image::eip/ResequencerIcon.gif[image]
-|xref:resequence-eip.adoc[Resequencer] |How can we get a stream of related
+|xref:eips:resequence-eip.adoc[Resequencer] |How can we get a stream of related
 but out-of-sequence messages back into the correct order?
 
 a|image::eip/DistributionAggregateIcon.gif[image]
@@ -159,7 +159,7 @@ overall message flow when a message needs to be sent to multiple
 recipients, each of which may send a reply?
 
 a|image::eip/RoutingTableIcon.gif[image]
-|xref:routingSlip-eip.adoc[Routing Slip] |How do we route a message
+|xref:eips:routingSlip-eip.adoc[Routing Slip] |How do we route a message
 consecutively through a series of processing steps when the sequence of
 steps is not known at design-time and may vary for each message?
 
@@ -174,38 +174,38 @@ destination of a message from the sender and maintain central control
 over the flow of messages?
 
 |
-|xref:throttle-eip.adoc[Throttler] |How can I throttle messages to ensure
+|xref:eips:throttle-eip.adoc[Throttler] |How can I throttle messages to ensure
 that a specific endpoint does not get overloaded, or we don't exceed an
 agreed SLA with some external service?
 
 |
-|xref:sample-eip.adoc[Sampling] |How can I sample one message out of many
+|xref:eips:sample-eip.adoc[Sampling] |How can I sample one message out of many
 in a given period to avoid downstream route does not get overloaded?
 
 |
-|xref:delay-eip.adoc[Delayer] |How can I delay the sending of a message?
+|xref:eips:delay-eip.adoc[Delayer] |How can I delay the sending of a message?
 
 |
-|xref:loadBalance-eip.adoc[Load Balancer] |How can I balance load across a
+|xref:eips:loadBalance-eip.adoc[Load Balancer] |How can I balance load across a
 number of endpoints?
 
 |
-|xref:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop to call an external service if the service is broken?
+|xref:eips:circuitBreaker-eip.adoc[Circuit Breaker] |How can I stop to call an external service if the service is broken?
 
 |
-|xref:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
+|xref:eips:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
 where the service is looked up from a service registry of some sorts?
 
 |
-|xref:saga-eip.adoc[Saga] |How can I define a series of related actions in a Camel route
+|xref:eips:saga-eip.adoc[Saga] |How can I define a series of related actions in a Camel route
 that should be either completed successfully (all of them) or not-executed/compensated?
 
 |
-|xref:multicast-eip.adoc[Multicast] |How can I route a message to a number
+|xref:eips:multicast-eip.adoc[Multicast] |How can I route a message to a number
 of endpoints at the same time?
 
 |
-|xref:loop-eip.adoc[Loop] |How can I repeat processing a message in a loop?
+|xref:eips:loop-eip.adoc[Loop] |How can I repeat processing a message in a loop?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageTransformation]]
@@ -219,11 +219,11 @@ with another system if the message originator does not have all the
 required data items available?
 
 a|image::eip/ContentFilterIcon.gif[image]
-|xref:content-filter-eip.adoc[Content Filter] |How do you simplify dealing
+|xref:eips:content-filter-eip.adoc[Content Filter] |How do you simplify dealing
 with a large message, when you are interested only in a few data items?
 
 a|image::eip/StoreInLibraryIcon.gif[image]
-|xref:claimCheck-eip.adoc[Claim Check] |How can we reduce the data volume
+|xref:eips:claimCheck-eip.adoc[Claim Check] |How can we reduce the data volume
 of message sent across the system without sacrificing information
 content?
 
@@ -232,13 +232,13 @@ a|image::eip/NormalizerIcon.gif[image]
 semantically equivalent, but arrive in a different format?
 
 |
-|xref:sort-eip.adoc[Sort] |How can I sort the body of a message?
+|xref:eips:sort-eip.adoc[Sort] |How can I sort the body of a message?
 
 |
-|xref:script-eip.adoc[Script] |How do I execute a script which may not change the message?
+|xref:eips:script-eip.adoc[Script] |How do I execute a script which may not change the message?
 
 |
-|xref:validate-eip.adoc[Validate] |How can I validate a message?
+|xref:eips:validate-eip.adoc[Validate] |How can I validate a message?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessagingEndpoints]]
@@ -252,7 +252,7 @@ between domain objects and the messaging infrastructure while keeping
 the two independent of each other?
 
 a|image::eip/EventDrivenConsumerIcon.gif[image]
-|xref:eventDrivenConsumer-eip.adoc[Event Driven Consumer] |How can an
+|xref:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer] |How can an
 application automatically consume messages as they become available?
 
 a|image::eip/PollingConsumerIcon.gif[image]
@@ -276,7 +276,7 @@ a|image::eip/DurableSubscriptionIcon.gif[image]
 avoid missing messages while it's not listening for them?
 
 |
-|xref:idempotentConsumer-eip.adoc[Idempotent Consumer] |How can a message
+|xref:eips:idempotentConsumer-eip.adoc[Idempotent Consumer] |How can a message
 receiver deal with duplicate messages?
 
 a|image::eip/TransactionalClientIcon.gif[image]
@@ -309,7 +309,7 @@ intermediate steps to perform validation, testing or debugging
 functions?
 
 a|image::eip/WireTapIcon.gif[image]
-|xref:wireTap-eip.adoc[Wire Tap] |How do you inspect messages that travel
+|xref:eips:wireTap-eip.adoc[Wire Tap] |How do you inspect messages that travel
 on a point-to-point channel?
 
 |
@@ -317,10 +317,10 @@ on a point-to-point channel?
 analyze and debug the flow of messages in a loosely coupled system?
 
 |
-|xref:log-eip.adoc[Log] |How can I log processing a message?
+|xref:eips:log-eip.adoc[Log] |How can I log processing a message?
 
 |
-|xref:step-eip.adoc[Step] | Steps groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
+|xref:eips:step-eip.adoc[Step] | Steps groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
 
 |=======================================================================
 

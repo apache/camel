@@ -1,0 +1,198 @@
+[[DynamicRouter-DynamicRouter]]
+= Dynamic Router
+
+The
+http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic
+Router] from the EIP patterns
+allows you to route messages while avoiding the dependency of the router
+on all possible destinations while maintaining its efficiency.
+
+image::eip/DynamicRouter.gif[image]
+
+The `dynamicRouter` in the DSL is similar to
+a dynamic Routing Slip which evaluates the slip
+_on-the-fly_.
+
+WARNING: *Beware*
+You must ensure the expression used for the `dynamicRouter` such as a
+bean, will return `null` to indicate the end. Otherwise the
+`dynamicRouter` will keep repeating endlessly.
+
+[[DynamicRouter-DynamicRouterinCamel2.5onwards]]
+== Dynamic Router in Camel 2.5 onwards
+
+The Dynamic Router will set a
+property (Exchange.SLIP_ENDPOINT) on the Exchange
+which contains the current endpoint as it advanced though the slip. This
+allows you to know how far we have processed in the slip. (It's a slip
+because the Dynamic Router implementation is
+based on top of Routing Slip).
+
+TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
+
+== Options
+
+// eip options: START
+The Dynamic Router EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uriDelimiter* | Sets the uri delimiter to use | , | String
+| *ignoreInvalidEndpoints* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this routing slip, when uris are reused. Beware that when using dynamic endpoints then it affects how well the cache can be utilized. If each dynamic endpoint is unique then its best to turn of caching by setting this to -1, which allows Camel to not cache both the producers and endpoints; they are regarded as prototype scoped and will be stopped and discarded after use. This reduces memory usage as otherwise producers/endpoints are stored in memory in the caches. However if there are a high degree of dynamic endpoints that have been used before, then it can benefit to use the cache to reuse both producers and endpoints and therefore the cache size can be set accordingly or rely on the default size (1000). If there is a mix of unique and used before dynamic endpoints, then setting a reasonable cache size can help reduce memory usage to avoid storing too many non frequent used producers. |  | Integer
+|===
+// eip options: END
+
+[[DynamicRouter-JavaDSL]]
+== Java DSL
+
+In Java DSL you can use the `dynamicRouter` as shown below:
+
+[source,java]
+----
+from("direct:start")
+    // use a bean as the dynamic router
+    .dynamicRouter(method(DynamicRouterTest.class, "slip"));
+----
+
+Which will leverage a xref:components::bean-component.adoc[Bean] to compute the slip
+_on-the-fly_, which could be implemented as follows:
+
+[source,java]
+----
+/**
+ * Use this method to compute dynamic where we should route next.
+ *
+ * @param body the message body
+ * @return endpoints to go, or <tt>null</tt> to indicate the end
+ */
+public String slip(String body) {
+    bodies.add(body);
+    invoked++;
+ 
+    if (invoked == 1) {
+        return "mock:a";
+    } else if (invoked == 2) {
+        return "mock:b,mock:c";
+    } else if (invoked == 3) {
+        return "direct:foo";
+    } else if (invoked == 4) {
+        return "mock:result";
+    }
+ 
+    // no more so return null
+    return null;
+}
+----
+
+Mind that this example is only for show and tell. The current
+implementation is not thread safe. You would have to store the state on
+the Exchange, to ensure thread safety, as shown
+below:
+
+[source,java]
+----
+/**
+ * Use this method to compute dynamic where we should route next.
+ *
+ * @param body the message body
+ * @param properties the exchange properties where we can store state between invocations
+ * @return endpoints to go, or <tt>null</tt> to indicate the end
+ */
+public String slip(String body, @Properties Map<String, Object> properties) {
+    bodies.add(body);
+ 
+    // get the state from the exchange properties and keep track how many times
+    // we have been invoked
+    int invoked = 0;
+    Object current = properties.get("invoked");
+    if (current != null) {
+        invoked = Integer.valueOf(current.toString());
+    }
+    invoked++;
+    // and store the state back on the properties
+    properties.put("invoked", invoked);
+ 
+    if (invoked == 1) {
+        return "mock:a";
+    } else if (invoked == 2) {
+        return "mock:b,mock:c";
+    } else if (invoked == 3) {
+        return "direct:foo";
+    } else if (invoked == 4) {
+        return "mock:result";
+    }
+ 
+    // no more so return null
+    return null;
+}
+----
+
+You could also store state as message headers, but they are not
+guaranteed to be preserved during routing, where as properties on the
+Exchange are. Although there was a bug in the method
+call expression, see the warning below.
+
+[[DynamicRouter-SpringXML]]
+== Spring XML
+
+The same example in Spring XML would be:
+
+[source,xml]
+----
+<bean id="mySlip" class="org.apache.camel.processor.DynamicRouterTest"/>
+ 
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:start"/>
+        <dynamicRouter>
+            <!-- use a method call on a bean as dynamic router -->
+            <method ref="mySlip" method="slip"/>
+        </dynamicRouter>
+    </route>
+ 
+    <route>
+        <from uri="direct:foo"/>
+        <transform><constant>Bye World</constant></transform>
+    </route>
+ 
+</camelContext>
+----
+
+[[DynamicRouter-DynamicRouterannotation]]
+== @DynamicRouter annotation
+
+You can also use the `@DynamicRouter` annotation. The `route` method would
+then be invoked repeatedly as the message is processed dynamically. The
+idea is to return the next endpoint uri where to go. Return `null` to
+indicate the end. You can return multiple endpoints if you like, just as
+the Routing Slip, where each endpoint is
+separated by a delimiter.
+
+[source,java]
+----
+public class MyDynamicRouter {
+
+    @Consume(uri = "activemq:foo")
+    @DynamicRouter
+    public String route(@XPath("/customer/id") String customerId, @Header("Location") String location, Document body) {
+        // query a database to find the best match of the endpoint based on the input parameteres
+        // return the next endpoint uri, where to go. Return null to indicate the end.
+    }
+}
+----
+
+In the above we can use the
+Parameter Binding Annotations
+to bind different parts of the Message to method
+parameters or use an Expression such as using
+xref:components:languages:xpath-language.adoc[XPath] or xref:components:languages:xpath-language.adoc[XQuery].
+
+The method can be invoked in a number of ways as described in the
+Bean Integration such as
+
+* POJO Producing
+* Spring Remoting
+* xref:components::bean-component.adoc[Bean] component
+
