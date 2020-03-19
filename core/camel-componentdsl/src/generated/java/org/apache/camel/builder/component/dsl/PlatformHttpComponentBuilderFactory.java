@@ -81,6 +81,19 @@ public interface PlatformHttpComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * An HTTP Server engine implementation to serve the requests.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
+         * 
+         * Group: advanced
+         */
+        default PlatformHttpComponentBuilder engine(
+                org.apache.camel.component.platform.http.spi.PlatformHttpEngine engine) {
+            doSetProperty("engine", engine);
+            return this;
+        }
     }
 
     class PlatformHttpComponentBuilderImpl
@@ -100,6 +113,7 @@ public interface PlatformHttpComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((PlatformHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "basicPropertyBinding": ((PlatformHttpComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "engine": ((PlatformHttpComponent) component).setEngine((org.apache.camel.component.platform.http.spi.PlatformHttpEngine) value); return true;
             default: return false;
             }
         }

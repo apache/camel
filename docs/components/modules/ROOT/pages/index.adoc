@@ -832,7 +832,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -867,6 +867,8 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
 | xref:osgi-activator.adoc[Osgi Activator] (camel-osgi-activator) | 3.1 | Camel OSGi Activator for running Camel routes from other bundles
+
+| xref:platform-http-vertx.adoc[Platform Http Vertx] (camel-platform-http-vertx) |  | Implementation of the Platform Http Engine based on Vert.x Web
 
 | xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert.x
 

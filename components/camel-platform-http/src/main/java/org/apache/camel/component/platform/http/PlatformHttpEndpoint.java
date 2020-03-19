@@ -144,22 +144,4 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     public void setProduces(String produces) {
         this.produces = produces;
     }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (platformHttpEngine == null) {
-            LOGGER.debug("Lookup platform http engine from registry");
-
-            platformHttpEngine = getCamelContext().getRegistry()
-                    .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
-
-            if (platformHttpEngine == null) {
-                throw new IllegalStateException(PlatformHttpEngine.class.getSimpleName() + " neither set on this "
-                        + PlatformHttpEndpoint.class.getSimpleName()
-                        + " neither found in Camel Registry.");
-            }
-        }
-    }
 }
