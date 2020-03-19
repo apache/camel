@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
@@ -30,19 +31,25 @@ import org.apache.camel.support.CamelContextHelper;
  * This class holds an instance of a {@link Router} and an optional list of [{@link Handler<RoutingContext>} that are
  * used by the {@link VertxPlatformHttpConsumer} to create and register Vert.x {@link io.vertx.ext.web.Route}].
  */
-public class VertxPlatformHttpRouter {
+public class VertxPlatformHttp {
     public static final String PLATFORM_HTTP_ROUTER_NAME = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router";
 
+    private final Vertx vertx;
     private final Router router;
     private final List<Handler<RoutingContext>> handlers;
 
-    public VertxPlatformHttpRouter(Router router) {
-        this(router, Collections.emptyList());
+    public VertxPlatformHttp(Vertx vertx, Router router) {
+        this(vertx, router, Collections.emptyList());
     }
 
-    public VertxPlatformHttpRouter(Router router, List<Handler<RoutingContext>> handlers) {
+    public VertxPlatformHttp(Vertx vertx, Router router, List<Handler<RoutingContext>> handlers) {
+        this.vertx = vertx;
         this.router = router;
         this.handlers = handlers;
+    }
+
+    public Vertx vertx() {
+        return this.vertx;
     }
 
     public Router router() {
@@ -59,11 +66,11 @@ public class VertxPlatformHttpRouter {
     //
     // **********************
 
-    public static VertxPlatformHttpRouter lookup(CamelContext camelContext) {
+    public static VertxPlatformHttp lookup(CamelContext camelContext) {
         return CamelContextHelper.mandatoryLookup(
             camelContext,
-            VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,
-            VertxPlatformHttpRouter.class
+            VertxPlatformHttp.PLATFORM_HTTP_ROUTER_NAME,
+            VertxPlatformHttp.class
         );
     }
 }
