@@ -9,7 +9,7 @@ Spring Framework in a number of ways.
 instances or the CamelContext instance itself
 and auto-expose Spring beans as components and endpoints.
 * Camel works with Spring XML processing with the XML Configuration
-* Camel Spring XML Schema's is defined at xref:manual::xml-reference.adoc[XML
+* Camel Spring XML Schema's is defined at xref:latest@manual::xml-reference.adoc[XML
 Reference]
 * Camel provides powerful Bean Integration
 with any bean defined in a Spring ApplicationContext
@@ -19,7 +19,7 @@ components like xref:jms-component.adoc[JMS] and xref:jms-component.adoc[JPA]
 Type Converter support for Spring Resources etc
 * Allows you to reuse the Spring Testing
 framework to simplify your unit and integration testing using
-xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
+xref:latest@manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
 xref:test.adoc[Test] endpoints
 
@@ -88,7 +88,7 @@ inline namespace declaration:
 === Advanced configuration using Spring
 
 See more details at
-xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
+xref:latest@manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring]
 
 === Using Java Code
@@ -209,7 +209,7 @@ above in the `<packageScan>` documentation.
 
 == How do I import routes from other XML files
 
-When defining routes in Camel using xref:manual::xml-configuration.adoc[Xml
+When defining routes in Camel using xref:latest@manual::xml-configuration.adoc[Xml
 Configuration] you may want to define some routes in other XML files.
 For example you may have many routes and it may help to maintain the
 application if some of the routes are in separate XML files. You may
@@ -364,14 +364,14 @@ the above example), then you can refer to the component using
 SpringCamelContext lazily fetching components from the spring context
 for the scheme name you use for Endpoint URIs.
 
-For more detail see xref:manual::faq/how-do-i-configure-endpoints.adoc[Configuring
+For more detail see xref:latest@manual::faq/how-do-i-configure-endpoints.adoc[Configuring
 Endpoints and Components].
 
 == CamelContextAware
 
 If you want to be injected with the CamelContext
 in your POJO just implement the `CamelContextAware` interface; then when Spring creates your POJO the CamelContext will be
-injected into your POJO. Also see the xref:manual::bean-integration.adoc[Bean
+injected into your POJO. Also see the xref:latest@manual::bean-integration.adoc[Bean
 Integration] for further injections.
 
 == Integration Testing
