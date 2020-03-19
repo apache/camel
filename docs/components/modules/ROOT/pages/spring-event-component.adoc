@@ -10,7 +10,7 @@ The Spring Event component provides access to the Spring
 `ApplicationEvent` objects to a Spring `ApplicationContext` or to
 consume them. You can then use
 xref:latest@manual::enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns] to process them such as xref:latest@manual::filter-eip.adoc[Message
+Patterns] to process them such as xref:latest@manual:eips:filter-eip.adoc[Message
 Filter].
 
 == URI format

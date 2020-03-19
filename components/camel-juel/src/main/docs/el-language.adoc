@@ -12,7 +12,7 @@ Expression or Predicate to be
 used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
 Configuration].
 
-For example you could use EL inside a xref:latest@manual::filter-eip.adoc[Message
+For example you could use EL inside a xref:latest@manual:eips:filter-eip.adoc[Message
 Filter] in XML
 
 [source,xml]
