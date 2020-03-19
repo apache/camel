@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
 @JdkService(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY)
 public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformHttpEngine, CamelContextAware {
     private CamelContext camelContext;
-    private VertxPlatformHttpRouter router;
+    private VertxPlatformHttp router;
     private List<Handler<RoutingContext>> handlers;
     private UploadAttacher uploadAttacher;
 
@@ -51,11 +51,11 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
         this.handlers = Collections.emptyList();
     }
 
-    public VertxPlatformHttpRouter getRouter() {
+    public VertxPlatformHttp getRouter() {
         return router;
     }
 
-    public void setRouter(VertxPlatformHttpRouter router) {
+    public void setRouter(VertxPlatformHttp router) {
         this.router = router;
     }
 
@@ -92,7 +92,7 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
         if (router == null) {
             ObjectHelper.notNull(getCamelContext(), "Camel Context");
 
-            router = VertxPlatformHttpRouter.lookup(getCamelContext());
+            router = VertxPlatformHttp.lookup(getCamelContext());
         }
     }
 
