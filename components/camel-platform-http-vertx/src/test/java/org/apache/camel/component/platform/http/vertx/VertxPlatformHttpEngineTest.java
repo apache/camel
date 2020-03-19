@@ -54,7 +54,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
+            assertThat(VertxPlatformHttp.lookup(context)).isNotNull();
             assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
                 assertThat(component.getEngine()).isInstanceOfSatisfying(VertxPlatformHttpEngine.class, e -> {
                     assertThat(e.getRouter().router()).isNotNull();

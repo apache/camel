@@ -145,8 +145,8 @@ final class VertxPlatformHttpServer extends ServiceSupport {
         router.mountSubRouter(configuration.getPath(), subRouter);
 
         context.getRegistry().bind(
-            VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME,
-            new VertxPlatformHttpRouter(subRouter, Collections.singletonList(createBodyHandler()))
+            VertxPlatformHttp.PLATFORM_HTTP_ROUTER_NAME,
+            new VertxPlatformHttp(vertx, subRouter, Collections.singletonList(createBodyHandler()))
         );
 
         //HttpServerOptions options = new HttpServerOptions();
