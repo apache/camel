@@ -31,8 +31,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Optional.ofNullable;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.models.HttpMethod;
@@ -70,13 +68,12 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.client.methods.HttpGet;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
-import static org.apache.camel.util.StringHelper.after;
-import static org.apache.camel.util.StringHelper.before;
-import static org.apache.camel.util.StringHelper.notEmpty;
+import static org.apache.camel.util.StringHelper.*;
 
 /**
  * An awesome REST endpoint backed by Swagger specifications.
