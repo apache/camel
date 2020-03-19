@@ -20,7 +20,11 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -41,6 +45,8 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
+import javax.management.remote.rmi.RMIConnectorServer;
+import javax.management.remote.rmi.RMIJRMPServerImpl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -66,7 +72,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_REGISTRY_PORT = 1099;
-    public static final int DEFAULT_CONNECTION_PORT = -1;
+    public static final int DEFAULT_CONNECTION_PORT = 0;
     public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementAgent.class);
 
@@ -77,6 +83,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     // need a name -> actual name mapping as some servers changes the names (such as WebSphere)
     private final ConcurrentMap<ObjectName, ObjectName> mbeansRegistered = new ConcurrentHashMap<>();
     private JMXConnectorServer cs;
+    private Remote remoteServerStub;
+    private RMIJRMPServerImpl rmiServer;
     private Registry registry;
 
     private Integer registryPort = DEFAULT_REGISTRY_PORT;
@@ -96,6 +104,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean useHostIPAddress = false;
     private String managementNamePattern = "#name#";
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.Default;
+    private Map<String, ?> environment;
 
     public DefaultManagementAgent() {
     }
@@ -570,7 +579,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             LOG.warn("Could not create and start JMX connector.", ioe);
         }
     }
-    
+
     protected MBeanServer findOrCreateMBeanServer() {
 
         // return platform mbean server if the option is specified.
@@ -598,7 +607,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         ObjectHelper.notNull(registryPort, "registryPort");
 
         try {
-            registry = LocateRegistry.createRegistry(registryPort);
+            String bindingName = serviceUrlPath.startsWith("/") ? serviceUrlPath.substring(1) : serviceUrlPath;
+            registry = new JmxRegistry(registryPort, bindingName);
             LOG.debug("Created JMXConnector RMI registry on port {}", registryPort);
         } catch (RemoteException ex) {
             // The registry may had been created, we could get the registry instead
@@ -615,7 +625,10 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort + path);
         }
 
-        cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
+        rmiServer = new RMIJRMPServerImpl(connectorPort, null, null, environment);
+
+        // Create the connector server now.
+        cs = new RMIConnectorServer(url, environment, rmiServer, server);
 
         // use async thread for starting the JMX Connector
         // (no need to use a thread pool or enlist in JMX as this thread is terminated when the JMX connector has been started)
@@ -624,6 +637,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             try {
                 LOG.debug("Staring JMX Connector thread to listen at: {}", url);
                 cs.start();
+                remoteServerStub = rmiServer.toStub();
                 LOG.info("JMX Connector thread started and listening at: {}", url);
             } catch (IOException ioe) {
                 LOG.warn("Could not start JMXConnector thread at: " + url + ". JMX Connector not in use.", ioe);
@@ -632,4 +646,49 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         thread.start();
     }
 
+    public Map<String, ?> getEnvironment() {
+        return environment;
+    }
+
+    /**
+     * Set the environment attributes to control the new Connector Server
+     */
+    public void setEnvironment(Map<String, ?> environment) {
+        this.environment = environment;
+    }
+
+    /*
+     * Better to use the internal API than re-invent the wheel.
+     */
+    @SuppressWarnings("restriction")
+    private class JmxRegistry extends sun.rmi.registry.RegistryImpl {
+        private final String lookupName;
+
+        JmxRegistry(final int port, final String lookupName) throws RemoteException {
+            super(port);
+            this.lookupName = lookupName;
+        }
+
+        @Override
+        public Remote lookup(String s) throws RemoteException, NotBoundException {
+            return lookupName.equals(s) ? remoteServerStub : null;
+        }
+
+        @Override
+        public void bind(String s, Remote remote) throws RemoteException, AlreadyBoundException, AccessException {
+        }
+
+        @Override
+        public void unbind(String s) throws RemoteException, NotBoundException, AccessException {
+        }
+
+        @Override
+        public void rebind(String s, Remote remote) throws RemoteException, AccessException {
+        }
+
+        @Override
+        public String[] list() throws RemoteException {
+            return new String[] {lookupName};
+        }
+    }
 }
