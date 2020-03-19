@@ -329,6 +329,17 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         assertEquals("body-2", exchange2.getIn().getBody(String.class));
     }
 
+    @Test
+    public void testWithCustomizer() throws Exception {
+        getMockEndpoint("mock:custom").expectedBodiesReceived("Hello World");
+
+        FluentProducerTemplate fluent = context.createFluentProducerTemplate().withTemplateCustomizer(t -> t.setDefaultEndpointUri("mock:custom"));
+
+        fluent.withBody("Hello World").send();
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

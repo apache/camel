@@ -177,6 +177,14 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public FluentProducerTemplate withTemplateCustomizer(final Consumer<ProducerTemplate> templateCustomizer) {
         this.templateCustomizer.set(templateCustomizer);
+
+        if (template != null) {
+            // need to re-initialize template since we have a customizer
+            ServiceHelper.stopService(template);
+            templateCustomizer.accept(template);
+            ServiceHelper.startService(template);
+        }
+
         return this;
     }
 
@@ -372,6 +380,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         }
         if (defaultEndpoint != null) {
             return defaultEndpoint;
+        }
+
+        if (template != null && template.getDefaultEndpoint() != null) {
+            return template.getDefaultEndpoint();
         }
 
         throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
