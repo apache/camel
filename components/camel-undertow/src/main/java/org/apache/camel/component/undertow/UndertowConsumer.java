@@ -21,7 +21,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
@@ -79,6 +81,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     @Override
     public UndertowEndpoint getEndpoint() {
         return (UndertowEndpoint) super.getEndpoint();
+    }
+
+    public List<String> getAllowedRoles() {
+        String allowedRolesString = getEndpoint().getAllowedRoles();
+        return allowedRolesString == null ? null : Arrays.asList(allowedRolesString.split("\\s*,\\s*"));
     }
 
     @Override
@@ -168,6 +175,16 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (httpExchange.isInIoThread()) {
             httpExchange.dispatch(this);
             return;
+        }
+
+        if (getEndpoint().getSecurityProvider() != null) {
+            //security provider decides, whether endpoint is accessible
+            int statusCode = getEndpoint().getSecurityProvider().authenticate(httpExchange, getAllowedRoles());
+            if (statusCode != StatusCodes.OK) {
+                httpExchange.setStatusCode(statusCode);
+                httpExchange.endExchange();
+                return;
+            }
         }
 
         //create new Exchange
