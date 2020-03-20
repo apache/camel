@@ -90,6 +90,19 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Aws2S3ComponentBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
@@ -149,6 +162,19 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default Aws2S3ComponentBuilder uriEndpointOverride(
+                java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -459,11 +485,13 @@ public interface Aws2S3ComponentBuilderFactory {
             case "amazonS3Client": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Client((software.amazon.awssdk.services.s3.S3Client) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((AWS2S3Component) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((AWS2S3Component) component).setConfiguration((org.apache.camel.component.aws2.s3.AWS2S3Configuration) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((AWS2S3Component) component).setOverrideEndpoint((boolean) value); return true;
             case "policy": getOrCreateConfiguration((AWS2S3Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((AWS2S3Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((AWS2S3Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((AWS2S3Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((AWS2S3Component) component).setRegion((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((AWS2S3Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useIAMCredentials": getOrCreateConfiguration((AWS2S3Component) component).setUseIAMCredentials((boolean) value); return true;
             case "bridgeErrorHandler": ((AWS2S3Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterRead((boolean) value); return true;

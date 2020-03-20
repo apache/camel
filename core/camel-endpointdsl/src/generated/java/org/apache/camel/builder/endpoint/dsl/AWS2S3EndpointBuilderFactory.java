@@ -100,6 +100,34 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AWS2S3EndpointConsumerBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AWS2S3EndpointConsumerBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
@@ -184,6 +212,19 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointConsumerBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointConsumerBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -1096,6 +1137,34 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AWS2S3EndpointProducerBuilder overrideEndpoint(
+                boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AWS2S3EndpointProducerBuilder overrideEndpoint(
+                String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
@@ -1180,6 +1249,19 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointProducerBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointProducerBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -1571,6 +1653,32 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AWS2S3EndpointBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overidding the endpoint. This option needs to be
+         * used in combination with uriEndpointOverride option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default AWS2S3EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
@@ -1654,6 +1762,19 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointBuilder uriEndpointOverride(
+                String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
