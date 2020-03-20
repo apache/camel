@@ -248,9 +248,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         return componentModel;
     }
 
-    protected void updateResource(Path dir, String file, String data) {
+    protected boolean updateResource(Path dir, String file, String data) {
         resources.put(file, data);
-        super.updateResource(dir, file, data);
+        return super.updateResource(dir, file, data);
     }
 
     private String loadResource(String fileName) {
