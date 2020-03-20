@@ -44,7 +44,7 @@ public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
-    
+
     @EndpointInject
     private ProducerTemplate template;
 
@@ -63,7 +63,7 @@ public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listBuckets);
             }
         });
-        
+
         template.send("direct:addObject", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "CamelUnitTest2");
@@ -71,7 +71,7 @@ public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
                 exchange.getIn().removeHeader(AWS2S3Constants.S3_OPERATION);
             }
         });
-        
+
         Exchange ex = template.request("direct:listObjects", new Processor() {
 
             @Override
@@ -80,11 +80,11 @@ public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects);
             }
         });
-        
+
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(1, resp.size());
         assertEquals("CamelUnitTest2", resp.get(0).key());
-        
+
         template.send("direct:deleteObject", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(AWS2S3Constants.KEY, "CamelUnitTest2");
@@ -101,7 +101,7 @@ public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteBucket);
             }
         });
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -111,15 +111,15 @@ public class S3ListObjectsOperationIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-s3://mycamel2?autoCreateBucket=true";
-              
+
                 from("direct:listBucket").to(awsEndpoint);
-                
+
                 from("direct:addObject").to(awsEndpoint);
-                
+
                 from("direct:deleteObject").to(awsEndpoint);
-                
+
                 from("direct:listObjects").to(awsEndpoint);
-                
+
                 from("direct:deleteBucket").to(awsEndpoint).to("mock:result");
 
             }

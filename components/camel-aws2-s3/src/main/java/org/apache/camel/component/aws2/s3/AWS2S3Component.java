@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 @Component("aws2-s3")
 public class AWS2S3Component extends DefaultComponent {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3Component.class);
 
     @Metadata

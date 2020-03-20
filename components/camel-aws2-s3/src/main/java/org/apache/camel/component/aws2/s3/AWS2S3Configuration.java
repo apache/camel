@@ -191,10 +191,9 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * The region in which S3 client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which S3 client needs to work. When using this parameter,
+     * the configuration will expect the lowercase name of the region (for
+     * example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -387,34 +386,36 @@ public class AWS2S3Configuration implements Cloneable {
     public void setKeyName(String keyName) {
         this.keyName = keyName;
     }
-    
+
     public boolean isOverrideEndpoint() {
-		return overrideEndpoint;
-	}
+        return overrideEndpoint;
+    }
 
     /**
-     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option
+     * Set the need for overidding the endpoint. This option needs to be used in
+     * combination with uriEndpointOverride option
      */
-	public void setOverrideEndpoint(boolean overrideEndpoint) {
-		this.overrideEndpoint = overrideEndpoint;
-	}
+    public void setOverrideEndpoint(boolean overrideEndpoint) {
+        this.overrideEndpoint = overrideEndpoint;
+    }
 
-	public String getUriEndpointOverride() {
-		return uriEndpointOverride;
-	}
+    public String getUriEndpointOverride() {
+        return uriEndpointOverride;
+    }
 
     /**
-     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
+     * Set the overriding uri endpoint. This option needs to be used in
+     * combination with overrideEndpoint option
      */
-	public void setUriEndpointOverride(String uriEndpointOverride) {
-		this.uriEndpointOverride = uriEndpointOverride;
-	}
+    public void setUriEndpointOverride(String uriEndpointOverride) {
+        this.uriEndpointOverride = uriEndpointOverride;
+    }
 
     // *************************************************
     //
     // *************************************************
 
-	public AWS2S3Configuration copy() {
+    public AWS2S3Configuration copy() {
         try {
             return (AWS2S3Configuration)super.clone();
         } catch (CloneNotSupportedException e) {

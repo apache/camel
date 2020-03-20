@@ -39,7 +39,7 @@ public class S3MultipartUploadOperationIntegrationTest extends CamelTestSupport 
 
     @BindToRegistry("amazonS3Client")
     S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
-    
+
     @EndpointInject
     private ProducerTemplate template;
 
@@ -58,7 +58,7 @@ public class S3MultipartUploadOperationIntegrationTest extends CamelTestSupport 
                 exchange.getIn().setBody(new File("src/test/resources/empty.txt"));
             }
         });
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -68,7 +68,7 @@ public class S3MultipartUploadOperationIntegrationTest extends CamelTestSupport 
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-s3://mycamel?multiPartUpload=true&autoCreateBucket=false&partSize=1048576";
-              
+
                 from("direct:putObject").to(awsEndpoint).to("mock:result");
 
             }

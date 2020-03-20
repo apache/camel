@@ -82,7 +82,7 @@ public class AWS2S3ClientStandardImpl implements AWS2CamelS3InternalClient {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
         }
         if (configuration.isOverrideEndpoint()) {
-        	clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
+            clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
         }
         client = clientBuilder.build();
         return client;
