@@ -49,6 +49,8 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
         case "dualstackEnabled": target.getConfiguration().setDualstackEnabled(property(camelContext, boolean.class, value)); return true;
         case "encryptionmaterials":
         case "encryptionMaterials": target.getConfiguration().setEncryptionMaterials(property(camelContext, com.amazonaws.services.s3.model.EncryptionMaterials.class, value)); return true;
+        case "endpointconfiguration":
+        case "endpointConfiguration": target.getConfiguration().setEndpointConfiguration(property(camelContext, com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":

@@ -98,6 +98,32 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Endpoint Configuration.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.client.builder.AwsClientBuilder$EndpointConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointConsumerBuilder endpointConfiguration(
+                Object endpointConfiguration) {
+            doSetProperty("endpointConfiguration", endpointConfiguration);
+            return this;
+        }
+        /**
+         * Amazon AWS Endpoint Configuration.
+         * 
+         * The option will be converted to a
+         * <code>com.amazonaws.client.builder.AwsClientBuilder$EndpointConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointConsumerBuilder endpointConfiguration(
+                String endpointConfiguration) {
+            doSetProperty("endpointConfiguration", endpointConfiguration);
+            return this;
+        }
+        /**
          * Whether or not the S3 client should use path style access.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1292,6 +1318,32 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Endpoint Configuration.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.client.builder.AwsClientBuilder$EndpointConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointProducerBuilder endpointConfiguration(
+                Object endpointConfiguration) {
+            doSetProperty("endpointConfiguration", endpointConfiguration);
+            return this;
+        }
+        /**
+         * Amazon AWS Endpoint Configuration.
+         * 
+         * The option will be converted to a
+         * <code>com.amazonaws.client.builder.AwsClientBuilder$EndpointConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointProducerBuilder endpointConfiguration(
+                String endpointConfiguration) {
+            doSetProperty("endpointConfiguration", endpointConfiguration);
+            return this;
+        }
+        /**
          * Whether or not the S3 client should use path style access.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1979,6 +2031,32 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointBuilder autoCreateBucket(String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
+            return this;
+        }
+        /**
+         * Amazon AWS Endpoint Configuration.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.client.builder.AwsClientBuilder$EndpointConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointBuilder endpointConfiguration(
+                Object endpointConfiguration) {
+            doSetProperty("endpointConfiguration", endpointConfiguration);
+            return this;
+        }
+        /**
+         * Amazon AWS Endpoint Configuration.
+         * 
+         * The option will be converted to a
+         * <code>com.amazonaws.client.builder.AwsClientBuilder$EndpointConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default S3EndpointBuilder endpointConfiguration(
+                String endpointConfiguration) {
+            doSetProperty("endpointConfiguration", endpointConfiguration);
             return this;
         }
         /**

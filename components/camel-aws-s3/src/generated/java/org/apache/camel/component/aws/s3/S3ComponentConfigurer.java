@@ -50,6 +50,8 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "dualstackEnabled": getOrCreateConfiguration(target).setDualstackEnabled(property(camelContext, boolean.class, value)); return true;
         case "encryptionmaterials":
         case "encryptionMaterials": getOrCreateConfiguration(target).setEncryptionMaterials(property(camelContext, com.amazonaws.services.s3.model.EncryptionMaterials.class, value)); return true;
+        case "endpointconfiguration":
+        case "endpointConfiguration": getOrCreateConfiguration(target).setEndpointConfiguration(property(camelContext, com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "forceglobalbucketaccessenabled":
