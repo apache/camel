@@ -19,10 +19,8 @@ package org.apache.camel.component.aws2.s3;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Encryption;
 
 @UriParams
 public class AWS2S3Configuration implements Cloneable {
