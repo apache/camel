@@ -77,12 +77,14 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         refresh(buildContext, file);
     }
 
-    protected void updateResource(Path dir, String fileName, String data) {
-        updateResource(buildContext, dir.resolve(fileName), data);
+    protected boolean updateResource(Path dir, String fileName, String data) {
+        boolean updated;
+        updated = updateResource(buildContext, dir.resolve(fileName), data);
         if (!fileName.endsWith(".java")) {
             Path outputDir = Paths.get(project.getBuild().getOutputDirectory());
-            updateResource(buildContext, outputDir.resolve(fileName), data);
+            updated |= updateResource(buildContext, outputDir.resolve(fileName), data);
         }
+        return updated;
     }
 
     protected String createProperties(String key, String val) {
@@ -111,14 +113,16 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         }
     }
 
-    public static void updateResource(BuildContext buildContext, Path out, String data) {
+    public static boolean updateResource(BuildContext buildContext, Path out, String data) {
         try {
             if (FileUtil.updateFile(out, data)) {
                 refresh(buildContext, out);
+                return true;
             }
         } catch (IOException e) {
             throw new IOError(e);
         }
+        return false;
     }
 
     public static boolean haveResourcesChanged(Log log, MavenProject project, BuildContext buildContext, String suffix) {

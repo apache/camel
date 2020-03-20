@@ -187,27 +187,33 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
     private ComponentDslBuilderFactoryGenerator syncAndGenerateSpecificComponentsBuilderFactories(final ComponentModel componentModel) throws MojoFailureException {
         final ComponentDslBuilderFactoryGenerator componentDslBuilderFactoryGenerator = ComponentDslBuilderFactoryGenerator.generateClass(componentModel, projectClassLoader, componentsDslPackageName);
-        writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(), componentsDslFactoriesPackageName.replace('.', '/'), componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
+        boolean updated = writeSourceIfChanged(componentDslBuilderFactoryGenerator.printClassAsString(), componentsDslFactoriesPackageName.replace('.', '/'), componentDslBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
-        getLog().info("Regenerate " + componentDslBuilderFactoryGenerator.getGeneratedClassName());
+        if (updated) {
+            getLog().info("Updated ComponentDsl: " + componentModel.getScheme());
+        }
 
         return componentDslBuilderFactoryGenerator;
     }
 
     private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final ComponentModel componentModel, final String className) {
         final ComponentsDslMetadataRegistry componentsDslMetadataRegistry = new ComponentsDslMetadataRegistry(sourcesOutputDir.toPath().resolve(componentsDslFactoriesPackageName.replace('.', '/')).toFile(), componentsMetadata);
-        componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
+        boolean updated = componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
 
-        getLog().info("Update components metadata with " + className);
+        if (updated) {
+            getLog().info("Updated ComponentDsl metadata: " + componentModel.getScheme());
+        }
 
         return componentsDslMetadataRegistry;
     }
 
     private void syncAndGenerateComponentsBuilderFactories(final Set<ComponentModel> componentCachedModels) throws MojoFailureException {
         final ComponentsBuilderFactoryGenerator componentsBuilderFactoryGenerator = ComponentsBuilderFactoryGenerator.generateClass(componentCachedModels, projectClassLoader, componentsDslPackageName);
-        writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
+        boolean updated = writeSourceIfChanged(componentsBuilderFactoryGenerator.printClassAsString(), componentsDslPackageName.replace('.', '/'), componentsBuilderFactoryGenerator.getGeneratedClassName() + ".java", sourcesOutputDir);
 
-        getLog().info("Regenerate " + componentsBuilderFactoryGenerator.getGeneratedClassName());
+        if (updated) {
+            getLog().info("Updated ComponentDsl factories: " + componentCachedModels);
+        }
     }
 
     protected static String loadJson(File file) {
@@ -255,7 +261,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    protected void writeSourceIfChanged(String source, String filePath, String fileName, File outputDir) throws MojoFailureException {
+    protected boolean writeSourceIfChanged(String source, String filePath, String fileName, File outputDir) throws MojoFailureException {
         Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
 
         try {
@@ -266,7 +272,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
             String code = header + source;
             getLog().debug("Source code generated:\n" + code);
 
-            updateResource(buildContext, target, code);
+            return updateResource(buildContext, target, code);
         } catch (Exception e) {
             throw new MojoFailureException("IOError with file " + target, e);
         }

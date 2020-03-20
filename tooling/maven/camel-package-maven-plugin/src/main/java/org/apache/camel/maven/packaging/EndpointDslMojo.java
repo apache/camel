@@ -234,20 +234,23 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     }
 
     private void createEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
-
-        doCreateEndpointDsl(model, aliases, overrideComponentName);
+        boolean updated = doCreateEndpointDsl(model, aliases, overrideComponentName);
 
         // Update components metadata
-        getLog().info("Load components EndpointFactories");
+        getLog().debug("Load components EndpointFactories");
         List<File> endpointFactories = loadAllComponentsDslEndpointFactoriesAsFile();
 
-        getLog().info("Regenerate EndpointBuilderFactory");
+        getLog().debug("Regenerate EndpointBuilderFactory");
         // make sure EndpointBuilderFactory is synced
-        synchronizeEndpointBuilderFactoryInterface(endpointFactories);
+        updated |= synchronizeEndpointBuilderFactoryInterface(endpointFactories);
 
-        getLog().info("Regenerate EndpointBuilders");
+        getLog().debug("Regenerate EndpointBuilders");
         // make sure EndpointBuilders is synced
-        synchronizeEndpointBuildersInterface(endpointFactories);
+        updated |= synchronizeEndpointBuildersInterface(endpointFactories);
+
+        if (updated) {
+            getLog().info("Updated EndpointDsl: " + model.getScheme());
+        }
     }
 
     private ComponentsDslMetadataRegistry syncAndUpdateComponentsMetadataRegistry(final ComponentModel componentModel, final String className) {
@@ -257,13 +260,13 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                             componentsMetadata);
         componentsDslMetadataRegistry.addComponentToMetadataAndSyncMetadataFile(componentModel, className);
 
-        getLog().info("Update components metadata with " + className);
+        getLog().debug("Update components metadata with " + className);
 
         return componentsDslMetadataRegistry;
     }
 
     @SuppressWarnings("checkstyle:methodlength")
-    private void doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
+    private boolean doCreateEndpointDsl(ComponentModel model, List<ComponentModel> aliases, String overrideComponentName) throws MojoFailureException {
         String componentClassName = model.getJavaType();
         String builderName = getEndpointName(componentClassName);
         Class<?> realComponentClass = loadClass(componentClassName);
@@ -548,10 +551,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             dslClass.addMethod(method.copy()).setDefault().setBodyF("return %s.%s(%s);", javaClass.getName(), method.getName(), String.join(",", method.getParametersNames()));
         }
 
-        writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java", false);
+        return writeSourceIfChanged(javaClass, componentsFactoriesPackageName.replace('.', '/'), builderName + "Factory.java", false);
     }
 
-    private void synchronizeEndpointBuilderFactoryInterface(List<File> factories) throws MojoFailureException {
+    private boolean synchronizeEndpointBuilderFactoryInterface(List<File> factories) throws MojoFailureException {
         JavaClass javaClass = new JavaClass(getProjectClassLoader());
         javaClass.setPackage(endpointFactoriesPackageName);
         javaClass.setName("EndpointBuilderFactory");
@@ -575,10 +578,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaClass.implementInterface(componentsFactoriesPackageName + "." + factoryName + "." + endpointsName);
         }
 
-        writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
+        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
     }
 
-    private void synchronizeEndpointBuildersInterface(List<File> factories) throws MojoFailureException {
+    private boolean synchronizeEndpointBuildersInterface(List<File> factories) throws MojoFailureException {
         JavaClass javaClass = new JavaClass(getProjectClassLoader());
         javaClass.setPackage(endpointFactoriesPackageName);
         javaClass.setName("EndpointBuilders");
@@ -591,7 +594,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaClass.implementInterface(componentsFactoriesPackageName + "." + Strings.before(factory.getName(), "."));
         }
 
-        writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
+        return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON", endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
@@ -918,11 +921,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void writeSourceIfChanged(JavaClass source, String filePath, String fileName, boolean innerClassesLast) throws MojoFailureException {
-        writeSourceIfChanged(source.printClass(innerClassesLast), filePath, fileName);
+    private boolean writeSourceIfChanged(JavaClass source, String filePath, String fileName, boolean innerClassesLast) throws MojoFailureException {
+        return writeSourceIfChanged(source.printClass(innerClassesLast), filePath, fileName);
     }
 
-    private void writeSourceIfChanged(String source, String filePath, String fileName) throws MojoFailureException {
+    private boolean writeSourceIfChanged(String source, String filePath, String fileName) throws MojoFailureException {
         try {
             String header;
             try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
@@ -931,7 +934,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             String code = header + source;
             getLog().debug("Source code generated:\n" + code);
 
-            updateResource(sourcesOutputDir.toPath(), filePath + "/" + fileName, code);
+            return updateResource(sourcesOutputDir.toPath(), filePath + "/" + fileName, code);
         } catch (Exception e) {
             throw new MojoFailureException("IOError with file " + filePath + "/" + fileName, e);
         }

@@ -76,16 +76,16 @@ public class ComponentsDslMetadataRegistry {
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
-    public void addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
+    public boolean addComponentToMetadataAndSyncMetadataFile(final ComponentModel componentModel, final String key) {
         // put the component into the cache
         componentsCache.put(key, new ModifiedComponentModel(componentModel));
 
-        syncMetadataFile();
+        return syncMetadataFile();
     }
 
-    private void syncMetadataFile() {
+    private boolean syncMetadataFile() {
         syncMetadataFileWithGeneratedDslComponents();
-        writeCacheIntoMetadataFile();
+        return writeCacheIntoMetadataFile();
     }
 
     private void syncMetadataFileWithGeneratedDslComponents() {
@@ -101,12 +101,12 @@ public class ComponentsDslMetadataRegistry {
         componentsNamesToRemoveFromCache.forEach(componentFactoryName -> componentsCache.remove(componentFactoryName));
     }
 
-    private void writeCacheIntoMetadataFile() {
+    private boolean writeCacheIntoMetadataFile() {
         JsonObject json = new JsonObject();
         componentsCache.forEach((componentKey, componentModel) -> json.put(componentKey, JsonMapper.asJsonObject(componentModel).get("component")));
         final String jsonText = JsonMapper.serialize(json);
         try {
-            FileUtil.updateFile(metadataFile.toPath(), jsonText);
+            return FileUtil.updateFile(metadataFile.toPath(), jsonText);
         } catch (IOException ex) {
             throw new IOError(ex);
         }
