@@ -171,7 +171,10 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
                 File file = jsonFiles.get(elementName);
                 injectAttributesDocumentation(domFinder, documentationEnricher, file, elementType, injectedTypes);
             } else {
-                getLog().warn("Cannot find json metadata to use for enriching element " + elementName);
+                boolean ignore = "ExpressionDefinition".equalsIgnoreCase(elementName);
+                if (!ignore) {
+                    getLog().warn("Cannot find json metadata to use for enriching element " + elementName);
+                }
             }
         }
         getLog().info("Enriched " + enriched + " models out of " + typeToNameMap.size() + " models");
