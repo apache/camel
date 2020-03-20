@@ -166,21 +166,26 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
-        boolean logRoutesAsXml = true;
         if (builder instanceof AdviceWithRouteBuilder) {
             AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
             arb.setOriginalRoute(definition);
-            logRoutesAsXml = arb.isLogRouteAsXml();
         }
 
         // configure and prepare the routes from the builder
         RoutesDefinition routes = builder.configureRoutes(camelContext);
 
+        // was logging enabled or disabled
+        boolean logRoutesAsXml = true;
+        if (builder instanceof AdviceWithRouteBuilder) {
+            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
+            logRoutesAsXml = arb.isLogRouteAsXml();
+        }
+
         log.debug("AdviceWith routes: {}", routes);
 
         // we can only advice with a route builder without any routes
         if (!builder.getRouteCollection().getRoutes().isEmpty()) {
-            throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes." + " Remove all routes from the route builder.");
+            throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes. Remove all routes from the route builder.");
         }
         // we can not advice with error handlers (if you added a new error
         // handler in the route builder)
