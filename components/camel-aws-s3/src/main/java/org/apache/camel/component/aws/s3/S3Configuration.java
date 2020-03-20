@@ -146,17 +146,17 @@ public class S3Configuration implements Cloneable {
     }
 
     public EndpointConfiguration getEndpointConfiguration() {
-		return endpointConfiguration;
-	}
+        return endpointConfiguration;
+    }
 
     /**
      * Amazon AWS Endpoint Configuration
      */
-	public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
-		this.endpointConfiguration = endpointConfiguration;
-	}
+    public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
+        this.endpointConfiguration = endpointConfiguration;
+    }
 
-	public AmazonS3 getAmazonS3Client() {
+    public AmazonS3 getAmazonS3Client() {
         return amazonS3Client;
     }
 

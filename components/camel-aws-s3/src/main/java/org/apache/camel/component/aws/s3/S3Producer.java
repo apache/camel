@@ -186,7 +186,7 @@ public class S3Producer extends DefaultProducer {
                 partSize = Math.min(partSize, contentLength - filePosition);
 
                 UploadPartRequest uploadRequest = new UploadPartRequest().withBucketName(getConfiguration().getBucketName()).withKey(keyName)
-                        .withUploadId(initResponse.getUploadId()).withPartNumber(part).withFileOffset(filePosition).withFile(filePayload).withPartSize(partSize);
+                    .withUploadId(initResponse.getUploadId()).withPartNumber(part).withFileOffset(filePosition).withFile(filePayload).withPartSize(partSize);
 
                 LOG.trace("Uploading part [{}] for {}", part, keyName);
                 partETags.add(getEndpoint().getS3Client().uploadPart(uploadRequest).getPartETag());

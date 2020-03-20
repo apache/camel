@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);
 
     @BindToRegistry("amazonS3Client")

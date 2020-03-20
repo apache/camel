@@ -240,7 +240,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.createEndpoint("aws-s3://MyTopic?amazonS3Client=#amazonS3Client");
     }
-    
+
     @Test
     public void createEndpointWithEndpointConfiguration() throws Exception {
 
