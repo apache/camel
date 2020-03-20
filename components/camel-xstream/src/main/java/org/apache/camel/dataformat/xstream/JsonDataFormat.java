@@ -16,11 +16,12 @@
  */
 package org.apache.camel.dataformat.xstream;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+
+import javax.xml.stream.XMLStreamException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
