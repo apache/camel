@@ -3,14 +3,14 @@
 
 If you use the xref:exception-clause.adoc[useOriginalMessage] option
 from the Camel xref:exception-clause.adoc[Error Handler] then it matters
-if you use this with xref:enterprise-integration-patterns.adoc[EIP]s such as:
+if you use this with xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s such as:
 
-* xref:eips:recipientList-eip.adoc[Recipient List]
-* xref:eips:split-eip.adoc[Splitter]
-* xref:eips:multicast-eip.adoc[Multicast]
+* xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List]
+* xref:{eip-vc}:eips:split-eip.adoc[Splitter]
+* xref:{eip-vc}:eips:multicast-eip.adoc[Multicast]
 
-Then the option `shareUnitOfWork` on these xref:enterprise-integration-patterns.adoc[EIP]s
+Then the option `shareUnitOfWork` on these xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP]s
 influence the message in use by the `useOriginalMessage` option.
 
-See more details at xref:eips:split-eip.adoc[Splitter] and further below with
+See more details at xref:{eip-vc}:eips:split-eip.adoc[Splitter] and further below with
 the examples explaining this in more detail.

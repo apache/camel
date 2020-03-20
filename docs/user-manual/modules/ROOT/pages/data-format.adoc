@@ -3,7 +3,7 @@
 
 Camel supports a pluggable DataFormat to allow messages to be marshalled
 to and from binary or text formats to support a kind of
-xref:message-translator.adoc[Message Translator].
+xref:{eip-vc}:eips:message-translator.adoc[Message Translator].
 
 The following data formats are currently supported:
 
@@ -107,7 +107,7 @@ xref:registry.adoc[Registry].
 
 The following example unmarshals via serialization then marshals using a
 named JAXB data format to perform a kind of
-xref:message-translator.adoc[Message Translator]:
+xref:{eip-vc}:eips:message-translator.adoc[Message Translator]:
 
 [source,java]
 ----

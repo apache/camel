@@ -10,7 +10,7 @@ beans in the xref:dsl.adoc[DSL]
 
 Annotations can be used to define an xref:expression.adoc[Expression] or
 to extract various headers, properties or payloads from a
-xref:message.adoc[Message] when invoking a bean method (see
+xref:{eip-vc}:eips:message.adoc[Message] when invoking a bean method (see
 xref:bean-integration.adoc[Bean Integration] for more detail of how to
 invoke bean methods) together with being useful to help disambiguate
 which method to invoke.

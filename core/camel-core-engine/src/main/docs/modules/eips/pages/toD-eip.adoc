@@ -2,8 +2,8 @@
 = To D EIP
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
-computed xref:ROOT:endpoint.adoc[Endpoint] using one or
-more xref:ROOT:expression.adoc[Expression] that are concat together. By
+computed xref:latest@manual:ROOT:endpoint.adoc[Endpoint] using one or
+more xref:latest@manual:ROOT:expression.adoc[Expression] that are concat together. By
 default the xref:components:languages:simple-language.adoc[Simple] language is used to compute
 the endpoint.
 

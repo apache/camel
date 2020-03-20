@@ -2,7 +2,7 @@
 = How does Camel work with ServiceMix?
 
 You can use Camel to do smart routing and implement the
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] inside of the JBI container, routing between existing JBI
 components together with communicating with any of the other Camel
 xref:component.adoc[Components].

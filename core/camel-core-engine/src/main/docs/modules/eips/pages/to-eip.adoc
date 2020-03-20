@@ -3,12 +3,12 @@
 
 See message related documentation
 
-* xref:ROOT:message.adoc[Message]
-* xref:ROOT:message-bus.adoc[Message Bus]
-* xref:ROOT:message-channel.adoc[Message Channel]
-* xref:ROOT:message-endpoint.adoc[Message Endpoint]
-* xref:ROOT:message-router.adoc[Message Router]
-* xref:ROOT:message-translator.adoc[Message Translator]
+* xref:message.adoc[Message]
+* xref:message-bus.adoc[Message Bus]
+* xref:message-channel.adoc[Message Channel]
+* xref:message-endpoint.adoc[Message Endpoint]
+* xref:message-router.adoc[Message Router]
+* xref:message-translator.adoc[Message Translator]
 
 == Options
 

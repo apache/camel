@@ -1,0 +1,15 @@
+[[Message-Dispatcher]]
+= Message Dispatcher
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageDispatcher.html[Message Dispatcher]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+Camel supports the Message Dispatcher from the EIP patterns using various approaches.
+
+image::eip/MessageDispatcher.gif[image]
+
+You can use a component like JMS with selectors to implement a xref:selective-consumer.adoc[Selective Consumer]
+as the Message Dispatcher implementation. Or you can use an xref:message-endpoint.adoc[Message Endpoint]
+as the Message Dispatcher itself and then use a xref:content-based-router-eip.adoc[Content Based Router]
+as the Message Dispatcher.
