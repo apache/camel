@@ -48,8 +48,6 @@
 ** xref:java-dsl.adoc[Java DSL]
 ** xref:spring.adoc[Spring support]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
-* Supported expression languages -- see Components documentation
-* xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 * Frequently asked questions
 ** xref:faq/can-i-get-commercial-support.adoc[Can I get commercial support?]
 ** xref:support.adoc[How can I get help?]
@@ -154,3 +152,10 @@
 ** xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
 * xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
 * xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
+
+
+* *Reference*
+* xref:latest@components::index.adoc[Components]
+* xref:latest@components:dataformats:index.adoc[Data Formats]
+* xref:latest@components:languages:index.adoc[Supported expression languages]
+* xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
