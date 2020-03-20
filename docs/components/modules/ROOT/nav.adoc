@@ -271,6 +271,7 @@
 ** xref:pg-replication-slot-component.adoc[PostgresSQL Replication Slot Component]
 ** xref:pgevent-component.adoc[PostgresSQL Event Component]
 ** xref:platform-http-component.adoc[Platform HTTP Component]
+** xref:platform-http-vertx.adoc[PlatformHttp VertX]
 ** xref:properties-component.adoc[Properties Component]
 ** xref:pubnub-component.adoc[PubNub Component]
 ** xref:pulsar-component.adoc[Pulsar Component]
