@@ -63,6 +63,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "multipartupload":
         case "multiPartUpload": target.getConfiguration().setMultiPartUpload(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "partsize":
         case "partSize": target.getConfiguration().setPartSize(property(camelContext, long.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
@@ -96,6 +98,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "timeunit":
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "useawskms":
         case "useAwsKMS": target.getConfiguration().setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":

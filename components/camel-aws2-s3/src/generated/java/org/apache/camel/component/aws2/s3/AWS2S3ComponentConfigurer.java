@@ -53,6 +53,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "multipartupload":
         case "multiPartUpload": getOrCreateConfiguration(target).setMultiPartUpload(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Operations.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "partsize":
         case "partSize": getOrCreateConfiguration(target).setPartSize(property(camelContext, long.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
@@ -68,6 +70,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "storageclass":
         case "storageClass": getOrCreateConfiguration(target).setStorageClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "useawskms":
         case "useAwsKMS": getOrCreateConfiguration(target).setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
         case "useiamcredentials":

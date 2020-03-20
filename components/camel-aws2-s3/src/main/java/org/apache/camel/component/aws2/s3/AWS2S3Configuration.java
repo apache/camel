@@ -75,6 +75,10 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean useIAMCredentials;
     @UriParam(label = "producer")
     private String keyName;
+    @UriParam(defaultValue = "false")
+    private boolean overrideEndpoint;
+    @UriParam
+    private String uriEndpointOverride;
 
     public long getPartSize() {
         return partSize;
@@ -383,12 +387,34 @@ public class AWS2S3Configuration implements Cloneable {
     public void setKeyName(String keyName) {
         this.keyName = keyName;
     }
+    
+    public boolean isOverrideEndpoint() {
+		return overrideEndpoint;
+	}
+
+    /**
+     * Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option
+     */
+	public void setOverrideEndpoint(boolean overrideEndpoint) {
+		this.overrideEndpoint = overrideEndpoint;
+	}
+
+	public String getUriEndpointOverride() {
+		return uriEndpointOverride;
+	}
+
+    /**
+     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
+     */
+	public void setUriEndpointOverride(String uriEndpointOverride) {
+		this.uriEndpointOverride = uriEndpointOverride;
+	}
 
     // *************************************************
     //
     // *************************************************
 
-    public AWS2S3Configuration copy() {
+	public AWS2S3Configuration copy() {
         try {
             return (AWS2S3Configuration)super.clone();
         } catch (CloneNotSupportedException e) {
