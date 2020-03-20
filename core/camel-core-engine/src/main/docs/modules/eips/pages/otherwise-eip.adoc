@@ -2,7 +2,7 @@
 = Otherwise EIP
 
 The Otherwise EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
-Based Router] from the xref:ROOT:enterprise-integration-patterns.adoc[EIP
+Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns]
 
 image::eip/ContentBasedRouter.gif[image]
@@ -17,7 +17,7 @@ The Otherwise EIP has no options.
 
 The following example shows how to route a request from an input
 *direct:a* endpoint to either *direct:b*, *direct:c* or *direct:d* depending on
-the evaluation of various xref:ROOT:predicate.adoc[Predicate] expressions
+the evaluation of various xref:latest@manual:ROOT:predicate.adoc[Predicate] expressions
 
 [source,java]
 ----

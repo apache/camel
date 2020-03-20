@@ -36,6 +36,10 @@ content:
       branches: HEAD
       start_path: docs/components
 
+asciidoc:
+  attributes:
+    eip-vc: latest@eip
+
 ui:
   bundle:
     url: not-used

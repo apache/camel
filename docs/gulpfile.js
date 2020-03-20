@@ -120,27 +120,6 @@ function createComponentImageSymlinks() {
         .pipe(dest('components/modules/ROOT/assets/images/'));
 }
 
-// function deleteUserManualSymlinks() {
-//     return del(['user-manual/modules/ROOT/pages/*-eip.adoc', 'user-manual/modules/ROOT/pages/*-language.adoc']);
-// }
-
-// NOTE! the single adoc at ../core/camel-base/src/main/docs/*.adoc doesn't appear to have generated content.  Can it just be moved to the rest of the user manual?
-
-// function createUserManualSymlinks() {
-//     return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core-languages/src/main/docs/*.adoc', '../core/camel-xml-jaxp/src/main/docs/*.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
-//         // Antora disabled symlinks, there is an issue open
-//         // https://gitlab.com/antora/antora/issues/188
-//         // to reinstate symlink support, until that's resolved
-//         // we'll simply copy over instead of creating symlinks
-//         // .pipe(symlink('user-manual/modules/ROOT/pages/', {
-//         //     relativeSymlinks: true
-//         // }));
-//         // uncomment above .pipe() and remove the .pipe() below
-//         // when antora#188 is resolved
-//         .pipe(insertSourceAttribute())
-//         .pipe(dest('user-manual/modules/ROOT/pages/'));
-// }
-
 function titleFrom(file) {
     const maybeName = /(?:=|#) (.*)/.exec(file.contents.toString())
     if (maybeName == null) {
@@ -211,19 +190,11 @@ function createComponentLanguagesNav() {
         .pipe(dest('components/modules/languages/'))
 }
 
-function createUserManualNav() {
-    return src('user-manual-nav.adoc.template')
+function createEIPNav() {
+    const f = filter(['**','!**/enterprise-integration-patterns.adoc'])
+    return src('eip-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        // .pipe(inject(src('../core/camel-core-languages/src/main/docs/modules/languages/pages/*.adoc').pipe(sort()), {
-        //     removeTags: true,
-        //     name: 'languages',
-        //     transform: (filename, file) => {
-        //         const filepath = path.basename(filename);
-        //         const title = titleFrom(file);
-        //         return ` ** xref:languages:${filepath}[${title}]`;
-        //     }
-        // }))
-        .pipe(inject(src('../core/camel-core-engine/src/main/docs/modules/eips/pages/*.adoc').pipe(sort()), {
+        .pipe(inject(src('../core/camel-core-engine/src/main/docs/modules/eips/pages/*.adoc').pipe(f).pipe(sort()), {
             removeTags: true,
             name: 'eips',
             transform: (filename, file) => {
@@ -233,7 +204,7 @@ function createUserManualNav() {
             }
         }))
         .pipe(rename('nav.adoc'))
-        .pipe(dest('user-manual/modules/ROOT/'))
+        .pipe(dest('../core/camel-core-engine/src/main/docs/modules/eips/'))
 }
 
 const extractExamples = function(file, enc, next) {
@@ -245,7 +216,7 @@ const extractExamples = function(file, enc, next) {
         let examplePath = path.resolve(path.join('..', example[1]));
         exampleFiles.add(examplePath);
     }
-
+    // (exampleFiles.size > 0) && console.log('example files', exampleFiles)
     exampleFiles.forEach(examplePath => this.push(new File({
         base: path.resolve('..'),
         path: examplePath,
@@ -265,10 +236,10 @@ function createUserManualExamples() {
         .pipe(dest('user-manual/modules/ROOT/examples/'));
 }
 
-function createUserManualEIPExamples() {
-    return src('../core/camel-core-engine/src/main/docs/user-manual/modules/eips/**/*.adoc')
+function createEIPExamples() {
+    return src('../core/camel-core-engine/src/main/docs/modules/eips/**/*.adoc')
         .pipe(through2.obj(extractExamples))
-        .pipe(dest('user-manual/modules/ROOT/examples/'));
+        .pipe(dest('../core/camel-core-engine/src/main/docs/modules/eips/examples/'));
 }
 
 function createUserManualLanguageExamples() {
@@ -286,10 +257,9 @@ function createComponentExamples() {
 const symlinks = parallel(
     series(deleteComponentSymlinks, createComponentSymlinks, createComponentDataFormatSymlinks, createComponentLanguageSymlinks),
     series(deleteComponentImageSymlinks, createComponentImageSymlinks)
-    // series(deleteUserManualSymlinks, createUserManualSymlinks)
 );
-const nav = parallel(createComponentNav, createComponentDataFormatsNav, createComponentLanguagesNav, createUserManualNav);
-const examples = series(deleteExamples, createUserManualExamples, createUserManualEIPExamples, createUserManualLanguageExamples, createComponentExamples);
+const nav = parallel(createComponentNav, createComponentDataFormatsNav, createComponentLanguagesNav, createEIPNav);
+const examples = series(deleteExamples, createUserManualExamples, createEIPExamples, createUserManualLanguageExamples, createComponentExamples);
 
 exports.symlinks = symlinks;
 exports.nav = nav;

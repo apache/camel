@@ -1,7 +1,7 @@
 = Apache Camel user manual
 
 Apache Camel™ is a versatile open-source integration framework based on
-known xref:enterprise-integration-patterns.adoc[Enterprise Integration
+known xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns].
 
 Camel empowers you to define routing and mediation rules in a variety of
@@ -37,7 +37,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq/what-is-camel
 * xref:books.adoc[Books]
 * xref:examples.adoc[Examples]
 * xref:architecture.adoc[Architecture]
-* xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+* xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 * xref:Endpoint-dsl.adoc[Endpoint-dsl]
 * xref:dsl.adoc[DSL]
 * <<Components>>
@@ -103,7 +103,7 @@ camel routes without them knowing
 * xref:expression.adoc[Expression]
 * xref:http-session-handling.adoc[HTTP-Session Handling]
 * xref:injector.adoc[Injector]
-* xref:intercept.adoc[Intercept]
+* xref:{eip-vc}:eips:intercept.adoc[Intercept]
 * xref:inversion-of-control-with-smart-defaults.adoc[Inversion of Control with Smart Defaults]
 * xref:languages.adoc[Languages]
 * xref:lifecycle.adoc[Lifecycle]

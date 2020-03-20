@@ -4,7 +4,7 @@
 *Since Camel 2.4*
 
 As of Camel 2.4 the asynchronous routing engine is back and kicking. +
-All the xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] 
+All the xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] 
 are supported as well a selected number of
 Components:
 

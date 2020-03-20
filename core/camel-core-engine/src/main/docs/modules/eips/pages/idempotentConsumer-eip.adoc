@@ -3,7 +3,7 @@
 
 The
 http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent
-Consumer] from the xref:ROOT:enterprise-integration-patterns.adoc[EIP
+Consumer] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] is used to filter out duplicate messages.
 
 The Idempotent Consumer essentially acts like a
@@ -23,7 +23,7 @@ Camel provides the following Idempotent Consumer implementations:
 * xref:components::jpa-component.adoc[JpaMessageIdRepository]
 * xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]
 * xref:components::jcache-component.adoc[JCacheIdempotentRepository]
-* xref:ROOT:spring.adoc[SpringCacheIdempotentRepository]
+* xref:latest@manual:ROOT:spring.adoc[SpringCacheIdempotentRepository]
 * xref:components::ehcache-component.adoc[EhcacheIdempotentRepository]
 * xref:components::kafka-component.adoc[KafkaIdempotentRepository]
 

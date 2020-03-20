@@ -1,7 +1,7 @@
 = Examples
 
 Once you have read about xref:getting-started.adoc[Getting Started] and
-looked at the xref:enterprise-integration-patterns.adoc[Enterprise
+looked at the xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns], you might want to try out some examples.
 
 Before starting to work on example you may want to
