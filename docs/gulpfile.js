@@ -163,7 +163,7 @@ function createComponentNav() {
 function createComponentDataFormatsNav() {
     return src('component-dataformats-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src(['components/modules/dataformats/pages/**/*.adoc']).pipe(sort()), {
+        .pipe(inject(src(['components/modules/dataformats/pages/**/*.adoc', '!components/modules/dataformats/pages/index.adoc']).pipe(sort()), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
@@ -178,7 +178,7 @@ function createComponentDataFormatsNav() {
 function createComponentLanguagesNav() {
     return src('component-languages-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src(['components/modules/languages/pages/**/*.adoc', '../core/camel-core-languages/src/main/docs/modules/languages/pages/*.adoc']).pipe(sort()), {
+        .pipe(inject(src(['components/modules/languages/pages/**/*.adoc', '../core/camel-core-languages/src/main/docs/modules/languages/pages/*.adoc', '!components/modules/languages/pages/index.adoc']).pipe(sort()), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);

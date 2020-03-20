@@ -1,0 +1,48 @@
+[list-of-camel-expression-languages]
+= Expression Languages
+
+Below is the list of expression languages that are provided by Apache Camel.
+
+
+// languages: START
+Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Language | Since | Description
+
+| xref:languages:bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
+
+| xref:languages:constant-language.adoc[Constant] (camel-core-languages) | 1.5 | To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.
+
+| xref:languages:exchangeProperty-language.adoc[ExchangeProperty] (camel-core-languages) | 2.0 | To use a Camel Exchange property in expressions or predicates.
+
+| xref:languages:file-language.adoc[File] (camel-core-languages) | 1.1 | For expressions and predicates using the file/simple language.
+
+| xref:languages:groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | To use Groovy scripts in Camel expressions or predicates.
+
+| xref:languages:header-language.adoc[Header] (camel-core-languages) | 1.5 | To use a Camel Message header in expressions or predicates.
+
+| xref:languages:hl7terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
+
+| xref:languages:jsonpath-language.adoc[JsonPath] (camel-jsonpath) | 2.13 | To use JsonPath in Camel expressions or predicates.
+
+| xref:languages:mvel-language.adoc[MVEL] (camel-mvel) | 2.0 | To use MVEL scripts in Camel expressions or predicates.
+
+| xref:languages:ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
+
+| xref:languages:ref-language.adoc[Ref] (camel-core-languages) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
+
+| xref:languages:simple-language.adoc[Simple] (camel-core-languages) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+
+| xref:languages:spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
+
+| xref:languages:tokenize-language.adoc[Tokenize] (camel-core-languages) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
+
+| xref:languages:xtokenize-language.adoc[XML Tokenize] (camel-xml-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+
+| xref:languages:xpath-language.adoc[XPath] (camel-xpath) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
+
+| xref:languages:xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | To use XQuery (XML) in Camel expressions or predicates.
+|===
+// languages: END
