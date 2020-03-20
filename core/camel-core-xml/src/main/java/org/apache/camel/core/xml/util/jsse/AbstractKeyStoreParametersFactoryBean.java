@@ -21,21 +21,23 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractKeyStoreParametersFactoryBean extends AbstractJsseUtilFactoryBean<KeyStoreParameters> {
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(description = "The optional type of the key store to load."
+            + " See Appendix A in the Java Cryptography Architecture Standard Algorithm Name Documentation for more information on standard names.")
     protected String type;
     
-    @XmlAttribute
+    @XmlAttribute @Metadata(description = "The optional password for reading/opening/verifying the key store")
     protected String password;
     
-    @XmlAttribute
+    @XmlAttribute @Metadata(description = "The optional provider identifier for instantiating the key store")
     protected String provider;
     
-    @XmlAttribute
+    @XmlAttribute @Metadata(description = "The optional file path, class path resource, or URL of the resource used to load the key store")
     protected String resource;
     
     @XmlTransient
