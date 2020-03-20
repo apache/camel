@@ -957,7 +957,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
      * Whether to automatic detect OSGi Blueprint property placeholder service in use,
      * and bridge with Camel property placeholder.
      * When enabled this allows you to only setup OSGi Blueprint property placeholder
-     * and Camel can use the properties in the <camelContext>.
+     * and Camel can use the properties in the camelContext.
      */
     public void setUseBlueprintPropertyResolver(Boolean useBlueprintPropertyResolver) {
         this.useBlueprintPropertyResolver = useBlueprintPropertyResolver;
