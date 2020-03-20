@@ -87,6 +87,19 @@ public interface AwsS3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Amazon AWS Endpoint Configuration.
+         * 
+         * The option is a:
+         * <code>com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default AwsS3ComponentBuilder endpointConfiguration(
+                com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration endpointConfiguration) {
+            doSetProperty("endpointConfiguration", endpointConfiguration);
+            return this;
+        }
+        /**
          * Whether or not the S3 client should use path style access.
          * 
          * The option is a: <code>boolean</code> type.
@@ -568,6 +581,7 @@ public interface AwsS3ComponentBuilderFactory {
             case "amazonS3Client": getOrCreateConfiguration((S3Component) component).setAmazonS3Client((com.amazonaws.services.s3.AmazonS3) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((S3Component) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((S3Component) component).setConfiguration((org.apache.camel.component.aws.s3.S3Configuration) value); return true;
+            case "endpointConfiguration": getOrCreateConfiguration((S3Component) component).setEndpointConfiguration((com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration) value); return true;
             case "pathStyleAccess": getOrCreateConfiguration((S3Component) component).setPathStyleAccess((boolean) value); return true;
             case "policy": getOrCreateConfiguration((S3Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((S3Component) component).setProxyHost((java.lang.String) value); return true;
