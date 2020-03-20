@@ -347,6 +347,8 @@ public class RestSwaggerEndpointTest {
         assertThat(RestSwaggerEndpoint.pickBestScheme(null, Collections.emptyList())).isNull();
 
         assertThat(RestSwaggerEndpoint.pickBestScheme(null, null)).isNull();
+
+        assertThat(RestSwaggerEndpoint.pickBestScheme("file", null)).isNull();
     }
 
     @Test(expected = IllegalArgumentException.class)
