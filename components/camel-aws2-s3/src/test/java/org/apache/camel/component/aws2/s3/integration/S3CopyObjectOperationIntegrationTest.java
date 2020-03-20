@@ -38,7 +38,7 @@ public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
-    
+
     @EndpointInject
     private ProducerTemplate template;
 
@@ -68,7 +68,7 @@ public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.copyObject);
             }
         });
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -78,9 +78,9 @@ public class S3CopyObjectOperationIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false";
-              
+
                 from("direct:putObject").to(awsEndpoint);
-                
+
                 from("direct:copyObject").to(awsEndpoint).to("mock:result");
 
             }

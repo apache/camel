@@ -38,7 +38,7 @@ public class S3DeleteBucketOperationIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
-    
+
     @EndpointInject
     private ProducerTemplate template;
 
@@ -65,7 +65,7 @@ public class S3DeleteBucketOperationIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteBucket);
             }
         });
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -75,9 +75,9 @@ public class S3DeleteBucketOperationIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-s3://mycamel2?autoCreateBucket=true";
-              
+
                 from("direct:listBucket").to(awsEndpoint);
-                
+
                 from("direct:deleteBucket").to(awsEndpoint).to("mock:result");
 
             }

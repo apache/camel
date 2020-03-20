@@ -27,7 +27,8 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
-        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component.createEndpoint("aws2-s3://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&overrideEndpoint=true&uriEndpointOverride=http://localhost:4572");
+        AWS2S3Endpoint endpoint = (AWS2S3Endpoint)component
+            .createEndpoint("aws2-s3://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&overrideEndpoint=true&uriEndpointOverride=http://localhost:4572");
         assertTrue(endpoint.getConfiguration().isOverrideEndpoint());
         assertEquals(endpoint.getConfiguration().getUriEndpointOverride(), "http://localhost:4572");
     }

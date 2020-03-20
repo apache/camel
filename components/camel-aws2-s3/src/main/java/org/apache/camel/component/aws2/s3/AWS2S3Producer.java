@@ -117,7 +117,7 @@ public class AWS2S3Producer extends DefaultProducer {
             }
         }
     }
-    
+
     public void processMultiPart(final Exchange exchange) throws Exception {
         File filePayload = null;
         Object obj = exchange.getIn().getMandatoryBody();
@@ -141,8 +141,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         final String keyName = determineKey(exchange);
-        CreateMultipartUploadRequest.Builder createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
-            .bucket(getConfiguration().getBucketName()).key(keyName);
+        CreateMultipartUploadRequest.Builder createMultipartUploadRequest = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
 
         String storageClass = determineStorageClass(exchange);
         if (storageClass != null) {
@@ -182,8 +181,8 @@ public class AWS2S3Producer extends DefaultProducer {
             for (int part = 1; filePosition < contentLength; part++) {
                 partSize = Math.min(partSize, contentLength - filePosition);
 
-                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName)
-                        .uploadId(initResponse.uploadId()).partNumber(part).build();
+                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId())
+                    .partNumber(part).build();
 
                 LOG.trace("Uploading part [{}] for {}", part, keyName);
                 String etag = getEndpoint().getS3Client().uploadPart(uploadRequest, RequestBody.fromFile(filePayload)).eTag();
@@ -193,12 +192,14 @@ public class AWS2S3Producer extends DefaultProducer {
                 filePosition += partSize;
             }
             CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
-            CompleteMultipartUploadRequest compRequest = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload).bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build();
+            CompleteMultipartUploadRequest compRequest = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
+                .bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build();
 
             uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequest);
 
         } catch (Exception e) {
-            getEndpoint().getS3Client().abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build());
+            getEndpoint().getS3Client()
+                .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName).uploadId(initResponse.uploadId()).build());
             throw e;
         }
 
@@ -345,7 +346,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
         DeleteBucketResponse resp = s3Client.deleteBucket(deleteBucketRequest.build());
-        
+
         Message message = getMessageForResponse(exchange);
         message.setBody(resp);
     }
