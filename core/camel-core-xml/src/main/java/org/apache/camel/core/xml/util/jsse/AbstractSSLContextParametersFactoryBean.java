@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,12 +29,16 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextParameters> {
     
     @XmlAttribute
+    @Metadata(description = "The optional provider identifier for the JSSE implementation to use when constructing an SSLContext.")
     private String provider;
 
     @XmlAttribute
+    @Metadata(description = "The optional protocol for the secure sockets created by the SSLContext"
+            + " represented by this instance's configuration. See Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names.")
     private String secureSocketProtocol;
     
     @XmlAttribute
+    @Metadata(description = "An optional certificate alias to use. This is useful when the keystore has multiple certificates.")
     private String certAlias;
 
     @Override

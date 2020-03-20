@@ -40,7 +40,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.util.StringHelper.after;
 
 /**
@@ -53,6 +52,23 @@ public final class EndpointHelper {
 
     private EndpointHelper() {
         //Utility Class
+    }
+
+    /**
+     * Normalize uri so we can do endpoint hits with minor mistakes and
+     * parameters is not in the same order.
+     *
+     * @param uri the uri
+     * @return normalized uri
+     * @throws ResolveEndpointFailedException if uri cannot be normalized
+     */
+    public static String normalizeEndpointUri(String uri) {
+        try {
+            uri = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+        return uri;
     }
 
     /**
@@ -121,11 +137,7 @@ public final class EndpointHelper {
         }
 
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
-        try {
-            uri = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
+        uri = normalizeEndpointUri(uri);
 
         // we need to test with and without scheme separators (//)
         boolean match = PatternHelper.matchPattern(toggleUriSchemeSeparators(uri), pattern);

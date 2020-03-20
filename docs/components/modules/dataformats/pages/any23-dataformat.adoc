@@ -1,0 +1,92 @@
+[[any23-dataformat]]
+= Any23 DataFormat
+:page-source: components/camel-any23/src/main/docs/any23-dataformat.adoc
+Camel Any23 is a DataFormat that uses the Apache Anything To Triples (Any23) library to extract structured data in RDF from a variety of documents on the web.
+*Since Camel 3.0*
+
+
+*Since Camel 3.0*
+
+The main functionality of this DataFormat focuses on its Unmarshal method which extracts RDF triplets from compatible pages, in a wide variety of RDF syntaxes.
+Any23 is a Data Format that is intended to convert HTML from a site (or file) into rdf.
+
+
+== Any23 Options
+
+// dataformat options: START
+The Any23 dataformat supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| outputFormat | RDF4JMODEL | Any23OutputFormat | What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL. The value can be one of: JSONLD, NQUADS, NTRIPLES, RDF4JMODEL, RDFJSON, RDFXML, TURTLE
+| configuration |  | List | Configurations for Apache Any23 as key-value pairs in order to customize the extraction process. The list of supported parameters can be found here. If not provided, a default configuration is used.
+| extractors |  | List | List of Any23 extractors to be used in the unmarshal operation. A list of the available extractors can be found here here. If not provided, all the available extractors are used.
+| baseURI |  | String | The URI to use as base for building RDF entities if only relative paths are provided.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+
+
+
+
+== Java DSL Example
+
+An example where the consumer provides some HTML
+
+[source,java]
+---------------------------------------------------------------------------
+from("direct:start").unmarshal().any23("http://mock.foo/bar").to("mock:result");
+---------------------------------------------------------------------------
+
+== Spring XML Example
+
+The following example shows how to use TidyMarkup
+to unmarshal using Spring
+
+[source,java]
+-----------------------------------------------------------------------
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <dataFormats>
+      <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" > 
+        <configurations>
+          <entry>
+            <key>any23.extraction.metadata.nesting</key>
+            <value>off</value>
+          </entry>
+        </configurations>
+        <extractors>html-head-title</extractors>
+      </any23>
+    </dataFormats>
+    <route>
+      <from uri="direct:start"/>
+      <to uri="http://microformats.org/2009/08"/>
+      <unmarshal>
+        <custom ref="any23"/>
+      </unmarshal>
+      <to uri="mock:result"/>
+    </route>
+  </camelContext>
+-----------------------------------------------------------------------
+
+== Dependencies
+
+To use Any23 in your camel routes you need to add the a dependency
+on *camel-any23* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,java]
+----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-any23</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----------------------------------------
+
+include::camel-spring-boot::page$any23-starter.adoc[]

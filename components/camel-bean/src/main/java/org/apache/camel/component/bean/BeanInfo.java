@@ -163,7 +163,7 @@ public class BeanInfo {
         ParameterMappingStrategy answer = registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
         if (answer == null) {
             // no then use the default one
-            answer = new DefaultParameterMappingStrategy();
+            answer = DefaultParameterMappingStrategy.INSTANCE;
         }
 
         return answer;
@@ -171,25 +171,9 @@ public class BeanInfo {
 
     public MethodInvocation createInvocation(Object pojo, Exchange exchange)
         throws AmbiguousMethodCallException, MethodNotFoundException {
-        return createInvocation(pojo, exchange, null);
-    }
 
-    private MethodInvocation createInvocation(Object pojo, Exchange exchange, Method explicitMethod)
-        throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
         
-        // find the explicit method to invoke
-        if (explicitMethod != null) {
-            for (List<MethodInfo> infos : operations.values()) {
-                for (MethodInfo info : infos) {
-                    if (explicitMethod.equals(info.getMethod())) {
-                        return info.createMethodInvocation(pojo, info.hasParameters(), exchange);
-                    }
-                }
-            }
-            throw new MethodNotFoundException(exchange, pojo, explicitMethod.getName());
-        }
-
         String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (methodName != null) {
 

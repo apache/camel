@@ -1634,7 +1634,7 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "configuration": def.setConfiguration(unmarshal(new PropertyDescriptionsAdapter(), doParsePropertyDefinitions())); break;
+                case "configuration": doAdd(doParsePropertyDefinition(), def.getConfiguration(), def::setConfiguration); break;
                 case "extractors": doAdd(doParseText(), def.getExtractors(), def::setExtractors); break;
                 default: return false;
             }
@@ -1941,6 +1941,7 @@ public class ModelParser extends BaseParser {
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
+                case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); break;
                 case "include": def.setInclude(val); break;
@@ -2171,102 +2172,13 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "aliases": def.setAliases(unmarshal(new XStreamDataFormat.AliasAdapter(), doParseAliasList())); break;
-                case "converters": def.setConverters(unmarshal(new XStreamDataFormat.ConvertersAdapter(), doParseConverterList())); break;
-                case "implicitCollections": def.setImplicitCollections(unmarshal(new XStreamDataFormat.ImplicitCollectionsAdapter(), doParseImplicitCollectionList())); break;
-                case "omitFields": def.setOmitFields(unmarshal(new XStreamDataFormat.OmitFieldsAdapter(), doParseOmitFieldList())); break;
+                case "aliases": doAdd(doParsePropertyDefinition(), def.getAliases(), def::setAliases); break;
+                case "converters": doAdd(doParsePropertyDefinition(), def.getConverters(), def::setConverters); break;
+                case "implicitCollections": doAdd(doParsePropertyDefinition(), def.getImplicitCollections(), def::setImplicitCollections); break;
+                case "omitFields": doAdd(doParsePropertyDefinition(), def.getOmitFields(), def::setOmitFields); break;
                 default: return false;
             }
             return true;
-        }, noValueHandler());
-    }
-    protected XStreamDataFormat.ConverterList doParseConverterList() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.ConverterList(),
-            noAttributeHandler(), (def, key) -> {
-            if ("converter".equals(key)) {
-                doAdd(doParseConverterEntry(), def.getList(), def::setList);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected XStreamDataFormat.AliasList doParseAliasList() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.AliasList(),
-            noAttributeHandler(), (def, key) -> {
-            if ("alias".equals(key)) {
-                doAdd(doParseAliasEntry(), def.getList(), def::setList);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected XStreamDataFormat.OmitFieldList doParseOmitFieldList() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.OmitFieldList(),
-            noAttributeHandler(), (def, key) -> {
-            if ("omitField".equals(key)) {
-                doAdd(doParseOmitFieldEntry(), def.getList(), def::setList);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected XStreamDataFormat.ImplicitCollectionList doParseImplicitCollectionList() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.ImplicitCollectionList(),
-            noAttributeHandler(), (def, key) -> {
-            if ("class".equals(key)) {
-                doAdd(doParseImplicitCollectionEntry(), def.getList(), def::setList);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected XStreamDataFormat.AliasEntry doParseAliasEntry() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.AliasEntry(), (def, key, val) -> {
-            switch (key) {
-                case "class": def.setClsName(val); break;
-                case "name": def.setName(val); break;
-                default: return false;
-            }
-            return true;
-        }, noElementHandler(), noValueHandler());
-    }
-    protected XStreamDataFormat.ConverterEntry doParseConverterEntry() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.ConverterEntry(), (def, key, val) -> {
-            if ("class".equals(key)) {
-                def.setClsName(val);
-                return true;
-            }
-            return false;
-        }, noElementHandler(), noValueHandler());
-    }
-    protected XStreamDataFormat.ImplicitCollectionEntry doParseImplicitCollectionEntry() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.ImplicitCollectionEntry(), (def, key, val) -> {
-            if ("name".equals(key)) {
-                def.setClsName(val);
-                return true;
-            }
-            return false;
-        }, (def, key) -> {
-            if ("field".equals(key)) {
-                doAdd(doParseText(), def.getFields(), def::setFields);
-                return true;
-            }
-            return false;
-        }, noValueHandler());
-    }
-    protected XStreamDataFormat.OmitFieldEntry doParseOmitFieldEntry() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat.OmitFieldEntry(), (def, key, val) -> {
-            if ("class".equals(key)) {
-                def.setClsName(val);
-                return true;
-            }
-            return false;
-        }, (def, key) -> {
-            if ("field".equals(key)) {
-                doAdd(doParseText(), def.getFields(), def::setFields);
-                return true;
-            }
-            return false;
         }, noValueHandler());
     }
     protected XmlRpcDataFormat doParseXmlRpcDataFormat() throws IOException, XmlPullParserException {

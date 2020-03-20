@@ -57,6 +57,13 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *                               #class:com.foo.MyClass('Hello World', 5, true)</li>.
  *     <li>ignore case - Whether to ignore case for property keys<li>
  * </ul>
+ *
+ * Keys can be marked as optional if the key name starts with a question mark, such as:
+ * <pre>
+ * foo=123
+ * ?bar=false
+ * </pre>
+ * Where foo is mandatory, and bar is optional.
  */
 public final class PropertyBindingSupport {
 
@@ -197,7 +204,7 @@ public final class PropertyBindingSupport {
         }
 
         /**
-         * Whether properties should be filtered by prefix.         *
+         * Whether properties should be filtered by prefix.
          * Note that the prefix is removed from the key before the property is bound.
          */
         public Builder withOptionPrefix(String optionPrefix) {
@@ -242,11 +249,6 @@ public final class PropertyBindingSupport {
             Object obj = target != null ? target : this.target;
             Map<String, Object> prop = properties != null ? properties : this.properties;
 
-            // mandatory parameters
-            org.apache.camel.util.ObjectHelper.notNull(context, "camelContext");
-            org.apache.camel.util.ObjectHelper.notNull(obj, "target");
-            org.apache.camel.util.ObjectHelper.notNull(prop, "properties");
-
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
                     optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
@@ -262,11 +264,6 @@ public final class PropertyBindingSupport {
          * @return true if the property was bound
          */
         public boolean bind(CamelContext camelContext, Object target, String key, Object value) {
-            org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
-            org.apache.camel.util.ObjectHelper.notNull(target, "target");
-            org.apache.camel.util.ObjectHelper.notNull(key, "key");
-            org.apache.camel.util.ObjectHelper.notNull(value, "value");
-
             Map<String, Object> properties = new HashMap<>(1);
             properties.put(key, value);
 
@@ -470,18 +467,21 @@ public final class PropertyBindingSupport {
                                             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
                                             boolean reference, boolean placeholder,
                                             PropertyConfigurer configurer) {
-        org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
-        org.apache.camel.util.ObjectHelper.notNull(target, "target");
-        org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
         final String uOptionPrefix = ignoreCase && isNotEmpty(optionPrefix) ? optionPrefix.toUpperCase(Locale.US) : "";
         final int size = properties.size();
 
+        // use configuer first to set the options it can do
         if (configurer != null) {
             for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, Object> entry = iter.next();
                 String key = entry.getKey();
                 Object value = entry.getValue();
+
+                final boolean optional = key.startsWith("?");
+                if (optional) {
+                    key = key.substring(1);
+                }
 
                 // property configurer does not support nested names so skip if the name has a dot
                 if (key.indexOf('.') == -1) {
@@ -504,15 +504,28 @@ public final class PropertyBindingSupport {
             }
         }
 
-        // must set reference parameters first before the other bindings
+        // then we must set reference parameters before the other bindings
         setReferenceProperties(camelContext, target, properties);
 
-        // sort the keys by nesting level
+        // sort the keys by nesting level and set the remainder
         properties.keySet().stream()
             .sorted(Comparator.comparingInt(s -> StringHelper.countChar(s, '.')))
             .forEach(key -> {
+                Object text = properties.get(key);
                 final String propertyKey = key;
-                final Object value = properties.get(key);
+                final boolean optional = key.startsWith("?");
+                if (optional) {
+                    key = key.substring(1);
+                }
+                if (placeholder) {
+                    // resolve property placeholders
+                    key = camelContext.resolvePropertyPlaceholders(key);
+                    if (text instanceof String) {
+                        // resolve property placeholders
+                        text = camelContext.resolvePropertyPlaceholders(text.toString());
+                    }
+                }
+                final Object value = text;
 
                 if (isNotEmpty(optionPrefix)) {
                     boolean match = key.startsWith(optionPrefix) || ignoreCase && key.toUpperCase(Locale.US).startsWith(uOptionPrefix);
@@ -522,11 +535,22 @@ public final class PropertyBindingSupport {
                     key = key.substring(optionPrefix.length());
                 }
 
-                boolean bound = bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+                boolean bound = false;
+                if (configurer != null) {
+                    // attempt configurer first
+                    try {
+                        bound = configurer.configure(camelContext, target, key, value, ignoreCase);
+                    } catch (Exception e) {
+                        throw new PropertyBindingException(target, key, value, e);
+                    }
+                }
+                if (!bound) {
+                    bound = bindProperty(camelContext, target, key, value, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
+                }
                 if (bound && removeParameter) {
                     properties.remove(propertyKey);
                 }
-                if (mandatory && !bound) {
+                if (mandatory && !optional && !bound) {
                     throw new PropertyBindingException(target, propertyKey, value);
                 }
             }
@@ -735,6 +759,11 @@ public final class PropertyBindingSupport {
         while (it.hasNext()) {
             Map.Entry<String, Object> entry = it.next();
             String name = entry.getKey();
+
+            final boolean optional = name.startsWith("?");
+            if (optional) {
+                name = name.substring(1);
+            }
 
             // we only support basic keys
             if (name.contains(".") || name.contains("[") || name.contains("]")) {

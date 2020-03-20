@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.Route;
+import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.config.Ini;

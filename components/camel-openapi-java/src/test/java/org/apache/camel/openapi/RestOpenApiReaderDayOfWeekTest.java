@@ -28,7 +28,6 @@ import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class RestOpenApiReaderDayOfWeekTest extends CamelTestSupport {
 
     @BindToRegistry("dummy-rest")

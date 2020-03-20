@@ -383,6 +383,82 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals(false, foo.getAnimal().isDangerous());
     }
 
+    @Test
+    public void testPropertiesOptionallKey() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("?bar.AGE", "33");
+        prop.put("BAR.{{committer}}", "true");
+        prop.put("bar.gOLd-Customer", "true");
+        prop.put("?bar.silver-Customer", "true");
+        prop.put("?bAr.work.ID", "123");
+        prop.put("?bar.WORk.naME", "{{companyName}}");
+        prop.put("?bar.work.addresss", "Some street");
+        prop.put("?bar.work.addresss.zip", "1234");
+
+        PropertyBindingSupport.build().withIgnoreCase(true).bind(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertFalse("Should NOT bind all properties", prop.isEmpty());
+        assertEquals(3, prop.size());
+        assertTrue(prop.containsKey("?bar.silver-Customer"));
+        assertTrue(prop.containsKey("?bar.work.addresss"));
+        assertTrue(prop.containsKey("?bar.work.addresss.zip"));
+    }
+
+    @Test
+    public void testPropertiesOptionallKeyMandatory() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.AGE", "33");
+        prop.put("BAR.{{committer}}", "true");
+        prop.put("bar.gOLd-Customer", "true");
+        prop.put("?bar.silver-Customer", "true");
+        prop.put("?bAr.work.ID", "123");
+        prop.put("?bar.WORk.naME", "{{companyName}}");
+        prop.put("?bar.work.addresss", "Some street");
+        prop.put("?bar.work.addresss.zip", "1234");
+
+        PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertFalse("Should NOT bind all properties", prop.isEmpty());
+        assertEquals(3, prop.size());
+        assertTrue(prop.containsKey("?bar.silver-Customer"));
+        assertTrue(prop.containsKey("?bar.work.addresss"));
+        assertTrue(prop.containsKey("?bar.work.addresss.zip"));
+
+        // should not fail as we marked the option as optional
+        prop.put("?bar.unknown", "123");
+        PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
+        prop.remove("?bar.unknown");
+
+        // should fail as its mandatory
+        prop.put("bar.unknown", "123");
+        try {
+            PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
+            fail("Should fail");
+        } catch (PropertyBindingException e) {
+            assertEquals("bar.unknown", e.getPropertyName());
+        }
+    }
+
     public static class Foo {
         private String name;
         private Bar bar = new Bar();

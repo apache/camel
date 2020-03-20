@@ -8,6 +8,7 @@
     "description": "To use Jetty as a HTTP server as consumer for Camel routes.",
     "label": "http",
     "deprecated": false,
+    "deprecationNote": "",
     "async": true,
     "consumerOnly": true,
     "producerOnly": false,

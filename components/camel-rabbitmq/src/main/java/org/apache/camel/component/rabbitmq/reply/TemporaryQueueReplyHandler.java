@@ -23,7 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link ReplyHandler} to handle processing replies when using temporary queues.
+ * {@link ReplyHandler} to handle processing replies when using temporary
+ * queues.
  */
 public class TemporaryQueueReplyHandler implements ReplyHandler {
 
@@ -33,13 +34,13 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     protected final ReplyManager replyManager;
     protected final Exchange exchange;
     protected final AsyncCallback callback;
-    // remember the original correlation id, in case the server returns back a reply with a messed up correlation id
+    // remember the original correlation id, in case the server returns back a
+    // reply with a messed up correlation id
     protected final String originalCorrelationId;
     protected final String correlationId;
     protected final long timeout;
 
-    public TemporaryQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                      String originalCorrelationId, String correlationId, long timeout) {
+    public TemporaryQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId, String correlationId, long timeout) {
         this.replyManager = replyManager;
         this.exchange = exchange;
         this.originalCorrelationId = originalCorrelationId;

@@ -22,6 +22,7 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -29,8 +30,8 @@ import org.apache.camel.spi.UriParam;
  * To copy files using the secure copy protocol (SCP).
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "scp", extendsScheme = "ftp", title = "SCP",
-        syntax = "scp:host:port/directoryName", producerOnly = true, label = "file",
-        excludeProperties = "appendChars,binary,charset,doneFileName,download,fastExistsCheck,fileExist,moveExisting,passiveMode"
+        syntax = "scp:host:port/directoryName", producerOnly = true, label = "file")
+@Metadata(excludeProperties = "appendChars,binary,charset,doneFileName,download,fastExistsCheck,fileExist,moveExisting,passiveMode"
                 + ",separator,tempFileName,tempPrefix,eagerDeleteTargetFile,keepLastModified,sendNoop"
                 + ",maximumReconnectAttempts,reconnectDelay,autoCreate,bufferSize,siteCommand,stepwise,throwExceptionOnConnectFailed"
                 + ",transferLoggingIntervalSeconds,transferLoggingLevel,transferLoggingVerbose,resumeDownload"

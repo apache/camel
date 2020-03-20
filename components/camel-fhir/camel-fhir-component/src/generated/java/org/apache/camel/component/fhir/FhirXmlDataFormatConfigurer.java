@@ -20,6 +20,8 @@ public class FhirXmlDataFormatConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "fhirversion":
         case "fhirVersion": dataformat.setFhirVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "contenttypeheader":
+        case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "serverbaseurl":
         case "serverBaseUrl": dataformat.setServerBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "prettyprint":

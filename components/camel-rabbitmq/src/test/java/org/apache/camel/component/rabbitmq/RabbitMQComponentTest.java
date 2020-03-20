@@ -99,7 +99,7 @@ public class RabbitMQComponentTest extends CamelTestSupport {
 
         RabbitMQComponent comp = context.getComponent("rabbitmq", RabbitMQComponent.class);
         comp.setAutoDetectConnectionFactory(false);
-        return (RabbitMQEndpoint) comp.createEndpoint(uri, params);
+        return (RabbitMQEndpoint)comp.createEndpoint(uri, params);
     }
 
     @Test

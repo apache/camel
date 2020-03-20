@@ -83,7 +83,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     @XmlTransient
     private Processor onExceptionOccurred;
     @XmlTransient
-    private Boolean routeScoped;
+    private boolean routeScoped = true;
 
     public OnExceptionDefinition() {
     }
@@ -101,12 +101,14 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
     }
 
     public boolean isRouteScoped() {
-        // is context scoped by default
-        return routeScoped != null ? routeScoped : false;
+        return routeScoped;
     }
 
-    public Boolean getRouteScoped() {
-        return routeScoped;
+    @Override
+    public void setParent(ProcessorDefinition<?> parent) {
+        if (routeScoped) {
+            super.setParent(parent);
+        }
     }
 
     @Override

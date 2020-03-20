@@ -29,6 +29,8 @@ public class RestConfiguration {
     public static final String CORS_ACCESS_CONTROL_MAX_AGE = "3600";
     public static final String CORS_ACCESS_CONTROL_ALLOW_HEADERS = "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers";
 
+    public static final String DEFAULT_REST_CONFIGURATION_ID = "rest-configuration";
+
     public enum RestBindingMode {
         auto, off, json, xml, json_xml
     }
@@ -172,7 +174,7 @@ public class RestConfiguration {
      * WWhether to use X-Forward headers to set host etc. for Swagger.
      * <p/>
      * This option is default <tt>true</tt>.
-     * 
+     *
      * @param useXForwardHeaders whether to use X-Forward headers
      */
     public void setUseXForwardHeaders(boolean useXForwardHeaders) {

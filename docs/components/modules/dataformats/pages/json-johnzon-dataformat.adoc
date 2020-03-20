@@ -1,0 +1,54 @@
+[[json-johnzon-dataformat]]
+= JSon Johnzon DataFormat
+:page-source: components/camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc
+
+*Since Camel 2.18*
+
+Johnzon is a Data Format which uses the
+http://johnzon.apache.org/[Johnzon Library]
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Johnzon).
+  to("mqseries:Another.Queue");
+-------------------------------
+
+== Johnzon Options
+
+
+
+// dataformat options: START
+The JSon Johnzon dataformat supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+|===
+// dataformat options: END
+
+
+== Dependencies
+
+To use Johnzon in your camel routes you need to add the dependency
+on *camel-johnzon* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-johnzon</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+include::camel-spring-boot::page$johnzon-starter.adoc[]

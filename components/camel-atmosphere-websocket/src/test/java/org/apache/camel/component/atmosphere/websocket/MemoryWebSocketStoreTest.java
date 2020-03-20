@@ -19,14 +19,17 @@ package org.apache.camel.component.atmosphere.websocket;
 import java.util.UUID;
 
 import org.atmosphere.websocket.WebSocket;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class MemoryWebSocketStoreTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class MemoryWebSocketStoreTest {
     
     @Test
-    public void testAddAndRemove() throws Exception {
+    void testAddAndRemove() {
         MemoryWebSocketStore store = new MemoryWebSocketStore();
         WebSocket webSocket1 = Mockito.mock(WebSocket.class);
         WebSocket webSocket2 = Mockito.mock(WebSocket.class);

@@ -595,9 +595,7 @@ public interface ElsqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the next poll.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -609,9 +607,7 @@ public interface ElsqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the next poll. You can also specify time values
-         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the next poll.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -649,9 +645,7 @@ public interface ElsqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the first poll starts. You can also specify time
-         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the first poll starts.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -663,9 +657,7 @@ public interface ElsqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Milliseconds before the first poll starts. You can also specify time
-         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
-         * seconds), and 1h (1 hour).
+         * Milliseconds before the first poll starts.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1566,7 +1558,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
-         * used.
+         * used.Note that query parameters in the message body are represented
+         * by a question mark instead of a # symbol.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1581,7 +1574,8 @@ public interface ElsqlEndpointBuilderFactory {
         /**
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
-         * used.
+         * used.Note that query parameters in the message body are represented
+         * by a question mark instead of a # symbol.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

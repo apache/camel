@@ -19,7 +19,6 @@ package org.apache.camel.swagger;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -256,7 +255,15 @@ public class RestSwaggerReader {
             }
 
             final String routeId = verb.getRouteId();
-            final String operationId = Optional.ofNullable(rest.getId()).orElse(routeId);
+            // favour ids from verb, rest, route
+            final String operationId;
+            if (verb.getId() != null) {
+                operationId = verb.getId();
+            } else if (rest.getId() != null) {
+                operationId = rest.getId();
+            } else {
+                operationId = routeId;
+            }
             op.operationId(operationId);
 
             // add id as vendor extensions

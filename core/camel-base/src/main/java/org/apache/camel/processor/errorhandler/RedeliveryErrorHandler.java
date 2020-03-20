@@ -44,7 +44,6 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.CamelContextHelper;
@@ -613,6 +612,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return;
             }
 
+            try {
+                doRun();
+            } catch (Throwable e) {
+                // unexpected exception during running so break out
+                exchange.setException(e);
+                callback.done(false);
+            }
+        }
+
+        private void doRun() throws Exception {
             // did previous processing cause an exception?
             if (exchange.getException() != null) {
                 handleException();

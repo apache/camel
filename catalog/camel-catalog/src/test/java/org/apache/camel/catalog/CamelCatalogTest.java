@@ -29,12 +29,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 
 public class CamelCatalogTest {
 
@@ -694,7 +694,7 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
 
         // time pattern
-        result = catalog.validateEndpointProperties("timer://foo?fixedRate=true&delay=0&period=2s");
+        result = catalog.validateEndpointProperties("timer://foo?fixedRate=true&delay=0&period=2000");
         assertTrue(result.isSuccess());
 
         // reference lookup

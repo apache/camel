@@ -46,7 +46,7 @@ public interface UndertowHost {
      * @return the given {@code handler} or a different {@link HttpHandler} that has been registered with the given
      *         {@link HttpHandlerRegistrationInfo} earlier.
      */
-    HttpHandler registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
+    HttpHandler registerHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
 
     /**
      * Unregister a handler with the given {@link HttpHandlerRegistrationInfo}. Note that if
@@ -54,6 +54,6 @@ public interface UndertowHost {
      * equivalent {@link HttpHandlerRegistrationInfo} then {@link #unregisterHandler(HttpHandlerRegistrationInfo)} must
      * be called the same number of times to unregister the associated handler completely.
      */
-    void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo);
+    void unregisterHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo);
 
 }

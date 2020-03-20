@@ -37,13 +37,13 @@ public class RabbitMQRequeueQpidTest extends RabbitMQRequeueIntTest {
     public static void stopBroker() {
         systemLauncher.shutdown();
     }
-    
+
     @Ignore
     @Override
     @Test
     public void testNoRequeueHeaderCausesReject() throws Exception {
     }
-    
+
     @Ignore
     @Override
     @Test

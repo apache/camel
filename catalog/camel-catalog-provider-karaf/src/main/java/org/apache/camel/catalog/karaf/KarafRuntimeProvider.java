@@ -26,8 +26,9 @@ import org.apache.camel.catalog.RuntimeProvider;
 import org.apache.camel.catalog.impl.CatalogHelper;
 
 /**
- * A karaf based {@link RuntimeProvider} which only includes the supported Camel components, data formats, languages and others
- * which can be installed in Karaf using the Camel Karaf features.xml descriptor.
+ * A karaf based {@link RuntimeProvider} which only includes the supported Camel
+ * components, data formats, languages and others which can be installed in
+ * Karaf using the Camel Karaf features.xml descriptor.
  */
 public class KarafRuntimeProvider implements RuntimeProvider {
 
@@ -90,13 +91,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findComponentNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(COMPONENTS_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(COMPONENTS_CATALOG)) {
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
+        } catch (IOException e1) {
+            // ignore
         }
         return names;
     }
@@ -104,13 +108,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findDataFormatNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(DATA_FORMATS_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(DATA_FORMATS_CATALOG)) {
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
+        } catch (IOException e1) {
+            // ignore
         }
         return names;
     }
@@ -118,13 +125,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findLanguageNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(LANGUAGE_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(LANGUAGE_CATALOG)) {
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
+        } catch (IOException e1) {
+            // ignore
         }
         return names;
     }
@@ -132,13 +142,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findOtherNames() {
         List<String> names = new ArrayList<>();
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(OTHER_CATALOG);
-        if (is != null) {
-            try {
-                CatalogHelper.loadLines(is, names);
-            } catch (IOException e) {
-                // ignore
+        try (InputStream is = camelCatalog.getVersionManager().getResourceAsStream(OTHER_CATALOG)) {
+            if (is != null) {
+                try {
+                    CatalogHelper.loadLines(is, names);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
+        } catch (IOException e1) {
+            // ignore
         }
         return names;
     }

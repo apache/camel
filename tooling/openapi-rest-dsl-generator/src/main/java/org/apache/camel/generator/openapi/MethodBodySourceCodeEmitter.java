@@ -81,38 +81,6 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
         return builder.build();
     }
 
-    Object[] argumentsFor(final Object[] args) {
-        final List<Object> arguments = new ArrayList<>(args.length);
-
-        for (final Object arg : args) {
-            if (isPrimitiveOrWrapper(arg.getClass())) {
-                arguments.add(arg);
-            } else if (arg instanceof String) {
-                arguments.add(arg);
-            } else if (arg instanceof Enum) {
-                arguments.add(arg.getClass());
-                arguments.add(arg);
-            } else if (arg instanceof String[]) {
-                arguments.add(Arrays.stream((String[]) arg).collect(Collectors.joining(",")));
-            }
-        }
-
-        return arguments.toArray(new Object[arguments.size()]);
-    }
-
-    Object[] extend(final Object first, final Object... others) {
-        if (others == null || others.length == 0) {
-            return new Object[] {first};
-        }
-
-        final Object[] ret = new Object[1 + others.length];
-
-        ret[0] = first;
-        System.arraycopy(others, 0, ret, 1, others.length);
-
-        return ret;
-    }
-
     int indentLevelOf(final String method) {
         switch (method) {
             case "rest":
@@ -161,6 +129,38 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
         }
 
         return literals.toString();
+    }
+
+    static Object[] argumentsFor(final Object[] args) {
+        final List<Object> arguments = new ArrayList<>(args.length);
+
+        for (final Object arg : args) {
+            if (isPrimitiveOrWrapper(arg.getClass())) {
+                arguments.add(arg);
+            } else if (arg instanceof String) {
+                arguments.add(arg);
+            } else if (arg instanceof Enum) {
+                arguments.add(arg.getClass());
+                arguments.add(arg);
+            } else if (arg instanceof String[]) {
+                arguments.add(Arrays.stream((String[]) arg).collect(Collectors.joining(",")));
+            }
+        }
+
+        return arguments.toArray(new Object[arguments.size()]);
+    }
+
+    static Object[] extend(final Object first, final Object... others) {
+        if (others == null || others.length == 0) {
+            return new Object[] {first};
+        }
+
+        final Object[] ret = new Object[1 + others.length];
+
+        ret[0] = first;
+        System.arraycopy(others, 0, ret, 1, others.length);
+
+        return ret;
     }
 
 }

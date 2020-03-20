@@ -57,7 +57,7 @@ public final class AtomixClientClusteredRoutePolicyFactoryMain {
         main.addRouteBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:clustered?delay=1s&period=1s")
+                from("timer:clustered?delay=1000&period=1000")
                     .routeId("route-" + id)
                     .log("Route ${routeId} is running ...");
             }

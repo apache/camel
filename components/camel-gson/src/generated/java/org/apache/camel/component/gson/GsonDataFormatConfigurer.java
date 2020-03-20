@@ -20,6 +20,8 @@ public class GsonDataFormatConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "prettyprint":
         case "prettyPrint": dataformat.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
+        case "contenttypeheader":
+        case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

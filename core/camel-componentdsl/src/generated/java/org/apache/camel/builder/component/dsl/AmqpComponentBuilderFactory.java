@@ -955,7 +955,7 @@ public interface AmqpComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AmqpComponentBuilder allowAutoWiredConnectionFactory(
@@ -971,7 +971,7 @@ public interface AmqpComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default AmqpComponentBuilder allowAutoWiredDestinationResolver(
@@ -993,6 +993,19 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
+            return this;
+        }
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AmqpComponentBuilder artemisStreamingEnabled(
+                boolean artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
             return this;
         }
         /**
@@ -1654,6 +1667,7 @@ public interface AmqpComponentBuilderFactory {
             case "allowAutoWiredConnectionFactory": ((AMQPComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
             case "allowAutoWiredDestinationResolver": ((AMQPComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
             case "allowSerializedHeaders": getOrCreateConfiguration((AMQPComponent) component).setAllowSerializedHeaders((boolean) value); return true;
+            case "artemisStreamingEnabled": getOrCreateConfiguration((AMQPComponent) component).setArtemisStreamingEnabled((boolean) value); return true;
             case "asyncStartListener": getOrCreateConfiguration((AMQPComponent) component).setAsyncStartListener((boolean) value); return true;
             case "asyncStopListener": getOrCreateConfiguration((AMQPComponent) component).setAsyncStopListener((boolean) value); return true;
             case "basicPropertyBinding": ((AMQPComponent) component).setBasicPropertyBinding((boolean) value); return true;

@@ -1304,7 +1304,9 @@ public interface InfinispanEndpointBuilderFactory {
          * Syntax: <code>infinispan:cacheName</code>
          * 
          * Path parameter: cacheName (required)
-         * The cache to use
+         * The name of the cache to use. Use current to use the existing cache
+         * name from the currently configured cached manager. Or use default for
+         * the default cache manager name.
          */
         default InfinispanEndpointBuilder infinispan(String path) {
             return InfinispanEndpointBuilderFactory.infinispan(path);
@@ -1322,7 +1324,9 @@ public interface InfinispanEndpointBuilderFactory {
      * Syntax: <code>infinispan:cacheName</code>
      * 
      * Path parameter: cacheName (required)
-     * The cache to use
+     * The name of the cache to use. Use current to use the existing cache name
+     * from the currently configured cached manager. Or use default for the
+     * default cache manager name.
      */
     static InfinispanEndpointBuilder infinispan(String path) {
         class InfinispanEndpointBuilderImpl extends AbstractEndpointBuilder implements InfinispanEndpointBuilder, AdvancedInfinispanEndpointBuilder {

@@ -710,6 +710,48 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointConsumerBuilder allowMessageBodySerialization(
+                boolean allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointConsumerBuilder allowMessageBodySerialization(
+                String allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
          * Password for authenticated access.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -954,6 +996,32 @@ public interface RabbitMQEndpointBuilderFactory {
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
                 String clientProperties) {
             doSetProperty("clientProperties", clientProperties);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointConsumerBuilder connectionFactoryExceptionHandler(
+                Object connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option will be converted to a
+         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointConsumerBuilder connectionFactoryExceptionHandler(
+                String connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }
         /**
@@ -1659,6 +1727,32 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Allow pass custom values to header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder allowCustomHeaders(
+                boolean allowCustomHeaders) {
+            doSetProperty("allowCustomHeaders", allowCustomHeaders);
+            return this;
+        }
+        /**
+         * Allow pass custom values to header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder allowCustomHeaders(
+                String allowCustomHeaders) {
+            doSetProperty("allowCustomHeaders", allowCustomHeaders);
+            return this;
+        }
+        /**
          * Allow pass null values to header.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1961,6 +2055,48 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointProducerBuilder allowMessageBodySerialization(
+                boolean allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointProducerBuilder allowMessageBodySerialization(
+                String allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
          * Password for authenticated access.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2120,6 +2256,32 @@ public interface RabbitMQEndpointBuilderFactory {
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
                 String clientProperties) {
             doSetProperty("clientProperties", clientProperties);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointProducerBuilder connectionFactoryExceptionHandler(
+                Object connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option will be converted to a
+         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointProducerBuilder connectionFactoryExceptionHandler(
+                String connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }
         /**
@@ -2822,6 +2984,48 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointBuilder allowMessageBodySerialization(
+                boolean allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
+         * Whether to allow Java serialization of the message body or not. If
+         * this value is true, the message body will be serialized on the
+         * producer side using Java serialization, if no type converter can
+         * handle the message body. On the consumer side, it will deserialize
+         * the message body if this value is true and the message contains a
+         * CamelSerialize header. Setting this value to true may introduce a
+         * security vulnerability as it allows an attacker to attempt to
+         * deserialize to a gadget object which could result in a RCE or other
+         * security vulnerability.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: allowMessageBodySerialization
+         */
+        default RabbitMQEndpointBuilder allowMessageBodySerialization(
+                String allowMessageBodySerialization) {
+            doSetProperty("allowMessageBodySerialization", allowMessageBodySerialization);
+            return this;
+        }
+        /**
          * Password for authenticated access.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2981,6 +3185,32 @@ public interface RabbitMQEndpointBuilderFactory {
         default AdvancedRabbitMQEndpointBuilder clientProperties(
                 String clientProperties) {
             doSetProperty("clientProperties", clientProperties);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointBuilder connectionFactoryExceptionHandler(
+                Object connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
+            return this;
+        }
+        /**
+         * Custom rabbitmq ExceptionHandler for ConnectionFactory.
+         * 
+         * The option will be converted to a
+         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedRabbitMQEndpointBuilder connectionFactoryExceptionHandler(
+                String connectionFactoryExceptionHandler) {
+            doSetProperty("connectionFactoryExceptionHandler", connectionFactoryExceptionHandler);
             return this;
         }
         /**

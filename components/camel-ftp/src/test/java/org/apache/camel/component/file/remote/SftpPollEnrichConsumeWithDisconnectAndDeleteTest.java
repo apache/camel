@@ -82,7 +82,7 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServer
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:trigger").pollEnrich("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10s&disconnect=true&delete=true")
+                from("vm:trigger").pollEnrich("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
                     .routeId("foo").to("mock:result");
             }
         };

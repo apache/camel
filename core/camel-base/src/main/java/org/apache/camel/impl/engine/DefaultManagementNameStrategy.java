@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;

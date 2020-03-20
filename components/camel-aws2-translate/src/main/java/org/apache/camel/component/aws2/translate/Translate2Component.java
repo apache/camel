@@ -24,6 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.translate.TranslateClient;
 
 /**
@@ -31,6 +34,8 @@ import software.amazon.awssdk.services.translate.TranslateClient;
  */
 @Component("aws2-translate")
 public class Translate2Component extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Translate2Component.class);
 
     @Metadata
     private Translate2Configuration configuration = new Translate2Configuration();
@@ -51,7 +56,7 @@ public class Translate2Component extends DefaultComponent {
 
         Translate2Endpoint endpoint = new Translate2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        checkAndSetRegistryClient(configuration);
+        checkAndSetRegistryClient(configuration, endpoint);
         if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon translate client or accessKey and secretKey must be specified");
         }
@@ -69,10 +74,18 @@ public class Translate2Component extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    private void checkAndSetRegistryClient(Translate2Configuration configuration) {
-        Set<TranslateClient> clients = getCamelContext().getRegistry().findByType(TranslateClient.class);
-        if (clients.size() == 1) {
-            configuration.setTranslateClient(clients.stream().findFirst().get());
+    private void checkAndSetRegistryClient(Translate2Configuration configuration, Translate2Endpoint endpoint) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getTranslateClient())) {
+            LOG.debug("Looking for an TranslateClient instance in the registry");
+            Set<TranslateClient> clients = getCamelContext().getRegistry().findByType(TranslateClient.class);
+            if (clients.size() == 1) {
+                LOG.debug("Found exactly one TranslateClient instance in the registry");
+                configuration.setTranslateClient(clients.stream().findFirst().get());
+            } else {
+                LOG.debug("No TranslateClient instance in the registry");
+            }
+        } else {
+            LOG.debug("TranslateClient instance is already set at endpoint level: skipping the check in the registry");
         }
     }
 }

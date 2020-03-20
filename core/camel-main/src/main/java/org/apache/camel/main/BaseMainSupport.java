@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -53,8 +55,8 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -64,6 +66,7 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -71,7 +74,7 @@ import static org.apache.camel.util.StringHelper.matches;
 /**
  * Base class for main implementations to allow bootstrapping Camel in standalone mode.
  */
-public abstract class BaseMainSupport extends ServiceSupport {
+public abstract class BaseMainSupport extends BaseService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
@@ -83,6 +86,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
+    protected final Properties wildcardProperties = new OrderedProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected List<RoutesBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
@@ -544,6 +548,9 @@ public abstract class BaseMainSupport extends ServiceSupport {
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
         }
+        if (mainConfigurationProperties.isAutowireComponentProperties() || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
+            autowireWildcardProperties(camelContext);
+        }
 
         // tracing may be enabled by some other property (i.e. camel.context.tracer.exchange-formatter.show-headers)
         if (camelContext.isTracing() && !mainConfigurationProperties.isTracing()) {
@@ -770,11 +777,10 @@ public abstract class BaseMainSupport extends ServiceSupport {
         }
         if (!restProperties.isEmpty()) {
             LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            RestConfiguration rest = model.getRestConfiguration();
+            RestConfiguration rest = camelContext.getRestConfiguration();
             if (rest == null) {
                 rest = new RestConfiguration();
-                model.setRestConfiguration(rest);
+                camelContext.setRestConfiguration(rest);
             }
             setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
@@ -806,8 +812,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
             });
         }
         if (!restProperties.isEmpty()) {
-            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
-            RestConfiguration rest = model.getRestConfiguration();
+            RestConfiguration rest = camelContext.getRestConfiguration();
             restProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.rest.{}={} on bean: {}", k, v, rest);
             });
@@ -952,15 +957,26 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
         Map<PropertyOptionKey, Map<String, Object>> properties = new LinkedHashMap<>();
 
+        // filter out wildcard properties
+        for (String key : prop.stringPropertyNames()) {
+            if (key.contains("*")) {
+                wildcardProperties.put(key, prop.getProperty(key));
+            }
+        }
+        // and remove wildcards
+        for (String key : wildcardProperties.stringPropertyNames()) {
+            prop.remove(key);
+        }
+
         for (String key : prop.stringPropertyNames()) {
             computeProperties("camel.component.", key, prop, properties, name -> {
+                // its an existing component name
                 Component target = camelContext.getComponent(name);
                 if (target == null) {
                     throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find component with name " + name
                             + ". Make sure you have the component on the classpath");
                 }
-
-                return target;
+                return Collections.singleton(target);
             });
             computeProperties("camel.dataformat.", key, prop, properties, name -> {
                 DataFormat target = camelContext.resolveDataFormat(name);
@@ -969,7 +985,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                             + ". Make sure you have the dataformat on the classpath");
                 }
 
-                return target;
+                return Collections.singleton(target);
             });
             computeProperties("camel.language.", key, prop, properties, name -> {
                 Language target;
@@ -980,7 +996,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                             + ". Make sure you have the language on the classpath");
                 }
 
-                return target;
+                return Collections.singleton(target);
             });
         }
 
@@ -1022,6 +1038,66 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 });
             }
         });
+    }
+
+    protected void autowireWildcardProperties(CamelContext camelContext) {
+        if (wildcardProperties.isEmpty()) {
+            return;
+        }
+
+        // autowire any pre-existing components as they have been added before we are invoked
+        for (String name : camelContext.getComponentNames()) {
+            Component comp = camelContext.getComponent(name);
+            doAutowireWildcardProperties(name, comp);
+        }
+
+        // and autowire any new components that may be added in the future
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onComponentAdd(String name, Component component) {
+                doAutowireWildcardProperties(name, component);
+            }
+        });
+    }
+
+    protected void doAutowireWildcardProperties(String name, Component component) {
+        Map<PropertyOptionKey, Map<String, Object>> properties = new LinkedHashMap<>();
+        Map<String, String> autoConfiguredProperties = new LinkedHashMap<>();
+        String match = ("camel.component." + name).toLowerCase(Locale.US);
+
+        for (String key : wildcardProperties.stringPropertyNames()) {
+            String mKey = key.substring(0, key.indexOf('*')).toLowerCase(Locale.US);
+            if (match.startsWith(mKey)) {
+                computeProperties("camel.component.", key, wildcardProperties, properties, s -> Collections.singleton(component));
+            }
+        }
+
+        try {
+            for (Map.Entry<PropertyOptionKey, Map<String, Object>> entry : properties.entrySet()) {
+                setPropertiesOnTarget(
+                        camelContext,
+                        entry.getKey().getInstance(),
+                        entry.getValue(),
+                        entry.getKey().getOptionPrefix(),
+                        mainConfigurationProperties.isAutoConfigurationFailFast(),
+                        true,
+                        autoConfiguredProperties);
+            }
+            // log summary of configurations
+            if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
+                LOG.info("Auto-configuration component {} summary:", name);
+                autoConfiguredProperties.forEach((k, v) -> {
+                    boolean sensitive = SENSITIVE_KEYS.contains(k.toLowerCase(Locale.US));
+                    if (sensitive) {
+                        LOG.info("\t{}=xxxxxx", k);
+                    } else {
+                        LOG.info("\t{}={}", k, v);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     protected static void validateOptionAndValue(String key, String option, String value) {
@@ -1115,7 +1191,8 @@ public abstract class BaseMainSupport extends ServiceSupport {
         }
     }
 
-    public static void computeProperties(String keyPrefix, String key, Properties prop, Map<PropertyOptionKey, Map<String, Object>> properties, Function<String, Object> supplier) {
+    protected static void computeProperties(String keyPrefix, String key, Properties prop, Map<PropertyOptionKey, Map<String, Object>> properties,
+                                            Function<String, Iterable<Object>> supplier) {
         if (key.startsWith(keyPrefix)) {
             // grab name
             final int dot = key.indexOf(".", keyPrefix.length());
@@ -1145,7 +1222,6 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 return;
             }
 
-            Object target = supplier.apply(name);
             String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
             String option = dot == -1 ? "" : key.substring(dot + 1);
             String value = prop.getProperty(key, "");
@@ -1157,15 +1233,18 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
             validateOptionAndValue(key, option, value);
 
-            PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
-            Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
+            Iterable<Object> targets = supplier.apply(name);
+            for (Object target : targets) {
+                PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
+                Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
 
-            // we ignore case for property keys (so we should store them in canonical style
-            values.put(optionKey(option), value);
+                // we ignore case for property keys (so we should store them in canonical style
+                values.put(optionKey(option), value);
+            }
         }
     }
 
-    public static boolean isServiceEnabled(String prefix, String name, Properties properties) {
+    protected static boolean isServiceEnabled(String prefix, String name, Properties properties) {
         ObjectHelper.notNull(prefix, "prefix");
         ObjectHelper.notNull(name, "name");
         ObjectHelper.notNull(properties, "properties");
@@ -1177,6 +1256,6 @@ public abstract class BaseMainSupport extends ServiceSupport {
         final String group = properties.getProperty(prefix + "enabled", "true");
         final String item = properties.getProperty(prefix + name + ".enabled", group);
 
-        return Boolean.valueOf(item);
+        return Boolean.parseBoolean(item);
     }
 }

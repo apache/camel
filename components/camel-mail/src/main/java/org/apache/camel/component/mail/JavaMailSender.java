@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -39,6 +40,8 @@ public interface JavaMailSender {
     Properties getJavaMailProperties();
 
     void setJavaMailProperties(Properties javaMailProperties);
+
+    void addAdditionalJavaMailProperty(String key, String value);
 
     void setHost(String host);
 

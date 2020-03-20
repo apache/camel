@@ -22,14 +22,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo;
 import software.amazon.awssdk.services.kafka.model.ClusterState;
 import software.amazon.awssdk.services.kafka.model.CreateClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.kafka.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MSKProducerTest extends CamelTestSupport {
 

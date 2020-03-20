@@ -32,7 +32,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="outputChannel"/>
+            <from uri="spring-integration:outputChannel"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

@@ -33,7 +33,7 @@ public class PoolableChannelFactory implements PoolableObjectFactory<Channel> {
     public PoolableChannelFactory(Connection connection) {
         this.connection = connection;
     }
-    
+
     @Override
     public Channel makeObject() throws Exception {
         return connection.createChannel();
@@ -44,7 +44,7 @@ public class PoolableChannelFactory implements PoolableObjectFactory<Channel> {
         try {
             t.close();
         } catch (Exception e) {
-            //no-op
+            // no-op
         }
     }
 

@@ -19,18 +19,18 @@ package org.apache.camel.component.aws2.kinesis;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KinesisEndpointTest {
 
     @Mock
@@ -38,7 +38,7 @@ public class KinesisEndpointTest {
 
     private CamelContext camelContext;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("kinesisClient", amazonKinesisClient);

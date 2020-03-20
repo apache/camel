@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -31,10 +29,8 @@ import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.namespace.QName;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.BeanScope;
@@ -2274,7 +2270,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
-        answer.setRouteScoped(true);
         addOutput(answer);
         return answer;
     }
@@ -2288,7 +2283,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
-        answer.setRouteScoped(true);
         addOutput(answer);
         return answer;
     }

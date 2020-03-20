@@ -1,0 +1,76 @@
+[[json-jackson-dataformat]]
+= JSon Jackson DataFormat
+:page-source: components/camel-jackson/src/main/docs/json-jackson-dataformat.adoc
+
+*Since Camel 2.0*
+
+Jackson is a Data Format which uses the
+https://github.com/FasterXML/jackson-core[Jackson Library]
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Jackson).
+  to("mqseries:Another.Queue");
+-------------------------------
+
+== Jackson Options
+
+
+
+// dataformat options: START
+The JSon Jackson dataformat supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
+| useDefaultObjectMapper | true | Boolean | Whether to lookup and use default Jackson ObjectMapper from the registry.
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+| jsonView |  | Class | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
+| include |  | String | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL
+| allowJmsType | false | Boolean | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
+| useList | false | Boolean | To unmarshal to a List of Map or a List of Pojo.
+| enableJaxbAnnotationModule | false | Boolean | Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson.
+| moduleClassNames |  | String | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.
+| moduleRefs |  | String | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
+| enableFeatures |  | String | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
+| timezone |  | String | If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the others Json DataFormat, like gson, fastjson and xstream.
+| autoDiscoverObjectMapper | false | Boolean | If set to true then Jackson will lookup for an objectMapper into the registry
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+
+== Using custom ObjectMapper
+
+You can configure `JacksonDataFormat` to use a custom `ObjectMapper` in case you need more control of the mapping configuration.
+
+If you setup a single `ObjectMapper` in the registry, then Camel will automatic lookup and use this `ObjectMapper`.
+For example if you use Spring Boot, then Spring Boot can provide a default `ObjectMapper` for you if you have Spring MVC enabled.
+And this would allow Camel to detect that there is one bean of `ObjectMapper` class type in the Spring Boot bean registry
+and then use it. When this happens you should set a `INFO` logging from Camel.
+
+== Dependencies
+
+To use Jackson in your camel routes you need to add the dependency
+on *camel-jackson* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jackson</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+include::camel-spring-boot::page$jackson-starter.adoc[]

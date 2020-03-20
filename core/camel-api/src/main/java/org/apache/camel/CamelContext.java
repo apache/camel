@@ -58,7 +58,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * Interface used to represent the CamelContext used to configure routes and the
  * policies to use during message exchanges between endpoints.
  * <p/>
- * The CamelContext offers the following methods to control the lifecycle:
+ * The CamelContext offers the following methods {@link CamelContextLifecycle} to control the lifecycle:
  * <ul>
  *   <li>{@link #start()}  - to start (<b>important:</b> the start method is not blocked, see more details
  *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>
@@ -79,7 +79,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * <p/>
  * For more advanced APIs with {@link CamelContext} see {@link ExtendedCamelContext}, which you can obtain via the adapt method.
  */
-public interface CamelContext extends StatefulService, RuntimeConfiguration {
+public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
@@ -112,27 +112,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * If CamelContext during the start procedure was vetoed, and therefore causing Camel to not start.
      */
     boolean isVetoStarted();
-
-    /**
-     * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
-     *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>.
-     * <p/>
-     * See more details at the class-level javadoc of this class.
-     *
-     * @throws RuntimeCamelException is thrown if starting failed
-     */
-    @Override
-    void start();
-
-    /**
-     * Stop and shutdown the {@link CamelContext} (will stop all routes/components/endpoints etc and clear internal state/cache).
-     * <p/>
-     * See more details at the class-level javadoc of this class.
-     *
-     * @throws RuntimeCamelException is thrown if stopping failed
-     */
-    @Override
-    void stop();
 
     /**
      * Gets the name (id) of the this CamelContext.
@@ -191,14 +170,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the version
      */
     String getVersion();
-
-    /**
-     * Get the status of this CamelContext
-     *
-     * @return the status
-     */
-    @Override
-    ServiceStatus getStatus();
 
     /**
      * Gets the uptime in a human readable format
@@ -651,30 +622,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     RestConfiguration getRestConfiguration();
 
     /**
-     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
-     *
-     * @param restConfiguration the REST configuration
-     */
-    @Deprecated
-    void addRestConfiguration(RestConfiguration restConfiguration);
-
-    /**
-     * Gets the REST configuration for the given component
-     *
-     * @param component the component name to get the configuration
-     * @param defaultIfNotFound determine if the default configuration is returned if there isn't a
-     *        specific configuration for the given component
-     * @return the configuration, or <tt>null</tt> if none has been configured.
-     */
-    RestConfiguration getRestConfiguration(String component, boolean defaultIfNotFound);
-
-    /**
-     * Gets all the RestConfiguration's
-     */
-    @Deprecated
-    Collection<RestConfiguration> getRestConfigurations();
-
-    /**
      * Gets the {@link org.apache.camel.spi.RestRegistry} to use
      */
     RestRegistry getRestRegistry();
@@ -769,7 +716,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @throws IllegalArgumentException is thrown if property placeholders was used and there was an error resolving them
      */
     String resolvePropertyPlaceholders(String text);
-    
+
     /**
      * Returns the configured properties component or create one if none has been configured.
      *
@@ -1121,9 +1068,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the uuidGenerator
      */
     UuidGenerator getUuidGenerator();
-    
+
     /**
-     * Sets a custom {@link UuidGenerator} (should only be set once) 
+     * Sets a custom {@link UuidGenerator} (should only be set once)
      *
      * @param uuidGenerator the UUID Generator
      */

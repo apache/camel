@@ -70,8 +70,8 @@ import org.springframework.util.ErrorHandler;
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", label = "messaging",
-        excludeProperties = "bridgeErrorHandler")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", label = "messaging")
+@Metadata(excludeProperties = "bridgeErrorHandler")
 public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsEndpoint.class);
@@ -1289,6 +1289,16 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
         configuration.setFormatDateHeadersToIso8601(formatDateHeadersToIso8601);
+    }
+
+    @ManagedAttribute
+    public boolean isArtemisStreamingEnabled() {
+        return configuration.isArtemisStreamingEnabled();
+    }
+
+    @ManagedAttribute
+    public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
+        configuration.setArtemisStreamingEnabled(artemisStreamingEnabled);
     }
 
     // Implementation methods

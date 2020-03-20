@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.aws2.ec2;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.Ec2Client;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EC2ComponentConfigurationTest extends CamelTestSupport {
 
@@ -46,28 +51,36 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAmazonEc2Client());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutDomainName() throws Exception {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        component.createEndpoint("aws2-ec2:// ");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ec2:// ");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAmazonSDBClientConfiguration() throws Exception {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        component.createEndpoint("aws2-ec2://TestDomain");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ec2://TestDomain");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        component.createEndpoint("aws2-ec2://TestDomain?secretKey=yyy");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ec2://TestDomain?secretKey=yyy");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx");
+        assertThrows(IllegalArgumentException.class, () -> {
+            component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx");
+        });
     }
 
     @Test

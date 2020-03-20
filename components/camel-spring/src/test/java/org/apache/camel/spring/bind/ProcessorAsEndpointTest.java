@@ -18,7 +18,6 @@ package org.apache.camel.spring.bind;
 
 import java.util.List;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spring.SpringTestSupport;
@@ -33,7 +32,7 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
     public void testSendingToProcessorEndpoint() throws Exception {
         ProcessorStub processor = getMandatoryBean(ProcessorStub.class, "myProcessor");
 
-        template.sendBody("myProcessor", body);
+        template.sendBody("bean:myProcessor", body);
 
         List<Exchange> list = processor.getExchanges();
         assertEquals("Received exchange list: " + list, 1, list.size());
@@ -44,8 +43,6 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
     @Test
     public void testSendingToNonExistentEndpoint() throws Exception {
         String uri = "unknownEndpoint";
-        Endpoint endpoint = context.getEndpoint(uri);
-        assertNull("Should not have found an endpoint! Was: " + endpoint, endpoint);
         try {
             template.sendBody(uri, body);
             fail("We should have failed as this is a bad endpoint URI");

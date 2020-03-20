@@ -24,6 +24,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.lw.ImmutableCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
@@ -43,6 +44,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
+    private boolean useImmutableContext;
     private Service camelContextService;
 
     /**
@@ -58,6 +60,14 @@ public abstract class ContextTestSupport extends TestSupport {
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
         this.useRouteBuilder = useRouteBuilder;
+    }
+
+    public boolean isUseImmutableContext() {
+        return useImmutableContext;
+    }
+
+    public void setUseImmutableContext(boolean useImmutableContext) {
+        this.useImmutableContext = useImmutableContext;
     }
 
     public Service getCamelContextService() {
@@ -170,10 +180,14 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.start();
         } else {
-            if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext)context;
-                if (!defaultCamelContext.isStarted()) {
-                    defaultCamelContext.start();
+            if (context instanceof ImmutableCamelContext) {
+                ImmutableCamelContext ctx = (ImmutableCamelContext) context;
+                Boolean autoStartup = ctx.isAutoStartup();
+                ctx.setAutoStartup(false);
+                ctx.start();
+                ctx.makeImmutable();
+                if (autoStartup != null && autoStartup) {
+                    ctx.startImmutable();
                 }
             } else {
                 context.start();
@@ -182,11 +196,19 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = new DefaultCamelContext(false);
+        CamelContext context;
+        if (useImmutableContext) {
+            ImmutableCamelContext ctx = new ImmutableCamelContext();
+            ctx.setRegistry(createRegistry());
+            context = ctx;
+        } else {
+            DefaultCamelContext ctx = new DefaultCamelContext(false);
+            ctx.setRegistry(createRegistry());
+            context = ctx;
+        }
         if (!useJmx()) {
             context.disableJMX();
         }
-        context.setRegistry(createRegistry());
         context.setLoadTypeConverters(isLoadTypeConverters());
         return context;
     }

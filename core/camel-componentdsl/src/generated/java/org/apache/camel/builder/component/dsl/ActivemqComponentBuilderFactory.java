@@ -1025,7 +1025,7 @@ public interface ActivemqComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default ActivemqComponentBuilder allowAutoWiredConnectionFactory(
@@ -1041,7 +1041,7 @@ public interface ActivemqComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default ActivemqComponentBuilder allowAutoWiredDestinationResolver(
@@ -1063,6 +1063,19 @@ public interface ActivemqComponentBuilderFactory {
         default ActivemqComponentBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
+            return this;
+        }
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default ActivemqComponentBuilder artemisStreamingEnabled(
+                boolean artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
             return this;
         }
         /**
@@ -1721,6 +1734,7 @@ public interface ActivemqComponentBuilderFactory {
             case "allowAutoWiredConnectionFactory": ((ActiveMQComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
             case "allowAutoWiredDestinationResolver": ((ActiveMQComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
             case "allowSerializedHeaders": getOrCreateConfiguration((ActiveMQComponent) component).setAllowSerializedHeaders((boolean) value); return true;
+            case "artemisStreamingEnabled": getOrCreateConfiguration((ActiveMQComponent) component).setArtemisStreamingEnabled((boolean) value); return true;
             case "asyncStartListener": getOrCreateConfiguration((ActiveMQComponent) component).setAsyncStartListener((boolean) value); return true;
             case "asyncStopListener": getOrCreateConfiguration((ActiveMQComponent) component).setAsyncStopListener((boolean) value); return true;
             case "basicPropertyBinding": ((ActiveMQComponent) component).setBasicPropertyBinding((boolean) value); return true;

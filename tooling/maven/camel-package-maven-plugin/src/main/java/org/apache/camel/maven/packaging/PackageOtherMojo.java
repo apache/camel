@@ -17,7 +17,6 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Collections;
 
 import org.apache.camel.tooling.model.JsonMapper;

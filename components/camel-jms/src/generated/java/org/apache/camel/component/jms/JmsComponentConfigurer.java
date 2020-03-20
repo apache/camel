@@ -40,6 +40,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "allowSerializedHeaders": getOrCreateConfiguration(target).setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "alwayscopymessage":
         case "alwaysCopyMessage": getOrCreateConfiguration(target).setAlwaysCopyMessage(property(camelContext, boolean.class, value)); return true;
+        case "artemisstreamingenabled":
+        case "artemisStreamingEnabled": getOrCreateConfiguration(target).setArtemisStreamingEnabled(property(camelContext, boolean.class, value)); return true;
         case "asyncconsumer":
         case "asyncConsumer": getOrCreateConfiguration(target).setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
         case "asyncstartlistener":

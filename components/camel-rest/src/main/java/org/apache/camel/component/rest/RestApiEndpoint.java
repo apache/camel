@@ -34,6 +34,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -132,13 +133,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         RestApiProcessorFactory factory = null;
 
-        RestConfiguration config = getCamelContext().getRestConfiguration(consumerComponentName, false);
-        if (config == null) {
-            config = getCamelContext().getRestConfiguration();
-        }
-        if (config == null) {
-            config = getCamelContext().getRestConfiguration(consumerComponentName, true);
-        }
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), getConsumerComponentName());
 
         // lookup in registry
         Set<RestApiProcessorFactory> factories = getCamelContext().getRegistry().findByType(RestApiProcessorFactory.class);
@@ -155,7 +150,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
             FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
             factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
         }
-        
+
         if (factory == null) {
             String name = apiComponentName != null ? apiComponentName : config.getApiComponent();
             if (name == null) {
@@ -263,7 +258,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             // calculate the url to the rest API service
-            RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
 
             // calculate the url to the rest API service
             String path = getPath();

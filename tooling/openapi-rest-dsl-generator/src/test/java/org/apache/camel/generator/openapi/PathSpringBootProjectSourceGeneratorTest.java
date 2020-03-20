@@ -33,9 +33,10 @@ public class PathSpringBootProjectSourceGeneratorTest {
 
     @Test
     public void shouldGenerateSourceCodeWithDefaults() throws IOException, URISyntaxException {
-        Path path = new File("target/generated-sources").toPath();
+        final Path path = new File("target/generated-sources").toPath();
         SpringBootProjectSourceCodeGenerator.generator().withPackageName("com.foo").generate(path);
-        final String generatedContent = new String(Files.readAllBytes(Paths.get("target/generated-sources/com/foo/CamelRestController.java")), StandardCharsets.UTF_8);
+        final String generatedContent = new String(Files.readAllBytes(Paths.get("target/generated-sources/com/foo/CamelRestController.java")),
+            StandardCharsets.UTF_8);
 
         final URI file = PathSpringBootProjectSourceGeneratorTest.class.getResource("/SpringBootRestController.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

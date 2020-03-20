@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper for easily sending event notifications in a single line of code
  */
+@SuppressWarnings("UnusedReturnValue")
 public final class EventHelper {
 
     // This implementation has been optimized to be as fast and not create unnecessary objects or lambdas.

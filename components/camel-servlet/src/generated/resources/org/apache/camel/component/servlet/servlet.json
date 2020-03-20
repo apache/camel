@@ -8,6 +8,7 @@
     "description": "To use a HTTP Servlet as entry for Camel routes when running in a servlet container.",
     "label": "http",
     "deprecated": false,
+    "deprecationNote": "",
     "async": false,
     "consumerOnly": true,
     "producerOnly": false,

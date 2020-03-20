@@ -17,13 +17,8 @@
 package org.apache.camel;
 
 /**
- * Evaluates a binary <a
- * href="http://camel.apache.org/predicate.html">predicate</a> on the
- * message exchange to support things like <a
- * href="http://camel.apache.org/scripting-languages.html">scripting
- * languages</a>, <a href="http://camel.apache.org/xquery.html">XQuery</a>
- * or <a href="http://camel.apache.org/sql.html">SQL</a> as well as
- * any arbitrary Java expression.
+ * Evaluates a binary <a href="http://camel.apache.org/predicate.html">predicate</a> on the
+ * message exchange.
  */
 public interface Predicate {
 

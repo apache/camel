@@ -155,7 +155,7 @@ process the message and send them to the next queue.
 Quite a few inbound Camel endpoints use a scheduled poll pattern to
 receive messages and push them through the Camel processing routes. That
 is to say externally from the client the endpoint appears to use an
-xref:eventDrivenConsumer-eip.adoc[Event Driven Consumer] but internally a
+xref:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer] but internally a
 scheduled poll is used to monitor some kind of state or resource and
 then fire message exchanges.
 
@@ -297,7 +297,7 @@ while you can do:
 
 [source,java]
 ----
-from("ftp://myserver?username=foo&password=secret&delete=true&delay=5s&backoffMultiplier=6&backoffIdleThreshold=5")
+from("ftp://myserver?username=foo&password=secret&delete=true&delay=5000&backoffMultiplier=6&backoffIdleThreshold=5")
 .to("bean:processFile");
 ----
 

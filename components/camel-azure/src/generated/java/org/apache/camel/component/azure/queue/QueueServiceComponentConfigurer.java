@@ -30,6 +30,10 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceConfiguration.class, value)); return true;
         case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": getOrCreateConfiguration(target).setCredentialsAccountKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "credentialsaccountname":
+        case "credentialsAccountName": getOrCreateConfiguration(target).setCredentialsAccountName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagetimetolive":

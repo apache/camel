@@ -40,6 +40,10 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
     @Metadata(required = true)
     private final String path;
 
+    @UriParam(label = "consumer", defaultValue = "false", description = "Whether or not the consumer should try to find a target consumer "
+            + "by matching the URI prefix if no exact match is found.")
+    private boolean matchOnUriPrefix;
+
     @UriParam(label = "consumer", description = "A comma separated list of HTTP methods to serve, e.g. GET,POST ."
             + " If no methods are specified, all methods will be served.")
     private String httpMethodRestrict;
@@ -101,6 +105,14 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
         this.platformHttpEngine = platformHttpEngine;
     }
 
+    public boolean getMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
     public String getHttpMethodRestrict() {
         return httpMethodRestrict;
     }
@@ -131,23 +143,5 @@ public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoi
 
     public void setProduces(String produces) {
         this.produces = produces;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (platformHttpEngine == null) {
-            LOGGER.debug("Lookup platform http engine from registry");
-
-            platformHttpEngine = getCamelContext().getRegistry()
-                    .lookupByNameAndType(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class);
-
-            if (platformHttpEngine == null) {
-                throw new IllegalStateException(PlatformHttpEngine.class.getSimpleName() + " neither set on this "
-                        + PlatformHttpEndpoint.class.getSimpleName()
-                        + " neither found in Camel Registry.");
-            }
-        }
     }
 }

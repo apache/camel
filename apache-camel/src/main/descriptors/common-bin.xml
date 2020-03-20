@@ -40,6 +40,7 @@
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-core-catalog</include>
         <include>org.apache.camel:camel-cloud</include>
+        <include>org.apache.camel:camel-cluster</include>
         <include>org.apache.camel:camel-xml-jaxp</include>
         <include>org.apache.camel:camel-main</include>
         <include>org.apache.camel:camel-tooling-model</include>
@@ -97,6 +98,7 @@
         <include>org.apache.camel:camel-aws2-lambda</include>
         <include>org.apache.camel:camel-aws2-mq</include>
         <include>org.apache.camel:camel-aws2-msk</include>
+        <include>org.apache.camel:camel-aws2-s3</include>
         <include>org.apache.camel:camel-aws2-ses</include>
         <include>org.apache.camel:camel-aws2-sns</include>
         <include>org.apache.camel:camel-aws2-sqs</include>
@@ -286,6 +288,7 @@
         <include>org.apache.camel:camel-pg-replication-slot</include>
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-platform-http</include>
+        <include>org.apache.camel:camel-platform-http-vertx</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-pubnub</include>

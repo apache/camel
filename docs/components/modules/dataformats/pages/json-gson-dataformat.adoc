@@ -1,0 +1,54 @@
+[[json-gson-dataformat]]
+= JSon GSon DataFormat
+:page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
+
+*Since Camel 2.10*
+
+Gson is a Data Format which uses the
+https://github.com/google/gson[Gson Library]
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Gson).
+  to("mqseries:Another.Queue");
+-------------------------------
+
+== Gson Options
+
+
+// dataformat options: START
+The JSon GSon dataformat supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+
+
+
+== Dependencies
+
+To use Gson in your camel routes you need to add the dependency
+on *camel-gson* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-gson</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+include::camel-spring-boot::page$gson-starter.adoc[]

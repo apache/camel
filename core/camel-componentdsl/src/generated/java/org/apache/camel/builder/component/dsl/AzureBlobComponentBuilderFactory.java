@@ -303,6 +303,30 @@ public interface AzureBlobComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureBlobComponentBuilder credentialsAccountKey(
+                java.lang.String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureBlobComponentBuilder credentialsAccountName(
+                java.lang.String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
+            return this;
+        }
     }
 
     class AzureBlobComponentBuilderImpl
@@ -346,6 +370,8 @@ public interface AzureBlobComponentBuilderFactory {
             case "useFlatListing": getOrCreateConfiguration((BlobServiceComponent) component).setUseFlatListing((boolean) value); return true;
             case "basicPropertyBinding": ((BlobServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((BlobServiceComponent) component).setConfiguration((org.apache.camel.component.azure.blob.BlobServiceConfiguration) value); return true;
+            case "credentialsAccountKey": getOrCreateConfiguration((BlobServiceComponent) component).setCredentialsAccountKey((java.lang.String) value); return true;
+            case "credentialsAccountName": getOrCreateConfiguration((BlobServiceComponent) component).setCredentialsAccountName((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -47,7 +47,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.Synchronization;
@@ -212,15 +211,8 @@ public final class ExchangeHelper {
      * @throws TypeConversionException is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException} if no type converters exists to convert to the given type
      */
-    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
-        throws TypeConversionException, NoTypeConversionAvailableException {
-        CamelContext camelContext = exchange.getContext();
-        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.mandatoryConvertTo(type, exchange, value);
-        }
-        throw new NoTypeConversionAvailableException(value, type);
+    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+        return exchange.getContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
     }
 
     /**
@@ -230,13 +222,7 @@ public final class ExchangeHelper {
      * @throws org.apache.camel.TypeConversionException is thrown if error during type conversion
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException {
-        CamelContext camelContext = exchange.getContext();
-        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.convertTo(type, exchange, value);
-        }
-        return null;
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
     }
 
     /**
@@ -558,7 +544,10 @@ public final class ExchangeHelper {
      * @param exchanges  the exchanges
      * @param exchangeId the exchangeId to find
      * @return matching exchange, or <tt>null</tt> if none found
+     *
+     * @deprecated not in use, to be removed in a future Camel release
      */
+    @Deprecated
     public static Exchange getExchangeById(Iterable<Exchange> exchanges, String exchangeId) {
         for (Exchange exchange : exchanges) {
             String id = exchange.getExchangeId();
@@ -892,15 +881,7 @@ public final class ExchangeHelper {
      * @return     the component scheme (name), or <tt>null</tt> if not possible to resolve
      */
     public static String resolveScheme(String uri) {
-        String scheme = null;
-        if (uri != null) {
-            // Use the URI prefix to find the component.
-            String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-            if (splitURI[1] != null) {
-                scheme = splitURI[0];
-            }
-        }
-        return scheme;
+        return StringHelper.before(uri, ":");
     }
 
     @SuppressWarnings("unchecked")

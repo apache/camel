@@ -47,6 +47,8 @@ public class JaxbDataFormatConfigurer extends PropertyConfigurerSupport implemen
         case "xmlStreamWriterWrapper": dataformat.setXmlStreamWriterWrapper(property(camelContext, org.apache.camel.converter.jaxb.JaxbXmlStreamWriterWrapper.class, value)); return true;
         case "jaxbproviderproperties":
         case "jaxbProviderProperties": dataformat.setJaxbProviderProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "contenttypeheader":
+        case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }

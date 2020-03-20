@@ -77,6 +77,7 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
 
 import static java.lang.invoke.MethodHandles.publicLookup;
+
 /**
  * A Camel REST-DSL openApi reader that parse the rest-dsl into a openApi model representation.
  * <p/>
@@ -385,7 +386,15 @@ public class RestOpenApiReader {
             }
 
             final String routeId = verb.getRouteId();
-            final String operationId = Optional.ofNullable(rest.getId()).orElse(routeId);
+            // favour ids from verb, rest, route
+            final String operationId;
+            if (verb.getId() != null) {
+                operationId = verb.getId();
+            } else if (rest.getId() != null) {
+                operationId = rest.getId();
+            } else {
+                operationId = routeId;
+            }
             op.operationId = operationId;
 
             // add id as vendor extensions

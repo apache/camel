@@ -35,13 +35,13 @@ import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 
@@ -301,6 +301,7 @@ public class RestEndpoint extends DefaultEndpoint {
         this.bindingMode = RestConfiguration.RestBindingMode.valueOf(bindingMode.toLowerCase());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Producer createProducer() throws Exception {
         if (ObjectHelper.isEmpty(host)) {
@@ -424,13 +425,9 @@ public class RestEndpoint extends DefaultEndpoint {
         if (factory != null) {
             LOG.debug("Using RestProducerFactory: {}", factory);
 
-            RestConfiguration config = getCamelContext().getRestConfiguration(pname, false);
-            if (config == null) {
-                config = getCamelContext().getRestConfiguration();
-            }
-            if (config == null) {
-                config = getCamelContext().getRestConfiguration(pname, true);
-            }
+            // here we look for the producer part so we should not care about the component
+            // configured for the consumer part
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), null, pname);
 
             Producer producer;
             if (apiDocFactory != null) {
@@ -525,7 +522,7 @@ public class RestEndpoint extends DefaultEndpoint {
             String host = "";
             int port = 80;
 
-            RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
             if (config.getScheme() != null) {
                 scheme = config.getScheme();
             }

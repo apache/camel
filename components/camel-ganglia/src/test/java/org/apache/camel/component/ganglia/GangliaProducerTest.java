@@ -73,7 +73,6 @@ public class GangliaProducerTest {
     public void setup() {
         when(mockEndpoint.getConfiguration()).thenReturn(mockConf);
 
-        when(mockConf.getPrefix()).thenReturn(null);
         when(mockConf.getGroupName()).thenReturn(CONF_GROUP_NAME);
         when(mockConf.getMetricName()).thenReturn(CONF_METRIC_NAME);
         when(mockConf.getType()).thenReturn(CONF_TYPE);

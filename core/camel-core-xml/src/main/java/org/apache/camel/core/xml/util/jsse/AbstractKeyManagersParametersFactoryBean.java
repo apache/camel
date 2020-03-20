@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 
 /**
@@ -32,12 +33,19 @@ import org.apache.camel.support.jsse.KeyManagersParameters;
 public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJsseUtilFactoryBean<KeyManagersParameters> {
     
     @XmlAttribute
+    @Metadata(description = "The optional password for recovering keys in the key store. Used by the KeyManagerFactory"
+            + " that creates the KeyManagers represented by this object's configuration.")
     protected String keyPassword;
     
     @XmlAttribute
+    @Metadata(description = "The optional provider identifier for the KeyManagerFactory"
+            + " used to create the KeyManagers represented by this object's configuration.")
     protected String provider;
     
     @XmlAttribute
+    @Metadata(description = "The optional algorithm name for the KeyManagerFactory used to create"
+            + " the KeyManagers represented by this object's configuration."
+            + " See the Java Secure Socket Extension Reference Guide</a> for information about standard algorithm names.")
     protected String algorithm;
     
     @XmlTransient

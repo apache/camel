@@ -26,7 +26,6 @@ import java.util.stream.StreamSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
-import com.mongodb.WriteResult;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -46,7 +45,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import static org.apache.camel.component.mongodb.MongoDbOperation.command;
 import static org.apache.camel.component.mongodb.MongoDbOperation.findAll;
@@ -331,7 +329,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of {@link com.mongodb.Mongo} to use.
+     * Name of {@link com.mongodb.client.MongoClient} to use.
      */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
@@ -602,7 +600,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * In write operations, it determines whether instead of returning
-     * {@link WriteResult} as the body of the OUT message, we transfer the IN
+     * WriteResult as the body of the OUT message, we transfer the IN
      * message to the OUT and attach the WriteResult as a header.
      *
      * @param writeResultAsHeader flag to indicate if this option is enabled

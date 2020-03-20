@@ -28,7 +28,6 @@ import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.Transaction;
 import rx.Subscription;
 
-
 import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParameter;
 
 /**

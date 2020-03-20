@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
@@ -44,7 +45,7 @@ public class QueryCommand extends AbstractDdbCommand {
 
         QueryResponse result = ddbClient.query(query.build());
 
-        Map tmp = new HashMap<>();
+        Map<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.ITEMS, result.items());
         tmp.put(Ddb2Constants.LAST_EVALUATED_KEY, result.lastEvaluatedKey());
         tmp.put(Ddb2Constants.CONSUMED_CAPACITY, result.consumedCapacity());
@@ -52,6 +53,7 @@ public class QueryCommand extends AbstractDdbCommand {
         addToResults(tmp);
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, AttributeValue> determineStartKey() {
         return exchange.getIn().getHeader(Ddb2Constants.START_KEY, Map.class);
     }
@@ -60,7 +62,8 @@ public class QueryCommand extends AbstractDdbCommand {
         return exchange.getIn().getHeader(Ddb2Constants.SCAN_INDEX_FORWARD, Boolean.class);
     }
 
-    private Map determineKeyConditions() {
+    @SuppressWarnings("unchecked")
+    private Map<String, Condition> determineKeyConditions() {
         return exchange.getIn().getHeader(Ddb2Constants.KEY_CONDITIONS, Map.class);
     }
 }

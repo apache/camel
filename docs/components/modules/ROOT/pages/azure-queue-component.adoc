@@ -40,7 +40,7 @@ to("file://queuedirectory");
 
 
 // component options: START
-The Azure Storage Queue Service component supports 10 options, which are listed below.
+The Azure Storage Queue Service component supports 12 options, which are listed below.
 
 
 
@@ -57,6 +57,8 @@ The Azure Storage Queue Service component supports 10 options, which are listed 
 | *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | The Queue Service configuration |  | QueueServiceConfiguration
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
 |===
 // component options: END
 
@@ -89,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -107,6 +109,8 @@ with the following path and query parameters:
 | *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
+| *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String
 |===
 // endpoint options: END
 

@@ -30,9 +30,9 @@ import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.component.atomix.client.AtomixFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public abstract class AtomixClientRoutePolicyFactoryTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:atomix?delay=1s&period=1s")
+                    from("timer:atomix?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .log("From ${routeId}")
                         .process(e -> contextLatch.countDown());

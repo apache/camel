@@ -46,7 +46,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -109,6 +108,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteController;
@@ -438,23 +438,23 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().addRestDefinitions(getRests(), false);
 
             // convert rests api-doc into routes so they are routes for runtime
-            for (RestConfiguration config : getContext().getRestConfigurations()) {
-                if (config.getApiContextPath() != null) {
-                    // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
-                    // to the CamelContext, as we only want to setup rest-api once
-                    // so we check all existing routes if they have rest-api route already added
-                    boolean hasRestApi = false;
-                    for (RouteDefinition route : getContext().getRouteDefinitions()) {
-                        FromDefinition from = route.getInput();
-                        if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
-                            hasRestApi = true;
-                        }
+            RestConfiguration config = getContext().getRestConfiguration();
+
+            if (config.getApiContextPath() != null) {
+                // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
+                // to the CamelContext, as we only want to setup rest-api once
+                // so we check all existing routes if they have rest-api route already added
+                boolean hasRestApi = false;
+                for (RouteDefinition route : getContext().getRouteDefinitions()) {
+                    FromDefinition from = route.getInput();
+                    if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
+                        hasRestApi = true;
                     }
-                    if (!hasRestApi) {
-                        RouteDefinition route = RestDefinition.asRouteApiDefinition(getContext(), config);
-                        LOG.debug("Adding routeId: {} as rest-api route", route.getId());
-                        getRoutes().add(route);
-                    }
+                }
+                if (!hasRestApi) {
+                    RouteDefinition route = RestDefinition.asRouteApiDefinition(getContext(), config);
+                    LOG.debug("Adding routeId: {} as rest-api route", route.getId());
+                    getRoutes().add(route);
                 }
             }
 
@@ -685,16 +685,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                                                                              PropertiesParser.class);
                 pc.setPropertiesParser(parser);
             }
-            
+
             if (def.getDefaultFallbackEnabled() != null) {
                 pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }
-            
+
             if (def.getFunctions() != null && !def.getFunctions().isEmpty()) {
                 for (CamelPropertyPlaceholderFunctionDefinition function : def.getFunctions()) {
                     String ref = function.getRef();
                     PropertiesFunction pf = CamelContextHelper.mandatoryLookup(getContext(), ref, PropertiesFunction.class);
-                    pc.addFunction(pf);
+                    pc.addPropertiesFunction(pf);
                 }
             }
 
@@ -972,7 +972,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(getTypeConverterExistsLoggingLevel());
         }
         if (getRestConfiguration() != null) {
-            context.setRestConfiguration(getRestConfiguration().asRestConfiguration(context));
+            getRestConfiguration().asRestConfiguration(context, context.getRestConfiguration());
         }
         if (getDefaultServiceCallConfiguration() != null) {
             context.setServiceCallConfiguration(getDefaultServiceCallConfiguration());

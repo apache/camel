@@ -39,27 +39,24 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.ObjectHelper;
 
-
-
-
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
     private boolean blueprint;
 
-    RestDslXmlGenerator(final OasDocument openapi) {
-        super(openapi);
+    RestDslXmlGenerator(final OasDocument document) {
+        super(document);
     }
 
     public String generate(final CamelContext context) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
-        String basePath = RestDslGenerator.getBasePathFromOasDocument(openapi);
+        final String basePath = RestDslGenerator.determineBasePathFrom(document);
         final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(basePath, emitter, filter,
             destinationGenerator());
 
-        openapi.paths.getPathItems().forEach(restDslStatement::visit);
+        document.paths.getPathItems().forEach(restDslStatement::visit);
 
         final RestsDefinition rests = emitter.result();
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
         final String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, rests);
 
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();

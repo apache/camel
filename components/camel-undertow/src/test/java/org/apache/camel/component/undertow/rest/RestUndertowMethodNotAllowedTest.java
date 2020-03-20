@@ -23,10 +23,11 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
 public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
+
     @Test
-    public void testMethodNotAllowed() {
+    public void testPostMethodNotAllowed() {
         try {
-            template.sendBody("http://localhost:" + getPort() + "/users/123/basic", "body");
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD, "POST");
             fail("Shall not pass!");
         } catch (Exception e) {
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
@@ -35,7 +36,7 @@ public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
     }
     
     @Test
-    public void testMethodAllowed() {
+    public void testGetMethodAllowed() {
         try {
             template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD, "GET");
         } catch (Exception e) {

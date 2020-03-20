@@ -39,10 +39,8 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -64,15 +62,27 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     protected File buildDir;
 
     /**
-     * The documentation directory
+     * The component documentation directory
      */
     @Parameter(defaultValue = "${project.basedir}/src/main/docs")
-    protected File docDir;
+    protected File componentDocDir;
 
     /**
-     * The documentation EIP directory
+     * The dataformat documentation directory
      */
-    @Parameter(defaultValue = "${project.basedir}/src/main/docs/eips")
+    @Parameter(defaultValue = "${project.basedir}/src/main/docs")
+    protected File dataformatDocDir;
+
+    /**
+     * The language documentation directory
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/main/docs/modules/languages/pages")
+    protected File languageDocDir;
+
+    /**
+     * The EIP documentation directory
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/main/docs/modules/eips/pages")
     protected File eipDocDir;
 
     /**
@@ -84,8 +94,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     @Override
     public void execute(MavenProject project, MavenProjectHelper projectHelper, BuildContext buildContext) throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
-        docDir = new File(project.getBasedir(), "src/main/docs");
-        eipDocDir = new File(project.getBasedir(), "src/main/docs/eips");
+        componentDocDir = new File(project.getBasedir(), "src/main/docs");
+        dataformatDocDir = new File(project.getBasedir(), "src/main/docs");
+        languageDocDir = new File(project.getBasedir(), "/src/main/docs/modules/languages/pages");
+        eipDocDir = new File(project.getBasedir(), "src/main/docs/modules/eips/pages");
         super.execute(project, projectHelper, buildContext);
     }
 
@@ -113,7 +125,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     // special for some components
                     componentName = asComponentName(componentName);
 
-                    File file = new File(docDir, componentName + "-component.adoc");
+                    File file = new File(componentDocDir, componentName + "-component.adoc");
 
                     ComponentModel model = generateComponentModel(json);
                     String title = asComponentTitle(model.getScheme(), model.getTitle());
@@ -192,7 +204,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     // special for some data formats
                     dataFormatName = asDataFormatName(dataFormatName);
 
-                    File file = new File(docDir, dataFormatName + "-dataformat.adoc");
+                    File file = new File(dataformatDocDir, dataFormatName + "-dataformat.adoc");
 
                     DataFormatModel model = generateDataFormatModel(json);
                     // Bindy has 3 derived dataformats, but only one doc, so
@@ -257,7 +269,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             for (String languageName : languageNames) {
                 String json = loadJsonFrom(jsonFiles, "language", languageName);
                 if (json != null) {
-                    File file = new File(docDir, languageName + "-language.adoc");
+                    File file = new File(languageDocDir, languageName + "-language.adoc");
 
                     LanguageModel model = JsonMapper.generateLanguageModel(json);
                     // skip option named id
@@ -306,9 +318,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private void executeEips() throws MojoExecutionException {
-        // only run if in camel-core
+        // only run if in camel-core-engine
         String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
-        if (!currentDir.endsWith("camel-core")) {
+        if (!currentDir.endsWith("camel-core-engine")) {
             return;
         }
 

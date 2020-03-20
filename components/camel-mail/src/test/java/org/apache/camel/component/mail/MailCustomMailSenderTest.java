@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -50,6 +51,10 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         @Override
         public Properties getJavaMailProperties() {
             return null;
+        }
+
+        @Override
+        public void addAdditionalJavaMailProperty(String key, String value) {
         }
 
         @Override

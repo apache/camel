@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;

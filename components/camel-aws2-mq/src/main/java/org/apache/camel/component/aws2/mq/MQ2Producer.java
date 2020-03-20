@@ -127,6 +127,7 @@ public class MQ2Producer extends DefaultProducer {
         message.setBody(result);
     }
 
+    @SuppressWarnings("unchecked")
     private void createBroker(MqClient mqClient, Exchange exchange) {
         String brokerName;
         String brokerEngine;

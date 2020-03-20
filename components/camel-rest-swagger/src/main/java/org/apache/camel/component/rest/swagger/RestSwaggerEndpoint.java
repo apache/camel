@@ -59,6 +59,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -72,9 +73,7 @@ import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostPa
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
-import static org.apache.camel.util.StringHelper.after;
-import static org.apache.camel.util.StringHelper.before;
-import static org.apache.camel.util.StringHelper.notEmpty;
+import static org.apache.camel.util.StringHelper.*;
 
 /**
  * An awesome REST endpoint backed by Swagger specifications.
@@ -332,13 +331,9 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final CamelContext camelContext = getCamelContext();
-        final RestConfiguration specificConfiguration = camelContext.getRestConfiguration(assignedComponentName, false);
-        if (specificConfiguration != null && isNotEmpty(specificConfiguration.getContextPath())) {
-            return specificConfiguration.getContextPath();
-        }
-
-        final RestConfiguration restConfiguration = camelContext.getRestConfiguration("rest-swagger", true);
+        final RestConfiguration restConfiguration = CamelContextHelper.getRestConfiguration(camelContext, assignedComponentName);
         final String restConfigurationBasePath = restConfiguration.getContextPath();
+
         if (isNotEmpty(restConfigurationBasePath)) {
             return restConfigurationBasePath;
         }
@@ -431,28 +426,15 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final CamelContext camelContext = getCamelContext();
-
-        final RestConfiguration specificRestConfiguration = camelContext.getRestConfiguration(assignedComponentName,
-            false);
-        final String specificConfigurationHost = hostFrom(specificRestConfiguration);
-        if (specificConfigurationHost != null) {
-            return specificConfigurationHost;
-        }
-
-        final RestConfiguration componentRestConfiguration = camelContext.getRestConfiguration("rest-swagger", false);
-        final String componentConfigurationHost = hostFrom(componentRestConfiguration);
-        if (componentConfigurationHost != null) {
-            return componentConfigurationHost;
-        }
-
-        final RestConfiguration globalRestConfiguration = camelContext.getRestConfiguration();
+        final RestConfiguration globalRestConfiguration = CamelContextHelper.getRestConfiguration(camelContext, assignedComponentName);
         final String globalConfigurationHost = hostFrom(globalRestConfiguration);
+
         if (globalConfigurationHost != null) {
             return globalConfigurationHost;
         }
 
         final String specificationScheme = specificationUri.getScheme();
-        if (specificationUri.isAbsolute() && specificationScheme.toLowerCase().startsWith("http")) {
+        if (specificationUri.isAbsolute() && specificationScheme.toLowerCase().startsWith(Scheme.HTTP.toValue())) {
             try {
                 return new URI(specificationUri.getScheme(), specificationUri.getUserInfo(), specificationUri.getHost(),
                     specificationUri.getPort(), null, null, null).toString();
@@ -601,8 +583,8 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         }
 
         final StringBuilder answer = new StringBuilder(scheme).append("://").append(host);
-        if (port > 0 && !("http".equalsIgnoreCase(scheme) && port == 80)
-            && !("https".equalsIgnoreCase(scheme) && port == 443)) {
+        if (port > 0 && !(Scheme.HTTP.toValue().equalsIgnoreCase(scheme) && port == 80)
+            && !(Scheme.HTTPS.toValue().equalsIgnoreCase(scheme) && port == 443)) {
             answer.append(':').append(port);
         }
 
@@ -671,15 +653,15 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
     static String pickBestScheme(final String specificationScheme, final List<Scheme> schemes) {
         if (schemes != null && !schemes.isEmpty()) {
             if (schemes.contains(Scheme.HTTPS)) {
-                return "https";
+                return Scheme.HTTPS.toValue();
             }
 
             if (schemes.contains(Scheme.HTTP)) {
-                return "http";
+                return Scheme.HTTP.toValue();
             }
         }
 
-        if (specificationScheme != null) {
+        if (specificationScheme != null && (Scheme.HTTP.toValue().contains(specificationScheme) || Scheme.HTTPS.toValue().contains(specificationScheme))) {
             return specificationScheme;
         }
 

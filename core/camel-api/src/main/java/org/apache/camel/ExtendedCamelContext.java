@@ -30,6 +30,7 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
@@ -52,7 +53,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ReifierStrategy;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
@@ -169,6 +170,19 @@ public interface ExtendedCamelContext extends CamelContext {
     Endpoint getEndpoint(NormalizedEndpointUri uri);
 
     /**
+     * Resolves the given name to an {@link Endpoint} of the specified type.
+     * If the name has a singleton endpoint registered, then the singleton is returned.
+     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
+     *
+     * @param uri the URI of the endpoint
+     * @param parameters the parameters to customize the endpoint
+     * @return the endpoint
+     *
+     * @see #getPrototypeEndpoint(String)
+     */
+    Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters);
+
+    /**
      * Normalizes the given uri.
      *
      * @param uri  the uri
@@ -247,6 +261,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets a custom {@link ComponentResolver} to use.
      */
     void setComponentResolver(ComponentResolver componentResolver);
+
+    /**
+     * Gets the {@link ComponentNameResolver} to use.
+     */
+    ComponentNameResolver getComponentNameResolver();
+
+    /**
+     * Sets a custom {@link ComponentNameResolver} to use.
+     */
+    void setComponentNameResolver(ComponentNameResolver componentNameResolver);
 
     /**
      * Gets the {@link LanguageResolver} to use.
@@ -520,7 +544,7 @@ public interface ExtendedCamelContext extends CamelContext {
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
 
     /**
-     * Whether its allowed to add new routes after Camel has been started.
+     * Whether it's allowed to add new routes after Camel has been started.
      * This is enabled by default.
      * Setting this to false allows Camel to do some internal optimizations to reduce memory footprint.
      * <p/>
@@ -539,4 +563,25 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     boolean isAllowAddingNewRoutes();
 
+    /**
+     * Camel context can be configured to remove all references to the model definitions
+     * after it has been started.  It can be used in addition to the {@link #setAllowAddingNewRoutes(boolean)}
+     * method to reduce the footprint.
+     *
+     * @see #isAllowAddingNewRoutes()
+     * @param clearModelReferences
+     */
+    @Experimental
+    void setClearModelReferences(boolean clearModelReferences);
+
+    /**
+     * If references to the model are removed when Camel is started or not.
+     */
+    boolean isClearModelReferences();
+
+    RouteController getInternalRouteController();
+
+    void addRoute(Route route);
+
+    void removeRoute(Route route);
 }

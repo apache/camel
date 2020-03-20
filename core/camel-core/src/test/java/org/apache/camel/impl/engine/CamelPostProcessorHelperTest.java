@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
@@ -30,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
@@ -39,6 +41,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.FooBar;
+import org.apache.camel.impl.FooBarConfig;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultRegistry;
@@ -343,8 +346,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         try {
             helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             fail("Should throw exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
+        } catch (NoSuchEndpointException e) {
+            // expected
         }
     }
 
@@ -460,6 +463,48 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         String out = bean.doSomething("Camel");
         assertEquals("Hello Camel", out);
+    }
+
+    @Test
+    public void testBeanConfigInjectByType() throws Exception {
+        Properties initial = new Properties();
+        initial.put("foobar.name", "Donald");
+        initial.put("foobar.age", "33");
+        context.getPropertiesComponent().setInitialProperties(initial);
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyBeanConfigInjectByTypeBean bean = new MyBeanConfigInjectByTypeBean();
+        Field field = bean.getClass().getField("config");
+
+        BeanConfigInject beanInject = field.getAnnotation(BeanConfigInject.class);
+        Class<?> type = field.getType();
+        Object value = helper.getInjectionBeanConfigValue(type, beanInject.value());
+        field.set(bean, value);
+
+        String out = bean.doSomething("Camel");
+        assertEquals("Donald (age: 33) likes Camel", out);
+    }
+
+    @Test
+    public void testBeanConfigInjectByMethod() throws Exception {
+        Properties initial = new Properties();
+        initial.put("foobar.name", "Goofy");
+        initial.put("foobar.age", "34");
+        context.getPropertiesComponent().setInitialProperties(initial);
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyBeanConfigInjectByMethod bean = new MyBeanConfigInjectByMethod();
+        Method method = bean.getClass().getMethod("initFooBar", FooBarConfig.class);
+
+        BeanConfigInject beanInject = method.getAnnotation(BeanConfigInject.class);
+        Class<?> type = method.getParameterTypes()[0];
+        Object value = helper.getInjectionBeanConfigValue(type, beanInject.value());
+        method.invoke(bean, value);
+
+        String out = bean.doSomething("Camel");
+        assertEquals("Goofy (age: 34) likes Camel", out);
     }
 
     @Test
@@ -738,6 +783,33 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         public String doSomething(String body) {
             return foo.hello(body);
+        }
+    }
+
+    public class MyBeanConfigInjectByTypeBean {
+
+        @BeanConfigInject("foobar")
+        public FooBarConfig config;
+
+        public String doSomething(String body) {
+            FooBar bean = new FooBar();
+            bean.setGreeting(config.getName() + " (age: " + config.getAge() + ") likes");
+            return bean.hello(body);
+        }
+    }
+
+    public class MyBeanConfigInjectByMethod {
+
+        public FooBar fooBar;
+
+        @BeanConfigInject("foobar")
+        public void initFooBar(FooBarConfig config) {
+            fooBar = new FooBar();
+            fooBar.setGreeting(config.getName() + " (age: " + config.getAge() + ") likes");
+        }
+
+        public String doSomething(String body) {
+            return fooBar.hello(body);
         }
     }
 

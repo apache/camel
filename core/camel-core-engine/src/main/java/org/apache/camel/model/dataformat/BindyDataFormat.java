@@ -17,7 +17,6 @@
 package org.apache.camel.model.dataformat;
 
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -58,7 +58,7 @@ public class SftpECKeyFileConsumeTest extends SftpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&knownHostsFile=" + getKnownHostsFile()
-                     + "&privateKeyFile=./src/test/resources/ec.pem&delay=10s&disconnect=true").routeId("foo").noAutoStartup().to("mock:result");
+                     + "&privateKeyFile=./src/test/resources/ec.pem&delay=10000&disconnect=true").routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

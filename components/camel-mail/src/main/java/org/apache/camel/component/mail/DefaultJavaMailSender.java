@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -65,6 +66,10 @@ public class DefaultJavaMailSender implements JavaMailSender {
     @Override
     public void setJavaMailProperties(Properties javaMailProperties) {
         this.javaMailProperties = javaMailProperties;
+    }
+
+    public void addAdditionalJavaMailProperty(String key, String value) {
+        getJavaMailProperties().setProperty(key, value);
     }
 
     @Override

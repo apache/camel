@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -31,18 +32,17 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -192,6 +192,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 injectFieldBean(field, beanInject.value(), bean, beanName);
             }
 
+            BeanConfigInject beanConfigInject = field.getAnnotation(BeanConfigInject.class);
+            if (beanConfigInject != null) {
+                injectFieldBeanConfig(field, beanConfigInject.value(), bean, beanName);
+            }
+
             EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
             if (endpointInject != null) {
                 @SuppressWarnings("deprecation")
@@ -232,6 +237,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     public void injectFieldBean(Field field, String name, Object bean, String beanName) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionBeanValue(field.getType(), name));
+    }
+
+    public void injectFieldBeanConfig(Field field, String name, Object bean, String beanName) {
+        ReflectionHelper.setField(field, bean,
+                getPostProcessorHelper().getInjectionBeanConfigValue(field.getType(), name));
     }
 
     public void injectFieldProperty(Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
@@ -325,6 +335,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             setterBeanInjection(method, beanInject.value(), bean, beanName);
         }
 
+        BeanConfigInject beanConfigInject = method.getAnnotation(BeanConfigInject.class);
+        if (beanConfigInject != null) {
+            setterBeanConfigInjection(method, beanConfigInject.value(), bean, beanName);
+        }
+
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         if (endpointInject != null) {
             String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
@@ -368,6 +383,16 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
         } else {
             Object value = getPostProcessorHelper().getInjectionBeanValue(parameterTypes[0], name);
+            invokeMethod(method, bean, value);
+        }
+    }
+
+    public void setterBeanConfigInjection(Method method, String name, Object bean, String beanName) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes.length != 1) {
+            LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
+        } else {
+            Object value = getPostProcessorHelper().getInjectionBeanConfigValue(parameterTypes[0], name);
             invokeMethod(method, bean, value);
         }
     }
@@ -462,42 +487,16 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                     Annotation ann = anns[0];
                     if (ann.annotationType() == PropertyInject.class) {
                         PropertyInject pi = (PropertyInject) ann;
-                        // build key with default value included as this is supported during resolving
-                        String key = pi.value();
-                        if (!isEmpty(pi.defaultValue())) {
-                            key = key + ":" + pi.defaultValue();
-                        }
-                        // need to force property lookup by having key enclosed in tokens
-                        key = PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN;
-                        try {
-                            Object value = getOrLookupCamelContext().resolvePropertyPlaceholders(key);
-                            parameters[i] = getOrLookupCamelContext().getTypeConverter().convertTo(type, value);
-                        } catch (Exception e) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                        }
+                        Object result = getPostProcessorHelper().getInjectionPropertyValue(type, pi.value(), pi.defaultValue(), null, null, null);
+                        parameters[i] = result;
+                    } else if (ann.annotationType() == BeanConfigInject.class) {
+                        BeanConfigInject pi = (BeanConfigInject) ann;
+                        Object result = getPostProcessorHelper().getInjectionBeanConfigValue(type, pi.value());
+                        parameters[i] = result;
                     } else if (ann.annotationType() == BeanInject.class) {
                         BeanInject bi = (BeanInject) ann;
-                        String key = bi.value();
-                        Object value;
-                        if (isEmpty(key)) {
-                            // empty key so lookup anonymously by type
-                            Set<?> instances = getOrLookupCamelContext().getRegistry().findByType(type);
-                            if (instances.size() == 0) {
-                                throw new NoSuchBeanException(null, key);
-                            } else if (instances.size() == 1) {
-                                parameters[i] = instances.iterator().next();
-                            } else {
-                                // there are multiple instances of the same type, so barf
-                                throw new IllegalArgumentException("Multiple beans of the same type: " + type
-                                    + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: " + method);
-                            }
-                        } else {
-                            value = getOrLookupCamelContext().getRegistry().lookupByName(key);
-                            if (value == null) {
-                                throw new NoSuchBeanException(key);
-                            }
-                            parameters[i] = getOrLookupCamelContext().getTypeConverter().convertTo(type, value);
-                        }
+                        Object result = getPostProcessorHelper().getInjectionBeanValue(type, bi.value());
+                        parameters[i] = result;
                     }
                 } else {
                     // okay attempt to default to singleton instances from the registry

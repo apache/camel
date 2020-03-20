@@ -16,14 +16,22 @@
  */
 package org.apache.camel.impl;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.engine.BaseRouteService;
+import org.apache.camel.impl.engine.DefaultRoute;
+import org.apache.camel.impl.engine.RouteService;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -32,10 +40,13 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.processor.channel.DefaultChannel;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.DataFormat;
@@ -53,7 +64,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
-    private final Model model = new DefaultModel(this);
+    private Model model = new DefaultModel(this);
 
     /**
      * Creates the {@link ModelCamelContext} using
@@ -286,9 +297,10 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
-        if (routeService instanceof RouteService) {
-            model.getRouteDefinitions().remove(((RouteService)routeService).getRouteDefinition());
+    protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
+        RouteDefinition rd = model.getRouteDefinition(routeService.getId());
+        if (rd != null) {
+            model.getRouteDefinitions().remove(rd);
         }
         super.shutdownRouteService(routeService);
     }
@@ -310,7 +322,43 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void startRouteDefinitions() throws Exception {
-        model.startRouteDefinitions();
+        List<RouteDefinition> routeDefinitions = model.getRouteDefinitions();
+        if (routeDefinitions != null) {
+            startRouteDefinitions(routeDefinitions);
+        }
+    }
+
+    public void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception {
+        // indicate we are staring the route using this thread so
+        // we are able to query this if needed
+        boolean alreadyStartingRoutes = isStartingRoutes();
+        if (!alreadyStartingRoutes) {
+            setStartingRoutes(true);
+        }
+        try {
+            RouteDefinitionHelper.forceAssignIds(getCamelContextReference(), routeDefinitions);
+            for (RouteDefinition routeDefinition : routeDefinitions) {
+                // assign ids to the routes and validate that the id's is all unique
+                String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
+                if (duplicate != null) {
+                    throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
+                }
+
+                // must ensure route is prepared, before we can start it
+                if (!routeDefinition.isPrepared()) {
+                    RouteDefinitionHelper.prepareRoute(getCamelContextReference(), routeDefinition);
+                    routeDefinition.markPrepared();
+                }
+
+                Route route = new RouteReifier(getCamelContextReference(), routeDefinition).createRoute();
+                RouteService routeService = new RouteService(route);
+                startRouteService(routeService, true);
+            }
+        } finally {
+            if (!alreadyStartingRoutes) {
+                setStartingRoutes(false);
+            }
+        }
     }
 
     @Override
@@ -318,4 +366,34 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         return new DefaultExecutorServiceManager(this);
     }
 
+    @Override
+    protected void clearModelReferences() {
+        model = (Model) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Model.class }, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                throw new UnsupportedOperationException("Model invocations are not supported at runtime");
+            }
+        });
+        for (Route route : getRoutes()) {
+            clearModelReferences(route);
+        }
+    }
+
+    private void clearModelReferences(Route r) {
+        if (r instanceof DefaultRoute) {
+            ((DefaultRoute) r).clearModelReferences();
+        }
+        clearModelReferences(r.navigate());
+    }
+
+    private void clearModelReferences(Navigate<Processor> nav) {
+        for (Processor processor : nav.next()) {
+            if (processor instanceof DefaultChannel) {
+                ((DefaultChannel) processor).clearModelReferences();
+            }
+            if (processor instanceof Navigate) {
+                clearModelReferences((Navigate<Processor>) processor);
+            }
+        }
+    }
 }

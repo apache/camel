@@ -22,7 +22,6 @@ import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.PutRecordRequest;
 import com.amazonaws.services.kinesis.model.PutRecordResult;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,10 +57,11 @@ public class KinesisProducerTest {
     private Message inMessage;
     @Mock
     private PutRecordResult putRecordResult;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
     private Exchange exchange;
 
     private KinesisProducer kinesisProducer;
+
     @Before
     public void setup() throws Exception {
         when(kinesisEndpoint.getClient()).thenReturn(kinesisClient);

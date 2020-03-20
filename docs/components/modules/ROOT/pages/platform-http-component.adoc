@@ -29,7 +29,7 @@ for this component:
 == Options
 
 // component options: START
-The Platform HTTP component supports 2 options, which are listed below.
+The Platform HTTP component supports 3 options, which are listed below.
 
 
 
@@ -38,6 +38,7 @@ The Platform HTTP component supports 2 options, which are listed below.
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *engine* (advanced) | An HTTP Server engine implementation to serve the requests |  | PlatformHttpEngine
 |===
 // component options: END
 
@@ -61,7 +62,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (11 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,6 +71,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumes* (consumer) | The content type this endpoint accepts as an input, such as application/xml or application/json. null or &#42;/&#42; mean no restriction. |  | String
 | *httpMethodRestrict* (consumer) | A comma separated list of HTTP methods to serve, e.g. GET,POST . If no methods are specified, all methods will be served. |  | String
+| *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
 | *produces* (consumer) | The content type this endpoint produces, such as application/xml or application/json. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern

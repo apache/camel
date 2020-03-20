@@ -33,7 +33,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route id="_route1">
       <from id="_from1" uri="direct:rabbitMQ"/>
-      <to id="_to1" uri="rabbitmq://localhost:5672/ex2?connectionFactory=#customConnectionFactory&amp;queue=q2&amp;routingKey=rk2"/>
+      <to id="_to1" uri="rabbitmq://localhost:5672/ex2?queue=q2&amp;routingKey=rk2"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

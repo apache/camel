@@ -39,6 +39,7 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
@@ -114,7 +115,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter(this, getPackageScanClassResolver(), getInjector(),
+        return new DefaultTypeConverter(getCamelContextReference(), getPackageScanClassResolver(), getInjector(),
                 getDefaultFactoryFinder(), isLoadTypeConverters());
     }
 
@@ -134,24 +135,29 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected Injector createInjector() {
         FactoryFinder finder = getDefaultFactoryFinder();
-        return finder.newInstance("Injector", Injector.class).orElse(new DefaultInjector(this));
+        return finder.newInstance("Injector", Injector.class).orElse(new DefaultInjector(getCamelContextReference()));
     }
 
     @Override
     protected PropertiesComponent createPropertiesComponent() {
         return new BaseServiceResolver<>(PropertiesComponent.FACTORY, PropertiesComponent.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseGet(org.apache.camel.component.properties.PropertiesComponent::new);
     }
 
     @Override
     protected CamelBeanPostProcessor createBeanPostProcessor() {
-        return new DefaultCamelBeanPostProcessor(this);
+        return new DefaultCamelBeanPostProcessor(getCamelContextReference());
     }
 
     @Override
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
+    }
+
+    @Override
+    protected ComponentNameResolver createComponentNameResolver() {
+        return new DefaultComponentNameResolver();
     }
 
     @Override
@@ -167,7 +173,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
         return new BaseServiceResolver<>(ModelJAXBContextFactory.FACTORY, ModelJAXBContextFactory.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find ModelJAXBContextFactory on classpath. "
                         + "Add camel-xml-jaxb to classpath."));
     }
@@ -184,7 +190,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ClassResolver createClassResolver() {
-        return new DefaultClassResolver(this);
+        return new DefaultClassResolver(getCamelContextReference());
     }
 
     @Override
@@ -214,12 +220,13 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RouteController createRouteController() {
-        return new DefaultRouteController(this);
+        // TODO:
+        return new DefaultRouteController(getCamelContextReference());
     }
 
     @Override
     protected ShutdownStrategy createShutdownStrategy() {
-        return new DefaultShutdownStrategy(this);
+        return new DefaultShutdownStrategy(getCamelContextReference());
     }
 
     @Override
@@ -248,7 +255,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
         return new BaseServiceResolver<>(RuntimeCamelCatalog.FACTORY, RuntimeCamelCatalog.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find RuntimeCamelCatalog on classpath. "
                         + "Add camel-core-catalog to classpath."));
     }
@@ -260,20 +267,20 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ManagementNameStrategy createManagementNameStrategy() {
-        return new DefaultManagementNameStrategy(this);
+        return new DefaultManagementNameStrategy(getCamelContextReference());
     }
 
     @Override
     protected HeadersMapFactory createHeadersMapFactory() {
         return new BaseServiceResolver<>(HeadersMapFactory.FACTORY, HeadersMapFactory.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseGet(DefaultHeadersMapFactory::new);
     }
 
     @Override
     protected BeanProxyFactory createBeanProxyFactory() {
         return new BaseServiceResolver<>(BeanProxyFactory.FACTORY, BeanProxyFactory.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find BeanProxyFactory on classpath. "
                         + "Add camel-bean to classpath."));
     }
@@ -281,7 +288,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
         return new BaseServiceResolver<>(BeanProcessorFactory.FACTORY, BeanProcessorFactory.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find BeanProcessorFactory on classpath. "
                         + "Add camel-bean to classpath."));
     }
@@ -294,7 +301,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader() {
         return new BaseServiceResolver<>(XMLRoutesDefinitionLoader.FACTORY, XMLRoutesDefinitionLoader.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find XMLRoutesDefinitionLoader on classpath. "
                         + "Add either camel-xml-io or camel-xml-jaxb to classpath."));
     }
@@ -302,7 +309,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ModelToXMLDumper createModelToXMLDumper() {
         return new BaseServiceResolver<>(ModelToXMLDumper.FACTORY, ModelToXMLDumper.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. "
                         + "Add camel-xml-jaxb to classpath."));
     }
@@ -340,14 +347,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected RestRegistryFactory createRestRegistryFactory() {
         return new BaseServiceResolver<>(RestRegistryFactory.FACTORY, RestRegistryFactory.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find RestRegistryFactory on classpath. "
                         + "Add camel-rest to classpath."));
     }
 
     @Override
     protected EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints) {
-        return new DefaultEndpointRegistry(this, endpoints);
+        return new DefaultEndpointRegistry(getCamelContextReference(), endpoints);
     }
 
     @Override
@@ -358,27 +365,27 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ReactiveExecutor createReactiveExecutor() {
         return new BaseServiceResolver<>(ReactiveExecutor.FACTORY, ReactiveExecutor.class)
-                .resolve(this)
+                .resolve(getCamelContextReference())
                 .orElseGet(DefaultReactiveExecutor::new);
     }
 
     @Override
     public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
-        return new MulticastProcessor(this, processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
+        return new MulticastProcessor(getCamelContextReference(), processors, null, true, executor, shutdownExecutorService, false, false, 0, null, false, false);
     }
 
     @Override
     protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() {
-        return new DefaultValidatorRegistry(this);
+        return new DefaultValidatorRegistry(getCamelContextReference());
     }
 
     @Override
     protected TransformerRegistry<TransformerKey> createTransformerRegistry() {
-        return new DefaultTransformerRegistry(this);
+        return new DefaultTransformerRegistry(getCamelContextReference());
     }
 
     @Override
     protected ExecutorServiceManager createExecutorServiceManager() {
-        return new BaseExecutorServiceManager(this);
+        return new BaseExecutorServiceManager(getCamelContextReference());
     }
 }

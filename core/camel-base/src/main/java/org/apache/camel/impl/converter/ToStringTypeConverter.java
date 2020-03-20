@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
@@ -31,24 +29,12 @@ import org.apache.camel.support.TypeConverterSupport;
  */
 public class ToStringTypeConverter extends TypeConverterSupport {
 
-    static Set<Class<?>> missTypes = new HashSet<>();
-
-    public static void registerMissType(Class clazz) {
-        missTypes.add(clazz);
-    }
-
-    static {
-        registerMissType(Message.class);
-        registerMissType(Future.class);
-        registerMissType(WrappedFile.class);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
 
-        // should not try to convert specific types
-        if (missTypes.stream().anyMatch(cl -> cl.isAssignableFrom(value.getClass()))) {
+        // should not try to convert these specific types
+        if (value instanceof Message || value instanceof WrappedFile || value instanceof Future) {
             return (T) MISS_VALUE;
         }
 

@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging.dsl.component;
 import java.util.Collection;
 import java.util.Optional;
 
-import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.commons.lang3.StringUtils;

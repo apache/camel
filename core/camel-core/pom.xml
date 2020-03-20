@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Core</name>
-    <description>The Core Camel Java DSL based router</description>
+    <description>The Core Camel Framework</description>
 
     <dependencies>
 
@@ -56,6 +56,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-caffeine-lrucache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cluster</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

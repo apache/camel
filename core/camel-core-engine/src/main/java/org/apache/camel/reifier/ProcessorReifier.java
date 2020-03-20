@@ -581,15 +581,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (route != null && !route.getOutputs().isEmpty()) {
             first = route.getOutputs().get(0) == definition;
         }
-        // set scoping
-        boolean routeScoped = true;
-        if (definition instanceof OnExceptionDefinition) {
-            routeScoped = ((OnExceptionDefinition)definition).isRouteScoped();
-        } else if (this.definition instanceof OnCompletionDefinition) {
-            routeScoped = ((OnCompletionDefinition)definition).isRouteScoped();
-        }
         // initialize the channel
-        channel.initChannel(this.route, definition, child, interceptors, processor, route, first, routeScoped);
+        channel.initChannel(this.route, definition, child, interceptors, processor, route, first);
 
         boolean wrap = false;
         // set the error handler, must be done after init as we can set the

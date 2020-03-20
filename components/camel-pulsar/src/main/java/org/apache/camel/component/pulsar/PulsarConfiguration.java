@@ -23,6 +23,7 @@ import org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosi
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.pulsar.client.api.BatcherBuilder;
 import org.apache.pulsar.client.api.CompressionType;
 import org.apache.pulsar.client.api.MessageRouter;
 import org.apache.pulsar.client.api.MessageRoutingMode;
@@ -76,6 +77,8 @@ public class PulsarConfiguration implements Cloneable {
     private int batchingMaxMessages = 1000;
     @UriParam(label = "producer", description = "Control whether automatic batching of messages is enabled for the producer.", defaultValue = "true")
     private boolean batchingEnabled = true;
+    @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT")
+    private BatcherBuilder batcherBuilder = BatcherBuilder.DEFAULT;
     @UriParam(label = "producer", description = "The first message published will have a sequence Id of initialSequenceId  1.", defaultValue = "-1")
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
@@ -113,7 +116,7 @@ public class PulsarConfiguration implements Cloneable {
     }
 
     /**
-     * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER], defaults to
+     * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER|KEY_SHARED], defaults to
      * EXCLUSIVE
      */
     public void setSubscriptionType(SubscriptionType subscriptionType) {
@@ -183,8 +186,8 @@ public class PulsarConfiguration implements Cloneable {
     /**
      * Whether to allow manual message acknowledgements.
      * <p/>
-     * If this option is enabled, then messages are not immediately acknowledged
-     * after being consumed. Instead, an instance of
+     * If this option is enabled, then messages are not acknowledged automatically
+     * after successful route completion. Instead, an instance of
      * {@link PulsarMessageReceipt} is stored as a header on the
      * {@link org.apache.camel.Exchange}. Messages can then be acknowledged
      * using {@link PulsarMessageReceipt} at any time before the ackTimeout
@@ -305,6 +308,21 @@ public class PulsarConfiguration implements Cloneable {
 
     public boolean isBatchingEnabled() {
         return batchingEnabled;
+    }
+
+    /**
+     * Control batching method of the Pulsar producer.
+     * KEY_BASED batches based on the Pulsar message key.
+     * DEFAULT batches all messages together regardless of key;
+     * this may cause only a single consumer to work when consuming using a KEY_SHARED subscription.
+     * Default is DEFAULT.
+     */
+    public void setBatcherBuilder(BatcherBuilder batcherBuilder) {
+        this.batcherBuilder = batcherBuilder;
+    }
+
+    public BatcherBuilder getBatcherBuilder() {
+        return batcherBuilder;
     }
 
     /**

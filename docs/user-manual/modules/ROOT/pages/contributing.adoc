@@ -1,6 +1,10 @@
 = Contributing to Apache Camel
 
-There are many ways you can help make Camel a better piece of software - please dive in and help!
+First of all, thank you for having an interest in contributing to Apache Camel.
+
+Here are some guidelines on how to best approach the Apache Camel community and how to best apply yourself.
+
+There are many ways you can help make Camel better - please dive in and help!
 
 * Try surf the documentation - if somethings confusing or not clear, let us know.
 * Download the code & try it out and see what you think.
@@ -8,6 +12,12 @@ There are many ways you can help make Camel a better piece of software - please 
 * Want to do some hacking on Camel? Try surfing the our https://issues.apache.org/jira/browse/CAMEL[issue tracker] for open issues or features that need to be implemented, take ownership of an issue and try fix it.
 * If you are a new Camel rider and would like to help us, you can also find https://issues.apache.org/jira/issues/?filter=12348073[some easy to resolve issues] or issues we https://issues.apache.org/jira/issues/?filter=12348074[need help with].
 * Leave a comment on the issue to let us know you are working on it and add yourself as a watcher to get informed about all modifications.
+
+Identify areas you can contribute first. You don't have to be an expert in an area, the Apache Camel developers are available to offer help and guidance.
+
+Introduce yourself on the developer's mailing list (see below), tell us what area of work or problem you wish to address in Camel. Create a draft of your solution, this can be simple 1-2 sentences on the change you wish to make. Try to be as specific as you can: include a short description of your intent, what you tried and what didn't work, or what you need help with. The best way of approaching the developers is by describing what you would like to work on and asking specific questions on how to get started. We'll do our best to guide you and help you make your contribution. 
+
+We also participate in Google Summer of Code and Outreachy programs, for information about those look at those program websites. If you wish to participate in either of those follow the guidelines and schedule set by those programs. If you're unsure please reach out via official communication channels of those programs, or ask on the developer's mailing list for help.
 
 == Table of Contents
 
@@ -29,17 +39,35 @@ There are many ways you can help make Camel a better piece of software - please 
 [#getting-in-touch]
 == Getting in touch
 
+Apache Camel is an Apache Software Foundation project, all communication is done in the open on the project mailing lists. You can https://www.apache.org/foundation/mailinglists.html[read more on the reasoning behind this] to get a better understanding of this.
+
+All communication is subject to the https://www.apache.org/foundation/policies/conduct.html[ASF Code of Conduct].
+
 There are various ways of communicating with the Camel community.
 
-* Join us on the https://camel.apache.org/community/mailing-list/[Mailing Lists] and take part in any conversations
-* Pop by on https://gitter.im/apache/apache-camel[Gitter] chat and say hi
-* Browse through the https://issues.apache.org/jira/browse/CAMEL[issue tracker], look for something interesting and comment there
+For questions and guidance around contributing subscribe to the developer's mailing list by sending an e-mail to dev-subscribe@camel.apache.org.
+
+We can also be reached on the Gitter chat at https://gitter.im/apache/apache-camel/.
+
+We track issues using https://issues.apache.org/jira/browse/CAMEL[ASF Jira], look for https://issues.apache.org/jira/issues/?filter=12348073[some easy to resolve issues] or issues we https://issues.apache.org/jira/issues/?filter=12348074[need help with].
+
+When you're ready to contribute create a Pull request to one of the Camel projects you can find under the Apache organization https://github.com/apache?q=camel[on GitHub].
+
+Expect that your Pull request will receive a review and that you will need to respond and correspond to that via comments at GitHub.
+
+== Your first contribution
+
+Make sure you followed the steps and guidelines outlined in this document. For bigger changes, make sure that you have discussed on the developer's mailing list or in the Jira issue tracker before hand. We love receiving contributions, to get the best response make sure that the reasoning behind the contribution you wish to make is clear: outline the problem and explain your solution for it.
+
+Be mindful of the source checks, formatting and the structure of the git commit message we abide by. This will help you in getting your contribution accepted. Outline any changes you made but are unaware or unsure of any consequences or side effects.
+
+Stay engaged, follow and respond to comments or questions you might be asked.
 
 [#improving-the-documentation]
 == Improving the documentation
 
-Documentation is massively important to help users make the most of Apache Camel and its probably the area that needs the most help!
-So if you are interested in helping the documentation effort; whether its just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
+Documentation is massively important to help users make the most of Apache Camel and it's probably the area that needs the most help!
+So if you are interested in helping the documentation effort; whether it's just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
 We moved the documentation into the code (AsciiDoc). We are not using the wiki system anymore.
 
 To edit the documentation:
@@ -56,10 +84,8 @@ For more information see https://camel.apache.org/manual/latest/faq/how-does-the
 [#if-you-find-a-bug-or-problem]
 == If you find a bug or problem
 
-Please raise a new issue in our https://issues.apache.org/jira/browse/CAMEL[issue tracker]
-If you can create a JUnit test case then your issue is more likely to be resolved quicker.
+Please raise a new issue on our https://issues.apache.org/jira/browse/CAMEL[JIRA issue tracker]. This way we’ll know when it’s really fixed and we can ensure that the problem stays fixed in future releases. Please describe the bug/issue clearly, and add pictures/screenshots if necessary. If you can create a JUnit test case then your issue is more likely to be resolved quicker.
 e.g. take a look at some of the existing https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/[unit tests cases]
-Then we can add your issue to Subversion and then we'll know when its really fixed and we can ensure that the problem stays fixed in future releases.
 
 [#working-on-the-code]
 == Working on the code
@@ -139,7 +165,7 @@ We gladly accept patches if you can find ways to improve, tune or fix Camel in s
 
 We recommend using github PRs instead of manual patch files. Especially for bigger patches.
 
-Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team \-> Create Patch. Then just save the patch as a file and then submit it. (You may have to click on Team \-> Share... first to enable the Subversion options).
+Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team \-> Create Patch. Then just save the patch as a file and attach it to the corresponding issue on our https://issues.apache.org/jira/browse/CAMEL[JIRA issue tracker].
 If you're a command line person try the following to create the patch
 
  diff -u Main.java.orig Main.java >> patchfile.txt

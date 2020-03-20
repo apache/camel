@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.cluster.ClusteredRoutePolicyFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public final class ZooKeeperClusteredRoutePolicyFactoryTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:zookeeper?delay=1s&period=1s")
+                    from("timer:zookeeper?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .log("From ${routeId}")
                         .process(e -> contextLatch.countDown());

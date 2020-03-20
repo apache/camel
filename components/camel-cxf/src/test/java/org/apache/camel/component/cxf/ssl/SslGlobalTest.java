@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 import static org.hamcrest.core.Is.is;
 
 public class SslGlobalTest extends CamelSpringTestSupport {

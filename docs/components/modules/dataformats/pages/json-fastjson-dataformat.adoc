@@ -1,0 +1,52 @@
+[[json-fastjson-dataformat]]
+= JSon Fastjson DataFormat
+:page-source: components/camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc
+
+*Since Camel 2.20*
+
+Fastjson is a Data Format which uses the
+https://github.com/alibaba/fastjson[Fastjson Library]
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Fastjson).
+  to("mqseries:Another.Queue");
+-------------------------------
+
+== Fastjson Options
+
+
+// dataformat options: START
+The JSon Fastjson dataformat supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+
+
+== Dependencies
+
+To use Fastjson in your camel routes you need to add the dependency
+on *camel-fastjson* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-fastjson</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+include::camel-spring-boot::page$fastjson-starter.adoc[]

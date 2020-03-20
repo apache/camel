@@ -18,6 +18,7 @@ package org.apache.camel.component.properties;
 
 import java.util.Locale;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.StringHelper;
 
 /**

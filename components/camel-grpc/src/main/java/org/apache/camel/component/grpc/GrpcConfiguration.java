@@ -17,7 +17,6 @@
 package org.apache.camel.component.grpc;
 
 import java.net.URI;
-import java.util.Map;
 
 import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NegotiationType;

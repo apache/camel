@@ -30,11 +30,9 @@ import org.junit.BeforeClass;
 import org.wildfly.security.WildFlyElytronBaseProvider;
 import org.wildfly.security.auth.permission.LoginPermission;
 import org.wildfly.security.auth.realm.token.TokenSecurityRealm;
-import org.wildfly.security.auth.realm.token.validator.JwtValidator;
 import org.wildfly.security.auth.server.SecurityDomain;
 import org.wildfly.security.authz.RoleMapper;
 import org.wildfly.security.authz.Roles;
-import org.wildfly.security.http.HttpConstants;
 import org.wildfly.security.permission.PermissionVerifier;
 
 /**
@@ -107,7 +105,9 @@ public abstract class BaseElytronTest extends CamelTestSupport {
     }
 
     private KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        return KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        KeyPairGenerator generator =  KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        return generator.generateKeyPair();
     }
 
 }

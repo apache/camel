@@ -20,10 +20,9 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnJre;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpChmodTest extends SftpServerTestSupport {
 

@@ -35,16 +35,17 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultModelRoute;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -165,21 +166,26 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
-        boolean logRoutesAsXml = true;
         if (builder instanceof AdviceWithRouteBuilder) {
             AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
             arb.setOriginalRoute(definition);
-            logRoutesAsXml = arb.isLogRouteAsXml();
         }
 
         // configure and prepare the routes from the builder
         RoutesDefinition routes = builder.configureRoutes(camelContext);
 
+        // was logging enabled or disabled
+        boolean logRoutesAsXml = true;
+        if (builder instanceof AdviceWithRouteBuilder) {
+            AdviceWithRouteBuilder arb = (AdviceWithRouteBuilder)builder;
+            logRoutesAsXml = arb.isLogRouteAsXml();
+        }
+
         log.debug("AdviceWith routes: {}", routes);
 
         // we can only advice with a route builder without any routes
         if (!builder.getRouteCollection().getRoutes().isEmpty()) {
-            throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes." + " Remove all routes from the route builder.");
+            throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes. Remove all routes from the route builder.");
         }
         // we can not advice with error handlers (if you added a new error
         // handler in the route builder)
@@ -257,13 +263,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // create route
         String id = definition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-        DefaultRoute route = new DefaultRoute(camelContext, definition, id, endpoint) {
-            @Override
-            public Processor createErrorHandler(Processor processor) throws Exception {
-                return ErrorHandlerReifier.reifier(this, getErrorHandlerFactory())
-                        .createErrorHandler(processor);
-            }
-        };
+        String desc = RouteDefinitionHelper.getRouteMessage(definition.toString());
+        DefaultRoute route = new DefaultModelRoute(camelContext, definition, id, desc, endpoint);
 
         // configure error handler
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
@@ -492,8 +493,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 policy.onInit(route);
             }
         }
-
-        route.initialized();
 
         return route;
     }

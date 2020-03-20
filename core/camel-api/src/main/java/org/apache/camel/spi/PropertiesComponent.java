@@ -105,6 +105,11 @@ public interface PropertiesComponent extends StaticService {
     void addPropertiesSource(PropertiesSource propertiesSource);
 
     /**
+     * Registers the {@link PropertiesFunction} as a function to this component.
+     */
+    void addPropertiesFunction(PropertiesFunction function);
+
+    /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.
      */
     void setIgnoreMissingLocation(boolean ignoreMissingLocation);

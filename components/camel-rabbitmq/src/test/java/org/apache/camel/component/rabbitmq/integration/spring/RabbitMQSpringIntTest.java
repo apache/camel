@@ -58,7 +58,7 @@ public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
     protected AbstractApplicationContext createApplicationContext() {
         AbstractApplicationContext applicationContext = super.createApplicationContext();
 
-        connectionFactory = (ConnectionFactory) applicationContext.getBean("customConnectionFactory");
+        connectionFactory = (ConnectionFactory)applicationContext.getBean("customConnectionFactory");
         return applicationContext;
     }
 
@@ -108,7 +108,6 @@ public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
             }
         }
     }
-
 
     private static final class LastDeliveryConsumer extends DefaultConsumer {
         private byte[] lastBody;

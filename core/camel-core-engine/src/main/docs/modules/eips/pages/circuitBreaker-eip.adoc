@@ -1,0 +1,72 @@
+[[circuitBreaker-eip]]
+= Circuit Breaker EIP
+
+The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
+which is used to detect excessive current draw and fail fast to protect electrical equipment.
+The software-based circuit breaker works on the same notion, by encapsulating
+the operation and monitoring it for failures. The Circuit Breaker pattern operates in
+three states, as illustrated in the following figure:
+
+image::eip/CircuitBreaker.png[image]
+
+The states are as follows:
+
+* *Closed* — When operating successfully.
+* *Open* — When failure is detected and the breaker opens to short-circuit and fail
+  fast. In this state, the circuit breaker avoids invoking the protected operation and
+  avoids putting additional load on the struggling service.
+* *Half Open* — After a short period in the open state, an operation is attempted to
+  see whether it can complete successfully, and depending on the outcome, it will
+  transfer to either open or closed state.
+
+// eip options: START
+The Circuit Breaker EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hystrixConfiguration* | Configures the circuit breaker to use Hystrix with the given configuration. |  | HystrixConfigurationDefinition
+| *resilience4jConfiguration* | Configures the circuit breaker to use Resilience4j with the given configuration. |  | Resilience4jConfigurationDefinition
+| *configurationRef* | Refers to a circuit breaker configuration (such as hystrix, resillience4j, or microprofile-fault-tolerance) to use for configuring the circuit breaker EIP. |  | String
+|===
+// eip options: END
+
+== Example
+
+Below is an example route showing a circuit breaker endpoint that protects against slow operation by falling back to the in-lined fallback route. By default the timeout request is just *1000ms* so the HTTP endpoint has to be fairly quick to succeed.
+[source,java]
+----
+from("direct:start")
+    .circuitBreaker()
+        .to("http://fooservice.com/slow")
+    .onFallback()
+        .transform().constant("Fallback message")
+    .end()
+    .to("mock:result");
+----
+
+And in XML DSL:
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <circuitBreaker>
+      <to uri="http://fooservice.com/slow"/>
+      <onFallback>
+        <transform>
+          <constant>Fallback message</constant>
+        </transform>
+      </onFallback>
+    </circuitBreaker>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+== CircuitBreaker Implementations
+
+Camel provides two implementations of this pattern:
+
+* xref:hystrix-eip.adoc[Hystrix] - Using the Netflix Hystrix implementation
+* xref:resilience4j-eip.adoc[Resilience4j] - Using the Resilience4j implementation

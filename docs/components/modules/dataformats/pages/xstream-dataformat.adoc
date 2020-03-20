@@ -1,0 +1,143 @@
+[[xstream-dataformat]]
+= XStream DataFormat
+:page-source: components/camel-xstream/src/main/docs/xstream-dataformat.adoc
+
+*Since Camel 1.3*
+
+XStream is a Data Format which uses the
+http://x-stream.github.io/[XStream library] to marshal and unmarshal
+Java objects to and from XML.
+
+To use XStream in your camel routes you need to add the a dependency
+on *camel-xstream* which implements this data format.
+
+Maven users will need to add the following dependency to their
+`pom.xml` for this component:
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xstream</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+== Options
+
+// dataformat options: START
+The XStream dataformat supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| permissions |  | String | Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow, and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specify com.foo.. Multiple permissions can be configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The following default permission is always included: -,java.lang.,java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.
+| encoding |  | String | Sets the encoding to use
+| mode |  | String | Mode for dealing with duplicate references The possible values are: NO_REFERENCES ID_REFERENCES XPATH_RELATIVE_REFERENCES XPATH_ABSOLUTE_REFERENCES SINGLE_NODE_XPATH_RELATIVE_REFERENCES SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES
+| converters |  | List | List of class names for using custom XStream converters. The classes must be of type com.thoughtworks.xstream.converters.Converter
+| aliases |  | List | Alias a Class to a shorter name to be used in XML elements.
+| omitFields |  | List | Prevents a field from being serialized. To omit a field you must always provide the declaring type and not necessarily the type that is converted. Multiple values can be separated by comma.
+| implicitCollections |  | List | Adds a default implicit collection which is used for any unmapped XML tag. Multiple values can be separated by comma.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+ND
+
+
+== Using the Java DSL
+
+[source,java]
+-----------------------------------------------------------
+// lets turn Object messages into XML then send to MQSeries
+from("activemq:My.Queue").
+  marshal().xstream().
+  to("mqseries:Another.Queue");
+-----------------------------------------------------------
+
+If you would like to configure the `XStream` instance used by the Camel
+for the message transformation, you can simply pass a reference to that
+instance on the DSL level.
+
+[source,java]
+---------------------------------------------------------
+XStream xStream = new XStream();
+xStream.aliasField("money", PurchaseOrder.class, "cash");
+// new Added setModel option since Camel 2.14
+xStream.setModel("NO_REFERENCES");
+...
+
+from("direct:marshal").
+  marshal(new XStreamDataFormat(xStream)).
+  to("mock:marshaled");
+---------------------------------------------------------
+
+== XMLInputFactory and XMLOutputFactory
+
+http://x-stream.github.io/[The XStream library] uses the
+`javax.xml.stream.XMLInputFactory` and
+`javax.xml.stream.XMLOutputFactory`, you can control which
+implementation of this factory should be used.
+
+The Factory is discovered using this algorithm: 
+ 1. Use the `javax.xml.stream.XMLInputFactory` ,
+`javax.xml.stream.XMLOutputFactory` system property. 
+ 2. Use the `lib/xml.stream.properties` file in the `JRE_HOME`
+directory. 
+ 3. Use the Services API, if available, to determine the classname by
+looking in the `META-INF/services/javax.xml.stream.XMLInputFactory`,
+`META-INF/services/javax.xml.stream.XMLOutputFactory` files in jars
+available to the JRE. 
+ 4. Use the platform default XMLInputFactory,XMLOutputFactory instance.
+
+== How to set the XML encoding in Xstream DataFormat?
+
+You can set the encoding of XML in Xstream DataFormat
+by setting the Exchange's property with the key `Exchange.CHARSET_NAME`,
+or setting the encoding property on Xstream from DSL or Spring config.
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  marshal().xstream("UTF-8").
+  to("mqseries:Another.Queue");
+-------------------------------
+
+== Setting the type permissions of Xstream DataFormat
+
+In Camel, one can always use its own processing step in the route to
+filter and block certain XML documents to be routed to the XStream's
+unmarhall step. You can
+set http://x-stream.github.io/security.html[XStream's type
+permissions] to automatically allow or deny the instantiation of certain
+types.
+
+The default type permissions setting used by Camel denies all types
+except for those from java.lang and java.util packages. This setting can
+be changed by setting System property
+org.apache.camel.xstream.permissions. Its value is a string of
+comma-separated permission terms, each representing a type being allowed
+or denied, depending on whether the term is prefixed with '+' (note '+'
+may be omitted) or with '-', respectively.
+
+Each term may contain a wildcard character '*'. For example, value
+"-*,java.lang.*,java.util.*" indicates denying all types except for
+java.lang.* and java.util.* classes. Setting this value to an empty
+string "" reverts to the default XStream's type permissions handling
+which denies certain blacklisted classes and allow others.
+
+The type permissions setting can be extended at an individual XStream
+DataFormat instance by setting its type permissions property.
+
+[source,java]
+-------------------------------------------------------------------
+    <dataFormats>
+        <xstream id="xstream-default" 
+                 permissions="org.apache.camel.samples.xstream.*"/>
+        ...
+
+-------------------------------------------------------------------
+
+include::camel-spring-boot::page$xstream-starter.adoc[]

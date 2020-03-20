@@ -16,7 +16,6 @@
  */
 package org.apache.camel.generator.openapi;
 
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,16 +23,25 @@ import io.apicurio.datamodels.openapi.models.OasOperation;
 import io.apicurio.datamodels.openapi.models.OasPathItem;
 import org.apache.camel.util.ObjectHelper;
 
-
-
 class PathVisitor<T> {
 
     private final DestinationGenerator destinationGenerator;
 
     private final CodeEmitter<T> emitter;
+
     private final OperationFilter filter;
 
-    PathVisitor(final String basePath, final CodeEmitter<T> emitter, OperationFilter filter, final DestinationGenerator destinationGenerator) {
+    public enum HttpMethod {
+        DELETE,
+        GET,
+        HEAD,
+        OPTIONS,
+        PATCH,
+        POST,
+        PUT
+    }
+
+    PathVisitor(final String basePath, final CodeEmitter<T> emitter, final OperationFilter filter, final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
         this.filter = filter;
         this.destinationGenerator = destinationGenerator;
@@ -45,20 +53,20 @@ class PathVisitor<T> {
         }
     }
 
-    void visit(final String path, final OasPathItem definition) {
-        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, filter, path, destinationGenerator);
-
-        getOperationMap(definition).forEach(restDslOperation::visit);
-    }
-    
     void visit(final OasPathItem definition) {
         final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, filter, definition.getPath(), destinationGenerator);
 
-        getOperationMap(definition).forEach(restDslOperation::visit);
+        operationMapFrom(definition).forEach(restDslOperation::visit);
     }
-    
-    private Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {
-        Map<HttpMethod, OasOperation> result = new LinkedHashMap<HttpMethod, OasOperation>();
+
+    void visit(final String path, final OasPathItem definition) {
+        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, filter, path, destinationGenerator);
+
+        operationMapFrom(definition).forEach(restDslOperation::visit);
+    }
+
+    private static Map<HttpMethod, OasOperation> operationMapFrom(final OasPathItem path) {
+        final Map<HttpMethod, OasOperation> result = new LinkedHashMap<>();
 
         if (path.get != null) {
             result.put(HttpMethod.GET, path.get);
@@ -83,16 +91,6 @@ class PathVisitor<T> {
         }
 
         return result;
-    }
-    
-    public enum HttpMethod {
-        POST,
-        GET,
-        PUT,
-        PATCH,
-        DELETE,
-        HEAD,
-        OPTIONS
     }
 
 }

@@ -19,10 +19,9 @@ package org.apache.camel.test;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.camel.component.properties.PropertiesFunction;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-
 
 /**
  * A {@link PropertiesFunction} that reserves network ports and place them in a cache for reuse.

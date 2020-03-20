@@ -23,10 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 

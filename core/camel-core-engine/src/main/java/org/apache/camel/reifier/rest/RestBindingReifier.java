@@ -29,6 +29,7 @@ import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 public class RestBindingReifier extends AbstractReifier {
@@ -41,7 +42,7 @@ public class RestBindingReifier extends AbstractReifier {
     }
 
     public RestBindingAdvice createRestBindingAdvice() throws Exception {
-        RestConfiguration config = camelContext.getRestConfiguration(definition.getComponent(), true);
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, definition.getComponent());
 
         // these options can be overridden per rest verb
         String mode = config.getBindingMode().name();

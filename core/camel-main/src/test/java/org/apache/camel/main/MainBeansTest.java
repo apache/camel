@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.seda.SedaComponent;
 import org.junit.Assert;
 import org.junit.Test;
 

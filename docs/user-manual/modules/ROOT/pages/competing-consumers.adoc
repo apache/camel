@@ -73,7 +73,7 @@ And what if we need more, then we need to add a 3rd, a 4th and so on.
 What if the processing of the file itself is the bottleneck? That is the calculateBean is slow.
 So how can we process messages with this bean concurrently?
 
-Yeah we can use the xref:threads-eip.adoc[Threads EIP], so if we insert it in the route we get:
+Yeah we can use the xref:eips:threads-eip.adoc[Threads EIP], so if we insert it in the route we get:
 
 [source,java]
 ----

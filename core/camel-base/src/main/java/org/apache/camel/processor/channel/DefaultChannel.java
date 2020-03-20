@@ -68,7 +68,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private ManagementInterceptStrategy.InstrumentationProcessor<?> instrumentationProcessor;
     private CamelContext camelContext;
     private Route route;
-    private boolean routeScoped = true;
 
     public DefaultChannel(CamelContext camelContext) {
         super(camelContext);
@@ -126,8 +125,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         return definition;
     }
 
-    public void setDefinition(NamedNode definition) {
-        this.definition = definition;
+    public void clearModelReferences() {
+        this.definition = null;
     }
 
     @Override
@@ -148,10 +147,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     protected void doStop() throws Exception {
         // do not call super as we want to be in control here of the lifecycle
 
-        if (isRouteScoped()) {
-            // only stop services if not context scoped (as context scoped is reused by others)
-            ServiceHelper.stopService(output, errorHandler);
-        }
+        // only stop services if not context scoped (as context scoped is reused by others)
+        ServiceHelper.stopService(output, errorHandler);
     }
 
     @Override
@@ -159,10 +156,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // do not call super as we want to be in control here of the lifecycle
 
         ServiceHelper.stopAndShutdownServices(output, errorHandler);
-    }
-
-    public boolean isRouteScoped() {
-        return routeScoped;
     }
 
     /**
@@ -181,13 +174,11 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                             List<InterceptStrategy> interceptors,
                             Processor nextProcessor,
                             NamedRoute routeDefinition,
-                            boolean first,
-                            boolean routeScoped) throws Exception {
+                            boolean first) throws Exception {
         this.route = route;
         this.definition = definition;
         this.camelContext = route.getCamelContext();
         this.nextProcessor = nextProcessor;
-        this.routeScoped = routeScoped;
 
         // init CamelContextAware as early as possible on nextProcessor
         if (nextProcessor instanceof CamelContextAware) {

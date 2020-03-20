@@ -31,6 +31,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.ExceptionHandler;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -166,8 +167,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean guaranteedDeliveries;
     @UriParam(label = "producer")
     private boolean allowNullHeaders;
+    @UriParam(label = "producer")
+    private boolean allowCustomHeaders = true;
     @UriParam(label = "consumer")
     private String consumerTag = "";
+    @UriParam(label = "advanced")
+    private ExceptionHandler connectionFactoryExceptionHandler;
+    @UriParam(label = "allowMessageBodySerialization", defaultValue = "false")
+    private boolean allowMessageBodySerialization;
+
     // camel-jms supports this setting but it is not currently configurable in
     // camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
@@ -196,7 +204,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     public Exchange createRabbitExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
         Exchange exchange = super.createExchange();
-        messageConverter.populateRabbitExchange(exchange, envelope, properties, body, false);
+        messageConverter.populateRabbitExchange(exchange, envelope, properties, body, false, allowMessageBodySerialization);
         return exchange;
     }
 
@@ -574,6 +582,23 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
         this.automaticRecoveryEnabled = automaticRecoveryEnabled;
+    }
+
+    public boolean isAllowMessageBodySerialization() {
+        return allowMessageBodySerialization;
+    }
+
+    /**
+     * Whether to allow Java serialization of the message body or not. If this value is true, the message body
+     * will be serialized on the producer side using Java serialization, if no type converter can handle the
+     * message body. On the consumer side, it will deserialize the message body if this value is true and the
+     * message contains a CamelSerialize header.
+     *
+     * Setting this value to true may introduce a security vulnerability as it allows an attacker to attempt to
+     * deserialize to a gadget object which could result in a RCE or other security vulnerability.
+     */
+    public void setAllowMessageBodySerialization(boolean allowMessageBodySerialization) {
+        this.allowMessageBodySerialization = allowMessageBodySerialization;
     }
 
     public Integer getNetworkRecoveryInterval() {
@@ -961,5 +986,28 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setConsumerTag(String consumerTag) {
         this.consumerTag = consumerTag;
+    }
+
+    public boolean isAllowCustomHeaders() {
+        return allowCustomHeaders;
+    }
+
+    /**
+     * Allow pass custom values to header
+     */
+    public void setAllowCustomHeaders(boolean allowCustomHeaders) {
+        this.allowCustomHeaders = allowCustomHeaders;
+    }
+
+
+    public ExceptionHandler getConnectionFactoryExceptionHandler() {
+        return connectionFactoryExceptionHandler;
+    }
+
+    /**
+     * Custom rabbitmq ExceptionHandler for ConnectionFactory
+     */
+    public void setConnectionFactoryExceptionHandler(ExceptionHandler connectionFactoryExceptionHandler) {
+        this.connectionFactoryExceptionHandler = connectionFactoryExceptionHandler;
     }
 }

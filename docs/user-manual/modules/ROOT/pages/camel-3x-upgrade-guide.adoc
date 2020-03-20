@@ -9,6 +9,21 @@ xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
 For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
+== Upgrading Camel 3.1 to 3.1
+
+=== Rest Configuration
+
+The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.
+
+The following methods have been removed:
+
+* org.apache.camel.CamelContext#addRestConfiguration(RestConfiguration restConfiguration)
+* org.apache.camel.CamelContext#getRestConfiguration(String component, boolean defaultIfNotFound)
+* org.apache.camel.CamelContext#getRestConfigurations
+
+
+https://issues.apache.org/jira/browse/CAMEL-13844
+
 == Upgrading Camel 3.0 to 3.1
 
 === camel-ahc, camel-netty-http, camel-undertow
@@ -79,7 +94,7 @@ Should be changed to
 milo-client:opc.tcp://foo:bar@localhost:1234
 ----
 
-The `camel-milo` server component requires Java 9 at runtime. 
+The `camel-milo` server component requires Java 9 at runtime.
 Property `strictEndpointUrlsEnabled` is no longer supported.
 Properties`hostName` and `serverName` are replaced by `path`.
 To successfully use certificates for secured communication, JCE Jurisdiction Policy File Default
@@ -421,6 +436,28 @@ Should now be:
     exchange.setRollbackOnly(true);
 ----
 
+==== Exchange.ERRORHANDLER_HANDLED
+
+The exchange property `Exchange.ERRORHANDLER_HANDLED` was used to indicate that the error handling mechanism for a given exchange
+had completed.  This property sometimes had to be conveyed by aggregation strategies, so instead of
+
+[source,java]
+----
+    oldExchange.getProperties().put(
+            Exchange.ERRORHANDLER_HANDLED,
+            newExchange.getProperties().get(Exchange.ERRORHANDLER_HANDLED));
+----
+
+one should now use:
+
+[source,java]
+----
+    Boolean handled = newExchange.adapt(ExtendedExchange.class)
+            .getErrorHandlerHandled();
+    oldExchange.adapt(ExtendedExchange.class)
+            .setErrorHandlerHandled(handled);
+----
+
 ==== ModelHelper removed
 
 The class `org.apache.camel.model.ModelHelper` has been removed. Instead you can use its functionality from `ExtendedCamelContext` by
@@ -621,9 +658,178 @@ After:
 camel.component.activemq.broker-url=tcp://localhost:61616
 ----
 
+=== camel-any23
+
+The XML DSL has changed for the `<configuration>` element, which now
+is flattened so the key/values should be configured on it directly:
+
+Before:
+[source,xml]
+----
+<dataFormats>
+  <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+    <configuration>
+      <property key="any23.extraction.metadata.nesting" value="off" />
+      <property key="another-key" value="another-value" />
+    </configuration>
+    <extractors>html-head-title</extractors>
+  </any23>
+</dataFormats>
+----
+
+After:
+
+[source,xml]
+----
+<dataFormats>
+  <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+    <configuration key="any23.extraction.metadata.nesting" value="off"/>
+    <configuration key="another-key" value="another-value"/>
+    <extractors>html-head-title</extractors>
+  </any23>
+</dataFormats>
+----
+
+=== camel-infinispan
+
+Camel now requires endpoint URIs to include context-path which means
+the endpoint URI `infinispan` should be changed to `infinispan:current`.
+
 === google-pubnub
 
 The google-pubnub component has been improved to use a new Java library and become faster.
 
 Support for Apache Karaf has been removed.
+
+=== camel-xstream
+
+The XML DSL has changed for the `<converters>`, `<alias>`, `implicitCollections`, and `omitFields` elements,
+which now is flattened so the key/values should be configured on it directly.
+
+Before:
+[source,xml]
+----
+<xstream id="xstream-1" mode="NO_REFERENCES"
+    permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
+    <converters>
+        <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
+    </converters>
+    <aliases>
+                <alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
+    </aliases>
+    <implicitCollections>
+       <class name="org.apache.camel.dataformat.xstream.PurchaseHistory">
+          <field>history</field>
+       </class>
+    </implicitCollections>
+</xstream>
+----
+
+After:
+[source,xml]
+----
+<xstream id="xstream-1" mode="NO_REFERENCES"
+    permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
+    <converters key="purchase-converter" value="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter"/>
+    <aliases key="purchase-order" value="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+    <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history"/>
+</xstream>
+----
+
+Multiple values for `implicitCollections` and `omitFields` can be separated by comma
+
+For example:
+[source,xml]
+----
+<implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history,adress"/>
+----
+
+=== Endpoint URIs without context path
+
+Previously Camel components may work by referring to their name only without a colon and context path (eg `log`)
+that for a few components would allow them to create an endpoint anyway.
+
+Now this is not allowed and Camel will throw an `NoSuchEndpointException`.
+
+An endpoint by its logical id can still be referred by the id only, eg
+[source,java]
+----
+Endpoint endpoint = camelContext.getEndpoint("myCoolEndpoint");
+----
+
+=== Error handling
+
+The context scope error handling has been modified a bit.  The processors in those `onException` and
+`onCompletion` are not shared between routes anymore.  This should have little effect in most cases.
+If there is a need to have a single set of processors involved (such as when using a loadbalancer or
+other stateful patterns), then an intermediary route needs to be used. The following exerpt:
+
+[source,java]
+----
+onException(Exception.class).handled(true)
+    .loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+----
+
+... needs to be rewritten as:
+
+[source,java]
+----
+onException(Exception.class).handled(true).to("direct:error");
+
+from("direct:error").loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+----
+
+=== camel-cluster
+
+The base support for cluster in `org.apache.camel.cluster` has been moved
+out of `camel-core-engine` into separate JAR named `camel-cluster`.
+
+=== Configuring milli seconds
+
+Camel was using a type converter from `String` -> `long` that accepted
+a time pattern which allowed to configure long values such as `2s` for 2 seconds, eg `2000`.
+And more complex such as `8h15m` for 8 hours and 15 minutes.
+
+However as this was implemented as part of `String` -> `long` type convertion
+which then adds a little bit of overhead during routing, when converting from String to plain numbers.
+
+To make Camel routing engine as fast as possible, then this has been removed.
+
+For example a timer with a 5 second period
+
+[source,java]
+----
+from("timer:foo?period=5000")
+----
+
+Should now be specified as numeric only:
+
+[source,java]
+----
+from("timer:foo?period=5000")
+----
+
+
+=== API changes
+
+==== DefaultComponent
+
+The deprecated method `preProcessUri` has been removed.
+
+==== CamelContext
+
+The method `getEndpoint` now throws `NoSuchEndpointException` directly instead of being wrapped
+within an `FailedToResolveEndpoint`.
+
+==== JavaUuidGenerator
+
+The `org.apache.camel.impl.engine.JavaUuidGenerator` class has been removed.
+Its a very slow UUID generator and its not recommended to be used.
+
+==== PropertiesComponent
+
+The `org.apache.camel.component.properties.PropertiesFunction` has been moved to `org.apache.camel.spi.PropertiesFunction`
+and its now possible to add custom functions on the `org.apache.camel.spi.PropertiesComponent` interface.
 

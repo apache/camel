@@ -68,7 +68,7 @@ public class FtpSimpleConsumeStreamingPartialReadTest extends FtpServerTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true" + "&move=done&moveFailed=failed&stepwise=false")
+                from("ftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true" + "&move=done&moveFailed=failed&stepwise=false")
                     .routeId("foo").noAutoStartup().process(new Processor() {
 
                         @Override

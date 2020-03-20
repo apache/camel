@@ -7,6 +7,7 @@
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.0.1",
+    "gulp-filter": "^6.0.0",
     "gulp-inject": "^5.0.2",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",

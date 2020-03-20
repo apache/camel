@@ -35,7 +35,7 @@ public class NsqConfiguration {
     @UriPath(description = "The NSQ topic")
     @Metadata(required = true)
     private String topic;
-    @UriParam(description = "The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer).")
+    @UriParam(description = "The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer)")
     private String servers;
     @UriParam(label = "consumer", description = "The NSQ channel")
     private String channel;

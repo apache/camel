@@ -70,9 +70,9 @@ public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementT
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
 
-        // but still 1 context scoped error handler
+        // no more error handlers
         set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(1, set.size());
+        assertEquals(0, set.size());
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {

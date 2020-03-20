@@ -28,7 +28,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -44,8 +44,9 @@ import org.slf4j.LoggerFactory;
  * The ftps (FTP secure SSL/TLS) component is used for uploading or downloading
  * files from FTP servers.
  */
-@UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS", syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName", label = "file", 
-                   excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize," 
+@UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
+        syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName", label = "file")
+@Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                    + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"   
                    + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                    + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"  

@@ -941,7 +941,7 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default JmsComponentBuilder allowAutoWiredConnectionFactory(
@@ -957,7 +957,7 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
         default JmsComponentBuilder allowAutoWiredDestinationResolver(
@@ -979,6 +979,19 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
+            return this;
+        }
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default JmsComponentBuilder artemisStreamingEnabled(
+                boolean artemisStreamingEnabled) {
+            doSetProperty("artemisStreamingEnabled", artemisStreamingEnabled);
             return this;
         }
         /**
@@ -1639,6 +1652,7 @@ public interface JmsComponentBuilderFactory {
             case "allowAutoWiredConnectionFactory": ((JmsComponent) component).setAllowAutoWiredConnectionFactory((boolean) value); return true;
             case "allowAutoWiredDestinationResolver": ((JmsComponent) component).setAllowAutoWiredDestinationResolver((boolean) value); return true;
             case "allowSerializedHeaders": getOrCreateConfiguration((JmsComponent) component).setAllowSerializedHeaders((boolean) value); return true;
+            case "artemisStreamingEnabled": getOrCreateConfiguration((JmsComponent) component).setArtemisStreamingEnabled((boolean) value); return true;
             case "asyncStartListener": getOrCreateConfiguration((JmsComponent) component).setAsyncStartListener((boolean) value); return true;
             case "asyncStopListener": getOrCreateConfiguration((JmsComponent) component).setAsyncStopListener((boolean) value); return true;
             case "basicPropertyBinding": ((JmsComponent) component).setBasicPropertyBinding((boolean) value); return true;

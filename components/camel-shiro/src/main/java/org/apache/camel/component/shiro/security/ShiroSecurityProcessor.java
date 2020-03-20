@@ -17,7 +17,10 @@
 package org.apache.camel.component.shiro.security;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
@@ -117,7 +120,17 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         ByteSource decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decryptedToken.getBytes());
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream) {
+            @Override
+            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                if (!(desc.getName().equals(ShiroSecurityToken.class.getName())
+                    || "java.lang.String".equals(desc.getName()))) {
+                    throw new InvalidClassException("Unauthorized deserialization attempt", desc.getName());
+                }
+                return super.resolveClass(desc);
+            }
+
+        };
         ShiroSecurityToken securityToken;
         try {
             securityToken = (ShiroSecurityToken)objectInputStream.readObject();

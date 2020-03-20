@@ -23,7 +23,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.MongoClientURI;
+import com.mongodb.ConnectionString;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.model.Filters;
@@ -57,10 +57,10 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
         LOGGER.debug("Fetching mongodb meta information with params: {}", textParameters);
 
         ConnectionParamsConfiguration mongoConf = new ConnectionParamsConfiguration(textParameters);
-        MongoClientURI connectionURI = new MongoClientURI(mongoConf.getMongoClientURI());
+        ConnectionString connectionString = new ConnectionString(mongoConf.getMongoClientURI());
 
         JsonNode collectionInfoRoot;
-        try (MongoClient mongoConnection = MongoClients.create(connectionURI.getURI())) {
+        try (MongoClient mongoConnection = MongoClients.create(connectionString)) {
             Document collectionInfo = mongoConnection.getDatabase(textParameters.get("database"))
                     .listCollections()
                     .filter(Filters.eq("name", textParameters.get("collection")))

@@ -37,18 +37,6 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
 
     @Override
     public void addRoutes() throws Exception {
-        // assign whether this was a route scoped onException or not
-        // we need to know this later when setting the parent, as only route
-        // scoped should have parent
-        // Note: this logic can possible be removed when the Camel routing
-        // engine decides at runtime
-        // to apply onException in a more dynamic fashion than current code base
-        // and therefore is in a better position to decide among context/route
-        // scoped OnException at runtime
-        if (definition.getRouteScoped() == null) {
-            definition.setRouteScoped(definition.getParent() != null);
-        }
-
         // must validate configuration before creating processor
         definition.validateConfiguration();
 
@@ -62,7 +50,7 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         if (child != null) {
             // wrap in our special safe fallback error handler if OnException
             // have child output
-            Processor errorHandler = new FatalFallbackErrorHandler(child);
+            Processor errorHandler = new FatalFallbackErrorHandler(child, false);
             String id = getId(definition);
             route.setOnException(id, errorHandler);
         }

@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.ddbstream;
 
 import com.amazonaws.Protocol;
 import com.amazonaws.regions.Regions;
-import org.apache.camel.component.aws.ddb.DdbEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

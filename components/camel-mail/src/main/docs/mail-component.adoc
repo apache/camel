@@ -228,7 +228,7 @@ with the following path and query parameters:
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
 | *delay* (scheduler) | Milliseconds before the next poll. | 60000 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
-| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
 | *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. The value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
@@ -712,5 +712,25 @@ The parameter maxMessagePerPoll and fetchSize allow you to restrict the number m
 These parameters should help to prevent bad performance when working with folders that contain a lot of messages.
 In previous versions these parameters have been evaluated too late, so that big mailboxes could still cause performance problems.
 With Camel 3.1 these parameters are evaluated earlier during the poll to avoid these problems.
+
+== Using headers with additional Java Mail Sender properties
+
+*Since Camel 3.2*
+
+When sending mails, then you can provide dynamic java mail properties for the `JavaMailSender` from
+the Exchange as message headers with keys starting with `java.smtp.`.
+
+You can set any of the `java.smtp` properties which you can find in the Java Mail documentation.
+
+For example to provide a dynamic uuid in `java.smtp.from` (SMTP MAIL command):
+
+[source,java]
+----
+    .setHeader("from", constant("reply2me@foo.com"));
+    .setHeader("java.smtp.from", method(UUID.class, "randomUUID"));
+    .to("smtp://mymailserver:1234");
+----
+
+NOTE: This is only supported when *not* using a custom `JavaMailSender`.
 
 include::camel-spring-boot::page$mail-starter.adoc[]

@@ -1,0 +1,36 @@
+[[Endpoint-DSL]]
+= Endpoint DSL
+
+Endpoint-dsl is a new API that allows to use type-safe endpoint URL configurations.
+
+The following is an example of an FTP consumer endpoint definition:
+
+[source,java]
+----
+from("ftp://foo@myserver?password=secret&recursive=true&
+           ftpClient.dataTimeout=30000&
+           ftpClientConfig.serverLanguageCode=fr")
+    .to("bean:doSomething");
+----
+
+The same Java statement can be rewritten in the following more readable way:
+
+[source,java]
+----
+from(ftp("myserver").account("foo").password("secret").recursive(true)
+        .advanced()
+        .ftpClientParameters(Collections.singletonMap("dataTimeout", 30000))
+        .ftpClientConfig(Collections.singletonMap("serverLanguageCode", "fr")))
+    .to(bean("something"));
+----
+
+== The fluent DSL now provides type safety for parameters:
+
+The above example of endpoint-dsl uses the meta model, which is  extracted from the source using an annotation processor and
+written in various JSON files, to generate a fluent DSL for each endpoint.This fluent DSL provides type safety for parameters.
+It further allows leveraging the Java editor code completion to access the list of available parameters for the each endpoint.
+
+== How to use
+
+The DSL can be accessed in several ways, but the main one is to switch to using an `EndpointRouteBuilder` instead of the usual 
+`RouteBuilder`.  It provides access to all endpoint builders which are defined through inheritance on the `EndpointRouteBuilder`.

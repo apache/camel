@@ -610,6 +610,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2MskComponentBuilderFactory.aws2Msk();
     }
     /**
+     * AWS2 S3 Storage Service (camel-aws2-s3)
+     * The aws2-s3 component is used for storing and retrieving object from
+     * Amazon S3 Storage Service.
+     * 
+     * Category: cloud,file
+     * Since: 3.2
+     * Maven coordinates: org.apache.camel:camel-aws2-s3
+     */
+    static org.apache.camel.builder.component.dsl.Aws2S3ComponentBuilderFactory.Aws2S3ComponentBuilder aws2S3() {
+        return org.apache.camel.builder.component.dsl.Aws2S3ComponentBuilderFactory.aws2S3();
+    }
+    /**
      * AWS 2 Simple Email Service (camel-aws2-ses)
      * The aws2-ses component is used for sending emails with Amazon's SES
      * service.

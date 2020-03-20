@@ -28,9 +28,9 @@ import java.util.stream.IntStream;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cluster.ClusteredRoutePolicy;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.cluster.ClusteredRoutePolicy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -90,7 +90,7 @@ public class ConsulClusteredRoutePolicyTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("timer:consul?delay=1s&period=1s").routeId("route-" + id).routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
+                    from("timer:consul?delay=1000&period=1000").routeId("route-" + id).routePolicy(ClusteredRoutePolicy.forNamespace("my-ns")).log("From ${routeId}")
                         .process(e -> contextLatch.countDown());
                 }
             });

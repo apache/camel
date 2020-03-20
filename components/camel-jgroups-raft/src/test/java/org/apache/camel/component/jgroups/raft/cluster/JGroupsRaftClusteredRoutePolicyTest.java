@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cluster.ClusteredRoutePolicy;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.cluster.ClusteredRoutePolicy;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:master?delay=1s&period=1s")
+                from("timer:master?delay=1000&period=1000")
                         .routeId("route-" + id)
                         .routePolicy(ClusteredRoutePolicy.forNamespace("jgr"))
                         .log("From ${routeId}");

@@ -43,6 +43,8 @@ public class JacksonDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "disableFeatures": dataformat.setDisableFeatures(property(camelContext, java.lang.String.class, value)); return true;
         case "allowunmarshalltype":
         case "allowUnmarshallType": dataformat.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
+        case "contenttypeheader":
+        case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
         case "timezone": dataformat.setTimezone(property(camelContext, java.util.TimeZone.class, value)); return true;
         case "autodiscoverobjectmapper":
         case "autoDiscoverObjectMapper": dataformat.setAutoDiscoverObjectMapper(property(camelContext, boolean.class, value)); return true;

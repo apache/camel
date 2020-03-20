@@ -26,7 +26,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.PropertyBindingSupport;
 
 /**
  * Represents the component that manages {@link WordpressEndpoint}.

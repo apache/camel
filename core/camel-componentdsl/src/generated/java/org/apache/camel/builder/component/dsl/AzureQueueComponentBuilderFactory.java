@@ -193,6 +193,30 @@ public interface AzureQueueComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+        /**
+         * Set the storage account key used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureQueueComponentBuilder credentialsAccountKey(
+                java.lang.String credentialsAccountKey) {
+            doSetProperty("credentialsAccountKey", credentialsAccountKey);
+            return this;
+        }
+        /**
+         * Set the storage account name used during authentication phase.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default AzureQueueComponentBuilder credentialsAccountName(
+                java.lang.String credentialsAccountName) {
+            doSetProperty("credentialsAccountName", credentialsAccountName);
+            return this;
+        }
     }
 
     class AzureQueueComponentBuilderImpl
@@ -227,6 +251,8 @@ public interface AzureQueueComponentBuilderFactory {
             case "queuePrefix": getOrCreateConfiguration((QueueServiceComponent) component).setQueuePrefix((java.lang.String) value); return true;
             case "basicPropertyBinding": ((QueueServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((QueueServiceComponent) component).setConfiguration((org.apache.camel.component.azure.queue.QueueServiceConfiguration) value); return true;
+            case "credentialsAccountKey": getOrCreateConfiguration((QueueServiceComponent) component).setCredentialsAccountKey((java.lang.String) value); return true;
+            case "credentialsAccountName": getOrCreateConfiguration((QueueServiceComponent) component).setCredentialsAccountName((java.lang.String) value); return true;
             default: return false;
             }
         }

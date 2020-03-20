@@ -289,11 +289,6 @@ public interface Model {
     void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
 
     /**
-     * Start all routes from this model.
-     */
-    void startRouteDefinitions() throws Exception;
-
-    /**
      * Used for filtering routes routes matching the given pattern, which
      * follows the following rules: - Match by route id - Match by route input
      * endpoint uri The matching is using exact match, by wildcard and regular

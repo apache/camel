@@ -20,19 +20,18 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 
-
 public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDefinitionGenerator> {
 
-    RestDslDefinitionGenerator(final OasDocument openapi) {
-        super(openapi);
+    RestDslDefinitionGenerator(final OasDocument document) {
+        super(document);
     }
 
     public RestsDefinition generate(final CamelContext context) {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
-        String basePath = RestDslGenerator.getBasePathFromOasDocument(openapi);
+        final String basePath = RestDslGenerator.determineBasePathFrom(document);
         final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(basePath, emitter, filter, destinationGenerator());
 
-        openapi.paths.getPathItems().forEach(restDslStatement::visit);
+        document.paths.getPathItems().forEach(restDslStatement::visit);
 
         return emitter.result();
     }

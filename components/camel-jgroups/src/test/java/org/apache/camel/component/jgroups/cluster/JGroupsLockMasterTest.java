@@ -76,7 +76,7 @@ public class JGroupsLockMasterTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("master:jgl:timer:master?delay=1s&period=1s")
+                    from("master:jgl:timer:master?delay=1000&period=1000")
                             .routeId("route-" + id)
                             .log("From ${routeId}")
                             .process(e -> contextLatch.countDown());

@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -180,8 +181,11 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
                 basePath = path;
                 uriTemplate = null;
             }
-            RestConfiguration config = camelContext.getRestConfiguration(componentName, true);   
-            return factory.createProducer(camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
+
+            RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, componentName);
+
+            return factory.createProducer(
+                camelContext, host, verb, basePath, uriTemplate, queryParameters, consumes, produces, config, parameters);
 
         } else {
             throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");

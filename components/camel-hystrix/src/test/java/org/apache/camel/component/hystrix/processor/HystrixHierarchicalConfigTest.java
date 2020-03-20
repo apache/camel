@@ -17,12 +17,12 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.Route;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class HystrixHierarchicalConfigTest {
     public void testRegistryConfiguration() throws Exception {
         final SimpleRegistry registry = new SimpleRegistry();
         final CamelContext context = new DefaultCamelContext(registry);
-        final Route route = new DefaultRoute(context, null, null, null);
+        final Route route = new DefaultRoute(context, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
@@ -65,7 +65,7 @@ public class HystrixHierarchicalConfigTest {
     @Test
     public void testContextConfiguration() throws Exception {
         final CamelContext context = new DefaultCamelContext();
-        final Route route = new DefaultRoute(context, null, null, null);
+        final Route route = new DefaultRoute(context, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");
@@ -98,7 +98,7 @@ public class HystrixHierarchicalConfigTest {
     public void testMixedConfiguration() throws Exception {
         final SimpleRegistry registry = new SimpleRegistry();
         final CamelContext context = new DefaultCamelContext(registry);
-        final Route route = new DefaultRoute(context, null, null, null);
+        final Route route = new DefaultRoute(context, null, null, null, null);
 
         HystrixConfigurationDefinition def = new HystrixConfigurationDefinition();
         def.setGroupKey("global-group-key");

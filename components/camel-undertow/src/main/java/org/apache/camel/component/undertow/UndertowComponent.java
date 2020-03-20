@@ -41,6 +41,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.RestProducerFactoryHelper;
@@ -72,6 +73,11 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     private UndertowHostOptions hostOptions;
     @Metadata(label = "consumer", defaultValue = "false")
     private boolean muteException;
+    @Metadata(label = "security")
+    private Object securityConfiguration;
+    @Metadata(label = "security")
+    private String allowedRoles;
+
 
     public UndertowComponent() {
         this(null);
@@ -85,6 +91,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+
         URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
@@ -166,7 +173,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = camelContext.getRestConfiguration(getComponentName(), true);
+            config = CamelContextHelper.getRestConfiguration(camelContext, getComponentName());
+
         }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
@@ -197,10 +205,10 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(getComponentName(), config);
         // build query string, and append any endpoint configuration properties
 
-        
+
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-        
+
         boolean explicitOptions = restrict.contains("OPTIONS");
         boolean cors = config.isEnableCORS();
 
@@ -211,11 +219,11 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             // the rest-dsl is using OPTIONS
             map.put("optionsEnabled", "true");
         }
-        
+
         if (api) {
             map.put("matchOnUriPrefix", "true");
         }
-        
+
         RestComponentHelper.addHttpRestrictParam(map, verb, !explicitOptions);
 
         String url = RestComponentHelper.createRestConsumerUrl(getComponentName(), scheme, host, port, path, map);
@@ -232,6 +240,10 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
+        }
+        if (consumer instanceof UndertowConsumer) {
+            // mark the consumer as a rest consumer
+            ((UndertowConsumer) consumer).setRest(true);
         }
 
         return consumer;
@@ -255,13 +267,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             url += "/" + uriTemplate;
         }
 
-        RestConfiguration config = getCamelContext().getRestConfiguration(getComponentName(), false);
-        if (config == null) {
-            config = getCamelContext().getRestConfiguration();
-        }
-        if (config == null) {
-            config = getCamelContext().getRestConfiguration(getComponentName(), true);
-        }
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, getComponentName());
 
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
@@ -300,25 +306,26 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration(getComponentName(), true);
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), getComponentName());
+
         // configure additional options on undertow configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());
         }
     }
 
-    public HttpHandler registerEndpoint(HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
+    public HttpHandler registerEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext, HttpHandler handler) {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
-        final UndertowHost host = undertowRegistry.computeIfAbsent(key, k -> createUndertowHost(k));
+        final UndertowHost host = undertowRegistry.computeIfAbsent(key, this::createUndertowHost);
 
         host.validateEndpointURI(uri);
         handlers.add(registrationInfo);
 
-        return host.registerHandler(registrationInfo, handler);
+        return host.registerHandler(consumer, registrationInfo, handler);
     }
 
-    public void unregisterEndpoint(HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
+    public void unregisterEndpoint(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, SSLContext sslContext) {
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.get(key);
@@ -329,7 +336,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         // may not have any instance of UndertowHost associated to the given
         // registrationInfo
         if (host != null) {
-            host.unregisterHandler(registrationInfo);
+            host.unregisterHandler(consumer, registrationInfo);
         }
     }
 
@@ -404,5 +411,28 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
     public Set<HttpHandlerRegistrationInfo> getHandlers() {
         return handlers;
+    }
+
+    public Object getSecurityConfiguration() {
+        return securityConfiguration;
+    }
+
+    /**
+     * Configuration used by UndertowSecurityProvider. Security configuration object for use from UndertowSecurityProvider.
+     * Configuration is UndertowSecurityProvider specific. Each provider decides, whether it accepts configuration.
+     */
+    public void setSecurityConfiguration(Object securityConfiguration) {
+        this.securityConfiguration = securityConfiguration;
+    }
+
+    public String getAllowedRoles() {
+        return allowedRoles;
+    }
+
+    /**
+     * Configuration used by UndertowSecurityProvider. Comma separated list of allowed roles.
+     */
+    public void setAllowedRoles(String allowedRoles) {
+        this.allowedRoles = allowedRoles;
     }
 }

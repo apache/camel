@@ -273,6 +273,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      */
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
+        answer.setRouteScoped(false);
         getOnCompletions().add(answer);
         return answer;
     }

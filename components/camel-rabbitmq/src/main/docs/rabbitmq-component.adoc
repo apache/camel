@@ -51,7 +51,7 @@ exchange name determines which exchange the queue will bind to.
 == Options
 
 // component options: START
-The RabbitMQ component supports 52 options, which are listed below.
+The RabbitMQ component supports 53 options, which are listed below.
 
 
 
@@ -97,6 +97,7 @@ The RabbitMQ component supports 52 options, which are listed below.
 | *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
+| *connectionFactoryException Handler* (advanced) | Custom rabbitmq ExceptionHandler for ConnectionFactory |  | ExceptionHandler
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
@@ -133,7 +134,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (60 parameters):
+=== Query Parameters (63 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -172,6 +173,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. The value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
+| *allowCustomHeaders* (producer) | Allow pass custom values to header | false | boolean
 | *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
 | *bridgeEndpoint* (producer) | If the bridgeEndpoint is true, the producer will ignore the message header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY | false | boolean
 | *channelPoolMaxSize* (producer) | Get maximum number of opened channel in pool | 10 | int
@@ -185,6 +187,7 @@ with the following path and query parameters:
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
+| *connectionFactoryException Handler* (advanced) | Custom rabbitmq ExceptionHandler for ConnectionFactory |  | ExceptionHandler
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
@@ -195,6 +198,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *topologyRecoveryEnabled* (advanced) | Enables connection topology recovery (should topology recovery be performed) |  | Boolean
 | *transferException* (advanced) | When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response | false | boolean
+| *allowMessageBodySerialization* (allowMessageBodySerialization) | Whether to allow Java serialization of the message body or not. If this value is true, the message body will be serialized on the producer side using Java serialization, if no type converter can handle the message body. On the consumer side, it will deserialize the message body if this value is true and the message contains a CamelSerialize header. Setting this value to true may introduce a security vulnerability as it allows an attacker to attempt to deserialize to a gadget object which could result in a RCE or other security vulnerability. | false | boolean
 | *password* (security) | Password for authenticated access | guest | String
 | *sslProtocol* (security) | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
 | *trustManager* (security) | Configure SSL trust manager, SSL should be enabled for this option to be effective |  | TrustManager
@@ -246,6 +250,7 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 </camelContext>
 ----
 
+In case you have multiple connection factories in your application or multiple connection factories in your registry, don't forge to set the `autoDetectConnectionFactory` to false.
 
 == Message Headers
 
@@ -317,6 +322,16 @@ Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
 producer sets will be overridden.
+
+== Allowing custom Headers
+
+The `allowCustomHeaders` endpoint option can be used to avoid adding custom headers to the message sent to RabbitMQ.
+If set to false, the user will have only rabbitmq.* headers in the payload of the message. Default value for this option is true.
+
+[NOTE]
+====
+If you decide to use the allowCustomHeaders option, don't add sensitive information as header. It's not recommended and it's dangerous. Don't do it.
+====
 
 == Message Body
 

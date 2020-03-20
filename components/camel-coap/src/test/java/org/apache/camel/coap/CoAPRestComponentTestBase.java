@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -124,7 +123,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RestConfigurationDefinition restConfig = restConfiguration("coap").scheme(getProtocol()).host("localhost").port(coapport);
+                RestConfigurationDefinition restConfig = restConfiguration().scheme(getProtocol()).host("localhost").port(coapport);
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");

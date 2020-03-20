@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Core Languages</name>
-    <description>The Base Camel Framework</description>
+    <description>Camel Core Languages</description>
 
     <properties>
         <firstVersion>3.2.0</firstVersion>

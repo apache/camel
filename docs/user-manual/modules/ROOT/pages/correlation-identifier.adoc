@@ -25,8 +25,8 @@ those cases, Camel will add a correlation id on the
 xref:exchange.adoc[Exchange] as a property with they key
 `Exchange.CORRELATION_ID`, which links back to the source
 xref:exchange.adoc[Exchange]. For example the
-xref:split-eip.adoc[Splitter], xref:multicast-eip.adoc[Multicast],
-xref:recipientList-eip.adoc[Recipient List], and xref:wireTap-eip.adoc[Wire
+xref:eips:split-eip.adoc[Splitter], xref:eips:multicast-eip.adoc[Multicast],
+xref:eips:recipientList-eip.adoc[Recipient List], and xref:eips:wireTap-eip.adoc[Wire
 Tap] EIP does this.
 
 The following example demonstrates using the Camel JMSMessageID as the

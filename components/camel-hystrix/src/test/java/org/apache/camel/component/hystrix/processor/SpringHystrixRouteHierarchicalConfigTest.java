@@ -17,11 +17,11 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.Route;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
     public void testHystrix() throws Exception {
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
         final Route route = new DefaultRoute(context, routeDefinition,
-                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()), null);
+                routeDefinition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()), null, null);
         CircuitBreakerDefinition hystrixDefinition = findCircuitBreakerDefinition(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);

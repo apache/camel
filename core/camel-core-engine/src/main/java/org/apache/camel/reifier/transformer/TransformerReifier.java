@@ -35,7 +35,7 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
     static {
         Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> map = new HashMap<>();
         map.put(CustomTransformerDefinition.class, CustomTransformeReifier::new);
-        map.put(DataFormatTransformerDefinition.class, DataFormatTransformeReifier::new);
+        map.put(DataFormatTransformerDefinition.class, DataFormatTransformerReifier::new);
         map.put(EndpointTransformerDefinition.class, EndpointTransformeReifier::new);
         TRANSFORMERS = map;
         ReifierStrategy.addReifierClearer(TransformerReifier::clearReifiers);

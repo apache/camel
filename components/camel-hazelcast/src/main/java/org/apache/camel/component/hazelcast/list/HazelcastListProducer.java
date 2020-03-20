@@ -19,8 +19,8 @@ package org.apache.camel.component.hazelcast.list;
 import java.util.Collection;
 import java.util.Map;
 
+import com.hazelcast.collection.IList;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;

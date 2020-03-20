@@ -38,9 +38,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
@@ -187,9 +185,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         // so we should use that one
         if (!isErrorHandlerFactoryConfigured(ref)) {
             // see if there has been configured a error handler builder on the route
-            // TODO: Avoid using RouteDefinition - tests should pass: https://issues.apache.org/jira/browse/CAMEL-13984
-            RouteDefinition def = (RouteDefinition) route.getRoute();
-            answer = def.getErrorHandlerFactory();
+            answer = route.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
             if (answer instanceof ErrorHandlerBuilderRef) {
                 ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
@@ -266,13 +262,9 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             list = createExceptionClasses(exceptionType);
             for (Class<? extends Throwable> clazz : list) {
                 String routeId = null;
-                // only get the route id, if the exception type is route
-                // scoped
+                // only get the route id, if the exception type is route scoped
                 if (exceptionType.isRouteScoped()) {
-                    RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
-                    if (route != null) {
-                        routeId = route.getId();
-                    }
+                    routeId = route.getRouteId();
                 }
                 Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
                 ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);

@@ -106,7 +106,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cacheName* | *Required* The cache to use |  | String
+| *cacheName* | *Required* The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name. |  | String
 |===
 
 
