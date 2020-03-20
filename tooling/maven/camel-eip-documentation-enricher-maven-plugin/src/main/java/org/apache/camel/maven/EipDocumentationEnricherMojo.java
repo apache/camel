@@ -69,9 +69,9 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     public File outputCamelSchemaFile;
 
     /**
-     * Path to camel core project root directory.
+     * Path to camel core-engine project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-engine")
     public File camelCoreDir;
 
     /**
@@ -159,17 +159,22 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
         Set<String> injectedTypes = new LinkedHashSet<>();
 
-        getLog().info("Found " + typeToNameMap.size() + " models to use when enriching the XSD schema");
+        getLog().debug("Found " + typeToNameMap.size() + " models to use when enriching the XSD schema");
+        int enriched = 0;
 
         for (Map.Entry<String, String> entry : typeToNameMap.entrySet()) {
             String elementType = entry.getKey();
             String elementName = entry.getValue();
             if (jsonFileExistsForElement(jsonFiles, elementName)) {
+                enriched++;
                 getLog().debug("Enriching " + elementName);
                 File file = jsonFiles.get(elementName);
                 injectAttributesDocumentation(domFinder, documentationEnricher, file, elementType, injectedTypes);
+            } else {
+                getLog().warn("Cannot find json metadata to use for enriching element " + elementName);
             }
         }
+        getLog().info("Enriched " + enriched + " models out of " + typeToNameMap.size() + " models");
 
         saveToFile(document, outputCamelSchemaFile, XmlHelper.buildTransformer());
     }
