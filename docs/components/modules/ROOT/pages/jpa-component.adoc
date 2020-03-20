@@ -404,7 +404,7 @@ xref:jpa-component.adoc[JPA] to store traced messages into a database.
 
 == Using the JPA-Based Idempotent Repository
 
-The Idempotent Consumer from the xref:latest@manual::enterprise-integration-patterns.adoc[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
+The Idempotent Consumer from the xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
 
 To use the JPA based idempotent repository.
 
