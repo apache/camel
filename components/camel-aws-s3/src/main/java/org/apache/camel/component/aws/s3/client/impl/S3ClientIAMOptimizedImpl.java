@@ -88,7 +88,7 @@ public class S3ClientIAMOptimizedImpl implements S3Client {
             }
             clientBuilder = clientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
             if (ObjectHelper.isNotEmpty(configuration.getEndpointConfiguration())) {
-            	clientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
+                clientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
             }
             client = clientBuilder.build();
         } else {
@@ -97,7 +97,7 @@ public class S3ClientIAMOptimizedImpl implements S3Client {
             }
             encClientBuilder = encClientBuilder.withPathStyleAccessEnabled(configuration.isPathStyleAccess());
             if (ObjectHelper.isNotEmpty(configuration.getEndpointConfiguration())) {
-            	encClientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
+                encClientBuilder.withEndpointConfiguration(configuration.getEndpointConfiguration());
             }
             client = encClientBuilder.build();
         }
