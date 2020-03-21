@@ -21,14 +21,30 @@ import java.util.Map;
 /**
  * A marker interface to identify the object as being a configurer which can
  * provide details about the options the configurer supports.
+ * <p/>
+ * This is used in Camel to have fast property configuration of Camel components & endpoints,
+ * and for EIP patterns as well.
+ *
+ * @see PropertyConfigurer
  */
-public interface PropertyOptionsConfigurer {
+public interface PropertyConfigurerGetter {
 
     /**
      * Provides a map of which options the cofigurer supports and their class type.
      *
-     * @return options as map name -> class type.
+     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
+     * @return configurable options from the target as a Map name -> class type.
      */
-    Map<String, Object> options();
+    Map<String, Object> getAllOptions(Object target);
+
+    /**
+     * Gets the property value
+     *
+     * @param target  the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
+     * @param name          the property name
+     * @param ignoreCase    whether to ignore case for matching the property name
+     * @return the property value
+     */
+    Object getOptionValue(Object target, String name, boolean ignoreCase);
 
 }
