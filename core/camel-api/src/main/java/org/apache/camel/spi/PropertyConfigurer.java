@@ -23,6 +23,8 @@ import org.apache.camel.CamelContext;
  * <p/>
  * This is used in Camel to have fast property configuration of Camel components & endpoints,
  * and for EIP patterns as well.
+ *
+ * @see PropertyConfigurerGetter
  */
 public interface PropertyConfigurer {
 

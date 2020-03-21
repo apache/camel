@@ -30,9 +30,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
@@ -338,11 +341,44 @@ public final class PropertyBindingSupport {
         return false;
     }
 
-    private static boolean doAutowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target, Set<Object> parents,
+    private static boolean doAutowireSingletonPropertiesFromRegistry(final CamelContext camelContext, Object target, Set<Object> parents,
                                                                      boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) throws Exception {
 
+        // properties of all the current values from the target
         Map<String, Object> properties = new LinkedHashMap<>();
-        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(target, properties, null);
+
+        // if there a configurer
+        PropertyConfigurer configurer = null;
+        PropertyConfigurerGetter getter = null;
+        if (target instanceof Component) {
+            // the component needs to be initialized to have the configurer ready
+            ServiceHelper.initService(target);
+            configurer = ((Component) target).getComponentPropertyConfigurer();
+        }
+        if (configurer == null) {
+            String name = target.getClass().getSimpleName();
+            if (target instanceof ExtendedCamelContext) {
+                // special for camel context itself as we have an extended configurer
+                name = "ExtendedCamelContext";
+            }
+            // see if there is a configurer for it
+            configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver().resolvePropertyConfigurer(name, camelContext);
+        }
+
+        // use configurer to get all the current options and its values
+        if (configurer instanceof PropertyConfigurerGetter) {
+            getter = (PropertyConfigurerGetter) configurer;
+            final PropertyConfigurerGetter lambdaGetter = getter;
+            final Object lambdaTarget = target;
+            // TODO: optimize to only load complex values as these are the only ones we
+            getter.getAllOptions(target).forEach((key, type) -> {
+                Object value = lambdaGetter.getOptionValue(lambdaTarget, key, true);
+                properties.put(key, value);
+            });
+        } else {
+            // okay use reflection based
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(target, properties, null);
+        }
 
         boolean hit = false;
 
@@ -362,7 +398,14 @@ public final class PropertyBindingSupport {
                 continue;
             }
 
-            Class<?> type = getGetterType(camelContext, target, key, false);
+            Class<?> type;
+            if (getter != null) {
+                // use getter configurer to know the property class type
+                type = (Class<?>) getter.getAllOptions(target).get(key);
+            } else {
+                // okay fallback to use reflection based
+                type = getGetterType(camelContext, target, key, false);
+            }
             if (type != null && CamelContext.class.isAssignableFrom(type)) {
                 // the camel context is usually bound by other means so don't bind it to the target object
                 // and most important do not walk it down and re-configure it.
@@ -380,7 +423,14 @@ public final class PropertyBindingSupport {
                     if (lookup.size() == 1) {
                         value = lookup.iterator().next();
                         if (value != null) {
-                            hit |= camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, target, key, value);
+                            if (configurer != null) {
+                                // favour using source code generated configurer
+                                hit = configurer.configure(camelContext, target, key, value, true);
+                            }
+                            if (!hit) {
+                                // fallback to use reflection based
+                                hit = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, target, key, value);
+                            }
                             if (hit && callback != null) {
                                 callback.onAutowire(target, key, type, value);
                             }
