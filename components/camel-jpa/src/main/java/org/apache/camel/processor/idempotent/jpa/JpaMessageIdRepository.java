@@ -145,12 +145,24 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 if (isJoinTransaction()) {
                     entityManager.joinTransaction();
                 }
-
-                List<?> list = query(entityManager, messageId);
-                if (list.isEmpty()) {
-                    return Boolean.FALSE;
-                } else {
-                    return Boolean.TRUE;
+                try {
+                    List<?> list = query(entityManager, messageId);
+                    if (list.isEmpty()) {
+                        return Boolean.FALSE;
+                    } else {
+                        return Boolean.TRUE;
+                    }
+                } catch (Exception ex) {
+                    LOG.error("Something went wrong trying to check message in repository {}", ex);
+                    throw new PersistenceException(ex);
+                } finally {
+                    try {
+                        if (entityManager.isOpen()) {
+                            entityManager.close();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
             }
         });
