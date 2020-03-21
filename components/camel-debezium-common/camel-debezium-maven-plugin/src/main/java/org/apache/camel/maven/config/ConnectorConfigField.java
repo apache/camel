@@ -53,7 +53,7 @@ public class ConnectorConfigField {
     }
 
     public String getFieldGetterMethodName() {
-        return getGetterMethodName(fieldDef.name);
+        return getGetterMethodName(fieldDef.name, fieldDef.type);
     }
 
     public Class<?> getRawType() {
@@ -94,8 +94,12 @@ public class ConnectorConfigField {
         return getCamelCase("set." + name);
     }
 
-    private String getGetterMethodName(final String name) {
-        return getCamelCase("get." + name);
+    private String getGetterMethodName(final String name, ConfigDef.Type type) {
+        if (type == ConfigDef.Type.BOOLEAN) {
+            return getCamelCase("is." + name);
+        } else {
+            return getCamelCase("get." + name);
+        }
     }
 
     private String getCamelCase(final String name) {
