@@ -21,10 +21,13 @@ import org.apache.camel.Message;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientSpringTestSupport;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DirtiesContext
 public class SpringAtomixMapProducerTest extends AtomixClientSpringTestSupport {
@@ -35,7 +38,7 @@ public class SpringAtomixMapProducerTest extends AtomixClientSpringTestSupport {
     }
 
     @Test
-    public void testPut() throws Exception {
+    void testPut() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
         final DistributedMap<Object, Object> map = getClient().getMap("test-map").join();

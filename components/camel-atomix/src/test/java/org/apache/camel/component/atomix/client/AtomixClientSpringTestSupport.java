@@ -19,7 +19,7 @@ package org.apache.camel.component.atomix.client;
 import io.atomix.AtomixClient;
 import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 
 public abstract class AtomixClientSpringTestSupport extends CamelSpringTestSupport {
     protected Address getReplicaAddress() {
