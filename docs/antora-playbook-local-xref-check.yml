@@ -38,7 +38,7 @@ content:
 
 asciidoc:
   attributes:
-    eip-vc: latest@eip
+    eip-vc: latest@components
 
 ui:
   bundle:

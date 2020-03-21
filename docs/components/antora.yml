@@ -22,3 +22,4 @@ nav:
   - modules/ROOT/nav.adoc
   - modules/dataformats/nav.adoc
   - modules/languages/nav.adoc
+  - modules/eips/nav.adoc
