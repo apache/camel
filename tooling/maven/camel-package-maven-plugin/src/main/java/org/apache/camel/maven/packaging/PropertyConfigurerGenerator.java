@@ -36,15 +36,19 @@ public final class PropertyConfigurerGenerator {
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");
+        w.write("import java.util.Map;\n");
+        w.write("\n");
         w.write("import org.apache.camel.CamelContext;\n");
         w.write("import org.apache.camel.spi.GeneratedPropertyConfigurer;\n");
+        w.write("import org.apache.camel.spi.PropertyOptionsConfigurer;\n");
+        w.write("import org.apache.camel.util.CaseInsensitiveMap;\n");
         w.write("import "  + pfqn + ";\n");
         w.write("\n");
         w.write("/**\n");
         w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
         w.write(" */\n");
         w.write("@SuppressWarnings(\"unchecked\")\n");
-        w.write("public class " + cn + " extends " + psn + " implements GeneratedPropertyConfigurer {\n");
+        w.write("public class " + cn + " extends " + psn + " implements GeneratedPropertyConfigurer, PropertyOptionsConfigurer {\n");
         w.write("\n");
         if (!options.isEmpty() || !hasSuper) {
 
@@ -83,8 +87,31 @@ public final class PropertyConfigurerGenerator {
                 w.write("        }\n");
             }
             w.write("    }\n");
+
+            // generate API that returns which
+            w.write("\n");
+            w.write("    @Override\n");
+            w.write("    public Map<String, Object> options() {\n");
+            if (hasSuper) {
+                w.write("        Map<String, Object> answer = super.options();\n");
+            } else {
+                w.write("        Map<String, Object> answer = new CaseInsensitiveMap();\n");
+            }
+            if (!options.isEmpty() || !hasSuper) {
+                for (BaseOptionModel option : options) {
+                    // type may contain generics so remove those
+                    String type = option.getJavaType();
+                    if (type.indexOf('<') != -1) {
+                        type = type.substring(0, type.indexOf('<'));
+                    }
+                    type = type.replace('$', '.');
+                    w.write(String.format("        answer.put(\"%s\", %s.class);\n", option.getName(), type));
+                }
+                w.write("        return answer;\n");
+                w.write("    }\n");
+            }
         }
-        w.write("\n");
+
         w.write("}\n");
         w.write("\n");
     }
