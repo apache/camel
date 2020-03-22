@@ -125,7 +125,7 @@ public final class PropertyConfigurerGenerator {
                     if (!option.getName().toLowerCase().equals(option.getName())) {
                         w.write(String.format("        case \"%s\":\n", option.getName().toLowerCase()));
                     }
-                    w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), getterLambda));
+                    w.write(String.format("        case \"%s\": return %s;\n", option.getName(), getterLambda));
                 }
                 if (hasSuper) {
                     w.write("        default: return super.getOptionValue(obj, name, ignoreCase);\n");
