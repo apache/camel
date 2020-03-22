@@ -42,9 +42,4 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
         component.setSecurityPoliciesById("None,http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetSecurityPolicies4() {
-        final MiloServerComponent component = new MiloServerComponent();
-        component.setSecurityPoliciesById("I just made that up");
-    }
 }
