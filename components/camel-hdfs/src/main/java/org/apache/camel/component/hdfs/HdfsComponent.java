@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.hdfs;
 
-import javax.security.auth.login.Configuration;
 import java.net.URL;
 import java.util.Map;
+
+import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hdfs.kerberos.KerberosConfigurationBuilder;
