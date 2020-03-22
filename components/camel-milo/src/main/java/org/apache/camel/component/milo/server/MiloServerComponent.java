@@ -131,6 +131,8 @@ public class MiloServerComponent extends DefaultComponent {
     private OpcUaServerConfig buildServerConfig() {
         OpcUaServerConfigBuilder serverConfig = this.opcServerConfig  != null ? this.opcServerConfig : createDefaultConfiguration();
 
+        this.securityPolicies = createSecurityPolicies();
+
         Map<String, String> userMap = createUserMap();
         if (!userMap.isEmpty() || enableAnonymousAuthentication != null) {
             // set identity validator
@@ -204,7 +206,7 @@ public class MiloServerComponent extends DefaultComponent {
     }
 
     private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies) {
-        return createEndpointConfigurations(userTokenPolicies, createSecurityPolicies());
+        return createEndpointConfigurations(userTokenPolicies, securityPolicies);
     }
 
     private Set<EndpointConfiguration> createEndpointConfigurations(List<UserTokenPolicy> userTokenPolicies, Set<SecurityPolicy> securityPolicies) {
@@ -491,6 +493,8 @@ public class MiloServerComponent extends DefaultComponent {
         } else {
             this.securityPolicies = EnumSet.copyOf(securityPolicies);
         }
+        // clear id as we set explicit these policies
+        this.securityPoliciesById = null;
     }
 
     /**
