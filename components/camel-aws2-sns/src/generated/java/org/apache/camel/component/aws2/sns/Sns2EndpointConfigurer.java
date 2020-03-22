@@ -87,39 +87,39 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         Sns2Endpoint target = (Sns2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonsnsclient":
-        case "amazonSNSClient": target.getConfiguration().getAmazonSNSClient(); return true;
+        case "amazonSNSClient": return target.getConfiguration().getAmazonSNSClient();
         case "autocreatetopic":
-        case "autoCreateTopic": target.getConfiguration().isAutoCreateTopic(); return true;
+        case "autoCreateTopic": return target.getConfiguration().isAutoCreateTopic();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "kmsmasterkeyid":
-        case "kmsMasterKeyId": target.getConfiguration().getKmsMasterKeyId(); return true;
+        case "kmsMasterKeyId": return target.getConfiguration().getKmsMasterKeyId();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagestructure":
-        case "messageStructure": target.getConfiguration().getMessageStructure(); return true;
-        case "policy": target.getConfiguration().getPolicy(); return true;
+        case "messageStructure": return target.getConfiguration().getMessageStructure();
+        case "policy": return target.getConfiguration().getPolicy();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().getProxyProtocol(); return true;
+        case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
         case "queueurl":
-        case "queueUrl": target.getConfiguration().getQueueUrl(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "queueUrl": return target.getConfiguration().getQueueUrl();
+        case "region": return target.getConfiguration().getRegion();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
         case "serversideencryptionenabled":
-        case "serverSideEncryptionEnabled": target.getConfiguration().isServerSideEncryptionEnabled(); return true;
-        case "subject": target.getConfiguration().getSubject(); return true;
+        case "serverSideEncryptionEnabled": return target.getConfiguration().isServerSideEncryptionEnabled();
+        case "subject": return target.getConfiguration().getSubject();
         case "subscribesnstosqs":
-        case "subscribeSNStoSQS": target.getConfiguration().isSubscribeSNStoSQS(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "subscribeSNStoSQS": return target.getConfiguration().isSubscribeSNStoSQS();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

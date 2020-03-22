@@ -90,41 +90,41 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         SedaEndpoint target = (SedaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockwhenfull":
-        case "blockWhenFull": target.isBlockWhenFull(); return true;
+        case "blockWhenFull": return target.isBlockWhenFull();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "discardifnoconsumers":
-        case "discardIfNoConsumers": target.isDiscardIfNoConsumers(); return true;
+        case "discardIfNoConsumers": return target.isDiscardIfNoConsumers();
         case "discardwhenfull":
-        case "discardWhenFull": target.isDiscardWhenFull(); return true;
+        case "discardWhenFull": return target.isDiscardWhenFull();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "failifnoconsumers":
-        case "failIfNoConsumers": target.isFailIfNoConsumers(); return true;
+        case "failIfNoConsumers": return target.isFailIfNoConsumers();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "limitconcurrentconsumers":
-        case "limitConcurrentConsumers": target.isLimitConcurrentConsumers(); return true;
+        case "limitConcurrentConsumers": return target.isLimitConcurrentConsumers();
         case "multipleconsumers":
-        case "multipleConsumers": target.isMultipleConsumers(); return true;
+        case "multipleConsumers": return target.isMultipleConsumers();
         case "offertimeout":
-        case "offerTimeout": target.getOfferTimeout(); return true;
+        case "offerTimeout": return target.getOfferTimeout();
         case "polltimeout":
-        case "pollTimeout": target.getPollTimeout(); return true;
+        case "pollTimeout": return target.getPollTimeout();
         case "purgewhenstopping":
-        case "purgeWhenStopping": target.isPurgeWhenStopping(); return true;
-        case "queue": target.getQueue(); return true;
-        case "size": target.getSize(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "purgeWhenStopping": return target.isPurgeWhenStopping();
+        case "queue": return target.getQueue();
+        case "size": return target.getSize();
+        case "synchronous": return target.isSynchronous();
+        case "timeout": return target.getTimeout();
         case "waitfortasktocomplete":
-        case "waitForTaskToComplete": target.getWaitForTaskToComplete(); return true;
+        case "waitForTaskToComplete": return target.getWaitForTaskToComplete();
         default: return null;
         }
     }

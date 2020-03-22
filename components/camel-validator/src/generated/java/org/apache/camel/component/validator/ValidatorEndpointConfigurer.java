@@ -69,28 +69,28 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "errorhandler":
-        case "errorHandler": target.getErrorHandler(); return true;
+        case "errorHandler": return target.getErrorHandler();
         case "failonnullbody":
-        case "failOnNullBody": target.isFailOnNullBody(); return true;
+        case "failOnNullBody": return target.isFailOnNullBody();
         case "failonnullheader":
-        case "failOnNullHeader": target.isFailOnNullHeader(); return true;
+        case "failOnNullHeader": return target.isFailOnNullHeader();
         case "headername":
-        case "headerName": target.getHeaderName(); return true;
+        case "headerName": return target.getHeaderName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "resourceresolver":
-        case "resourceResolver": target.getResourceResolver(); return true;
+        case "resourceResolver": return target.getResourceResolver();
         case "resourceresolverfactory":
-        case "resourceResolverFactory": target.getResourceResolverFactory(); return true;
+        case "resourceResolverFactory": return target.getResourceResolverFactory();
         case "schemafactory":
-        case "schemaFactory": target.getSchemaFactory(); return true;
+        case "schemaFactory": return target.getSchemaFactory();
         case "schemalanguage":
-        case "schemaLanguage": target.getSchemaLanguage(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "schemaLanguage": return target.getSchemaLanguage();
+        case "synchronous": return target.isSynchronous();
         case "usesharedschema":
-        case "useSharedSchema": target.isUseSharedSchema(); return true;
+        case "useSharedSchema": return target.isUseSharedSchema();
         default: return null;
         }
     }

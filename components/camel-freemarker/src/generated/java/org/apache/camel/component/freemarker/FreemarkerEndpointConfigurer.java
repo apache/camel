@@ -52,16 +52,16 @@ public class FreemarkerEndpointConfigurer extends PropertyConfigurerSupport impl
         FreemarkerEndpoint target = (FreemarkerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "contentcache":
-        case "contentCache": target.isContentCache(); return true;
-        case "encoding": target.getEncoding(); return true;
+        case "contentCache": return target.isContentCache();
+        case "encoding": return target.getEncoding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         case "templateupdatedelay":
-        case "templateUpdateDelay": target.getTemplateUpdateDelay(); return true;
+        case "templateUpdateDelay": return target.getTemplateUpdateDelay();
         default: return null;
         }
     }

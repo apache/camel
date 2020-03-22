@@ -58,20 +58,20 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
         ChunkEndpoint target = (ChunkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
-        case "contentCache": target.isContentCache(); return true;
-        case "encoding": target.getEncoding(); return true;
-        case "extension": target.getExtension(); return true;
+        case "contentCache": return target.isContentCache();
+        case "encoding": return target.getEncoding();
+        case "extension": return target.getExtension();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         case "themefolder":
-        case "themeFolder": target.getThemeFolder(); return true;
+        case "themeFolder": return target.getThemeFolder();
         case "themelayer":
-        case "themeLayer": target.getThemeLayer(); return true;
+        case "themeLayer": return target.getThemeLayer();
         case "themesubfolder":
-        case "themeSubfolder": target.getThemeSubfolder(); return true;
+        case "themeSubfolder": return target.getThemeSubfolder();
         default: return null;
         }
     }

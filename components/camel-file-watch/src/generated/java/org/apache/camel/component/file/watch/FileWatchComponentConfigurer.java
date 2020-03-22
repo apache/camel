@@ -55,19 +55,19 @@ public class FileWatchComponentConfigurer extends PropertyConfigurerSupport impl
         FileWatchComponent target = (FileWatchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "filehasher":
-        case "fileHasher": target.getFileHasher(); return true;
+        case "fileHasher": return target.getFileHasher();
         case "pollthreads":
-        case "pollThreads": target.getPollThreads(); return true;
+        case "pollThreads": return target.getPollThreads();
         case "queuesize":
-        case "queueSize": target.getQueueSize(); return true;
+        case "queueSize": return target.getQueueSize();
         case "usefilehashing":
-        case "useFileHashing": target.isUseFileHashing(); return true;
+        case "useFileHashing": return target.isUseFileHashing();
         default: return null;
         }
     }

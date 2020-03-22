@@ -113,56 +113,56 @@ public class FlatpackEndpointConfigurer extends PropertyConfigurerSupport implem
         FlatpackEndpoint target = (FlatpackEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowshortlines":
-        case "allowShortLines": target.isAllowShortLines(); return true;
+        case "allowShortLines": return target.isAllowShortLines();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "delay": target.getDelay(); return true;
-        case "delimiter": target.getDelimiter(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "delay": return target.getDelay();
+        case "delimiter": return target.getDelimiter();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "greedy": return target.isGreedy();
         case "ignoreextracolumns":
-        case "ignoreExtraColumns": target.isIgnoreExtraColumns(); return true;
+        case "ignoreExtraColumns": return target.isIgnoreExtraColumns();
         case "ignorefirstrecord":
-        case "ignoreFirstRecord": target.isIgnoreFirstRecord(); return true;
+        case "ignoreFirstRecord": return target.isIgnoreFirstRecord();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "splitrows":
-        case "splitRows": target.isSplitRows(); return true;
+        case "splitRows": return target.isSplitRows();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "synchronous": return target.isSynchronous();
         case "textqualifier":
-        case "textQualifier": target.getTextQualifier(); return true;
+        case "textQualifier": return target.getTextQualifier();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         default: return null;
         }
     }

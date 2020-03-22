@@ -127,61 +127,61 @@ public class SWFComponentConfigurer extends PropertyConfigurerSupport implements
         SWFComponent target = (SWFComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "activitylist":
-        case "activityList": getOrCreateConfiguration(target).getActivityList(); return true;
+        case "activityList": return getOrCreateConfiguration(target).getActivityList();
         case "activityschedulingoptions":
-        case "activitySchedulingOptions": getOrCreateConfiguration(target).getActivitySchedulingOptions(); return true;
+        case "activitySchedulingOptions": return getOrCreateConfiguration(target).getActivitySchedulingOptions();
         case "activitythreadpoolsize":
-        case "activityThreadPoolSize": getOrCreateConfiguration(target).getActivityThreadPoolSize(); return true;
+        case "activityThreadPoolSize": return getOrCreateConfiguration(target).getActivityThreadPoolSize();
         case "activitytypeexecutionoptions":
-        case "activityTypeExecutionOptions": getOrCreateConfiguration(target).getActivityTypeExecutionOptions(); return true;
+        case "activityTypeExecutionOptions": return getOrCreateConfiguration(target).getActivityTypeExecutionOptions();
         case "activitytyperegistrationoptions":
-        case "activityTypeRegistrationOptions": getOrCreateConfiguration(target).getActivityTypeRegistrationOptions(); return true;
+        case "activityTypeRegistrationOptions": return getOrCreateConfiguration(target).getActivityTypeRegistrationOptions();
         case "amazonswclient":
-        case "amazonSWClient": getOrCreateConfiguration(target).getAmazonSWClient(); return true;
+        case "amazonSWClient": return getOrCreateConfiguration(target).getAmazonSWClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "childpolicy":
-        case "childPolicy": getOrCreateConfiguration(target).getChildPolicy(); return true;
+        case "childPolicy": return getOrCreateConfiguration(target).getChildPolicy();
         case "clientconfigurationparameters":
-        case "clientConfigurationParameters": getOrCreateConfiguration(target).getClientConfigurationParameters(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientConfigurationParameters": return getOrCreateConfiguration(target).getClientConfigurationParameters();
+        case "configuration": return target.getConfiguration();
         case "dataconverter":
-        case "dataConverter": getOrCreateConfiguration(target).getDataConverter(); return true;
+        case "dataConverter": return getOrCreateConfiguration(target).getDataConverter();
         case "domainname":
-        case "domainName": getOrCreateConfiguration(target).getDomainName(); return true;
+        case "domainName": return getOrCreateConfiguration(target).getDomainName();
         case "eventname":
-        case "eventName": getOrCreateConfiguration(target).getEventName(); return true;
+        case "eventName": return getOrCreateConfiguration(target).getEventName();
         case "executionstarttoclosetimeout":
-        case "executionStartToCloseTimeout": getOrCreateConfiguration(target).getExecutionStartToCloseTimeout(); return true;
+        case "executionStartToCloseTimeout": return getOrCreateConfiguration(target).getExecutionStartToCloseTimeout();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "swclientparameters":
-        case "sWClientParameters": getOrCreateConfiguration(target).getSWClientParameters(); return true;
+        case "sWClientParameters": return getOrCreateConfiguration(target).getSWClientParameters();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "signalname":
-        case "signalName": getOrCreateConfiguration(target).getSignalName(); return true;
+        case "signalName": return getOrCreateConfiguration(target).getSignalName();
         case "startworkflowoptionsparameters":
-        case "startWorkflowOptionsParameters": getOrCreateConfiguration(target).getStartWorkflowOptionsParameters(); return true;
+        case "startWorkflowOptionsParameters": return getOrCreateConfiguration(target).getStartWorkflowOptionsParameters();
         case "stateresulttype":
-        case "stateResultType": getOrCreateConfiguration(target).getStateResultType(); return true;
+        case "stateResultType": return getOrCreateConfiguration(target).getStateResultType();
         case "taskstarttoclosetimeout":
-        case "taskStartToCloseTimeout": getOrCreateConfiguration(target).getTaskStartToCloseTimeout(); return true;
+        case "taskStartToCloseTimeout": return getOrCreateConfiguration(target).getTaskStartToCloseTimeout();
         case "terminationdetails":
-        case "terminationDetails": getOrCreateConfiguration(target).getTerminationDetails(); return true;
+        case "terminationDetails": return getOrCreateConfiguration(target).getTerminationDetails();
         case "terminationreason":
-        case "terminationReason": getOrCreateConfiguration(target).getTerminationReason(); return true;
-        case "version": getOrCreateConfiguration(target).getVersion(); return true;
+        case "terminationReason": return getOrCreateConfiguration(target).getTerminationReason();
+        case "version": return getOrCreateConfiguration(target).getVersion();
         case "workflowlist":
-        case "workflowList": getOrCreateConfiguration(target).getWorkflowList(); return true;
+        case "workflowList": return getOrCreateConfiguration(target).getWorkflowList();
         case "workflowtyperegistrationoptions":
-        case "workflowTypeRegistrationOptions": getOrCreateConfiguration(target).getWorkflowTypeRegistrationOptions(); return true;
+        case "workflowTypeRegistrationOptions": return getOrCreateConfiguration(target).getWorkflowTypeRegistrationOptions();
         default: return null;
         }
     }

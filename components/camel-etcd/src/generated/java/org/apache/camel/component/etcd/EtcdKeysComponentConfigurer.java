@@ -72,24 +72,24 @@ public class EtcdKeysComponentConfigurer extends PropertyConfigurerSupport imple
         EtcdKeysComponent target = (EtcdKeysComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
-        case "recursive": getOrCreateConfiguration(target).isRecursive(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return getOrCreateConfiguration(target).getPassword();
+        case "recursive": return getOrCreateConfiguration(target).isRecursive();
         case "servicepath":
-        case "servicePath": getOrCreateConfiguration(target).getServicePath(); return true;
+        case "servicePath": return getOrCreateConfiguration(target).getServicePath();
         case "sslcontextparameters":
-        case "sslContextParameters": getOrCreateConfiguration(target).getSslContextParameters(); return true;
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
         case "timetolive":
-        case "timeToLive": getOrCreateConfiguration(target).getTimeToLive(); return true;
-        case "timeout": getOrCreateConfiguration(target).getTimeout(); return true;
-        case "uris": getOrCreateConfiguration(target).getUris(); return true;
+        case "timeToLive": return getOrCreateConfiguration(target).getTimeToLive();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
+        case "uris": return getOrCreateConfiguration(target).getUris();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username":
-        case "userName": getOrCreateConfiguration(target).getUserName(); return true;
+        case "userName": return getOrCreateConfiguration(target).getUserName();
         default: return null;
         }
     }

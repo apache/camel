@@ -58,21 +58,21 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AsteriskEndpoint target = (AsteriskEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action": target.getAction(); return true;
+        case "action": return target.getAction();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "hostname": target.getHostname(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "hostname": return target.getHostname();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": target.getPassword(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "username": target.getUsername(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getPassword();
+        case "synchronous": return target.isSynchronous();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

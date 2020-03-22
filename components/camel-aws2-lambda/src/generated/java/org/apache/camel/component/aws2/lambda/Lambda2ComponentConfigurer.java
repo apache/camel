@@ -71,24 +71,24 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         Lambda2Component target = (Lambda2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "awslambdaclient":
-        case "awsLambdaClient": getOrCreateConfiguration(target).getAwsLambdaClient(); return true;
+        case "awsLambdaClient": return getOrCreateConfiguration(target).getAwsLambdaClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         default: return null;
         }
     }

@@ -82,37 +82,37 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         WebsocketEndpoint target = (WebsocketEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authhost":
-        case "authHost": target.getAuthHost(); return true;
+        case "authHost": return target.getAuthHost();
         case "bridgeendpoint":
-        case "bridgeEndpoint": target.isBridgeEndpoint(); return true;
+        case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "connectionclose":
-        case "connectionClose": target.isConnectionClose(); return true;
+        case "connectionClose": return target.isConnectionClose();
         case "cookiehandler":
-        case "cookieHandler": target.getCookieHandler(); return true;
+        case "cookieHandler": return target.getCookieHandler();
         case "copyheaders":
-        case "copyHeaders": target.isCopyHeaders(); return true;
+        case "copyHeaders": return target.isCopyHeaders();
         case "httpmethod":
-        case "httpMethod": target.getHttpMethod(); return true;
+        case "httpMethod": return target.getHttpMethod();
         case "ignoreresponsebody":
-        case "ignoreResponseBody": target.isIgnoreResponseBody(); return true;
+        case "ignoreResponseBody": return target.isIgnoreResponseBody();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "okstatuscoderange":
-        case "okStatusCodeRange": target.getOkStatusCodeRange(); return true;
+        case "okStatusCodeRange": return target.getOkStatusCodeRange();
         case "preservehostheader":
-        case "preserveHostHeader": target.isPreserveHostHeader(); return true;
+        case "preserveHostHeader": return target.isPreserveHostHeader();
         case "proxyauthscheme":
-        case "proxyAuthScheme": target.getProxyAuthScheme(); return true;
+        case "proxyAuthScheme": return target.getProxyAuthScheme();
         case "proxyhost":
-        case "proxyHost": target.getProxyHost(); return true;
+        case "proxyHost": return target.getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getProxyPort(); return true;
+        case "proxyPort": return target.getProxyPort();
         case "sendtoall":
-        case "sendToAll": target.isSendToAll(); return true;
+        case "sendToAll": return target.isSendToAll();
         case "throwexceptiononfailure":
-        case "throwExceptionOnFailure": target.isThrowExceptionOnFailure(); return true;
+        case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
         case "usestreaming":
-        case "useStreaming": target.isUseStreaming(); return true;
+        case "useStreaming": return target.isUseStreaming();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

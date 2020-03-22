@@ -51,16 +51,16 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
         HazelcastAtomicnumberEndpoint target = (HazelcastAtomicnumberEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "defaultoperation":
-        case "defaultOperation": target.getDefaultOperation(); return true;
+        case "defaultOperation": return target.getDefaultOperation();
         case "hazelcastinstance":
-        case "hazelcastInstance": target.getHazelcastInstance(); return true;
+        case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastinstancename":
-        case "hazelcastInstanceName": target.getHazelcastInstanceName(); return true;
+        case "hazelcastInstanceName": return target.getHazelcastInstanceName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

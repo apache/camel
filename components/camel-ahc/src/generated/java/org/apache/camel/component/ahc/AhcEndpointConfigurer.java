@@ -77,33 +77,33 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
         AhcEndpoint target = (AhcEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "binding": target.getBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "binding": return target.getBinding();
         case "bridgeendpoint":
-        case "bridgeEndpoint": target.isBridgeEndpoint(); return true;
+        case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "buffersize":
-        case "bufferSize": target.getBufferSize(); return true;
+        case "bufferSize": return target.getBufferSize();
         case "clientconfig":
-        case "clientConfig": target.getClientConfig(); return true;
+        case "clientConfig": return target.getClientConfig();
         case "clientconfigoptions":
-        case "clientConfigOptions": target.getClientConfigOptions(); return true;
+        case "clientConfigOptions": return target.getClientConfigOptions();
         case "clientconfigrealmoptions":
-        case "clientConfigRealmOptions": target.getClientConfigRealmOptions(); return true;
+        case "clientConfigRealmOptions": return target.getClientConfigRealmOptions();
         case "connectionclose":
-        case "connectionClose": target.isConnectionClose(); return true;
+        case "connectionClose": return target.isConnectionClose();
         case "cookiehandler":
-        case "cookieHandler": target.getCookieHandler(); return true;
+        case "cookieHandler": return target.getCookieHandler();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         case "throwexceptiononfailure":
-        case "throwExceptionOnFailure": target.isThrowExceptionOnFailure(); return true;
+        case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
         case "transferexception":
-        case "transferException": target.isTransferException(); return true;
+        case "transferException": return target.isTransferException();
         default: return null;
         }
     }

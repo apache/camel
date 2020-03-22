@@ -47,13 +47,13 @@ public class DirectComponentConfigurer extends PropertyConfigurerSupport impleme
         DirectComponent target = (DirectComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "block": target.isBlock(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "block": return target.isBlock();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "timeout": return target.getTimeout();
         default: return null;
         }
     }

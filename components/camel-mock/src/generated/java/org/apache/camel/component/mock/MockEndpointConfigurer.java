@@ -72,30 +72,30 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         MockEndpoint target = (MockEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
-        case "assertPeriod": target.getAssertPeriod(); return true;
+        case "assertPeriod": return target.getAssertPeriod();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "copyonexchange":
-        case "copyOnExchange": target.isCopyOnExchange(); return true;
+        case "copyOnExchange": return target.isCopyOnExchange();
         case "expectedcount":
-        case "expectedCount": target.getExpectedCount(); return true;
+        case "expectedCount": return target.getExpectedCount();
         case "failfast":
-        case "failFast": target.isFailFast(); return true;
+        case "failFast": return target.isFailFast();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "reportgroup":
-        case "reportGroup": target.getReportGroup(); return true;
+        case "reportGroup": return target.getReportGroup();
         case "resultminimumwaittime":
-        case "resultMinimumWaitTime": target.getResultMinimumWaitTime(); return true;
+        case "resultMinimumWaitTime": return target.getResultMinimumWaitTime();
         case "resultwaittime":
-        case "resultWaitTime": target.getResultWaitTime(); return true;
+        case "resultWaitTime": return target.getResultWaitTime();
         case "retainfirst":
-        case "retainFirst": target.getRetainFirst(); return true;
+        case "retainFirst": return target.getRetainFirst();
         case "retainlast":
-        case "retainLast": target.getRetainLast(); return true;
+        case "retainLast": return target.getRetainLast();
         case "sleepforemptytest":
-        case "sleepForEmptyTest": target.getSleepForEmptyTest(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sleepForEmptyTest": return target.getSleepForEmptyTest();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

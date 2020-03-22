@@ -233,133 +233,133 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         NettyEndpoint target = (NettyEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
-        case "allowDefaultCodec": target.getConfiguration().isAllowDefaultCodec(); return true;
+        case "allowDefaultCodec": return target.getConfiguration().isAllowDefaultCodec();
         case "allowserializedheaders":
-        case "allowSerializedHeaders": target.getConfiguration().isAllowSerializedHeaders(); return true;
+        case "allowSerializedHeaders": return target.getConfiguration().isAllowSerializedHeaders();
         case "autoappenddelimiter":
-        case "autoAppendDelimiter": target.getConfiguration().isAutoAppendDelimiter(); return true;
-        case "backlog": target.getConfiguration().getBacklog(); return true;
+        case "autoAppendDelimiter": return target.getConfiguration().isAutoAppendDelimiter();
+        case "backlog": return target.getConfiguration().getBacklog();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bosscount":
-        case "bossCount": target.getConfiguration().getBossCount(); return true;
+        case "bossCount": return target.getConfiguration().getBossCount();
         case "bossgroup":
-        case "bossGroup": target.getConfiguration().getBossGroup(); return true;
+        case "bossGroup": return target.getConfiguration().getBossGroup();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "broadcast": target.getConfiguration().isBroadcast(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "broadcast": return target.getConfiguration().isBroadcast();
         case "channelgroup":
-        case "channelGroup": target.getConfiguration().getChannelGroup(); return true;
+        case "channelGroup": return target.getConfiguration().getChannelGroup();
         case "clientinitializerfactory":
-        case "clientInitializerFactory": target.getConfiguration().getClientInitializerFactory(); return true;
+        case "clientInitializerFactory": return target.getConfiguration().getClientInitializerFactory();
         case "clientmode":
-        case "clientMode": target.getConfiguration().isClientMode(); return true;
+        case "clientMode": return target.getConfiguration().isClientMode();
         case "connecttimeout":
-        case "connectTimeout": target.getConfiguration().getConnectTimeout(); return true;
+        case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "correlationmanager":
-        case "correlationManager": target.getConfiguration().getCorrelationManager(); return true;
+        case "correlationManager": return target.getConfiguration().getCorrelationManager();
         case "decodermaxlinelength":
-        case "decoderMaxLineLength": target.getConfiguration().getDecoderMaxLineLength(); return true;
-        case "decoders": target.getConfiguration().getDecoders(); return true;
-        case "delimiter": target.getConfiguration().getDelimiter(); return true;
-        case "disconnect": target.getConfiguration().isDisconnect(); return true;
+        case "decoderMaxLineLength": return target.getConfiguration().getDecoderMaxLineLength();
+        case "decoders": return target.getConfiguration().getDecoders();
+        case "delimiter": return target.getConfiguration().getDelimiter();
+        case "disconnect": return target.getConfiguration().isDisconnect();
         case "disconnectonnoreply":
-        case "disconnectOnNoReply": target.getConfiguration().isDisconnectOnNoReply(); return true;
+        case "disconnectOnNoReply": return target.getConfiguration().isDisconnectOnNoReply();
         case "enabledprotocols":
-        case "enabledProtocols": target.getConfiguration().getEnabledProtocols(); return true;
-        case "encoders": target.getConfiguration().getEncoders(); return true;
-        case "encoding": target.getConfiguration().getEncoding(); return true;
+        case "enabledProtocols": return target.getConfiguration().getEnabledProtocols();
+        case "encoders": return target.getConfiguration().getEncoders();
+        case "encoding": return target.getConfiguration().getEncoding();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "keepalive":
-        case "keepAlive": target.getConfiguration().isKeepAlive(); return true;
+        case "keepAlive": return target.getConfiguration().isKeepAlive();
         case "keystorefile":
-        case "keyStoreFile": target.getConfiguration().getKeyStoreFile(); return true;
+        case "keyStoreFile": return target.getConfiguration().getKeyStoreFile();
         case "keystoreformat":
-        case "keyStoreFormat": target.getConfiguration().getKeyStoreFormat(); return true;
+        case "keyStoreFormat": return target.getConfiguration().getKeyStoreFormat();
         case "keystoreresource":
-        case "keyStoreResource": target.getConfiguration().getKeyStoreResource(); return true;
+        case "keyStoreResource": return target.getConfiguration().getKeyStoreResource();
         case "lazychannelcreation":
-        case "lazyChannelCreation": target.getConfiguration().isLazyChannelCreation(); return true;
+        case "lazyChannelCreation": return target.getConfiguration().isLazyChannelCreation();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "nativetransport":
-        case "nativeTransport": target.getConfiguration().isNativeTransport(); return true;
+        case "nativeTransport": return target.getConfiguration().isNativeTransport();
         case "needclientauth":
-        case "needClientAuth": target.getConfiguration().isNeedClientAuth(); return true;
+        case "needClientAuth": return target.getConfiguration().isNeedClientAuth();
         case "nettyserverbootstrapfactory":
-        case "nettyServerBootstrapFactory": target.getConfiguration().getNettyServerBootstrapFactory(); return true;
+        case "nettyServerBootstrapFactory": return target.getConfiguration().getNettyServerBootstrapFactory();
         case "networkinterface":
-        case "networkInterface": target.getConfiguration().getNetworkInterface(); return true;
+        case "networkInterface": return target.getConfiguration().getNetworkInterface();
         case "noreplyloglevel":
-        case "noReplyLogLevel": target.getConfiguration().getNoReplyLogLevel(); return true;
-        case "options": target.getConfiguration().getOptions(); return true;
-        case "passphrase": target.getConfiguration().getPassphrase(); return true;
+        case "noReplyLogLevel": return target.getConfiguration().getNoReplyLogLevel();
+        case "options": return target.getConfiguration().getOptions();
+        case "passphrase": return target.getConfiguration().getPassphrase();
         case "producerpoolenabled":
-        case "producerPoolEnabled": target.getConfiguration().isProducerPoolEnabled(); return true;
+        case "producerPoolEnabled": return target.getConfiguration().isProducerPoolEnabled();
         case "producerpoolmaxactive":
-        case "producerPoolMaxActive": target.getConfiguration().getProducerPoolMaxActive(); return true;
+        case "producerPoolMaxActive": return target.getConfiguration().getProducerPoolMaxActive();
         case "producerpoolmaxidle":
-        case "producerPoolMaxIdle": target.getConfiguration().getProducerPoolMaxIdle(); return true;
+        case "producerPoolMaxIdle": return target.getConfiguration().getProducerPoolMaxIdle();
         case "producerpoolminevictableidle":
-        case "producerPoolMinEvictableIdle": target.getConfiguration().getProducerPoolMinEvictableIdle(); return true;
+        case "producerPoolMinEvictableIdle": return target.getConfiguration().getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":
-        case "producerPoolMinIdle": target.getConfiguration().getProducerPoolMinIdle(); return true;
+        case "producerPoolMinIdle": return target.getConfiguration().getProducerPoolMinIdle();
         case "receivebuffersize":
-        case "receiveBufferSize": target.getConfiguration().getReceiveBufferSize(); return true;
+        case "receiveBufferSize": return target.getConfiguration().getReceiveBufferSize();
         case "receivebuffersizepredictor":
-        case "receiveBufferSizePredictor": target.getConfiguration().getReceiveBufferSizePredictor(); return true;
-        case "reconnect": target.getConfiguration().isReconnect(); return true;
+        case "receiveBufferSizePredictor": return target.getConfiguration().getReceiveBufferSizePredictor();
+        case "reconnect": return target.getConfiguration().isReconnect();
         case "reconnectinterval":
-        case "reconnectInterval": target.getConfiguration().getReconnectInterval(); return true;
+        case "reconnectInterval": return target.getConfiguration().getReconnectInterval();
         case "requesttimeout":
-        case "requestTimeout": target.getConfiguration().getRequestTimeout(); return true;
+        case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "reuseaddress":
-        case "reuseAddress": target.getConfiguration().isReuseAddress(); return true;
+        case "reuseAddress": return target.getConfiguration().isReuseAddress();
         case "reusechannel":
-        case "reuseChannel": target.getConfiguration().isReuseChannel(); return true;
+        case "reuseChannel": return target.getConfiguration().isReuseChannel();
         case "securityprovider":
-        case "securityProvider": target.getConfiguration().getSecurityProvider(); return true;
+        case "securityProvider": return target.getConfiguration().getSecurityProvider();
         case "sendbuffersize":
-        case "sendBufferSize": target.getConfiguration().getSendBufferSize(); return true;
+        case "sendBufferSize": return target.getConfiguration().getSendBufferSize();
         case "serverclosedchannelexceptioncaughtloglevel":
-        case "serverClosedChannelExceptionCaughtLogLevel": target.getConfiguration().getServerClosedChannelExceptionCaughtLogLevel(); return true;
+        case "serverClosedChannelExceptionCaughtLogLevel": return target.getConfiguration().getServerClosedChannelExceptionCaughtLogLevel();
         case "serverexceptioncaughtloglevel":
-        case "serverExceptionCaughtLogLevel": target.getConfiguration().getServerExceptionCaughtLogLevel(); return true;
+        case "serverExceptionCaughtLogLevel": return target.getConfiguration().getServerExceptionCaughtLogLevel();
         case "serverinitializerfactory":
-        case "serverInitializerFactory": target.getConfiguration().getServerInitializerFactory(); return true;
-        case "ssl": target.getConfiguration().isSsl(); return true;
+        case "serverInitializerFactory": return target.getConfiguration().getServerInitializerFactory();
+        case "ssl": return target.getConfiguration().isSsl();
         case "sslclientcertheaders":
-        case "sslClientCertHeaders": target.getConfiguration().isSslClientCertHeaders(); return true;
+        case "sslClientCertHeaders": return target.getConfiguration().isSslClientCertHeaders();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "sslhandler":
-        case "sslHandler": target.getConfiguration().getSslHandler(); return true;
-        case "sync": target.getConfiguration().isSync(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslHandler": return target.getConfiguration().getSslHandler();
+        case "sync": return target.getConfiguration().isSync();
+        case "synchronous": return target.isSynchronous();
         case "tcpnodelay":
-        case "tcpNoDelay": target.getConfiguration().isTcpNoDelay(); return true;
-        case "textline": target.getConfiguration().isTextline(); return true;
+        case "tcpNoDelay": return target.getConfiguration().isTcpNoDelay();
+        case "textline": return target.getConfiguration().isTextline();
         case "transferexchange":
-        case "transferExchange": target.getConfiguration().isTransferExchange(); return true;
+        case "transferExchange": return target.getConfiguration().isTransferExchange();
         case "truststorefile":
-        case "trustStoreFile": target.getConfiguration().getTrustStoreFile(); return true;
+        case "trustStoreFile": return target.getConfiguration().getTrustStoreFile();
         case "truststoreresource":
-        case "trustStoreResource": target.getConfiguration().getTrustStoreResource(); return true;
+        case "trustStoreResource": return target.getConfiguration().getTrustStoreResource();
         case "udpbytearraycodec":
-        case "udpByteArrayCodec": target.getConfiguration().isUdpByteArrayCodec(); return true;
+        case "udpByteArrayCodec": return target.getConfiguration().isUdpByteArrayCodec();
         case "udpconnectionlesssending":
-        case "udpConnectionlessSending": target.getConfiguration().isUdpConnectionlessSending(); return true;
+        case "udpConnectionlessSending": return target.getConfiguration().isUdpConnectionlessSending();
         case "usebytebuf":
-        case "useByteBuf": target.getConfiguration().isUseByteBuf(); return true;
+        case "useByteBuf": return target.getConfiguration().isUseByteBuf();
         case "usingexecutorservice":
-        case "usingExecutorService": target.getConfiguration().isUsingExecutorService(); return true;
+        case "usingExecutorService": return target.getConfiguration().isUsingExecutorService();
         case "workercount":
-        case "workerCount": target.getConfiguration().getWorkerCount(); return true;
+        case "workerCount": return target.getConfiguration().getWorkerCount();
         case "workergroup":
-        case "workerGroup": target.getConfiguration().getWorkerGroup(); return true;
+        case "workerGroup": return target.getConfiguration().getWorkerGroup();
         default: return null;
         }
     }

@@ -86,35 +86,35 @@ public class AtomixValueComponentConfigurer extends PropertyConfigurerSupport im
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AtomixValueComponent target = (AtomixValueComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "atomix": getOrCreateConfiguration(target).getAtomix(); return true;
+        case "atomix": return getOrCreateConfiguration(target).getAtomix();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
         case "configurationuri":
-        case "configurationUri": target.getConfigurationUri(); return true;
+        case "configurationUri": return target.getConfigurationUri();
         case "defaultaction":
-        case "defaultAction": getOrCreateConfiguration(target).getDefaultAction(); return true;
+        case "defaultAction": return getOrCreateConfiguration(target).getDefaultAction();
         case "defaultresourceconfig":
-        case "defaultResourceConfig": getOrCreateConfiguration(target).getDefaultResourceConfig(); return true;
+        case "defaultResourceConfig": return getOrCreateConfiguration(target).getDefaultResourceConfig();
         case "defaultresourceoptions":
-        case "defaultResourceOptions": getOrCreateConfiguration(target).getDefaultResourceOptions(); return true;
-        case "ephemeral": getOrCreateConfiguration(target).isEphemeral(); return true;
+        case "defaultResourceOptions": return getOrCreateConfiguration(target).getDefaultResourceOptions();
+        case "ephemeral": return getOrCreateConfiguration(target).isEphemeral();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "nodes": target.getNodes(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "nodes": return target.getNodes();
         case "readconsistency":
-        case "readConsistency": getOrCreateConfiguration(target).getReadConsistency(); return true;
+        case "readConsistency": return getOrCreateConfiguration(target).getReadConsistency();
         case "resourceconfigs":
-        case "resourceConfigs": getOrCreateConfiguration(target).getResourceConfigs(); return true;
+        case "resourceConfigs": return getOrCreateConfiguration(target).getResourceConfigs();
         case "resourceoptions":
-        case "resourceOptions": getOrCreateConfiguration(target).getResourceOptions(); return true;
+        case "resourceOptions": return getOrCreateConfiguration(target).getResourceOptions();
         case "resultheader":
-        case "resultHeader": getOrCreateConfiguration(target).getResultHeader(); return true;
+        case "resultHeader": return getOrCreateConfiguration(target).getResultHeader();
         case "transportclassname":
-        case "transportClassName": getOrCreateConfiguration(target).getTransportClassName(); return true;
-        case "ttl": getOrCreateConfiguration(target).getTtl(); return true;
+        case "transportClassName": return getOrCreateConfiguration(target).getTransportClassName();
+        case "ttl": return getOrCreateConfiguration(target).getTtl();
         default: return null;
         }
     }

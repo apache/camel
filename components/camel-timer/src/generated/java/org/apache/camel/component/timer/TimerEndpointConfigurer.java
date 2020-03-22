@@ -69,26 +69,26 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
         TimerEndpoint target = (TimerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "daemon": target.isDaemon(); return true;
-        case "delay": target.getDelay(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "daemon": return target.isDaemon();
+        case "delay": return target.getDelay();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "fixedrate":
-        case "fixedRate": target.isFixedRate(); return true;
+        case "fixedRate": return target.isFixedRate();
         case "includemetadata":
-        case "includeMetadata": target.isIncludeMetadata(); return true;
-        case "pattern": target.getPattern(); return true;
-        case "period": target.getPeriod(); return true;
+        case "includeMetadata": return target.isIncludeMetadata();
+        case "pattern": return target.getPattern();
+        case "period": return target.getPeriod();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "time": target.getTime(); return true;
-        case "timer": target.getTimer(); return true;
+        case "repeatCount": return target.getRepeatCount();
+        case "synchronous": return target.isSynchronous();
+        case "time": return target.getTime();
+        case "timer": return target.getTimer();
         default: return null;
         }
     }

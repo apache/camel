@@ -81,35 +81,35 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
         CryptoCmsEndpoint target = (CryptoCmsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentencryptionalgorithm":
-        case "contentEncryptionAlgorithm": target.getEncryptConfig().getContentEncryptionAlgorithm(); return true;
+        case "contentEncryptionAlgorithm": return target.getEncryptConfig().getContentEncryptionAlgorithm();
         case "frombase64":
-        case "fromBase64": target.getVerifyConfig().isFromBase64(); return true;
+        case "fromBase64": return target.getVerifyConfig().isFromBase64();
         case "includecontent":
-        case "includeContent": target.getSignConfig().getIncludeContent(); return true;
+        case "includeContent": return target.getSignConfig().getIncludeContent();
         case "keystore":
-        case "keyStore": target.getVerifyConfig().getKeyStore(); return true;
+        case "keyStore": return target.getVerifyConfig().getKeyStore();
         case "keystoreparameters":
-        case "keyStoreParameters": target.getVerifyConfig().getKeyStoreParameters(); return true;
+        case "keyStoreParameters": return target.getVerifyConfig().getKeyStoreParameters();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "originatorinformationprovider":
-        case "originatorInformationProvider": target.getEncryptConfig().getOriginatorInformationProvider(); return true;
-        case "password": target.getDecryptConfig().getPassword(); return true;
-        case "recipient": target.getEncryptConfig().getRecipient(); return true;
+        case "originatorInformationProvider": return target.getEncryptConfig().getOriginatorInformationProvider();
+        case "password": return target.getDecryptConfig().getPassword();
+        case "recipient": return target.getEncryptConfig().getRecipient();
         case "secretkeylength":
-        case "secretKeyLength": target.getEncryptConfig().getSecretKeyLength(); return true;
+        case "secretKeyLength": return target.getEncryptConfig().getSecretKeyLength();
         case "signeddataheaderbase64":
-        case "signedDataHeaderBase64": target.getVerifyConfig().isSignedDataHeaderBase64(); return true;
-        case "signer": target.getSignConfig().getSigner(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "signedDataHeaderBase64": return target.getVerifyConfig().isSignedDataHeaderBase64();
+        case "signer": return target.getSignConfig().getSigner();
+        case "synchronous": return target.isSynchronous();
         case "tobase64":
-        case "toBase64": target.getSignConfig().getToBase64(); return true;
+        case "toBase64": return target.getSignConfig().getToBase64();
         case "unprotectedattributesgeneratorprovider":
-        case "unprotectedAttributesGeneratorProvider": target.getEncryptConfig().getUnprotectedAttributesGeneratorProvider(); return true;
+        case "unprotectedAttributesGeneratorProvider": return target.getEncryptConfig().getUnprotectedAttributesGeneratorProvider();
         case "verifysignaturesofallsigners":
-        case "verifySignaturesOfAllSigners": target.getVerifyConfig().isVerifySignaturesOfAllSigners(); return true;
+        case "verifySignaturesOfAllSigners": return target.getVerifyConfig().isVerifySignaturesOfAllSigners();
         default: return null;
         }
     }

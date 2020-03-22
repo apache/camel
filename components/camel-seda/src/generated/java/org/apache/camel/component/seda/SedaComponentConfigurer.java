@@ -61,23 +61,23 @@ public class SedaComponentConfigurer extends PropertyConfigurerSupport implement
         SedaComponent target = (SedaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "defaultblockwhenfull":
-        case "defaultBlockWhenFull": target.isDefaultBlockWhenFull(); return true;
+        case "defaultBlockWhenFull": return target.isDefaultBlockWhenFull();
         case "defaultdiscardwhenfull":
-        case "defaultDiscardWhenFull": target.isDefaultDiscardWhenFull(); return true;
+        case "defaultDiscardWhenFull": return target.isDefaultDiscardWhenFull();
         case "defaultoffertimeout":
-        case "defaultOfferTimeout": target.getDefaultOfferTimeout(); return true;
+        case "defaultOfferTimeout": return target.getDefaultOfferTimeout();
         case "defaultqueuefactory":
-        case "defaultQueueFactory": target.getDefaultQueueFactory(); return true;
+        case "defaultQueueFactory": return target.getDefaultQueueFactory();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "queuesize":
-        case "queueSize": target.getQueueSize(); return true;
+        case "queueSize": return target.getQueueSize();
         default: return null;
         }
     }

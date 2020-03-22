@@ -46,13 +46,13 @@ public class BeanstalkComponentConfigurer extends PropertyConfigurerSupport impl
         BeanstalkComponent target = (BeanstalkComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connectionsettingsfactory":
-        case "connectionSettingsFactory": target.getConnectionSettingsFactory(); return true;
+        case "connectionSettingsFactory": return target.getConnectionSettingsFactory();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

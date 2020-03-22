@@ -136,71 +136,71 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         CxfEndpoint target = (CxfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstreaming":
-        case "allowStreaming": target.getAllowStreaming(); return true;
+        case "allowStreaming": return target.getAllowStreaming();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bindingid":
-        case "bindingId": target.getBindingId(); return true;
+        case "bindingId": return target.getBindingId();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "bus": target.getBus(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "bus": return target.getBus();
         case "continuationtimeout":
-        case "continuationTimeout": target.getContinuationTimeout(); return true;
+        case "continuationTimeout": return target.getContinuationTimeout();
         case "cookiehandler":
-        case "cookieHandler": target.getCookieHandler(); return true;
+        case "cookieHandler": return target.getCookieHandler();
         case "cxfbinding":
-        case "cxfBinding": target.getCxfBinding(); return true;
+        case "cxfBinding": return target.getCxfBinding();
         case "cxfconfigurer":
-        case "cxfConfigurer": target.getCxfConfigurer(); return true;
+        case "cxfConfigurer": return target.getCxfConfigurer();
         case "dataformat":
-        case "dataFormat": target.getDataFormat(); return true;
+        case "dataFormat": return target.getDataFormat();
         case "defaultbus":
-        case "defaultBus": target.isDefaultBus(); return true;
+        case "defaultBus": return target.isDefaultBus();
         case "defaultoperationname":
-        case "defaultOperationName": target.getDefaultOperationName(); return true;
+        case "defaultOperationName": return target.getDefaultOperationName();
         case "defaultoperationnamespace":
-        case "defaultOperationNamespace": target.getDefaultOperationNamespace(); return true;
+        case "defaultOperationNamespace": return target.getDefaultOperationNamespace();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "hostnameverifier":
-        case "hostnameVerifier": target.getHostnameVerifier(); return true;
+        case "hostnameVerifier": return target.getHostnameVerifier();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "loggingfeatureenabled":
-        case "loggingFeatureEnabled": target.isLoggingFeatureEnabled(); return true;
+        case "loggingFeatureEnabled": return target.isLoggingFeatureEnabled();
         case "loggingsizelimit":
-        case "loggingSizeLimit": target.getLoggingSizeLimit(); return true;
+        case "loggingSizeLimit": return target.getLoggingSizeLimit();
         case "mergeprotocolheaders":
-        case "mergeProtocolHeaders": target.isMergeProtocolHeaders(); return true;
+        case "mergeProtocolHeaders": return target.isMergeProtocolHeaders();
         case "mtomenabled":
-        case "mtomEnabled": target.isMtomEnabled(); return true;
-        case "password": target.getPassword(); return true;
+        case "mtomEnabled": return target.isMtomEnabled();
+        case "password": return target.getPassword();
         case "portname":
-        case "portName": target.getPortName(); return true;
-        case "properties": target.getProperties(); return true;
+        case "portName": return target.getPortName();
+        case "properties": return target.getProperties();
         case "publishedendpointurl":
-        case "publishedEndpointUrl": target.getPublishedEndpointUrl(); return true;
+        case "publishedEndpointUrl": return target.getPublishedEndpointUrl();
         case "serviceclass":
-        case "serviceClass": target.getServiceClass(); return true;
+        case "serviceClass": return target.getServiceClass();
         case "servicename":
-        case "serviceName": target.getServiceName(); return true;
+        case "serviceName": return target.getServiceName();
         case "skipfaultlogging":
-        case "skipFaultLogging": target.isSkipFaultLogging(); return true;
+        case "skipFaultLogging": return target.isSkipFaultLogging();
         case "skippayloadmessagepartcheck":
-        case "skipPayloadMessagePartCheck": target.isSkipPayloadMessagePartCheck(); return true;
+        case "skipPayloadMessagePartCheck": return target.isSkipPayloadMessagePartCheck();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "username": target.getUsername(); return true;
-        case "wrapped": target.isWrapped(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
+        case "username": return target.getUsername();
+        case "wrapped": return target.isWrapped();
         case "wrappedstyle":
-        case "wrappedStyle": target.getWrappedStyle(); return true;
+        case "wrappedStyle": return target.getWrappedStyle();
         case "wsdlurl":
-        case "wsdlURL": target.getWsdlURL(); return true;
+        case "wsdlURL": return target.getWsdlURL();
         default: return null;
         }
     }

@@ -55,19 +55,19 @@ public class ElsqlComponentConfigurer extends PropertyConfigurerSupport implemen
         ElsqlComponent target = (ElsqlComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
-        case "dataSource": target.getDataSource(); return true;
+        case "dataSource": return target.getDataSource();
         case "databasevendor":
-        case "databaseVendor": target.getDatabaseVendor(); return true;
+        case "databaseVendor": return target.getDatabaseVendor();
         case "elsqlconfig":
-        case "elSqlConfig": target.getElSqlConfig(); return true;
+        case "elSqlConfig": return target.getElSqlConfig();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "resourceuri":
-        case "resourceUri": target.getResourceUri(); return true;
+        case "resourceUri": return target.getResourceUri();
         default: return null;
         }
     }

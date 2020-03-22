@@ -107,51 +107,51 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         ConsulEndpoint target = (ConsulEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acltoken":
-        case "aclToken": target.getConfiguration().getAclToken(); return true;
-        case "action": target.getConfiguration().getAction(); return true;
+        case "aclToken": return target.getConfiguration().getAclToken();
+        case "action": return target.getConfiguration().getAction();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockseconds":
-        case "blockSeconds": target.getConfiguration().getBlockSeconds(); return true;
+        case "blockSeconds": return target.getConfiguration().getBlockSeconds();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connecttimeoutmillis":
-        case "connectTimeoutMillis": target.getConfiguration().getConnectTimeoutMillis(); return true;
+        case "connectTimeoutMillis": return target.getConfiguration().getConnectTimeoutMillis();
         case "consistencymode":
-        case "consistencyMode": target.getConfiguration().getConsistencyMode(); return true;
+        case "consistencyMode": return target.getConfiguration().getConsistencyMode();
         case "consulclient":
-        case "consulClient": target.getConfiguration().getConsulClient(); return true;
-        case "datacenter": target.getConfiguration().getDatacenter(); return true;
+        case "consulClient": return target.getConfiguration().getConsulClient();
+        case "datacenter": return target.getConfiguration().getDatacenter();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "firstindex":
-        case "firstIndex": target.getConfiguration().getFirstIndex(); return true;
-        case "key": target.getConfiguration().getKey(); return true;
+        case "firstIndex": return target.getConfiguration().getFirstIndex();
+        case "key": return target.getConfiguration().getKey();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "nearnode":
-        case "nearNode": target.getConfiguration().getNearNode(); return true;
+        case "nearNode": return target.getConfiguration().getNearNode();
         case "nodemeta":
-        case "nodeMeta": target.getConfiguration().getNodeMeta(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
+        case "nodeMeta": return target.getConfiguration().getNodeMeta();
+        case "password": return target.getConfiguration().getPassword();
         case "pinginstance":
-        case "pingInstance": target.getConfiguration().isPingInstance(); return true;
+        case "pingInstance": return target.getConfiguration().isPingInstance();
         case "readtimeoutmillis":
-        case "readTimeoutMillis": target.getConfiguration().getReadTimeoutMillis(); return true;
-        case "recursive": target.getConfiguration().isRecursive(); return true;
+        case "readTimeoutMillis": return target.getConfiguration().getReadTimeoutMillis();
+        case "recursive": return target.getConfiguration().isRecursive();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "tags": target.getConfiguration().getTags(); return true;
-        case "url": target.getConfiguration().getUrl(); return true;
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
+        case "tags": return target.getConfiguration().getTags();
+        case "url": return target.getConfiguration().getUrl();
         case "username":
-        case "userName": target.getConfiguration().getUserName(); return true;
+        case "userName": return target.getConfiguration().getUserName();
         case "valueasstring":
-        case "valueAsString": target.getConfiguration().isValueAsString(); return true;
+        case "valueAsString": return target.getConfiguration().isValueAsString();
         case "writetimeoutmillis":
-        case "writeTimeoutMillis": target.getConfiguration().getWriteTimeoutMillis(); return true;
+        case "writeTimeoutMillis": return target.getConfiguration().getWriteTimeoutMillis();
         default: return null;
         }
     }

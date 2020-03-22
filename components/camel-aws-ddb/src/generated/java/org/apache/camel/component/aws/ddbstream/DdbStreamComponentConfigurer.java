@@ -78,29 +78,29 @@ public class DdbStreamComponentConfigurer extends PropertyConfigurerSupport impl
         DdbStreamComponent target = (DdbStreamComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazondynamodbstreamsclient":
-        case "amazonDynamoDbStreamsClient": getOrCreateConfiguration(target).getAmazonDynamoDbStreamsClient(); return true;
+        case "amazonDynamoDbStreamsClient": return getOrCreateConfiguration(target).getAmazonDynamoDbStreamsClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
         case "iteratortype":
-        case "iteratorType": getOrCreateConfiguration(target).getIteratorType(); return true;
+        case "iteratorType": return getOrCreateConfiguration(target).getIteratorType();
         case "maxresultsperrequest":
-        case "maxResultsPerRequest": getOrCreateConfiguration(target).getMaxResultsPerRequest(); return true;
+        case "maxResultsPerRequest": return getOrCreateConfiguration(target).getMaxResultsPerRequest();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sequencenumberprovider":
-        case "sequenceNumberProvider": getOrCreateConfiguration(target).getSequenceNumberProvider(); return true;
+        case "sequenceNumberProvider": return getOrCreateConfiguration(target).getSequenceNumberProvider();
         default: return null;
         }
     }

@@ -59,21 +59,21 @@ public class AhcComponentConfigurer extends PropertyConfigurerSupport implements
         AhcComponent target = (AhcComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
-        case "allowJavaSerializedObject": target.isAllowJavaSerializedObject(); return true;
+        case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "binding": target.getBinding(); return true;
-        case "client": target.getClient(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "binding": return target.getBinding();
+        case "client": return target.getClient();
         case "clientconfig":
-        case "clientConfig": target.getClientConfig(); return true;
+        case "clientConfig": return target.getClientConfig();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

@@ -91,43 +91,43 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         HttpComponent target = (HttpComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
-        case "allowJavaSerializedObject": target.isAllowJavaSerializedObject(); return true;
+        case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientconnectionmanager":
-        case "clientConnectionManager": target.getClientConnectionManager(); return true;
+        case "clientConnectionManager": return target.getClientConnectionManager();
         case "connecttimeout":
-        case "connectTimeout": target.getConnectTimeout(); return true;
+        case "connectTimeout": return target.getConnectTimeout();
         case "connectionrequesttimeout":
-        case "connectionRequestTimeout": target.getConnectionRequestTimeout(); return true;
+        case "connectionRequestTimeout": return target.getConnectionRequestTimeout();
         case "connectiontimetolive":
-        case "connectionTimeToLive": target.getConnectionTimeToLive(); return true;
+        case "connectionTimeToLive": return target.getConnectionTimeToLive();
         case "connectionsperroute":
-        case "connectionsPerRoute": target.getConnectionsPerRoute(); return true;
+        case "connectionsPerRoute": return target.getConnectionsPerRoute();
         case "cookiestore":
-        case "cookieStore": target.getCookieStore(); return true;
+        case "cookieStore": return target.getCookieStore();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
-        case "httpBinding": target.getHttpBinding(); return true;
+        case "httpBinding": return target.getHttpBinding();
         case "httpclientconfigurer":
-        case "httpClientConfigurer": target.getHttpClientConfigurer(); return true;
+        case "httpClientConfigurer": return target.getHttpClientConfigurer();
         case "httpconfiguration":
-        case "httpConfiguration": target.getHttpConfiguration(); return true;
+        case "httpConfiguration": return target.getHttpConfiguration();
         case "httpcontext":
-        case "httpContext": target.getHttpContext(); return true;
+        case "httpContext": return target.getHttpContext();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtotalconnections":
-        case "maxTotalConnections": target.getMaxTotalConnections(); return true;
+        case "maxTotalConnections": return target.getMaxTotalConnections();
         case "sockettimeout":
-        case "socketTimeout": target.getSocketTimeout(); return true;
+        case "socketTimeout": return target.getSocketTimeout();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "x509hostnameverifier":
-        case "x509HostnameVerifier": target.getX509HostnameVerifier(); return true;
+        case "x509HostnameVerifier": return target.getX509HostnameVerifier();
         default: return null;
         }
     }

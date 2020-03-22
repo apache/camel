@@ -62,24 +62,24 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ExecEndpoint target = (ExecEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "args": target.getArgs(); return true;
+        case "args": return target.getArgs();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "binding": target.getBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "binding": return target.getBinding();
         case "commandexecutor":
-        case "commandExecutor": target.getCommandExecutor(); return true;
+        case "commandExecutor": return target.getCommandExecutor();
         case "commandloglevel":
-        case "commandLogLevel": target.getCommandLogLevel(); return true;
+        case "commandLogLevel": return target.getCommandLogLevel();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "outfile":
-        case "outFile": target.getOutFile(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "outFile": return target.getOutFile();
+        case "synchronous": return target.isSynchronous();
+        case "timeout": return target.getTimeout();
         case "usestderronemptystdout":
-        case "useStderrOnEmptyStdout": target.isUseStderrOnEmptyStdout(); return true;
+        case "useStderrOnEmptyStdout": return target.isUseStderrOnEmptyStdout();
         case "workingdir":
-        case "workingDir": target.getWorkingDir(); return true;
+        case "workingDir": return target.getWorkingDir();
         default: return null;
         }
     }

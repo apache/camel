@@ -37,7 +37,7 @@ public class WsComponentConfigurer extends AhcComponentConfigurer implements Gen
         WsComponent target = (WsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

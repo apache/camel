@@ -49,15 +49,15 @@ public class GoogleBigQueryComponentConfigurer extends PropertyConfigurerSupport
         GoogleBigQueryComponent target = (GoogleBigQueryComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "connectionfactory":
-        case "connectionFactory": target.getConnectionFactory(); return true;
+        case "connectionFactory": return target.getConnectionFactory();
         case "datasetid":
-        case "datasetId": target.getDatasetId(); return true;
+        case "datasetId": return target.getDatasetId();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "projectid":
-        case "projectId": target.getProjectId(); return true;
+        case "projectId": return target.getProjectId();
         default: return null;
         }
     }

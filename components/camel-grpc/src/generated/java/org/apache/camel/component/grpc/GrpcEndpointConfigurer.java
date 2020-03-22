@@ -113,57 +113,57 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         GrpcEndpoint target = (GrpcEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authenticationtype":
-        case "authenticationType": target.getConfiguration().getAuthenticationType(); return true;
+        case "authenticationType": return target.getConfiguration().getAuthenticationType();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumerstrategy":
-        case "consumerStrategy": target.getConfiguration().getConsumerStrategy(); return true;
+        case "consumerStrategy": return target.getConfiguration().getConsumerStrategy();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "flowcontrolwindow":
-        case "flowControlWindow": target.getConfiguration().getFlowControlWindow(); return true;
+        case "flowControlWindow": return target.getConfiguration().getFlowControlWindow();
         case "forwardoncompleted":
-        case "forwardOnCompleted": target.getConfiguration().isForwardOnCompleted(); return true;
+        case "forwardOnCompleted": return target.getConfiguration().isForwardOnCompleted();
         case "forwardonerror":
-        case "forwardOnError": target.getConfiguration().isForwardOnError(); return true;
+        case "forwardOnError": return target.getConfiguration().isForwardOnError();
         case "jwtalgorithm":
-        case "jwtAlgorithm": target.getConfiguration().getJwtAlgorithm(); return true;
+        case "jwtAlgorithm": return target.getConfiguration().getJwtAlgorithm();
         case "jwtissuer":
-        case "jwtIssuer": target.getConfiguration().getJwtIssuer(); return true;
+        case "jwtIssuer": return target.getConfiguration().getJwtIssuer();
         case "jwtsecret":
-        case "jwtSecret": target.getConfiguration().getJwtSecret(); return true;
+        case "jwtSecret": return target.getConfiguration().getJwtSecret();
         case "jwtsubject":
-        case "jwtSubject": target.getConfiguration().getJwtSubject(); return true;
+        case "jwtSubject": return target.getConfiguration().getJwtSubject();
         case "keycertchainresource":
-        case "keyCertChainResource": target.getConfiguration().getKeyCertChainResource(); return true;
+        case "keyCertChainResource": return target.getConfiguration().getKeyCertChainResource();
         case "keypassword":
-        case "keyPassword": target.getConfiguration().getKeyPassword(); return true;
+        case "keyPassword": return target.getConfiguration().getKeyPassword();
         case "keyresource":
-        case "keyResource": target.getConfiguration().getKeyResource(); return true;
+        case "keyResource": return target.getConfiguration().getKeyResource();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxconcurrentcallsperconnection":
-        case "maxConcurrentCallsPerConnection": target.getConfiguration().getMaxConcurrentCallsPerConnection(); return true;
+        case "maxConcurrentCallsPerConnection": return target.getConfiguration().getMaxConcurrentCallsPerConnection();
         case "maxmessagesize":
-        case "maxMessageSize": target.getConfiguration().getMaxMessageSize(); return true;
-        case "method": target.getConfiguration().getMethod(); return true;
+        case "maxMessageSize": return target.getConfiguration().getMaxMessageSize();
+        case "method": return target.getConfiguration().getMethod();
         case "negotiationtype":
-        case "negotiationType": target.getConfiguration().getNegotiationType(); return true;
+        case "negotiationType": return target.getConfiguration().getNegotiationType();
         case "producerstrategy":
-        case "producerStrategy": target.getConfiguration().getProducerStrategy(); return true;
+        case "producerStrategy": return target.getConfiguration().getProducerStrategy();
         case "serviceaccountresource":
-        case "serviceAccountResource": target.getConfiguration().getServiceAccountResource(); return true;
+        case "serviceAccountResource": return target.getConfiguration().getServiceAccountResource();
         case "streamrepliesto":
-        case "streamRepliesTo": target.getConfiguration().getStreamRepliesTo(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "streamRepliesTo": return target.getConfiguration().getStreamRepliesTo();
+        case "synchronous": return target.isSynchronous();
         case "trustcertcollectionresource":
-        case "trustCertCollectionResource": target.getConfiguration().getTrustCertCollectionResource(); return true;
+        case "trustCertCollectionResource": return target.getConfiguration().getTrustCertCollectionResource();
         case "useragent":
-        case "userAgent": target.getConfiguration().getUserAgent(); return true;
+        case "userAgent": return target.getConfiguration().getUserAgent();
         default: return null;
         }
     }

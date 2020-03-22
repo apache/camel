@@ -42,10 +42,10 @@ public class FreemarkerComponentConfigurer extends PropertyConfigurerSupport imp
         FreemarkerComponent target = (FreemarkerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

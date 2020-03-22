@@ -68,27 +68,27 @@ public class AvroEndpointConfigurer extends PropertyConfigurerSupport implements
         AvroEndpoint target = (AvroEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "protocol": target.getConfiguration().getProtocol(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "protocol": return target.getConfiguration().getProtocol();
         case "protocolclassname":
-        case "protocolClassName": target.getConfiguration().getProtocolClassName(); return true;
+        case "protocolClassName": return target.getConfiguration().getProtocolClassName();
         case "protocollocation":
-        case "protocolLocation": target.getConfiguration().getProtocolLocation(); return true;
+        case "protocolLocation": return target.getConfiguration().getProtocolLocation();
         case "reflectionprotocol":
-        case "reflectionProtocol": target.getConfiguration().isReflectionProtocol(); return true;
+        case "reflectionProtocol": return target.getConfiguration().isReflectionProtocol();
         case "singleparameter":
-        case "singleParameter": target.getConfiguration().isSingleParameter(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "singleParameter": return target.getConfiguration().isSingleParameter();
+        case "synchronous": return target.isSynchronous();
         case "uriauthority":
-        case "uriAuthority": target.getConfiguration().getUriAuthority(); return true;
+        case "uriAuthority": return target.getConfiguration().getUriAuthority();
         default: return null;
         }
     }

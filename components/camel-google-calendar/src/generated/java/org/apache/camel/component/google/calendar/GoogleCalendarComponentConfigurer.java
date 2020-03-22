@@ -80,30 +80,30 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         GoogleCalendarComponent target = (GoogleCalendarComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "accessToken": getOrCreateConfiguration(target).getAccessToken(); return true;
+        case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "applicationname":
-        case "applicationName": getOrCreateConfiguration(target).getApplicationName(); return true;
+        case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientfactory":
-        case "clientFactory": target.getClientFactory(); return true;
+        case "clientFactory": return target.getClientFactory();
         case "clientid":
-        case "clientId": getOrCreateConfiguration(target).getClientId(); return true;
+        case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
-        case "clientSecret": getOrCreateConfiguration(target).getClientSecret(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientSecret": return getOrCreateConfiguration(target).getClientSecret();
+        case "configuration": return target.getConfiguration();
         case "emailaddress":
-        case "emailAddress": getOrCreateConfiguration(target).getEmailAddress(); return true;
+        case "emailAddress": return getOrCreateConfiguration(target).getEmailAddress();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "p12filename":
-        case "p12FileName": getOrCreateConfiguration(target).getP12FileName(); return true;
+        case "p12FileName": return getOrCreateConfiguration(target).getP12FileName();
         case "refreshtoken":
-        case "refreshToken": getOrCreateConfiguration(target).getRefreshToken(); return true;
-        case "scopes": getOrCreateConfiguration(target).getScopes(); return true;
-        case "user": getOrCreateConfiguration(target).getUser(); return true;
+        case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
+        case "scopes": return getOrCreateConfiguration(target).getScopes();
+        case "user": return getOrCreateConfiguration(target).getUser();
         default: return null;
         }
     }

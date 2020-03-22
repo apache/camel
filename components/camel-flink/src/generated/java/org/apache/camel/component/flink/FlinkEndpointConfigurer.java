@@ -56,19 +56,19 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         FlinkEndpoint target = (FlinkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "collect": target.isCollect(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "collect": return target.isCollect();
         case "dataset":
-        case "dataSet": target.getDataSet(); return true;
+        case "dataSet": return target.getDataSet();
         case "datasetcallback":
-        case "dataSetCallback": target.getDataSetCallback(); return true;
+        case "dataSetCallback": return target.getDataSetCallback();
         case "datastream":
-        case "dataStream": target.getDataStream(); return true;
+        case "dataStream": return target.getDataStream();
         case "datastreamcallback":
-        case "dataStreamCallback": target.getDataStreamCallback(); return true;
+        case "dataStreamCallback": return target.getDataStreamCallback();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

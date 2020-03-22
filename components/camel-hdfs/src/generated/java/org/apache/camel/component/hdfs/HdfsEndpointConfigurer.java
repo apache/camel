@@ -165,91 +165,91 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HdfsEndpoint target = (HdfsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "append": target.getConfig().isAppend(); return true;
+        case "append": return target.getConfig().isAppend();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blocksize":
-        case "blockSize": target.getConfig().getBlockSize(); return true;
+        case "blockSize": return target.getConfig().getBlockSize();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":
-        case "bufferSize": target.getConfig().getBufferSize(); return true;
+        case "bufferSize": return target.getConfig().getBufferSize();
         case "checkidleinterval":
-        case "checkIdleInterval": target.getConfig().getCheckIdleInterval(); return true;
+        case "checkIdleInterval": return target.getConfig().getCheckIdleInterval();
         case "chunksize":
-        case "chunkSize": target.getConfig().getChunkSize(); return true;
+        case "chunkSize": return target.getConfig().getChunkSize();
         case "compressioncodec":
-        case "compressionCodec": target.getConfig().getCompressionCodec(); return true;
+        case "compressionCodec": return target.getConfig().getCompressionCodec();
         case "compressiontype":
-        case "compressionType": target.getConfig().getCompressionType(); return true;
+        case "compressionType": return target.getConfig().getCompressionType();
         case "connectonstartup":
-        case "connectOnStartup": target.getConfig().isConnectOnStartup(); return true;
-        case "delay": target.getDelay(); return true;
+        case "connectOnStartup": return target.getConfig().isConnectOnStartup();
+        case "delay": return target.getDelay();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "filesystemtype":
-        case "fileSystemType": target.getConfig().getFileSystemType(); return true;
+        case "fileSystemType": return target.getConfig().getFileSystemType();
         case "filetype":
-        case "fileType": target.getConfig().getFileType(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "fileType": return target.getConfig().getFileType();
+        case "greedy": return target.isGreedy();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "kerberosconfigfilelocation":
-        case "kerberosConfigFileLocation": target.getConfig().getKerberosConfigFileLocation(); return true;
+        case "kerberosConfigFileLocation": return target.getConfig().getKerberosConfigFileLocation();
         case "kerberoskeytablocation":
-        case "kerberosKeytabLocation": target.getConfig().getKerberosKeytabLocation(); return true;
+        case "kerberosKeytabLocation": return target.getConfig().getKerberosKeytabLocation();
         case "kerberosusername":
-        case "kerberosUsername": target.getConfig().getKerberosUsername(); return true;
+        case "kerberosUsername": return target.getConfig().getKerberosUsername();
         case "keytype":
-        case "keyType": target.getConfig().getKeyType(); return true;
+        case "keyType": return target.getConfig().getKeyType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.getConfig().getMaxMessagesPerPoll(); return true;
+        case "maxMessagesPerPoll": return target.getConfig().getMaxMessagesPerPoll();
         case "namednodes":
-        case "namedNodes": target.getConfig().getNamedNodes(); return true;
+        case "namedNodes": return target.getConfig().getNamedNodes();
         case "openedsuffix":
-        case "openedSuffix": target.getConfig().getOpenedSuffix(); return true;
-        case "overwrite": target.getConfig().isOverwrite(); return true;
-        case "owner": target.getConfig().getOwner(); return true;
-        case "pattern": target.getConfig().getPattern(); return true;
+        case "openedSuffix": return target.getConfig().getOpenedSuffix();
+        case "overwrite": return target.getConfig().isOverwrite();
+        case "owner": return target.getConfig().getOwner();
+        case "pattern": return target.getConfig().getPattern();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "readsuffix":
-        case "readSuffix": target.getConfig().getReadSuffix(); return true;
+        case "readSuffix": return target.getConfig().getReadSuffix();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
-        case "replication": target.getConfig().getReplication(); return true;
+        case "repeatCount": return target.getRepeatCount();
+        case "replication": return target.getConfig().getReplication();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "splitstrategy":
-        case "splitStrategy": target.getConfig().getSplitStrategy(); return true;
+        case "splitStrategy": return target.getConfig().getSplitStrategy();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
+        case "startScheduler": return target.isStartScheduler();
         case "streamdownload":
-        case "streamDownload": target.getConfig().isStreamDownload(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "streamDownload": return target.getConfig().isStreamDownload();
+        case "synchronous": return target.isSynchronous();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "valuetype":
-        case "valueType": target.getConfig().getValueType(); return true;
+        case "valueType": return target.getConfig().getValueType();
         default: return null;
         }
     }

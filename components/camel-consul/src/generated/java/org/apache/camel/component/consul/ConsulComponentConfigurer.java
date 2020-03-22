@@ -111,49 +111,49 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         ConsulComponent target = (ConsulComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acltoken":
-        case "aclToken": getOrCreateConfiguration(target).getAclToken(); return true;
-        case "action": getOrCreateConfiguration(target).getAction(); return true;
+        case "aclToken": return getOrCreateConfiguration(target).getAclToken();
+        case "action": return getOrCreateConfiguration(target).getAction();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockseconds":
-        case "blockSeconds": getOrCreateConfiguration(target).getBlockSeconds(); return true;
+        case "blockSeconds": return getOrCreateConfiguration(target).getBlockSeconds();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
         case "connecttimeoutmillis":
-        case "connectTimeoutMillis": getOrCreateConfiguration(target).getConnectTimeoutMillis(); return true;
+        case "connectTimeoutMillis": return getOrCreateConfiguration(target).getConnectTimeoutMillis();
         case "consistencymode":
-        case "consistencyMode": getOrCreateConfiguration(target).getConsistencyMode(); return true;
+        case "consistencyMode": return getOrCreateConfiguration(target).getConsistencyMode();
         case "consulclient":
-        case "consulClient": getOrCreateConfiguration(target).getConsulClient(); return true;
-        case "datacenter": getOrCreateConfiguration(target).getDatacenter(); return true;
+        case "consulClient": return getOrCreateConfiguration(target).getConsulClient();
+        case "datacenter": return getOrCreateConfiguration(target).getDatacenter();
         case "firstindex":
-        case "firstIndex": getOrCreateConfiguration(target).getFirstIndex(); return true;
-        case "key": getOrCreateConfiguration(target).getKey(); return true;
+        case "firstIndex": return getOrCreateConfiguration(target).getFirstIndex();
+        case "key": return getOrCreateConfiguration(target).getKey();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "nearnode":
-        case "nearNode": getOrCreateConfiguration(target).getNearNode(); return true;
+        case "nearNode": return getOrCreateConfiguration(target).getNearNode();
         case "nodemeta":
-        case "nodeMeta": getOrCreateConfiguration(target).getNodeMeta(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
+        case "nodeMeta": return getOrCreateConfiguration(target).getNodeMeta();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "pinginstance":
-        case "pingInstance": getOrCreateConfiguration(target).isPingInstance(); return true;
+        case "pingInstance": return getOrCreateConfiguration(target).isPingInstance();
         case "readtimeoutmillis":
-        case "readTimeoutMillis": getOrCreateConfiguration(target).getReadTimeoutMillis(); return true;
-        case "recursive": getOrCreateConfiguration(target).isRecursive(); return true;
+        case "readTimeoutMillis": return getOrCreateConfiguration(target).getReadTimeoutMillis();
+        case "recursive": return getOrCreateConfiguration(target).isRecursive();
         case "sslcontextparameters":
-        case "sslContextParameters": getOrCreateConfiguration(target).getSslContextParameters(); return true;
-        case "tags": getOrCreateConfiguration(target).getTags(); return true;
-        case "url": getOrCreateConfiguration(target).getUrl(); return true;
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
+        case "tags": return getOrCreateConfiguration(target).getTags();
+        case "url": return getOrCreateConfiguration(target).getUrl();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username":
-        case "userName": getOrCreateConfiguration(target).getUserName(); return true;
+        case "userName": return getOrCreateConfiguration(target).getUserName();
         case "valueasstring":
-        case "valueAsString": getOrCreateConfiguration(target).isValueAsString(); return true;
+        case "valueAsString": return getOrCreateConfiguration(target).isValueAsString();
         case "writetimeoutmillis":
-        case "writeTimeoutMillis": getOrCreateConfiguration(target).getWriteTimeoutMillis(); return true;
+        case "writeTimeoutMillis": return getOrCreateConfiguration(target).getWriteTimeoutMillis();
         default: return null;
         }
     }

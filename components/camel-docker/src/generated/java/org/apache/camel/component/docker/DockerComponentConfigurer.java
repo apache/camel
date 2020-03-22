@@ -95,38 +95,38 @@ public class DockerComponentConfigurer extends PropertyConfigurerSupport impleme
         DockerComponent target = (DockerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "certpath":
-        case "certPath": getOrCreateConfiguration(target).getCertPath(); return true;
+        case "certPath": return getOrCreateConfiguration(target).getCertPath();
         case "cmdexecfactory":
-        case "cmdExecFactory": getOrCreateConfiguration(target).getCmdExecFactory(); return true;
-        case "configuration": target.getConfiguration(); return true;
-        case "email": getOrCreateConfiguration(target).getEmail(); return true;
+        case "cmdExecFactory": return getOrCreateConfiguration(target).getCmdExecFactory();
+        case "configuration": return target.getConfiguration();
+        case "email": return getOrCreateConfiguration(target).getEmail();
         case "followredirectfilter":
-        case "followRedirectFilter": getOrCreateConfiguration(target).isFollowRedirectFilter(); return true;
-        case "host": getOrCreateConfiguration(target).getHost(); return true;
+        case "followRedirectFilter": return getOrCreateConfiguration(target).isFollowRedirectFilter();
+        case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "loggingfilter":
-        case "loggingFilter": getOrCreateConfiguration(target).isLoggingFilter(); return true;
+        case "loggingFilter": return getOrCreateConfiguration(target).isLoggingFilter();
         case "maxperrouteconnections":
-        case "maxPerRouteConnections": getOrCreateConfiguration(target).getMaxPerRouteConnections(); return true;
+        case "maxPerRouteConnections": return getOrCreateConfiguration(target).getMaxPerRouteConnections();
         case "maxtotalconnections":
-        case "maxTotalConnections": getOrCreateConfiguration(target).getMaxTotalConnections(); return true;
-        case "parameters": getOrCreateConfiguration(target).getParameters(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
-        case "port": getOrCreateConfiguration(target).getPort(); return true;
+        case "maxTotalConnections": return getOrCreateConfiguration(target).getMaxTotalConnections();
+        case "parameters": return getOrCreateConfiguration(target).getParameters();
+        case "password": return getOrCreateConfiguration(target).getPassword();
+        case "port": return getOrCreateConfiguration(target).getPort();
         case "requesttimeout":
-        case "requestTimeout": getOrCreateConfiguration(target).getRequestTimeout(); return true;
-        case "secure": getOrCreateConfiguration(target).isSecure(); return true;
+        case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
+        case "secure": return getOrCreateConfiguration(target).isSecure();
         case "serveraddress":
-        case "serverAddress": getOrCreateConfiguration(target).getServerAddress(); return true;
-        case "socket": getOrCreateConfiguration(target).isSocket(); return true;
+        case "serverAddress": return getOrCreateConfiguration(target).getServerAddress();
+        case "socket": return getOrCreateConfiguration(target).isSocket();
         case "tlsverify":
-        case "tlsVerify": getOrCreateConfiguration(target).isTlsVerify(); return true;
-        case "username": getOrCreateConfiguration(target).getUsername(); return true;
+        case "tlsVerify": return getOrCreateConfiguration(target).isTlsVerify();
+        case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }
     }

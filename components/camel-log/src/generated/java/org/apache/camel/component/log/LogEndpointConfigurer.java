@@ -113,56 +113,56 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
         LogEndpoint target = (LogEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "exchangeformatter":
-        case "exchangeFormatter": target.getExchangeFormatter(); return true;
+        case "exchangeFormatter": return target.getExchangeFormatter();
         case "groupactiveonly":
-        case "groupActiveOnly": target.getGroupActiveOnly(); return true;
+        case "groupActiveOnly": return target.getGroupActiveOnly();
         case "groupdelay":
-        case "groupDelay": target.getGroupDelay(); return true;
+        case "groupDelay": return target.getGroupDelay();
         case "groupinterval":
-        case "groupInterval": target.getGroupInterval(); return true;
+        case "groupInterval": return target.getGroupInterval();
         case "groupsize":
-        case "groupSize": target.getGroupSize(); return true;
+        case "groupSize": return target.getGroupSize();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "level": target.getLevel(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "level": return target.getLevel();
         case "logmask":
-        case "logMask": target.getLogMask(); return true;
-        case "marker": target.getMarker(); return true;
+        case "logMask": return target.getLogMask();
+        case "marker": return target.getMarker();
         case "maxchars":
-        case "maxChars": target.getMaxChars(); return true;
-        case "multiline": target.isMultiline(); return true;
+        case "maxChars": return target.getMaxChars();
+        case "multiline": return target.isMultiline();
         case "showall":
-        case "showAll": target.isShowAll(); return true;
+        case "showAll": return target.isShowAll();
         case "showbody":
-        case "showBody": target.isShowBody(); return true;
+        case "showBody": return target.isShowBody();
         case "showbodytype":
-        case "showBodyType": target.isShowBodyType(); return true;
+        case "showBodyType": return target.isShowBodyType();
         case "showcaughtexception":
-        case "showCaughtException": target.isShowCaughtException(); return true;
+        case "showCaughtException": return target.isShowCaughtException();
         case "showexception":
-        case "showException": target.isShowException(); return true;
+        case "showException": return target.isShowException();
         case "showexchangeid":
-        case "showExchangeId": target.isShowExchangeId(); return true;
+        case "showExchangeId": return target.isShowExchangeId();
         case "showexchangepattern":
-        case "showExchangePattern": target.isShowExchangePattern(); return true;
+        case "showExchangePattern": return target.isShowExchangePattern();
         case "showfiles":
-        case "showFiles": target.isShowFiles(); return true;
+        case "showFiles": return target.isShowFiles();
         case "showfuture":
-        case "showFuture": target.isShowFuture(); return true;
+        case "showFuture": return target.isShowFuture();
         case "showheaders":
-        case "showHeaders": target.isShowHeaders(); return true;
+        case "showHeaders": return target.isShowHeaders();
         case "showproperties":
-        case "showProperties": target.isShowProperties(); return true;
+        case "showProperties": return target.isShowProperties();
         case "showstacktrace":
-        case "showStackTrace": target.isShowStackTrace(); return true;
+        case "showStackTrace": return target.isShowStackTrace();
         case "showstreams":
-        case "showStreams": target.isShowStreams(); return true;
+        case "showStreams": return target.isShowStreams();
         case "skipbodylineseparator":
-        case "skipBodyLineSeparator": target.isSkipBodyLineSeparator(); return true;
-        case "style": target.getStyle(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "skipBodyLineSeparator": return target.isSkipBodyLineSeparator();
+        case "style": return target.getStyle();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -125,64 +125,64 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
         CxfRsEndpoint target = (CxfRsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "binding": target.getBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "binding": return target.getBinding();
         case "bindingstyle":
-        case "bindingStyle": target.getBindingStyle(); return true;
+        case "bindingStyle": return target.getBindingStyle();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "bus": target.getBus(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "bus": return target.getBus();
         case "continuationtimeout":
-        case "continuationTimeout": target.getContinuationTimeout(); return true;
+        case "continuationTimeout": return target.getContinuationTimeout();
         case "cookiehandler":
-        case "cookieHandler": target.getCookieHandler(); return true;
+        case "cookieHandler": return target.getCookieHandler();
         case "cxfrsconfigurer":
-        case "cxfRsConfigurer": target.getCxfRsConfigurer(); return true;
+        case "cxfRsConfigurer": return target.getCxfRsConfigurer();
         case "defaultbus":
-        case "defaultBus": target.isDefaultBus(); return true;
+        case "defaultBus": return target.isDefaultBus();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "features": target.getFeatures(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "features": return target.getFeatures();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "hostnameverifier":
-        case "hostnameVerifier": target.getHostnameVerifier(); return true;
+        case "hostnameVerifier": return target.getHostnameVerifier();
         case "httpclientapi":
-        case "httpClientAPI": target.isHttpClientAPI(); return true;
+        case "httpClientAPI": return target.isHttpClientAPI();
         case "ignoredeletemethodmessagebody":
-        case "ignoreDeleteMethodMessageBody": target.isIgnoreDeleteMethodMessageBody(); return true;
+        case "ignoreDeleteMethodMessageBody": return target.isIgnoreDeleteMethodMessageBody();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "loggingfeatureenabled":
-        case "loggingFeatureEnabled": target.isLoggingFeatureEnabled(); return true;
+        case "loggingFeatureEnabled": return target.isLoggingFeatureEnabled();
         case "loggingsizelimit":
-        case "loggingSizeLimit": target.getLoggingSizeLimit(); return true;
+        case "loggingSizeLimit": return target.getLoggingSizeLimit();
         case "maxclientcachesize":
-        case "maxClientCacheSize": target.getMaxClientCacheSize(); return true;
+        case "maxClientCacheSize": return target.getMaxClientCacheSize();
         case "modelref":
-        case "modelRef": target.getModelRef(); return true;
+        case "modelRef": return target.getModelRef();
         case "performinvocation":
-        case "performInvocation": target.isPerformInvocation(); return true;
+        case "performInvocation": return target.isPerformInvocation();
         case "propagatecontexts":
-        case "propagateContexts": target.isPropagateContexts(); return true;
-        case "providers": target.getProviders(); return true;
+        case "propagateContexts": return target.isPropagateContexts();
+        case "providers": return target.getProviders();
         case "publishedendpointurl":
-        case "publishedEndpointUrl": target.getPublishedEndpointUrl(); return true;
+        case "publishedEndpointUrl": return target.getPublishedEndpointUrl();
         case "resourceclasses":
-        case "resourceClasses": target.getResourceClasses(); return true;
+        case "resourceClasses": return target.getResourceClasses();
         case "schemalocations":
-        case "schemaLocations": target.getSchemaLocations(); return true;
+        case "schemaLocations": return target.getSchemaLocations();
         case "servicebeans":
-        case "serviceBeans": target.getServiceBeans(); return true;
+        case "serviceBeans": return target.getServiceBeans();
         case "skipfaultlogging":
-        case "skipFaultLogging": target.isSkipFaultLogging(); return true;
+        case "skipFaultLogging": return target.isSkipFaultLogging();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         case "throwexceptiononfailure":
-        case "throwExceptionOnFailure": target.isThrowExceptionOnFailure(); return true;
+        case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
         default: return null;
         }
     }

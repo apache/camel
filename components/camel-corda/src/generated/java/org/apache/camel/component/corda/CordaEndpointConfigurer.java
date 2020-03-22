@@ -77,32 +77,32 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
         CordaEndpoint target = (CordaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "contractstateclass":
-        case "contractStateClass": target.getConfiguration().getContractStateClass(); return true;
+        case "contractStateClass": return target.getConfiguration().getContractStateClass();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "flowlogicarguments":
-        case "flowLogicArguments": target.getConfiguration().getFlowLogicArguments(); return true;
+        case "flowLogicArguments": return target.getConfiguration().getFlowLogicArguments();
         case "flowlogicclass":
-        case "flowLogicClass": target.getConfiguration().getFlowLogicClass(); return true;
+        case "flowLogicClass": return target.getConfiguration().getFlowLogicClass();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return target.getConfiguration().getOperation();
         case "pagespecification":
-        case "pageSpecification": target.getConfiguration().getPageSpecification(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
+        case "pageSpecification": return target.getConfiguration().getPageSpecification();
+        case "password": return target.getConfiguration().getPassword();
         case "processsnapshot":
-        case "processSnapshot": target.getConfiguration().isProcessSnapshot(); return true;
+        case "processSnapshot": return target.getConfiguration().isProcessSnapshot();
         case "querycriteria":
-        case "queryCriteria": target.getConfiguration().getQueryCriteria(); return true;
-        case "sort": target.getConfiguration().getSort(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "username": target.getConfiguration().getUsername(); return true;
+        case "queryCriteria": return target.getConfiguration().getQueryCriteria();
+        case "sort": return target.getConfiguration().getSort();
+        case "synchronous": return target.isSynchronous();
+        case "username": return target.getConfiguration().getUsername();
         default: return null;
         }
     }

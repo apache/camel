@@ -62,23 +62,23 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         BeanValidatorEndpoint target = (BeanValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "constraintvalidatorfactory":
-        case "constraintValidatorFactory": target.getConstraintValidatorFactory(); return true;
-        case "group": target.getGroup(); return true;
+        case "constraintValidatorFactory": return target.getConstraintValidatorFactory();
+        case "group": return target.getGroup();
         case "ignorexmlconfiguration":
-        case "ignoreXmlConfiguration": target.isIgnoreXmlConfiguration(); return true;
+        case "ignoreXmlConfiguration": return target.isIgnoreXmlConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "messageinterpolator":
-        case "messageInterpolator": target.getMessageInterpolator(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "messageInterpolator": return target.getMessageInterpolator();
+        case "synchronous": return target.isSynchronous();
         case "traversableresolver":
-        case "traversableResolver": target.getTraversableResolver(); return true;
+        case "traversableResolver": return target.getTraversableResolver();
         case "validationproviderresolver":
-        case "validationProviderResolver": target.getValidationProviderResolver(); return true;
+        case "validationProviderResolver": return target.getValidationProviderResolver();
         case "validatorfactory":
-        case "validatorFactory": target.getValidatorFactory(); return true;
+        case "validatorFactory": return target.getValidatorFactory();
         default: return null;
         }
     }

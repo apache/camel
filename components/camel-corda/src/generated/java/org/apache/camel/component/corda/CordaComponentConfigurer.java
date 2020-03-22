@@ -78,28 +78,28 @@ public class CordaComponentConfigurer extends PropertyConfigurerSupport implemen
         CordaComponent target = (CordaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
         case "contractstateclass":
-        case "contractStateClass": getOrCreateConfiguration(target).getContractStateClass(); return true;
+        case "contractStateClass": return getOrCreateConfiguration(target).getContractStateClass();
         case "flowlogicarguments":
-        case "flowLogicArguments": getOrCreateConfiguration(target).getFlowLogicArguments(); return true;
+        case "flowLogicArguments": return getOrCreateConfiguration(target).getFlowLogicArguments();
         case "flowlogicclass":
-        case "flowLogicClass": getOrCreateConfiguration(target).getFlowLogicClass(); return true;
+        case "flowLogicClass": return getOrCreateConfiguration(target).getFlowLogicClass();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "pagespecification":
-        case "pageSpecification": getOrCreateConfiguration(target).getPageSpecification(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
+        case "pageSpecification": return getOrCreateConfiguration(target).getPageSpecification();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "processsnapshot":
-        case "processSnapshot": getOrCreateConfiguration(target).isProcessSnapshot(); return true;
+        case "processSnapshot": return getOrCreateConfiguration(target).isProcessSnapshot();
         case "querycriteria":
-        case "queryCriteria": getOrCreateConfiguration(target).getQueryCriteria(); return true;
-        case "sort": getOrCreateConfiguration(target).getSort(); return true;
-        case "username": getOrCreateConfiguration(target).getUsername(); return true;
+        case "queryCriteria": return getOrCreateConfiguration(target).getQueryCriteria();
+        case "sort": return getOrCreateConfiguration(target).getSort();
+        case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }
     }

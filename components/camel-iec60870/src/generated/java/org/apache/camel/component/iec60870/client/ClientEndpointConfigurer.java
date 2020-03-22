@@ -96,45 +96,45 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
         ClientEndpoint target = (ClientEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acknowledgewindow":
-        case "acknowledgeWindow": target.getConnectionOptions().getAcknowledgeWindow(); return true;
+        case "acknowledgeWindow": return target.getConnectionOptions().getAcknowledgeWindow();
         case "adsuaddresstype":
-        case "adsuAddressType": target.getConnectionOptions().getAdsuAddressType(); return true;
+        case "adsuAddressType": return target.getConnectionOptions().getAdsuAddressType();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "causeoftransmissiontype":
-        case "causeOfTransmissionType": target.getConnectionOptions().getCauseOfTransmissionType(); return true;
+        case "causeOfTransmissionType": return target.getConnectionOptions().getCauseOfTransmissionType();
         case "causesourceaddress":
-        case "causeSourceAddress": target.getConnectionOptions().getCauseSourceAddress(); return true;
+        case "causeSourceAddress": return target.getConnectionOptions().getCauseSourceAddress();
         case "connectionid":
-        case "connectionId": target.getConnectionId(); return true;
+        case "connectionId": return target.getConnectionId();
         case "connectiontimeout":
-        case "connectionTimeout": target.getConnectionOptions().getConnectionTimeout(); return true;
+        case "connectionTimeout": return target.getConnectionOptions().getConnectionTimeout();
         case "datamoduleoptions":
-        case "dataModuleOptions": target.getConnectionOptions().getDataModuleOptions(); return true;
+        case "dataModuleOptions": return target.getConnectionOptions().getDataModuleOptions();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "ignorebackgroundscan":
-        case "ignoreBackgroundScan": target.getConnectionOptions().isIgnoreBackgroundScan(); return true;
+        case "ignoreBackgroundScan": return target.getConnectionOptions().isIgnoreBackgroundScan();
         case "ignoredaylightsavingtime":
-        case "ignoreDaylightSavingTime": target.getConnectionOptions().isIgnoreDaylightSavingTime(); return true;
+        case "ignoreDaylightSavingTime": return target.getConnectionOptions().isIgnoreDaylightSavingTime();
         case "informationobjectaddresstype":
-        case "informationObjectAddressType": target.getConnectionOptions().getInformationObjectAddressType(); return true;
+        case "informationObjectAddressType": return target.getConnectionOptions().getInformationObjectAddressType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxunacknowledged":
-        case "maxUnacknowledged": target.getConnectionOptions().getMaxUnacknowledged(); return true;
+        case "maxUnacknowledged": return target.getConnectionOptions().getMaxUnacknowledged();
         case "protocoloptions":
-        case "protocolOptions": target.getConnectionOptions().getProtocolOptions(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "protocolOptions": return target.getConnectionOptions().getProtocolOptions();
+        case "synchronous": return target.isSynchronous();
         case "timezone":
-        case "timeZone": target.getConnectionOptions().getTimeZone(); return true;
-        case "timeout1": target.getConnectionOptions().getTimeout1(); return true;
-        case "timeout2": target.getConnectionOptions().getTimeout2(); return true;
-        case "timeout3": target.getConnectionOptions().getTimeout3(); return true;
+        case "timeZone": return target.getConnectionOptions().getTimeZone();
+        case "timeout1": return target.getConnectionOptions().getTimeout1();
+        case "timeout2": return target.getConnectionOptions().getTimeout2();
+        case "timeout3": return target.getConnectionOptions().getTimeout3();
         default: return null;
         }
     }

@@ -69,23 +69,23 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         KinesisFirehose2Component target = (KinesisFirehose2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonkinesisfirehoseclient":
-        case "amazonKinesisFirehoseClient": getOrCreateConfiguration(target).getAmazonKinesisFirehoseClient(); return true;
+        case "amazonKinesisFirehoseClient": return getOrCreateConfiguration(target).getAmazonKinesisFirehoseClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         default: return null;
         }
     }

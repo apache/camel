@@ -85,39 +85,39 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         EhcacheEndpoint target = (EhcacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action": target.getConfiguration().getAction(); return true;
+        case "action": return target.getConfiguration().getAction();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachemanager":
-        case "cacheManager": target.getConfiguration().getCacheManager(); return true;
+        case "cacheManager": return target.getConfiguration().getCacheManager();
         case "cachemanagerconfiguration":
-        case "cacheManagerConfiguration": target.getConfiguration().getCacheManagerConfiguration(); return true;
-        case "configuration": target.getConfiguration().getConfiguration(); return true;
+        case "cacheManagerConfiguration": return target.getConfiguration().getCacheManagerConfiguration();
+        case "configuration": return target.getConfiguration().getConfiguration();
         case "configurationuri":
-        case "configurationUri": target.getConfiguration().getConfigurationUri(); return true;
-        case "configurations": target.getConfiguration().getConfigurations(); return true;
+        case "configurationUri": return target.getConfiguration().getConfigurationUri();
+        case "configurations": return target.getConfiguration().getConfigurations();
         case "createcacheifnotexist":
-        case "createCacheIfNotExist": target.getConfiguration().isCreateCacheIfNotExist(); return true;
+        case "createCacheIfNotExist": return target.getConfiguration().isCreateCacheIfNotExist();
         case "eventfiring":
-        case "eventFiring": target.getConfiguration().getEventFiring(); return true;
+        case "eventFiring": return target.getConfiguration().getEventFiring();
         case "eventordering":
-        case "eventOrdering": target.getConfiguration().getEventOrdering(); return true;
+        case "eventOrdering": return target.getConfiguration().getEventOrdering();
         case "eventtypes":
-        case "eventTypes": target.getConfiguration().getEventTypes(); return true;
+        case "eventTypes": return target.getConfiguration().getEventTypes();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "key": target.getConfiguration().getKey(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "key": return target.getConfiguration().getKey();
         case "keytype":
-        case "keyType": target.getConfiguration().getKeyType(); return true;
+        case "keyType": return target.getConfiguration().getKeyType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         case "valuetype":
-        case "valueType": target.getConfiguration().getValueType(); return true;
+        case "valueType": return target.getConfiguration().getValueType();
         default: return null;
         }
     }

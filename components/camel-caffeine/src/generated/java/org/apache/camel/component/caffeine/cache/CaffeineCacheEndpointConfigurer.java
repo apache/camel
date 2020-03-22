@@ -83,38 +83,38 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CaffeineCacheEndpoint target = (CaffeineCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action": target.getConfiguration().getAction(); return true;
+        case "action": return target.getConfiguration().getAction();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "cache": target.getConfiguration().getCache(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "cache": return target.getConfiguration().getCache();
         case "cacheloader":
-        case "cacheLoader": target.getConfiguration().getCacheLoader(); return true;
+        case "cacheLoader": return target.getConfiguration().getCacheLoader();
         case "createcacheifnotexist":
-        case "createCacheIfNotExist": target.getConfiguration().isCreateCacheIfNotExist(); return true;
+        case "createCacheIfNotExist": return target.getConfiguration().isCreateCacheIfNotExist();
         case "evictiontype":
-        case "evictionType": target.getConfiguration().getEvictionType(); return true;
+        case "evictionType": return target.getConfiguration().getEvictionType();
         case "expireafteraccesstime":
-        case "expireAfterAccessTime": target.getConfiguration().getExpireAfterAccessTime(); return true;
+        case "expireAfterAccessTime": return target.getConfiguration().getExpireAfterAccessTime();
         case "expireafterwritetime":
-        case "expireAfterWriteTime": target.getConfiguration().getExpireAfterWriteTime(); return true;
+        case "expireAfterWriteTime": return target.getConfiguration().getExpireAfterWriteTime();
         case "initialcapacity":
-        case "initialCapacity": target.getConfiguration().getInitialCapacity(); return true;
-        case "key": target.getConfiguration().getKey(); return true;
+        case "initialCapacity": return target.getConfiguration().getInitialCapacity();
+        case "key": return target.getConfiguration().getKey();
         case "keytype":
-        case "keyType": target.getConfiguration().getKeyType(); return true;
+        case "keyType": return target.getConfiguration().getKeyType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumsize":
-        case "maximumSize": target.getConfiguration().getMaximumSize(); return true;
+        case "maximumSize": return target.getConfiguration().getMaximumSize();
         case "removallistener":
-        case "removalListener": target.getConfiguration().getRemovalListener(); return true;
+        case "removalListener": return target.getConfiguration().getRemovalListener();
         case "statscounter":
-        case "statsCounter": target.getConfiguration().getStatsCounter(); return true;
+        case "statsCounter": return target.getConfiguration().getStatsCounter();
         case "statsenabled":
-        case "statsEnabled": target.getConfiguration().isStatsEnabled(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "statsEnabled": return target.getConfiguration().isStatsEnabled();
+        case "synchronous": return target.isSynchronous();
         case "valuetype":
-        case "valueType": target.getConfiguration().getValueType(); return true;
+        case "valueType": return target.getConfiguration().getValueType();
         default: return null;
         }
     }

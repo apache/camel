@@ -94,39 +94,39 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         SnsComponent target = (SnsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonsnsclient":
-        case "amazonSNSClient": getOrCreateConfiguration(target).getAmazonSNSClient(); return true;
+        case "amazonSNSClient": return getOrCreateConfiguration(target).getAmazonSNSClient();
         case "amazonsqsclient":
-        case "amazonSQSClient": getOrCreateConfiguration(target).getAmazonSQSClient(); return true;
+        case "amazonSQSClient": return getOrCreateConfiguration(target).getAmazonSQSClient();
         case "autocreatetopic":
-        case "autoCreateTopic": getOrCreateConfiguration(target).isAutoCreateTopic(); return true;
+        case "autoCreateTopic": return getOrCreateConfiguration(target).isAutoCreateTopic();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "kmsmasterkeyid":
-        case "kmsMasterKeyId": getOrCreateConfiguration(target).getKmsMasterKeyId(); return true;
+        case "kmsMasterKeyId": return getOrCreateConfiguration(target).getKmsMasterKeyId();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagestructure":
-        case "messageStructure": getOrCreateConfiguration(target).getMessageStructure(); return true;
-        case "policy": getOrCreateConfiguration(target).getPolicy(); return true;
+        case "messageStructure": return getOrCreateConfiguration(target).getMessageStructure();
+        case "policy": return getOrCreateConfiguration(target).getPolicy();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
         case "queueurl":
-        case "queueUrl": getOrCreateConfiguration(target).getQueueUrl(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "queueUrl": return getOrCreateConfiguration(target).getQueueUrl();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "serversideencryptionenabled":
-        case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).isServerSideEncryptionEnabled(); return true;
-        case "subject": getOrCreateConfiguration(target).getSubject(); return true;
+        case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
+        case "subject": return getOrCreateConfiguration(target).getSubject();
         case "subscribesnstosqs":
-        case "subscribeSNStoSQS": getOrCreateConfiguration(target).isSubscribeSNStoSQS(); return true;
+        case "subscribeSNStoSQS": return getOrCreateConfiguration(target).isSubscribeSNStoSQS();
         default: return null;
         }
     }

@@ -323,191 +323,191 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         JmsComponent target = (JmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acceptmessageswhilestopping":
-        case "acceptMessagesWhileStopping": getOrCreateConfiguration(target).isAcceptMessagesWhileStopping(); return true;
+        case "acceptMessagesWhileStopping": return getOrCreateConfiguration(target).isAcceptMessagesWhileStopping();
         case "acknowledgementmodename":
-        case "acknowledgementModeName": getOrCreateConfiguration(target).getAcknowledgementModeName(); return true;
+        case "acknowledgementModeName": return getOrCreateConfiguration(target).getAcknowledgementModeName();
         case "allowadditionalheaders":
-        case "allowAdditionalHeaders": getOrCreateConfiguration(target).getAllowAdditionalHeaders(); return true;
+        case "allowAdditionalHeaders": return getOrCreateConfiguration(target).getAllowAdditionalHeaders();
         case "allowautowiredconnectionfactory":
-        case "allowAutoWiredConnectionFactory": target.isAllowAutoWiredConnectionFactory(); return true;
+        case "allowAutoWiredConnectionFactory": return target.isAllowAutoWiredConnectionFactory();
         case "allowautowireddestinationresolver":
-        case "allowAutoWiredDestinationResolver": target.isAllowAutoWiredDestinationResolver(); return true;
+        case "allowAutoWiredDestinationResolver": return target.isAllowAutoWiredDestinationResolver();
         case "allownullbody":
-        case "allowNullBody": getOrCreateConfiguration(target).isAllowNullBody(); return true;
+        case "allowNullBody": return getOrCreateConfiguration(target).isAllowNullBody();
         case "allowreplymanagerquickstop":
-        case "allowReplyManagerQuickStop": getOrCreateConfiguration(target).isAllowReplyManagerQuickStop(); return true;
+        case "allowReplyManagerQuickStop": return getOrCreateConfiguration(target).isAllowReplyManagerQuickStop();
         case "allowserializedheaders":
-        case "allowSerializedHeaders": getOrCreateConfiguration(target).isAllowSerializedHeaders(); return true;
+        case "allowSerializedHeaders": return getOrCreateConfiguration(target).isAllowSerializedHeaders();
         case "alwayscopymessage":
-        case "alwaysCopyMessage": getOrCreateConfiguration(target).isAlwaysCopyMessage(); return true;
+        case "alwaysCopyMessage": return getOrCreateConfiguration(target).isAlwaysCopyMessage();
         case "artemisstreamingenabled":
-        case "artemisStreamingEnabled": getOrCreateConfiguration(target).isArtemisStreamingEnabled(); return true;
+        case "artemisStreamingEnabled": return getOrCreateConfiguration(target).isArtemisStreamingEnabled();
         case "asyncconsumer":
-        case "asyncConsumer": getOrCreateConfiguration(target).isAsyncConsumer(); return true;
+        case "asyncConsumer": return getOrCreateConfiguration(target).isAsyncConsumer();
         case "asyncstartlistener":
-        case "asyncStartListener": getOrCreateConfiguration(target).isAsyncStartListener(); return true;
+        case "asyncStartListener": return getOrCreateConfiguration(target).isAsyncStartListener();
         case "asyncstoplistener":
-        case "asyncStopListener": getOrCreateConfiguration(target).isAsyncStopListener(); return true;
+        case "asyncStopListener": return getOrCreateConfiguration(target).isAsyncStopListener();
         case "autostartup":
-        case "autoStartup": getOrCreateConfiguration(target).isAutoStartup(); return true;
+        case "autoStartup": return getOrCreateConfiguration(target).isAutoStartup();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachelevel":
-        case "cacheLevel": getOrCreateConfiguration(target).getCacheLevel(); return true;
+        case "cacheLevel": return getOrCreateConfiguration(target).getCacheLevel();
         case "cachelevelname":
-        case "cacheLevelName": getOrCreateConfiguration(target).getCacheLevelName(); return true;
+        case "cacheLevelName": return getOrCreateConfiguration(target).getCacheLevelName();
         case "clientid":
-        case "clientId": getOrCreateConfiguration(target).getClientId(); return true;
+        case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "concurrentconsumers":
-        case "concurrentConsumers": getOrCreateConfiguration(target).getConcurrentConsumers(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "concurrentConsumers": return getOrCreateConfiguration(target).getConcurrentConsumers();
+        case "configuration": return target.getConfiguration();
         case "connectionfactory":
-        case "connectionFactory": getOrCreateConfiguration(target).getConnectionFactory(); return true;
+        case "connectionFactory": return getOrCreateConfiguration(target).getConnectionFactory();
         case "consumertype":
-        case "consumerType": getOrCreateConfiguration(target).getConsumerType(); return true;
+        case "consumerType": return getOrCreateConfiguration(target).getConsumerType();
         case "correlationproperty":
-        case "correlationProperty": getOrCreateConfiguration(target).getCorrelationProperty(); return true;
+        case "correlationProperty": return getOrCreateConfiguration(target).getCorrelationProperty();
         case "defaulttaskexecutortype":
-        case "defaultTaskExecutorType": getOrCreateConfiguration(target).getDefaultTaskExecutorType(); return true;
+        case "defaultTaskExecutorType": return getOrCreateConfiguration(target).getDefaultTaskExecutorType();
         case "deliverydelay":
-        case "deliveryDelay": getOrCreateConfiguration(target).getDeliveryDelay(); return true;
+        case "deliveryDelay": return getOrCreateConfiguration(target).getDeliveryDelay();
         case "deliverymode":
-        case "deliveryMode": getOrCreateConfiguration(target).getDeliveryMode(); return true;
+        case "deliveryMode": return getOrCreateConfiguration(target).getDeliveryMode();
         case "deliverypersistent":
-        case "deliveryPersistent": getOrCreateConfiguration(target).isDeliveryPersistent(); return true;
+        case "deliveryPersistent": return getOrCreateConfiguration(target).isDeliveryPersistent();
         case "destinationresolver":
-        case "destinationResolver": getOrCreateConfiguration(target).getDestinationResolver(); return true;
+        case "destinationResolver": return getOrCreateConfiguration(target).getDestinationResolver();
         case "disablereplyto":
-        case "disableReplyTo": getOrCreateConfiguration(target).isDisableReplyTo(); return true;
+        case "disableReplyTo": return getOrCreateConfiguration(target).isDisableReplyTo();
         case "disabletimetolive":
-        case "disableTimeToLive": getOrCreateConfiguration(target).isDisableTimeToLive(); return true;
+        case "disableTimeToLive": return getOrCreateConfiguration(target).isDisableTimeToLive();
         case "durablesubscriptionname":
-        case "durableSubscriptionName": getOrCreateConfiguration(target).getDurableSubscriptionName(); return true;
+        case "durableSubscriptionName": return getOrCreateConfiguration(target).getDurableSubscriptionName();
         case "eagerloadingofproperties":
-        case "eagerLoadingOfProperties": getOrCreateConfiguration(target).isEagerLoadingOfProperties(); return true;
+        case "eagerLoadingOfProperties": return getOrCreateConfiguration(target).isEagerLoadingOfProperties();
         case "eagerpoisonbody":
-        case "eagerPoisonBody": getOrCreateConfiguration(target).getEagerPoisonBody(); return true;
+        case "eagerPoisonBody": return getOrCreateConfiguration(target).getEagerPoisonBody();
         case "errorhandler":
-        case "errorHandler": getOrCreateConfiguration(target).getErrorHandler(); return true;
+        case "errorHandler": return getOrCreateConfiguration(target).getErrorHandler();
         case "errorhandlerlogstacktrace":
-        case "errorHandlerLogStackTrace": getOrCreateConfiguration(target).isErrorHandlerLogStackTrace(); return true;
+        case "errorHandlerLogStackTrace": return getOrCreateConfiguration(target).isErrorHandlerLogStackTrace();
         case "errorhandlerlogginglevel":
-        case "errorHandlerLoggingLevel": getOrCreateConfiguration(target).getErrorHandlerLoggingLevel(); return true;
+        case "errorHandlerLoggingLevel": return getOrCreateConfiguration(target).getErrorHandlerLoggingLevel();
         case "exceptionlistener":
-        case "exceptionListener": getOrCreateConfiguration(target).getExceptionListener(); return true;
+        case "exceptionListener": return getOrCreateConfiguration(target).getExceptionListener();
         case "explicitqosenabled":
-        case "explicitQosEnabled": getOrCreateConfiguration(target).getExplicitQosEnabled(); return true;
+        case "explicitQosEnabled": return getOrCreateConfiguration(target).getExplicitQosEnabled();
         case "exposelistenersession":
-        case "exposeListenerSession": getOrCreateConfiguration(target).isExposeListenerSession(); return true;
+        case "exposeListenerSession": return getOrCreateConfiguration(target).isExposeListenerSession();
         case "forcesendoriginalmessage":
-        case "forceSendOriginalMessage": getOrCreateConfiguration(target).isForceSendOriginalMessage(); return true;
+        case "forceSendOriginalMessage": return getOrCreateConfiguration(target).isForceSendOriginalMessage();
         case "formatdateheaderstoiso8601":
-        case "formatDateHeadersToIso8601": getOrCreateConfiguration(target).isFormatDateHeadersToIso8601(); return true;
+        case "formatDateHeadersToIso8601": return getOrCreateConfiguration(target).isFormatDateHeadersToIso8601();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "idleconsumerlimit":
-        case "idleConsumerLimit": getOrCreateConfiguration(target).getIdleConsumerLimit(); return true;
+        case "idleConsumerLimit": return getOrCreateConfiguration(target).getIdleConsumerLimit();
         case "idletaskexecutionlimit":
-        case "idleTaskExecutionLimit": getOrCreateConfiguration(target).getIdleTaskExecutionLimit(); return true;
+        case "idleTaskExecutionLimit": return getOrCreateConfiguration(target).getIdleTaskExecutionLimit();
         case "includealljmsxproperties":
-        case "includeAllJMSXProperties": getOrCreateConfiguration(target).isIncludeAllJMSXProperties(); return true;
+        case "includeAllJMSXProperties": return getOrCreateConfiguration(target).isIncludeAllJMSXProperties();
         case "includesentjmsmessageid":
-        case "includeSentJMSMessageID": getOrCreateConfiguration(target).isIncludeSentJMSMessageID(); return true;
+        case "includeSentJMSMessageID": return getOrCreateConfiguration(target).isIncludeSentJMSMessageID();
         case "jmskeyformatstrategy":
-        case "jmsKeyFormatStrategy": getOrCreateConfiguration(target).getJmsKeyFormatStrategy(); return true;
+        case "jmsKeyFormatStrategy": return getOrCreateConfiguration(target).getJmsKeyFormatStrategy();
         case "jmsmessagetype":
-        case "jmsMessageType": getOrCreateConfiguration(target).getJmsMessageType(); return true;
+        case "jmsMessageType": return getOrCreateConfiguration(target).getJmsMessageType();
         case "lazycreatetransactionmanager":
-        case "lazyCreateTransactionManager": getOrCreateConfiguration(target).isLazyCreateTransactionManager(); return true;
+        case "lazyCreateTransactionManager": return getOrCreateConfiguration(target).isLazyCreateTransactionManager();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "mapjmsmessage":
-        case "mapJmsMessage": getOrCreateConfiguration(target).isMapJmsMessage(); return true;
+        case "mapJmsMessage": return getOrCreateConfiguration(target).isMapJmsMessage();
         case "maxconcurrentconsumers":
-        case "maxConcurrentConsumers": getOrCreateConfiguration(target).getMaxConcurrentConsumers(); return true;
+        case "maxConcurrentConsumers": return getOrCreateConfiguration(target).getMaxConcurrentConsumers();
         case "maxmessagespertask":
-        case "maxMessagesPerTask": getOrCreateConfiguration(target).getMaxMessagesPerTask(); return true;
+        case "maxMessagesPerTask": return getOrCreateConfiguration(target).getMaxMessagesPerTask();
         case "messageconverter":
-        case "messageConverter": getOrCreateConfiguration(target).getMessageConverter(); return true;
+        case "messageConverter": return getOrCreateConfiguration(target).getMessageConverter();
         case "messagecreatedstrategy":
-        case "messageCreatedStrategy": getOrCreateConfiguration(target).getMessageCreatedStrategy(); return true;
+        case "messageCreatedStrategy": return getOrCreateConfiguration(target).getMessageCreatedStrategy();
         case "messageidenabled":
-        case "messageIdEnabled": getOrCreateConfiguration(target).isMessageIdEnabled(); return true;
+        case "messageIdEnabled": return getOrCreateConfiguration(target).isMessageIdEnabled();
         case "messagelistenercontainerfactory":
-        case "messageListenerContainerFactory": getOrCreateConfiguration(target).getMessageListenerContainerFactory(); return true;
+        case "messageListenerContainerFactory": return getOrCreateConfiguration(target).getMessageListenerContainerFactory();
         case "messagetimestampenabled":
-        case "messageTimestampEnabled": getOrCreateConfiguration(target).isMessageTimestampEnabled(); return true;
-        case "password": getOrCreateConfiguration(target).getPassword(); return true;
+        case "messageTimestampEnabled": return getOrCreateConfiguration(target).isMessageTimestampEnabled();
+        case "password": return getOrCreateConfiguration(target).getPassword();
         case "preservemessageqos":
-        case "preserveMessageQos": getOrCreateConfiguration(target).isPreserveMessageQos(); return true;
-        case "priority": getOrCreateConfiguration(target).getPriority(); return true;
+        case "preserveMessageQos": return getOrCreateConfiguration(target).isPreserveMessageQos();
+        case "priority": return getOrCreateConfiguration(target).getPriority();
         case "pubsubnolocal":
-        case "pubSubNoLocal": getOrCreateConfiguration(target).isPubSubNoLocal(); return true;
+        case "pubSubNoLocal": return getOrCreateConfiguration(target).isPubSubNoLocal();
         case "queuebrowsestrategy":
-        case "queueBrowseStrategy": target.getQueueBrowseStrategy(); return true;
+        case "queueBrowseStrategy": return target.getQueueBrowseStrategy();
         case "receivetimeout":
-        case "receiveTimeout": getOrCreateConfiguration(target).getReceiveTimeout(); return true;
+        case "receiveTimeout": return getOrCreateConfiguration(target).getReceiveTimeout();
         case "recoveryinterval":
-        case "recoveryInterval": getOrCreateConfiguration(target).getRecoveryInterval(); return true;
+        case "recoveryInterval": return getOrCreateConfiguration(target).getRecoveryInterval();
         case "replyto":
-        case "replyTo": getOrCreateConfiguration(target).getReplyTo(); return true;
+        case "replyTo": return getOrCreateConfiguration(target).getReplyTo();
         case "replytocachelevelname":
-        case "replyToCacheLevelName": getOrCreateConfiguration(target).getReplyToCacheLevelName(); return true;
+        case "replyToCacheLevelName": return getOrCreateConfiguration(target).getReplyToCacheLevelName();
         case "replytoconcurrentconsumers":
-        case "replyToConcurrentConsumers": getOrCreateConfiguration(target).getReplyToConcurrentConsumers(); return true;
+        case "replyToConcurrentConsumers": return getOrCreateConfiguration(target).getReplyToConcurrentConsumers();
         case "replytodeliverypersistent":
-        case "replyToDeliveryPersistent": getOrCreateConfiguration(target).isReplyToDeliveryPersistent(); return true;
+        case "replyToDeliveryPersistent": return getOrCreateConfiguration(target).isReplyToDeliveryPersistent();
         case "replytodestinationselectorname":
-        case "replyToDestinationSelectorName": getOrCreateConfiguration(target).getReplyToDestinationSelectorName(); return true;
+        case "replyToDestinationSelectorName": return getOrCreateConfiguration(target).getReplyToDestinationSelectorName();
         case "replytomaxconcurrentconsumers":
-        case "replyToMaxConcurrentConsumers": getOrCreateConfiguration(target).getReplyToMaxConcurrentConsumers(); return true;
+        case "replyToMaxConcurrentConsumers": return getOrCreateConfiguration(target).getReplyToMaxConcurrentConsumers();
         case "replytoontimeoutmaxconcurrentconsumers":
-        case "replyToOnTimeoutMaxConcurrentConsumers": getOrCreateConfiguration(target).getReplyToOnTimeoutMaxConcurrentConsumers(); return true;
+        case "replyToOnTimeoutMaxConcurrentConsumers": return getOrCreateConfiguration(target).getReplyToOnTimeoutMaxConcurrentConsumers();
         case "replytooverride":
-        case "replyToOverride": getOrCreateConfiguration(target).getReplyToOverride(); return true;
+        case "replyToOverride": return getOrCreateConfiguration(target).getReplyToOverride();
         case "replytosamedestinationallowed":
-        case "replyToSameDestinationAllowed": getOrCreateConfiguration(target).isReplyToSameDestinationAllowed(); return true;
+        case "replyToSameDestinationAllowed": return getOrCreateConfiguration(target).isReplyToSameDestinationAllowed();
         case "replytotype":
-        case "replyToType": getOrCreateConfiguration(target).getReplyToType(); return true;
+        case "replyToType": return getOrCreateConfiguration(target).getReplyToType();
         case "requesttimeout":
-        case "requestTimeout": getOrCreateConfiguration(target).getRequestTimeout(); return true;
+        case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
         case "requesttimeoutcheckerinterval":
-        case "requestTimeoutCheckerInterval": getOrCreateConfiguration(target).getRequestTimeoutCheckerInterval(); return true;
-        case "selector": getOrCreateConfiguration(target).getSelector(); return true;
+        case "requestTimeoutCheckerInterval": return getOrCreateConfiguration(target).getRequestTimeoutCheckerInterval();
+        case "selector": return getOrCreateConfiguration(target).getSelector();
         case "streammessagetypeenabled":
-        case "streamMessageTypeEnabled": getOrCreateConfiguration(target).isStreamMessageTypeEnabled(); return true;
+        case "streamMessageTypeEnabled": return getOrCreateConfiguration(target).isStreamMessageTypeEnabled();
         case "subscriptiondurable":
-        case "subscriptionDurable": getOrCreateConfiguration(target).isSubscriptionDurable(); return true;
+        case "subscriptionDurable": return getOrCreateConfiguration(target).isSubscriptionDurable();
         case "subscriptionname":
-        case "subscriptionName": getOrCreateConfiguration(target).getSubscriptionName(); return true;
+        case "subscriptionName": return getOrCreateConfiguration(target).getSubscriptionName();
         case "subscriptionshared":
-        case "subscriptionShared": getOrCreateConfiguration(target).isSubscriptionShared(); return true;
+        case "subscriptionShared": return getOrCreateConfiguration(target).isSubscriptionShared();
         case "taskexecutor":
-        case "taskExecutor": getOrCreateConfiguration(target).getTaskExecutor(); return true;
+        case "taskExecutor": return getOrCreateConfiguration(target).getTaskExecutor();
         case "testconnectiononstartup":
-        case "testConnectionOnStartup": getOrCreateConfiguration(target).isTestConnectionOnStartup(); return true;
+        case "testConnectionOnStartup": return getOrCreateConfiguration(target).isTestConnectionOnStartup();
         case "timetolive":
-        case "timeToLive": getOrCreateConfiguration(target).getTimeToLive(); return true;
-        case "transacted": getOrCreateConfiguration(target).isTransacted(); return true;
+        case "timeToLive": return getOrCreateConfiguration(target).getTimeToLive();
+        case "transacted": return getOrCreateConfiguration(target).isTransacted();
         case "transactionmanager":
-        case "transactionManager": getOrCreateConfiguration(target).getTransactionManager(); return true;
+        case "transactionManager": return getOrCreateConfiguration(target).getTransactionManager();
         case "transactionname":
-        case "transactionName": getOrCreateConfiguration(target).getTransactionName(); return true;
+        case "transactionName": return getOrCreateConfiguration(target).getTransactionName();
         case "transactiontimeout":
-        case "transactionTimeout": getOrCreateConfiguration(target).getTransactionTimeout(); return true;
+        case "transactionTimeout": return getOrCreateConfiguration(target).getTransactionTimeout();
         case "transferexception":
-        case "transferException": getOrCreateConfiguration(target).isTransferException(); return true;
+        case "transferException": return getOrCreateConfiguration(target).isTransferException();
         case "transferexchange":
-        case "transferExchange": getOrCreateConfiguration(target).isTransferExchange(); return true;
+        case "transferExchange": return getOrCreateConfiguration(target).isTransferExchange();
         case "usemessageidascorrelationid":
-        case "useMessageIDAsCorrelationID": getOrCreateConfiguration(target).isUseMessageIDAsCorrelationID(); return true;
-        case "username": getOrCreateConfiguration(target).getUsername(); return true;
+        case "useMessageIDAsCorrelationID": return getOrCreateConfiguration(target).isUseMessageIDAsCorrelationID();
+        case "username": return getOrCreateConfiguration(target).getUsername();
         case "waitforprovisioncorrelationtobeupdatedcounter":
-        case "waitForProvisionCorrelationToBeUpdatedCounter": getOrCreateConfiguration(target).getWaitForProvisionCorrelationToBeUpdatedCounter(); return true;
+        case "waitForProvisionCorrelationToBeUpdatedCounter": return getOrCreateConfiguration(target).getWaitForProvisionCorrelationToBeUpdatedCounter();
         case "waitforprovisioncorrelationtobeupdatedthreadsleepingtime":
-        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": getOrCreateConfiguration(target).getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(); return true;
+        case "waitForProvisionCorrelationToBeUpdatedThreadSleepingTime": return getOrCreateConfiguration(target).getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
         default: return null;
         }
     }

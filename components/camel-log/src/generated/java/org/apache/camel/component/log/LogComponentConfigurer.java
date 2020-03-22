@@ -43,11 +43,11 @@ public class LogComponentConfigurer extends PropertyConfigurerSupport implements
         LogComponent target = (LogComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "exchangeformatter":
-        case "exchangeFormatter": target.getExchangeFormatter(); return true;
+        case "exchangeFormatter": return target.getExchangeFormatter();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
         }
     }

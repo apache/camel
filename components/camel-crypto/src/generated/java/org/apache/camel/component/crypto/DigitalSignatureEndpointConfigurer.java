@@ -89,41 +89,41 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DigitalSignatureEndpoint target = (DigitalSignatureEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "algorithm": target.getConfiguration().getAlgorithm(); return true;
-        case "alias": target.getConfiguration().getAlias(); return true;
+        case "algorithm": return target.getConfiguration().getAlgorithm();
+        case "alias": return target.getConfiguration().getAlias();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "buffersize":
-        case "bufferSize": target.getConfiguration().getBufferSize(); return true;
-        case "certificate": target.getConfiguration().getCertificate(); return true;
+        case "bufferSize": return target.getConfiguration().getBufferSize();
+        case "certificate": return target.getConfiguration().getCertificate();
         case "certificatename":
-        case "certificateName": target.getConfiguration().getCertificateName(); return true;
+        case "certificateName": return target.getConfiguration().getCertificateName();
         case "clearheaders":
-        case "clearHeaders": target.getConfiguration().isClearHeaders(); return true;
+        case "clearHeaders": return target.getConfiguration().isClearHeaders();
         case "keystoreparameters":
-        case "keyStoreParameters": target.getConfiguration().getKeyStoreParameters(); return true;
-        case "keystore": target.getConfiguration().getKeystore(); return true;
+        case "keyStoreParameters": return target.getConfiguration().getKeyStoreParameters();
+        case "keystore": return target.getConfiguration().getKeystore();
         case "keystorename":
-        case "keystoreName": target.getConfiguration().getKeystoreName(); return true;
+        case "keystoreName": return target.getConfiguration().getKeystoreName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getConfiguration().getPassword();
         case "privatekey":
-        case "privateKey": target.getConfiguration().getPrivateKey(); return true;
+        case "privateKey": return target.getConfiguration().getPrivateKey();
         case "privatekeyname":
-        case "privateKeyName": target.getConfiguration().getPrivateKeyName(); return true;
-        case "provider": target.getConfiguration().getProvider(); return true;
+        case "privateKeyName": return target.getConfiguration().getPrivateKeyName();
+        case "provider": return target.getConfiguration().getProvider();
         case "publickey":
-        case "publicKey": target.getConfiguration().getPublicKey(); return true;
+        case "publicKey": return target.getConfiguration().getPublicKey();
         case "publickeyname":
-        case "publicKeyName": target.getConfiguration().getPublicKeyName(); return true;
+        case "publicKeyName": return target.getConfiguration().getPublicKeyName();
         case "securerandom":
-        case "secureRandom": target.getConfiguration().getSecureRandom(); return true;
+        case "secureRandom": return target.getConfiguration().getSecureRandom();
         case "securerandomname":
-        case "secureRandomName": target.getConfiguration().getSecureRandomName(); return true;
+        case "secureRandomName": return target.getConfiguration().getSecureRandomName();
         case "signatureheadername":
-        case "signatureHeaderName": target.getConfiguration().getSignatureHeaderName(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "signatureHeaderName": return target.getConfiguration().getSignatureHeaderName();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

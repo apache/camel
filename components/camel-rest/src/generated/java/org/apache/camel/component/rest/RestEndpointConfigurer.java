@@ -83,36 +83,36 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         RestEndpoint target = (RestEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
-        case "apiDoc": target.getApiDoc(); return true;
+        case "apiDoc": return target.getApiDoc();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bindingmode":
-        case "bindingMode": target.getBindingMode(); return true;
+        case "bindingMode": return target.getBindingMode();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumercomponentname":
-        case "consumerComponentName": target.getConsumerComponentName(); return true;
-        case "consumes": target.getConsumes(); return true;
-        case "description": target.getDescription(); return true;
+        case "consumerComponentName": return target.getConsumerComponentName();
+        case "consumes": return target.getConsumes();
+        case "description": return target.getDescription();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "host": target.getHost(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "host": return target.getHost();
         case "intype":
-        case "inType": target.getInType(); return true;
+        case "inType": return target.getInType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "outtype":
-        case "outType": target.getOutType(); return true;
+        case "outType": return target.getOutType();
         case "producercomponentname":
-        case "producerComponentName": target.getProducerComponentName(); return true;
-        case "produces": target.getProduces(); return true;
+        case "producerComponentName": return target.getProducerComponentName();
+        case "produces": return target.getProduces();
         case "queryparameters":
-        case "queryParameters": target.getQueryParameters(); return true;
+        case "queryParameters": return target.getQueryParameters();
         case "routeid":
-        case "routeId": target.getRouteId(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "routeId": return target.getRouteId();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -48,14 +48,14 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
         ChatScriptEndpoint target = (ChatScriptEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "chatusername":
-        case "chatUserName": target.getChatUserName(); return true;
+        case "chatUserName": return target.getChatUserName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "resetchat":
-        case "resetChat": target.isResetChat(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "resetChat": return target.isResetChat();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

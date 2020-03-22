@@ -51,15 +51,15 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
         DrillEndpoint target = (DrillEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clusterid":
-        case "clusterId": target.getClusterId(); return true;
-        case "directory": target.getDirectory(); return true;
+        case "clusterId": return target.getClusterId();
+        case "directory": return target.getDirectory();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "mode": target.getMode(); return true;
-        case "port": target.getPort(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "mode": return target.getMode();
+        case "port": return target.getPort();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

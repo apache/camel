@@ -73,30 +73,30 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         QueueServiceEndpoint target = (QueueServiceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azurequeueclient":
-        case "azureQueueClient": target.getConfiguration().getAzureQueueClient(); return true;
+        case "azureQueueClient": return target.getConfiguration().getAzureQueueClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "credentials": target.getConfiguration().getCredentials(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "credentials": return target.getConfiguration().getCredentials();
         case "credentialsaccountkey":
-        case "credentialsAccountKey": target.getConfiguration().getCredentialsAccountKey(); return true;
+        case "credentialsAccountKey": return target.getConfiguration().getCredentialsAccountKey();
         case "credentialsaccountname":
-        case "credentialsAccountName": target.getConfiguration().getCredentialsAccountName(); return true;
+        case "credentialsAccountName": return target.getConfiguration().getCredentialsAccountName();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagetimetolive":
-        case "messageTimeToLive": target.getConfiguration().getMessageTimeToLive(); return true;
+        case "messageTimeToLive": return target.getConfiguration().getMessageTimeToLive();
         case "messagevisibilitydelay":
-        case "messageVisibilityDelay": target.getConfiguration().getMessageVisibilityDelay(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
+        case "messageVisibilityDelay": return target.getConfiguration().getMessageVisibilityDelay();
+        case "operation": return target.getConfiguration().getOperation();
         case "queueprefix":
-        case "queuePrefix": target.getConfiguration().getQueuePrefix(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "queuePrefix": return target.getConfiguration().getQueuePrefix();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

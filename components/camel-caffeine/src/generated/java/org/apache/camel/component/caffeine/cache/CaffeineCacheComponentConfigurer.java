@@ -90,38 +90,38 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CaffeineCacheComponent target = (CaffeineCacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "action": getOrCreateConfiguration(target).getAction(); return true;
+        case "action": return getOrCreateConfiguration(target).getAction();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "cache": getOrCreateConfiguration(target).getCache(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "cache": return getOrCreateConfiguration(target).getCache();
         case "cacheloader":
-        case "cacheLoader": getOrCreateConfiguration(target).getCacheLoader(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "cacheLoader": return getOrCreateConfiguration(target).getCacheLoader();
+        case "configuration": return target.getConfiguration();
         case "createcacheifnotexist":
-        case "createCacheIfNotExist": getOrCreateConfiguration(target).isCreateCacheIfNotExist(); return true;
+        case "createCacheIfNotExist": return getOrCreateConfiguration(target).isCreateCacheIfNotExist();
         case "evictiontype":
-        case "evictionType": getOrCreateConfiguration(target).getEvictionType(); return true;
+        case "evictionType": return getOrCreateConfiguration(target).getEvictionType();
         case "expireafteraccesstime":
-        case "expireAfterAccessTime": getOrCreateConfiguration(target).getExpireAfterAccessTime(); return true;
+        case "expireAfterAccessTime": return getOrCreateConfiguration(target).getExpireAfterAccessTime();
         case "expireafterwritetime":
-        case "expireAfterWriteTime": getOrCreateConfiguration(target).getExpireAfterWriteTime(); return true;
+        case "expireAfterWriteTime": return getOrCreateConfiguration(target).getExpireAfterWriteTime();
         case "initialcapacity":
-        case "initialCapacity": getOrCreateConfiguration(target).getInitialCapacity(); return true;
-        case "key": getOrCreateConfiguration(target).getKey(); return true;
+        case "initialCapacity": return getOrCreateConfiguration(target).getInitialCapacity();
+        case "key": return getOrCreateConfiguration(target).getKey();
         case "keytype":
-        case "keyType": getOrCreateConfiguration(target).getKeyType(); return true;
+        case "keyType": return getOrCreateConfiguration(target).getKeyType();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumsize":
-        case "maximumSize": getOrCreateConfiguration(target).getMaximumSize(); return true;
+        case "maximumSize": return getOrCreateConfiguration(target).getMaximumSize();
         case "removallistener":
-        case "removalListener": getOrCreateConfiguration(target).getRemovalListener(); return true;
+        case "removalListener": return getOrCreateConfiguration(target).getRemovalListener();
         case "statscounter":
-        case "statsCounter": getOrCreateConfiguration(target).getStatsCounter(); return true;
+        case "statsCounter": return getOrCreateConfiguration(target).getStatsCounter();
         case "statsenabled":
-        case "statsEnabled": getOrCreateConfiguration(target).isStatsEnabled(); return true;
+        case "statsEnabled": return getOrCreateConfiguration(target).isStatsEnabled();
         case "valuetype":
-        case "valueType": getOrCreateConfiguration(target).getValueType(); return true;
+        case "valueType": return getOrCreateConfiguration(target).getValueType();
         default: return null;
         }
     }

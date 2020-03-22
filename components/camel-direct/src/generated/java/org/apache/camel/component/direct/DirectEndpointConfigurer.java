@@ -58,20 +58,20 @@ public class DirectEndpointConfigurer extends PropertyConfigurerSupport implemen
         DirectEndpoint target = (DirectEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "block": target.isBlock(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "block": return target.isBlock();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "failifnoconsumers":
-        case "failIfNoConsumers": target.isFailIfNoConsumers(); return true;
+        case "failIfNoConsumers": return target.isFailIfNoConsumers();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
+        case "timeout": return target.getTimeout();
         default: return null;
         }
     }

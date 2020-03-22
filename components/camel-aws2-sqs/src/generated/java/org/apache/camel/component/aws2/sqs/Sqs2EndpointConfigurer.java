@@ -200,113 +200,113 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         Sqs2Endpoint target = (Sqs2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonawshost":
-        case "amazonAWSHost": target.getConfiguration().getAmazonAWSHost(); return true;
+        case "amazonAWSHost": return target.getConfiguration().getAmazonAWSHost();
         case "amazonsqsclient":
-        case "amazonSQSClient": target.getConfiguration().getAmazonSQSClient(); return true;
+        case "amazonSQSClient": return target.getConfiguration().getAmazonSQSClient();
         case "attributenames":
-        case "attributeNames": target.getConfiguration().getAttributeNames(); return true;
+        case "attributeNames": return target.getConfiguration().getAttributeNames();
         case "autocreatequeue":
-        case "autoCreateQueue": target.getConfiguration().isAutoCreateQueue(); return true;
+        case "autoCreateQueue": return target.getConfiguration().isAutoCreateQueue();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConfiguration().getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConfiguration().getConcurrentConsumers();
         case "defaultvisibilitytimeout":
-        case "defaultVisibilityTimeout": target.getConfiguration().getDefaultVisibilityTimeout(); return true;
-        case "delay": target.getDelay(); return true;
+        case "defaultVisibilityTimeout": return target.getConfiguration().getDefaultVisibilityTimeout();
+        case "delay": return target.getDelay();
         case "delayqueue":
-        case "delayQueue": target.getConfiguration().isDelayQueue(); return true;
+        case "delayQueue": return target.getConfiguration().isDelayQueue();
         case "delayseconds":
-        case "delaySeconds": target.getConfiguration().getDelaySeconds(); return true;
+        case "delaySeconds": return target.getConfiguration().getDelaySeconds();
         case "deleteafterread":
-        case "deleteAfterRead": target.getConfiguration().isDeleteAfterRead(); return true;
+        case "deleteAfterRead": return target.getConfiguration().isDeleteAfterRead();
         case "deleteiffiltered":
-        case "deleteIfFiltered": target.getConfiguration().isDeleteIfFiltered(); return true;
+        case "deleteIfFiltered": return target.getConfiguration().isDeleteIfFiltered();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "extendmessagevisibility":
-        case "extendMessageVisibility": target.getConfiguration().isExtendMessageVisibility(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "extendMessageVisibility": return target.getConfiguration().isExtendMessageVisibility();
+        case "greedy": return target.isGreedy();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "kmsdatakeyreuseperiodseconds":
-        case "kmsDataKeyReusePeriodSeconds": target.getConfiguration().getKmsDataKeyReusePeriodSeconds(); return true;
+        case "kmsDataKeyReusePeriodSeconds": return target.getConfiguration().getKmsDataKeyReusePeriodSeconds();
         case "kmsmasterkeyid":
-        case "kmsMasterKeyId": target.getConfiguration().getKmsMasterKeyId(); return true;
+        case "kmsMasterKeyId": return target.getConfiguration().getKmsMasterKeyId();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.getMaxMessagesPerPoll(); return true;
+        case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "maximummessagesize":
-        case "maximumMessageSize": target.getConfiguration().getMaximumMessageSize(); return true;
+        case "maximumMessageSize": return target.getConfiguration().getMaximumMessageSize();
         case "messageattributenames":
-        case "messageAttributeNames": target.getConfiguration().getMessageAttributeNames(); return true;
+        case "messageAttributeNames": return target.getConfiguration().getMessageAttributeNames();
         case "messagededuplicationidstrategy":
-        case "messageDeduplicationIdStrategy": target.getConfiguration().getMessageDeduplicationIdStrategy(); return true;
+        case "messageDeduplicationIdStrategy": return target.getConfiguration().getMessageDeduplicationIdStrategy();
         case "messagegroupidstrategy":
-        case "messageGroupIdStrategy": target.getConfiguration().getMessageGroupIdStrategy(); return true;
+        case "messageGroupIdStrategy": return target.getConfiguration().getMessageGroupIdStrategy();
         case "messageretentionperiod":
-        case "messageRetentionPeriod": target.getConfiguration().getMessageRetentionPeriod(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
-        case "policy": target.getConfiguration().getPolicy(); return true;
+        case "messageRetentionPeriod": return target.getConfiguration().getMessageRetentionPeriod();
+        case "operation": return target.getConfiguration().getOperation();
+        case "policy": return target.getConfiguration().getPolicy();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
-        case "protocol": target.getConfiguration().getProtocol(); return true;
+        case "pollStrategy": return target.getPollStrategy();
+        case "protocol": return target.getConfiguration().getProtocol();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().getProxyProtocol(); return true;
+        case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
         case "queueownerawsaccountid":
-        case "queueOwnerAWSAccountId": target.getConfiguration().getQueueOwnerAWSAccountId(); return true;
+        case "queueOwnerAWSAccountId": return target.getConfiguration().getQueueOwnerAWSAccountId();
         case "queueurl":
-        case "queueUrl": target.getConfiguration().getQueueUrl(); return true;
+        case "queueUrl": return target.getConfiguration().getQueueUrl();
         case "receivemessagewaittimeseconds":
-        case "receiveMessageWaitTimeSeconds": target.getConfiguration().getReceiveMessageWaitTimeSeconds(); return true;
+        case "receiveMessageWaitTimeSeconds": return target.getConfiguration().getReceiveMessageWaitTimeSeconds();
         case "redrivepolicy":
-        case "redrivePolicy": target.getConfiguration().getRedrivePolicy(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "redrivePolicy": return target.getConfiguration().getRedrivePolicy();
+        case "region": return target.getConfiguration().getRegion();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serversideencryptionenabled":
-        case "serverSideEncryptionEnabled": target.getConfiguration().isServerSideEncryptionEnabled(); return true;
+        case "serverSideEncryptionEnabled": return target.getConfiguration().isServerSideEncryptionEnabled();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "synchronous": return target.isSynchronous();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
         case "visibilitytimeout":
-        case "visibilityTimeout": target.getConfiguration().getVisibilityTimeout(); return true;
+        case "visibilityTimeout": return target.getConfiguration().getVisibilityTimeout();
         case "waittimeseconds":
-        case "waitTimeSeconds": target.getConfiguration().getWaitTimeSeconds(); return true;
+        case "waitTimeSeconds": return target.getConfiguration().getWaitTimeSeconds();
         default: return null;
         }
     }

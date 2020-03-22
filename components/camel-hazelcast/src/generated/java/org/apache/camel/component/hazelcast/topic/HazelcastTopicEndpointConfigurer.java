@@ -62,23 +62,23 @@ public class HazelcastTopicEndpointConfigurer extends PropertyConfigurerSupport 
         HazelcastTopicEndpoint target = (HazelcastTopicEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "defaultoperation":
-        case "defaultOperation": target.getDefaultOperation(); return true;
+        case "defaultOperation": return target.getDefaultOperation();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "hazelcastinstance":
-        case "hazelcastInstance": target.getHazelcastInstance(); return true;
+        case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastinstancename":
-        case "hazelcastInstanceName": target.getHazelcastInstanceName(); return true;
+        case "hazelcastInstanceName": return target.getHazelcastInstanceName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "reliable": target.getConfiguration().isReliable(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "reliable": return target.getConfiguration().isReliable();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

@@ -70,28 +70,28 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "client": target.getClient(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "client": return target.getClient();
         case "connectiontimeout":
-        case "connectionTimeout": target.getConnectionTimeout(); return true;
+        case "connectionTimeout": return target.getConnectionTimeout();
         case "enablessl":
-        case "enableSSL": target.getEnableSSL(); return true;
+        case "enableSSL": return target.getEnableSSL();
         case "enablesniffer":
-        case "enableSniffer": target.getEnableSniffer(); return true;
+        case "enableSniffer": return target.getEnableSniffer();
         case "hostaddresses":
-        case "hostAddresses": target.getHostAddresses(); return true;
+        case "hostAddresses": return target.getHostAddresses();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxretrytimeout":
-        case "maxRetryTimeout": target.getMaxRetryTimeout(); return true;
-        case "password": target.getPassword(); return true;
+        case "maxRetryTimeout": return target.getMaxRetryTimeout();
+        case "password": return target.getPassword();
         case "sniffafterfailuredelay":
-        case "sniffAfterFailureDelay": target.getSniffAfterFailureDelay(); return true;
+        case "sniffAfterFailureDelay": return target.getSniffAfterFailureDelay();
         case "snifferinterval":
-        case "snifferInterval": target.getSnifferInterval(); return true;
+        case "snifferInterval": return target.getSnifferInterval();
         case "sockettimeout":
-        case "socketTimeout": target.getSocketTimeout(); return true;
-        case "user": target.getUser(); return true;
+        case "socketTimeout": return target.getSocketTimeout();
+        case "user": return target.getUser();
         default: return null;
         }
     }

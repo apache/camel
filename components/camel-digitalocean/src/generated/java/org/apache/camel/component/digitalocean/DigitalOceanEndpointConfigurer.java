@@ -67,26 +67,26 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
         DigitalOceanEndpoint target = (DigitalOceanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "digitaloceanclient":
-        case "digitalOceanClient": target.getConfiguration().getDigitalOceanClient(); return true;
+        case "digitalOceanClient": return target.getConfiguration().getDigitalOceanClient();
         case "httpproxyhost":
-        case "httpProxyHost": target.getConfiguration().getHttpProxyHost(); return true;
+        case "httpProxyHost": return target.getConfiguration().getHttpProxyHost();
         case "httpproxypassword":
-        case "httpProxyPassword": target.getConfiguration().getHttpProxyPassword(); return true;
+        case "httpProxyPassword": return target.getConfiguration().getHttpProxyPassword();
         case "httpproxyport":
-        case "httpProxyPort": target.getConfiguration().getHttpProxyPort(); return true;
+        case "httpProxyPort": return target.getConfiguration().getHttpProxyPort();
         case "httpproxyuser":
-        case "httpProxyUser": target.getConfiguration().getHttpProxyUser(); return true;
+        case "httpProxyUser": return target.getConfiguration().getHttpProxyUser();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "oauthtoken":
-        case "oAuthToken": target.getConfiguration().getOAuthToken(); return true;
-        case "page": target.getConfiguration().getPage(); return true;
+        case "oAuthToken": return target.getConfiguration().getOAuthToken();
+        case "page": return target.getConfiguration().getPage();
         case "perpage":
-        case "perPage": target.getConfiguration().getPerPage(); return true;
-        case "resource": target.getConfiguration().getResource(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "perPage": return target.getConfiguration().getPerPage();
+        case "resource": return target.getConfiguration().getResource();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

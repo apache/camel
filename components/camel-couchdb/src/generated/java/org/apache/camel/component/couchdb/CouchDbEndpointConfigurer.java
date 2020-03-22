@@ -68,25 +68,25 @@ public class CouchDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         CouchDbEndpoint target = (CouchDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "createdatabase":
-        case "createDatabase": target.isCreateDatabase(); return true;
-        case "deletes": target.isDeletes(); return true;
+        case "createDatabase": return target.isCreateDatabase();
+        case "deletes": return target.isDeletes();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "heartbeat": target.getHeartbeat(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "heartbeat": return target.getHeartbeat();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": target.getPassword(); return true;
-        case "since": target.getSince(); return true;
-        case "style": target.getStyle(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "updates": target.isUpdates(); return true;
-        case "username": target.getUsername(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getPassword();
+        case "since": return target.getSince();
+        case "style": return target.getStyle();
+        case "synchronous": return target.isSynchronous();
+        case "updates": return target.isUpdates();
+        case "username": return target.getUsername();
         default: return null;
         }
     }

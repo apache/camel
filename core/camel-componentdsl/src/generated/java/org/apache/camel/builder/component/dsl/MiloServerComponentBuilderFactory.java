@@ -98,6 +98,19 @@ public interface MiloServerComponentBuilderFactory {
             return this;
         }
         /**
+         * Server certificate.
+         * 
+         * The option is a: <code>java.security.cert.X509Certificate</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default MiloServerComponentBuilder certificate(
+                java.security.cert.X509Certificate certificate) {
+            doSetProperty("certificate", certificate);
+            return this;
+        }
+        /**
          * Server certificate manager.
          * 
          * The option is a:
@@ -114,12 +127,12 @@ public interface MiloServerComponentBuilderFactory {
          * Validator for client certificates.
          * 
          * The option is a:
-         * <code>java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.security.CertificateValidator></code> type.
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
          * 
          * Group: common
          */
         default MiloServerComponentBuilder certificateValidator(
-                java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.security.CertificateValidator> certificateValidator) {
+                org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
             doSetProperty("certificateValidator", certificateValidator);
             return this;
         }
@@ -209,30 +222,16 @@ public interface MiloServerComponentBuilderFactory {
             return this;
         }
         /**
-         * Security policies by URI or name.
+         * Security policies by URI or name. Multiple policies can be separated
+         * by comma.
          * 
-         * The option is a: <code>java.util.Collection<java.lang.String></code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default MiloServerComponentBuilder securityPoliciesById(
-                java.util.Collection<java.lang.String> securityPoliciesById) {
+                java.lang.String securityPoliciesById) {
             doSetProperty("securityPoliciesById", securityPoliciesById);
-            return this;
-        }
-        /**
-         * Server certificate.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.milo.KeyStoreLoader.Result</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default MiloServerComponentBuilder serverCertificate(
-                org.apache.camel.component.milo.KeyStoreLoader.Result serverCertificate) {
-            doSetProperty("serverCertificate", serverCertificate);
             return this;
         }
         /**
@@ -336,8 +335,9 @@ public interface MiloServerComponentBuilderFactory {
             case "applicationUri": ((MiloServerComponent) component).setApplicationUri((java.lang.String) value); return true;
             case "bindAddresses": ((MiloServerComponent) component).setBindAddresses((java.lang.String) value); return true;
             case "buildInfo": ((MiloServerComponent) component).setBuildInfo((org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo) value); return true;
+            case "certificate": ((MiloServerComponent) component).setCertificate((java.security.cert.X509Certificate) value); return true;
             case "certificateManager": ((MiloServerComponent) component).setCertificateManager((org.eclipse.milo.opcua.stack.core.security.CertificateManager) value); return true;
-            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((java.util.function.Supplier) value); return true;
+            case "certificateValidator": ((MiloServerComponent) component).setCertificateValidator((org.eclipse.milo.opcua.stack.core.security.CertificateValidator) value); return true;
             case "defaultCertificateValidator": ((MiloServerComponent) component).setDefaultCertificateValidator((java.lang.String) value); return true;
             case "enableAnonymousAuthentication": ((MiloServerComponent) component).setEnableAnonymousAuthentication((boolean) value); return true;
             case "namespaceUri": ((MiloServerComponent) component).setNamespaceUri((java.lang.String) value); return true;
@@ -345,8 +345,7 @@ public interface MiloServerComponentBuilderFactory {
             case "port": ((MiloServerComponent) component).setPort((int) value); return true;
             case "productUri": ((MiloServerComponent) component).setProductUri((java.lang.String) value); return true;
             case "securityPolicies": ((MiloServerComponent) component).setSecurityPolicies((java.util.Set) value); return true;
-            case "securityPoliciesById": ((MiloServerComponent) component).setSecurityPoliciesById((java.util.Collection) value); return true;
-            case "serverCertificate": ((MiloServerComponent) component).setServerCertificate((org.apache.camel.component.milo.KeyStoreLoader.Result) value); return true;
+            case "securityPoliciesById": ((MiloServerComponent) component).setSecurityPoliciesById((java.lang.String) value); return true;
             case "userAuthenticationCredentials": ((MiloServerComponent) component).setUserAuthenticationCredentials((java.lang.String) value); return true;
             case "usernameSecurityPolicyUri": ((MiloServerComponent) component).setUsernameSecurityPolicyUri((org.eclipse.milo.opcua.stack.core.security.SecurityPolicy) value); return true;
             case "bridgeErrorHandler": ((MiloServerComponent) component).setBridgeErrorHandler((boolean) value); return true;

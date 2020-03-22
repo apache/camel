@@ -72,29 +72,29 @@ public class Ses2EndpointConfigurer extends PropertyConfigurerSupport implements
         Ses2Endpoint target = (Ses2Endpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonsesclient":
-        case "amazonSESClient": target.getConfiguration().getAmazonSESClient(); return true;
+        case "amazonSESClient": return target.getConfiguration().getAmazonSESClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().getProxyProtocol(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
+        case "region": return target.getConfiguration().getRegion();
         case "replytoaddresses":
-        case "replyToAddresses": target.getConfiguration().getReplyToAddresses(); return true;
+        case "replyToAddresses": return target.getConfiguration().getReplyToAddresses();
         case "returnpath":
-        case "returnPath": target.getConfiguration().getReturnPath(); return true;
+        case "returnPath": return target.getConfiguration().getReturnPath();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
-        case "subject": target.getConfiguration().getSubject(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "to": target.getConfiguration().getTo(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
+        case "subject": return target.getConfiguration().getSubject();
+        case "synchronous": return target.isSynchronous();
+        case "to": return target.getConfiguration().getTo();
         default: return null;
         }
     }

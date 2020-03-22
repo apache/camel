@@ -46,13 +46,13 @@ public class CMISComponentConfigurer extends PropertyConfigurerSupport implement
         CMISComponent target = (CMISComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "sessionfacadefactory":
-        case "sessionFacadeFactory": target.getSessionFacadeFactory(); return true;
+        case "sessionFacadeFactory": return target.getSessionFacadeFactory();
         default: return null;
         }
     }

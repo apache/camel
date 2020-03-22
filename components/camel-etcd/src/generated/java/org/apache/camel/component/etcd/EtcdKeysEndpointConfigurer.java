@@ -62,22 +62,22 @@ public class EtcdKeysEndpointConfigurer extends PropertyConfigurerSupport implem
         EtcdKeysEndpoint target = (EtcdKeysEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
-        case "recursive": target.getConfiguration().isRecursive(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "password": return target.getConfiguration().getPassword();
+        case "recursive": return target.getConfiguration().isRecursive();
         case "servicepath":
-        case "servicePath": target.getConfiguration().getServicePath(); return true;
+        case "servicePath": return target.getConfiguration().getServicePath();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getConfiguration().getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         case "timetolive":
-        case "timeToLive": target.getConfiguration().getTimeToLive(); return true;
-        case "timeout": target.getConfiguration().getTimeout(); return true;
-        case "uris": target.getConfiguration().getUris(); return true;
+        case "timeToLive": return target.getConfiguration().getTimeToLive();
+        case "timeout": return target.getConfiguration().getTimeout();
+        case "uris": return target.getConfiguration().getUris();
         case "username":
-        case "userName": target.getConfiguration().getUserName(); return true;
+        case "userName": return target.getConfiguration().getUserName();
         default: return null;
         }
     }

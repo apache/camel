@@ -75,31 +75,31 @@ public class CMISEndpointConfigurer extends PropertyConfigurerSupport implements
         CMISEndpoint target = (CMISEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "pagesize":
-        case "pageSize": target.getSessionFacade().getPageSize(); return true;
-        case "password": target.getSessionFacade().getPassword(); return true;
-        case "query": target.getSessionFacade().getQuery(); return true;
+        case "pageSize": return target.getSessionFacade().getPageSize();
+        case "password": return target.getSessionFacade().getPassword();
+        case "query": return target.getSessionFacade().getQuery();
         case "querymode":
-        case "queryMode": target.isQueryMode(); return true;
+        case "queryMode": return target.isQueryMode();
         case "readcontent":
-        case "readContent": target.getSessionFacade().isReadContent(); return true;
+        case "readContent": return target.getSessionFacade().isReadContent();
         case "readcount":
-        case "readCount": target.getSessionFacade().getReadCount(); return true;
+        case "readCount": return target.getSessionFacade().getReadCount();
         case "repositoryid":
-        case "repositoryId": target.getSessionFacade().getRepositoryId(); return true;
+        case "repositoryId": return target.getSessionFacade().getRepositoryId();
         case "sessionfacadefactory":
-        case "sessionFacadeFactory": target.getSessionFacadeFactory(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "username": target.getSessionFacade().getUsername(); return true;
+        case "sessionFacadeFactory": return target.getSessionFacadeFactory();
+        case "synchronous": return target.isSynchronous();
+        case "username": return target.getSessionFacade().getUsername();
         default: return null;
         }
     }

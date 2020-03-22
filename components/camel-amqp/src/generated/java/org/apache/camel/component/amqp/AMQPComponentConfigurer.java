@@ -37,7 +37,7 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         AMQPComponent target = (AMQPComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "includeamqpannotations":
-        case "includeAmqpAnnotations": target.isIncludeAmqpAnnotations(); return true;
+        case "includeAmqpAnnotations": return target.isIncludeAmqpAnnotations();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

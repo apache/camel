@@ -55,19 +55,19 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         XsltComponent target = (XsltComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
-        case "contentCache": target.isContentCache(); return true;
+        case "contentCache": return target.isContentCache();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "transformerfactoryclass":
-        case "transformerFactoryClass": target.getTransformerFactoryClass(); return true;
+        case "transformerFactoryClass": return target.getTransformerFactoryClass();
         case "transformerfactoryconfigurationstrategy":
-        case "transformerFactoryConfigurationStrategy": target.getTransformerFactoryConfigurationStrategy(); return true;
+        case "transformerFactoryConfigurationStrategy": return target.getTransformerFactoryConfigurationStrategy();
         case "uriresolver":
-        case "uriResolver": target.getUriResolver(); return true;
+        case "uriResolver": return target.getUriResolver();
         case "uriresolverfactory":
-        case "uriResolverFactory": target.getUriResolverFactory(); return true;
+        case "uriResolverFactory": return target.getUriResolverFactory();
         default: return null;
         }
     }

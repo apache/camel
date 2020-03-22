@@ -101,44 +101,44 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         BlobServiceComponent target = (BlobServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azureblobclient":
-        case "azureBlobClient": getOrCreateConfiguration(target).getAzureBlobClient(); return true;
+        case "azureBlobClient": return getOrCreateConfiguration(target).getAzureBlobClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobmetadata":
-        case "blobMetadata": getOrCreateConfiguration(target).getBlobMetadata(); return true;
+        case "blobMetadata": return getOrCreateConfiguration(target).getBlobMetadata();
         case "bloboffset":
-        case "blobOffset": getOrCreateConfiguration(target).getBlobOffset(); return true;
+        case "blobOffset": return getOrCreateConfiguration(target).getBlobOffset();
         case "blobprefix":
-        case "blobPrefix": getOrCreateConfiguration(target).getBlobPrefix(); return true;
+        case "blobPrefix": return getOrCreateConfiguration(target).getBlobPrefix();
         case "blobtype":
-        case "blobType": getOrCreateConfiguration(target).getBlobType(); return true;
+        case "blobType": return getOrCreateConfiguration(target).getBlobType();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "closestreamafterread":
-        case "closeStreamAfterRead": getOrCreateConfiguration(target).isCloseStreamAfterRead(); return true;
+        case "closeStreamAfterRead": return getOrCreateConfiguration(target).isCloseStreamAfterRead();
         case "closestreamafterwrite":
-        case "closeStreamAfterWrite": getOrCreateConfiguration(target).isCloseStreamAfterWrite(); return true;
-        case "configuration": target.getConfiguration(); return true;
-        case "credentials": getOrCreateConfiguration(target).getCredentials(); return true;
+        case "closeStreamAfterWrite": return getOrCreateConfiguration(target).isCloseStreamAfterWrite();
+        case "configuration": return target.getConfiguration();
+        case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "credentialsaccountkey":
-        case "credentialsAccountKey": getOrCreateConfiguration(target).getCredentialsAccountKey(); return true;
+        case "credentialsAccountKey": return getOrCreateConfiguration(target).getCredentialsAccountKey();
         case "credentialsaccountname":
-        case "credentialsAccountName": getOrCreateConfiguration(target).getCredentialsAccountName(); return true;
+        case "credentialsAccountName": return getOrCreateConfiguration(target).getCredentialsAccountName();
         case "datalength":
-        case "dataLength": getOrCreateConfiguration(target).getDataLength(); return true;
+        case "dataLength": return getOrCreateConfiguration(target).getDataLength();
         case "filedir":
-        case "fileDir": getOrCreateConfiguration(target).getFileDir(); return true;
+        case "fileDir": return getOrCreateConfiguration(target).getFileDir();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "publicforread":
-        case "publicForRead": getOrCreateConfiguration(target).isPublicForRead(); return true;
+        case "publicForRead": return getOrCreateConfiguration(target).isPublicForRead();
         case "streamreadsize":
-        case "streamReadSize": getOrCreateConfiguration(target).getStreamReadSize(); return true;
+        case "streamReadSize": return getOrCreateConfiguration(target).getStreamReadSize();
         case "streamwritesize":
-        case "streamWriteSize": getOrCreateConfiguration(target).getStreamWriteSize(); return true;
+        case "streamWriteSize": return getOrCreateConfiguration(target).getStreamWriteSize();
         case "useflatlisting":
-        case "useFlatListing": getOrCreateConfiguration(target).isUseFlatListing(); return true;
+        case "useFlatListing": return getOrCreateConfiguration(target).isUseFlatListing();
         default: return null;
         }
     }

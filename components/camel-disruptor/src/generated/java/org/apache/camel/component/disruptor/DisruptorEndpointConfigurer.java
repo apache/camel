@@ -73,30 +73,30 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
         DisruptorEndpoint target = (DisruptorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockwhenfull":
-        case "blockWhenFull": target.isBlockWhenFull(); return true;
+        case "blockWhenFull": return target.isBlockWhenFull();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "multipleconsumers":
-        case "multipleConsumers": target.isMultipleConsumers(); return true;
+        case "multipleConsumers": return target.isMultipleConsumers();
         case "producertype":
-        case "producerType": target.getProducerType(); return true;
-        case "size": target.getSize(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "timeout": target.getTimeout(); return true;
+        case "producerType": return target.getProducerType();
+        case "size": return target.getSize();
+        case "synchronous": return target.isSynchronous();
+        case "timeout": return target.getTimeout();
         case "waitfortasktocomplete":
-        case "waitForTaskToComplete": target.getWaitForTaskToComplete(); return true;
+        case "waitForTaskToComplete": return target.getWaitForTaskToComplete();
         case "waitstrategy":
-        case "waitStrategy": target.getWaitStrategy(); return true;
+        case "waitStrategy": return target.getWaitStrategy();
         default: return null;
         }
     }

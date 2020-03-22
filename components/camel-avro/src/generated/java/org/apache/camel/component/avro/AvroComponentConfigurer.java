@@ -69,23 +69,23 @@ public class AvroComponentConfigurer extends PropertyConfigurerSupport implement
         AvroComponent target = (AvroComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "protocol": getOrCreateConfiguration(target).getProtocol(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "protocol": return getOrCreateConfiguration(target).getProtocol();
         case "protocolclassname":
-        case "protocolClassName": getOrCreateConfiguration(target).getProtocolClassName(); return true;
+        case "protocolClassName": return getOrCreateConfiguration(target).getProtocolClassName();
         case "protocollocation":
-        case "protocolLocation": getOrCreateConfiguration(target).getProtocolLocation(); return true;
+        case "protocolLocation": return getOrCreateConfiguration(target).getProtocolLocation();
         case "reflectionprotocol":
-        case "reflectionProtocol": getOrCreateConfiguration(target).isReflectionProtocol(); return true;
+        case "reflectionProtocol": return getOrCreateConfiguration(target).isReflectionProtocol();
         case "singleparameter":
-        case "singleParameter": getOrCreateConfiguration(target).isSingleParameter(); return true;
+        case "singleParameter": return getOrCreateConfiguration(target).isSingleParameter();
         case "uriauthority":
-        case "uriAuthority": getOrCreateConfiguration(target).getUriAuthority(); return true;
+        case "uriAuthority": return getOrCreateConfiguration(target).getUriAuthority();
         default: return null;
         }
     }

@@ -54,18 +54,18 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         GooglePubsubComponent target = (GooglePubsubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "endpoint": target.getEndpoint(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "endpoint": return target.getEndpoint();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "publishercachesize":
-        case "publisherCacheSize": target.getPublisherCacheSize(); return true;
+        case "publisherCacheSize": return target.getPublisherCacheSize();
         case "publishercachetimeout":
-        case "publisherCacheTimeout": target.getPublisherCacheTimeout(); return true;
+        case "publisherCacheTimeout": return target.getPublisherCacheTimeout();
         case "publisherterminationtimeout":
-        case "publisherTerminationTimeout": target.getPublisherTerminationTimeout(); return true;
+        case "publisherTerminationTimeout": return target.getPublisherTerminationTimeout();
         default: return null;
         }
     }

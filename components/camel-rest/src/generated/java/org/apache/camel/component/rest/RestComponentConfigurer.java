@@ -57,20 +57,20 @@ public class RestComponentConfigurer extends PropertyConfigurerSupport implement
         RestComponent target = (RestComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
-        case "apiDoc": target.getApiDoc(); return true;
+        case "apiDoc": return target.getApiDoc();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "componentname":
-        case "componentName": target.getComponentName(); return true;
+        case "componentName": return target.getComponentName();
         case "consumercomponentname":
-        case "consumerComponentName": target.getConsumerComponentName(); return true;
-        case "host": target.getHost(); return true;
+        case "consumerComponentName": return target.getConsumerComponentName();
+        case "host": return target.getHost();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "producercomponentname":
-        case "producerComponentName": target.getProducerComponentName(); return true;
+        case "producerComponentName": return target.getProducerComponentName();
         default: return null;
         }
     }

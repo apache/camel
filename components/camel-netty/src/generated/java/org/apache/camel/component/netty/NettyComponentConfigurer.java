@@ -243,135 +243,135 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         NettyComponent target = (NettyComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
-        case "allowDefaultCodec": getOrCreateConfiguration(target).isAllowDefaultCodec(); return true;
+        case "allowDefaultCodec": return getOrCreateConfiguration(target).isAllowDefaultCodec();
         case "allowserializedheaders":
-        case "allowSerializedHeaders": getOrCreateConfiguration(target).isAllowSerializedHeaders(); return true;
+        case "allowSerializedHeaders": return getOrCreateConfiguration(target).isAllowSerializedHeaders();
         case "autoappenddelimiter":
-        case "autoAppendDelimiter": getOrCreateConfiguration(target).isAutoAppendDelimiter(); return true;
-        case "backlog": getOrCreateConfiguration(target).getBacklog(); return true;
+        case "autoAppendDelimiter": return getOrCreateConfiguration(target).isAutoAppendDelimiter();
+        case "backlog": return getOrCreateConfiguration(target).getBacklog();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bosscount":
-        case "bossCount": getOrCreateConfiguration(target).getBossCount(); return true;
+        case "bossCount": return getOrCreateConfiguration(target).getBossCount();
         case "bossgroup":
-        case "bossGroup": getOrCreateConfiguration(target).getBossGroup(); return true;
+        case "bossGroup": return getOrCreateConfiguration(target).getBossGroup();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "broadcast": getOrCreateConfiguration(target).isBroadcast(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "broadcast": return getOrCreateConfiguration(target).isBroadcast();
         case "channelgroup":
-        case "channelGroup": getOrCreateConfiguration(target).getChannelGroup(); return true;
+        case "channelGroup": return getOrCreateConfiguration(target).getChannelGroup();
         case "clientinitializerfactory":
-        case "clientInitializerFactory": getOrCreateConfiguration(target).getClientInitializerFactory(); return true;
+        case "clientInitializerFactory": return getOrCreateConfiguration(target).getClientInitializerFactory();
         case "clientmode":
-        case "clientMode": getOrCreateConfiguration(target).isClientMode(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "clientMode": return getOrCreateConfiguration(target).isClientMode();
+        case "configuration": return target.getConfiguration();
         case "connecttimeout":
-        case "connectTimeout": getOrCreateConfiguration(target).getConnectTimeout(); return true;
+        case "connectTimeout": return getOrCreateConfiguration(target).getConnectTimeout();
         case "correlationmanager":
-        case "correlationManager": getOrCreateConfiguration(target).getCorrelationManager(); return true;
+        case "correlationManager": return getOrCreateConfiguration(target).getCorrelationManager();
         case "decodermaxlinelength":
-        case "decoderMaxLineLength": getOrCreateConfiguration(target).getDecoderMaxLineLength(); return true;
-        case "decoders": getOrCreateConfiguration(target).getDecoders(); return true;
-        case "delimiter": getOrCreateConfiguration(target).getDelimiter(); return true;
-        case "disconnect": getOrCreateConfiguration(target).isDisconnect(); return true;
+        case "decoderMaxLineLength": return getOrCreateConfiguration(target).getDecoderMaxLineLength();
+        case "decoders": return getOrCreateConfiguration(target).getDecoders();
+        case "delimiter": return getOrCreateConfiguration(target).getDelimiter();
+        case "disconnect": return getOrCreateConfiguration(target).isDisconnect();
         case "disconnectonnoreply":
-        case "disconnectOnNoReply": getOrCreateConfiguration(target).isDisconnectOnNoReply(); return true;
+        case "disconnectOnNoReply": return getOrCreateConfiguration(target).isDisconnectOnNoReply();
         case "enabledprotocols":
-        case "enabledProtocols": getOrCreateConfiguration(target).getEnabledProtocols(); return true;
-        case "encoders": getOrCreateConfiguration(target).getEncoders(); return true;
-        case "encoding": getOrCreateConfiguration(target).getEncoding(); return true;
+        case "enabledProtocols": return getOrCreateConfiguration(target).getEnabledProtocols();
+        case "encoders": return getOrCreateConfiguration(target).getEncoders();
+        case "encoding": return getOrCreateConfiguration(target).getEncoding();
         case "executorservice":
-        case "executorService": target.getExecutorService(); return true;
+        case "executorService": return target.getExecutorService();
         case "keepalive":
-        case "keepAlive": getOrCreateConfiguration(target).isKeepAlive(); return true;
+        case "keepAlive": return getOrCreateConfiguration(target).isKeepAlive();
         case "keystorefile":
-        case "keyStoreFile": getOrCreateConfiguration(target).getKeyStoreFile(); return true;
+        case "keyStoreFile": return getOrCreateConfiguration(target).getKeyStoreFile();
         case "keystoreformat":
-        case "keyStoreFormat": getOrCreateConfiguration(target).getKeyStoreFormat(); return true;
+        case "keyStoreFormat": return getOrCreateConfiguration(target).getKeyStoreFormat();
         case "keystoreresource":
-        case "keyStoreResource": getOrCreateConfiguration(target).getKeyStoreResource(); return true;
+        case "keyStoreResource": return getOrCreateConfiguration(target).getKeyStoreResource();
         case "lazychannelcreation":
-        case "lazyChannelCreation": getOrCreateConfiguration(target).isLazyChannelCreation(); return true;
+        case "lazyChannelCreation": return getOrCreateConfiguration(target).isLazyChannelCreation();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumpoolsize":
-        case "maximumPoolSize": target.getMaximumPoolSize(); return true;
+        case "maximumPoolSize": return target.getMaximumPoolSize();
         case "nativetransport":
-        case "nativeTransport": getOrCreateConfiguration(target).isNativeTransport(); return true;
+        case "nativeTransport": return getOrCreateConfiguration(target).isNativeTransport();
         case "needclientauth":
-        case "needClientAuth": getOrCreateConfiguration(target).isNeedClientAuth(); return true;
+        case "needClientAuth": return getOrCreateConfiguration(target).isNeedClientAuth();
         case "nettyserverbootstrapfactory":
-        case "nettyServerBootstrapFactory": getOrCreateConfiguration(target).getNettyServerBootstrapFactory(); return true;
+        case "nettyServerBootstrapFactory": return getOrCreateConfiguration(target).getNettyServerBootstrapFactory();
         case "networkinterface":
-        case "networkInterface": getOrCreateConfiguration(target).getNetworkInterface(); return true;
+        case "networkInterface": return getOrCreateConfiguration(target).getNetworkInterface();
         case "noreplyloglevel":
-        case "noReplyLogLevel": getOrCreateConfiguration(target).getNoReplyLogLevel(); return true;
-        case "options": getOrCreateConfiguration(target).getOptions(); return true;
-        case "passphrase": getOrCreateConfiguration(target).getPassphrase(); return true;
+        case "noReplyLogLevel": return getOrCreateConfiguration(target).getNoReplyLogLevel();
+        case "options": return getOrCreateConfiguration(target).getOptions();
+        case "passphrase": return getOrCreateConfiguration(target).getPassphrase();
         case "producerpoolenabled":
-        case "producerPoolEnabled": getOrCreateConfiguration(target).isProducerPoolEnabled(); return true;
+        case "producerPoolEnabled": return getOrCreateConfiguration(target).isProducerPoolEnabled();
         case "producerpoolmaxactive":
-        case "producerPoolMaxActive": getOrCreateConfiguration(target).getProducerPoolMaxActive(); return true;
+        case "producerPoolMaxActive": return getOrCreateConfiguration(target).getProducerPoolMaxActive();
         case "producerpoolmaxidle":
-        case "producerPoolMaxIdle": getOrCreateConfiguration(target).getProducerPoolMaxIdle(); return true;
+        case "producerPoolMaxIdle": return getOrCreateConfiguration(target).getProducerPoolMaxIdle();
         case "producerpoolminevictableidle":
-        case "producerPoolMinEvictableIdle": getOrCreateConfiguration(target).getProducerPoolMinEvictableIdle(); return true;
+        case "producerPoolMinEvictableIdle": return getOrCreateConfiguration(target).getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":
-        case "producerPoolMinIdle": getOrCreateConfiguration(target).getProducerPoolMinIdle(); return true;
+        case "producerPoolMinIdle": return getOrCreateConfiguration(target).getProducerPoolMinIdle();
         case "receivebuffersize":
-        case "receiveBufferSize": getOrCreateConfiguration(target).getReceiveBufferSize(); return true;
+        case "receiveBufferSize": return getOrCreateConfiguration(target).getReceiveBufferSize();
         case "receivebuffersizepredictor":
-        case "receiveBufferSizePredictor": getOrCreateConfiguration(target).getReceiveBufferSizePredictor(); return true;
-        case "reconnect": getOrCreateConfiguration(target).isReconnect(); return true;
+        case "receiveBufferSizePredictor": return getOrCreateConfiguration(target).getReceiveBufferSizePredictor();
+        case "reconnect": return getOrCreateConfiguration(target).isReconnect();
         case "reconnectinterval":
-        case "reconnectInterval": getOrCreateConfiguration(target).getReconnectInterval(); return true;
+        case "reconnectInterval": return getOrCreateConfiguration(target).getReconnectInterval();
         case "requesttimeout":
-        case "requestTimeout": getOrCreateConfiguration(target).getRequestTimeout(); return true;
+        case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
         case "reuseaddress":
-        case "reuseAddress": getOrCreateConfiguration(target).isReuseAddress(); return true;
+        case "reuseAddress": return getOrCreateConfiguration(target).isReuseAddress();
         case "reusechannel":
-        case "reuseChannel": getOrCreateConfiguration(target).isReuseChannel(); return true;
+        case "reuseChannel": return getOrCreateConfiguration(target).isReuseChannel();
         case "securityprovider":
-        case "securityProvider": getOrCreateConfiguration(target).getSecurityProvider(); return true;
+        case "securityProvider": return getOrCreateConfiguration(target).getSecurityProvider();
         case "sendbuffersize":
-        case "sendBufferSize": getOrCreateConfiguration(target).getSendBufferSize(); return true;
+        case "sendBufferSize": return getOrCreateConfiguration(target).getSendBufferSize();
         case "serverclosedchannelexceptioncaughtloglevel":
-        case "serverClosedChannelExceptionCaughtLogLevel": getOrCreateConfiguration(target).getServerClosedChannelExceptionCaughtLogLevel(); return true;
+        case "serverClosedChannelExceptionCaughtLogLevel": return getOrCreateConfiguration(target).getServerClosedChannelExceptionCaughtLogLevel();
         case "serverexceptioncaughtloglevel":
-        case "serverExceptionCaughtLogLevel": getOrCreateConfiguration(target).getServerExceptionCaughtLogLevel(); return true;
+        case "serverExceptionCaughtLogLevel": return getOrCreateConfiguration(target).getServerExceptionCaughtLogLevel();
         case "serverinitializerfactory":
-        case "serverInitializerFactory": getOrCreateConfiguration(target).getServerInitializerFactory(); return true;
-        case "ssl": getOrCreateConfiguration(target).isSsl(); return true;
+        case "serverInitializerFactory": return getOrCreateConfiguration(target).getServerInitializerFactory();
+        case "ssl": return getOrCreateConfiguration(target).isSsl();
         case "sslclientcertheaders":
-        case "sslClientCertHeaders": getOrCreateConfiguration(target).isSslClientCertHeaders(); return true;
+        case "sslClientCertHeaders": return getOrCreateConfiguration(target).isSslClientCertHeaders();
         case "sslcontextparameters":
-        case "sslContextParameters": getOrCreateConfiguration(target).getSslContextParameters(); return true;
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
         case "sslhandler":
-        case "sslHandler": getOrCreateConfiguration(target).getSslHandler(); return true;
-        case "sync": getOrCreateConfiguration(target).isSync(); return true;
+        case "sslHandler": return getOrCreateConfiguration(target).getSslHandler();
+        case "sync": return getOrCreateConfiguration(target).isSync();
         case "tcpnodelay":
-        case "tcpNoDelay": getOrCreateConfiguration(target).isTcpNoDelay(); return true;
-        case "textline": getOrCreateConfiguration(target).isTextline(); return true;
+        case "tcpNoDelay": return getOrCreateConfiguration(target).isTcpNoDelay();
+        case "textline": return getOrCreateConfiguration(target).isTextline();
         case "transferexchange":
-        case "transferExchange": getOrCreateConfiguration(target).isTransferExchange(); return true;
+        case "transferExchange": return getOrCreateConfiguration(target).isTransferExchange();
         case "truststorefile":
-        case "trustStoreFile": getOrCreateConfiguration(target).getTrustStoreFile(); return true;
+        case "trustStoreFile": return getOrCreateConfiguration(target).getTrustStoreFile();
         case "truststoreresource":
-        case "trustStoreResource": getOrCreateConfiguration(target).getTrustStoreResource(); return true;
+        case "trustStoreResource": return getOrCreateConfiguration(target).getTrustStoreResource();
         case "udpbytearraycodec":
-        case "udpByteArrayCodec": getOrCreateConfiguration(target).isUdpByteArrayCodec(); return true;
+        case "udpByteArrayCodec": return getOrCreateConfiguration(target).isUdpByteArrayCodec();
         case "udpconnectionlesssending":
-        case "udpConnectionlessSending": getOrCreateConfiguration(target).isUdpConnectionlessSending(); return true;
+        case "udpConnectionlessSending": return getOrCreateConfiguration(target).isUdpConnectionlessSending();
         case "usebytebuf":
-        case "useByteBuf": getOrCreateConfiguration(target).isUseByteBuf(); return true;
+        case "useByteBuf": return getOrCreateConfiguration(target).isUseByteBuf();
         case "useglobalsslcontextparameters":
-        case "useGlobalSslContextParameters": target.isUseGlobalSslContextParameters(); return true;
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "usingexecutorservice":
-        case "usingExecutorService": getOrCreateConfiguration(target).isUsingExecutorService(); return true;
+        case "usingExecutorService": return getOrCreateConfiguration(target).isUsingExecutorService();
         case "workercount":
-        case "workerCount": getOrCreateConfiguration(target).getWorkerCount(); return true;
+        case "workerCount": return getOrCreateConfiguration(target).getWorkerCount();
         case "workergroup":
-        case "workerGroup": getOrCreateConfiguration(target).getWorkerGroup(); return true;
+        case "workerGroup": return getOrCreateConfiguration(target).getWorkerGroup();
         default: return null;
         }
     }

@@ -188,107 +188,107 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         HttpEndpoint target = (HttpEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authdomain":
-        case "authDomain": target.getAuthDomain(); return true;
+        case "authDomain": return target.getAuthDomain();
         case "authhost":
-        case "authHost": target.getAuthHost(); return true;
+        case "authHost": return target.getAuthHost();
         case "authmethod":
-        case "authMethod": target.getAuthMethod(); return true;
+        case "authMethod": return target.getAuthMethod();
         case "authmethodpriority":
-        case "authMethodPriority": target.getAuthMethodPriority(); return true;
+        case "authMethodPriority": return target.getAuthMethodPriority();
         case "authpassword":
-        case "authPassword": target.getAuthPassword(); return true;
+        case "authPassword": return target.getAuthPassword();
         case "authusername":
-        case "authUsername": target.getAuthUsername(); return true;
+        case "authUsername": return target.getAuthUsername();
         case "authenticationpreemptive":
-        case "authenticationPreemptive": target.isAuthenticationPreemptive(); return true;
+        case "authenticationPreemptive": return target.isAuthenticationPreemptive();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeendpoint":
-        case "bridgeEndpoint": target.isBridgeEndpoint(); return true;
-        case "chunked": target.isChunked(); return true;
+        case "bridgeEndpoint": return target.isBridgeEndpoint();
+        case "chunked": return target.isChunked();
         case "clearexpiredcookies":
-        case "clearExpiredCookies": target.isClearExpiredCookies(); return true;
+        case "clearExpiredCookies": return target.isClearExpiredCookies();
         case "clientbuilder":
-        case "clientBuilder": target.getClientBuilder(); return true;
+        case "clientBuilder": return target.getClientBuilder();
         case "clientconnectionmanager":
-        case "clientConnectionManager": target.getClientConnectionManager(); return true;
+        case "clientConnectionManager": return target.getClientConnectionManager();
         case "connectionclose":
-        case "connectionClose": target.isConnectionClose(); return true;
+        case "connectionClose": return target.isConnectionClose();
         case "connectionsperroute":
-        case "connectionsPerRoute": target.getConnectionsPerRoute(); return true;
+        case "connectionsPerRoute": return target.getConnectionsPerRoute();
         case "cookiehandler":
-        case "cookieHandler": target.getCookieHandler(); return true;
+        case "cookieHandler": return target.getCookieHandler();
         case "cookiestore":
-        case "cookieStore": target.getCookieStore(); return true;
+        case "cookieStore": return target.getCookieStore();
         case "copyheaders":
-        case "copyHeaders": target.isCopyHeaders(); return true;
+        case "copyHeaders": return target.isCopyHeaders();
         case "customhostheader":
-        case "customHostHeader": target.getCustomHostHeader(); return true;
+        case "customHostHeader": return target.getCustomHostHeader();
         case "deletewithbody":
-        case "deleteWithBody": target.isDeleteWithBody(); return true;
+        case "deleteWithBody": return target.isDeleteWithBody();
         case "disablestreamcache":
-        case "disableStreamCache": target.isDisableStreamCache(); return true;
+        case "disableStreamCache": return target.isDisableStreamCache();
         case "getwithbody":
-        case "getWithBody": target.isGetWithBody(); return true;
+        case "getWithBody": return target.isGetWithBody();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.getHeaderFilterStrategy(); return true;
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpbinding":
-        case "httpBinding": target.getHttpBinding(); return true;
+        case "httpBinding": return target.getHttpBinding();
         case "httpclient":
-        case "httpClient": target.getHttpClient(); return true;
+        case "httpClient": return target.getHttpClient();
         case "httpclientconfigurer":
-        case "httpClientConfigurer": target.getHttpClientConfigurer(); return true;
+        case "httpClientConfigurer": return target.getHttpClientConfigurer();
         case "httpclientoptions":
-        case "httpClientOptions": target.getHttpClientOptions(); return true;
+        case "httpClientOptions": return target.getHttpClientOptions();
         case "httpcontext":
-        case "httpContext": target.getHttpContext(); return true;
+        case "httpContext": return target.getHttpContext();
         case "httpmethod":
-        case "httpMethod": target.getHttpMethod(); return true;
+        case "httpMethod": return target.getHttpMethod();
         case "ignoreresponsebody":
-        case "ignoreResponseBody": target.isIgnoreResponseBody(); return true;
+        case "ignoreResponseBody": return target.isIgnoreResponseBody();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maphttpmessagebody":
-        case "mapHttpMessageBody": target.isMapHttpMessageBody(); return true;
+        case "mapHttpMessageBody": return target.isMapHttpMessageBody();
         case "maphttpmessageformurlencodedbody":
-        case "mapHttpMessageFormUrlEncodedBody": target.isMapHttpMessageFormUrlEncodedBody(); return true;
+        case "mapHttpMessageFormUrlEncodedBody": return target.isMapHttpMessageFormUrlEncodedBody();
         case "maphttpmessageheaders":
-        case "mapHttpMessageHeaders": target.isMapHttpMessageHeaders(); return true;
+        case "mapHttpMessageHeaders": return target.isMapHttpMessageHeaders();
         case "maxtotalconnections":
-        case "maxTotalConnections": target.getMaxTotalConnections(); return true;
+        case "maxTotalConnections": return target.getMaxTotalConnections();
         case "okstatuscoderange":
-        case "okStatusCodeRange": target.getOkStatusCodeRange(); return true;
+        case "okStatusCodeRange": return target.getOkStatusCodeRange();
         case "preservehostheader":
-        case "preserveHostHeader": target.isPreserveHostHeader(); return true;
+        case "preserveHostHeader": return target.isPreserveHostHeader();
         case "proxyauthdomain":
-        case "proxyAuthDomain": target.getProxyAuthDomain(); return true;
+        case "proxyAuthDomain": return target.getProxyAuthDomain();
         case "proxyauthhost":
-        case "proxyAuthHost": target.getProxyAuthHost(); return true;
+        case "proxyAuthHost": return target.getProxyAuthHost();
         case "proxyauthmethod":
-        case "proxyAuthMethod": target.getProxyAuthMethod(); return true;
+        case "proxyAuthMethod": return target.getProxyAuthMethod();
         case "proxyauthpassword":
-        case "proxyAuthPassword": target.getProxyAuthPassword(); return true;
+        case "proxyAuthPassword": return target.getProxyAuthPassword();
         case "proxyauthport":
-        case "proxyAuthPort": target.getProxyAuthPort(); return true;
+        case "proxyAuthPort": return target.getProxyAuthPort();
         case "proxyauthscheme":
-        case "proxyAuthScheme": target.getProxyAuthScheme(); return true;
+        case "proxyAuthScheme": return target.getProxyAuthScheme();
         case "proxyauthusername":
-        case "proxyAuthUsername": target.getProxyAuthUsername(); return true;
+        case "proxyAuthUsername": return target.getProxyAuthUsername();
         case "proxyhost":
-        case "proxyHost": target.getProxyHost(); return true;
+        case "proxyHost": return target.getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getProxyPort(); return true;
+        case "proxyPort": return target.getProxyPort();
         case "sslcontextparameters":
-        case "sslContextParameters": target.getSslContextParameters(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "synchronous": return target.isSynchronous();
         case "throwexceptiononfailure":
-        case "throwExceptionOnFailure": target.isThrowExceptionOnFailure(); return true;
+        case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
         case "transferexception":
-        case "transferException": target.isTransferException(); return true;
+        case "transferException": return target.isTransferException();
         case "usesystemproperties":
-        case "useSystemProperties": target.isUseSystemProperties(); return true;
+        case "useSystemProperties": return target.isUseSystemProperties();
         case "x509hostnameverifier":
-        case "x509HostnameVerifier": target.getX509HostnameVerifier(); return true;
+        case "x509HostnameVerifier": return target.getX509HostnameVerifier();
         default: return null;
         }
     }

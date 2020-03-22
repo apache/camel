@@ -172,93 +172,93 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         CouchbaseEndpoint target = (CouchbaseEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalhosts":
-        case "additionalHosts": target.getAdditionalHosts(); return true;
+        case "additionalHosts": return target.getAdditionalHosts();
         case "autostartidforinserts":
-        case "autoStartIdForInserts": target.isAutoStartIdForInserts(); return true;
+        case "autoStartIdForInserts": return target.isAutoStartIdForInserts();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "bucket": target.getBucket(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "bucket": return target.getBucket();
         case "consumerprocessedstrategy":
-        case "consumerProcessedStrategy": target.getConsumerProcessedStrategy(); return true;
-        case "delay": target.getDelay(); return true;
-        case "descending": target.isDescending(); return true;
+        case "consumerProcessedStrategy": return target.getConsumerProcessedStrategy();
+        case "delay": return target.getDelay();
+        case "descending": return target.isDescending();
         case "designdocumentname":
-        case "designDocumentName": target.getDesignDocumentName(); return true;
+        case "designDocumentName": return target.getDesignDocumentName();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "greedy": return target.isGreedy();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
-        case "key": target.getKey(); return true;
+        case "initialDelay": return target.getInitialDelay();
+        case "key": return target.getKey();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "limit": target.getLimit(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "limit": return target.getLimit();
         case "maxreconnectdelay":
-        case "maxReconnectDelay": target.getMaxReconnectDelay(); return true;
+        case "maxReconnectDelay": return target.getMaxReconnectDelay();
         case "obspollinterval":
-        case "obsPollInterval": target.getObsPollInterval(); return true;
+        case "obsPollInterval": return target.getObsPollInterval();
         case "obstimeout":
-        case "obsTimeout": target.getObsTimeout(); return true;
+        case "obsTimeout": return target.getObsTimeout();
         case "opqueuemaxblocktime":
-        case "opQueueMaxBlockTime": target.getOpQueueMaxBlockTime(); return true;
+        case "opQueueMaxBlockTime": return target.getOpQueueMaxBlockTime();
         case "optimeout":
-        case "opTimeOut": target.getOpTimeOut(); return true;
-        case "operation": target.getOperation(); return true;
-        case "password": target.getPassword(); return true;
+        case "opTimeOut": return target.getOpTimeOut();
+        case "operation": return target.getOperation();
+        case "password": return target.getPassword();
         case "persistto":
-        case "persistTo": target.getPersistTo(); return true;
+        case "persistTo": return target.getPersistTo();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "producerretryattempts":
-        case "producerRetryAttempts": target.getProducerRetryAttempts(); return true;
+        case "producerRetryAttempts": return target.getProducerRetryAttempts();
         case "producerretrypause":
-        case "producerRetryPause": target.getProducerRetryPause(); return true;
+        case "producerRetryPause": return target.getProducerRetryPause();
         case "rangeendkey":
-        case "rangeEndKey": target.getRangeEndKey(); return true;
+        case "rangeEndKey": return target.getRangeEndKey();
         case "rangestartkey":
-        case "rangeStartKey": target.getRangeStartKey(); return true;
+        case "rangeStartKey": return target.getRangeStartKey();
         case "readbuffersize":
-        case "readBufferSize": target.getReadBufferSize(); return true;
+        case "readBufferSize": return target.getReadBufferSize();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "replicateto":
-        case "replicateTo": target.getReplicateTo(); return true;
+        case "replicateTo": return target.getReplicateTo();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "shouldoptimize":
-        case "shouldOptimize": target.isShouldOptimize(); return true;
-        case "skip": target.getSkip(); return true;
+        case "shouldOptimize": return target.isShouldOptimize();
+        case "skip": return target.getSkip();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
+        case "startScheduler": return target.isStartScheduler();
         case "startingidforinsertsfrom":
-        case "startingIdForInsertsFrom": target.getStartingIdForInsertsFrom(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startingIdForInsertsFrom": return target.getStartingIdForInsertsFrom();
+        case "synchronous": return target.isSynchronous();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "timeoutexceptionthreshold":
-        case "timeoutExceptionThreshold": target.getTimeoutExceptionThreshold(); return true;
+        case "timeoutExceptionThreshold": return target.getTimeoutExceptionThreshold();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
-        case "username": target.getUsername(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
+        case "username": return target.getUsername();
         case "viewname":
-        case "viewName": target.getViewName(); return true;
+        case "viewName": return target.getViewName();
         default: return null;
         }
     }

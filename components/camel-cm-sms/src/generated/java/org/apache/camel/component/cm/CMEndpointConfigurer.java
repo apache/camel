@@ -54,18 +54,18 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
         CMEndpoint target = (CMEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "defaultfrom":
-        case "defaultFrom": target.getConfiguration().getDefaultFrom(); return true;
+        case "defaultFrom": return target.getConfiguration().getDefaultFrom();
         case "defaultmaxnumberofparts":
-        case "defaultMaxNumberOfParts": target.getConfiguration().getDefaultMaxNumberOfParts(); return true;
+        case "defaultMaxNumberOfParts": return target.getConfiguration().getDefaultMaxNumberOfParts();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "producttoken":
-        case "productToken": target.getConfiguration().getProductToken(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "productToken": return target.getConfiguration().getProductToken();
+        case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
-        case "testConnectionOnStartup": target.getConfiguration().isTestConnectionOnStartup(); return true;
+        case "testConnectionOnStartup": return target.getConfiguration().isTestConnectionOnStartup();
         default: return null;
         }
     }

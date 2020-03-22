@@ -43,11 +43,11 @@ public class CronComponentConfigurer extends PropertyConfigurerSupport implement
         CronComponent target = (CronComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cronservice":
-        case "cronService": target.getCronService(); return true;
+        case "cronService": return target.getCronService();
         default: return null;
         }
     }

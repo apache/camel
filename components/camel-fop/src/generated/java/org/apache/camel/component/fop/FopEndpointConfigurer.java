@@ -48,14 +48,14 @@ public class FopEndpointConfigurer extends PropertyConfigurerSupport implements 
         FopEndpoint target = (FopEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "fopfactory":
-        case "fopFactory": target.getFopFactory(); return true;
+        case "fopFactory": return target.getFopFactory();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "synchronous": return target.isSynchronous();
         case "userconfigurl":
-        case "userConfigURL": target.getUserConfigURL(); return true;
+        case "userConfigURL": return target.getUserConfigURL();
         default: return null;
         }
     }

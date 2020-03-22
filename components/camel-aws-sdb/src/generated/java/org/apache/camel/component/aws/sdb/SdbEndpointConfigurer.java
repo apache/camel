@@ -70,28 +70,28 @@ public class SdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         SdbEndpoint target = (SdbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": target.getConfiguration().getAccessKey(); return true;
+        case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonsdbclient":
-        case "amazonSDBClient": target.getConfiguration().getAmazonSDBClient(); return true;
+        case "amazonSDBClient": return target.getConfiguration().getAmazonSDBClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "consistentread":
-        case "consistentRead": target.getConfiguration().isConsistentRead(); return true;
+        case "consistentRead": return target.getConfiguration().isConsistentRead();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxnumberofdomains":
-        case "maxNumberOfDomains": target.getConfiguration().getMaxNumberOfDomains(); return true;
-        case "operation": target.getConfiguration().getOperation(); return true;
+        case "maxNumberOfDomains": return target.getConfiguration().getMaxNumberOfDomains();
+        case "operation": return target.getConfiguration().getOperation();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().getProxyProtocol(); return true;
-        case "region": target.getConfiguration().getRegion(); return true;
+        case "proxyProtocol": return target.getConfiguration().getProxyProtocol();
+        case "region": return target.getConfiguration().getRegion();
         case "secretkey":
-        case "secretKey": target.getConfiguration().getSecretKey(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "secretKey": return target.getConfiguration().getSecretKey();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

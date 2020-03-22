@@ -45,12 +45,12 @@ public class ServiceComponentConfigurer extends PropertyConfigurerSupport implem
         ServiceComponent target = (ServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "service": target.getService(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "service": return target.getService();
         case "serviceselector":
-        case "serviceSelector": target.getServiceSelector(); return true;
+        case "serviceSelector": return target.getServiceSelector();
         default: return null;
         }
     }

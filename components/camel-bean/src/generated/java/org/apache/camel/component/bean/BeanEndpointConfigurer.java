@@ -50,14 +50,14 @@ public class BeanEndpointConfigurer extends PropertyConfigurerSupport implements
         BeanEndpoint target = (BeanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "cache": target.getCache(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "cache": return target.getCache();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "method": target.getMethod(); return true;
-        case "parameters": target.getParameters(); return true;
-        case "scope": target.getScope(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "method": return target.getMethod();
+        case "parameters": return target.getParameters();
+        case "scope": return target.getScope();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

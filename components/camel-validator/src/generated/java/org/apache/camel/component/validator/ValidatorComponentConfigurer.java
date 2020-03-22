@@ -43,11 +43,11 @@ public class ValidatorComponentConfigurer extends PropertyConfigurerSupport impl
         ValidatorComponent target = (ValidatorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "resourceresolverfactory":
-        case "resourceResolverFactory": target.getResourceResolverFactory(); return true;
+        case "resourceResolverFactory": return target.getResourceResolverFactory();
         default: return null;
         }
     }

@@ -66,26 +66,26 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         GooglePubsubEndpoint target = (GooglePubsubEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ackmode":
-        case "ackMode": target.getAckMode(); return true;
+        case "ackMode": return target.getAckMode();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
-        case "concurrentConsumers": target.getConcurrentConsumers(); return true;
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "loggerid":
-        case "loggerId": target.getLoggerId(); return true;
+        case "loggerId": return target.getLoggerId();
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.getMaxMessagesPerPoll(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "synchronous": return target.isSynchronous();
         case "synchronouspull":
-        case "synchronousPull": target.isSynchronousPull(); return true;
+        case "synchronousPull": return target.isSynchronousPull();
         default: return null;
         }
     }

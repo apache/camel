@@ -54,18 +54,18 @@ public class RestApiEndpointConfigurer extends PropertyConfigurerSupport impleme
         RestApiEndpoint target = (RestApiEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apicomponentname":
-        case "apiComponentName": target.getApiComponentName(); return true;
+        case "apiComponentName": return target.getApiComponentName();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumercomponentname":
-        case "consumerComponentName": target.getConsumerComponentName(); return true;
+        case "consumerComponentName": return target.getConsumerComponentName();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "synchronous": return target.isSynchronous();
         default: return null;
         }
     }

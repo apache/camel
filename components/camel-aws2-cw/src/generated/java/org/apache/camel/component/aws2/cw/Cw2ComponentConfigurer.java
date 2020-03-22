@@ -77,27 +77,27 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         Cw2Component target = (Cw2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazoncwclient":
-        case "amazonCwClient": getOrCreateConfiguration(target).getAmazonCwClient(); return true;
+        case "amazonCwClient": return getOrCreateConfiguration(target).getAmazonCwClient();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "configuration": return target.getConfiguration();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "name": getOrCreateConfiguration(target).getName(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "name": return getOrCreateConfiguration(target).getName();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
-        case "timestamp": getOrCreateConfiguration(target).getTimestamp(); return true;
-        case "unit": getOrCreateConfiguration(target).getUnit(); return true;
-        case "value": getOrCreateConfiguration(target).getValue(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
+        case "timestamp": return getOrCreateConfiguration(target).getTimestamp();
+        case "unit": return getOrCreateConfiguration(target).getUnit();
+        case "value": return getOrCreateConfiguration(target).getValue();
         default: return null;
         }
     }

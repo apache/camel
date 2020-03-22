@@ -49,15 +49,15 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         SqlComponent target = (SqlComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datasource":
-        case "dataSource": target.getDataSource(); return true;
+        case "dataSource": return target.getDataSource();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "useplaceholder":
-        case "usePlaceholder": target.isUsePlaceholder(); return true;
+        case "usePlaceholder": return target.isUsePlaceholder();
         default: return null;
         }
     }

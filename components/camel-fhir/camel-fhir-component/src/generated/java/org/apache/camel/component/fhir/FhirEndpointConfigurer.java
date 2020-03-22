@@ -161,86 +161,86 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         FhirEndpoint target = (FhirEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
-        case "accessToken": target.getConfiguration().getAccessToken(); return true;
+        case "accessToken": return target.getConfiguration().getAccessToken();
         case "backofferrorthreshold":
-        case "backoffErrorThreshold": target.getBackoffErrorThreshold(); return true;
+        case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
-        case "backoffIdleThreshold": target.getBackoffIdleThreshold(); return true;
+        case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
-        case "backoffMultiplier": target.getBackoffMultiplier(); return true;
+        case "backoffMultiplier": return target.getBackoffMultiplier();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
-        case "client": target.getConfiguration().getClient(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "client": return target.getConfiguration().getClient();
         case "clientfactory":
-        case "clientFactory": target.getConfiguration().getClientFactory(); return true;
-        case "compress": target.getConfiguration().isCompress(); return true;
+        case "clientFactory": return target.getConfiguration().getClientFactory();
+        case "compress": return target.getConfiguration().isCompress();
         case "connectiontimeout":
-        case "connectionTimeout": target.getConfiguration().getConnectionTimeout(); return true;
+        case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
         case "defermodelscanning":
-        case "deferModelScanning": target.getConfiguration().isDeferModelScanning(); return true;
-        case "delay": target.getDelay(); return true;
-        case "encoding": target.getConfiguration().getEncoding(); return true;
+        case "deferModelScanning": return target.getConfiguration().isDeferModelScanning();
+        case "delay": return target.getDelay();
+        case "encoding": return target.getConfiguration().getEncoding();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "fhircontext":
-        case "fhirContext": target.getConfiguration().getFhirContext(); return true;
+        case "fhirContext": return target.getConfiguration().getFhirContext();
         case "fhirversion":
-        case "fhirVersion": target.getConfiguration().getFhirVersion(); return true;
+        case "fhirVersion": return target.getConfiguration().getFhirVersion();
         case "forceconformancecheck":
-        case "forceConformanceCheck": target.getConfiguration().isForceConformanceCheck(); return true;
-        case "greedy": target.isGreedy(); return true;
+        case "forceConformanceCheck": return target.getConfiguration().isForceConformanceCheck();
+        case "greedy": return target.isGreedy();
         case "inbody":
-        case "inBody": target.getInBody(); return true;
+        case "inBody": return target.getInBody();
         case "initialdelay":
-        case "initialDelay": target.getInitialDelay(); return true;
+        case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
-        case "log": target.getConfiguration().isLog(); return true;
-        case "password": target.getConfiguration().getPassword(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
+        case "log": return target.getConfiguration().isLog();
+        case "password": return target.getConfiguration().getPassword();
         case "pollstrategy":
-        case "pollStrategy": target.getPollStrategy(); return true;
+        case "pollStrategy": return target.getPollStrategy();
         case "prettyprint":
-        case "prettyPrint": target.getConfiguration().isPrettyPrint(); return true;
+        case "prettyPrint": return target.getConfiguration().isPrettyPrint();
         case "proxyhost":
-        case "proxyHost": target.getConfiguration().getProxyHost(); return true;
+        case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxypassword":
-        case "proxyPassword": target.getConfiguration().getProxyPassword(); return true;
+        case "proxyPassword": return target.getConfiguration().getProxyPassword();
         case "proxyport":
-        case "proxyPort": target.getConfiguration().getProxyPort(); return true;
+        case "proxyPort": return target.getConfiguration().getProxyPort();
         case "proxyuser":
-        case "proxyUser": target.getConfiguration().getProxyUser(); return true;
+        case "proxyUser": return target.getConfiguration().getProxyUser();
         case "repeatcount":
-        case "repeatCount": target.getRepeatCount(); return true;
+        case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
-        case "runLoggingLevel": target.getRunLoggingLevel(); return true;
+        case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
-        case "scheduledExecutorService": target.getScheduledExecutorService(); return true;
-        case "scheduler": target.getScheduler(); return true;
+        case "scheduledExecutorService": return target.getScheduledExecutorService();
+        case "scheduler": return target.getScheduler();
         case "schedulerproperties":
-        case "schedulerProperties": target.getSchedulerProperties(); return true;
+        case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
-        case "sendEmptyMessageWhenIdle": target.isSendEmptyMessageWhenIdle(); return true;
+        case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serverurl":
-        case "serverUrl": target.getConfiguration().getServerUrl(); return true;
+        case "serverUrl": return target.getConfiguration().getServerUrl();
         case "sessioncookie":
-        case "sessionCookie": target.getConfiguration().getSessionCookie(); return true;
+        case "sessionCookie": return target.getConfiguration().getSessionCookie();
         case "sockettimeout":
-        case "socketTimeout": target.getConfiguration().getSocketTimeout(); return true;
+        case "socketTimeout": return target.getConfiguration().getSocketTimeout();
         case "startscheduler":
-        case "startScheduler": target.isStartScheduler(); return true;
-        case "summary": target.getConfiguration().getSummary(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "startScheduler": return target.isStartScheduler();
+        case "summary": return target.getConfiguration().getSummary();
+        case "synchronous": return target.isSynchronous();
         case "timeunit":
-        case "timeUnit": target.getTimeUnit(); return true;
+        case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
-        case "useFixedDelay": target.isUseFixedDelay(); return true;
-        case "username": target.getConfiguration().getUsername(); return true;
+        case "useFixedDelay": return target.isUseFixedDelay();
+        case "username": return target.getConfiguration().getUsername();
         case "validationmode":
-        case "validationMode": target.getConfiguration().getValidationMode(); return true;
+        case "validationMode": return target.getConfiguration().getValidationMode();
         default: return null;
         }
     }

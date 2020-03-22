@@ -49,15 +49,15 @@ public class WsEndpointConfigurer extends AhcEndpointConfigurer implements Gener
         WsEndpoint target = (WsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
+        case "exchangePattern": return target.getExchangePattern();
         case "sendmessageonerror":
-        case "sendMessageOnError": target.isSendMessageOnError(); return true;
+        case "sendMessageOnError": return target.isSendMessageOnError();
         case "usestreaming":
-        case "useStreaming": target.isUseStreaming(); return true;
+        case "useStreaming": return target.isUseStreaming();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

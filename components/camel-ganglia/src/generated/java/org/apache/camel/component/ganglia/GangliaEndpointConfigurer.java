@@ -70,26 +70,26 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
         GangliaEndpoint target = (GangliaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
-        case "dmax": target.getConfiguration().getDmax(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "dmax": return target.getConfiguration().getDmax();
         case "groupname":
-        case "groupName": target.getConfiguration().getGroupName(); return true;
+        case "groupName": return target.getConfiguration().getGroupName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "metricname":
-        case "metricName": target.getConfiguration().getMetricName(); return true;
-        case "mode": target.getConfiguration().getMode(); return true;
-        case "prefix": target.getConfiguration().getPrefix(); return true;
-        case "slope": target.getConfiguration().getSlope(); return true;
+        case "metricName": return target.getConfiguration().getMetricName();
+        case "mode": return target.getConfiguration().getMode();
+        case "prefix": return target.getConfiguration().getPrefix();
+        case "slope": return target.getConfiguration().getSlope();
         case "spoofhostname":
-        case "spoofHostname": target.getConfiguration().getSpoofHostname(); return true;
-        case "synchronous": target.isSynchronous(); return true;
-        case "tmax": target.getConfiguration().getTmax(); return true;
-        case "ttl": target.getConfiguration().getTtl(); return true;
-        case "type": target.getConfiguration().getType(); return true;
-        case "units": target.getConfiguration().getUnits(); return true;
+        case "spoofHostname": return target.getConfiguration().getSpoofHostname();
+        case "synchronous": return target.isSynchronous();
+        case "tmax": return target.getConfiguration().getTmax();
+        case "ttl": return target.getConfiguration().getTtl();
+        case "type": return target.getConfiguration().getType();
+        case "units": return target.getConfiguration().getUnits();
         case "wireformat31x":
-        case "wireFormat31x": target.getConfiguration().isWireFormat31x(); return true;
+        case "wireFormat31x": return target.getConfiguration().isWireFormat31x();
         default: return null;
         }
     }

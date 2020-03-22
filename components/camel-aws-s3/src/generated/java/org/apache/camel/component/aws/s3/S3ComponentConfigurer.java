@@ -149,75 +149,75 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         S3Component target = (S3Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acceleratemodeenabled":
-        case "accelerateModeEnabled": getOrCreateConfiguration(target).isAccelerateModeEnabled(); return true;
+        case "accelerateModeEnabled": return getOrCreateConfiguration(target).isAccelerateModeEnabled();
         case "accesskey":
-        case "accessKey": getOrCreateConfiguration(target).getAccessKey(); return true;
+        case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazons3client":
-        case "amazonS3Client": getOrCreateConfiguration(target).getAmazonS3Client(); return true;
+        case "amazonS3Client": return getOrCreateConfiguration(target).getAmazonS3Client();
         case "autocreatebucket":
-        case "autoCreateBucket": getOrCreateConfiguration(target).isAutoCreateBucket(); return true;
+        case "autoCreateBucket": return getOrCreateConfiguration(target).isAutoCreateBucket();
         case "autoclosebody":
-        case "autocloseBody": getOrCreateConfiguration(target).isAutocloseBody(); return true;
+        case "autocloseBody": return getOrCreateConfiguration(target).isAutocloseBody();
         case "awskmskeyid":
-        case "awsKMSKeyId": getOrCreateConfiguration(target).getAwsKMSKeyId(); return true;
+        case "awsKMSKeyId": return getOrCreateConfiguration(target).getAwsKMSKeyId();
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunkedencodingdisabled":
-        case "chunkedEncodingDisabled": getOrCreateConfiguration(target).isChunkedEncodingDisabled(); return true;
-        case "configuration": target.getConfiguration(); return true;
+        case "chunkedEncodingDisabled": return getOrCreateConfiguration(target).isChunkedEncodingDisabled();
+        case "configuration": return target.getConfiguration();
         case "deleteafterread":
-        case "deleteAfterRead": getOrCreateConfiguration(target).isDeleteAfterRead(); return true;
+        case "deleteAfterRead": return getOrCreateConfiguration(target).isDeleteAfterRead();
         case "deleteafterwrite":
-        case "deleteAfterWrite": getOrCreateConfiguration(target).isDeleteAfterWrite(); return true;
-        case "delimiter": getOrCreateConfiguration(target).getDelimiter(); return true;
+        case "deleteAfterWrite": return getOrCreateConfiguration(target).isDeleteAfterWrite();
+        case "delimiter": return getOrCreateConfiguration(target).getDelimiter();
         case "dualstackenabled":
-        case "dualstackEnabled": getOrCreateConfiguration(target).isDualstackEnabled(); return true;
+        case "dualstackEnabled": return getOrCreateConfiguration(target).isDualstackEnabled();
         case "encryptionmaterials":
-        case "encryptionMaterials": getOrCreateConfiguration(target).getEncryptionMaterials(); return true;
+        case "encryptionMaterials": return getOrCreateConfiguration(target).getEncryptionMaterials();
         case "endpointconfiguration":
-        case "endpointConfiguration": getOrCreateConfiguration(target).getEndpointConfiguration(); return true;
+        case "endpointConfiguration": return getOrCreateConfiguration(target).getEndpointConfiguration();
         case "filename":
-        case "fileName": getOrCreateConfiguration(target).getFileName(); return true;
+        case "fileName": return getOrCreateConfiguration(target).getFileName();
         case "forceglobalbucketaccessenabled":
-        case "forceGlobalBucketAccessEnabled": getOrCreateConfiguration(target).isForceGlobalBucketAccessEnabled(); return true;
+        case "forceGlobalBucketAccessEnabled": return getOrCreateConfiguration(target).isForceGlobalBucketAccessEnabled();
         case "includebody":
-        case "includeBody": getOrCreateConfiguration(target).isIncludeBody(); return true;
+        case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "keyname":
-        case "keyName": getOrCreateConfiguration(target).getKeyName(); return true;
+        case "keyName": return getOrCreateConfiguration(target).getKeyName();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "multipartupload":
-        case "multiPartUpload": getOrCreateConfiguration(target).isMultiPartUpload(); return true;
-        case "operation": getOrCreateConfiguration(target).getOperation(); return true;
+        case "multiPartUpload": return getOrCreateConfiguration(target).isMultiPartUpload();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "partsize":
-        case "partSize": getOrCreateConfiguration(target).getPartSize(); return true;
+        case "partSize": return getOrCreateConfiguration(target).getPartSize();
         case "pathstyleaccess":
-        case "pathStyleAccess": getOrCreateConfiguration(target).isPathStyleAccess(); return true;
+        case "pathStyleAccess": return getOrCreateConfiguration(target).isPathStyleAccess();
         case "payloadsigningenabled":
-        case "payloadSigningEnabled": getOrCreateConfiguration(target).isPayloadSigningEnabled(); return true;
-        case "policy": getOrCreateConfiguration(target).getPolicy(); return true;
-        case "prefix": getOrCreateConfiguration(target).getPrefix(); return true;
+        case "payloadSigningEnabled": return getOrCreateConfiguration(target).isPayloadSigningEnabled();
+        case "policy": return getOrCreateConfiguration(target).getPolicy();
+        case "prefix": return getOrCreateConfiguration(target).getPrefix();
         case "proxyhost":
-        case "proxyHost": getOrCreateConfiguration(target).getProxyHost(); return true;
+        case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
-        case "proxyPort": getOrCreateConfiguration(target).getProxyPort(); return true;
+        case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
-        case "proxyProtocol": getOrCreateConfiguration(target).getProxyProtocol(); return true;
-        case "region": getOrCreateConfiguration(target).getRegion(); return true;
+        case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
+        case "region": return getOrCreateConfiguration(target).getRegion();
         case "secretkey":
-        case "secretKey": getOrCreateConfiguration(target).getSecretKey(); return true;
+        case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "serversideencryption":
-        case "serverSideEncryption": getOrCreateConfiguration(target).getServerSideEncryption(); return true;
+        case "serverSideEncryption": return getOrCreateConfiguration(target).getServerSideEncryption();
         case "storageclass":
-        case "storageClass": getOrCreateConfiguration(target).getStorageClass(); return true;
+        case "storageClass": return getOrCreateConfiguration(target).getStorageClass();
         case "useawskms":
-        case "useAwsKMS": getOrCreateConfiguration(target).isUseAwsKMS(); return true;
+        case "useAwsKMS": return getOrCreateConfiguration(target).isUseAwsKMS();
         case "useencryption":
-        case "useEncryption": getOrCreateConfiguration(target).isUseEncryption(); return true;
+        case "useEncryption": return getOrCreateConfiguration(target).isUseEncryption();
         case "useiamcredentials":
-        case "useIAMCredentials": getOrCreateConfiguration(target).isUseIAMCredentials(); return true;
+        case "useIAMCredentials": return getOrCreateConfiguration(target).isUseIAMCredentials();
         default: return null;
         }
     }

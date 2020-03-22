@@ -84,37 +84,37 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
         HBaseEndpoint target = (HBaseEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
-        case "basicPropertyBinding": target.isBasicPropertyBinding(); return true;
+        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
-        case "bridgeErrorHandler": target.isBridgeErrorHandler(); return true;
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cellmappingstrategyfactory":
-        case "cellMappingStrategyFactory": target.getCellMappingStrategyFactory(); return true;
+        case "cellMappingStrategyFactory": return target.getCellMappingStrategyFactory();
         case "exceptionhandler":
-        case "exceptionHandler": target.getExceptionHandler(); return true;
+        case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
-        case "exchangePattern": target.getExchangePattern(); return true;
-        case "filters": target.getFilters(); return true;
+        case "exchangePattern": return target.getExchangePattern();
+        case "filters": return target.getFilters();
         case "lazystartproducer":
-        case "lazyStartProducer": target.isLazyStartProducer(); return true;
+        case "lazyStartProducer": return target.isLazyStartProducer();
         case "mappingstrategyclassname":
-        case "mappingStrategyClassName": target.getMappingStrategyClassName(); return true;
+        case "mappingStrategyClassName": return target.getMappingStrategyClassName();
         case "mappingstrategyname":
-        case "mappingStrategyName": target.getMappingStrategyName(); return true;
+        case "mappingStrategyName": return target.getMappingStrategyName();
         case "maxmessagesperpoll":
-        case "maxMessagesPerPoll": target.getMaxMessagesPerPoll(); return true;
+        case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "maxresults":
-        case "maxResults": target.getMaxResults(); return true;
-        case "operation": target.getOperation(); return true;
-        case "remove": target.isRemove(); return true;
+        case "maxResults": return target.getMaxResults();
+        case "operation": return target.getOperation();
+        case "remove": return target.isRemove();
         case "removehandler":
-        case "removeHandler": target.getRemoveHandler(); return true;
+        case "removeHandler": return target.getRemoveHandler();
         case "rowmapping":
-        case "rowMapping": target.getRowMapping(); return true;
+        case "rowMapping": return target.getRowMapping();
         case "rowmodel":
-        case "rowModel": target.getRowModel(); return true;
-        case "synchronous": target.isSynchronous(); return true;
+        case "rowModel": return target.getRowModel();
+        case "synchronous": return target.isSynchronous();
         case "usergroupinformation":
-        case "userGroupInformation": target.getUserGroupInformation(); return true;
+        case "userGroupInformation": return target.getUserGroupInformation();
         default: return null;
         }
     }
