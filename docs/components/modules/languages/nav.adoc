@@ -1,0 +1,21 @@
+// this file is auto generated and changes to it will be overwritten
+// make edits in docs/*nav.adoc.template files instead
+
+* xref:languages:index.adoc[Languages]
+** xref:languages:bean-language.adoc[Bean method Language]
+** xref:languages:constant-language.adoc[Constant Language]
+** xref:languages:exchangeProperty-language.adoc[ExchangeProperty Language]
+** xref:languages:file-language.adoc[File Language]
+** xref:languages:groovy-language.adoc[Groovy Language]
+** xref:languages:header-language.adoc[Header Language]
+** xref:languages:hl7terser-language.adoc[HL7 Terser Language]
+** xref:languages:jsonpath-language.adoc[JsonPath Language]
+** xref:languages:mvel-language.adoc[MVEL Language]
+** xref:languages:ognl-language.adoc[OGNL Language]
+** xref:languages:ref-language.adoc[Ref Language]
+** xref:languages:simple-language.adoc[Simple Language]
+** xref:languages:spel-language.adoc[SpEL Language]
+** xref:languages:tokenize-language.adoc[Tokenize Language]
+** xref:languages:xtokenize-language.adoc[XML Tokenize Language]
+** xref:languages:xpath-language.adoc[XPath Language]
+** xref:languages:xquery-language.adoc[XQuery Language]

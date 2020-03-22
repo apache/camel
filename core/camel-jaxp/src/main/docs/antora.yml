@@ -16,9 +16,4 @@
 #
 
 name: components
-title: Component reference
 version: 3.0.x
-nav:
-  - modules/ROOT/nav.adoc
-  - modules/dataformats/nav.adoc
-  - modules/languages/nav.adoc
